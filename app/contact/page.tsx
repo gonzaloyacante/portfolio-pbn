@@ -1,121 +1,121 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram } from "lucide-react";
+import { Clipboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { db } from "@/lib/firebaseClient";
+import { collection, getDocs } from "firebase/firestore";
+import { ContactData, socialIcons } from "@/models/ContactData";
+import Loader from "@/components/ui/loader";
+import NoData from "@/components/ui/NoData";
+import Error from "@/components/ui/Error";
 
 export default function Contacto() {
   const [isCopied, setIsCopied] = useState(false);
-  interface ProfileData {
-    graphql: {
-      user: {
-        full_name: string;
-        biography: string;
-        profile_pic_url_hd: string;
-        edge_owner_to_timeline_media: {
-          edges: {
-            node: {
-              display_url: string;
-            };
-          }[];
-        };
-      };
-    };
-  }
-
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [contactData, setContactData] = useState<ContactData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const copyToClipboard = useCallback(() => {
-    navigator.clipboard.writeText("paola@correo.com");
-    setIsCopied(true);
-    toast({
-      title: "Correo copiado",
-      description: "El correo ha sido copiado al portapapeles.",
-    });
-    setTimeout(() => setIsCopied(false), 2000);
-  }, [toast]);
+    if (contactData) {
+      navigator.clipboard.writeText(contactData.email);
+      setIsCopied(true);
+      toast({
+        title: "Correo copiado",
+        description: "El correo ha sido copiado al portapapeles.",
+      });
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  }, [contactData, toast]);
 
   useEffect(() => {
-    async function fetchProfileData() {
+    const fetchContactData = async () => {
       try {
-        const response = await fetch(
-          "https://www.instagram.com/paolabolivarn/?__a=1&__d=dis"
-        );
-        const data = await response.json();
-        setProfileData(data);
+        const querySnapshot = await getDocs(collection(db, "contact"));
+        const contactData = querySnapshot.docs.map(
+          (doc) => doc.data() as ContactData
+        )[0];
+        if (contactData) {
+          setContactData(contactData);
+        } else {
+          console.error("No such document!");
+          setError("No se encontró la información de contacto.");
+        }
       } catch (error) {
-        console.error("Error fetching Instagram profile data:", error);
+        console.error("Error fetching contact data:", error);
+        setError("Error al obtener la información de contacto.");
+      } finally {
+        setLoading(false);
       }
-    }
-    fetchProfileData();
+    };
+
+    fetchContactData();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Error message={error} />
+      </div>
+    );
+  }
+
+  if (!contactData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <NoData />
+      </div>
+    );
+  }
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-8 flex flex-col"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
       <h1 className="text-4xl font-bold text-center">Contacto</h1>
       <div className="flex flex-col items-center space-y-4">
-        <Button asChild>
-          <Link
-            href="https://www.instagram.com/paolabolivarn?igsh=dmV4MnV6Y25sM2M2"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2">
-            <Instagram className="w-5 h-5" />
-            <span>Sígueme en Instagram</span>
-          </Link>
-        </Button>
-        {profileData && (
-          <motion.div
-            className="text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}>
-            <Image
-              src={profileData.graphql.user.profile_pic_url_hd}
-              alt="Foto de perfil"
-              width={150}
-              height={150}
-              className="rounded-full"
-            />
-            <p className="text-lg">
-              Nombre: {profileData.graphql.user.full_name}
-            </p>
-            <p className="text-lg">
-              Biografía: {profileData.graphql.user.biography}
-            </p>
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              {profileData.graphql.user.edge_owner_to_timeline_media.edges
-                .slice(0, 3)
-                .map((edge, index) => (
-                  <Image
-                    key={index}
-                    src={edge.node.display_url}
-                    alt={`Foto ${index + 1}`}
-                    width={150}
-                    height={150}
-                    className="w-full h-auto rounded-md"
-                  />
-                ))}
-            </div>
-          </motion.div>
+        {contactData && (
+          <>
+            {Object.entries(contactData.socials).map(([key, value]) => {
+              if (value && value.url) {
+                const Icon = socialIcons[key as keyof typeof socialIcons];
+                return (
+                  <Button asChild key={key}>
+                    <Link
+                      href={value.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center space-x-2">
+                      <Icon className="w-7 h-7" />
+                      <span>{value.username}</span>
+                    </Link>
+                  </Button>
+                );
+              }
+              return null;
+            })}
+            <button
+              onClick={copyToClipboard}
+              className="flex items-center space-x-2 text-primary hover:underline focus:outline-none">
+              <span>{contactData.email}</span>
+              <Clipboard className="w-4 h-4" />
+            </button>
+          </>
         )}
-        <p className="text-lg">
-          O contáctame por correo:{" "}
-          <button
-            onClick={copyToClipboard}
-            className="text-primary hover:underline focus:outline-none">
-            paola@correo.com
-          </button>
-        </p>
         {isCopied && (
           <motion.p
             className="text-sm text-green-500"

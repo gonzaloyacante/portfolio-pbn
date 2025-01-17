@@ -1271,6 +1271,14 @@
     "@swc/counter" "^0.1.3"
     tslib "^2.4.0"
 
+"@szhsin/react-menu@^4.2.4":
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/@szhsin/react-menu/-/react-menu-4.2.4.tgz#1000b72a18ecd6a883d6ae4bc21d93abbc78a4ea"
+  integrity sha512-FczIttEAVlT1wKU89mWvPeR6aJADDEGbTzJocsQgG6lPO4QuC8oHPAzxweufDSMbQjhqibCDIQiwTnB+ks7XXg==
+  dependencies:
+    prop-types "^15.7.2"
+    react-transition-state "^2.1.2"
+
 "@types/d3-array@^3.0.3":
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/@types/d3-array/-/d3-array-3.2.1.tgz#1f6658e3d2006c4fceac53fde464166859f8b8c5"
@@ -2187,7 +2195,7 @@ postcss@^8, postcss@^8.4.47:
     picocolors "^1.1.1"
     source-map-js "^1.2.1"
 
-prop-types@^15.6.2, prop-types@^15.8.1:
+prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -2302,6 +2310,11 @@ react-transition-group@^4.4.5:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-transition-state@^2.1.2:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/react-transition-state/-/react-transition-state-2.2.0.tgz#3a9f37c0553a865b6110ae8eaf7ed4db22633577"
+  integrity sha512-D3EyLku1Sdxrxq26Fo4Jh0q1BLEFQfDOxKKiSuyqWH84+hM6y0Guc0hcW2IXMXY5l5gQCgkOQ9y90xx6mNoj5w==
 
 react@^18:
   version "18.3.1"

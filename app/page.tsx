@@ -15,50 +15,67 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { db } from "../lib/firebaseClient";
 import { collection, getDocs } from "firebase/firestore";
-
-type Project = {
-  id: string;
-  title: string;
-  image: string[];
-  category: string;
-};
+import Project from "@/models/Project";
+import Category from "@/models/Category";
+import Loader from "@/components/ui/loader";
 
 export default function Home() {
-  const [categorySelected, setCategorySelected] = useState("Todas");
-  const [proyectos, setProyectos] = useState<Project[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("Todas");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [categories, setCategories] = useState<string[]>(["Todas"]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const querySnapshot = await getDocs(collection(db, "projects"));
-      const projectsData = querySnapshot.docs.map((doc) => {
-        const data = doc.data() as Project;
-        return {
-          id: doc.id,
-          title: data.title,
-          image: data.image,
-          category: data.category,
-        };
-      });
-      setProyectos(projectsData);
+      try {
+        const querySnapshot = await getDocs(collection(db, "projects"));
+        const projectsData = querySnapshot.docs.map((doc) => {
+          const data = doc.data() as Project;
+          return {
+            id: doc.id,
+            title: data.title,
+            image: data.image,
+            category: data.category,
+            description: data.description,
+            process: data.process,
+          };
+        });
+        setProjects(projectsData);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     const fetchCategories = async () => {
-      const querySnapshot = await getDocs(collection(db, "categories"));
-      const categoriesData = querySnapshot.docs.flatMap(
-        (doc) => doc.data().nombre
-      );
-      setCategories(categoriesData);
+      try {
+        const querySnapshot = await getDocs(collection(db, "categories"));
+        const categoriesData = querySnapshot.docs.flatMap(
+          (doc) => (doc.data() as Category).name
+        );
+        setCategories(["Todas", ...categoriesData]);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
     };
 
     fetchProjects();
     fetchCategories();
   }, []);
 
-  const proyectosFiltrados =
-    categorySelected === "Todas"
-      ? proyectos
-      : proyectos.filter((proyecto) => proyecto.category === categorySelected);
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
+
+  const filteredProjects =
+    selectedCategory === "Todas"
+      ? projects
+      : projects.filter((project) => project.category === selectedCategory);
 
   return (
     <motion.div
@@ -71,14 +88,14 @@ export default function Home() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}>
-        Portafolio de Caracterización
+        Portfolio de Caracterización
       </motion.h1>
-      <div className="flex justify-center space-x-4">
+      <div className="flex overflow-x-auto space-x-4 pb-4">
         {categories.map((category, index) => (
           <Button
             key={index}
-            onClick={() => setCategorySelected(category)}
-            variant={categorySelected === category ? "default" : "outline"}>
+            onClick={() => setSelectedCategory(category)}
+            variant={selectedCategory === category ? "default" : "outline"}>
             {category}
           </Button>
         ))}
@@ -89,9 +106,9 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}>
-          {proyectosFiltrados.map((proyecto) => (
+          {filteredProjects.map((project) => (
             <motion.div
-              key={proyecto.id}
+              key={project.id}
               layout
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -99,21 +116,22 @@ export default function Home() {
               transition={{ duration: 0.5 }}>
               <Card>
                 <CardHeader>
-                  <CardTitle>{proyecto.title}</CardTitle>
+                  <CardTitle>{project.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Image
-                    src={proyecto.image[0] || "/placeholder.svg"}
-                    alt={proyecto.title}
+                    src={project.image[0] || "/placeholder.svg"}
+                    alt={project.title}
                     width={300}
                     height={300}
                     className="w-full h-48 object-cover rounded-md"
+                    priority
                   />
                 </CardContent>
                 <CardFooter className="flex justify-between items-center">
-                  <Badge>{proyecto.category}</Badge>
+                  <Badge>{project.category}</Badge>
                   <Button asChild>
-                    <Link href={`/proyect/${proyecto.id}`}>Ver Detalles</Link>
+                    <Link href={`/project/${project.id}`}>Ver detalles</Link>
                   </Button>
                 </CardFooter>
               </Card>
