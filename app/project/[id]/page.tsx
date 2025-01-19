@@ -112,21 +112,6 @@ export default function ProjectPage({ params }: { params: { id: string } }) {
                 />
               </DialogContent>
             </Dialog> */}
-            <div className="space-y-4">
-              <p className="text-gray-700">{project.description}</p>
-              <h3 className="text-xl font-semibold">Creation Process</h3>
-              <ul className="list-disc pl-5">
-                {project.process.map((step, index) => (
-                  <motion.li
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}>
-                    {step}
-                  </motion.li>
-                ))}
-              </ul>
-            </div>
           </div>
           <div className="grid grid-cols-3 gap-2 mt-4">
             {project.image.map((image, index) => (

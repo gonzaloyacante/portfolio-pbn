@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Moon, Sun, Menu, X } from "lucide-react";
+import { Moon, Sun, Menu, X, Home } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -22,41 +22,56 @@ export default function Header() {
     return null;
   }
 
+  const isAdminRoute = pathname.startsWith("/admin");
+
   return (
-    <header className="bg-background border-b">
-      <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex space-x-6 md:hidden">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <Menu className="h-[1.2rem] w-[1.2rem]" />
-            <span className="sr-only">Abrir menú</span>
-          </Button>
-        </div>
-        <div className="hidden md:flex space-x-6">
-          <Link
-            href="/"
-            className={`text-foreground hover:text-primary ${
-              pathname === "/" ? "font-bold" : ""
-            }`}>
-            Inicio
-          </Link>
-          <Link
-            href="/about-me"
-            className={`text-foreground hover:text-primary ${
-              pathname === "/about-me" ? "font-bold" : ""
-            }`}>
-            Sobre Mí
-          </Link>
-          <Link
-            href="/contact"
-            className={`text-foreground hover:text-primary ${
-              pathname === "/contact" ? "font-bold" : ""
-            }`}>
-            Contacto
-          </Link>
-        </div>
+    <header className="bg-background border-b h-16">
+      <nav className="container mx-auto px-6 flex justify-between items-center h-full">
+        {isAdminRoute ? (
+          <div className="flex items-center space-x-4">
+            <Link href="/">
+              <Button variant="ghost" size="icon">
+                <Home className="h-6 w-6" />
+                <span className="sr-only">Inicio</span>
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="flex space-x-6 md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                <Menu className="h-[1.2rem] w-[1.2rem]" />
+                <span className="sr-only">Abrir menú</span>
+              </Button>
+            </div>
+            <div className="hidden md:flex space-x-6">
+              <Link
+                href="/"
+                className={`text-foreground hover:text-primary ${
+                  pathname === "/" ? "font-bold" : ""
+                }`}>
+                Inicio
+              </Link>
+              <Link
+                href="/about-me"
+                className={`text-foreground hover:text-primary ${
+                  pathname === "/about-me" ? "font-bold" : ""
+                }`}>
+                Sobre Mí
+              </Link>
+              <Link
+                href="/contact"
+                className={`text-foreground hover:text-primary ${
+                  pathname === "/contact" ? "font-bold" : ""
+                }`}>
+                Contacto
+              </Link>
+            </div>
+          </>
+        )}
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
@@ -71,7 +86,7 @@ export default function Header() {
         </div>
       </nav>
       <AnimatePresence>
-        {isMenuOpen && (
+        {isMenuOpen && !isAdminRoute && (
           <motion.div
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
