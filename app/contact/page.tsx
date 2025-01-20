@@ -75,7 +75,7 @@ export default function Contacto() {
   if (!contactData) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <NoData />
+        <NoData message="No hay información de contacto." />
       </div>
     );
   }
