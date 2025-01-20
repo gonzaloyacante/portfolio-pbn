@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import NoData from "@/components/ui/NoData"; // Importar el componente NoData
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -41,6 +41,14 @@ export default function AdminSobreMi() {
     }
   };
 
+  if (!aboutMe) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <NoData message="No hay información disponible." />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 h-full">
       <header className="flex items-center space-x-4 w-full">
@@ -63,9 +71,12 @@ export default function AdminSobreMi() {
               className="block text-sm font-medium text-gray-700">
               Sobre Mí
             </label>
-            <ReactQuill
+            <Textarea
+              id="aboutMe"
+              name="aboutMe"
+              placeholder="Escribe algo sobre ti..."
               value={aboutMe}
-              onChange={setAboutMe}
+              onChange={(e) => setAboutMe(e.target.value)}
               className="bg-background"
             />
           </div>
