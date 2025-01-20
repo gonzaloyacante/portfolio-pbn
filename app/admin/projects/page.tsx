@@ -163,6 +163,9 @@ export default function AdminProyectos() {
           editProject={editProject}
           setEditProject={setEditProject}
           handleSave={handleSave}
+          projectId={editProject.id!}
+          setProjects={setProjects}
+          onClose={() => setEditProject(null)}
         />
       )}
       {successMessage && (

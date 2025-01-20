@@ -1,15 +1,12 @@
-import { motion } from "framer-motion";
+"use client";
 
-const NoData = () => {
+import { AlertCircle } from "lucide-react";
+
+export default function NoData({ message }: { message: string }) {
   return (
-    <motion.div
-      className="flex flex-col items-center justify-center space-y-2"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}>
-      <p className="text-lg text-gray-500">No hay información disponible.</p>
-    </motion.div>
+    <div className="flex flex-col items-center justify-center h-full">
+      <AlertCircle className="w-12 h-12 text-gray-500" />
+      <p className="mt-2 text-gray-500">{message}</p>
+    </div>
   );
-};
-
-export default NoData;
+}

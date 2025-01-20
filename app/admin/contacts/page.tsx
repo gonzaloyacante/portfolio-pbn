@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "../../../lib/firebaseClient";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ContactData } from "../../../models/ContactData";
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
+import { MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
@@ -39,6 +39,7 @@ export default function AdminContactos() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data() as ContactData;
+        console.log("Fetched contact data from Firebase:", data);
         setContactData(data);
       } else {
         console.log("No such document!");
@@ -51,6 +52,7 @@ export default function AdminContactos() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      console.log("Submitting contact data to Firebase:", contactData);
       const docRef = doc(db, "contact", "contact");
       await setDoc(docRef, contactData);
       alert("Información de contacto actualizada correctamente");
@@ -105,6 +107,7 @@ export default function AdminContactos() {
 
   const toggleAccordion = (platform: keyof ContactData["socials"]) => {
     setOpenAccordion(openAccordion === platform ? null : platform);
+    handleEdit(platform);
   };
 
   return (
@@ -143,13 +146,14 @@ export default function AdminContactos() {
               Redes Sociales
             </label>
             {Object.keys(contactData.socials).map((platform) => (
-              <div key={platform} className="mb-2 w-full">
+              <div key={platform} className="mb-4 w-full">
                 <div className="flex items-center justify-between w-full">
-                  <span>{platform}</span>
                   <MenuButton
+                    className="w-full flex justify-between items-center px-4 py-2 border rounded-md"
                     onClick={() =>
                       toggleAccordion(platform as keyof ContactData["socials"])
                     }>
+                    <span>{platform}</span>
                     {openAccordion === platform ? (
                       <ChevronUp className="ml-2" />
                     ) : (
@@ -158,38 +162,30 @@ export default function AdminContactos() {
                   </MenuButton>
                 </div>
                 {openAccordion === platform && (
-                  <div className="mt-2 w-full">
+                  <div className="mt-2 w-full space-y-2 px-6">
                     <Input
                       name="url"
                       placeholder="URL"
-                      value={
-                        editContact?.platform === platform
-                          ? editContact.url
-                          : contactData.socials[platform].url
-                      }
+                      value={editContact?.url || ""}
                       onChange={handleChange}
                       className="mb-2"
                     />
                     <Input
                       name="username"
                       placeholder="Username"
-                      value={
-                        editContact?.platform === platform
-                          ? editContact.username
-                          : contactData.socials[platform].username
-                      }
+                      value={editContact?.username || ""}
                       onChange={handleChange}
                       className="mb-2"
                     />
                     {editContact?.platform === platform && (
-                      <>
+                      <div className="flex space-x-2">
                         <Button onClick={handleSaveEdit} className="mr-2">
                           Guardar
                         </Button>
                         <Button onClick={handleCancelEdit} variant="secondary">
                           Cancelar
                         </Button>
-                      </>
+                      </div>
                     )}
                   </div>
                 )}

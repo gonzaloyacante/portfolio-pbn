@@ -18,6 +18,8 @@ import { collection, getDocs } from "firebase/firestore";
 import Project from "@/models/Project";
 import Category from "@/models/Category";
 import Loader from "@/components/ui/loader";
+import { AlertCircle } from "lucide-react";
+import NoData from "@/components/ui/NoData"; // Importar el componente NoData
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("Todas");
@@ -37,9 +39,9 @@ export default function Home() {
             image: data.image,
             category: data.category,
             description: data.description,
-            process: data.process,
           };
         });
+        console.log("Fetched projects from Firebase:", projectsData);
         setProjects(projectsData);
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -79,18 +81,18 @@ export default function Home() {
 
   return (
     <motion.div
-      className="space-y-8"
+      className="space-y-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
       <motion.h1
-        className="text-4xl font-bold text-center"
+        className="text-2xl font-bold text-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}>
         Portfolio de Caracterización
       </motion.h1>
-      <div className="flex overflow-x-auto space-x-4 pb-4">
+      <div className="flex overflow-x-auto space-x-4">
         {categories.map((category, index) => (
           <Button
             key={index}
@@ -101,43 +103,62 @@ export default function Home() {
         ))}
       </div>
       <AnimatePresence>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}>
-          {filteredProjects.map((project) => (
-            <motion.div
-              key={project.id}
-              layout
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.5 }}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>{project.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Image
-                    src={project.image[0] || "/placeholder.svg"}
-                    alt={project.title}
-                    width={300}
-                    height={300}
-                    className="w-full h-48 object-cover rounded-md"
-                    priority
-                  />
-                </CardContent>
-                <CardFooter className="flex justify-between items-center">
-                  <Badge>{project.category}</Badge>
-                  <Button asChild>
-                    <Link href={`/project/${project.id}`}>Ver detalles</Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        {filteredProjects.length > 0 ? (
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}>
+            {filteredProjects.map((project) => (
+              <motion.div
+                key={project.id}
+                layout
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.5 }}>
+                <Card className="max-w-sm mx-auto">
+                  <CardHeader>
+                    <CardTitle className="text-lg md:text-xl">
+                      {project.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {project.image.length > 0 ? (
+                      <Image
+                        src={project.image[0]}
+                        alt={project.title}
+                        width={300}
+                        height={300}
+                        className="w-full h-40 object-cover rounded-md"
+                        priority
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "";
+                        }}
+                      />
+                    ) : (
+                      <div className="flex justify-center items-center w-full h-32 bg-gray-200 rounded-md">
+                        <AlertCircle className="w-16 h-16 text-red-500" />
+                      </div>
+                    )}
+                    <p className="border-t pt-4 text-sm md:text-base">
+                      {project.description}
+                    </p>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center">
+                    <Badge>{project.category}</Badge>
+                    <Button asChild>
+                      <Link href={`/project/${project.id}`}>Ver detalles</Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <NoData message="No hay proyectos disponibles." />
+        )}
       </AnimatePresence>
     </motion.div>
   );
