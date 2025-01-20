@@ -56,7 +56,7 @@ export default function AboutMe() {
   if (!presentationData) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <NoData />
+        <NoData message="No hay información disponible." />
       </div>
     );
   }
