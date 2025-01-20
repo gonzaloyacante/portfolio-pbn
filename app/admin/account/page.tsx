@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "../../../lib/firebaseClient";
 import {
@@ -28,6 +28,14 @@ function AccountSettings() {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+  const [currentEmail, setCurrentEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const email = localStorage.getItem("userEmail");
+      setCurrentEmail(email);
+    }
+  }, []);
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +83,9 @@ function AccountSettings() {
       try {
         await reauthenticateWithCredential(user, credential);
         await updateEmail(user, newEmail);
-        localStorage.setItem("userEmail", newEmail);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("userEmail", newEmail);
+        }
         setSuccessMessage("Correo electrónico actualizado correctamente");
         handleCloseEmailModal();
       } catch (error) {
@@ -102,8 +112,6 @@ function AccountSettings() {
     setCurrentPassword("");
     setNewEmail("");
   };
-
-  const currentEmail = localStorage.getItem("userEmail");
 
   return (
     <div className="space-y-6 max-w-md mx-auto">

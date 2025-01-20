@@ -8,10 +8,12 @@ export default function Admin() {
   const router = useRouter();
 
   useEffect(() => {
-    const error = localStorage.getItem("authError");
-    if (error) {
-      setAuthError(error);
-      localStorage.removeItem("authError");
+    if (typeof window !== "undefined") {
+      const error = localStorage.getItem("authError");
+      if (error) {
+        setAuthError(error);
+        localStorage.removeItem("authError");
+      }
     }
   }, []);
 

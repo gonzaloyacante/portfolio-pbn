@@ -10,29 +10,31 @@ const withAuth = (WrappedComponent: React.FC) => {
 
     useEffect(() => {
       const checkAuth = async () => {
-        const token = localStorage.getItem("authToken");
-        const userUID = localStorage.getItem("userUID");
-        if (!token || !userUID) {
-          localStorage.setItem(
-            "authError",
-            "Debes iniciar sesión para ver esta información."
-          );
-          router.push("/admin/auth/login");
-        } else {
-          const auth = getAuth();
-          onAuthStateChanged(auth, (user) => {
-            if (user && user.uid === userUID) {
-              setLoading(false);
-            } else {
-              localStorage.removeItem("authToken");
-              localStorage.removeItem("userUID");
-              localStorage.setItem(
-                "authError",
-                "Debes iniciar sesión para ver esta información."
-              );
-              router.push("/admin/auth/login");
-            }
-          });
+        if (typeof window !== "undefined") {
+          const token = localStorage.getItem("authToken");
+          const userUID = localStorage.getItem("userUID");
+          if (!token || !userUID) {
+            localStorage.setItem(
+              "authError",
+              "Debes iniciar sesión para ver esta información."
+            );
+            router.push("/admin/auth/login");
+          } else {
+            const auth = getAuth();
+            onAuthStateChanged(auth, (user) => {
+              if (user && user.uid === userUID) {
+                setLoading(false);
+              } else {
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("userUID");
+                localStorage.setItem(
+                  "authError",
+                  "Debes iniciar sesión para ver esta información."
+                );
+                router.push("/admin/auth/login");
+              }
+            });
+          }
         }
       };
 
