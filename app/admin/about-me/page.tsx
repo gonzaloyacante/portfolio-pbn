@@ -3,24 +3,50 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Image, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import NoData from "@/components/NoData"; // Importar el componente NoData
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { CldUploadWidget } from "next-cloudinary";
+import dynamic from "next/dynamic";
+import SuccessModal from "@/components/SuccessModal";
+import ErrorModal from "@/components/ErrorModal";
+import "react-image-crop/dist/ReactCrop.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
+
+const modules = {
+  toolbar: [
+    [{ header: "1" }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+  ],
+};
 
 export default function AdminSobreMi() {
   const router = useRouter();
+  const [title, setTitle] = useState("");
   const [aboutMe, setAboutMe] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAboutMe = async () => {
-      const docRef = doc(db, "about", "aboutMe");
+      const docRef = doc(db, "presentation", "presentation");
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setAboutMe(data.content);
+        setTitle(data.title || "");
+        setAboutMe(data.content || "");
+        setProfileImageUrl(data.imageUrl || "");
       } else {
         console.log("No such document!");
       }
@@ -29,60 +55,134 @@ export default function AdminSobreMi() {
     fetchAboutMe();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const docRef = doc(db, "about", "aboutMe");
-      await setDoc(docRef, { content: aboutMe });
-      alert("Información actualizada correctamente");
-    } catch (error) {
-      console.error("Error actualizando la información:", error);
-      alert("Hubo un error al actualizar la información");
+  const handleImageUpload = (result: any) => {
+    if (result.event === "success") {
+      const imageUrl = result.info.secure_url;
+      console.log("Image uploaded to Cloudinary:", imageUrl);
+      if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+        setProfileImageUrl(imageUrl);
+      } else {
+        console.error("Invalid image URL:", imageUrl);
+      }
     }
   };
 
-  if (!aboutMe) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <NoData message="No hay información disponible." />
-      </div>
-    );
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const docRef = doc(db, "presentation", "presentation");
+      await setDoc(docRef, {
+        title,
+        content: aboutMe,
+        imageUrl: profileImageUrl,
+      });
+      setSuccessMessage("Información actualizada correctamente");
+    } catch (error) {
+      console.error("Error actualizando la información:", error);
+      setErrorMessage("Hubo un error al actualizar la información");
+    }
+  };
 
   return (
-    <div className="space-y-6 h-full">
+    <div className="space-y-6 h-full flex flex-col items-center">
       <header className="flex items-center space-x-4 w-full">
         <div className="flex items-center">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20" />
+            <ArrowLeft className="h-20 w-20 text-white" />
             <span className="sr-only">Volver</span>
           </Button>
-          <h2 className="text-xl font-bold">Sobre Mí</h2>
+          <h2 className="text-xl font-bold text-white">Sobre Mí</h2>
         </div>
       </header>
-      <CardContent>
+      <CardContent className="w-full max-w-2xl">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
-              htmlFor="aboutMe"
-              className="block text-sm font-medium text-gray-700">
-              Sobre Mí
+              htmlFor="title"
+              className="block text-sm font-medium text-white mb-2">
+              Título
             </label>
-            <Textarea
-              id="aboutMe"
-              name="aboutMe"
-              placeholder="Escribe algo sobre ti..."
+            <input
+              type="text"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full px-3 py-2 border rounded"
+            />
+          </div>
+          <div className="mb-4 flex flex-col items-center">
+            <label
+              htmlFor="profileImage"
+              className="block text-sm font-medium text-white">
+              Cambiar foto de Perfil
+            </label>
+            <CldUploadWidget
+              uploadPreset="ml_default"
+              options={{
+                cropping: true,
+                croppingAspectRatio: 1,
+                multiple: false,
+                showSkipCropButton: false,
+              }}
+              onSuccess={handleImageUpload}>
+              {({ open }) => {
+                function handleOnClick(e: any) {
+                  e.preventDefault();
+                  open();
+                }
+                return (
+                  <Button onClick={handleOnClick} variant="outline">
+                    <Plus className="mr-2" /> Subir Imagen
+                  </Button>
+                );
+              }}
+            </CldUploadWidget>
+            <div className="mt-4 w-40 h-40 flex items-center justify-center border-2 rounded-full overflow-hidden relative">
+              {profileImageUrl ? (
+                <img
+                  src={profileImageUrl}
+                  alt="Foto de Perfil"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <Image className="w-16 h-16 text-gray-400" />
+              )}
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
+                <span className="text-white text-sm">Editar</span>
+              </div>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label
+              htmlFor="aboutMe"
+              className="block text-sm font-medium text-white mb-2">
+              Descripción
+            </label>
+            <ReactQuill
               value={aboutMe}
-              onChange={(e) => setAboutMe(e.target.value)}
-              className="bg-background"
+              onChange={setAboutMe}
+              modules={modules}
+              className="bg-background text-white rounded-lg"
             />
           </div>
           <Button type="submit">Guardar Cambios</Button>
         </form>
       </CardContent>
+      {successMessage && (
+        <SuccessModal
+          message={successMessage}
+          onClose={() => setSuccessMessage(null)}
+        />
+      )}
+      {errorMessage && (
+        <ErrorModal
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+        />
+      )}
     </div>
   );
 }

@@ -17,19 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  collection,
-  getDoc,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
+import { collection, getDoc, getDocs, doc } from "firebase/firestore";
 import { db } from "../../../lib/firebaseClient";
 import Project from "../../../models/Project";
 import Category from "../../../models/Category";
 import { CldUploadWidget } from "next-cloudinary";
 import { Plus, X } from "lucide-react";
-import Loader from "@/components/ui/loader"; // Importar el componente Loader
+import Loader from "@/components/ui/loader";
 
 interface EditProjectModalProps {
   projectId: string;

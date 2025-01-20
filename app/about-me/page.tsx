@@ -2,30 +2,33 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/firebaseClient";
-import { collection, getDocs } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
-import { Presentation } from "@/models/Presentation";
 import Loader from "@/components/ui/loader";
 import NoData from "@/components/NoData";
 import Error from "@/components/ui/Error";
 
 export default function AboutMe() {
-  const [presentationData, setPresentationData] = useState<Presentation | null>(
-    null
-  );
+  const [title, setTitle] = useState("");
+  const [aboutMe, setAboutMe] = useState("");
+  const [profileImageUrl, setProfileImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPresentationData = async () => {
+    const fetchAboutMe = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "presentation"));
-        const presentationData = querySnapshot.docs.map(
-          (doc) => doc.data() as Presentation
-        )[0];
-        setPresentationData(presentationData);
+        const docRef = doc(db, "presentation", "presentation");
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setTitle(data.title || "");
+          setAboutMe(data.content || "");
+          setProfileImageUrl(data.imageUrl || "");
+        } else {
+          console.log("No such document!");
+        }
       } catch (error) {
         console.error("Error fetching presentation data:", error);
         setError("Error fetching presentation data.");
@@ -34,7 +37,7 @@ export default function AboutMe() {
       }
     };
 
-    fetchPresentationData();
+    fetchAboutMe();
   }, []);
 
   if (loading) {
@@ -55,7 +58,7 @@ export default function AboutMe() {
     );
   }
 
-  if (!presentationData) {
+  if (!title && !aboutMe && !profileImageUrl) {
     return (
       <div className="flex justify-center items-center h-screen">
         <NoData message="No hay información disponible." />
@@ -65,42 +68,35 @@ export default function AboutMe() {
 
   return (
     <motion.div
-      className="space-y-8 min-h-screen flex flex-col justify-center"
+      className="space-y-6 min-h-screen"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-      <h1 className="text-4xl font-bold text-center">Sobre mí</h1>
-      <Card>
-        <CardHeader>
-          <CardTitle>{presentationData?.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col md:flex-row gap-6">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}>
-            <Image
-              src={presentationData?.image || "/placeholder.svg"}
-              alt="Foto de perfil"
-              width={300}
-              height={400}
-              className="rounded-lg object-cover"
-              priority
-            />
-          </motion.div>
-          <div className="space-y-4">
-            {presentationData?.information.map((text, index) => (
-              <motion.p
-                key={index}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}>
-                {text}
-              </motion.p>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <h1 className="text-xl font-bold text-center">{title}</h1>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="flex justify-center">
+        <Image
+          src={profileImageUrl || "/placeholder.svg"}
+          alt="Foto de perfil"
+          width={150}
+          height={150}
+          className="rounded-full object-cover"
+          style={{ objectFit: "cover" }}
+          priority
+        />
+      </motion.div>
+      <div className="space-y-4 w-full px-4 max-w-2xl">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}>
+          <div dangerouslySetInnerHTML={{ __html: aboutMe }} />
+        </motion.div>
+      </div>
     </motion.div>
   );
 }

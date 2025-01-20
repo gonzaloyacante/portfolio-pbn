@@ -1,5 +1,6 @@
 "use client";
 
+import withAuth from "@/components/withAuth";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { db } from "../../../lib/firebaseClient";
@@ -22,7 +23,7 @@ import EditProjectModal from "./EditProjectModal";
 import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 
-export default function AdminProyectos() {
+function AdminProyectos() {
   const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -113,14 +114,14 @@ export default function AdminProyectos() {
   };
 
   return (
-    <div className="space-y-6 h-full">
+    <div className="space-y-6 h-full max-w-2xl mx-auto">
       <header className="flex justify-between items-center space-x-4 w-full">
         <div className="flex justify-between items-center">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20" />
+            <ArrowLeft className="h-20 w-20 scale-150" />
             <span className="sr-only">Volver</span>
           </Button>
           <h2 className="text-xl font-bold">Proyectos Existentes</h2>
@@ -147,9 +148,9 @@ export default function AdminProyectos() {
       <Button
         variant="default"
         size="icon"
-        className="fixed bottom-4 right-4"
+        className="fixed bottom-5 right-5 h-12 w-12"
         onClick={() => setIsAddProjectModalOpen(true)}>
-        <Plus className="h-6 w-6" />
+        <Plus className="scale-150" />
         <span className="sr-only">Añadir Proyecto</span>
       </Button>
       {isAddProjectModalOpen && (
@@ -183,3 +184,5 @@ export default function AdminProyectos() {
     </div>
   );
 }
+
+export default withAuth(AdminProyectos);

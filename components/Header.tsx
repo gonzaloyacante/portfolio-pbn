@@ -31,7 +31,7 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             <Link href="/">
               <Button variant="ghost" size="icon">
-                <Home className="h-6 w-6" />
+                <Home className="scale-150" />
                 <span className="sr-only">Inicio</span>
               </Button>
             </Link>
@@ -79,8 +79,8 @@ export default function Header() {
             onClick={() =>
               setTheme(resolvedTheme === "light" ? "dark" : "light")
             }>
-            <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Sun className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-150 transition-all dark:-rotate-90 dark:scale-0" />
+            <Sun className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-150" />
             <span className="sr-only">Cambiar tema</span>
           </Button>
         </div>

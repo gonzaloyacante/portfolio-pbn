@@ -8,18 +8,16 @@ import {
   getDocs,
   doc,
   deleteDoc,
-  addDoc,
   updateDoc,
 } from "firebase/firestore";
 import Category from "../../../models/Category";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus, Filter } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryList from "./CategoryList";
 import EditCategoryModal from "./EditCategoryModal";
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 
 export default function AdminCategorias() {

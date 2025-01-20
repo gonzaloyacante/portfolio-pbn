@@ -1,9 +1,11 @@
 "use client";
 
+import withAuth from "@/components/withAuth";
 import { useState, useEffect } from "react";
+import { useSpring, animated } from "react-spring";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ContactData } from "../../../models/ContactData";
@@ -11,8 +13,46 @@ import { MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import SuccessModal from "@/components/SuccessModal";
+import ErrorModal from "@/components/ErrorModal";
 
-export default function AdminContactos() {
+function ContactAccordion({
+  title,
+  content,
+  isOpen,
+  onToggle,
+}: {
+  title: string;
+  content: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
+  const props = useSpring({
+    height: isOpen ? "auto" : 0,
+    opacity: isOpen ? 1 : 0,
+    overflow: "hidden",
+  });
+
+  return (
+    <div className="border-b border-gray-200">
+      <button
+        className="w-full text-left py-4 px-6 font-bold text-lg flex justify-between items-center"
+        onClick={onToggle}>
+        {title}
+        {isOpen ? (
+          <ChevronUp className="ml-2" />
+        ) : (
+          <ChevronDown className="ml-2" />
+        )}
+      </button>
+      <animated.div style={props} className="px-6 border-l-4 border-gray-300">
+        <p className="py-4">{content}</p>
+      </animated.div>
+    </div>
+  );
+}
+
+function AdminContacts() {
   const [contactData, setContactData] = useState<ContactData>({
     email: "",
     socials: {
@@ -30,6 +70,8 @@ export default function AdminContactos() {
   const [openAccordion, setOpenAccordion] = useState<
     keyof ContactData["socials"] | null
   >(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -55,10 +97,13 @@ export default function AdminContactos() {
       console.log("Submitting contact data to Firebase:", contactData);
       const docRef = doc(db, "contact", "contact");
       await setDoc(docRef, contactData);
-      alert("Información de contacto actualizada correctamente");
+      setSuccessMessage("Información de contacto actualizada correctamente");
     } catch (error) {
       console.error("Error updating contact information: ", error);
-      alert("Hubo un error al actualizar la información de contacto");
+      setErrorMessage(
+        "Hubo un error al actualizar la información de contacto: " +
+          (error as Error).message
+      );
     }
   };
 
@@ -68,26 +113,6 @@ export default function AdminContactos() {
       url: contactData.socials[platform].url,
       username: contactData.socials[platform].username,
     });
-  };
-
-  const handleSaveEdit = () => {
-    if (editContact) {
-      setContactData((prevData) => ({
-        ...prevData,
-        socials: {
-          ...prevData.socials,
-          [editContact.platform]: {
-            url: editContact.url,
-            username: editContact.username,
-          },
-        },
-      }));
-      setEditContact(null);
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditContact(null);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,14 +136,14 @@ export default function AdminContactos() {
   };
 
   return (
-    <div className="space-y-6 h-full">
+    <div className="space-y-4 h-full">
       <header className="flex items-center space-x-4 w-full">
         <div className="flex items-center">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20" />
+            <ArrowLeft className="h-20 w-20 scale-150" />
             <span className="sr-only">Volver</span>
           </Button>
           <h2 className="text-xl font-bold">Administrar contactos</h2>
@@ -127,9 +152,7 @@ export default function AdminContactos() {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-medium mb-4">
               Email
             </label>
             <Input
@@ -142,59 +165,75 @@ export default function AdminContactos() {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium mb-4">
               Redes Sociales
             </label>
-            {Object.keys(contactData.socials).map((platform) => (
-              <div key={platform} className="mb-4 w-full">
-                <div className="flex items-center justify-between w-full">
-                  <MenuButton
-                    className="w-full flex justify-between items-center px-4 py-2 border rounded-md"
-                    onClick={() =>
-                      toggleAccordion(platform as keyof ContactData["socials"])
-                    }>
-                    <span>{platform}</span>
-                    {openAccordion === platform ? (
-                      <ChevronUp className="ml-2" />
-                    ) : (
-                      <ChevronDown className="ml-2" />
-                    )}
-                  </MenuButton>
-                </div>
-                {openAccordion === platform && (
-                  <div className="mt-2 w-full space-y-2 px-6">
-                    <Input
-                      name="url"
-                      placeholder="URL"
-                      value={editContact?.url || ""}
-                      onChange={handleChange}
-                      className="mb-2"
-                    />
-                    <Input
-                      name="username"
-                      placeholder="Username"
-                      value={editContact?.username || ""}
-                      onChange={handleChange}
-                      className="mb-2"
-                    />
-                    {editContact?.platform === platform && (
-                      <div className="flex space-x-2">
-                        <Button onClick={handleSaveEdit} className="mr-2">
-                          Guardar
-                        </Button>
-                        <Button onClick={handleCancelEdit} variant="secondary">
-                          Cancelar
-                        </Button>
-                      </div>
-                    )}
+            {Object.keys(contactData.socials).map((platform) => {
+              const isOpen = openAccordion === platform;
+              const props = useSpring({
+                height: isOpen ? "auto" : 0,
+                opacity: isOpen ? 1 : 0,
+                overflow: "hidden",
+              });
+              return (
+                <div key={platform} className="mb-4 w-full">
+                  <div className="flex items-center justify-between w-full">
+                    <MenuButton
+                      className="w-full flex justify-between items-center px-4 py-2 border rounded-md"
+                      onClick={() =>
+                        toggleAccordion(
+                          platform as keyof ContactData["socials"]
+                        )
+                      }>
+                      <span>{platform}</span>
+                      {isOpen ? (
+                        <ChevronUp className="ml-2" />
+                      ) : (
+                        <ChevronDown className="ml-2" />
+                      )}
+                    </MenuButton>
                   </div>
-                )}
-              </div>
-            ))}
+                  {isOpen && (
+                    <animated.div
+                      style={props}
+                      className="mt-2 w-full space-y-2 pl-4 border-l-4 border-primary">
+                      <Input
+                        name="url"
+                        placeholder="URL"
+                        value={editContact?.url || ""}
+                        onChange={handleChange}
+                        className="mb-2"
+                      />
+                      <Input
+                        name="username"
+                        placeholder="Username"
+                        value={editContact?.username || ""}
+                        onChange={handleChange}
+                        className="mb-2"
+                      />
+                    </animated.div>
+                  )}
+                </div>
+              );
+            })}
           </div>
           <Button type="submit">Guardar Cambios</Button>
         </form>
       </CardContent>
+      {successMessage && (
+        <SuccessModal
+          message={successMessage}
+          onClose={() => setSuccessMessage(null)}
+        />
+      )}
+      {errorMessage && (
+        <ErrorModal
+          message={errorMessage}
+          onClose={() => setErrorMessage(null)}
+        />
+      )}
     </div>
   );
 }
+
+export default withAuth(AdminContacts);
