@@ -92,7 +92,7 @@ export default function Header() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center space-y-6 md:hidden">
+            className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center md:hidden space-y-8">
             <Button
               variant="ghost"
               size="icon"
@@ -103,7 +103,7 @@ export default function Header() {
             </Button>
             <Link
               href="/"
-              className={`text-foreground hover:text-primary ${
+              className={`text-foreground hover:text-primary text-2xl ${
                 pathname === "/" ? "font-bold" : ""
               }`}
               onClick={() => setIsMenuOpen(false)}>
@@ -111,7 +111,7 @@ export default function Header() {
             </Link>
             <Link
               href="/about-me"
-              className={`text-foreground hover:text-primary ${
+              className={`text-foreground hover:text-primary text-2xl ${
                 pathname === "/about-me" ? "font-bold" : ""
               }`}
               onClick={() => setIsMenuOpen(false)}>
@@ -119,7 +119,7 @@ export default function Header() {
             </Link>
             <Link
               href="/contact"
-              className={`text-foreground hover:text-primary ${
+              className={`text-foreground hover:text-primary text-2xl ${
                 pathname === "/contact" ? "font-bold" : ""
               }`}
               onClick={() => setIsMenuOpen(false)}>

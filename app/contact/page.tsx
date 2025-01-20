@@ -10,7 +10,7 @@ import { db } from "@/lib/firebaseClient";
 import { collection, getDocs } from "firebase/firestore";
 import { ContactData, socialIcons } from "@/models/ContactData";
 import Loader from "@/components/ui/loader";
-import NoData from "@/components/ui/NoData";
+import NoData from "@/components/NoData";
 import Error from "@/components/ui/Error";
 
 export default function Contacto() {

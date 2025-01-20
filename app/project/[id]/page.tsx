@@ -48,14 +48,16 @@ export default function ProjectDetails() {
 
   const handleImageClick = (index: number) => {
     setPhotoIndex(index);
-    setIsOpen(true);
+    preloadImage(project?.image[index], () => {
+      setIsOpen(true);
+    });
   };
 
-  const preloadImages = (images: string[]) => {
-    images.forEach((src) => {
-      const img = new window.Image();
-      img.src = src;
-    });
+  const preloadImage = (src: string | undefined, callback: () => void) => {
+    if (!src) return;
+    const img = new window.Image();
+    img.src = src;
+    img.onload = callback;
   };
 
   if (loading) {
@@ -75,7 +77,6 @@ export default function ProjectDetails() {
   }
 
   const images = project.image;
-  preloadImages(images);
 
   return (
     <div className="container mx-auto p-4 max-w-4xl">

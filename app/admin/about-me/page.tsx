@@ -6,7 +6,7 @@ import { CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import NoData from "@/components/ui/NoData"; // Importar el componente NoData
+import NoData from "@/components/NoData"; // Importar el componente NoData
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
