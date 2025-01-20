@@ -58,7 +58,9 @@ export default function Contacto() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div
+        className="flex justify-center items-center h-screen"
+        style={{ height: "calc(100vh - 10rem)" }}>
         <Loader />
       </div>
     );

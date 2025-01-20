@@ -29,7 +29,7 @@ import Project from "../../../models/Project";
 import Category from "../../../models/Category";
 import { CldUploadWidget } from "next-cloudinary";
 import { Plus, X } from "lucide-react";
-import Loader from "@/components/ui/loader"; // Importar el componente Loader
+import Loader from "@/components/ui/loader";
 
 interface EditProjectModalProps {
   projectId: string;
