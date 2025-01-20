@@ -197,7 +197,7 @@ export default function AddProjectModal({
                     size="icon"
                     className="absolute top-0 right-0"
                     onClick={() => handleRemoveImage(url)}>
-                    <X className="w-4 h-4 text-red-500" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </div>
               ))}

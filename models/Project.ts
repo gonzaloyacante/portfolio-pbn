@@ -4,5 +4,4 @@ export default interface Project {
   description: string;
   category: string;
   image: string[];
-  process: string[];
 };
