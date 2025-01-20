@@ -13,16 +13,26 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { auth } from "../../../lib/firebaseClient";
+import { useEffect, useState } from "react";
 
 function AdminDashboard() {
   const router = useRouter();
-  const userEmail = localStorage.getItem("userEmail");
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const email = localStorage.getItem("userEmail");
+      setUserEmail(email);
+    }
+  }, []);
 
   const handleLogout = async () => {
     await auth.signOut();
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userUID");
-    localStorage.removeItem("userEmail");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userUID");
+      localStorage.removeItem("userEmail");
+    }
     router.push("/admin/auth/login");
   };
 
