@@ -16,42 +16,6 @@ import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 
-function ContactAccordion({
-  title,
-  content,
-  isOpen,
-  onToggle,
-}: {
-  title: string;
-  content: string;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  const props = useSpring({
-    height: isOpen ? "auto" : 0,
-    opacity: isOpen ? 1 : 0,
-    overflow: "hidden",
-  });
-
-  return (
-    <div className="border-b border-gray-200">
-      <button
-        className="w-full text-left py-4 px-6 font-bold text-lg flex justify-between items-center"
-        onClick={onToggle}>
-        {title}
-        {isOpen ? (
-          <ChevronUp className="ml-2" />
-        ) : (
-          <ChevronDown className="ml-2" />
-        )}
-      </button>
-      <animated.div style={props} className="px-6 border-l-4 border-gray-300">
-        <p className="py-4">{content}</p>
-      </animated.div>
-    </div>
-  );
-}
-
 function AdminContacts() {
   const [contactData, setContactData] = useState<ContactData>({
     email: "",

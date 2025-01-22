@@ -62,35 +62,48 @@ export default function AboutMe() {
 
   return (
     <motion.div
-      className="space-y-6 min-h-screen"
+      className="space-y-6 max-h-screen"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-      <h1 className="text-xl font-bold text-center">{title}</h1>
+      {title ? (
+        <h1 className="text-xl font-bold text-center">{title}</h1>
+      ) : (
+        <NoData message="No hay título disponible." />
+      )}
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex justify-center">
-        <Image
-          src={profileImageUrl || "/placeholder.svg"}
-          alt="Foto de perfil"
-          width={150}
-          height={150}
-          className="rounded-full object-cover"
-          style={{ objectFit: "cover" }}
-          priority
-        />
-      </motion.div>
-      <div className="space-y-4 w-full px-4 max-w-2xl">
+      {profileImageUrl ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}>
-          <div dangerouslySetInnerHTML={{ __html: aboutMe }} />
+          transition={{ duration: 0.5 }}
+          className="flex justify-center">
+          <Image
+            src={profileImageUrl || "/placeholder.svg"}
+            alt="Foto de perfil"
+            width={150}
+            height={150}
+            className="rounded-full object-cover"
+            style={{ objectFit: "cover" }}
+            priority
+          />
         </motion.div>
-      </div>
+      ) : (
+        <NoData message="No hay imagen de perfil disponible." />
+      )}
+
+      {aboutMe ? (
+        <div className="space-y-4 w-full mx-auto px-4 max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}>
+            <div dangerouslySetInnerHTML={{ __html: aboutMe }} />
+          </motion.div>
+        </div>
+      ) : (
+        <NoData message="No hay información sobre mí disponible." />
+      )}
     </motion.div>
   );
 }

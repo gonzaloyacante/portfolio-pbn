@@ -56,7 +56,7 @@ export default function Login() {
       style={{ height: "calc(100vh - 10rem)" }}>
       <div className="w-full max-w-xs">
         <img
-          src="@/public/images/login_Admin.svg"
+          src="/images/login-Admin.svg"
           alt="Imagen de fondo Iniciar sesión en administración"
           className="w-60 mx-auto"
         />
