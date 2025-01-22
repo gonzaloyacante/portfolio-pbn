@@ -67,9 +67,7 @@ function AdminContacts() {
     url: string;
     username: string;
   } | null>(null);
-  const [openAccordion, setOpenAccordion] = useState<
-    keyof ContactData["socials"] | null
-  >(null);
+  const [openAccordion, setOpenAccordion] = useState<keyof ContactData["socials"] | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -136,7 +134,7 @@ function AdminContacts() {
   };
 
   return (
-    <div className="space-y-4 h-full">
+    <div className="space-y-4 p-4 h-full">
       <header className="flex items-center space-x-4 w-full">
         <div className="flex items-center">
           <Button

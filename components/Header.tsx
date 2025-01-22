@@ -43,7 +43,7 @@ export default function Header() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                <Menu className="h-[1.2rem] w-[1.2rem]" />
+                <Menu className="scale-150" />
                 <span className="sr-only">Abrir menú</span>
               </Button>
             </div>
@@ -51,21 +51,25 @@ export default function Header() {
               <Link
                 href="/"
                 className={`text-foreground hover:text-primary ${
-                  pathname === "/" ? "font-bold" : ""
+                  pathname === "/" ? "font-bold border-b-2 border-primary" : ""
                 }`}>
                 Inicio
               </Link>
               <Link
                 href="/about-me"
                 className={`text-foreground hover:text-primary ${
-                  pathname === "/about-me" ? "font-bold" : ""
+                  pathname === "/about-me"
+                    ? "font-bold border-b-2 border-primary"
+                    : ""
                 }`}>
                 Sobre Mí
               </Link>
               <Link
                 href="/contact"
                 className={`text-foreground hover:text-primary ${
-                  pathname === "/contact" ? "font-bold" : ""
+                  pathname === "/contact"
+                    ? "font-bold border-b-2 border-primary"
+                    : ""
                 }`}>
                 Contacto
               </Link>
@@ -97,14 +101,14 @@ export default function Header() {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(false)}
-              className="absolute top-4 right-4">
-              <X className="h-[1.2rem] w-[1.2rem]" />
+              className="absolute top-8 right-8">
+              <X className="scale-150" />
               <span className="sr-only">Cerrar menú</span>
             </Button>
             <Link
               href="/"
               className={`text-foreground hover:text-primary text-2xl ${
-                pathname === "/" ? "font-bold" : ""
+                pathname === "/" ? "font-bold border-b-2 border-primary" : ""
               }`}
               onClick={() => setIsMenuOpen(false)}>
               Inicio
@@ -112,7 +116,9 @@ export default function Header() {
             <Link
               href="/about-me"
               className={`text-foreground hover:text-primary text-2xl ${
-                pathname === "/about-me" ? "font-bold" : ""
+                pathname === "/about-me"
+                  ? "font-bold border-b-2 border-primary"
+                  : ""
               }`}
               onClick={() => setIsMenuOpen(false)}>
               Sobre Mí
@@ -120,7 +126,9 @@ export default function Header() {
             <Link
               href="/contact"
               className={`text-foreground hover:text-primary text-2xl ${
-                pathname === "/contact" ? "font-bold" : ""
+                pathname === "/contact"
+                  ? "font-bold border-b-2 border-primary"
+                  : ""
               }`}
               onClick={() => setIsMenuOpen(false)}>
               Contacto

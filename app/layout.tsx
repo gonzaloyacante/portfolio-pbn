@@ -16,9 +16,11 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen bg-background text-foreground">
+          <div className="min-h-screen bg-background text-foreground flex flex-col">
             <Header />
-            <main className="container mx-auto px-4 py-8">{children}</main>
+            <main className="container mx-auto px-4 py-8 flex-grow">
+              {children}
+            </main>
           </div>
         </ThemeProvider>
       </body>

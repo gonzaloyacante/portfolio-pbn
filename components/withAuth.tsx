@@ -42,11 +42,7 @@ const withAuth = (WrappedComponent: React.FC) => {
     }, [router]);
 
     if (loading) {
-      return (
-        <div className="flex justify-center items-center h-screen">
-          <Loader />
-        </div>
-      );
+      return <Loader />;
     }
 
     return <WrappedComponent {...props} />;

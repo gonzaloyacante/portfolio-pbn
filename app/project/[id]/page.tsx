@@ -7,10 +7,10 @@ import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc } from "firebase/firestore";
 import Project from "@/models/Project";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Loader from "@/components/ui/loader";
 import { AlertCircle } from "lucide-react";
+import NoData from "@/components/NoData";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 
@@ -21,6 +21,7 @@ export default function ProjectDetails() {
   const [loading, setLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
+  const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -61,17 +62,18 @@ export default function ProjectDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
+    return <Loader />;
   }
 
   if (!project) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Proyecto no encontrado</p>
+      <div
+        className="flex flex-col justify-center items-center space-y-4"
+        style={{ height: "calc(100vh - 12rem)" }}>
+        <NoData message="Proyecto no encontrado" />
+        <Button variant="outline" onClick={() => router.back()}>
+          Volver
+        </Button>
       </div>
     );
   }
@@ -79,55 +81,61 @@ export default function ProjectDetails() {
   const images = project.image;
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg md:text-2xl">{project.title}</CardTitle>
-          <Badge>{project.category}</Badge>
-        </CardHeader>
-        <CardContent>
-          <div className="my-4 border-b pb-2">
-            <p className="text-sm md:text-base">{project.description}</p>
-          </div>
-          {images.length > 0 ? (
-            <>
+    <div className="container mx-auto px-4 max-w-4xl">
+      <div className="flex flex-row justify-between mb-4">
+        <Button variant="outline" onClick={() => router.back()}>
+          Volver
+        </Button>
+
+        <Badge variant="default">{project.category}</Badge>
+      </div>
+      <h3 className="text-lg md:text-2xl font-bold">{project.title}</h3>
+      <div className="my-4 border-b pb-2">
+        <p className="text-sm md:text-base">{project.description}</p>
+      </div>
+      <div className="mx-auto max-w-2xl flex flex-col justify-center items-center">
+        {images.length > 0 ? (
+          <>
+            <div className="relative w-full h-[50vh] overflow-hidden rounded-md cursor-pointer">
+              {imageLoading && (
+                <div className="absolute inset-0 flex justify-center items-center">
+                  <Loader />
+                </div>
+              )}
               <Image
                 src={images[0]}
                 alt={project.title}
-                width={800}
-                height={600}
-                className="w-full h-auto object-cover rounded-md cursor-pointer"
+                layout="fill"
+                objectFit="cover"
                 priority
                 onClick={() => handleImageClick(0)}
+                onLoad={() => setImageLoading(false)}
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src = "";
                 }}
               />
-              <div className="flex space-x-2 overflow-x-auto mt-4">
-                {images.slice(1).map((url, index) => (
-                  <Image
-                    key={index}
-                    src={url}
-                    alt={`Imagen del proyecto ${project.title}`}
-                    width={60}
-                    height={80}
-                    className="object-cover rounded-md cursor-pointer"
-                    onClick={() => handleImageClick(index + 1)}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="flex justify-center items-center w-full h-48 bg-gray-200 rounded-md">
-              <AlertCircle className="w-12 h-12 text-red-500" />
             </div>
-          )}
-        </CardContent>
-      </Card>
-      <Button variant="outline" onClick={() => router.back()} className="mt-4">
-        Volver
-      </Button>
+            <div className="flex space-x-2 overflow-x-auto mt-4">
+              {images.slice(1).map((url, index) => (
+                <Image
+                  key={index}
+                  src={url}
+                  alt={`Imagen del proyecto ${project.title}`}
+                  width={60}
+                  height={60}
+                  className="object-cover rounded-md cursor-pointer"
+                  onClick={() => handleImageClick(index + 1)}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="flex justify-center items-center w-full h-48 bg-gray-200 rounded-md">
+            <AlertCircle className="w-12 h-12 text-red-500" />
+          </div>
+        )}
+      </div>
       {isOpen && (
         <Lightbox
           mainSrc={images[photoIndex]}

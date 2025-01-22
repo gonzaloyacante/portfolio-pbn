@@ -31,12 +31,16 @@ export default function Login() {
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const token = await userCredential.user.getIdToken(); // Obtén el ID token
-      const uid = userCredential.user.uid; // Obtén el UID del usuario
-      localStorage.setItem("authToken", token); // Almacena el token en localStorage
-      localStorage.setItem("userUID", uid); // Almacena el UID en localStorage
-      localStorage.setItem("userEmail", email); // Almacena el correo en localStorage
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const token = await userCredential.user.getIdToken();
+      const uid = userCredential.user.uid;
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("userUID", uid);
+      localStorage.setItem("userEmail", email);
       router.push("/admin/dashboard");
     } catch (error) {
       console.error("Error de autenticación:", error);
@@ -52,7 +56,7 @@ export default function Login() {
       style={{ height: "calc(100vh - 10rem)" }}>
       <div className="w-full max-w-xs">
         <img
-          src="/images/login_Admin.svg"
+          src="@/public/images/login_Admin.svg"
           alt="Imagen de fondo Iniciar sesión en administración"
           className="w-60 mx-auto"
         />

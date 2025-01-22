@@ -23,21 +23,34 @@ export default function ForgotPassword() {
 
     try {
       const actionCodeSettings = {
-        url: `${window.location.origin}/reset-password`, // URL dinámica
+        url: `${window.location.origin}/reset-password`,
         handleCodeInApp: true,
       };
       await sendPasswordResetEmail(auth, resetEmail, actionCodeSettings);
-      setSuccess("Correo de restablecimiento de contraseña enviado. Por favor, revisa tu bandeja de entrada.");
+      setSuccess(
+        "Correo de restablecimiento de contraseña enviado. Por favor, revisa tu bandeja de entrada."
+      );
     } catch (error) {
       console.error("Error enviando correo de restablecimiento:", error);
-      setError("Error enviando correo de restablecimiento. Por favor, verifica tu correo electrónico.");
+      setError(
+        "Error enviando correo de restablecimiento. Por favor, verifica tu correo electrónico."
+      );
     }
   };
 
   return (
-    <div className="flex justify-center items-center" style={{ height: "calc(100vh - 10rem)" }}>
+    <div
+      className="flex justify-center items-center"
+      style={{ height: "calc(100vh - 10rem)" }}>
       <div className="w-full max-w-xs">
-        <h2 className="text-xl font-bold mb-4 text-center">Restablecer Contraseña</h2>
+        <img
+          src="@/public/images/login_Admin.svg"
+          alt="Imagen de fondo Iniciar sesión en administración"
+          className="w-60 mx-auto"
+        />
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Restablecer Contraseña
+        </h2>
         <input
           type="email"
           placeholder="Correo Electrónico"
@@ -50,7 +63,10 @@ export default function ForgotPassword() {
         <Button onClick={handlePasswordReset} className="w-full rounded mb-4">
           Enviar
         </Button>
-        <Button onClick={() => router.push("/admin/auth/login")} variant="outline" className="w-full py-2 rounded">
+        <Button
+          onClick={() => router.push("/admin/auth/login")}
+          variant="outline"
+          className="w-full py-2 rounded">
           Cancelar
         </Button>
       </div>

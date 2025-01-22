@@ -5,14 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { db } from "../lib/firebaseClient";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import Project from "@/models/Project";
@@ -84,11 +76,7 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
+    return <Loader />;
   }
 
   const filteredProjects =
@@ -109,7 +97,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}>
         {title}
       </motion.h1>
-      <div className="flex overflow-x-auto space-x-4">
+      <div className="flex overflow-x-auto space-x-4 pb-3 custom-scrollbar">
         {categories.map((category, index) => (
           <Button
             key={index}
@@ -127,7 +115,7 @@ export default function Home() {
       <AnimatePresence>
         {filteredProjects.length > 0 ? (
           <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}>
@@ -139,39 +127,48 @@ export default function Home() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}>
-                <Card className="max-w-sm mx-auto">
-                  <CardHeader>
-                    <CardTitle className="text-lg md:text-xl">
-                      {project.title}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {project.image.length > 0 ? (
-                      <Image
-                        src={project.image[0]}
-                        alt={project.title}
-                        width={300}
-                        height={300}
-                        className="w-full h-40 object-cover rounded-md"
-                        priority
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = "";
-                        }}
-                      />
-                    ) : (
-                      <div className="flex justify-center items-center w-full h-32 bg-gray-200 rounded-md">
-                        <AlertCircle className="w-16 h-16 text-red-500" />
+                <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-lg">
+                  {project.image.length > 0 ? (
+                    <Image
+                      src={project.image[0]}
+                      alt={project.title}
+                      width={300}
+                      height={300}
+                      className="w-full h-64 object-cover"
+                      priority
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "";
+                      }}
+                    />
+                  ) : (
+                    <div className="flex justify-center items-center w-full h-64 bg-gray-200 rounded-md">
+                      <AlertCircle className="w-16 h-16 text-red-500" />
+                    </div>
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 pt-8">
+                    <div className="flex flex-col justify-end h-full">
+                      <div className="flex justify-between items-end">
+                        <div>
+                          <span className="text-white text-sm">
+                            {project.category}
+                          </span>
+                          <h3 className="text-white font-bold">
+                            {project.title}
+                          </h3>
+                        </div>
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="text-white">
+                          <Link href={`/project/${project.id}`}>
+                            Ver detalles
+                          </Link>
+                        </Button>
                       </div>
-                    )}
-                  </CardContent>
-                  <CardFooter className="flex justify-between items-center">
-                    <Badge>{project.category}</Badge>
-                    <Button asChild>
-                      <Link href={`/project/${project.id}`}>Ver detalles</Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </motion.div>
@@ -179,6 +176,9 @@ export default function Home() {
           <NoData message="No hay proyectos disponibles." />
         )}
       </AnimatePresence>
+      <footer className="bg-background text-foreground pt-4 text-center border-t">
+        <p>Desarrollado por Gonzalo Yacante</p>
+      </footer>
     </motion.div>
   );
 }
