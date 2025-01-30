@@ -8,7 +8,7 @@ import { doc, getDoc } from "firebase/firestore";
 import Project from "@/models/Project";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import Loader from "@/components/ui/loader";
+import Loader from "@/components/loader";
 import { AlertCircle } from "lucide-react";
 import NoData from "@/components/NoData";
 import Lightbox from "react-image-lightbox";

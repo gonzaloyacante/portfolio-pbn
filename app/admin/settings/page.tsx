@@ -6,16 +6,14 @@ import { Input } from "@/components/ui/input";
 import { CardContent } from "@/components/ui/card";
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
+import AdminLayout from "@/components/AdminLayout";
 
 export default function AdminSettings() {
   const [title, setTitle] = useState("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchTitle = async () => {
@@ -52,39 +50,25 @@ export default function AdminSettings() {
   };
 
   return (
-    <div className="space-y-6 h-full">
-      <header className="flex items-center space-x-4 w-full">
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20" />
-            <span className="sr-only">Volver</span>
-          </Button>
-          <h2 className="text-xl font-bold">Configuración</h2>
+    <AdminLayout title="Configuración">
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="title" className="block text-sm font-medium mb-2">
+            Título
+          </label>
+          <Input
+            id="title"
+            name="title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
         </div>
-      </header>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium mb-2">
-              Título
-            </label>
-            <Input
-              id="title"
-              name="title"
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
-          <div className="text-left">
-            <Button type="submit">Guardar Cambios</Button>
-          </div>
-        </form>
-      </CardContent>
+        <div className="flex justify-end">
+          <Button type="submit">Guardar Cambios</Button>
+        </div>
+      </form>
       {successMessage && (
         <SuccessModal
           message={successMessage}
@@ -97,6 +81,6 @@ export default function AdminSettings() {
           onClose={() => setErrorMessage(null)}
         />
       )}
-    </div>
+    </AdminLayout>
   );
 }

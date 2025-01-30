@@ -9,7 +9,7 @@ import { db } from "../lib/firebaseClient";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import Project from "@/models/Project";
 import Category from "@/models/Category";
-import Loader from "@/components/ui/loader";
+import Loader from "@/components/Loader";
 import { AlertCircle } from "lucide-react";
 import NoData from "@/components/NoData";
 
@@ -86,7 +86,7 @@ export default function Home() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-6 flex flex-col"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
@@ -115,7 +115,7 @@ export default function Home() {
       <AnimatePresence>
         {filteredProjects.length > 0 ? (
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}>
@@ -127,7 +127,7 @@ export default function Home() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}>
-                <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-lg">
+                <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-xl">
                   {project.image.length > 0 ? (
                     <Image
                       src={project.image[0]}
@@ -148,7 +148,7 @@ export default function Home() {
                   )}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 pt-8">
                     <div className="flex flex-col justify-end h-full">
-                      <div className="flex justify-between items-end">
+                      <div className="flex justify-between items-end space-x-4">
                         <div>
                           <span className="text-white text-sm">
                             {project.category}
@@ -176,9 +176,6 @@ export default function Home() {
           <NoData message="No hay proyectos disponibles." />
         )}
       </AnimatePresence>
-      <footer className="bg-background text-foreground pt-4 text-center border-t">
-        <p>Desarrollado por Gonzalo Yacante</p>
-      </footer>
     </motion.div>
   );
 }

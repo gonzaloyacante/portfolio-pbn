@@ -12,9 +12,11 @@ import dynamic from "next/dynamic";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 import "react-image-crop/dist/ReactCrop.css";
+import AdminLayout from "@/components/AdminLayout";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
+import { Input } from "@/components/ui/input";
 
 const modules = {
   toolbar: [
@@ -84,93 +86,80 @@ export default function AdminSobreMi() {
   };
 
   return (
-    <div className="space-y-6 h-full flex flex-col items-center">
-      <header className="flex items-center space-x-4 w-full">
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20 text-white" />
-            <span className="sr-only">Volver</span>
-          </Button>
-          <h2 className="text-xl font-bold text-white">Sobre Mí</h2>
+    <AdminLayout title={"Sobre Mí"}>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-white mb-2">
+            Título
+          </label>
+          <Input
+            type="text"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
-      </header>
-      <CardContent className="w-full max-w-2xl">
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-white mb-2">
-              Título
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-3 py-2 border rounded"
-            />
-          </div>
-          <div className="mb-4 flex flex-col items-center">
-            <label
-              htmlFor="profileImage"
-              className="block text-sm font-medium text-white">
-              Cambiar foto de Perfil
-            </label>
-            <CldUploadWidget
-              uploadPreset="ml_default"
-              options={{
-                cropping: true,
-                croppingAspectRatio: 1,
-                multiple: false,
-                showSkipCropButton: false,
-              }}
-              onSuccess={handleImageUpload}>
-              {({ open }) => {
-                function handleOnClick(e: any) {
-                  e.preventDefault();
-                  open();
-                }
-                return (
-                  <Button onClick={handleOnClick} variant="outline">
-                    <Plus className="mr-2" /> Subir Imagen
-                  </Button>
-                );
-              }}
-            </CldUploadWidget>
-            <div className="mt-4 w-40 h-40 flex items-center justify-center border-2 rounded-full overflow-hidden relative">
-              {profileImageUrl ? (
-                <img
-                  src={profileImageUrl}
-                  alt="Foto de Perfil"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Image className="w-16 h-16 text-gray-400" />
-              )}
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
-                <span className="text-white text-sm">Editar</span>
-              </div>
+        <div className="mb-4 flex flex-col items-center">
+          <label
+            htmlFor="profileImage"
+            className="block text-sm font-medium text-white">
+            Cambiar foto de Perfil
+          </label>
+          <CldUploadWidget
+            uploadPreset="ml_default"
+            options={{
+              cropping: true,
+              croppingAspectRatio: 1,
+              multiple: false,
+              showSkipCropButton: false,
+            }}
+            onSuccess={handleImageUpload}>
+            {({ open }) => {
+              function handleOnClick(e: any) {
+                e.preventDefault();
+                open();
+              }
+              return (
+                <Button onClick={handleOnClick} variant="outline">
+                  <Plus className="mr-2" /> Subir Imagen
+                </Button>
+              );
+            }}
+          </CldUploadWidget>
+          <div className="mt-4 w-40 h-40 flex items-center justify-center border-2 rounded-full overflow-hidden relative">
+            {profileImageUrl ? (
+              <img
+                src={profileImageUrl}
+                alt="Foto de Perfil"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image className="w-16 h-16 text-gray-400" />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
+              <span className="text-white text-sm">Editar</span>
             </div>
           </div>
-          <div className="mb-4">
-            <label
-              htmlFor="aboutMe"
-              className="block text-sm font-medium text-white mb-2">
-              Descripción
-            </label>
-            <ReactQuill
-              value={aboutMe}
-              onChange={setAboutMe}
-              modules={modules}
-              className="bg-background text-white rounded-lg"
-            />
-          </div>
+        </div>
+        <div className="mb-4">
+          <label
+            htmlFor="aboutMe"
+            className="block text-sm font-medium text-white mb-2">
+            Descripción
+          </label>
+          <ReactQuill
+            value={aboutMe}
+            onChange={setAboutMe}
+            modules={modules}
+            className="bg-background text-white rounded-lg"
+          />
+        </div>
+        <div className="flex justify-end">
           <Button type="submit">Guardar Cambios</Button>
-        </form>
-      </CardContent>
+        </div>
+      </form>
       {successMessage && (
         <SuccessModal
           message={successMessage}
@@ -183,6 +172,6 @@ export default function AdminSobreMi() {
           onClose={() => setErrorMessage(null)}
         />
       )}
-    </div>
+    </AdminLayout>
   );
 }

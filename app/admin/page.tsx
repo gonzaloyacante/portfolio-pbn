@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import ErrorModal from "@/components/ErrorModal";
 
 export default function Admin() {
   const [authError, setAuthError] = useState<string | null>(null);
@@ -18,17 +19,17 @@ export default function Admin() {
   }, []);
 
   useEffect(() => {
-    if (authError) {
-      alert(authError);
-    }
     router.push("/admin/auth/login");
   }, [authError, router]);
 
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Redirigiendo...</h1>
+        <h1 className="text-xl font-bold">Redirigiendo...</h1>
       </div>
+      {authError && (
+        <ErrorModal message={authError} onClose={() => setAuthError(null)} />
+      )}
     </div>
   );
 }

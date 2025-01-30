@@ -36,70 +36,41 @@ function AdminDashboard() {
     router.push("/admin/auth/login");
   };
 
+  const buttons = [
+    { label: "Proyectos", icon: Briefcase, path: "/admin/projects" },
+    { label: "Contactos", icon: MessagesSquare, path: "/admin/contacts" },
+    { label: "Categorías", icon: Tag, path: "/admin/categories" },
+    { label: "Sobre Mí", icon: Presentation, path: "/admin/about-me" },
+    { label: "Configuración", icon: Settings, path: "/admin/settings" },
+    { label: "Cuenta", icon: UserCog, path: "/admin/account" },
+  ];
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative flex flex-col items-center justify-center">
       <h1 className="text-2xl font-bold text-center">
         Panel de Administración
       </h1>
       <p className="text-center">{userEmail}</p>
-      <div className="grid grid-cols-2 gap-6 items-center justify-center px-4 justify-items-center">
-        <Button
-          variant="outline"
-          className="h-24 w-full flex flex-col items-center justify-center font-bold p-4"
-          onClick={() => router.push("/admin/projects")}>
-          <Briefcase size={64} className="scale-150" />
-          <span>Proyectos</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="h-24 w-full flex flex-col items-center justify-center font-bold p-4"
-          onClick={() => router.push("/admin/contacts")}>
-          <MessagesSquare size={64} className="scale-150" />
-          <span>Contactos</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="h-24 w-full flex flex-col items-center justify-center font-bold p-4"
-          onClick={() => router.push("/admin/categories")}>
-          <Tag size={64} className="scale-150" />
-          <span>Categorías</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="h-24 w-full flex flex-col items-center justify-center font-bold p-4"
-          onClick={() => router.push("/admin/about-me")}>
-          <Presentation size={64} className="scale-150" />
-          <span>Sobre Mí</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="h-24 w-full flex flex-col items-center justify-center font-bold p-4"
-          onClick={() => router.push("/admin/settings")}>
-          <Settings size={64} className="scale-150" />
-          <span>Configuración</span>
-        </Button>
-
-        <Button
-          variant="outline"
-          className="h-24 w-full flex flex-col items-center justify-center font-bold p-4"
-          onClick={() => router.push("/admin/account")}>
-          <UserCog size={64} className="scale-150" />
-          <span>Cuenta</span>
-        </Button>
+      <div className="w-full max-w-2xl grid grid-cols-2 gap-6 items-center justify-center px-4 justify-items-center">
+        {buttons.map((button, index) => (
+          <Button
+            key={index}
+            variant="outline"
+            className="h-24 w-full flex flex-col items-center justify-center font-bold p-4 space-y-1"
+            onClick={() => router.push(button.path)}>
+            <button.icon size={64} className="scale-150" />
+            <span>{button.label}</span>
+          </Button>
+        ))}
       </div>
-      <div className="fixed bottom-4 w-full flex justify-center">
-        <Button
-          variant="outline"
-          className="h-12 w-48 flex items-center justify-center font-bold"
-          onClick={handleLogout}>
-          <LogOut size={24} className="mr-2" />
-          <span>Cerrar Sesión</span>
-        </Button>
-      </div>
+
+      <Button
+        variant="outline"
+        className="h-12 w-48 flex items-center justify-center font-bold fixed bottom-8 left-1/2 transform -translate-x-1/2"
+        onClick={handleLogout}>
+        <span>Cerrar Sesión</span>
+        <LogOut size={24} />
+      </Button>
     </div>
   );
 }

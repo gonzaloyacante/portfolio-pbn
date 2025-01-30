@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { db } from "@/lib/firebaseClient";
 import { doc, getDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
-import Loader from "@/components/ui/loader";
+import Loader from "@/components/loader";
 import NoData from "@/components/NoData";
 import Error from "@/components/ui/Error";
 

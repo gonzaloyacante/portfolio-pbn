@@ -11,17 +11,16 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import Category from "../../../models/Category";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryList from "./CategoryList";
 import EditCategoryModal from "./EditCategoryModal";
 import "@szhsin/react-menu/dist/index.css";
+import AdminLayout from "@/components/AdminLayout";
 
 export default function AdminCategorias() {
-  const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -62,43 +61,28 @@ export default function AdminCategorias() {
     }
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editCategory) {
-      try {
-        const categoryRef = doc(db, "categories", editCategory.id!);
-        await updateDoc(categoryRef, { ...editCategory });
-        setEditCategory(null);
-        const categoriesCollection = collection(db, "categories");
-        const categoriesSnapshot = await getDocs(categoriesCollection);
-        const categoriesList = categoriesSnapshot.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() } as Category)
-        );
-        setCategories(categoriesList);
-        setSuccessMessage("Categoría actualizada correctamente");
-      } catch (error) {
-        console.error("Error actualizando categoría:", error);
-        setErrorMessage(
-          "Error actualizando categoría: " + (error as Error).message
-        );
-      }
+  const handleSave = async (category: Category) => {
+    try {
+      const categoryRef = doc(db, "categories", category.id!);
+      await updateDoc(categoryRef, { ...category });
+      setEditCategory(null);
+      const categoriesCollection = collection(db, "categories");
+      const categoriesSnapshot = await getDocs(categoriesCollection);
+      const categoriesList = categoriesSnapshot.docs.map(
+        (doc) => ({ id: doc.id, ...doc.data() } as Category)
+      );
+      setCategories(categoriesList);
+      setSuccessMessage("Categoría actualizada correctamente");
+    } catch (error) {
+      console.error("Error actualizando categoría:", error);
+      setErrorMessage(
+        "Error actualizando categoría: " + (error as Error).message
+      );
     }
   };
 
   return (
-    <div className="space-y-6 h-full">
-      <header className="flex flex justify-between items-center space-x-4 w-full">
-        <div className="flex justify-between items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20" />
-            <span className="sr-only">Volver</span>
-          </Button>
-          <h2 className="text-xl font-bold">Categorías Existentes</h2>
-        </div>
-      </header>
+    <AdminLayout title="Categorías Existentes">
       <CategoryList
         categories={categories}
         handleEdit={setEditCategory}
@@ -137,6 +121,6 @@ export default function AdminCategorias() {
           onClose={() => setErrorMessage(null)}
         />
       )}
-    </div>
+    </AdminLayout>
   );
 }

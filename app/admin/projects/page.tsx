@@ -9,24 +9,22 @@ import {
   getDocs,
   doc,
   deleteDoc,
-  getDoc,
   updateDoc,
 } from "firebase/firestore";
 import Project from "../../../models/Project";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus, Filter } from "lucide-react";
+import Category from "../../../models/Category";
+import { Plus } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 import AddProjectModal from "./AddProjectModal";
 import ProjectList from "./ProjectList";
 import EditProjectModal from "./EditProjectModal";
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
+import AdminLayout from "@/components/AdminLayout";
 
 function AdminProyectos() {
-  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [editProject, setEditProject] = useState<Project | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -46,13 +44,12 @@ function AdminProyectos() {
     };
 
     const fetchCategories = async () => {
-      const docRef = doc(db, "categories", "categories");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setCategories(docSnap.data().name);
-      } else {
-        console.log("No such document!");
-      }
+      const categoriesCollection = collection(db, "categories");
+      const categoriesSnapshot = await getDocs(categoriesCollection);
+      const categoriesList = categoriesSnapshot.docs.map(
+        (doc) => ({ id: doc.id, ...doc.data() } as Category)
+      );
+      setCategories(categoriesList);
     };
 
     fetchProjects();
@@ -114,32 +111,11 @@ function AdminProyectos() {
   };
 
   return (
-    <div className="space-y-6 h-full max-w-2xl mx-auto">
-      <header className="flex justify-between items-center space-x-4 w-full">
-        <div className="flex justify-between items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20 scale-150" />
-            <span className="sr-only">Volver</span>
-          </Button>
-          <h2 className="text-xl font-bold">Proyectos Existentes</h2>
-        </div>
-        <Menu
-          menuButton={
-            <MenuButton>
-              <Filter className="h-6 w-6" />
-            </MenuButton>
-          }>
-          <MenuItem onClick={() => handleFilter("Todos")}>Todos</MenuItem>
-          {categories.map((category, index) => (
-            <MenuItem key={index} onClick={() => handleFilter(category)}>
-              {category}
-            </MenuItem>
-          ))}
-        </Menu>
-      </header>
+    <AdminLayout
+      title="Proyectos Existentes"
+      filter={true}
+      categories={categories}
+      handleFilter={handleFilter}>
       <ProjectList
         projects={filteredProjects}
         handleEdit={setEditProject}
@@ -181,7 +157,7 @@ function AdminProyectos() {
           onClose={() => setErrorMessage(null)}
         />
       )}
-    </div>
+    </AdminLayout>
   );
 }
 

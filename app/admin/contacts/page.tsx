@@ -12,9 +12,10 @@ import { ContactData } from "../../../models/ContactData";
 import { MenuButton } from "@szhsin/react-menu";
 import "@szhsin/react-menu/dist/index.css";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
+import AdminLayout from "@/components/AdminLayout";
 
 function AdminContacts() {
   const [contactData, setContactData] = useState<ContactData>({
@@ -31,7 +32,9 @@ function AdminContacts() {
     url: string;
     username: string;
   } | null>(null);
-  const [openAccordion, setOpenAccordion] = useState<keyof ContactData["socials"] | null>(null);
+  const [openAccordion, setOpenAccordion] = useState<
+    keyof ContactData["socials"] | null
+  >(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -98,90 +101,74 @@ function AdminContacts() {
   };
 
   return (
-    <div className="space-y-4 p-4 h-full">
-      <header className="flex items-center space-x-4 w-full">
-        <div className="flex items-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.push("/admin/dashboard")}>
-            <ArrowLeft className="h-20 w-20 scale-150" />
-            <span className="sr-only">Volver</span>
-          </Button>
-          <h2 className="text-xl font-bold">Administrar contactos</h2>
+    <AdminLayout title="Administrar contactos">
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-sm font-medium mb-4">
+            Email
+          </label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={contactData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
-      </header>
-      <CardContent>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium mb-4">
-              Email
-            </label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={contactData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-4">
-              Redes Sociales
-            </label>
-            {Object.keys(contactData.socials).map((platform) => {
-              const isOpen = openAccordion === platform;
-              const props = useSpring({
-                height: isOpen ? "auto" : 0,
-                opacity: isOpen ? 1 : 0,
-                overflow: "hidden",
-              });
-              return (
-                <div key={platform} className="mb-4 w-full">
-                  <div className="flex items-center justify-between w-full">
-                    <MenuButton
-                      className="w-full flex justify-between items-center px-4 py-2 border rounded-md"
-                      onClick={() =>
-                        toggleAccordion(
-                          platform as keyof ContactData["socials"]
-                        )
-                      }>
-                      <span>{platform}</span>
-                      {isOpen ? (
-                        <ChevronUp className="ml-2" />
-                      ) : (
-                        <ChevronDown className="ml-2" />
-                      )}
-                    </MenuButton>
-                  </div>
-                  {isOpen && (
-                    <animated.div
-                      style={props}
-                      className="mt-2 w-full space-y-2 pl-4 border-l-4 border-primary">
-                      <Input
-                        name="url"
-                        placeholder="URL"
-                        value={editContact?.url || ""}
-                        onChange={handleChange}
-                        className="mb-2"
-                      />
-                      <Input
-                        name="username"
-                        placeholder="Username"
-                        value={editContact?.username || ""}
-                        onChange={handleChange}
-                        className="mb-2"
-                      />
-                    </animated.div>
-                  )}
+        <div className="mb-4">
+          <label className="block text-sm font-medium mb-4">
+            Redes Sociales
+          </label>
+          {Object.keys(contactData.socials).map((platform) => {
+            const isOpen = openAccordion === platform;
+            const props = useSpring({
+              height: isOpen ? "auto" : 0,
+              opacity: isOpen ? 1 : 0,
+              overflow: "hidden",
+            });
+            return (
+              <div key={platform} className="mb-4 w-full">
+                <div className="flex items-center justify-between w-full">
+                  <MenuButton
+                    className="w-full flex justify-between items-center px-4 py-2 border rounded-md"
+                    onClick={() =>
+                      toggleAccordion(platform as keyof ContactData["socials"])
+                    }>
+                    <span>{platform}</span>
+                    {isOpen ? (
+                      <ChevronUp className="ml-2" />
+                    ) : (
+                      <ChevronDown className="ml-2" />
+                    )}
+                  </MenuButton>
                 </div>
-              );
-            })}
-          </div>
-          <Button type="submit">Guardar Cambios</Button>
-        </form>
-      </CardContent>
+                {isOpen && (
+                  <animated.div
+                    style={props}
+                    className="mt-2 mb-8 px-8 w-full space-y-2 pl-4 border-l-2 border-primary">
+                    <Input
+                      name="url"
+                      placeholder="URL"
+                      value={editContact?.url || ""}
+                      onChange={handleChange}
+                      className="mb-2"
+                    />
+                    <Input
+                      name="username"
+                      placeholder="Username"
+                      value={editContact?.username || ""}
+                      onChange={handleChange}
+                      className="mb-2"
+                    />
+                  </animated.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <Button type="submit">Guardar Cambios</Button>
+      </form>
       {successMessage && (
         <SuccessModal
           message={successMessage}
@@ -194,7 +181,7 @@ function AdminContacts() {
           onClose={() => setErrorMessage(null)}
         />
       )}
-    </div>
+    </AdminLayout>
   );
 }
 
