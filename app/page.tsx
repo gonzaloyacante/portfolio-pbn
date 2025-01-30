@@ -9,7 +9,7 @@ import { db } from "../lib/firebaseClient";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import Project from "@/models/Project";
 import Category from "@/models/Category";
-import Loader from "@/components/Loader";
+import { Loader } from "../components/Loader";
 import { AlertCircle } from "lucide-react";
 import NoData from "@/components/NoData";
 

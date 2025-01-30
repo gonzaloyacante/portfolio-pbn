@@ -20,7 +20,7 @@ import { Plus, X } from "lucide-react";
 import Modal from "@/components/Modal";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
-import Loader from "@/components/loader";
+import { Loader } from "../../../components/Loader";
 
 interface AddProjectModalProps {
   setProjects: (projects: Project[]) => void;

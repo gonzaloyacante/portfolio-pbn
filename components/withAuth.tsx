@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import Loader from "./Loader";
+import { Loader } from "../components/Loader";
 
 const withAuth = (WrappedComponent: React.FC) => {
   return (props: any) => {
