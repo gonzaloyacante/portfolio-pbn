@@ -27,7 +27,12 @@ export default function EditCategoryModal({
     e.preventDefault();
     setLoading(true);
     try {
-      handleSave(editCategory);
+      const updatedCategory = {
+        ...editCategory,
+        name: editCategory.name.trim(),
+      };
+      setEditCategory(updatedCategory);
+      handleSave(updatedCategory);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
@@ -43,7 +48,7 @@ export default function EditCategoryModal({
       {loading && <Loader />}
       {success && (
         <SuccessModal
-          message="Categoría guardada con éxito"
+          message="Categoría editada con éxito"
           onClose={() => setSuccess(false)}
         />
       )}
@@ -58,7 +63,7 @@ export default function EditCategoryModal({
             placeholder="Nombre de la Categoría"
             value={editCategory.name}
             onChange={(e) =>
-              setEditCategory({ ...editCategory, name: e.target.value.trim() })
+              setEditCategory({ ...editCategory, name: e.target.value })
             }
             className="bg-background"
           />

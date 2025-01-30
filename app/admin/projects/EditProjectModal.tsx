@@ -109,6 +109,12 @@ export default function EditProjectModal({
     e.preventDefault();
     setLoading(true);
     try {
+      const trimmedProject = {
+        ...editProject,
+        title: editProject.title.trim(),
+        description: editProject.description.trim(),
+      };
+      setEditProject(trimmedProject);
       await handleSave(e);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -129,7 +135,7 @@ export default function EditProjectModal({
       {loading && <Loader />}
       {success && (
         <SuccessModal
-          message="Proyecto guardado con éxito"
+          message="Proyecto editado con éxito"
           onClose={() => setSuccess(false)}
         />
       )}

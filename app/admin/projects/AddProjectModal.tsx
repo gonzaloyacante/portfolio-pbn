@@ -21,6 +21,7 @@ import Modal from "@/components/Modal";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 import { Loader } from "../../../components/Loader";
+import WarningModal from "@/components/WarningModal";
 
 interface AddProjectModalProps {
   setProjects: (projects: Project[]) => void;
@@ -43,6 +44,7 @@ export default function AddProjectModal({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isWarningModalOpen, setIsWarningModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -79,6 +81,8 @@ export default function AddProjectModal({
     try {
       const projectData = {
         ...newProject,
+        title: newProject.title.trim(),
+        description: newProject.description.trim(),
         image: selectedImages,
       };
       const projectsCollection = collection(db, "projects");
@@ -109,12 +113,58 @@ export default function AddProjectModal({
 
   const handleSubmitWithFeedback = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedImages.length === 0) {
+      setIsWarningModalOpen(true);
+      return;
+    }
     setLoading(true);
     try {
       await handleSubmit(e);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
+      setError("Error al añadir el proyecto");
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmSaveWithoutImages = async () => {
+    setIsWarningModalOpen(false);
+    setLoading(true);
+    try {
+      const projectData = {
+        ...newProject,
+        title: newProject.title.trim(),
+        description: newProject.description.trim(),
+        image: selectedImages,
+      };
+      const projectsCollection = collection(db, "projects");
+      const docRef = await addDoc(projectsCollection, projectData);
+      const newProjectWithId = { ...projectData, id: docRef.id };
+
+      await updateDoc(docRef, newProjectWithId);
+
+      setNewProject({
+        id: "",
+        title: "",
+        description: "",
+        category: "",
+        image: [],
+      });
+      setSelectedImages([]);
+
+      const projectsSnapshot = await getDocs(projectsCollection);
+      const projectsList = projectsSnapshot.docs.map(
+        (doc) => ({ id: doc.id, ...doc.data() } as Project)
+      );
+      setProjects(projectsList);
+      onClose();
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 3000);
+    } catch (error) {
+      console.error("Error añadiendo proyecto:", error);
       setError("Error al añadir el proyecto");
       setTimeout(() => setError(null), 3000);
     } finally {
@@ -131,14 +181,26 @@ export default function AddProjectModal({
           onClose={() => setSuccess(false)}
         />
       )}
-      {error && <ErrorModal message={error} onClose={() => setError(null)} />}
+      {!error && (
+        <ErrorModal
+          message={"Error al añadir el proyecto: \n" + error}
+          onClose={() => setError(null)}
+        />
+      )}
+      {isWarningModalOpen && (
+        <WarningModal
+          message="El proyecto no tiene fotos. ¿Deseas guardarlo sin fotos?"
+          onClose={() => setIsWarningModalOpen(false)}
+          onConfirm={confirmSaveWithoutImages}
+        />
+      )}
       <Modal title="Añadir Proyecto" onClose={onClose} footer="Añadir">
         <form onSubmit={handleSubmitWithFeedback} className="space-y-4">
           <Input
             placeholder="Título del Proyecto"
             value={newProject.title}
             onChange={(e) =>
-              setNewProject({ ...newProject, title: e.target.value.trim() })
+              setNewProject({ ...newProject, title: e.target.value })
             }
             className="bg-background"
           />

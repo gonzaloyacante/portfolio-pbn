@@ -15,7 +15,10 @@ import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
+import WarningModal from "@/components/WarningModal";
 import AdminLayout from "@/components/AdminLayout";
+import { Alert } from "@/components/ui/alert"; // Import Alert component
+import { CheckCircle, AlertTriangle, XCircle } from "lucide-react"; // Import icons for alerts
 
 function AdminContacts() {
   const [contactData, setContactData] = useState<ContactData>({
@@ -37,6 +40,7 @@ function AdminContacts() {
   >(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -61,12 +65,14 @@ function AdminContacts() {
       const docRef = doc(db, "contact", "contact");
       await setDoc(docRef, contactData);
       setSuccessMessage("Información de contacto actualizada correctamente");
+      setErrorMessage(null);
     } catch (error) {
       console.error("Error updating contact information: ", error);
       setErrorMessage(
         "Hubo un error al actualizar la información de contacto: " +
           (error as Error).message
       );
+      setSuccessMessage(null); // Clear success message on error
     }
   };
 
@@ -100,9 +106,9 @@ function AdminContacts() {
 
   return (
     <AdminLayout title="Administrar contactos">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="mb-4">
-          <label htmlFor="email" className="block text-sm font-medium mb-4">
+          <label htmlFor="email" className="block text-sm font-medium mb-2">
             Email
           </label>
           <Input
@@ -112,10 +118,11 @@ function AdminContacts() {
             value={contactData.email}
             onChange={handleChange}
             required
+            className="w-full"
           />
         </div>
         <div className="mb-4">
-          <label className="block text-sm font-medium mb-4">
+          <label className="block text-sm font-medium mb-2">
             Redes Sociales
           </label>
           {Object.keys(contactData.socials).map((platform) => {
@@ -133,7 +140,7 @@ function AdminContacts() {
                     onClick={() =>
                       toggleAccordion(platform as keyof ContactData["socials"])
                     }>
-                    <span>{platform}</span>
+                    <span className="capitalize">{platform}</span>
                     {isOpen ? (
                       <ChevronUp className="ml-2" />
                     ) : (
@@ -150,14 +157,14 @@ function AdminContacts() {
                       placeholder="URL"
                       value={editContact?.url || ""}
                       onChange={handleChange}
-                      className="mb-2"
+                      className="mb-2 w-full"
                     />
                     <Input
                       name="username"
                       placeholder="Username"
                       value={editContact?.username || ""}
                       onChange={handleChange}
-                      className="mb-2"
+                      className="mb-2 w-full"
                     />
                   </animated.div>
                 )}
@@ -165,7 +172,9 @@ function AdminContacts() {
             );
           })}
         </div>
-        <Button type="submit">Guardar Cambios</Button>
+        <Button type="submit" className="w-full">
+          Guardar Cambios
+        </Button>
       </form>
       {successMessage && (
         <SuccessModal
@@ -177,6 +186,15 @@ function AdminContacts() {
         <ErrorModal
           message={errorMessage}
           onClose={() => setErrorMessage(null)}
+        />
+      )}
+      {warningMessage && (
+        <WarningModal
+          message={warningMessage}
+          onClose={() => setWarningMessage(null)}
+          onConfirm={() => {
+            setWarningMessage(null);
+          }}
         />
       )}
     </AdminLayout>

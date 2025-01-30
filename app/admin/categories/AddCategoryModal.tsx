@@ -30,9 +30,13 @@ export default function AddCategoryModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const categoryData = {
+        ...newCategory,
+        name: newCategory.name.trim(),
+      };
       const categoriesCollection = collection(db, "categories");
-      const docRef = await addDoc(categoriesCollection, newCategory);
-      const newCategoryWithId = { ...newCategory, id: docRef.id };
+      const docRef = await addDoc(categoriesCollection, categoryData);
+      const newCategoryWithId = { ...categoryData, id: docRef.id };
 
       await updateDoc(docRef, newCategoryWithId);
 
@@ -84,7 +88,7 @@ export default function AddCategoryModal({
             placeholder="Maquillaje, Peluquería, etc."
             value={newCategory.name}
             onChange={(e) =>
-              setNewCategory({ ...newCategory, name: e.target.value.trim() })
+              setNewCategory({ ...newCategory, name: e.target.value })
             }
             className="bg-background"
           />

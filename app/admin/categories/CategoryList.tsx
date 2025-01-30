@@ -1,9 +1,11 @@
 "use client";
 
-import { Menu, MenuItem, MenuButton } from "@szhsin/react-menu";
+import { useState } from "react";
 import Category from "../../../models/Category";
 import { motion } from "framer-motion";
 import NoData from "@/components/NoData";
+import EditMenu from "@/components/EditMenu";
+import WarningModal from "@/components/WarningModal";
 
 interface CategoryListProps {
   categories: Category[];
@@ -16,6 +18,28 @@ export default function CategoryList({
   handleEdit,
   handleDelete,
 }: CategoryListProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
+
+  const openModal = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedCategoryId(null);
+  };
+
+  const confirmDelete = () => {
+    if (selectedCategoryId) {
+      handleDelete(selectedCategoryId);
+      closeModal();
+    }
+  };
+
   return (
     <div className="space-y-4 px-4">
       {categories.length === 0 ? (
@@ -31,14 +55,19 @@ export default function CategoryList({
               index !== categories.length - 1 ? "border-b pb-4" : ""
             }`}>
             <span>{category.name}</span>
-            <Menu menuButton={<MenuButton>⋮</MenuButton>}>
-              <MenuItem onClick={() => handleEdit(category)}>Editar</MenuItem>
-              <MenuItem onClick={() => handleDelete(category.id!)}>
-                Eliminar
-              </MenuItem>
-            </Menu>
+            <EditMenu
+              onEdit={() => handleEdit(category)}
+              onDelete={() => openModal(category.id!)}
+            />
           </motion.div>
         ))
+      )}
+      {isModalOpen && (
+        <WarningModal
+          message="¿Estás seguro de que deseas eliminar esta categoría?"
+          onClose={closeModal}
+          onConfirm={confirmDelete}
+        />
       )}
     </div>
   );

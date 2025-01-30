@@ -30,11 +30,18 @@ export default function Home() {
             id: doc.id,
             title: data.title,
             image: data.image,
-            category: data.category,
+            category: data.category.trim(),
             description: data.description,
           };
         });
         setProjects(projectsData);
+        console.log(
+          "Proyectos:",
+          projectsData.map((project) => ({
+            title: project.title,
+            category: project.category,
+          }))
+        );
       } catch (error) {
         console.error("Error fetching projects:", error);
       } finally {
@@ -45,10 +52,11 @@ export default function Home() {
     const fetchCategories = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "categories"));
-        const categoriesData = querySnapshot.docs.flatMap(
-          (doc) => (doc.data() as Category).name
+        const categoriesData = querySnapshot.docs.flatMap((doc) =>
+          (doc.data() as Category).name.trim()
         );
         setCategories(["Todas", ...categoriesData]);
+        console.log("Categorías:", categoriesData);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -81,7 +89,9 @@ export default function Home() {
   const filteredProjects =
     selectedCategory === "Todas"
       ? projects
-      : projects.filter((project) => project.category === selectedCategory);
+      : projects.filter(
+          (project) => project.category.trim() === selectedCategory.trim()
+        );
 
   return (
     <motion.div
@@ -133,6 +143,7 @@ export default function Home() {
                       alt={project.title}
                       width={300}
                       height={300}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="w-full h-64 object-cover"
                       priority
                       onError={(e) => {
@@ -141,7 +152,7 @@ export default function Home() {
                       }}
                     />
                   ) : (
-                    <div className="flex justify-center items-center w-full h-64 bg-gray-200 rounded-md">
+                    <div className="flex justify-center items-center w-full h-64 bg-card rounded-md">
                       <AlertCircle className="w-16 h-16 text-red-500" />
                     </div>
                   )}

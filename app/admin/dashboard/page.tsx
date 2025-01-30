@@ -14,10 +14,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { auth } from "../../../lib/firebaseClient";
 import { useEffect, useState } from "react";
+import WarningModal from "@/components/WarningModal";
 
 function AdminDashboard() {
   const router = useRouter();
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -34,6 +36,14 @@ function AdminDashboard() {
       localStorage.removeItem("userEmail");
     }
     router.push("/admin/auth/login");
+  };
+
+  const openLogoutModal = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const closeLogoutModal = () => {
+    setIsLogoutModalOpen(false);
   };
 
   const buttons = [
@@ -67,10 +77,17 @@ function AdminDashboard() {
       <Button
         variant="outline"
         className="h-12 w-48 flex items-center justify-center font-bold fixed bottom-8 left-1/2 transform -translate-x-1/2"
-        onClick={handleLogout}>
+        onClick={openLogoutModal}>
         <span>Cerrar Sesión</span>
         <LogOut size={24} />
       </Button>
+      {isLogoutModalOpen && (
+        <WarningModal
+          message="¿Estás seguro de que deseas cerrar sesión?"
+          onClose={closeLogoutModal}
+          onConfirm={handleLogout}
+        />
+      )}
     </div>
   );
 }

@@ -130,8 +130,9 @@ export default function ProjectDetails() {
             </div>
           </>
         ) : (
-          <div className="flex justify-center items-center w-full h-48 bg-gray-200 rounded-md">
+          <div className="flex flex-col space-y-4 justify-center items-center w-full h-48 bg-card rounded-md">
             <AlertCircle className="w-12 h-12 text-red-500" />
+            <p>Error al cargar la imagen</p>
           </div>
         )}
       </div>
