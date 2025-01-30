@@ -34,7 +34,6 @@ export default function Home() {
             description: data.description,
           };
         });
-        console.log("Fetched projects from Firebase:", projectsData);
         setProjects(projectsData);
       } catch (error) {
         console.error("Error fetching projects:", error);

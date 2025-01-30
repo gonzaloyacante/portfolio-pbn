@@ -34,7 +34,6 @@ export default function AdminCategorias() {
       const categoriesList = categoriesSnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as Category)
       );
-      console.log("Category IDs:", categoriesList);
       setCategories(categoriesList);
     };
 
@@ -42,7 +41,6 @@ export default function AdminCategorias() {
   }, []);
 
   const handleDelete = async (categoryId: string) => {
-    console.log("Deleting category with ID:", categoryId);
     try {
       const categoryRef = doc(db, "categories", categoryId);
       await deleteDoc(categoryRef);

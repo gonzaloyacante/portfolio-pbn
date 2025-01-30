@@ -80,7 +80,6 @@ export default function EditProjectModal({
   const handleImageUpload = (result: any) => {
     if (result.event === "success") {
       const imageUrl = result.info.secure_url;
-      console.log("Image uploaded to Cloudinary:", imageUrl);
       if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
         setSelectedImages((prevImages) => [...prevImages, imageUrl]);
         setEditProject((prevProject) => {

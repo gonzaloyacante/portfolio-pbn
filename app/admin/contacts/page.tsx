@@ -46,7 +46,6 @@ function AdminContacts() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data() as ContactData;
-        console.log("Fetched contact data from Firebase:", data);
         setContactData(data);
       } else {
         console.log("No such document!");
@@ -59,7 +58,6 @@ function AdminContacts() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log("Submitting contact data to Firebase:", contactData);
       const docRef = doc(db, "contact", "contact");
       await setDoc(docRef, contactData);
       setSuccessMessage("Información de contacto actualizada correctamente");

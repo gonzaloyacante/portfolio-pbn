@@ -38,7 +38,6 @@ function AdminProyectos() {
       const projectsList = projectsSnapshot.docs.map(
         (doc) => ({ id: doc.id, ...doc.data() } as Project)
       );
-      console.log("Project IDs:", projectsList);
       setProjects(projectsList);
       setFilteredProjects(projectsList);
     };
@@ -57,7 +56,6 @@ function AdminProyectos() {
   }, []);
 
   const handleDelete = async (projectId: string) => {
-    console.log("Deleting project with ID:", projectId);
     try {
       const projectRef = doc(db, "projects", projectId);
       await deleteDoc(projectRef);

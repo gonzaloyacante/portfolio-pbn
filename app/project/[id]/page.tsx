@@ -31,7 +31,6 @@ export default function ProjectDetails() {
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
             const projectData = docSnap.data() as Project;
-            console.log("Fetched project from Firebase:", projectData);
             setProject(projectData);
           } else {
             console.log("No such document!");

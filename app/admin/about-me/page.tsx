@@ -60,7 +60,6 @@ export default function AdminSobreMi() {
   const handleImageUpload = (result: any) => {
     if (result.event === "success") {
       const imageUrl = result.info.secure_url;
-      console.log("Image uploaded to Cloudinary:", imageUrl);
       if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
         setProfileImageUrl(imageUrl);
       } else {
