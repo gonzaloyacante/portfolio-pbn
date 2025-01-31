@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc } from "firebase/firestore";
 import Project from "@/models/Project";
@@ -11,16 +10,13 @@ import { Badge } from "@/components/ui/badge";
 import { Loader } from "../../../components/Loader";
 import { AlertCircle } from "lucide-react";
 import NoData from "@/components/NoData";
-import Lightbox from "react-image-lightbox";
-import "react-image-lightbox/style.css";
+import CustomImageGallery from "@/components/ImageGallery";
 
 export default function ProjectDetails() {
   const { id } = useParams();
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
-  const [photoIndex, setPhotoIndex] = useState(0);
   const [imageLoading, setImageLoading] = useState(true);
 
   useEffect(() => {
@@ -46,18 +42,8 @@ export default function ProjectDetails() {
     }
   }, [id]);
 
-  const handleImageClick = (index: number) => {
-    setPhotoIndex(index);
-    preloadImage(project?.image[index], () => {
-      setIsOpen(true);
-    });
-  };
-
-  const preloadImage = (src: string | undefined, callback: () => void) => {
-    if (!src) return;
-    const img = new window.Image();
-    img.src = src;
-    img.onload = callback;
+  const handleImageLoad = () => {
+    setImageLoading(false);
   };
 
   if (loading) {
@@ -94,41 +80,20 @@ export default function ProjectDetails() {
       </div>
       <div className="mx-auto max-w-2xl flex flex-col justify-center items-center">
         {images.length > 0 ? (
-          <>
-            <div className="relative w-full h-[50vh] overflow-hidden rounded-md cursor-pointer">
-              {imageLoading && (
-                <div className="absolute inset-0 flex justify-center items-center">
-                  <Loader />
-                </div>
-              )}
-              <Image
-                src={images[0]}
-                alt={project.title}
-                layout="fill"
-                objectFit="cover"
-                priority
-                onClick={() => handleImageClick(0)}
-                onLoad={() => setImageLoading(false)}
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = "";
-                }}
-              />
-            </div>
-            <div className="flex space-x-2 overflow-x-auto mt-4">
-              {images.slice(1).map((url, index) => (
-                <Image
-                  key={index}
-                  src={url}
-                  alt={`Imagen del proyecto ${project.title}`}
-                  width={60}
-                  height={60}
-                  className="object-cover rounded-md cursor-pointer"
-                  onClick={() => handleImageClick(index + 1)}
-                />
-              ))}
-            </div>
-          </>
+          <div className="relative h-40">
+            {imageLoading && (
+              <div className="absolute inset-0 flex justify-center items-center">
+                <Loader />
+              </div>
+            )}
+            <CustomImageGallery
+              images={project.image.map((img) => ({
+                original: img,
+                thumbnail: img,
+                onLoad: handleImageLoad,
+              }))}
+            />
+          </div>
         ) : (
           <div className="flex flex-col space-y-4 justify-center items-center w-full h-48 bg-card rounded-md">
             <AlertCircle className="w-12 h-12 text-red-500" />
@@ -136,21 +101,6 @@ export default function ProjectDetails() {
           </div>
         )}
       </div>
-      {isOpen && (
-        <Lightbox
-          mainSrc={images[photoIndex]}
-          nextSrc={images[(photoIndex + 1) % images.length]}
-          prevSrc={images[(photoIndex + images.length - 1) % images.length]}
-          onCloseRequest={() => setIsOpen(false)}
-          onMovePrevRequest={() =>
-            setPhotoIndex((photoIndex + images.length - 1) % images.length)
-          }
-          onMoveNextRequest={() =>
-            setPhotoIndex((photoIndex + 1) % images.length)
-          }
-          imageCaption={`Imagen ${photoIndex + 1} de ${images.length}`}
-        />
-      )}
     </div>
   );
 }
