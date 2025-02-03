@@ -1,5 +1,6 @@
 "use client";
 
+import "react-quill/dist/quill.snow.css";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
