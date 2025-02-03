@@ -23,7 +23,9 @@ export default function Admin() {
   }, [authError, router]);
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div
+      className="flex justify-center items-center h-screen"
+      style={{ height: "calc(100vh - 12rem)" }}>
       <div className="text-center">
         <h1 className="text-xl font-bold">Redirigiendo...</h1>
       </div>

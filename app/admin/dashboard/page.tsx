@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   UserCog,
+  Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { auth } from "../../../lib/firebaseClient";
@@ -53,6 +54,7 @@ function AdminDashboard() {
     { label: "Sobre Mí", icon: Presentation, path: "/admin/about-me" },
     { label: "Configuración", icon: Settings, path: "/admin/settings" },
     { label: "Cuenta", icon: UserCog, path: "/admin/account" },
+    { label: "Imágenes", icon: ImageIcon, path: "/admin/gallery" },
   ];
 
   return (
@@ -76,7 +78,7 @@ function AdminDashboard() {
 
       <Button
         variant="outline"
-        className="h-12 w-48 flex items-center justify-center font-bold fixed bottom-8 left-1/2 transform -translate-x-1/2"
+        className="h-12 w-48 flex items-center justify-center font-bold"
         onClick={openLogoutModal}>
         <span>Cerrar Sesión</span>
         <LogOut size={24} />

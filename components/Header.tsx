@@ -7,12 +7,16 @@ import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useAppContext } from "@/context/AppContext";
 
-export default function Header() {
+interface HeaderProps {}
+
+export default function Header({}: HeaderProps) {
   const pathname = usePathname();
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { title: homeTitle } = useAppContext();
 
   useEffect(() => {
     setMounted(true);
@@ -38,7 +42,7 @@ export default function Header() {
           </div>
         ) : (
           <>
-            <div className="flex space-x-6 md:hidden">
+            <div className="flex space-x-6 lg:hidden">
               <Button
                 variant="ghost"
                 size="icon"
@@ -47,7 +51,7 @@ export default function Header() {
                 <span className="sr-only">Abrir menú</span>
               </Button>
             </div>
-            <div className="hidden md:flex space-x-6">
+            <div className="hidden lg:flex space-x-6">
               <Link
                 href="/"
                 className={`text-foreground hover:text-primary ${
@@ -74,6 +78,15 @@ export default function Header() {
                 Contacto
               </Link>
             </div>
+            <span className="text-foreground font-bold lg:hidden">
+              {pathname === "/"
+                ? homeTitle
+                : pathname === "/about-me"
+                ? "Sobre Mí"
+                : pathname === "/contact"
+                ? "Contacto"
+                : ""}
+            </span>
           </>
         )}
         <div className="flex items-center space-x-4">

@@ -11,7 +11,7 @@ module.exports = {
         pathname: "/djlknirsd/**",
       },
     ],
-    domains: ["res.cloudinary.com"],
+    // domains: ["res.cloudinary.com"],
   },
   env: {
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:

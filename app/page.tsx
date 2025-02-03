@@ -6,19 +6,36 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { db } from "../lib/firebaseClient";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import Project from "@/models/Project";
 import Category from "@/models/Category";
 import { Loader } from "../components/Loader";
 import { AlertCircle } from "lucide-react";
 import NoData from "@/components/NoData";
+import CustomImageGallery from "@/components/ImageGallery";
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState("Todas");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
-  const [categories, setCategories] = useState<string[]>(["Todas"]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("Portfolio");
+  const [homeGalleryImages, setHomeGalleryImages] = useState<
+    {
+      original: string;
+      thumbnail: string;
+      order: number;
+      name: string;
+    }[]
+  >([]);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -55,14 +72,14 @@ export default function Home() {
         const categoriesData = querySnapshot.docs.flatMap((doc) =>
           (doc.data() as Category).name.trim()
         );
-        setCategories(["Todas", ...categoriesData]);
+        setCategories(categoriesData);
         console.log("Categorías:", categoriesData);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     };
 
-    const fetchTitle = async () => {
+    const fetchTitleAndGallery = async () => {
       try {
         const docRef = doc(db, "settings", "settings");
         const docSnap = await getDoc(docRef);
@@ -72,41 +89,67 @@ export default function Home() {
         } else {
           console.log("No such document!");
         }
+
+        const gallerySnapshot = await getDocs(
+          query(collection(db, "homeGallery"), orderBy("order"))
+        );
+        const galleryImages = gallerySnapshot.docs.map((doc) => ({
+          original: doc.data().url,
+          thumbnail: doc.data().url,
+          order: doc.data().order,
+          name: doc.data().name || "Imagen sin título",
+        }));
+        setHomeGalleryImages(galleryImages);
       } catch (error) {
-        console.error("Error fetching title:", error);
+        console.error("Error fetching title or gallery images:", error);
       }
     };
 
     fetchProjects();
     fetchCategories();
-    fetchTitle();
+    fetchTitleAndGallery();
   }, []);
+
+  useEffect(() => {
+    if (homeGalleryImages.length > 0) {
+      const imagePromises = homeGalleryImages.map(
+        (image) =>
+          new Promise<void>((resolve) => {
+            const img = new window.Image();
+            img.src = image.original;
+            img.onload = () => resolve();
+          })
+      );
+
+      Promise.all(imagePromises).then(() => setImagesLoaded(true));
+    }
+  }, [homeGalleryImages]);
+
+  // const handleCategorySelect = (category: string) => {
+  //   setSelectedCategory(category);
+  //   const projectsSection = document.getElementById("projects-section");
+  //   if (projectsSection) {
+  //     projectsSection.scrollIntoView({ behavior: "smooth" });
+  //   }
+  // };
 
   if (loading) {
     return <Loader />;
   }
 
-  const filteredProjects =
-    selectedCategory === "Todas"
-      ? projects
-      : projects.filter(
-          (project) => project.category.trim() === selectedCategory.trim()
-        );
+  const filteredProjects = selectedCategory
+    ? projects.filter(
+        (project) => project.category.trim() === selectedCategory.trim()
+      )
+    : [];
 
   return (
     <motion.div
-      className="space-y-6 flex flex-col"
+      className="flex flex-col"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-      <motion.h1
-        className="text-2xl font-bold text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}>
-        {title}
-      </motion.h1>
-      <div className="flex overflow-x-auto space-x-4 pb-3 custom-scrollbar">
+      <div className="flex overflow-x-auto space-x-4 pb-3 custom-scrollbar lg:justify-center">
         {categories.map((category, index) => (
           <Button
             key={index}
@@ -121,71 +164,100 @@ export default function Home() {
           </Button>
         ))}
       </div>
-      <AnimatePresence>
-        {filteredProjects.length > 0 ? (
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}>
-            {filteredProjects.map((project) => (
-              <motion.div
-                key={project.id}
-                layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5 }}>
-                <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-xl">
-                  {project.image.length > 0 ? (
-                    <Image
-                      src={project.image[0]}
-                      alt={project.title}
-                      width={300}
-                      height={300}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="w-full h-64 object-cover"
-                      priority
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = "";
-                      }}
-                    />
-                  ) : (
-                    <div className="flex justify-center items-center w-full h-64 bg-card rounded-md">
-                      <AlertCircle className="w-16 h-16 text-red-500" />
-                    </div>
-                  )}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 pt-8">
-                    <div className="flex flex-col justify-end h-full">
-                      <div className="flex justify-between items-end space-x-4">
-                        <div>
-                          <span className="text-white text-sm">
-                            {project.category}
-                          </span>
-                          <h3 className="text-white font-bold">
-                            {project.title}
-                          </h3>
+      {!selectedCategory && (
+        <div
+          className="relative w-full max-w-xl mx-auto"
+          style={{ height: "calc(100vh - 12rem)", maxHeight: "360px" }}>
+          {!imagesLoaded && <Loader />}
+          {imagesLoaded && (
+            <motion.div
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}>
+              <CustomImageGallery
+                images={homeGalleryImages}
+                showThumbnails={false}
+                thumbnailPosition="bottom"
+                showPlayButton={true}
+                showFullscreenButton={false}
+                autoPlay={true}
+                showBullets={true}
+              />
+            </motion.div>
+          )}
+        </div>
+      )}
+      <div id="projects-section">
+        <AnimatePresence>
+          {filteredProjects.length > 0 ? (
+            <motion.div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}>
+              {filteredProjects.map((project) => (
+                <motion.div
+                  key={project.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.5 }}>
+                  <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-xl">
+                    {project.image.length > 0 ? (
+                      <Image
+                        src={project.image[0]}
+                        alt={project.title}
+                        width={300}
+                        height={300}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="w-full h-64 object-cover"
+                        priority
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "";
+                        }}
+                      />
+                    ) : (
+                      <div className="flex justify-center items-center w-full h-64 bg-card rounded-md">
+                        <AlertCircle className="w-16 h-16 text-red-500" />
+                      </div>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 pt-8">
+                      <div className="flex flex-col justify-end h-full">
+                        <div className="flex justify-between items-end space-x-4">
+                          <div>
+                            <span className="text-white text-sm">
+                              {project.category}
+                            </span>
+                            <h3 className="text-white font-bold">
+                              {project.title}
+                            </h3>
+                          </div>
+                          <Button variant="outline" className="text-white">
+                            <Link href={`/project/${project.id}`}>
+                              Ver detalles
+                            </Link>
+                          </Button>
                         </div>
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="text-white">
-                          <Link href={`/project/${project.id}`}>
-                            Ver detalles
-                          </Link>
-                        </Button>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <NoData message="No hay proyectos disponibles." />
-        )}
-      </AnimatePresence>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <NoData
+              message={
+                selectedCategory
+                  ? "No hay proyectos disponibles."
+                  : "Seleccione una categoría para ver más proyectos."
+              }
+            />
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }

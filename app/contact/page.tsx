@@ -82,11 +82,11 @@ export default function Contacto() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-      <h1 className="text-4xl font-bold text-center">Contactos</h1>
+      <h1 className="text-2xl font-bold text-center">Contactos</h1>
       <img
         src="/images/contact-me.svg"
         alt="Imagen de fondo de contactos"
-        className="w-60 mx-auto"
+        className="w-40 mx-auto"
       />
       <div className="flex flex-col items-center space-y-4">
         {contactData && (

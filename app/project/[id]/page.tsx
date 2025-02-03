@@ -80,7 +80,7 @@ export default function ProjectDetails() {
       </div>
       <div className="mx-auto max-w-2xl flex flex-col justify-center items-center">
         {images.length > 0 ? (
-          <div className="relative h-40">
+          <div className="relative w-full">
             {imageLoading && (
               <div className="absolute inset-0 flex justify-center items-center">
                 <Loader />
@@ -92,6 +92,11 @@ export default function ProjectDetails() {
                 thumbnail: img,
                 onLoad: handleImageLoad,
               }))}
+              showThumbnails={true}
+              thumbnailPosition="right"
+              showPlayButton={false}
+              showFullscreenButton={true}
+              autoPlay={false}
             />
           </div>
         ) : (

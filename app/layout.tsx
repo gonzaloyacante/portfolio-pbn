@@ -2,6 +2,7 @@
 
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+import { AppProvider } from "@/context/AppContext";
 import Header from "@/components/Header";
 import "@/styles/globals.css";
 
@@ -39,13 +40,15 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen bg-background text-foreground flex flex-col">
-            <Header />
-            <main className="container mx-auto px-4 py-8 flex-grow">
-              {children}
-            </main>
-          </div>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <AppProvider>
+            <div className="min-h-screen bg-background text-foreground flex flex-col">
+              <Header />
+              <main className="container mx-auto px-4 py-8 flex-grow">
+                {children}
+              </main>
+            </div>
+          </AppProvider>
         </ThemeProvider>
       </body>
     </html>
