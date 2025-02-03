@@ -87,9 +87,10 @@ export default function ProjectDetails() {
               </div>
             )}
             <CustomImageGallery
-              images={project.image.map((img) => ({
+              images={project.image.map((img, index) => ({
                 original: img,
                 thumbnail: img,
+                name: `image-${index}`,
                 onLoad: handleImageLoad,
               }))}
               showThumbnails={true}
