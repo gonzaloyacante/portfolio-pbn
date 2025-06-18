@@ -13,7 +13,8 @@ import NoData from "@/components/NoData";
 import CustomImageGallery from "@/components/ImageGallery";
 
 export default function ProjectDetails() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
@@ -64,9 +65,8 @@ export default function ProjectDetails() {
   }
 
   const images = project.image;
-
   return (
-    <div className="container mx-auto px-4 max-w-4xl">
+    <div className="container mx-auto px-2 sm:px-4 w-full">
       <div className="flex flex-row justify-between mb-4">
         <Button variant="outline" onClick={() => router.back()}>
           Volver
@@ -77,15 +77,15 @@ export default function ProjectDetails() {
       <h3 className="text-lg md:text-2xl font-bold">{project.title}</h3>
       <div className="my-4 border-b pb-2">
         <p className="text-sm md:text-base">{project.description}</p>
-      </div>
-      <div className="mx-auto max-w-2xl flex flex-col justify-center items-center">
+      </div>{" "}
+      <div className="mx-auto w-full flex flex-col justify-center items-center">
         {images.length > 0 ? (
           <div className="relative w-full">
             {imageLoading && (
               <div className="absolute inset-0 flex justify-center items-center">
                 <Loader />
               </div>
-            )}
+            )}{" "}
             <CustomImageGallery
               images={project.image.map((img, index) => ({
                 original: img,
@@ -94,10 +94,11 @@ export default function ProjectDetails() {
                 onLoad: handleImageLoad,
               }))}
               showThumbnails={true}
-              thumbnailPosition="right"
-              showPlayButton={false}
-              showFullscreenButton={true}
+              thumbnailPosition="top" // Esto controla la posición de las miniaturas
+              showPlayButton={false} // Esto controla si se muestra el botón de reproducción
+              showFullscreenButton={false} // Esto controla si se muestra el botón de pantalla completa
               autoPlay={false}
+              showBullets={false} // Esto controla si se muestran los indicadores (bullets)
             />
           </div>
         ) : (

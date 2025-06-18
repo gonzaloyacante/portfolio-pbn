@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { AppProvider } from "@/context/AppContext";
 import Header from "@/components/Header";
 import "@/styles/globals.css";
+import "@/styles/gallery.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

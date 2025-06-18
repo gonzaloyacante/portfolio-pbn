@@ -175,6 +175,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}>
+              {" "}
               <CustomImageGallery
                 images={homeGalleryImages}
                 showThumbnails={false}
@@ -183,6 +184,7 @@ export default function Home() {
                 showFullscreenButton={false}
                 autoPlay={true}
                 showBullets={true}
+                isHome={true}
               />
             </motion.div>
           )}
@@ -248,16 +250,67 @@ export default function Home() {
               ))}
             </motion.div>
           ) : (
-            <NoData
-              message={
-                selectedCategory
-                  ? "No hay proyectos disponibles."
-                  : "Seleccione una categoría para ver más proyectos."
-              }
-            />
+            <div className="text-center py-6 bg-card bg-opacity-80 rounded-lg shadow-md mt-8">
+              <NoData
+                message={
+                  selectedCategory
+                    ? "No hay proyectos disponibles."
+                    : "Seleccione una categoría para ver más proyectos."
+                }
+              />
+            </div>
           )}
         </AnimatePresence>
       </div>
     </motion.div>
   );
+}
+
+// Script para ocultar los controles de zoom en la página de inicio
+if (typeof window !== "undefined") {
+  const checkIsHomePage = () => {
+    const homeGalleries = document.querySelectorAll(
+      '.home-gallery, [data-ishome="true"]'
+    );
+
+    homeGalleries.forEach((gallery) => {
+      const zoomControls = gallery.querySelectorAll(".zoom-controls");
+      zoomControls.forEach((control) => {
+        (control as HTMLElement).style.display = "none";
+      });
+
+      // Desactivar eventos de rueda y gestos en la galería del home
+      gallery.addEventListener(
+        "wheel",
+        (e) => {
+          if (gallery.classList.contains("home-gallery")) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        },
+        { passive: false }
+      );
+
+      gallery.addEventListener(
+        "touchmove",
+        (e) => {
+          if (gallery.classList.contains("home-gallery")) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        },
+        { passive: false }
+      );
+    });
+  };
+
+  // Ejecutar después de que la página se cargue y cuando cambie el DOM
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkIsHomePage);
+  } else {
+    checkIsHomePage();
+  }
+
+  // Ejecutar periódicamente para asegurar que los controles se oculten
+  setInterval(checkIsHomePage, 1000);
 }
