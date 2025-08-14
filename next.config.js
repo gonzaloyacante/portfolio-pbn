@@ -14,8 +14,8 @@ module.exports = {
     ],
     // Formatos modernos que mejoran significativamente la optimización
     formats: ['image/webp', 'image/avif'],
-    // Calidad de imagen optimizada (80% suele ser un buen equilibrio)
-    quality: 80,
+    // Mejorar rendimiento de caché de imágenes
+    minimumCacheTTL: 60,
     // Habilitar placeholder difuminado para mejorar la percepción de carga
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
