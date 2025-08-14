@@ -80,7 +80,7 @@ export default function ProjectDetails() {
       </div>{" "}
       <div className="mx-auto w-full flex flex-col justify-center items-center">
         {images.length > 0 ? (
-          <div className="relative w-full">
+          <div className="relative w-full project-gallery">
             {imageLoading && (
               <div className="absolute inset-0 flex justify-center items-center">
                 <Loader />
@@ -96,9 +96,10 @@ export default function ProjectDetails() {
               showThumbnails={true}
               thumbnailPosition="top" // Esto controla la posición de las miniaturas
               showPlayButton={false} // Esto controla si se muestra el botón de reproducción
-              showFullscreenButton={false} // Esto controla si se muestra el botón de pantalla completa
+              showFullscreenButton={true} // Esto controla si se muestra el botón de pantalla completa
               autoPlay={false}
               showBullets={false} // Esto controla si se muestran los indicadores (bullets)
+              isHome={false}
             />
           </div>
         ) : (

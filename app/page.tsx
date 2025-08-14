@@ -19,7 +19,16 @@ import Category from "@/models/Category";
 import { Loader } from "../components/Loader";
 import { AlertCircle } from "lucide-react";
 import NoData from "@/components/NoData";
-import CustomImageGallery from "@/components/ImageGallery";
+import dynamic from 'next/dynamic';
+
+// Importación dinámica para mejorar rendimiento
+const DynamicImageGallery = dynamic(
+  () => import("@/components/ImageGallery"),
+  {
+    loading: () => <div className="w-full h-64 bg-background-light dark:bg-background-dark animate-pulse rounded-md"></div>,
+    ssr: false, // Componente usa window, mejor no renderizarlo en servidor
+  }
+);
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -145,122 +154,134 @@ export default function Home() {
 
   return (
     <motion.div
-      className="flex flex-col"
+      className="flex flex-col min-h-[calc(100vh-60px)] overflow-auto"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-      <div className="flex overflow-x-auto space-x-4 pb-3 custom-scrollbar lg:justify-center">
-        {categories.map((category, index) => (
-          <Button
-            key={index}
-            onClick={() => setSelectedCategory(category)}
-            variant={selectedCategory === category ? "default" : "outline"}
-            className={
-              selectedCategory === category
-                ? "bg-primary text-white"
-                : "bg-transparent text-primary dark:text-white border-primary "
-            }>
-            {category}
-          </Button>
-        ))}
-      </div>
-      {!selectedCategory && (
-        <div
-          className="relative w-full max-w-xl mx-auto"
-          style={{ height: "calc(100vh - 12rem)", maxHeight: "360px" }}>
-          {!imagesLoaded && <Loader />}
-          {imagesLoaded && (
-            <motion.div
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}>
-              {" "}
-              <CustomImageGallery
-                images={homeGalleryImages}
-                showThumbnails={false}
-                thumbnailPosition="bottom"
-                showPlayButton={true}
-                showFullscreenButton={false}
-                autoPlay={true}
-                showBullets={true}
-                isHome={true}
-              />
-            </motion.div>
-          )}
+      {/* Contenedor de categorías - siempre visible y con altura fija */}
+      <div className="flex-none py-1 bg-background/70 backdrop-blur-sm sticky top-0 z-30">
+        <div className="flex overflow-x-auto space-x-4 pb-3 custom-scrollbar lg:justify-center">
+          {categories.map((category, index) => (
+            <Button
+              key={index}
+              onClick={() => setSelectedCategory(category)}
+              variant={selectedCategory === category ? "default" : "outline"}
+              className={`h-10 ${
+                selectedCategory === category
+                  ? "bg-primary text-white"
+                  : "bg-transparent text-primary dark:text-white border-primary"
+              }`}>
+              {category}
+            </Button>
+          ))}
         </div>
-      )}
-      <div id="projects-section">
-        <AnimatePresence>
-          {filteredProjects.length > 0 ? (
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}>
-              {filteredProjects.map((project) => (
+      </div>
+
+      {/* Contenido principal */}
+      <div className="flex-grow flex flex-col mt-2">
+        {!selectedCategory ? (
+          // Contenido cuando no hay categoría seleccionada
+          <>
+            {/* Mensaje informativo */}
+            <div className="py-3 px-4 bg-card bg-opacity-80 rounded-lg shadow-md mb-6 w-full max-w-xl mx-auto">
+              <p className="text-base font-medium text-center">
+                Seleccione una categoría para ver más proyectos.
+              </p>
+            </div>
+
+            {/* Galería de imágenes de inicio */}
+            <div className="w-full max-w-xl mx-auto mb-8">
+              {!imagesLoaded ? (
+                <div className="h-[400px] md:h-[600px] flex justify-center items-center">
+                  <Loader />
+                </div>
+              ) : (
+                <div className="h-[400px] md:h-[600px] w-full flex justify-center items-center overflow-hidden">
+                  <DynamicImageGallery
+                    images={homeGalleryImages}
+                    showThumbnails={false}
+                    thumbnailPosition="bottom"
+                    showPlayButton={true}
+                    showFullscreenButton={false}
+                    autoPlay={true}
+                    showBullets={true}
+                    isHome={true}
+                  />
+                </div>
+              )}
+            </div>
+          </>
+        ) : (
+          // Contenido cuando hay categoría seleccionada
+          <div id="projects-section" className="w-full px-4">
+            <AnimatePresence>
+              {filteredProjects.length > 0 ? (
                 <motion.div
-                  key={project.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ duration: 0.5 }}>
-                  <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-xl">
-                    {project.image.length > 0 ? (
-                      <Image
-                        src={project.image[0]}
-                        alt={project.title}
-                        width={300}
-                        height={300}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        className="w-full h-64 object-cover"
-                        priority
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          e.currentTarget.src = "";
-                        }}
-                      />
-                    ) : (
-                      <div className="flex justify-center items-center w-full h-64 bg-card rounded-md">
-                        <AlertCircle className="w-16 h-16 text-red-500" />
-                      </div>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 pt-8">
-                      <div className="flex flex-col justify-end h-full">
-                        <div className="flex justify-between items-end space-x-4">
-                          <div>
-                            <span className="text-white text-sm">
-                              {project.category}
-                            </span>
-                            <h3 className="text-white font-bold">
-                              {project.title}
-                            </h3>
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}>
+                  {filteredProjects.map((project) => (
+                    <motion.div
+                      key={project.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.5 }}>
+                      <div className="relative max-w-sm mx-auto overflow-hidden rounded-lg shadow-xl">
+                        {project.image.length > 0 ? (
+                          <Image
+                            src={project.image[0]}
+                            alt={project.title}
+                            width={300}
+                            height={300}
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="w-full h-64 object-cover transition-opacity duration-500 ease-in-out"
+                            placeholder="blur"
+                            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mM8w8DwHwAEOQHNmnaaOAAAAABJRU5ErkJggg=="
+                            loading="lazy"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = "";
+                            }}
+                          />
+                        ) : (
+                          <div className="flex justify-center items-center w-full h-64 bg-card rounded-md">
+                            <AlertCircle className="w-16 h-16 text-red-500" />
                           </div>
-                          <Button variant="outline" className="text-white">
-                            <Link href={`/project/${project.id}`}>
-                              Ver detalles
-                            </Link>
-                          </Button>
+                        )}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 pt-8">
+                          <div className="flex flex-col justify-end h-full">
+                            <div className="flex justify-between items-end space-x-4">
+                              <div>
+                                <span className="text-white text-sm">
+                                  {project.category}
+                                </span>
+                                <h3 className="text-white font-bold">
+                                  {project.title}
+                                </h3>
+                              </div>
+                              <Button variant="outline" className="text-white">
+                                <Link href={`/project/${project.id}`}>
+                                  Ver detalles
+                                </Link>
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </motion.div>
+                  ))}
                 </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <div className="text-center py-6 bg-card bg-opacity-80 rounded-lg shadow-md mt-8">
-              <NoData
-                message={
-                  selectedCategory
-                    ? "No hay proyectos disponibles."
-                    : "Seleccione una categoría para ver más proyectos."
-                }
-              />
-            </div>
-          )}
-        </AnimatePresence>
+              ) : (
+                <div className="text-center py-6 bg-card bg-opacity-80 rounded-lg shadow-md mt-8 relative z-20">
+                  <NoData message="No hay proyectos disponibles." />
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </motion.div>
   );

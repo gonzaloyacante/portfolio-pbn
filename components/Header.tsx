@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useAppContext } from "@/context/AppContext";
+import useRoutePreloader from "@/lib/preloadRoutes";
 
 interface HeaderProps {}
 
@@ -17,6 +18,9 @@ export default function Header({}: HeaderProps) {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { title: homeTitle } = useAppContext();
+  
+  // Utilizamos el preloader de rutas para mejorar la velocidad de navegación
+  useRoutePreloader();
 
   useEffect(() => {
     setMounted(true);

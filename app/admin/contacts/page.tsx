@@ -5,20 +5,14 @@ import { useState, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CardContent } from "@/components/ui/card";
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { ContactData } from "../../../models/ContactData";
-import { MenuButton } from "@szhsin/react-menu";
-import "@szhsin/react-menu/dist/index.css";
-import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import SuccessModal from "@/components/SuccessModal";
 import ErrorModal from "@/components/ErrorModal";
 import WarningModal from "@/components/WarningModal";
 import AdminLayout from "@/components/AdminLayout";
-import { Alert } from "@/components/ui/alert"; // Import Alert component
-import { CheckCircle, AlertTriangle, XCircle } from "lucide-react"; // Import icons for alerts
 
 function AdminContacts() {
   const [contactData, setContactData] = useState<ContactData>({
@@ -41,8 +35,6 @@ function AdminContacts() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
-
-  const router = useRouter();
 
   useEffect(() => {
     const fetchContactData = async () => {
@@ -72,7 +64,7 @@ function AdminContacts() {
         "Hubo un error al actualizar la información de contacto: " +
           (error as Error).message
       );
-      setSuccessMessage(null); // Clear success message on error
+      setSuccessMessage(null);
     }
   };
 
@@ -135,8 +127,9 @@ function AdminContacts() {
             return (
               <div key={platform} className="mb-4 w-full">
                 <div className="flex items-center justify-between w-full">
-                  <MenuButton
-                    className="w-full flex justify-between items-center px-4 py-2 border rounded-md"
+                  <button
+                    type="button"
+                    className="w-full flex justify-between items-center px-4 py-2 border rounded-md hover:bg-muted/50 transition-colors"
                     onClick={() =>
                       toggleAccordion(platform as keyof ContactData["socials"])
                     }>
@@ -146,7 +139,7 @@ function AdminContacts() {
                     ) : (
                       <ChevronDown className="ml-2" />
                     )}
-                  </MenuButton>
+                  </button>
                 </div>
                 {isOpen && (
                   <animated.div

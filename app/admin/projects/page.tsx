@@ -19,8 +19,8 @@ import ErrorModal from "@/components/ErrorModal";
 import AddProjectModal from "./AddProjectModal";
 import ProjectList from "./ProjectList";
 import EditProjectModal from "./EditProjectModal";
-import "@szhsin/react-menu/dist/index.css";
 import AdminLayout from "@/components/AdminLayout";
+import { Loader } from "@/components/Loader";
 
 function AdminProyectos() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -30,25 +30,40 @@ function AdminProyectos() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
-
+  const [selectedCategory, setSelectedCategory] = useState<string>("Todos");
+  const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchProjects = async () => {
-      const projectsCollection = collection(db, "projects");
-      const projectsSnapshot = await getDocs(projectsCollection);
-      const projectsList = projectsSnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Project)
-      );
-      setProjects(projectsList);
-      setFilteredProjects(projectsList);
+      setLoading(true); // Establecer loading en true al inicio de la carga
+      try {
+        const projectsCollection = collection(db, "projects");
+        const projectsSnapshot = await getDocs(projectsCollection);
+        const projectsList = projectsSnapshot.docs.map(
+          (doc) => ({ id: doc.id, ...doc.data() } as Project)
+        );
+        setProjects(projectsList);
+        setFilteredProjects(projectsList);
+      } catch (error) {
+        console.error("Error al cargar los proyectos:", error);
+        setErrorMessage(
+          "Error al cargar los proyectos: " + (error as Error).message
+        );
+      } finally {
+        setLoading(false); // Establecer loading en false cuando termine la carga
+      }
     };
 
     const fetchCategories = async () => {
-      const categoriesCollection = collection(db, "categories");
-      const categoriesSnapshot = await getDocs(categoriesCollection);
-      const categoriesList = categoriesSnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Category)
-      );
-      setCategories(categoriesList);
+      try {
+        const categoriesCollection = collection(db, "categories");
+        const categoriesSnapshot = await getDocs(categoriesCollection);
+        const categoriesList = categoriesSnapshot.docs.map(
+          (doc) => ({ id: doc.id, ...doc.data() } as Category)
+        );
+        setCategories(categoriesList);
+      } catch (error) {
+        console.error("Error al cargar las categorías:", error);
+      }
     };
 
     fetchProjects();
@@ -96,8 +111,9 @@ function AdminProyectos() {
       }
     }
   };
-
   const handleFilter = (category: string) => {
+    setSelectedCategory(category); // Actualizar la categoría seleccionada
+
     if (category === "Todos") {
       setFilteredProjects(projects);
     } else {
@@ -107,18 +123,25 @@ function AdminProyectos() {
       setFilteredProjects(filtered);
     }
   };
-
   return (
     <AdminLayout
       title="Proyectos Existentes"
       filter={true}
       categories={categories}
-      handleFilter={handleFilter}>
-      <ProjectList
-        projects={filteredProjects}
-        handleEdit={setEditProject}
-        handleDelete={handleDelete}
-      />
+      handleFilter={handleFilter}
+      selectedCategory={selectedCategory}>
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader />
+        </div>
+      ) : (
+        <ProjectList
+          projects={filteredProjects}
+          handleEdit={setEditProject}
+          handleDelete={handleDelete}
+        />
+      )}
+
       <Button
         variant="default"
         size="icon"

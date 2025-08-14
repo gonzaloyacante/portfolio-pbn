@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { AppProvider } from "@/context/AppContext";
 import Header from "@/components/Header";
+import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
+import EnvIndicator from "@/components/EnvIndicator";
 import "@/styles/globals.css";
 import "@/styles/gallery.css";
 
@@ -48,6 +50,8 @@ export default function RootLayout({
               <main className="container mx-auto px-4 py-8 flex-grow">
                 {children}
               </main>
+              <ServiceWorkerRegistration />
+              <EnvIndicator />
             </div>
           </AppProvider>
         </ThemeProvider>

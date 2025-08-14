@@ -3,8 +3,7 @@
 import "react-quill/dist/quill.snow.css";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
-import { ArrowLeft, Image, Plus } from "lucide-react";
+import { Image, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { db } from "../../../lib/firebaseClient";
 import { doc, getDoc, setDoc } from "firebase/firestore";

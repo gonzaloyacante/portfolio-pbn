@@ -10,6 +10,7 @@ interface AdminLayoutProps {
   filter?: boolean;
   categories?: Category[];
   handleFilter?: (category: string) => void;
+  selectedCategory?: string;
   children: ReactNode;
 }
 
@@ -18,6 +19,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   filter = false,
   categories = [],
   handleFilter,
+  selectedCategory = "Todos",
   children,
 }) => {
   const router = useRouter();
@@ -36,7 +38,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
           <h2 className="ml-2 text-xl font-bold">{title}</h2>
         </div>
         {filter && handleFilter && (
-          <FilterDropdown categories={categories} handleFilter={handleFilter} />
+          <FilterDropdown
+            categories={categories}
+            handleFilter={handleFilter}
+            selectedCategory={selectedCategory}
+          />
         )}
       </header>
       <div className="space-y-6 h-full flex flex-col items-center">

@@ -17,7 +17,6 @@ import ErrorModal from "@/components/ErrorModal";
 import AddCategoryModal from "./AddCategoryModal";
 import CategoryList from "./CategoryList";
 import EditCategoryModal from "./EditCategoryModal";
-import "@szhsin/react-menu/dist/index.css";
 import AdminLayout from "@/components/AdminLayout";
 
 export default function AdminCategorias() {

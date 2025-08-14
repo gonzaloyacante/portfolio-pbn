@@ -14,7 +14,7 @@
 
 /* Home Gallery - Mobile */
 .home-gallery .image-gallery {
-  height: 200px;
+  height: 400px;
 }
 
 /* Project Gallery - Mobile */
@@ -35,7 +35,7 @@
 /* Media queries para desktop */
 @media (min-width: 768px) {
   .home-gallery .image-gallery {
-    height: 400px;
+    height: 700px;
   }
 
   .project-gallery .image-gallery {
@@ -191,17 +191,84 @@
 
 /* Contenedor de imagen */
 .image-container {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
+  width: 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
 }
 
+/* Fijar dimensiones específicas para el contenedor de imágenes */
+.image-container {
+  width: 100% !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+}
+
+/* Asegurar que las imágenes mantengan su proporción y se contengan en su contenedor */
 .gallery-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  display: block !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
+/* Controlar la altura específica para home y proyectos - ACTUALIZADO */
+.home-gallery .image-container {
+  height: 400px !important;
+}
+
+@media (min-width: 768px) {
+  .home-gallery .image-container {
+    height: 700px !important;
+  }
+}
+
+/* Actualizar alturas de galería para mobile y desktop */
+.home-gallery .image-gallery {
+  height: 400px;
+}
+
+@media (min-width: 768px) {
+  .home-gallery .image-gallery {
+    height: 700px;
+  }
+}
+
+/* Evitar que las imágenes se expandan fuera de sus contenedores */
+.image-gallery-slide {
+  overflow: hidden !important;
+}
+
+/* Asegurar que la galería no se superponga con otros elementos */
+.custom-gallery {
+  z-index: 10;
+  margin-bottom: 2rem;
+}
+
+/* Asegurar que el mensaje de selección de categoría siempre sea visible */
+.text-center.py-6.bg-card {
+  position: relative;
+  z-index: 20;
+  margin-top: 1rem;
+}
+
+/* Contenedores con tamaños fijos */
+.image-gallery,
+.image-gallery-content,
+.image-gallery-slide-wrapper,
+.image-gallery-swipe,
+.image-gallery-slides,
+.image-gallery-slide {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Restringir el comportamiento de las imágenes en diferentes dispositivos */
+@media (max-width: 768px) {
+  #projects-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
 }
 
 /* Controles de zoom */
@@ -504,4 +571,119 @@
 
 .image-gallery-bullet.active {
   background-color: white;
+}
+
+/* Asegurar que las imágenes estén perfectamente centradas */
+.image-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.gallery-image {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
+/* Evitar que las imágenes se estiren */
+.react-transform-component {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.image-gallery-image {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Centrado mejorado de imágenes */
+.image-container {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.gallery-image {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
+/* Estructura mejorada para altura consistente */
+.image-gallery,
+.image-gallery-content,
+.image-gallery-slide-wrapper,
+.image-gallery-swipe,
+.image-gallery-slides,
+.image-gallery-slide {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+/* Comportamiento consistente en navegadores móviles */
+@media (max-width: 768px) {
+  .custom-gallery {
+    height: 400px !important;
+  }
+
+  .react-transform-component,
+  .react-transform-element {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+}
+
+/* Estilos específicos para las imágenes en detalles de proyecto */
+.project-gallery .image-container {
+  min-height: 300px !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+.project-gallery .gallery-image {
+  max-width: 100% !important;
+  max-height: none !important; /* Permitir altura natural */
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Mejorar el contenedor para adaptarse a diferentes proporciones */
+.project-gallery .react-transform-component {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 300px !important;
+}
+
+/* Asegurar que las imágenes verticales se muestren correctamente */
+@media (min-width: 768px) {
+  .project-gallery .image-container {
+    min-height: 450px !important;
+  }
+
+  .project-gallery .react-transform-component {
+    min-height: 450px !important;
+  }
 }

@@ -85,7 +85,6 @@ const CustomImageGallery: React.FC<ImageGalleryProps> = ({
       </button>
     );
   };
-
   const renderItem = (item: { original: string }) => (
     <TransformWrapper
       initialScale={1}
@@ -115,18 +114,19 @@ const CustomImageGallery: React.FC<ImageGalleryProps> = ({
               </button>
             </div>
           )}{" "}
-          <TransformComponent>
-            <div
-              className={clsx("image-container", {
-                "h-[300px] md:h-[600px]": !isHome,
-                "h-[200px] md:h-[400px]": isHome,
-                "w-full": true,
-              })}>
+          <TransformComponent
+            wrapperClass="w-full h-full flex justify-center items-center"
+            contentClass="flex justify-center items-center">
+            {" "}
+            <div className="image-container flex justify-center items-center w-full h-full">
               <img
                 src={item.original}
                 alt="Imagen de la galería"
                 loading="lazy"
-                className="gallery-image w-full"
+                className={`gallery-image max-w-full ${
+                  isHome ? "max-h-full" : "max-h-none"
+                } object-contain mx-auto`}
+                style={isHome ? { maxHeight: "600px" } : {}}
               />
             </div>
           </TransformComponent>

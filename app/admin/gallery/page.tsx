@@ -18,7 +18,6 @@ import ErrorModal from "@/components/ErrorModal";
 import AddGalleryImageModal from "./AddGalleryImageModal";
 import GalleryImageList from "./GalleryImageList";
 import EditGalleryImageModal from "./EditGalleryImageModal";
-import "@szhsin/react-menu/dist/index.css";
 import AdminLayout from "@/components/AdminLayout";
 
 function AdminGallery() {
