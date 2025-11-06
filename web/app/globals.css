@@ -1,0 +1,290 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Modo Claro - Rosa (actualizado de Canva) */
+  --background: #fff1f9;
+  --foreground: #6c0a0a;
+  --card: #ffaadd;
+  --card-foreground: #6c0a0a;
+  --popover: #fff1f9;
+  --popover-foreground: #6c0a0a;
+  --primary: #6c0a0a;
+  --primary-foreground: #fff1f9;
+  --secondary: #ffaadd;
+  --secondary-foreground: #6c0a0a;
+  --muted: #ffaadd;
+  --muted-foreground: #6c0a0a;
+  --accent: #ff69b4;
+  --accent-foreground: #6c0a0a;
+  --destructive: #6c0a0a;
+  --destructive-foreground: #fff1f9;
+  --border: #ffe0ed;
+  --input: #ffe0ed;
+  --ring: #6c0a0a;
+  --chart-1: #ff69b4;
+  --chart-2: #6c0a0a;
+  --chart-3: #ffaadd;
+  --chart-4: #ffe0ed;
+  --chart-5: #fff1f9;
+  --radius: 1rem;
+  --sidebar: #fff1f9;
+  --sidebar-foreground: #6c0a0a;
+  --sidebar-primary: #6c0a0a;
+  --sidebar-primary-foreground: #fff1f9;
+  --sidebar-accent: #ff69b4;
+  --sidebar-accent-foreground: #6c0a0a;
+  --sidebar-border: #ffe0ed;
+  --sidebar-ring: #6c0a0a;
+}
+
+.dark {
+  /* Modo Oscuro - Rojo oscuro */
+  --background: #2d0a0a;
+  --foreground: #ffaadd;
+  --card: #ffaadd;
+  --card-foreground: #6c0a0a;
+  --popover: #2d0a0a;
+  --popover-foreground: #ffaadd;
+  --primary: #ffaadd;
+  --primary-foreground: #2d0a0a;
+  --secondary: #ffaadd;
+  --secondary-foreground: #6c0a0a;
+  --muted: #ffaadd;
+  --muted-foreground: #ffaadd;
+  --accent: #ff69b4;
+  --accent-foreground: #6c0a0a;
+  --destructive: #ffaadd;
+  --destructive-foreground: #ffaadd;
+  --border: #6c0a0a;
+  --input: #6c0a0a;
+  --ring: #ffaadd;
+  --chart-1: #ffaadd;
+  --chart-2: #6c0a0a;
+  --chart-3: #ff69b4;
+  --chart-4: #6c0a0a;
+  --chart-5: #2d0a0a;
+  --sidebar: #2d0a0a;
+  --sidebar-foreground: #ffaadd;
+  --sidebar-primary: #ffaadd;
+  --sidebar-primary-foreground: #2d0a0a;
+  --sidebar-accent: #ffaadd;
+  --sidebar-accent-foreground: #6c0a0a;
+  --sidebar-border: #6c0a0a;
+  --sidebar-ring: #ffaadd;
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom fonts for script elements */
+@import url("https://fonts.googleapis.com/css2?family=Great+Vibes:wght@400;700&display=swap");
+
+.script-font {
+  font-family: "Great Vibes", cursive;
+  font-weight: 700;
+}
+
+/* Enhanced animations with more sophisticated effects */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 182, 217, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(255, 182, 217, 0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-right {
+  animation: slideRight 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  @apply transition-colors duration-300;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  @apply outline-2 outline-offset-2 outline-ring;
+}

@@ -1,197 +1,122 @@
-import { ENV } from './env'
+// API client for frontend
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
-// Cliente API centralizado con manejo de errores y tipos
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number,
-    public code?: string
-  ) {
-    super(message)
-    this.name = 'ApiError'
-  }
-}
-
-interface ApiRequestOptions extends RequestInit {
-  timeout?: number
+interface ApiResponse<T> {
+  data?: T
+  error?: string
 }
 
 class ApiClient {
-  private baseUrl: string
+  private token: string | null = null
 
-  constructor() {
-    this.baseUrl = ENV.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+  setToken(token: string) {
+    this.token = token
+    localStorage.setItem("auth_token", token)
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: ApiRequestOptions = {}
-  ): Promise<T> {
-    const { timeout = 10000, ...fetchOptions } = options
-    
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), timeout)
+  getToken() {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("auth_token")
+    }
+    return this.token
+  }
 
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...fetchOptions,
-        signal: controller.signal,
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          ...fetchOptions.headers,
-        },
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+        ...options.headers,
+      }
+
+      const token = this.getToken()
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`
+      }
+
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
       })
 
-      clearTimeout(timeoutId)
-
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        throw new ApiError(
-          errorData.error || `HTTP ${response.status}`,
-          response.status,
-          errorData.code
-        )
+        const error = await response.json()
+        return { error: error.error || "An error occurred" }
       }
 
-      return await response.json()
+      const data = await response.json()
+      return { data }
     } catch (error) {
-      clearTimeout(timeoutId)
-      
-      if (error instanceof ApiError) {
-        throw error
-      }
-      
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new ApiError('Request timeout', 408, 'TIMEOUT')
-      }
-      
-      throw new ApiError('Network error', 0, 'NETWORK_ERROR')
+      return { error: "Network error" }
     }
   }
 
   // Auth
   async login(email: string, password: string) {
-    return this.request('/api/auth/login', {
-      method: 'POST',
+    return this.request("/auth/login", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
     })
   }
 
-  async logout() {
-    return this.request('/api/auth/logout', { method: 'POST' })
-  }
-
-  async getSession() {
-    return this.request('/api/auth/session')
-  }
-
   // Projects
   async getProjects() {
-    return this.request('/api/projects')
+    return this.request("/projects")
   }
 
-  async getProject(id: string) {
-    return this.request(`/api/projects/${id}`)
+  async getProject(slug: string) {
+    return this.request(`/projects/${slug}`)
+  }
+
+  async getProjectsByCategory(categorySlug: string) {
+    return this.request(`/projects/category/${categorySlug}`)
   }
 
   async createProject(data: any) {
-    return this.request('/api/projects', {
-      method: 'POST',
+    return this.request("/projects", {
+      method: "POST",
       body: JSON.stringify(data),
     })
   }
 
   async updateProject(id: string, data: any) {
-    return this.request(`/api/projects/${id}`, {
-      method: 'PUT',
+    return this.request(`/projects/${id}`, {
+      method: "PUT",
       body: JSON.stringify(data),
     })
   }
 
   async deleteProject(id: string) {
-    return this.request(`/api/projects/${id}`, { method: 'DELETE' })
+    return this.request(`/projects/${id}`, {
+      method: "DELETE",
+    })
   }
 
-  // Categories
-  async getCategories() {
-    return this.request('/api/categories')
-  }
-
-  async createCategory(data: any) {
-    return this.request('/api/categories', {
-      method: 'POST',
+  // Contacts
+  async submitContact(data: any) {
+    return this.request("/contacts", {
+      method: "POST",
       body: JSON.stringify(data),
     })
   }
 
-  async updateCategory(id: string, data: any) {
-    return this.request(`/api/categories/${id}`, {
-      method: 'PUT',
+  async getContacts() {
+    return this.request("/contacts")
+  }
+
+  async getContact(id: string) {
+    return this.request(`/contacts/${id}`)
+  }
+
+  async updateContact(id: string, data: any) {
+    return this.request(`/contacts/${id}`, {
+      method: "PUT",
       body: JSON.stringify(data),
     })
   }
 
-  async deleteCategory(id: string) {
-    return this.request(`/api/categories/${id}`, { method: 'DELETE' })
-  }
-
-  // Gallery
-  async getGallery() {
-    return this.request('/api/gallery')
-  }
-
-  async updateGalleryOrder(images: any[]) {
-    return this.request('/api/gallery/order', {
-      method: 'PUT',
-      body: JSON.stringify({ images }),
-    })
-  }
-
-  async addToGallery(imageIds: string[]) {
-    return this.request('/api/gallery', {
-      method: 'POST',
-      body: JSON.stringify({ imageIds }),
-    })
-  }
-
-  async removeFromGallery(imageId: string) {
-    return this.request(`/api/gallery/${imageId}`, { method: 'DELETE' })
-  }
-
-  // Settings
-  async getSettings() {
-    return this.request('/api/settings')
-  }
-
-  async updateSettings(data: any) {
-    return this.request('/api/settings', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  // Contact
-  async getContact() {
-    return this.request('/api/contact')
-  }
-
-  async updateContact(data: any) {
-    return this.request('/api/contact', {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    })
-  }
-
-  // Presentation
-  async getPresentation() {
-    return this.request('/api/presentation')
-  }
-
-  async updatePresentation(data: any) {
-    return this.request('/api/presentation', {
-      method: 'PUT',
-      body: JSON.stringify(data),
+  async deleteContact(id: string) {
+    return this.request(`/contacts/${id}`, {
+      method: "DELETE",
     })
   }
 }
