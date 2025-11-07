@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run tests before push (if you have them)
+echo "🧪 Running tests before push..."
+
+# API tests
+if [ -d "api" ]; then
+  echo "Testing API..."
+  yarn --cwd api test --passWithNoTests
+fi
+
+# Web tests (if you add them later)
+# if [ -d "web" ]; then
+#   echo "Testing Web..."
+#   yarn --cwd web test --passWithNoTests
+# fi
+
+echo "✅ All tests passed!"

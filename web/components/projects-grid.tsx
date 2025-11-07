@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronLeft } from "lucide-react"
 import ProjectCard from "./project-card"
 import { Button } from "./button"
 import { ImageWithFallback } from "./image-with-fallback"
 import { ImageModal } from "./image-modal"
+import { apiClient } from "@/lib/api-client"
 
 interface ProjectsGridProps {
   onNavigate: (page: string) => void
@@ -13,61 +14,39 @@ interface ProjectsGridProps {
   onSelectProject?: (projectId: string | null) => void
 }
 
-const projectCategories = [
-  {
-    id: "sesiones",
-    title: "Sesiones de fotos",
-    description: "Sesiones fotográficas profesionales de maquillaje",
-    category: "Fotografía",
-    image: "/professional-makeup-photography-session.jpg",
-    images: Array(8).fill("/professional-makeup-photography-session.jpg"),
-  },
-  {
-    id: "fx",
-    title: "FX",
-    description: "Efectos especiales y maquillaje artístico",
-    category: "Efectos",
-    image: "/special-effects-makeup-art.jpg",
-    images: Array(8).fill("/special-effects-makeup-art.jpg"),
-  },
-  {
-    id: "teatro",
-    title: "Teatro",
-    description: "Maquillaje para producciones teatrales",
-    category: "Teatro",
-    image: "/theatrical-makeup-production.jpg",
-    images: Array(8).fill("/theatrical-makeup-production.jpg"),
-  },
-  {
-    id: "fantasia",
-    title: "Maquillaje fantasía",
-    description: "Diseños creativos y fantásticos",
-    category: "Fantasía",
-    image: "/fantasy-creative-makeup-design.jpg",
-    images: Array(8).fill("/fantasy-creative-makeup-design.jpg"),
-  },
-  {
-    id: "rodajes",
-    title: "Rodajes",
-    description: "Maquillaje para cine y televisión",
-    category: "Cine",
-    image: "/film-television-makeup-production.jpg",
-    images: Array(8).fill("/film-television-makeup-production.jpg"),
-  },
-  {
-    id: "social",
-    title: "Maquillaje social",
-    description: "Maquillaje para eventos y ocasiones especiales",
-    category: "Social",
-    image: "/social-event-makeup-special-occasion.jpg",
-    images: Array(8).fill("/social-event-makeup-special-occasion.jpg"),
-  },
-]
+interface Project {
+  id: string
+  title: string
+  slug: string
+  description: string
+  category: { name: string; slug: string }
+  coverImage: string
+  images: Array<{ url: string; alt: string }>
+}
 
 export default function ProjectsGrid({ onNavigate, selectedProject, onSelectProject }: ProjectsGridProps) {
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
-  const project = projectCategories.find((p) => p.id === selectedProject)
+  // Fetch projects from API
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        setLoading(true)
+        const data = await apiClient.getProjects()
+        setProjects(data || [])
+      } catch (error) {
+        console.error('Error fetching projects:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchProjects()
+  }, [])
+
+  const project = projects.find((p) => p.slug === selectedProject)
 
   if (selectedProject) {
     return (
@@ -100,8 +79,8 @@ export default function ProjectsGrid({ onNavigate, selectedProject, onSelectProj
                 aria-label={`Abrir imagen ${i + 1}`}
               >
                 <ImageWithFallback
-                  src={image || "/placeholder.svg"}
-                  alt={`${project?.title} - Imagen ${i + 1}`}
+                  src={image.url || "/placeholder.svg"}
+                  alt={image.alt || `${project?.title} - Imagen ${i + 1}`}
                   width={300}
                   height={300}
                   className="group-hover:scale-110"
@@ -114,11 +93,37 @@ export default function ProjectsGrid({ onNavigate, selectedProject, onSelectProj
 
         <ImageModal
           isOpen={selectedImageIndex !== null}
-          images={project?.images || []}
+          images={project?.images.map(img => img.url) || []}
           initialIndex={selectedImageIndex || 0}
           title={project?.title}
           onClose={() => setSelectedImageIndex(null)}
         />
+      </section>
+    )
+  }
+
+  // Loading state
+  if (loading) {
+    return (
+      <section className="py-8 md:py-24 px-4 md:px-8 min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-8 md:mb-12 space-y-4">
+            <div className="h-12 md:h-16 bg-muted/20 rounded animate-pulse" />
+            <div className="h-6 bg-muted/20 rounded w-2/3 animate-pulse" />
+          </div>
+          
+          <div className="mb-12 md:mb-16 h-48 md:h-96 bg-muted/20 rounded-xl md:rounded-2xl animate-pulse" />
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+            {Array(6).fill(0).map((_, i) => (
+              <div key={i} className="space-y-4">
+                <div className="aspect-[4/3] bg-muted/20 rounded-lg animate-pulse" />
+                <div className="h-6 bg-muted/20 rounded animate-pulse" />
+                <div className="h-4 bg-muted/20 rounded w-2/3 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
     )
   }
@@ -134,34 +139,36 @@ export default function ProjectsGrid({ onNavigate, selectedProject, onSelectProj
           </p>
         </div>
 
-        {/* Featured Image */}
-        <button
-          onClick={() => {
-            onSelectProject?.("sesiones")
-            setSelectedImageIndex(0)
-          }}
-          className="mb-12 md:mb-16 rounded-xl md:rounded-2xl overflow-hidden h-48 md:h-96 animate-slide-up group cursor-pointer w-full"
-          style={{ animationDelay: "50ms" }}
-          aria-label="Ver galería destacada"
-        >
-          <ImageWithFallback
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/attachments/gen-images/public/makeup-photography-session-ZYS4gvyxpq5VhSuQhUnCOfntUBOIKF.jpg"
-            alt="Portfolio Featured"
-            className="group-hover:scale-110 w-full h-full"
-            objectFit="cover"
-          />
-        </button>
+        {/* Featured Project */}
+        {projects[0] && (
+          <button
+            onClick={() => {
+              onSelectProject?.(projects[0]!.slug)
+              setSelectedImageIndex(0)
+            }}
+            className="mb-12 md:mb-16 rounded-xl md:rounded-2xl overflow-hidden h-48 md:h-96 animate-slide-up group cursor-pointer w-full"
+            style={{ animationDelay: "50ms" }}
+            aria-label="Ver galería destacada"
+          >
+            <ImageWithFallback
+              src={projects[0]!.coverImage || "/placeholder.svg"}
+              alt={projects[0]!.title}
+              className="group-hover:scale-110 w-full h-full"
+              objectFit="cover"
+            />
+          </button>
+        )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-          {projectCategories.map((cat, index) => (
-            <div key={cat.id} className="animate-slide-up" style={{ animationDelay: `${(index + 2) * 50}ms` }}>
+          {projects.map((proj, index) => (
+            <div key={proj.id} className="animate-slide-up" style={{ animationDelay: `${(index + 2) * 50}ms` }}>
               <ProjectCard
-                id={cat.id}
-                title={cat.title}
-                description={cat.description}
-                category={cat.category}
-                image={cat.image}
-                onClick={() => onSelectProject?.(cat.id)}
+                id={proj.slug}
+                title={proj.title}
+                description={proj.description}
+                category={proj.category.name}
+                image={proj.coverImage}
+                onClick={() => onSelectProject?.(proj.slug)}
               />
             </div>
           ))}

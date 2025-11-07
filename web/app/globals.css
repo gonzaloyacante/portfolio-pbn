@@ -127,8 +127,6 @@
 }
 
 /* Custom fonts for script elements */
-@import url("https://fonts.googleapis.com/css2?family=Great+Vibes:wght@400;700&display=swap");
-
 .script-font {
   font-family: "Great Vibes", cursive;
   font-weight: 700;

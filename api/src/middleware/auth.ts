@@ -1,64 +1,59 @@
-import type { Request, Response, NextFunction } from 'express'
-import jwt from 'jsonwebtoken'
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import { config } from '../config/env';
 
-export interface AuthTokenPayload {
-  sub: number
-  email: string
-  role: 'ADMIN' | 'EDITOR'
+export interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
 }
 
-// Marca temporal global para revocar sesiones emitidas antes de este instante
-let revokedAfterMs = 0
-export function setRevocationNow() {
-  revokedAfterMs = Date.now()
-}
-export function getRevocation() {
-  return revokedAfterMs
-}
-
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.session as string | undefined
-  if (!token) return res.status(401).json({ error: 'Unauthorized' })
-
+export const authenticate = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    const secret = process.env.JWT_SECRET || 'dev-secret'
-    const decoded = jwt.verify(token, secret)
-    if (!decoded || typeof decoded === 'string') return res.status(401).json({ error: 'Invalid token' })
-    const payload = decoded as jwt.JwtPayload
-    if (!payload.sub || !payload.email || !payload.role) return res.status(401).json({ error: 'Invalid token' })
-    // Si hay rotación/revocación y el token es anterior, inválidalo
-    if (revokedAfterMs && payload.iat && payload.iat * 1000 < revokedAfterMs) {
-      return res.status(401).json({ error: 'Session expired' })
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      res.status(401).json({ error: 'Token no proporcionado' });
+      return;
     }
-    const userPayload: AuthTokenPayload = {
-      sub: typeof payload.sub === 'string' ? parseInt(payload.sub, 10) : (payload.sub as number),
-      email: String(payload.email),
-      role: payload.role as 'ADMIN' | 'EDITOR',
+
+    const token = authHeader.substring(7);
+
+    const decoded = jwt.verify(token, config.jwt.secret) as {
+      id: string;
+      email: string;
+      role: string;
+    };
+
+    (req as AuthRequest).user = decoded;
+    next();
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      res.status(401).json({ error: 'Token expirado' });
+      return;
     }
-    ;(req as any).user = userPayload
-    return next()
-  } catch (e) {
-    return res.status(401).json({ error: 'Invalid token' })
+    if (error instanceof jwt.JsonWebTokenError) {
+      res.status(401).json({ error: 'Token inválido' });
+      return;
+    }
+    res.status(401).json({ error: 'Autenticación fallida' });
   }
-}
+};
 
-export function setSessionCookie(res: Response, token: string) {
-  const isProd = process.env.NODE_ENV === 'production'
-  res.cookie('session', token, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? 'lax' : 'lax',
-    path: '/',
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-  })
-}
+export const requireAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  const authReq = req as AuthRequest;
 
-export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  // Primero validar autenticación
-  requireAuth(req, res, () => {
-    const user = (req as any).user as AuthTokenPayload | undefined
-    if (!user) return res.status(401).json({ error: 'Unauthorized' })
-    if (user.role !== 'ADMIN') return res.status(403).json({ error: 'Forbidden' })
-    return next()
-  })
-}
+  if (!authReq.user) {
+    res.status(401).json({ error: 'No autenticado' });
+    return;
+  }
+
+  if (authReq.user.role !== 'ADMIN') {
+    res.status(403).json({ error: 'Acceso denegado - Se requiere rol de administrador' });
+    return;
+  }
+
+  next();
+};

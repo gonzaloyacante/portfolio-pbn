@@ -1,0 +1,18 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run validation before commit
+echo "🔍 Running pre-commit validations..."
+
+# Run lint-staged
+npx lint-staged
+
+# Run type checking
+echo "🔍 Type checking..."
+yarn type-check
+
+# Run Prisma validation (API only)
+echo "🔍 Validating Prisma schema..."
+yarn api:prisma:validate
+
+echo "✅ All validations passed!"

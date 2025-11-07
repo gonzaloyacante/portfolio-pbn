@@ -1,97 +1,198 @@
-// Prisma schema for Portfolio-PBN API
-// SQLite for development; can migrate to Postgres/MySQL later
+// Prisma Schema para Portfolio PBN v2
+// PostgreSQL como base de datos principal
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// ============================================
+// USUARIOS Y AUTENTICACIÓN
+// ============================================
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   email     String   @unique
-  password  String
-  role      Role     @default(EDITOR)
+  password  String   // Hasheado con bcrypt
+  name      String
+  role      Role     @default(ADMIN)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([email])
+  @@map("users")
 }
 
-model Category {
-  id        Int       @id @default(autoincrement())
-  uid       String?   @unique @default(uuid())
-  name      String    @unique
-  slug      String    @unique
-  projects  Project[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+// ============================================
+// PROYECTOS Y CATEGORÍAS
+// ============================================
+
+model ProjectCategory {
+  id          String    @id @default(uuid())
+  slug        String    @unique
+  name        String
+  description String?
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  projects    Project[]
 
   @@index([slug])
-  @@index([name])
+  @@index([order])
+  @@map("project_categories")
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }
 
 model Project {
-  id          Int            @id @default(autoincrement())
-  uid         String?        @unique @default(uuid())
-  title       String
-  description String
-  categoryId  Int
-  category    Category       @relation(fields: [categoryId], references: [id])
-  images      ProjectImage[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-}
+  id               String         @id @default(uuid())
+  slug             String         @unique
+  title            String
+  description      String         @db.Text
+  shortDescription String
+  thumbnailUrl     String
+  featured         Boolean        @default(false)
+  order            Int            @default(0)
+  status           ProjectStatus  @default(DRAFT)
+  categoryId       String
+  category         ProjectCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  images           ProjectImage[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 
-// Map external sources (e.g., Firebase IDs) to internal entities for idempotent imports
-model ImportMap {
-  id            Int     @id @default(autoincrement())
-  entity        String
-  sourceId      String
-  targetCatId   Int?
-  targetProjId  Int?
-
-  @@unique([entity, sourceId])
+  @@index([slug])
+  @@index([categoryId])
+  @@index([featured])
+  @@index([status])
+  @@index([order])
+  @@map("projects")
 }
 
 model ProjectImage {
-  id        Int     @id @default(autoincrement())
+  id        String   @id @default(uuid())
   url       String
-  order     Int     @default(0)
-  projectId Int
-  project   Project @relation(fields: [projectId], references: [id])
-}
-
-model Presentation {
-  id        Int      @id @default(1)
-  // Keep single row (id = 1)
-  title     String
-  content   String   // HTML or markdown rendered to HTML
-  imageUrl  String?
-  updatedAt DateTime @updatedAt
-}
-
-model GalleryImage {
-  id        Int      @id @default(autoincrement())
-  url       String
-  name      String
+  alt       String
   order     Int      @default(0)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([order])
+  @@map("project_images")
 }
 
-model Settings {
-  id        Int      @id @default(1)
-  title     String
-  updatedAt DateTime @updatedAt
+// ============================================
+// CONTACTOS
+// ============================================
+
+enum ContactStatus {
+  NEW
+  READ
+  RESPONDED
+  ARCHIVED
 }
 
 model Contact {
-  id          Int      @id @default(1)
+  id          String        @id @default(uuid())
+  name        String
   email       String
-  socialsJson String   // JSON string with socials structure
+  phone       String?
+  subject     String
+  message     String        @db.Text
+  status      ContactStatus @default(NEW)
+  response    String?       @db.Text
+  respondedAt DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("contacts")
+}
+
+// ============================================
+// HABILIDADES Y REDES SOCIALES
+// ============================================
+
+model Skill {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  level       Int      @default(50) // 0-100 percentage
+  icon        String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@map("skills")
+}
+
+enum SocialPlatform {
+  FACEBOOK
+  INSTAGRAM
+  TWITTER
+  LINKEDIN
+  YOUTUBE
+  TIKTOK
+  WHATSAPP
+  EMAIL
+  BEHANCE
+  OTHER
+}
+
+model SocialLink {
+  id        String         @id @default(uuid())
+  platform  SocialPlatform
+  url       String
+  label     String?
+  icon      String?
+  order     Int            @default(0)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([order])
+  @@map("social_links")
+}
+
+// ============================================
+// CONFIGURACIÓN GLOBAL DEL PORTFOLIO (SINGLETON)
+// ============================================
+
+model PortfolioSettings {
+  id                 String   @id @default("singleton")
+  siteName           String
+  siteDescription    String   @db.Text
+  siteUrl            String
+  ownerName          String
+  ownerTitle         String
+  ownerBio           String   @db.Text
+  ownerEmail         String
+  ownerPhone         String?
+  ownerLocation      String?
+  logoUrl            String?
+  faviconUrl         String?
+  ogImageUrl         String?
+  metaKeywords       String?
+  googleAnalyticsId  String?
+  facebookPixelId    String?
+  maintenanceMode    Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("portfolio_settings")
 }

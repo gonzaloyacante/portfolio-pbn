@@ -1,39 +1,104 @@
-# Root gitignore for monorepo (api + web)
+# ============================================
+# ROOT GITIGNORE - Portfolio PBN Monorepo
+# ============================================
 
-# Node
+# Dependencies
 node_modules/
+.pnp/
+.pnp.js
+.yarn/
 
 # Build outputs
 web/.next/
+web/out/
+web/build/
 api/dist/
+api/build/
 .next/
+out/
 dist/
+build/
+
+# Environment variables (CRITICAL - never commit!)
+.env
+.env*
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+api/.env*
+web/.env*
+!.env.example
+!api/.env.example
+!web/.env.example
 
 # Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+pino-*.log
 
-# Env files
-.env*
-api/.env*
-web/.env*
+# Testing & Coverage
+coverage/
+.nyc_output/
+test-results/
+junit.xml
 
-# System files
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
-# Vercel / tooling
+# IDE / Editor files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel / Deployment
 .vercel/
 .turbo/
+.netlify/
 
-# Coverage
-coverage/
+# Prisma
+prisma/*.db
+prisma/*.db-journal
+prisma/migrations/**/*.db
 
-# Lockfiles (use a single package manager; this avoids mixing)
-package-lock.json
-pnpm-lock.yaml
+# Temp / Cache
+tmp/
+temp/
+*.tmp
+.cache/
+.parcel-cache/
+.eslintcache
 
+# Lock files (if using single package manager)
+# Uncomment if you want to enforce a single package manager
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
-#Ignore vscode AI rules
-.github\instructions\codacy.instructions.md
+# AI Instructions (if you don't want to version them)
+.github/instructions/*.md
+!.github/instructions/README.md

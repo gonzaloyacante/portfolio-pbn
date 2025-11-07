@@ -1,9 +1,17 @@
-// API client for frontend
+// API client for frontend - Portfolio PBN v2
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
 
 interface ApiResponse<T> {
   data?: T
   error?: string
+  total?: number
+  limit?: number
+  offset?: number
+}
+
+interface PaginationParams {
+  limit?: number
+  offset?: number
 }
 
 class ApiClient {
@@ -11,7 +19,9 @@ class ApiClient {
 
   setToken(token: string) {
     this.token = token
-    localStorage.setItem("auth_token", token)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("auth_token", token)
+    }
   }
 
   getToken() {
@@ -21,11 +31,18 @@ class ApiClient {
     return this.token
   }
 
+  clearToken() {
+    this.token = null
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("auth_token")
+    }
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     try {
-      const headers: HeadersInit = {
+      const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        ...options.headers,
+        ...(options.headers as Record<string, string>),
       }
 
       const token = this.getToken()
@@ -36,6 +53,7 @@ class ApiClient {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers,
+        credentials: "include", // Para cookies (refresh token)
       })
 
       if (!response.ok) {
@@ -50,74 +68,284 @@ class ApiClient {
     }
   }
 
-  // Auth
+  // ============================================
+  // AUTH
+  // ============================================
+
+  async register(email: string, password: string, name: string) {
+    const result = await this.request<{ accessToken: string; user: any }>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, password, name }),
+    })
+    
+    if (result.data?.accessToken) {
+      this.setToken(result.data.accessToken)
+    }
+    
+    return result.data
+  }
+
   async login(email: string, password: string) {
-    return this.request("/auth/login", {
+    const result = await this.request<{ accessToken: string; user: any }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     })
+    
+    if (result.data?.accessToken) {
+      this.setToken(result.data.accessToken)
+    }
+    
+    return result.data
   }
 
-  // Projects
-  async getProjects() {
-    return this.request("/projects")
+  async logout() {
+    const result = await this.request("/auth/logout", { method: "POST" })
+    this.clearToken()
+    return result.data
   }
 
-  async getProject(slug: string) {
-    return this.request(`/projects/${slug}`)
+  async refreshToken() {
+    const result = await this.request<{ accessToken: string }>("/auth/refresh", { method: "POST" })
+    if (result.data?.accessToken) {
+      this.setToken(result.data.accessToken)
+    }
+    return result.data
   }
 
-  async getProjectsByCategory(categorySlug: string) {
-    return this.request(`/projects/category/${categorySlug}`)
+  async getMe() {
+    const result = await this.request<any>("/auth/me")
+    return result.data
+  }
+
+  // ============================================
+  // PROJECTS
+  // ============================================
+
+  async getProjects(params?: { category?: string; featured?: boolean } & PaginationParams) {
+    const query = new URLSearchParams()
+    if (params?.category) query.append("category", params.category)
+    if (params?.featured !== undefined) query.append("featured", params.featured.toString())
+    if (params?.limit) query.append("limit", params.limit.toString())
+    if (params?.offset) query.append("offset", params.offset.toString())
+
+    const result = await this.request<any>(`/projects?${query}`)
+    // API returns { data: projects[], total, limit, offset }
+    return result?.data?.data || []
+  }
+
+  async getProjectBySlug(slug: string) {
+    const result = await this.request<any>(`/projects/${slug}`)
+    return result.data
+  }
+
+  async getProjectsByCategory(categorySlug: string, params?: PaginationParams) {
+    const query = new URLSearchParams()
+    if (params?.limit) query.append("limit", params.limit.toString())
+    if (params?.offset) query.append("offset", params.offset.toString())
+
+    const result = await this.request<any>(`/projects/category/${categorySlug}?${query}`)
+    return result.data
+  }
+
+  // Admin
+  async getAllProjectsAdmin(params?: PaginationParams) {
+    const query = new URLSearchParams()
+    if (params?.limit) query.append("limit", params.limit.toString())
+    if (params?.offset) query.append("offset", params.offset.toString())
+
+  const result = await this.request<any>(`/projects/admin/all?${query}`)
+  return result?.data?.data || []
   }
 
   async createProject(data: any) {
-    return this.request("/projects", {
+    const result = await this.request<any>("/projects/admin", {
       method: "POST",
       body: JSON.stringify(data),
     })
+    return result.data
   }
 
   async updateProject(id: string, data: any) {
-    return this.request(`/projects/${id}`, {
+    const result = await this.request<any>(`/projects/admin/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
+    return result.data
   }
 
   async deleteProject(id: string) {
-    return this.request(`/projects/${id}`, {
-      method: "DELETE",
-    })
+    const result = await this.request(`/projects/admin/${id}`, { method: "DELETE" })
+    return result.data
   }
 
-  // Contacts
-  async submitContact(data: any) {
-    return this.request("/contacts", {
+  async addProjectImage(projectId: string, data: { url: string; alt: string; order?: number }) {
+    const result = await this.request<any>(`/projects/admin/${projectId}/images`, {
       method: "POST",
       body: JSON.stringify(data),
     })
+    return result.data
   }
 
-  async getContacts() {
-    return this.request("/contacts")
+  async deleteProjectImage(projectId: string, imageId: string) {
+    const result = await this.request(`/projects/admin/${projectId}/images/${imageId}`, { method: "DELETE" })
+    return result.data
   }
 
-  async getContact(id: string) {
-    return this.request(`/contacts/${id}`)
+  // ============================================
+  // CATEGORIES
+  // ============================================
+
+  async getCategories() {
+  const result = await this.request<any>("/categories")
+  return result?.data?.data || []
   }
 
-  async updateContact(id: string, data: any) {
-    return this.request(`/contacts/${id}`, {
+  async getCategoryBySlug(slug: string) {
+    const result = await this.request<any>(`/categories/${slug}`)
+    return result.data
+  }
+
+  // Admin
+  async createCategory(data: any) {
+    const result = await this.request<any>("/categories/admin", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async updateCategory(id: string, data: any) {
+    const result = await this.request<any>(`/categories/admin/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
+    return result.data
+  }
+
+  async deleteCategory(id: string) {
+    const result = await this.request(`/categories/admin/${id}`, { method: "DELETE" })
+    return result.data
+  }
+
+  // ============================================
+  // CONTACTS
+  // ============================================
+
+  async submitContact(data: any) {
+    const result = await this.request<any>("/contacts", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  // Admin
+  async getContacts(params?: { status?: string } & PaginationParams) {
+    const query = new URLSearchParams()
+    if (params?.status) query.append("status", params.status)
+    if (params?.limit) query.append("limit", params.limit.toString())
+    if (params?.offset) query.append("offset", params.offset.toString())
+
+  const result = await this.request<any>(`/contacts/admin?${query}`)
+  return result?.data?.data || []
+  }
+
+  async getContact(id: string) {
+    const result = await this.request<any>(`/contacts/admin/${id}`)
+    return result.data
+  }
+
+  async updateContact(id: string, data: any) {
+    const result = await this.request<any>(`/contacts/admin/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
   }
 
   async deleteContact(id: string) {
-    return this.request(`/contacts/${id}`, {
-      method: "DELETE",
+    const result = await this.request(`/contacts/admin/${id}`, { method: "DELETE" })
+    return result.data
+  }
+
+  // ============================================
+  // SKILLS
+  // ============================================
+
+  async getSkills() {
+  const result = await this.request<any>("/skills")
+  return result?.data?.data || []
+  }
+
+  // Admin
+  async createSkill(data: any) {
+    const result = await this.request<any>("/skills/admin", {
+      method: "POST",
+      body: JSON.stringify(data),
     })
+    return result.data
+  }
+
+  async updateSkill(id: string, data: any) {
+    const result = await this.request<any>(`/skills/admin/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async deleteSkill(id: string) {
+    const result = await this.request(`/skills/admin/${id}`, { method: "DELETE" })
+    return result.data
+  }
+
+  // ============================================
+  // SOCIAL LINKS
+  // ============================================
+
+  async getSocialLinks() {
+  const result = await this.request<any>("/social-links")
+  return result?.data?.data || []
+  }
+
+  // Admin
+  async createSocialLink(data: any) {
+    const result = await this.request<any>("/social-links/admin", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async updateSocialLink(id: string, data: any) {
+    const result = await this.request<any>(`/social-links/admin/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async deleteSocialLink(id: string) {
+    const result = await this.request(`/social-links/admin/${id}`, { method: "DELETE" })
+    return result.data
+  }
+
+  // ============================================
+  // SETTINGS
+  // ============================================
+
+  async getSettings() {
+    const result = await this.request<any>("/settings")
+    return result.data
+  }
+
+  // Admin
+  async updateSettings(data: any) {
+    const result = await this.request<any>("/settings/admin", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
   }
 }
 

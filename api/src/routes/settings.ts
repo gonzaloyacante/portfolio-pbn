@@ -1,33 +1,13 @@
-import { Router } from 'express'
-import { prisma } from '../prisma'
-import { z } from 'zod'
-import { requireAuth } from '../middleware/auth'
+import { Router } from 'express';
+import * as settingsController from '../controllers/settingsController';
+import { authenticate, requireAdmin } from '../middleware/auth';
 
-const router = Router()
+const router = Router();
 
-router.get('/', async (_req, res, next) => {
-  try {
-    const s = await prisma.settings.findUnique({ where: { id: 1 } })
-    res.json(s)
-  } catch (e) {
-    next(e)
-  }
-})
+// Public routes
+router.get('/', settingsController.getSettings);
 
-const upsertSchema = z.object({ title: z.string().min(1) })
+// Admin routes
+router.put('/admin', authenticate, requireAdmin, settingsController.updateSettings);
 
-router.put('/', requireAuth, async (req, res, next) => {
-  try {
-    const data = upsertSchema.parse(req.body)
-    const updated = await prisma.settings.upsert({
-      where: { id: 1 },
-      update: { ...data },
-      create: { id: 1, ...data },
-    })
-    res.json(updated)
-  } catch (e) {
-    next(e)
-  }
-})
-
-export default router
+export default router;

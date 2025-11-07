@@ -1,5 +1,6 @@
 {
   "name": "portfolio-pbn-monorepo",
+  "version": "2.0.0",
   "private": true,
   "workspaces": [
     "web",
@@ -9,13 +10,51 @@
     "web:dev": "yarn --cwd web dev",
     "web:build": "yarn --cwd web build",
     "web:lint": "yarn --cwd web lint",
-    "web:format": "yarn --cwd web format:check",
-
+    "web:lint:fix": "yarn --cwd web lint:fix",
+    "web:format": "yarn --cwd web format",
+    "web:format:check": "yarn --cwd web format:check",
+    "web:type-check": "yarn --cwd web type-check",
+    "web:validate": "yarn --cwd web validate",
     "api:dev": "yarn --cwd api dev",
     "api:build": "yarn --cwd api build",
-
-    "build": "yarn web:build && yarn api:build",
-    "format": "yarn web:format",
-    "lint": "yarn web:lint"
+    "api:lint": "yarn --cwd api lint",
+    "api:lint:fix": "yarn --cwd api lint:fix",
+    "api:format": "yarn --cwd api format",
+    "api:format:check": "yarn --cwd api format:check",
+    "api:type-check": "yarn --cwd api type-check",
+    "api:validate": "yarn --cwd api validate",
+    "api:prisma:generate": "yarn --cwd api prisma:generate",
+    "api:prisma:migrate": "yarn --cwd api prisma:migrate",
+    "api:prisma:deploy": "yarn --cwd api prisma:deploy",
+    "api:prisma:validate": "yarn --cwd api prisma:validate",
+    "api:seed": "yarn --cwd api seed",
+    "build": "yarn api:build && yarn web:build",
+    "dev": "concurrently \"yarn api:dev\" \"yarn web:dev\"",
+    "format": "yarn api:format && yarn web:format",
+    "format:check": "yarn api:format:check && yarn web:format:check",
+    "lint": "yarn api:lint && yarn web:lint",
+    "lint:fix": "yarn api:lint:fix && yarn web:lint:fix",
+    "type-check": "yarn api:type-check && yarn web:type-check",
+    "validate": "yarn api:validate && yarn web:validate",
+    "pre-commit": "yarn validate",
+    "prepare": "husky || true"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7"
+  },
+  "lint-staged": {
+    "api/**/*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "web/**/*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

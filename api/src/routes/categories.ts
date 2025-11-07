@@ -1,53 +1,16 @@
-import { Router } from 'express'
-import { prisma } from '../prisma'
-import { z } from 'zod'
-import { requireAuth } from '../middleware/auth'
+import { Router } from 'express';
+import * as categoryController from '../controllers/categoryController';
+import { authenticate, requireAdmin } from '../middleware/auth';
 
-const router = Router()
+const router = Router();
 
-const categorySchema = z.object({
-  name: z.string().min(1),
-  slug: z.string().min(1),
-})
+// Public routes
+router.get('/', categoryController.getCategories);
+router.get('/:slug', categoryController.getCategoryBySlug);
 
-router.get('/', async (_req, res, next) => {
-  try {
-    const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } })
-    res.json(categories)
-  } catch (e) {
-    next(e)
-  }
-})
+// Admin routes
+router.post('/admin', authenticate, requireAdmin, categoryController.createCategory);
+router.put('/admin/:id', authenticate, requireAdmin, categoryController.updateCategory);
+router.delete('/admin/:id', authenticate, requireAdmin, categoryController.deleteCategory);
 
-router.post('/', requireAuth, async (req, res, next) => {
-  try {
-    const data = categorySchema.parse(req.body)
-    const created = await prisma.category.create({ data })
-    res.status(201).json(created)
-  } catch (e) {
-    next(e)
-  }
-})
-
-router.put('/:id', requireAuth, async (req, res, next) => {
-  try {
-    const id = Number(req.params.id)
-    const data = categorySchema.partial().parse(req.body)
-    const updated = await prisma.category.update({ where: { id }, data })
-    res.json(updated)
-  } catch (e) {
-    next(e)
-  }
-})
-
-router.delete('/:id', requireAuth, async (req, res, next) => {
-  try {
-    const id = Number(req.params.id)
-    await prisma.category.delete({ where: { id } })
-    res.json({ ok: true })
-  } catch (e) {
-    next(e)
-  }
-})
-
-export default router
+export default router;

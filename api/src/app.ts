@@ -1,121 +1,90 @@
-import express, { type RequestHandler } from 'express'
-import cors from 'cors'
-import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
-import helmet from 'helmet'
-import compression from 'compression'
-import rateLimit from 'express-rate-limit'
-import pinoHttp from 'pino-http'
-import { randomUUID } from 'crypto'
-import authRoutes from './routes/auth'
-import projectRoutes from './routes/projects'
-import categoryRoutes from './routes/categories'
-import presentationRoutes from './routes/presentation'
-import galleryRoutes from './routes/gallery'
-import settingsRoutes from './routes/settings'
-import contactRoutes from './routes/contact'
-import accountRoutes from './routes/account'
-import usersRoutes from './routes/users'
-import devRoutes from './routes/dev'
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
+import { config } from './config/env';
+import { errorHandler, notFound } from './middleware/errorHandler';
 
-dotenv.config()
+// Import routes
+import authRoutes from './routes/auth';
+import projectRoutes from './routes/projects';
+import categoryRoutes from './routes/categories';
+import contactRoutes from './routes/contacts';
+import skillRoutes from './routes/skills';
+import socialLinkRoutes from './routes/socialLinks';
+import settingsRoutes from './routes/settings';
 
-const app = express()
+const app = express();
 
-// Seguridad básica
-app.disable('x-powered-by')
-// Evitar 304 por ETag en respuestas JSON; siempre enviar cuerpo fresco
-app.set('etag', false)
-app.set('trust proxy', 1)
-app.use(
-  helmet({
-    contentSecurityPolicy: false, // Ajusta si sirves vistas; en API no suele ser necesario
-    crossOriginOpenerPolicy: { policy: 'same-origin' },
-    crossOriginResourcePolicy: { policy: 'same-origin' },
-  }),
-)
-app.use(compression() as unknown as RequestHandler)
+// Security middleware
+app.use(helmet());
+app.disable('x-powered-by');
 
-// Logger estructurado con request id
-const isProd = process.env.NODE_ENV === 'production'
-const logger = pinoHttp({
-  genReqId: (req: any) => (req.headers['x-request-id'] as string) || randomUUID(),
-  // En dev: no loguear cada request para no ensuciar la terminal
-  // En prod: ignorar OPTIONS (preflight CORS) para reducir ruido
-  autoLogging: isProd ? { ignore: (req) => req.method === 'OPTIONS' } : false,
-})
-app.use(logger)
-
-// Rate limiting básico (ajusta paths sensibles si lo prefieres)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 1000, // 1000 req por ventana
-  standardHeaders: true,
-  legacyHeaders: false,
-})
-app.use(limiter)
-
-// CORS con whitelist desde variables
-// Soporta CORS_ORIGINS=dom1,dom2;dom3 (coma o punto y coma)
-const ORIGINS = (process.env.CORS_ORIGINS || process.env.CORS_ORIGIN || 'http://localhost:3000')
-  .split(/[;,]/)
-  .map((s) => s.trim())
-  .filter(Boolean)
-
+// CORS
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true) // allow non-browser clients
-      const allowed = ORIGINS.some((o) => origin === o)
-      return allowed ? callback(null, true) : callback(new Error(`CORS: origin ${origin} no permitido`))
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) return callback(null, true);
+
+      if (config.cors.origins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS: Origen no permitido'));
+      }
     },
     credentials: true,
-  }),
-)
-app.use(express.json({ limit: '5mb' }))
-app.use(cookieParser())
+  })
+);
 
-// Añadir x-request-id a las respuestas
-app.use((req, res, next) => {
-  // @ts-ignore - pino-http agrega id
-  const id = req.id as string | undefined
-  if (id) res.setHeader('x-request-id', id)
-  next()
-})
+// Compression
+app.use(compression());
 
-// Desactivar cache de respuestas API (especialmente útil en dev para evitar 304 Not Modified)
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api/')) {
-    res.setHeader('Cache-Control', 'no-store')
-  }
-  next()
-})
+// Body parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'portfolio-pbn-api' })
-})
+// Cookie parser
+app.use(cookieParser());
 
-app.use('/api/auth', authRoutes)
-app.use('/api/projects', projectRoutes)
-app.use('/api/categories', categoryRoutes)
-app.use('/api/presentation', presentationRoutes)
-app.use('/api/gallery', galleryRoutes)
-app.use('/api/settings', settingsRoutes)
-app.use('/api/contact', contactRoutes)
-app.use('/api/account', accountRoutes)
-app.use('/api/users', usersRoutes)
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/api/dev', devRoutes)
-}
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Demasiadas solicitudes desde esta IP, intenta de nuevo más tarde',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
-// Error handler
-app.use((err: any, req: express.Request, res: express.Response, _next: express.NextFunction) => {
-  // @ts-ignore pino-http
-  req.log?.error({ err }, 'Unhandled error')
-  const status = err.status || 500
-  res.status(status).json({ error: err.message || 'Internal Server Error' })
-})
+app.use('/api/', limiter);
 
-// Server start moved to server.ts for better separation
+// Stricter rate limit for auth endpoints
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  message: 'Demasiados intentos de autenticación, intenta de nuevo más tarde',
+});
 
-export default app
+// Health check
+app.get('/health', (_req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// API routes
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/contacts', contactRoutes);
+app.use('/api/skills', skillRoutes);
+app.use('/api/social-links', socialLinkRoutes);
+app.use('/api/settings', settingsRoutes);
+
+// 404 handler
+app.use(notFound);
+
+// Error handler (must be last)
+app.use(errorHandler);
+
+export default app;
