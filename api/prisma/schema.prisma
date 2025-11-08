@@ -196,3 +196,113 @@ model PortfolioSettings {
 
   @@map("portfolio_settings")
 }
+
+// ============================================
+// SISTEMA CMS COMPLETO - DISEÑO Y LAYOUT DINÁMICO
+// ============================================
+
+// Configuración de diseño global (colores, tipografía, espaciados)
+model DesignSettings {
+  id        String   @id @default("singleton")
+  // Colores
+  primaryColor      String @default("#8B0000") // Color primario
+  secondaryColor    String @default("#FFB6C1") // Color secundario
+  backgroundColor   String @default("#FFF5F5") // Fondo
+  textColor         String @default("#2D2D2D") // Texto
+  accentColor       String @default("#D4A5A5") // Acento
+  
+  // Tipografía
+  headingFont       String @default("Parisienne") // Fuente títulos
+  bodyFont          String @default("Inter") // Fuente cuerpo
+  headingSize       String @default("4rem") // Tamaño h1
+  bodySize          String @default("1rem") // Tamaño texto
+  lineHeight        String @default("1.6") // Altura línea
+  
+  // Espaciados
+  containerMaxWidth String @default("1200px") // Ancho máximo
+  sectionPadding    String @default("4rem 2rem") // Padding secciones
+  elementSpacing    String @default("2rem") // Espaciado entre elementos
+  borderRadius      String @default("0.5rem") // Radio bordes
+  
+  // Sombras y efectos
+  boxShadow         String @default("0 4px 6px rgba(0,0,0,0.1)")
+  hoverTransform    String @default("translateY(-4px)")
+  transitionSpeed   String @default("0.3s")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("design_settings")
+}
+
+// Configuración de layout de secciones (orden, visibilidad, estructura)
+enum SectionType {
+  HERO
+  ABOUT
+  SKILLS
+  PROJECTS
+  CONTACT
+  CUSTOM
+}
+
+enum SkillsLayoutType {
+  GRID
+  CIRCULAR
+  HORIZONTAL
+  VERTICAL
+}
+
+model PageSection {
+  id            String      @id @default(uuid())
+  pageName      String      // "home", "about", "projects", etc.
+  sectionType   SectionType
+  title         String?     // Título de la sección (editable)
+  subtitle      String?     // Subtítulo (editable)
+  order         Int         @default(0) // Orden de aparición
+  visible       Boolean     @default(true)
+  
+  // Config específica por tipo de sección (JSON)
+  config        Json        @default("{}")
+  // Ejemplo config para SKILLS:
+  // { "layout": "grid", "columns": 3, "showProgress": true, "cardStyle": "elevated" }
+  // Ejemplo config para HERO:
+  // { "imagePosition": "left", "showStats": true, "ctaButtons": ["projects", "contact"] }
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([pageName, sectionType])
+  @@index([pageName])
+  @@index([order])
+  @@map("page_sections")
+}
+
+// Bloques de contenido reutilizables (texto, imágenes, CTAs)
+enum ContentBlockType {
+  TEXT
+  IMAGE
+  CTA
+  STATS
+  TESTIMONIAL
+  CUSTOM_HTML
+}
+
+model ContentBlock {
+  id          String           @id @default(uuid())
+  slug        String           @unique
+  name        String           // Nombre descriptivo para admin
+  type        ContentBlockType
+  content     Json             // Contenido flexible en JSON
+  // Ejemplo para TEXT: { "html": "<p>Mi texto</p>", "align": "center" }
+  // Ejemplo para IMAGE: { "url": "...", "alt": "...", "width": "300px" }
+  // Ejemplo para CTA: { "text": "Contactar", "url": "/contact", "style": "primary" }
+  
+  order       Int              @default(0)
+  visible     Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([slug])
+  @@index([type])
+  @@map("content_blocks")
+}

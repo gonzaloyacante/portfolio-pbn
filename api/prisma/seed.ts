@@ -226,6 +226,109 @@ async function main() {
     console.log('✅ Proyecto de ejemplo creado:', exampleProject.title);
   }
 
+  // 7. Crear configuración de diseño por defecto
+  await prisma.designSettings.upsert({
+    where: { id: 'singleton' },
+    update: {},
+    create: {
+      id: 'singleton',
+      primaryColor: '#8B0000',
+      secondaryColor: '#FFB6C1',
+      backgroundColor: '#FFF5F5',
+      textColor: '#2D2D2D',
+      accentColor: '#D4A5A5',
+      headingFont: 'Parisienne',
+      bodyFont: 'Inter',
+      headingSize: '4rem',
+      bodySize: '1rem',
+      lineHeight: '1.6',
+      containerMaxWidth: '1200px',
+      sectionPadding: '4rem 2rem',
+      elementSpacing: '2rem',
+      borderRadius: '0.5rem',
+      boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+      hoverTransform: 'translateY(-4px)',
+      transitionSpeed: '0.3s',
+    },
+  });
+  console.log('✅ Configuración de diseño creada');
+
+  // 8. Crear secciones de la página home
+  const homeSections = [
+    {
+      pageName: 'home',
+      sectionType: 'HERO',
+      title: 'Hero Principal',
+      order: 1,
+      visible: true,
+      config: {
+        imagePosition: 'left',
+        showStats: true,
+        ctaButtons: ['projects', 'contact'],
+      },
+    },
+    {
+      pageName: 'home',
+      sectionType: 'ABOUT',
+      title: 'Sobre Mí',
+      order: 2,
+      visible: true,
+      config: {
+        layout: 'side-by-side',
+        showSkills: true,
+      },
+    },
+    {
+      pageName: 'home',
+      sectionType: 'SKILLS',
+      title: 'Mis Habilidades',
+      order: 3,
+      visible: true,
+      config: {
+        layout: 'grid',
+        columns: 3,
+        showProgress: true,
+        cardStyle: 'elevated',
+      },
+    },
+    {
+      pageName: 'home',
+      sectionType: 'PROJECTS',
+      title: 'Proyectos Destacados',
+      order: 4,
+      visible: true,
+      config: {
+        showFeaturedOnly: true,
+        gridColumns: 3,
+      },
+    },
+    {
+      pageName: 'home',
+      sectionType: 'CONTACT',
+      title: 'Contáctame',
+      order: 5,
+      visible: true,
+      config: {
+        showSocialLinks: true,
+        formStyle: 'card',
+      },
+    },
+  ];
+
+  for (const section of homeSections) {
+    await prisma.pageSection.upsert({
+      where: {
+        pageName_sectionType: {
+          pageName: section.pageName,
+          sectionType: section.sectionType as any,
+        },
+      },
+      update: {},
+      create: section as any,
+    });
+  }
+  console.log('✅ Secciones de página creadas:', homeSections.length);
+
   console.log('');
   console.log('🎉 Seed completado exitosamente!');
   console.log('');

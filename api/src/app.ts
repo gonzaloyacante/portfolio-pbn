@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -15,8 +15,11 @@ import contactRoutes from './routes/contacts';
 import skillRoutes from './routes/skills';
 import socialLinkRoutes from './routes/socialLinks';
 import settingsRoutes from './routes/settings';
+import designSettingsRoutes from './routes/designSettings';
+import pageSectionsRoutes from './routes/pageSections';
+import contentBlocksRoutes from './routes/contentBlocks';
 
-const app = express();
+const app: Express = express();
 
 // Security middleware
 app.use(helmet());
@@ -80,6 +83,9 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/skills', skillRoutes);
 app.use('/api/social-links', socialLinkRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/design-settings', designSettingsRoutes);
+app.use('/api/page-sections', pageSectionsRoutes);
+app.use('/api/content-blocks', contentBlocksRoutes);
 
 // 404 handler
 app.use(notFound);

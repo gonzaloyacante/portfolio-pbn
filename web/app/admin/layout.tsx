@@ -98,6 +98,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Contactos', href: '/admin/contacts', icon: Mail },
     { name: 'Skills', href: '/admin/skills', icon: Award },
     { name: 'Redes Sociales', href: '/admin/social-links', icon: Share2 },
+    { name: '🎨 Diseño', href: '/admin/design', icon: Settings },
+    { name: '📐 Layout Manager', href: '/admin/layout-manager', icon: LayoutDashboard },
+    { name: '📦 Content Blocks', href: '/admin/content-blocks', icon: FolderKanban },
     { name: 'Configuración', href: '/admin/settings', icon: Settings },
   ];
 

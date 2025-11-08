@@ -9,7 +9,6 @@ import { ImageModal } from "./image-modal"
 import { apiClient } from "@/lib/api-client"
 
 interface ProjectsGridProps {
-  onNavigate: (page: string) => void
   selectedProject?: string | null
   onSelectProject?: (projectId: string | null) => void
 }
@@ -24,7 +23,7 @@ interface Project {
   images: Array<{ url: string; alt: string }>
 }
 
-export default function ProjectsGrid({ onNavigate, selectedProject, onSelectProject }: ProjectsGridProps) {
+export default function ProjectsGrid({ selectedProject, onSelectProject }: ProjectsGridProps) {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)

@@ -347,6 +347,104 @@ class ApiClient {
     })
     return result.data
   }
+
+  // ============================================
+  // CMS - DESIGN SETTINGS
+  // ============================================
+
+  async getDesignSettings() {
+    const result = await this.request<any>("/design-settings")
+    return result.data
+  }
+
+  async updateDesignSettings(data: any) {
+    const result = await this.request<any>("/design-settings", {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  // ============================================
+  // CMS - PAGE SECTIONS
+  // ============================================
+
+  async getPageSections(pageName?: string) {
+    const query = pageName ? `?pageName=${pageName}` : ""
+    const result = await this.request<any>(`/page-sections${query}`)
+    return result.data?.data || []
+  }
+
+  async getPageSection(id: string) {
+    const result = await this.request<any>(`/page-sections/${id}`)
+    return result.data
+  }
+
+  async createPageSection(data: any) {
+    const result = await this.request<any>("/page-sections", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async updatePageSection(id: string, data: any) {
+    const result = await this.request<any>(`/page-sections/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async deletePageSection(id: string) {
+    await this.request<any>(`/page-sections/${id}`, {
+      method: "DELETE",
+    })
+  }
+
+  async reorderPageSections(sections: Array<{ id: string; order: number }>) {
+    const result = await this.request<any>("/page-sections/reorder", {
+      method: "PUT",
+      body: JSON.stringify({ sections }),
+    })
+    return result.data
+  }
+
+  // ============================================
+  // CMS - CONTENT BLOCKS
+  // ============================================
+
+  async getContentBlocks() {
+    const result = await this.request<any>("/content-blocks")
+    return result.data?.data || []
+  }
+
+  async getContentBlock(id: string) {
+    const result = await this.request<any>(`/content-blocks/${id}`)
+    return result.data
+  }
+
+  async createContentBlock(data: any) {
+    const result = await this.request<any>("/content-blocks", {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async updateContentBlock(id: string, data: any) {
+    const result = await this.request<any>(`/content-blocks/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    })
+    return result.data
+  }
+
+  async deleteContentBlock(id: string) {
+    await this.request<any>(`/content-blocks/${id}`, {
+      method: "DELETE",
+    })
+  }
 }
 
 export const apiClient = new ApiClient()
