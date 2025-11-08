@@ -23,6 +23,22 @@ export function useDesignSettings() {
     }
   }
 
+  const loadGoogleFont = (fontName: string) => {
+    if (!fontName || fontName === 'inherit') return
+
+    const formattedFontName = fontName.replace(/\s+/g, '+')
+    const linkId = `google-font-${formattedFontName}`
+
+    // Check if font already loaded
+    if (document.getElementById(linkId)) return
+
+    const link = document.createElement('link')
+    link.id = linkId
+    link.rel = 'stylesheet'
+    link.href = `https://fonts.googleapis.com/css2?family=${formattedFontName}:wght@300;400;500;600;700&display=swap`
+    document.head.appendChild(link)
+  }
+
   const applyDesignSettings = (settings: any) => {
     if (!settings) return
 
@@ -35,9 +51,15 @@ export function useDesignSettings() {
     root.style.setProperty("--cms-text-color", settings.textColor)
     root.style.setProperty("--cms-accent-color", settings.accentColor)
 
-    // Tipografía
-    root.style.setProperty("--cms-heading-font", settings.headingFont)
-    root.style.setProperty("--cms-body-font", settings.bodyFont)
+    // Tipografía - cargar fuentes de Google
+    if (settings.headingFont) {
+      loadGoogleFont(settings.headingFont)
+      root.style.setProperty("--cms-heading-font", `'${settings.headingFont}', cursive, serif`)
+    }
+    if (settings.bodyFont) {
+      loadGoogleFont(settings.bodyFont)
+      root.style.setProperty("--cms-body-font", `'${settings.bodyFont}', sans-serif`)
+    }
     root.style.setProperty("--cms-heading-size", settings.headingSize)
     root.style.setProperty("--cms-body-size", settings.bodySize)
     root.style.setProperty("--cms-line-height", settings.lineHeight)

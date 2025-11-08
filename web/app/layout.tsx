@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Great_Vibes } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { DesignProvider } from "@/components/design-provider"
+import { SkipToContent } from "@/components/skip-to-content"
 import "./globals.css"
 
 const greatVibes = Great_Vibes({ 
@@ -12,9 +13,65 @@ const greatVibes = Great_Vibes({
 })
 
 export const metadata: Metadata = {
-  title: "Paola Bolívar Nievas - Maquilladora Profesional",
-  description: "Portfolio de Paola Bolívar Nievas, maquilladora especializada en audiovisuales",
-  generator: "v0.app",
+  title: {
+    default: "Paola Bolívar Nievas - Maquilladora Profesional | Portfolio",
+    template: "%s | Paola Bolívar Nievas"
+  },
+  description: "Portfolio profesional de Paola Bolívar Nievas, maquilladora especializada en audiovisuales, cine, televisión y eventos. Más de 5 años de experiencia transformando rostros y creando looks únicos en Granada, España.",
+  keywords: ["maquilladora", "maquilladora profesional", "makeup artist", "Granada", "España", "audiovisuales", "cine", "televisión", "eventos", "bodas", "portfolio", "Paola Bolívar Nievas"],
+  authors: [{ name: "Paola Bolívar Nievas" }],
+  creator: "Paola Bolívar Nievas",
+  publisher: "Paola Bolívar Nievas",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://paolabolivar.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'es_ES',
+    url: '/',
+    siteName: 'Paola Bolívar Nievas - Maquilladora Profesional',
+    title: 'Paola Bolívar Nievas - Maquilladora Profesional',
+    description: 'Portfolio profesional de Paola Bolívar Nievas, maquilladora especializada en audiovisuales, cine, televisión y eventos. Más de 5 años de experiencia.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Paola Bolívar Nievas - Maquilladora Profesional',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Paola Bolívar Nievas - Maquilladora Profesional',
+    description: 'Portfolio profesional de Paola Bolívar Nievas, maquilladora especializada en audiovisuales, cine, televisión y eventos.',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: 'google-site-verification-code',
+    // Agregar otros códigos de verificación si es necesario
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 }
 
 export default function RootLayout({
@@ -25,6 +82,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={greatVibes.variable}>
       <body className={`font-sans antialiased`}>
+        <SkipToContent />
         <DesignProvider>
           {children}
         </DesignProvider>

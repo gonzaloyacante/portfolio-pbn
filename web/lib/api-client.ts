@@ -78,10 +78,19 @@ class ApiClient {
       body: JSON.stringify({ email, password, name }),
     })
     
-    if (result.data?.accessToken) {
-      this.setToken(result.data.accessToken)
+    if (result.error) {
+      throw new Error(result.error)
     }
     
+    if (!result.data) {
+      throw new Error("No se recibió respuesta del servidor")
+    }
+    
+    if (!result.data.accessToken) {
+      throw new Error("Token de acceso no recibido")
+    }
+    
+    this.setToken(result.data.accessToken)
     return result.data
   }
 
@@ -91,10 +100,19 @@ class ApiClient {
       body: JSON.stringify({ email, password }),
     })
     
-    if (result.data?.accessToken) {
-      this.setToken(result.data.accessToken)
+    if (result.error) {
+      throw new Error(result.error)
     }
     
+    if (!result.data) {
+      throw new Error("No se recibió respuesta del servidor")
+    }
+    
+    if (!result.data.accessToken) {
+      throw new Error("Token de acceso no recibido")
+    }
+    
+    this.setToken(result.data.accessToken)
     return result.data
   }
 

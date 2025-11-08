@@ -60,6 +60,23 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data: blob: https://hebbkx1anhila5yf.public.blob.vercel-storage.com https://res.cloudinary.com https://efjqvgqvntgfsfurfxhl.supabase.co",
+              "connect-src 'self' http://localhost:5000 https://efjqvgqvntgfsfurfxhl.supabase.co https://res.cloudinary.com https://va.vercel-scripts.com",
+              "frame-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'self'",
+              "upgrade-insecure-requests"
+            ].join('; ')
+          },
         ],
       },
     ];

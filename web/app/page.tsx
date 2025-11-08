@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Script from "next/script"
 import Header from "@/components/Header"
 import Hero from "@/components/hero"
 import AboutSection from "@/components/about-section"
@@ -75,9 +76,46 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
-      <Header currentPage={currentPage} onNavigate={setCurrentPage} />
-      {sections.map((section) => renderSection(section))}
-    </main>
+    <>
+      {/* Structured Data - JSON-LD para SEO */}
+      <Script
+        id="structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            name: "Paola Bolívar Nievas",
+            jobTitle: "Maquilladora Profesional",
+            description: "Maquilladora especializada en audiovisuales, cine, televisión y eventos con más de 5 años de experiencia",
+            url: typeof window !== 'undefined' ? window.location.origin : 'https://paolabolivar.com',
+            image: typeof window !== 'undefined' ? `${window.location.origin}/og-image.jpg` : 'https://paolabolivar.com/og-image.jpg',
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Granada",
+              addressCountry: "ES",
+            },
+            sameAs: [
+              // Enlaces a redes sociales - se actualizarán dinámicamente
+            ],
+            alumniOf: {
+              "@type": "EducationalOrganization",
+              name: "Escuela de Maquillaje Profesional",
+            },
+            knowsAbout: ["Maquillaje Audiovisual", "Maquillaje para Cine", "Maquillaje para Televisión", "Maquillaje de Bodas", "Caracterización"],
+            workExample: {
+              "@type": "CreativeWork",
+              name: "Portfolio de Trabajos",
+              url: typeof window !== 'undefined' ? `${window.location.origin}/projects` : 'https://paolabolivar.com/projects',
+            },
+          }),
+        }}
+      />
+      
+      <main id="main-content" className="min-h-screen bg-background" role="main">
+        <Header currentPage={currentPage} onNavigate={setCurrentPage} />
+        {sections.map((section) => renderSection(section))}
+      </main>
+    </>
   )
 }
