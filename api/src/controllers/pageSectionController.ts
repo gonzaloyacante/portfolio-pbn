@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../config/database';
 
 // GET /api/page-sections?pageName=home - Obtener secciones de una página
 export const getPageSections = async (req: Request, res: Response): Promise<void> => {

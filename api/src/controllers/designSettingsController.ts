@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from '../config/database';
 
 // GET /api/design-settings - Obtener configuración de diseño
 export const getDesignSettings = async (_req: Request, res: Response): Promise<void> => {
