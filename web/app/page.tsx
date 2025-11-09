@@ -1,12 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import Script from "next/script"
 import Link from "next/link"
 import { ArrowRight, Sparkles, Award, Users, Palette, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import AboutSection from "@/components/about-section"
-import ProjectsGrid from "@/components/projects-grid"
 
 export default function Home() {
   return (

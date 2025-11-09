@@ -27,8 +27,6 @@ export function ImageUploader({
   const [dragActive, setDragActive] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-
   const uploadToCloudinary = async (file: File) => {
     // Create a signed upload using the API route
     const formData = new FormData()

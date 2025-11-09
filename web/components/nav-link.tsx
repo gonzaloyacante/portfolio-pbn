@@ -1,14 +1,13 @@
 "use client"
 
 interface NavLinkProps {
-  id: string
   label: string
   isActive: boolean
   onClick: () => void
   mobile?: boolean
 }
 
-export default function NavLink({ id, label, isActive, onClick, mobile = false }: NavLinkProps) {
+export default function NavLink({ label, isActive, onClick, mobile = false }: NavLinkProps) {
   return (
     <button
       onClick={onClick}

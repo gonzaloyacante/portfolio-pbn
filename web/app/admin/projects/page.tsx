@@ -36,12 +36,6 @@ interface Project {
   updatedAt: string
 }
 
-interface Category {
-  id: string
-  name: string
-  slug: string
-}
-
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
@@ -55,12 +49,8 @@ export default function AdminProjectsPage() {
   const loadData = async () => {
     try {
       setLoading(true)
-      const [projectsData, categoriesData] = await Promise.all([
-        apiClient.getAllProjectsAdmin(),
-        apiClient.getCategories(),
-      ])
+      const projectsData = await apiClient.getAllProjectsAdmin()
       setProjects(projectsData)
-      setCategories(categoriesData)
     } catch (err) {
       console.error('Error:', err)
     } finally {

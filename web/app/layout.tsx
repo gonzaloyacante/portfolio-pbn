@@ -1,15 +1,28 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Great_Vibes } from "next/font/google"
+import { Inter, Playfair_Display, Great_Vibes } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { DesignProvider } from "@/components/design-provider"
 import { SkipToContent } from "@/components/skip-to-content"
 import "./globals.css"
 
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const playfair = Playfair_Display({ 
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+})
+
 const greatVibes = Great_Vibes({ 
   weight: "400",
   subsets: ["latin"],
   variable: "--font-great-vibes",
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -80,8 +93,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" className={greatVibes.variable}>
-      <body className={`font-sans antialiased`}>
+    <html lang="es" className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}>
+      <body className={`${inter.className} antialiased`}>
         <SkipToContent />
         <DesignProvider>
           {children}

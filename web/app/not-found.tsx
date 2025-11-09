@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Home, ArrowLeft, Search } from 'lucide-react'
+import { Home, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 export default function NotFound() {

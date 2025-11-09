@@ -52,7 +52,6 @@ export default function Header({ currentPage, onNavigate }: HeaderProps) {
             {NAVIGATION_ITEMS.map((item) => (
               <NavLink
                 key={item.id}
-                id={item.id}
                 label={item.label}
                 isActive={currentPage === item.id}
                 onClick={() => handleNavigate(item.id)}
@@ -93,7 +92,6 @@ export default function Header({ currentPage, onNavigate }: HeaderProps) {
             {NAVIGATION_ITEMS.map((item) => (
               <NavLink
                 key={item.id}
-                id={item.id}
                 label={item.label}
                 isActive={currentPage === item.id}
                 onClick={() => handleNavigate(item.id)}
