@@ -416,3 +416,81 @@ input:focus-visible,
 textarea:focus-visible {
   @apply outline-2 outline-offset-2 outline-ring;
 }
+
+/* Mobile Responsive Improvements */
+@media (max-width: 640px) {
+  /* Reduce large text on mobile */
+  h1 {
+    @apply text-4xl;
+  }
+  
+  /* Better padding for mobile */
+  .container {
+    @apply px-4;
+  }
+  
+  /* Stack flex items on mobile */
+  .flex-mobile-stack {
+    @apply flex-col gap-4;
+  }
+  
+  /* Full width buttons on mobile */
+  button,
+  .btn {
+    @apply w-full;
+  }
+  
+  /* Reduce animation intensity on mobile */
+  .animate-blob {
+    animation-duration: 10s;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .grid {
+    @apply gap-4;
+  }
+}
+
+/* Prevent horizontal scroll */
+body {
+  @apply overflow-x-hidden;
+}
+
+/* Better image loading */
+img {
+  @apply max-w-full h-auto;
+}
+
+/* Card hover effects - disabled on touch devices */
+@media (hover: hover) {
+  .card:hover,
+  .project-card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* Better form inputs on mobile */
+@media (max-width: 640px) {
+  input,
+  textarea,
+  select {
+    @apply text-base;
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+}
+
+/* Ensure nav is always accessible */
+nav {
+  @apply w-full;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* Better spacing for small screens */
+@media (max-width: 640px) {
+  section {
+    @apply py-12;
+  }
+}
