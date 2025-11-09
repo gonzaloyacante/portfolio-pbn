@@ -54,8 +54,7 @@ export function proxy(request: NextRequest) {
   );
 
   // CSP - Allow API connection
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-  const cspConnectSrc = `'self' ${apiUrl} https://efjqvgqvntgfsfurfxhl.supabase.co https://res.cloudinary.com`;
+  const cspConnectSrc = `'self' http://localhost:5000 https://res.cloudinary.com`;
   
   response.headers.set(
     'Content-Security-Policy',

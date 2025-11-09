@@ -20,12 +20,19 @@ class ApiClient {
   setToken(token: string) {
     this.token = token
     if (typeof window !== "undefined") {
+      // Save token in cookie for middleware
+      document.cookie = `auth_token=${token}; path=/; max-age=3600; SameSite=Strict`
+      // Also save in localStorage as backup
       localStorage.setItem("auth_token", token)
     }
   }
 
   getToken() {
     if (typeof window !== "undefined") {
+      // Try to get from cookie first
+      const cookieMatch = document.cookie.match(/auth_token=([^;]+)/)
+      if (cookieMatch) return cookieMatch[1]
+      // Fallback to localStorage
       return localStorage.getItem("auth_token")
     }
     return this.token
@@ -34,6 +41,9 @@ class ApiClient {
   clearToken() {
     this.token = null
     if (typeof window !== "undefined") {
+      // Remove cookie
+      document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+      // Remove from localStorage
       localStorage.removeItem("auth_token")
     }
   }
@@ -95,7 +105,7 @@ class ApiClient {
   }
 
   async login(email: string, password: string) {
-    const result = await this.request<{ accessToken: string; user: any }>("/auth/login", {
+    const result = await this.request<{ token: string; id: string; email: string; name: string; role: string }>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     })
@@ -108,11 +118,11 @@ class ApiClient {
       throw new Error("No se recibió respuesta del servidor")
     }
     
-    if (!result.data.accessToken) {
+    if (!result.data.token) {
       throw new Error("Token de acceso no recibido")
     }
     
-    this.setToken(result.data.accessToken)
+    this.setToken(result.data.token)
     return result.data
   }
 

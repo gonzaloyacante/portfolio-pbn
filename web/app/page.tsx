@@ -1,80 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import Script from "next/script"
-import Header from "@/components/Header"
-import Hero from "@/components/hero"
-import AboutSection from "@/components/about-section"
-import SkillsSection from "@/components/skills-section"
-import ProjectsGrid from "@/components/projects-grid"
-import ContactSection from "@/components/contact-section"
-import { apiClient } from "@/lib/api-client"
-
-interface PageSection {
-  id: string
-  sectionType: string
-  visible: boolean
-  order: number
-}
+import Link from "next/link"
+import { ArrowRight, Sparkles } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState("home")
-  const [selectedProject, setSelectedProject] = useState<string | null>(null)
-  const [sections, setSections] = useState<PageSection[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadPageSections() {
-      try {
-        const data = await apiClient.getPageSections(currentPage)
-        setSections(
-          data
-            .filter((s: PageSection) => s.visible)
-            .sort((a: PageSection, b: PageSection) => a.order - b.order)
-        )
-      } catch (error) {
-        console.error("Error loading sections:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadPageSections()
-  }, [currentPage])
-
-  const renderSection = (section: PageSection) => {
-    switch (section.sectionType) {
-      case "HERO":
-        return <Hero key={section.id} onNavigate={setCurrentPage} />
-      case "ABOUT":
-        return <AboutSection key={section.id} onNavigate={setCurrentPage} />
-      case "SKILLS":
-        return <SkillsSection key={section.id} />
-      case "PROJECTS":
-        return (
-          <ProjectsGrid
-            key={section.id}
-            selectedProject={selectedProject}
-            onSelectProject={setSelectedProject}
-          />
-        )
-      case "CONTACT":
-        return <ContactSection key={section.id} onNavigate={setCurrentPage} />
-      default:
-        return null
-    }
-  }
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted">Cargando...</p>
-        </div>
-      </main>
-    )
-  }
-
   return (
     <>
       {/* Structured Data - JSON-LD para SEO */}
@@ -95,13 +26,6 @@ export default function Home() {
               addressLocality: "Granada",
               addressCountry: "ES",
             },
-            sameAs: [
-              // Enlaces a redes sociales - se actualizarán dinámicamente
-            ],
-            alumniOf: {
-              "@type": "EducationalOrganization",
-              name: "Escuela de Maquillaje Profesional",
-            },
             knowsAbout: ["Maquillaje Audiovisual", "Maquillaje para Cine", "Maquillaje para Televisión", "Maquillaje de Bodas", "Caracterización"],
             workExample: {
               "@type": "CreativeWork",
@@ -112,9 +36,48 @@ export default function Home() {
         }}
       />
       
-      <main id="main-content" className="min-h-screen bg-background" role="main">
-        <Header currentPage={currentPage} onNavigate={setCurrentPage} />
-        {sections.map((section) => renderSection(section))}
+      <main id="main-content" className="min-h-screen bg-white dark:bg-zinc-950" role="main">
+        {/* Hero Section - Minimalista */}
+        <section className="relative h-screen flex items-center justify-center overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950" />
+          
+          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 rounded-full text-sm mb-8">
+              <Sparkles className="w-4 h-4" />
+              <span>Maquilladora Profesional</span>
+            </div>
+            
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-6">
+              Paola Bolívar Nievas
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-zinc-600 dark:text-zinc-400 mb-12 max-w-2xl mx-auto">
+              Transformando visiones en realidad a través del arte del maquillaje audiovisual
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="rounded-full">
+                <Link href="/projects">
+                  Ver Proyectos
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Link>
+              </Button>
+              
+              <Button asChild size="lg" variant="outline" className="rounded-full">
+                <Link href="/contact">
+                  Contactar
+                </Link>
+              </Button>
+            </div>
+          </div>
+          
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+            <div className="w-6 h-10 border-2 border-zinc-300 dark:border-zinc-700 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-zinc-800 dark:bg-zinc-200 rounded-full mt-2 animate-bounce" />
+            </div>
+          </div>
+        </section>
       </main>
     </>
   )
