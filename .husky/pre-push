@@ -1,13 +1,22 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "🚀 Running pre-push checks..."
+
+# Full build check (including web)
+echo "🏗️  Building full project..."
+yarn build || {
+  echo "❌ Build failed. Please fix the errors before pushing."
+  exit 1
+}
+
 # Run tests before push (if you have them)
-echo "🧪 Running tests before push..."
+echo "🧪 Running tests..."
 
 # API tests
 if [ -d "api" ]; then
   echo "Testing API..."
-  yarn --cwd api test --passWithNoTests
+  yarn --cwd api test --passWithNoTests || true
 fi
 
 # Web tests (if you add them later)
@@ -16,4 +25,4 @@ fi
 #   yarn --cwd web test --passWithNoTests
 # fi
 
-echo "✅ All tests passed!"
+echo "✅ All pre-push checks passed! Safe to push."

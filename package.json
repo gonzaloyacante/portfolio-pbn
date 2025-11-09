@@ -37,7 +37,7 @@
     "type-check": "yarn api:type-check && yarn web:type-check",
     "validate": "yarn api:validate && yarn web:validate",
     "pre-commit": "yarn validate",
-    "prepare": "husky || true"
+    "prepare": "husky"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import * as contactController from '../controllers/contactController';
 import { authenticate, requireAdmin } from '../middleware/auth';
 
-const router = Router();
+const router: RouterType = Router();
 
 // Public routes
 router.post('/', contactController.createContact);

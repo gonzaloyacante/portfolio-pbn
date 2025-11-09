@@ -1,18 +1,41 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Run validation before commit
-echo "🔍 Running pre-commit validations..."
+echo "🔍 Running pre-commit checks..."
 
-# Run lint-staged
-npx lint-staged
+# Type check
+echo "📝 Type checking..."
+yarn type-check || {
+  echo "❌ TypeScript type check failed. Please fix the errors before committing."
+  exit 1
+}
 
-# Run type checking
-echo "🔍 Type checking..."
-yarn type-check
+# Lint
+echo "🧹 Linting..."
+yarn lint || {
+  echo "❌ ESLint check failed. Please fix the errors before committing."
+  exit 1
+}
 
-# Run Prisma validation (API only)
-echo "🔍 Validating Prisma schema..."
-yarn api:prisma:validate
+# Format check
+echo "✨ Checking code formatting..."
+yarn format:check || {
+  echo "❌ Prettier format check failed. Run 'yarn format' to fix formatting."
+  exit 1
+}
 
-echo "✅ All validations passed!"
+# API Build check
+echo "🏗️  Building API..."
+yarn api:build || {
+  echo "❌ API build failed. Please fix the errors before committing."
+  exit 1
+}
+
+# Prisma validation
+echo "🗃️  Validating Prisma schema..."
+yarn api:prisma:validate || {
+  echo "❌ Prisma schema validation failed. Please fix the schema errors."
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"

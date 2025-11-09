@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { Router, type Router as RouterType } from 'express';
 import * as categoryController from '../controllers/categoryController';
 import { authenticate, requireAdmin } from '../middleware/auth';
 
-const router = Router();
+const router: RouterType = Router();
 
 // Public routes
 router.get('/', categoryController.getCategories);
