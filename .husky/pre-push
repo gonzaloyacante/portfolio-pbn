@@ -4,25 +4,18 @@
 echo "🚀 Running pre-push checks..."
 
 # Full build check (including web)
-echo "🏗️  Building full project..."
-yarn build || {
-  echo "❌ Build failed. Please fix the errors before pushing."
+echo "🏗️  Building API..."
+cd api && pnpm build || {
+  echo "❌ API build failed. Please fix the errors before pushing."
   exit 1
 }
+cd ..
 
-# Run tests before push (if you have them)
-echo "🧪 Running tests..."
-
-# API tests
-if [ -d "api" ]; then
-  echo "Testing API..."
-  yarn --cwd api test --passWithNoTests || true
-fi
-
-# Web tests (if you add them later)
-# if [ -d "web" ]; then
-#   echo "Testing Web..."
-#   yarn --cwd web test --passWithNoTests
-# fi
+echo "🏗️  Building Web..."
+cd web && pnpm build || {
+  echo "❌ Web build failed. Please fix the errors before pushing."
+  exit 1
+}
+cd ..
 
 echo "✅ All pre-push checks passed! Safe to push."
