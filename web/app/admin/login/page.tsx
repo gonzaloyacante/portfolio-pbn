@@ -122,23 +122,18 @@ export default function AdminLoginPage() {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Iniciando sesión...
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   </>
                 ) : (
                   <>
-                    <Lock className="mr-2 h-5 w-5" />
                     Iniciar Sesión
+                    <Lock className="mr-2 h-5 w-5" />
                   </>
                 )}
               </Button>
             </div>
           </CardContent>
-          
-          <CardFooter className="flex flex-col space-y-2 text-center text-sm text-gray-500 pb-6">
-            <p>✨ Sistema de gestión de contenidos</p>
-            <p className="text-xs">Desarrollado con Next.js 16 + React 19</p>
-          </CardFooter>
         </form>
       </Card>
 
