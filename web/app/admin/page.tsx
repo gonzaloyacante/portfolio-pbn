@@ -10,8 +10,7 @@ import {
   MailOpen,
   Award,
   Share2,
-  Eye,
-  TrendingUp
+  Eye
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -39,7 +38,6 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Obtener datos de todas las entidades
         const [projects, categories, contacts, skills, socialLinks] = await Promise.all([
           apiClient.getAllProjectsAdmin(),
           apiClient.getCategories(),
@@ -69,39 +67,44 @@ export default function AdminDashboard() {
 
   const statCards = [
     {
-      title: 'Proyectos Totales',
+      title: 'Proyectos',
       value: stats.totalProjects,
       icon: FolderKanban,
       description: `${stats.publishedProjects} publicados`,
-      color: 'text-blue-600',
+      gradient: 'from-blue-500 to-cyan-500',
+      bgGradient: 'from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30',
     },
     {
       title: 'Categorías',
       value: stats.totalCategories,
       icon: Tags,
-      description: 'Total de categorías',
-      color: 'text-purple-600',
+      description: 'Organiza tus proyectos',
+      gradient: 'from-purple-500 to-pink-500',
+      bgGradient: 'from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30',
     },
     {
-      title: 'Contactos Nuevos',
+      title: 'Mensajes',
       value: stats.newContacts,
-      icon: Mail,
-      description: `${stats.totalContacts} total`,
-      color: 'text-red-600',
+      icon: stats.newContacts > 0 ? MailOpen : Mail,
+      description: stats.newContacts > 0 ? `${stats.newContacts} nuevos` : 'Sin mensajes nuevos',
+      gradient: 'from-rose-500 to-red-500',
+      bgGradient: 'from-rose-50 to-red-50 dark:from-rose-950/30 dark:to-red-950/30',
     },
     {
-      title: 'Skills',
+      title: 'Habilidades',
       value: stats.totalSkills,
       icon: Award,
-      description: 'Habilidades activas',
-      color: 'text-green-600',
+      description: 'Tus capacidades',
+      gradient: 'from-emerald-500 to-green-500',
+      bgGradient: 'from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30',
     },
     {
       title: 'Redes Sociales',
       value: stats.totalSocialLinks,
       icon: Share2,
-      description: 'Enlaces configurados',
-      color: 'text-pink-600',
+      description: 'Enlaces activos',
+      gradient: 'from-amber-500 to-orange-500',
+      bgGradient: 'from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30',
     },
   ];
 
@@ -126,25 +129,38 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Resumen del estado del portfolio</p>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+          ¡Bienvenida de vuelta!
+        </h1>
+        <p className="text-gray-600 dark:text-gray-400 mt-2 text-lg">
+          Aquí está el resumen de tu portfolio
+        </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {statCards.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.title}>
-              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                <Icon className={`h-5 w-5 ${stat.color}`} />
+            <Card key={stat.title} className={`border-0 shadow-lg bg-gradient-to-br ${stat.bgGradient} overflow-hidden relative group hover:shadow-xl transition-shadow duration-300`}>
+              <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0 relative z-10">
+                <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  {stat.title}
+                </CardTitle>
+                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-md`}>
+                  <Icon className="h-5 w-5 text-white" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
+              <CardContent className="relative z-10">
+                <div className="text-4xl font-bold bg-gradient-to-br ${stat.gradient} bg-clip-text text-transparent">
+                  {stat.value}
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 font-medium">
+                  {stat.description}
+                </p>
               </CardContent>
             </Card>
           );
@@ -152,40 +168,55 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <Card>
+      <Card className="border-0 shadow-xl bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle>Acciones Rápidas</CardTitle>
+          <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+            ¿Qué quieres hacer hoy?
+          </CardTitle>
+          <p className="text-gray-600 dark:text-gray-400">Acciones rápidas para gestionar tu portfolio</p>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             <a
               href="/admin/projects"
-              className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="group flex items-start gap-4 p-5 rounded-2xl border-2 border-gray-200/50 dark:border-gray-700/50 hover:border-blue-300 dark:hover:border-blue-700 bg-gradient-to-br from-blue-50/50 to-cyan-50/50 dark:from-blue-950/20 dark:to-cyan-950/20 hover:shadow-lg transition-all duration-300"
             >
-              <FolderKanban className="h-6 w-6 text-blue-600" />
-              <div>
-                <p className="font-medium">Gestionar Proyectos</p>
-                <p className="text-sm text-muted-foreground">Crear y editar proyectos</p>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <FolderKanban className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-gray-900 dark:text-white text-lg">Mis Proyectos</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Agregar y editar tus trabajos
+                </p>
               </div>
             </a>
             <a
               href="/admin/contacts"
-              className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="group flex items-start gap-4 p-5 rounded-2xl border-2 border-gray-200/50 dark:border-gray-700/50 hover:border-rose-300 dark:hover:border-rose-700 bg-gradient-to-br from-rose-50/50 to-red-50/50 dark:from-rose-950/20 dark:to-red-950/20 hover:shadow-lg transition-all duration-300"
             >
-              <Mail className="h-6 w-6 text-red-600" />
-              <div>
-                <p className="font-medium">Ver Contactos</p>
-                <p className="text-sm text-muted-foreground">Revisar mensajes nuevos</p>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-rose-500 to-red-500 shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <Mail className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-gray-900 dark:text-white text-lg">Mensajes</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Ver contactos recibidos
+                </p>
               </div>
             </a>
             <a
               href="/admin/settings"
-              className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="group flex items-start gap-4 p-5 rounded-2xl border-2 border-gray-200/50 dark:border-gray-700/50 hover:border-purple-300 dark:hover:border-purple-700 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20 hover:shadow-lg transition-all duration-300"
             >
-              <Eye className="h-6 w-6 text-purple-600" />
-              <div>
-                <p className="font-medium">Configuración</p>
-                <p className="text-sm text-muted-foreground">Editar info del portfolio</p>
+              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-md group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                <Eye className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-gray-900 dark:text-white text-lg">Configuración</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Editar información general
+                </p>
               </div>
             </a>
           </div>

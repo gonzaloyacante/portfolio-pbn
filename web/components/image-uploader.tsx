@@ -28,20 +28,16 @@ export function ImageUploader({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
-  const uploadPreset = 'portfolio-pbn' // Necesitarás crear esto en Cloudinary
 
   const uploadToCloudinary = async (file: File) => {
+    // Create a signed upload using the API route
     const formData = new FormData()
     formData.append('file', file)
-    formData.append('upload_preset', uploadPreset)
 
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    )
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    })
 
     if (!response.ok) throw new Error('Error al subir la imagen')
     return response.json()

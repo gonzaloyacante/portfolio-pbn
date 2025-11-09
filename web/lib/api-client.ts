@@ -161,6 +161,11 @@ class ApiClient {
     return result?.data?.data || []
   }
 
+  async getProject(id: string) {
+    const result = await this.request<any>(`/projects/${id}`)
+    return result.data
+  }
+
   async getProjectBySlug(slug: string) {
     const result = await this.request<any>(`/projects/${slug}`)
     return result.data

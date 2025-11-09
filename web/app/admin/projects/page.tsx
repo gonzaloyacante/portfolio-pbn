@@ -1,780 +1,264 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { apiClient } from '@/lib/api-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useEffect, useState } from 'react'
+import { apiClient } from '@/lib/api-client'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import {
   Plus,
   Pencil,
   Trash2,
-  Image as ImageIcon,
-  Eye,
   Search,
-  Filter,
-  X,
-} from 'lucide-react';
+  Star,
+  StarOff,
+  Loader2,
+  Image as ImageIcon,
+} from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 
 interface Project {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  content: string;
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
-  featured: boolean;
-  categoryId: string;
-  category: { id: string; name: string; slug: string };
-  images: Array<{ id: string; url: string; altText: string; order: number }>;
-  order: number;
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  title: string
+  slug: string
+  description: string
+  shortDescription: string
+  thumbnailUrl: string
+  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED'
+  featured: boolean
+  categoryId: string
+  category: { id: string; name: string; slug: string }
+  images: Array<{ id: string; url: string; alt: string; order: number }>
+  order: number
+  createdAt: string
+  updatedAt: string
 }
 
 interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface ProjectFormData {
-  title: string;
-  description: string;
-  content: string;
-  categoryId: string;
-  status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
-  featured: boolean;
-  order: number;
+  id: string
+  name: string
+  slug: string
 }
 
 export default function AdminProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  // Filters
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  // Modals
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [imagesModalOpen, setImagesModalOpen] = useState(false);
-
-  // Selected project for edit/delete/images
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
-  // Form data
-  const [formData, setFormData] = useState<ProjectFormData>({
-    title: '',
-    description: '',
-    content: '',
-    categoryId: '',
-    status: 'DRAFT',
-    featured: false,
-    order: 0,
-  });
-
-  // Image management
-  const [newImageUrl, setNewImageUrl] = useState('');
-  const [newImageAlt, setNewImageAlt] = useState('');
-
-  // Submitting state
-  const [submitting, setSubmitting] = useState(false);
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    loadData()
+  }, [])
 
-  const fetchData = async () => {
+  const loadData = async () => {
     try {
-      setLoading(true);
+      setLoading(true)
       const [projectsData, categoriesData] = await Promise.all([
         apiClient.getAllProjectsAdmin(),
         apiClient.getCategories(),
-      ]);
-      setProjects(projectsData || []);
-      setCategories(categoriesData || []);
-    } catch (err: any) {
-      setError(err.message || 'Error al cargar datos');
+      ])
+      setProjects(projectsData)
+      setCategories(categoriesData)
+    } catch (err) {
+      console.error('Error:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const handleCreateProject = async () => {
-    try {
-      setSubmitting(true);
-      setError('');
-      await apiClient.createProject(formData);
-      await fetchData();
-      setCreateModalOpen(false);
-      resetForm();
-    } catch (err: any) {
-      setError(err.message || 'Error al crear proyecto');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleUpdateProject = async () => {
-    if (!selectedProject) return;
-    try {
-      setSubmitting(true);
-      setError('');
-      await apiClient.updateProject(selectedProject.id, formData);
-      await fetchData();
-      setEditModalOpen(false);
-      setSelectedProject(null);
-      resetForm();
-    } catch (err: any) {
-      setError(err.message || 'Error al actualizar proyecto');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDeleteProject = async () => {
-    if (!selectedProject) return;
-    try {
-      setSubmitting(true);
-      setError('');
-      await apiClient.deleteProject(selectedProject.id);
-      await fetchData();
-      setDeleteModalOpen(false);
-      setSelectedProject(null);
-    } catch (err: any) {
-      setError(err.message || 'Error al eliminar proyecto');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleAddImage = async () => {
-    if (!selectedProject || !newImageUrl) return;
-    try {
-      setSubmitting(true);
-      setError('');
-      await apiClient.addProjectImage(selectedProject.id, {
-        url: newImageUrl,
-        alt: newImageAlt || selectedProject.title,
-        order: selectedProject.images.length,
-      });
-      await fetchData();
-      // Update selected project
-      const updated = await apiClient.getAllProjectsAdmin();
-      const updatedProject = updated.find((p: Project) => p.id === selectedProject.id);
-      if (updatedProject) setSelectedProject(updatedProject);
-      setNewImageUrl('');
-      setNewImageAlt('');
-    } catch (err: any) {
-      setError(err.message || 'Error al añadir imagen');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleDeleteImage = async (imageId: string) => {
-    if (!selectedProject) return;
-    try {
-      setSubmitting(true);
-      setError('');
-      await apiClient.deleteProjectImage(selectedProject.id, imageId);
-      await fetchData();
-      // Update selected project
-      const updated = await apiClient.getAllProjectsAdmin();
-      const updatedProject = updated.find((p: Project) => p.id === selectedProject.id);
-      if (updatedProject) setSelectedProject(updatedProject);
-    } catch (err: any) {
-      setError(err.message || 'Error al eliminar imagen');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const openEditModal = (project: Project) => {
-    setSelectedProject(project);
-    setFormData({
-      title: project.title,
-      description: project.description,
-      content: project.content,
-      categoryId: project.categoryId,
-      status: project.status,
-      featured: project.featured,
-      order: project.order,
-    });
-    setEditModalOpen(true);
-  };
-
-  const openDeleteModal = (project: Project) => {
-    setSelectedProject(project);
-    setDeleteModalOpen(true);
-  };
-
-  const openImagesModal = (project: Project) => {
-    setSelectedProject(project);
-    setImagesModalOpen(true);
-  };
-
-  const openCreateModal = () => {
-    resetForm();
-    setCreateModalOpen(true);
-  };
-
-  const resetForm = () => {
-    setFormData({
-      title: '',
-      description: '',
-      content: '',
-      categoryId: '',
-      status: 'DRAFT',
-      featured: false,
-      order: 0,
-    });
-    setError('');
-  };
-
-  // Filter projects
   const filteredProjects = projects.filter((project) => {
-    if (statusFilter !== 'all' && project.status !== statusFilter) return false;
-    if (categoryFilter !== 'all' && project.categoryId !== categoryFilter) return false;
-    if (searchQuery && !project.title.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false;
-    }
-    return true;
-  });
+    const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         project.description.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesStatus = statusFilter === 'all' || project.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
-  const getStatusBadge = (status: string) => {
-    const variants: Record<string, 'default' | 'secondary' | 'destructive'> = {
-      PUBLISHED: 'default',
-      DRAFT: 'secondary',
-      ARCHIVED: 'destructive',
-    };
-    return (
-      <Badge variant={variants[status] || 'default'}>
-        {status === 'PUBLISHED' ? 'Publicado' : status === 'DRAFT' ? 'Borrador' : 'Archivado'}
-      </Badge>
-    );
-  };
+  const toggleFeatured = async (projectId: string, currentFeatured: boolean) => {
+    try {
+      await apiClient.updateProject(projectId, { featured: !currentFeatured })
+      loadData()
+    } catch (err) {
+      console.error('Error:', err)
+    }
+  }
+
+  const deleteProject = async (projectId: string) => {
+    if (!confirm('¿Estás segura de eliminar este proyecto?')) return
+    
+    try {
+      await apiClient.deleteProject(projectId)
+      loadData()
+    } catch (err) {
+      console.error('Error:', err)
+    }
+  }
 
   if (loading) {
     return (
-      <div className="space-y-4">
-        <h1 className="text-3xl font-bold">Proyectos</h1>
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
-            <p className="mt-2 text-sm text-muted-foreground">Cargando proyectos...</p>
-          </div>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-rose-500" />
       </div>
-    );
+    )
   }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Proyectos</h1>
-          <p className="text-muted-foreground">
-            Gestiona todos los proyectos del portfolio
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+            Mis Proyectos
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Gestiona todos tus trabajos y portfolio
           </p>
         </div>
-        <Button onClick={openCreateModal}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo Proyecto
-        </Button>
+        <Link href="/admin/projects/new">
+          <Button size="lg" className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 shadow-lg shadow-rose-500/30">
+            <Plus className="h-5 w-5 mr-2" />
+            Crear Proyecto
+          </Button>
+        </Link>
       </div>
 
-      {/* Error Alert */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filtros
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            {/* Search */}
-            <div className="space-y-2">
-              <Label>Buscar</Label>
-              <div className="relative">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar por título..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-            </div>
-
-            {/* Status Filter */}
-            <div className="space-y-2">
-              <Label>Estado</Label>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="PUBLISHED">Publicados</SelectItem>
-                  <SelectItem value="DRAFT">Borradores</SelectItem>
-                  <SelectItem value="ARCHIVED">Archivados</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Category Filter */}
-            <div className="space-y-2">
-              <Label>Categoría</Label>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <Card className="p-4 border-0 shadow-lg bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Input
+              placeholder="Buscar proyectos..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12 border-2 focus:border-rose-300 dark:focus:border-rose-700"
+            />
           </div>
-
-          {/* Clear Filters */}
-          {(statusFilter !== 'all' || categoryFilter !== 'all' || searchQuery) && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setStatusFilter('all');
-                setCategoryFilter('all');
-                setSearchQuery('');
-              }}
-              className="mt-4"
-            >
-              <X className="h-4 w-4 mr-2" />
-              Limpiar Filtros
-            </Button>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Projects Table */}
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Destacado</TableHead>
-                <TableHead>Imágenes</TableHead>
-                <TableHead>Orden</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProjects.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No se encontraron proyectos
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredProjects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell className="font-medium">{project.title}</TableCell>
-                    <TableCell>{project.category.name}</TableCell>
-                    <TableCell>{getStatusBadge(project.status)}</TableCell>
-                    <TableCell>
-                      {project.featured && (
-                        <Badge variant="outline" className="bg-yellow-50">
-                          ⭐ Destacado
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>{project.images.length}</TableCell>
-                    <TableCell>{project.order}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openImagesModal(project)}
-                          title="Gestionar imágenes"
-                        >
-                          <ImageIcon className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEditModal(project)}
-                          title="Editar"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openDeleteModal(project)}
-                          title="Eliminar"
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-
-      {/* Create/Edit Modal */}
-      <Dialog open={createModalOpen || editModalOpen} onOpenChange={(open) => {
-        if (!open) {
-          setCreateModalOpen(false);
-          setEditModalOpen(false);
-          setSelectedProject(null);
-          resetForm();
-        }
-      }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {createModalOpen ? 'Crear Nuevo Proyecto' : 'Editar Proyecto'}
-            </DialogTitle>
-            <DialogDescription>
-              {createModalOpen
-                ? 'Completa los datos para crear un nuevo proyecto'
-                : 'Actualiza la información del proyecto'}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            {/* Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Título *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                placeholder="Ej: Maquillaje de novia elegante"
-              />
-            </div>
-
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Descripción *</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Breve descripción del proyecto..."
-                rows={3}
-              />
-            </div>
-
-            {/* Content */}
-            <div className="space-y-2">
-              <Label htmlFor="content">Contenido Detallado *</Label>
-              <Textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Descripción completa del proyecto, técnicas utilizadas, etc..."
-                rows={5}
-              />
-            </div>
-
-            {/* Category */}
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoría *</Label>
-              <Select
-                value={formData.categoryId}
-                onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
+          <div className="flex gap-2">
+            {['all', 'PUBLISHED', 'DRAFT', 'ARCHIVED'].map((status) => (
+              <Button
+                key={status}
+                variant={statusFilter === status ? 'default' : 'outline'}
+                onClick={() => setStatusFilter(status)}
+                className={statusFilter === status ? 'bg-gradient-to-r from-rose-500 to-pink-600' : ''}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona una categoría" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              {/* Status */}
-              <div className="space-y-2">
-                <Label htmlFor="status">Estado *</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(value: any) => setFormData({ ...formData, status: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="DRAFT">Borrador</SelectItem>
-                    <SelectItem value="PUBLISHED">Publicado</SelectItem>
-                    <SelectItem value="ARCHIVED">Archivado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Order */}
-              <div className="space-y-2">
-                <Label htmlFor="order">Orden</Label>
-                <Input
-                  id="order"
-                  type="number"
-                  value={formData.order}
-                  onChange={(e) =>
-                    setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
-                  }
-                />
-              </div>
-
-              {/* Featured */}
-              <div className="space-y-2">
-                <Label htmlFor="featured">Destacado</Label>
-                <div className="flex items-center h-10">
-                  <input
-                    id="featured"
-                    type="checkbox"
-                    checked={formData.featured}
-                    onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    className="h-4 w-4 rounded border-gray-300"
-                  />
-                  <label htmlFor="featured" className="ml-2 text-sm">
-                    Destacar en home
-                  </label>
-                </div>
-              </div>
-            </div>
+                {status === 'all' ? 'Todos' : 
+                 status === 'PUBLISHED' ? 'Publicados' :
+                 status === 'DRAFT' ? 'Borradores' : 'Archivados'}
+              </Button>
+            ))}
           </div>
+        </div>
+      </Card>
 
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setCreateModalOpen(false);
-                setEditModalOpen(false);
-                setSelectedProject(null);
-                resetForm();
-              }}
-              disabled={submitting}
-            >
-              Cancelar
+      {/* Projects Grid */}
+      {filteredProjects.length === 0 ? (
+        <Card className="p-12 text-center border-2 border-dashed border-gray-300 dark:border-gray-700">
+          <ImageIcon className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            No hay proyectos
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {searchQuery ? 'No se encontraron proyectos con ese nombre' : 'Comienza creando tu primer proyecto'}
+          </p>
+          <Link href="/admin/projects/new">
+            <Button className="bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Crear Mi Primer Proyecto
             </Button>
-            <Button
-              onClick={createModalOpen ? handleCreateProject : handleUpdateProject}
-              disabled={submitting || !formData.title || !formData.categoryId}
+          </Link>
+        </Card>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {filteredProjects.map((project) => (
+            <Card
+              key={project.id}
+              className="group overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-900"
             >
-              {submitting ? 'Guardando...' : createModalOpen ? 'Crear' : 'Actualizar'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Delete Confirmation */}
-      <AlertDialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Se eliminará permanentemente el proyecto "
-              {selectedProject?.title}" y todas sus imágenes.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={submitting}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteProject}
-              disabled={submitting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {submitting ? 'Eliminando...' : 'Eliminar'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Images Management Modal */}
-      <Dialog open={imagesModalOpen} onOpenChange={(open) => {
-        if (!open) {
-          setImagesModalOpen(false);
-          setSelectedProject(null);
-          setNewImageUrl('');
-          setNewImageAlt('');
-        }
-      }}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Gestionar Imágenes - {selectedProject?.title}</DialogTitle>
-            <DialogDescription>
-              Añade o elimina imágenes del proyecto
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            {/* Add New Image */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Añadir Nueva Imagen</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-2">
-                  <Label htmlFor="imageUrl">URL de la imagen *</Label>
-                  <Input
-                    id="imageUrl"
-                    value={newImageUrl}
-                    onChange={(e) => setNewImageUrl(e.target.value)}
-                    placeholder="https://..."
+              {/* Image */}
+              <div className="relative aspect-video overflow-hidden bg-gray-100 dark:bg-gray-800">
+                {project.thumbnailUrl ? (
+                  <Image
+                    src={project.thumbnailUrl}
+                    alt={project.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <ImageIcon className="h-16 w-16 text-gray-300" />
+                  </div>
+                )}
+                
+                {/* Status Badge */}
+                <div className="absolute top-3 left-3">
+                  <Badge
+                    className={`${
+                      project.status === 'PUBLISHED'
+                        ? 'bg-green-500'
+                        : project.status === 'DRAFT'
+                        ? 'bg-yellow-500'
+                        : 'bg-gray-500'
+                    } text-white border-0 shadow-lg`}
+                  >
+                    {project.status === 'PUBLISHED' ? 'Publicado' :
+                     project.status === 'DRAFT' ? 'Borrador' : 'Archivado'}
+                  </Badge>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="imageAlt">Texto alternativo</Label>
-                  <Input
-                    id="imageAlt"
-                    value={newImageAlt}
-                    onChange={(e) => setNewImageAlt(e.target.value)}
-                    placeholder="Descripción de la imagen"
-                  />
-                </div>
-                <Button
-                  onClick={handleAddImage}
-                  disabled={submitting || !newImageUrl}
-                  size="sm"
+
+                {/* Featured Star */}
+                <button
+                  onClick={() => toggleFeatured(project.id, project.featured)}
+                  className="absolute top-3 right-3 p-2 rounded-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm hover:scale-110 transition-transform"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {submitting ? 'Añadiendo...' : 'Añadir Imagen'}
-                </Button>
-              </CardContent>
-            </Card>
+                  {project.featured ? (
+                    <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+                  ) : (
+                    <StarOff className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
+              </div>
 
-            {/* Current Images */}
-            <div className="space-y-2">
-              <Label>Imágenes Actuales ({selectedProject?.images.length || 0})</Label>
-              {selectedProject?.images.length === 0 ? (
-                <p className="text-sm text-muted-foreground py-8 text-center border rounded-lg">
-                  No hay imágenes en este proyecto
+              {/* Content */}
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {project.category?.name || 'Sin categoría'}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-4">
+                  {project.shortDescription || project.description}
                 </p>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {selectedProject?.images
-                    .sort((a, b) => a.order - b.order)
-                    .map((image) => (
-                      <Card key={image.id}>
-                        <CardContent className="p-4">
-                          <div className="space-y-3">
-                            <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
-                              <img
-                                src={image.url}
-                                alt={image.altText}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{image.altText}</p>
-                                <p className="text-xs text-muted-foreground">
-                                  Orden: {image.order}
-                                </p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleDeleteImage(image.id)}
-                                disabled={submitting}
-                                className="flex-shrink-0"
-                              >
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
-              )}
-            </div>
-          </div>
 
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                setImagesModalOpen(false);
-                setSelectedProject(null);
-                setNewImageUrl('');
-                setNewImageAlt('');
-              }}
-            >
-              Cerrar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Link href={`/admin/projects/${project.id}`} className="flex-1">
+                    <Button variant="outline" className="w-full border-2 hover:border-rose-300 dark:hover:border-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30">
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="border-2 hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600"
+                    onClick={() => deleteProject(project.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
-  );
+  )
 }
