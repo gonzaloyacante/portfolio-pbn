@@ -58,48 +58,68 @@ export const register = async (req: Request, res: Response) => {
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = loginSchema.parse(req.body);
+  try {
+    const { email, password } = loginSchema.parse(req.body);
 
-  // Find user
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    throw new AppError('Credenciales inválidas', 401);
+    // Find user
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(401).json({ 
+        success: false,
+        error: 'Credenciales inválidas',
+        message: 'El email o la contraseña son incorrectos' 
+      });
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ 
+        success: false,
+        error: 'Credenciales inválidas',
+        message: 'El email o la contraseña son incorrectos' 
+      });
+    }
+
+    // Generate tokens
+    const accessToken = generateAccessToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = generateRefreshToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    // Send refresh token as httpOnly cookie
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env['NODE_ENV'] === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    return res.json({
+      success: true,
+      data: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        token: accessToken,
+      }
+    });
+  } catch (error: any) {
+    console.error('Login error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Error en el servidor',
+      message: 'Ocurrió un error al iniciar sesión. Por favor, inténtalo de nuevo.'
+    });
   }
-
-  // Verify password
-  const isValidPassword = await bcrypt.compare(password, user.password);
-  if (!isValidPassword) {
-    throw new AppError('Credenciales inválidas', 401);
-  }
-
-  // Generate tokens
-  const accessToken = generateAccessToken({
-    id: user.id,
-    email: user.email,
-    role: user.role,
-  });
-
-  const refreshToken = generateRefreshToken({
-    id: user.id,
-    email: user.email,
-    role: user.role,
-  });
-
-  // Send refresh token as httpOnly cookie
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: process.env['NODE_ENV'] === 'production',
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
-
-  res.json({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    token: accessToken,
-  });
 };
 
 export const refresh = async (req: Request, res: Response) => {

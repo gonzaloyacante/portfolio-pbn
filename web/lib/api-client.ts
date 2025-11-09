@@ -4,6 +4,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/a
 interface ApiResponse<T> {
   data?: T
   error?: string
+  message?: string
+  success?: boolean
   total?: number
   limit?: number
   offset?: number
@@ -105,25 +107,33 @@ class ApiClient {
   }
 
   async login(email: string, password: string) {
-    const result = await this.request<{ token: string; id: string; email: string; name: string; role: string }>("/auth/login", {
+    const result = await this.request<any>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     })
+    
+    // Manejar respuesta de error del servidor
+    if (!result.success && result.error) {
+      throw new Error(result.message || result.error || "Error al iniciar sesión")
+    }
     
     if (result.error) {
       throw new Error(result.error)
     }
     
-    if (!result.data) {
+    // La respuesta exitosa viene en result.data.data
+    const userData = result.data?.data || result.data
+    
+    if (!userData) {
       throw new Error("No se recibió respuesta del servidor")
     }
     
-    if (!result.data.token) {
+    if (!userData.token) {
       throw new Error("Token de acceso no recibido")
     }
     
-    this.setToken(result.data.token)
-    return result.data
+    this.setToken(userData.token)
+    return userData
   }
 
   async logout() {

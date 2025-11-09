@@ -52,13 +52,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         const userData = await apiClient.getMe();
         
+        // Verificar que userData existe y tiene las propiedades necesarias
+        if (!userData || !userData.id) {
+          throw new Error('Datos de usuario inválidos');
+        }
+        
         if (userData.role !== 'ADMIN') {
           throw new Error('No tienes permisos de administrador');
         }
 
         setUser(userData);
-      } catch (err) {
-        console.error('Error de autenticación:', err);
+      } catch (err: any) {
+        console.error('Error de autenticación:', err?.message || err);
         apiClient.clearToken();
         router.push('/admin/login');
       } finally {
