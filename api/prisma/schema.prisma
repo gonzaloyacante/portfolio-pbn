@@ -1,0 +1,97 @@
+// Prisma schema for Portfolio-PBN API
+// SQLite for development; can migrate to Postgres/MySQL later
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(EDITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  uid       String?   @unique @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([slug])
+  @@index([name])
+}
+
+model Project {
+  id          Int            @id @default(autoincrement())
+  uid         String?        @unique @default(uuid())
+  title       String
+  description String
+  categoryId  Int
+  category    Category       @relation(fields: [categoryId], references: [id])
+  images      ProjectImage[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+// Map external sources (e.g., Firebase IDs) to internal entities for idempotent imports
+model ImportMap {
+  id            Int     @id @default(autoincrement())
+  entity        String
+  sourceId      String
+  targetCatId   Int?
+  targetProjId  Int?
+
+  @@unique([entity, sourceId])
+}
+
+model ProjectImage {
+  id        Int     @id @default(autoincrement())
+  url       String
+  order     Int     @default(0)
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id])
+}
+
+model Presentation {
+  id        Int      @id @default(1)
+  // Keep single row (id = 1)
+  title     String
+  content   String   // HTML or markdown rendered to HTML
+  imageUrl  String?
+  updatedAt DateTime @updatedAt
+}
+
+model GalleryImage {
+  id        Int      @id @default(autoincrement())
+  url       String
+  name      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Settings {
+  id        Int      @id @default(1)
+  title     String
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id          Int      @id @default(1)
+  email       String
+  socialsJson String   // JSON string with socials structure
+  updatedAt   DateTime @updatedAt
+}
