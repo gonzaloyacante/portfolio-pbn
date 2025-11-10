@@ -102,3 +102,8 @@ temp/
 # AI Instructions (if you don't want to version them)
 .github/instructions/*.md
 !.github/instructions/README.md
+
+# Markdown documentation files (except main README)
+*.md
+!README.md
+!.github/**/*.md

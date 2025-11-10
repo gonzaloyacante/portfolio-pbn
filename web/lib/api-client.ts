@@ -1,5 +1,6 @@
 // API client for frontend - Portfolio PBN v2
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"
+// Now using Next.js API Routes instead of external backend
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api"
 
 interface ApiResponse<T> {
   data?: T
@@ -196,12 +197,12 @@ class ApiClient {
     if (params?.limit) query.append("limit", params.limit.toString())
     if (params?.offset) query.append("offset", params.offset.toString())
 
-  const result = await this.request<any>(`/projects/admin/all?${query}`)
-  return result?.data?.data || []
+    const result = await this.request<any>(`/admin/projects?${query}`)
+    return result?.data?.data || []
   }
 
   async createProject(data: any) {
-    const result = await this.request<any>("/projects/admin", {
+    const result = await this.request<any>("/admin/projects", {
       method: "POST",
       body: JSON.stringify(data),
     })
@@ -209,7 +210,7 @@ class ApiClient {
   }
 
   async updateProject(id: string, data: any) {
-    const result = await this.request<any>(`/projects/admin/${id}`, {
+    const result = await this.request<any>(`/admin/projects?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -217,12 +218,12 @@ class ApiClient {
   }
 
   async deleteProject(id: string) {
-    const result = await this.request(`/projects/admin/${id}`, { method: "DELETE" })
+    const result = await this.request(`/admin/projects?id=${id}`, { method: "DELETE" })
     return result.data
   }
 
   async addProjectImage(projectId: string, data: { url: string; alt: string; order?: number }) {
-    const result = await this.request<any>(`/projects/admin/${projectId}/images`, {
+    const result = await this.request<any>(`/admin/projects/images?projectId=${projectId}`, {
       method: "POST",
       body: JSON.stringify(data),
     })
@@ -230,7 +231,7 @@ class ApiClient {
   }
 
   async deleteProjectImage(projectId: string, imageId: string) {
-    const result = await this.request(`/projects/admin/${projectId}/images/${imageId}`, { method: "DELETE" })
+    const result = await this.request(`/admin/projects/images?projectId=${projectId}&imageId=${imageId}`, { method: "DELETE" })
     return result.data
   }
 
@@ -250,7 +251,7 @@ class ApiClient {
 
   // Admin
   async createCategory(data: any) {
-    const result = await this.request<any>("/categories/admin", {
+    const result = await this.request<any>("/categories", {
       method: "POST",
       body: JSON.stringify(data),
     })
@@ -258,7 +259,7 @@ class ApiClient {
   }
 
   async updateCategory(id: string, data: any) {
-    const result = await this.request<any>(`/categories/admin/${id}`, {
+    const result = await this.request<any>(`/categories?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -266,7 +267,7 @@ class ApiClient {
   }
 
   async deleteCategory(id: string) {
-    const result = await this.request(`/categories/admin/${id}`, { method: "DELETE" })
+    const result = await this.request(`/categories?id=${id}`, { method: "DELETE" })
     return result.data
   }
 
@@ -289,17 +290,17 @@ class ApiClient {
     if (params?.limit) query.append("limit", params.limit.toString())
     if (params?.offset) query.append("offset", params.offset.toString())
 
-  const result = await this.request<any>(`/contacts/admin?${query}`)
-  return result?.data?.data || []
+    const result = await this.request<any>(`/admin/contacts?${query}`)
+    return result?.data?.data || []
   }
 
   async getContact(id: string) {
-    const result = await this.request<any>(`/contacts/admin/${id}`)
+    const result = await this.request<any>(`/admin/contacts/${id}`)
     return result.data
   }
 
   async updateContact(id: string, data: any) {
-    const result = await this.request<any>(`/contacts/admin/${id}`, {
+    const result = await this.request<any>(`/admin/contacts?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -307,7 +308,7 @@ class ApiClient {
   }
 
   async deleteContact(id: string) {
-    const result = await this.request(`/contacts/admin/${id}`, { method: "DELETE" })
+    const result = await this.request(`/admin/contacts?id=${id}`, { method: "DELETE" })
     return result.data
   }
 
@@ -322,7 +323,7 @@ class ApiClient {
 
   // Admin
   async createSkill(data: any) {
-    const result = await this.request<any>("/skills/admin", {
+    const result = await this.request<any>("/skills", {
       method: "POST",
       body: JSON.stringify(data),
     })
@@ -330,7 +331,7 @@ class ApiClient {
   }
 
   async updateSkill(id: string, data: any) {
-    const result = await this.request<any>(`/skills/admin/${id}`, {
+    const result = await this.request<any>(`/skills?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -338,7 +339,7 @@ class ApiClient {
   }
 
   async deleteSkill(id: string) {
-    const result = await this.request(`/skills/admin/${id}`, { method: "DELETE" })
+    const result = await this.request(`/skills?id=${id}`, { method: "DELETE" })
     return result.data
   }
 
@@ -347,13 +348,13 @@ class ApiClient {
   // ============================================
 
   async getSocialLinks() {
-  const result = await this.request<any>("/social-links")
-  return result?.data?.data || []
+    const result = await this.request<any>("/social-links")
+    return result?.data?.data || []
   }
 
   // Admin
   async createSocialLink(data: any) {
-    const result = await this.request<any>("/social-links/admin", {
+    const result = await this.request<any>("/social-links", {
       method: "POST",
       body: JSON.stringify(data),
     })
@@ -361,7 +362,7 @@ class ApiClient {
   }
 
   async updateSocialLink(id: string, data: any) {
-    const result = await this.request<any>(`/social-links/admin/${id}`, {
+    const result = await this.request<any>(`/social-links?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -369,7 +370,7 @@ class ApiClient {
   }
 
   async deleteSocialLink(id: string) {
-    const result = await this.request(`/social-links/admin/${id}`, { method: "DELETE" })
+    const result = await this.request(`/social-links?id=${id}`, { method: "DELETE" })
     return result.data
   }
 
@@ -384,7 +385,7 @@ class ApiClient {
 
   // Admin
   async updateSettings(data: any) {
-    const result = await this.request<any>("/settings/admin", {
+    const result = await this.request<any>("/settings", {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -432,7 +433,7 @@ class ApiClient {
   }
 
   async updatePageSection(id: string, data: any) {
-    const result = await this.request<any>(`/page-sections/${id}`, {
+    const result = await this.request<any>(`/page-sections?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -440,7 +441,7 @@ class ApiClient {
   }
 
   async deletePageSection(id: string) {
-    await this.request<any>(`/page-sections/${id}`, {
+    await this.request<any>(`/page-sections?id=${id}`, {
       method: "DELETE",
     })
   }
@@ -476,7 +477,7 @@ class ApiClient {
   }
 
   async updateContentBlock(id: string, data: any) {
-    const result = await this.request<any>(`/content-blocks/${id}`, {
+    const result = await this.request<any>(`/content-blocks?id=${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     })
@@ -484,7 +485,7 @@ class ApiClient {
   }
 
   async deleteContentBlock(id: string) {
-    await this.request<any>(`/content-blocks/${id}`, {
+    await this.request<any>(`/content-blocks?id=${id}`, {
       method: "DELETE",
     })
   }
