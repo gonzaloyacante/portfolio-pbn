@@ -15,7 +15,10 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
+  Palette,
+  Layout,
+  Blocks
 } from 'lucide-react';
 
 interface User {
@@ -103,6 +106,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { name: 'Mensajes', href: '/admin/contacts', icon: Mail, description: 'Contactos recibidos' },
     { name: 'Habilidades', href: '/admin/skills', icon: Award, description: 'Tus skills' },
     { name: 'Redes Sociales', href: '/admin/social-links', icon: Share2, description: 'Tus perfiles' },
+    { name: 'Diseño', href: '/admin/design', icon: Palette, description: 'Personalizar colores y estilos' },
+    { name: 'Páginas', href: '/admin/layout-manager', icon: Layout, description: 'Gestionar secciones' },
+    { name: 'Contenidos', href: '/admin/content-blocks', icon: Blocks, description: 'Bloques de contenido' },
     { name: 'Configuración', href: '/admin/settings', icon: Settings, description: 'Ajustes generales' },
   ];
 

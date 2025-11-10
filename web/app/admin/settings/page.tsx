@@ -12,18 +12,28 @@ import { Loader2, Save } from 'lucide-react';
 interface Settings {
   siteName: string;
   siteDescription: string;
-  contactEmail: string;
-  contactPhone: string;
+  ownerName: string;
+  ownerTitle: string;
+  ownerBio: string;
+  ownerEmail: string;
+  ownerPhone: string;
+  ownerLocation: string;
   logoUrl: string;
+  metaKeywords: string;
 }
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings>({
     siteName: '',
     siteDescription: '',
-    contactEmail: '',
-    contactPhone: '',
-    logoUrl: ''
+    ownerName: '',
+    ownerTitle: '',
+    ownerBio: '',
+    ownerEmail: '',
+    ownerPhone: '',
+    ownerLocation: '',
+    logoUrl: '',
+    metaKeywords: ''
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -72,60 +82,127 @@ export default function AdminSettingsPage() {
         <p className="text-muted-foreground">Gestiona la configuración del sitio</p>
       </div>
 
-      <Card className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="siteName">Nombre del Sitio</Label>
-            <Input
-              id="siteName"
-              value={settings.siteName}
-              onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-            />
-          </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card className="p-6 md:col-span-2">
+          <h2 className="text-xl font-semibold mb-4">Información del Sitio</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label htmlFor="siteName">Nombre del Sitio</Label>
+                <Input
+                  id="siteName"
+                  value={settings.siteName}
+                  onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                />
+              </div>
 
-          <div>
-            <Label htmlFor="siteDescription">Descripción</Label>
-            <Textarea
-              id="siteDescription"
-              value={settings.siteDescription}
-              onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
-            />
-          </div>
+              <div>
+                <Label htmlFor="ownerName">Nombre del Propietario</Label>
+                <Input
+                  id="ownerName"
+                  value={settings.ownerName}
+                  onChange={(e) => setSettings({ ...settings, ownerName: e.target.value })}
+                />
+              </div>
+            </div>
 
-          <div>
-            <Label htmlFor="contactEmail">Email de Contacto</Label>
-            <Input
-              id="contactEmail"
-              type="email"
-              value={settings.contactEmail}
-              onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
-            />
-          </div>
+            <div>
+              <Label htmlFor="ownerTitle">Título Profesional</Label>
+              <Input
+                id="ownerTitle"
+                value={settings.ownerTitle}
+                onChange={(e) => setSettings({ ...settings, ownerTitle: e.target.value })}
+                placeholder="Ej: Maquilladora Profesional"
+              />
+            </div>
 
-          <div>
-            <Label htmlFor="contactPhone">Teléfono</Label>
-            <Input
-              id="contactPhone"
-              value={settings.contactPhone}
-              onChange={(e) => setSettings({ ...settings, contactPhone: e.target.value })}
-            />
-          </div>
+            <div>
+              <Label htmlFor="siteDescription">Descripción del Sitio</Label>
+              <Textarea
+                id="siteDescription"
+                value={settings.siteDescription}
+                onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
+                rows={3}
+              />
+            </div>
 
-          <Button type="submit" disabled={saving}>
-            {saving ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Guardando...
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Guardar Cambios
-              </>
-            )}
-          </Button>
-        </form>
-      </Card>
+            <div>
+              <Label htmlFor="ownerBio">Biografía</Label>
+              <Textarea
+                id="ownerBio"
+                value={settings.ownerBio}
+                onChange={(e) => setSettings({ ...settings, ownerBio: e.target.value })}
+                rows={4}
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <Label htmlFor="ownerEmail">Email</Label>
+                <Input
+                  id="ownerEmail"
+                  type="email"
+                  value={settings.ownerEmail}
+                  onChange={(e) => setSettings({ ...settings, ownerEmail: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="ownerPhone">Teléfono</Label>
+                <Input
+                  id="ownerPhone"
+                  value={settings.ownerPhone}
+                  onChange={(e) => setSettings({ ...settings, ownerPhone: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="ownerLocation">Ubicación</Label>
+              <Input
+                id="ownerLocation"
+                value={settings.ownerLocation}
+                onChange={(e) => setSettings({ ...settings, ownerLocation: e.target.value })}
+                placeholder="Ej: Madrid, España"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="logoUrl">URL del Logo</Label>
+              <Input
+                id="logoUrl"
+                value={settings.logoUrl}
+                onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
+                placeholder="https://..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="metaKeywords">Palabras Clave SEO</Label>
+              <Input
+                id="metaKeywords"
+                value={settings.metaKeywords}
+                onChange={(e) => setSettings({ ...settings, metaKeywords: e.target.value })}
+                placeholder="maquillaje, caracterización, cine, ..."
+              />
+            </div>
+
+            <Button type="submit" disabled={saving} className="w-full md:w-auto">
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Guardando...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4 mr-2" />
+                  Guardar Cambios
+                </>
+              )}
+            </Button>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 }
