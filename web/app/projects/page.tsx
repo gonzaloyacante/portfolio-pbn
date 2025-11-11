@@ -1,58 +1,23 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ProjectCardSkeleton } from "@/components/ui/skeleton"
-import { apiClient } from "@/lib/api-client"
-
-interface Project {
-  id: string
-  slug: string
-  title: string
-  shortDescription: string
-  thumbnailUrl: string
-  featured: boolean
-  category?: {
-    name: string
-    slug: string
-  }
-}
-
-interface Category {
-  id: string
-  name: string
-  slug: string
-}
+import { Filter, ArrowLeft } from "lucide-react"
+import { Button } from "@/components/forms"
+import { ProjectCardSkeleton } from "@/components/feedback/skeleton"
+import { useProjects, useCategories } from "@/hooks/use-api"
 
 export default function ProjectsPage() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const [projectsData, categoriesData] = await Promise.all([
-          apiClient.getProjects(),
-          apiClient.getCategories()
-        ])
-        setProjects(projectsData)
-        setCategories(categoriesData)
-      } catch (error) {
-        console.error("Error loading data:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadData()
-  }, [])
+  
+  const { data: projects = [], isLoading: projectsLoading } = useProjects()
+  const { data: categories = [], isLoading: categoriesLoading } = useCategories()
+  
+  const loading = projectsLoading || categoriesLoading
 
   const filteredProjects = selectedCategory
-    ? projects.filter(p => p.category?.slug === selectedCategory)
+    ? projects.filter((p: any) => p.category?.slug === selectedCategory)
     : projects
 
   return (
@@ -113,7 +78,7 @@ export default function ProjectsPage() {
                 >
                   Todos
                 </button>
-                {categories.map((category) => (
+                {categories.map((category: any) => (
                   <button
                     key={category.id}
                     onClick={() => setSelectedCategory(category.slug)}
@@ -151,7 +116,7 @@ export default function ProjectsPage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project, index) => (
+              {filteredProjects.map((project: any, index: number) => (
                 <Link 
                   key={project.id} 
                   href={`/projects/${project.slug}`}

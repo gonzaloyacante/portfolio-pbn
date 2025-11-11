@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { apiClient } from "@/lib/api-client"
-import { Button } from "@/components/button"
-import Card from "@/components/card"
+import { Button, Card } from "@/components/cms/form-components"
 import { Plus, Edit, Trash2, Eye, EyeOff } from "lucide-react"
 
 interface ContentBlock {

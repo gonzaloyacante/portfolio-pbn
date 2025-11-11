@@ -494,3 +494,108 @@ nav {
     @apply py-12;
   }
 }
+
+/* ============================================
+   CMS ANIMATIONS - 15 entrance animations
+   ============================================ */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-down {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-left {
+  from { transform: translateX(30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-right {
+  from { transform: translateX(-30px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes zoom-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes zoom-out {
+  from { transform: scale(1.05); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.9); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes flip-in-x {
+  from { transform: perspective(400px) rotateX(-90deg); opacity: 0; }
+  to { transform: perspective(400px) rotateX(0); opacity: 1; }
+}
+
+@keyframes flip-in-y {
+  from { transform: perspective(400px) rotateY(-90deg); opacity: 0; }
+  to { transform: perspective(400px) rotateY(0); opacity: 1; }
+}
+
+@keyframes rotate-in {
+  from { transform: rotate(-180deg) scale(0.9); opacity: 0; }
+  to { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+@keyframes blur-in {
+  from { filter: blur(10px); opacity: 0; }
+  to { filter: blur(0); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+/* Animation classes */
+.animate-fade-in { animation: fade-in 0.6s ease-out; }
+.animate-slide-up { animation: slide-up 0.6s ease-out; }
+.animate-slide-down { animation: slide-down 0.6s ease-out; }
+.animate-slide-left { animation: slide-left 0.6s ease-out; }
+.animate-slide-right { animation: slide-right 0.6s ease-out; }
+.animate-zoom-in { animation: zoom-in 0.6s ease-out; }
+.animate-zoom-out { animation: zoom-out 0.6s ease-out; }
+.animate-bounce-in { animation: bounce-in 0.8s ease-out; }
+.animate-flip-in-x { animation: flip-in-x 0.7s ease-out; }
+.animate-flip-in-y { animation: flip-in-y 0.7s ease-out; }
+.animate-rotate-in { animation: rotate-in 0.7s ease-out; }
+.animate-blur-in { animation: blur-in 0.8s ease-out; }
+.animate-shake { animation: shake 0.5s ease-in-out; }
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+.animate-none { animation: none !important; }
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

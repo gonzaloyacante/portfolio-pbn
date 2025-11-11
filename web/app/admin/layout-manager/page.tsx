@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { apiClient } from "@/lib/api-client"
-import { Button } from "@/components/button"
-import Card from "@/components/card"
+import { Button, Card, Loading, Select } from "@/components/cms/form-components"
+import { AnimationSelector } from "@/components/cms/animation-selector"
 import { GripVertical, Eye, EyeOff, Settings, Plus } from "lucide-react"
 
 interface PageSection {
@@ -100,44 +100,39 @@ export default function LayoutManagerPage() {
     ))
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted">Cargando layout...</p>
-        </div>
-      </div>
-    )
-  }
+  if (loading) return <Loading text="Cargando layout..." />
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="max-w-5xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Layout Manager</h1>
-          <p className="text-muted mt-2">
-            Arrastra para reordenar secciones, configura layouts y controla visibilidad
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Administrador de Páginas</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Arrastra para reordenar secciones, configura animaciones y controla visibilidad
           </p>
         </div>
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? "Guardando..." : "💾 Guardar Layout"}
+        <Button 
+          variant="primary"
+          onClick={handleSave} 
+          loading={saving}
+        >
+          Guardar Cambios
         </Button>
       </div>
 
       {/* Page selector */}
-      <Card className="p-4">
-        <label className="block text-sm font-medium mb-2">Página</label>
-        <select
+      <Card padding="md">
+        <Select
+          label="Página"
           value={selectedPage}
           onChange={(e) => setSelectedPage(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg bg-background"
-        >
-          <option value="home">Inicio</option>
-          <option value="about">Sobre Mí</option>
-          <option value="projects">Proyectos</option>
-          <option value="contact">Contacto</option>
-        </select>
+          options={[
+            { value: "home", label: "Inicio" },
+            { value: "about", label: "Sobre Mí" },
+            { value: "projects", label: "Proyectos" },
+            { value: "contact", label: "Contacto" }
+          ]}
+        />
       </Card>
 
       {/* Sections */}
@@ -183,6 +178,22 @@ export default function LayoutManagerPage() {
                         {section.visible ? <Eye size={18} /> : <EyeOff size={18} />}
                       </Button>
                     </div>
+                  </div>
+
+                  {/* Animation Selector for ALL sections */}
+                  <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+                      💫 Animación de Entrada
+                    </h4>
+                    <AnimationSelector
+                      value={section.config?.animation || "fade-in"}
+                      onChange={(animation) =>
+                        handleConfigChange(section.id, {
+                          ...section.config,
+                          animation,
+                        })
+                      }
+                    />
                   </div>
 
                   {/* Section config */}

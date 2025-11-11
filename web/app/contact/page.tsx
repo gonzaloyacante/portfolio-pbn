@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { ArrowLeft, Mail, Phone, MapPin, Instagram, Linkedin, MessageCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import ContactForm from "@/components/contact-form"
+import { Button } from "@/components/forms"
+import ContactForm from "@/components/sections/contact-form"
 
 export default function ContactPage() {
   return (

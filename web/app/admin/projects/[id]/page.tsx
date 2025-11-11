@@ -1,21 +1,21 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useState, useEffect, use } from 'react'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, Save } from 'lucide-react'
 import Link from 'next/link'
 import { apiClient } from '@/lib/api-client'
-import { ImageUploader } from '@/components/image-uploader'
+import { ImageUploader } from '@/components/media/image-uploader'
 
 interface Category {
   id: string
   name: string
 }
 
-export default function EditProjectPage() {
+export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
-  const params = useParams()
-  const projectId = params.id as string
+  const resolvedParams = use(params)
+  const projectId = resolvedParams.id
 
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingProject, setIsLoadingProject] = useState(true)

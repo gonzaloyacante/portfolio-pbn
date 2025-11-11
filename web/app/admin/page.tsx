@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { apiClient } from '@/lib/api-client';
 import {
   FolderKanban,
   Tags,
@@ -38,23 +37,11 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [projects, categories, contacts, skills, socialLinks] = await Promise.all([
-          apiClient.getAllProjectsAdmin(),
-          apiClient.getCategories(),
-          apiClient.getContacts(),
-          apiClient.getSkills(),
-          apiClient.getSocialLinks(),
-        ]);
-
-        setStats({
-          totalProjects: projects.length,
-          publishedProjects: projects.filter((p: any) => p.status === 'PUBLISHED').length,
-          totalCategories: categories.length,
-          newContacts: contacts.filter((c: any) => c.status === 'NEW').length,
-          totalContacts: contacts.length,
-          totalSkills: skills.length,
-          totalSocialLinks: socialLinks.length,
-        });
+        // Single optimized API call instead of 5 separate calls
+        const response = await fetch('/api/admin/stats');
+        if (!response.ok) throw new Error('Failed to fetch stats');
+        const data = await response.json();
+        setStats(data);
       } catch (err) {
         console.error('Error al cargar estadísticas:', err);
       } finally {

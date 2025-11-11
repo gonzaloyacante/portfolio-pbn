@@ -9,6 +9,10 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+  
+  // Connection pooling configuration for NeonDB
+  // Prevents "Connection was forcibly closed" errors (Error 10054)
+  relationMode = "prisma"
 }
 
 // ============================================
@@ -230,6 +234,10 @@ model DesignSettings {
   hoverTransform    String @default("translateY(-4px)")
   transitionSpeed   String @default("0.3s")
   
+  // Draft system - los cambios se guardan como draft hasta publicarlos
+  draftData         Json?   // Cambios pendientes de publicación (JSON con estructura igual a arriba)
+  publishedAt       DateTime? // Última fecha de publicación
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -268,6 +276,14 @@ model PageSection {
   // { "layout": "grid", "columns": 3, "showProgress": true, "cardStyle": "elevated" }
   // Ejemplo config para HERO:
   // { "imagePosition": "left", "showStats": true, "ctaButtons": ["projects", "contact"] }
+  
+  // Draft system - permite editar sin afectar producción
+  draftTitle    String?     // Draft del título
+  draftSubtitle String?     // Draft del subtítulo
+  draftConfig   Json?       // Draft de config
+  draftVisible  Boolean?    // Draft de visibilidad
+  isPublished   Boolean     @default(true) // false = solo en admin
+  publishedAt   DateTime?   // Última fecha de publicación
   
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt

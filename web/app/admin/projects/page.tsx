@@ -2,10 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { apiClient } from '@/lib/api-client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Button, Card, Badge, Loading, Input } from '@/components/cms/form-components'
 import {
   Plus,
   Pencil,
@@ -13,7 +10,6 @@ import {
   Search,
   Star,
   StarOff,
-  Loader2,
   Image as ImageIcon,
 } from 'lucide-react'
 import Image from 'next/image'
@@ -85,20 +81,14 @@ export default function AdminProjectsPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-rose-500" />
-      </div>
-    )
-  }
+  if (loading) return <Loading text="Cargando proyectos..." />
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
             Mis Proyectos
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">
@@ -129,9 +119,8 @@ export default function AdminProjectsPage() {
             {['all', 'PUBLISHED', 'DRAFT', 'ARCHIVED'].map((status) => (
               <Button
                 key={status}
-                variant={statusFilter === status ? 'default' : 'outline'}
+                variant={statusFilter === status ? 'primary' : 'outline'}
                 onClick={() => setStatusFilter(status)}
-                className={statusFilter === status ? 'bg-gradient-to-r from-rose-500 to-pink-600' : ''}
               >
                 {status === 'all' ? 'Todos' : 
                  status === 'PUBLISHED' ? 'Publicados' :
@@ -236,9 +225,8 @@ export default function AdminProjectsPage() {
                     </Button>
                   </Link>
                   <Button
-                    variant="outline"
-                    size="icon"
-                    className="border-2 hover:border-red-300 dark:hover:border-red-700 hover:bg-red-50 dark:hover:bg-red-950/30 hover:text-red-600"
+                    variant="danger"
+                    size="md"
                     onClick={() => deleteProject(project.id)}
                   >
                     <Trash2 className="h-4 w-4" />

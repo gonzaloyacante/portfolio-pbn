@@ -2,8 +2,9 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter, Playfair_Display, Great_Vibes } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import { DesignProvider } from "@/components/design-provider"
-import { SkipToContent } from "@/components/skip-to-content"
+import { DesignProvider } from "@/components/utils/design-provider"
+import { SkipToContent } from "@/components/utils/skip-to-content"
+import { QueryProvider } from "@/lib/query-provider"
 import "./globals.css"
 
 const inter = Inter({ 
@@ -96,9 +97,11 @@ export default function RootLayout({
     <html lang="es" className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}>
       <body className={`${inter.className} antialiased`}>
         <SkipToContent />
-        <DesignProvider>
-          {children}
-        </DesignProvider>
+        <QueryProvider>
+          <DesignProvider>
+            {children}
+          </DesignProvider>
+        </QueryProvider>
         <Analytics />
       </body>
     </html>

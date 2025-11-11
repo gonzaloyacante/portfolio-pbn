@@ -4,19 +4,45 @@ import { handleApiError, requireAdmin } from '@/lib/server/auth';
 import { createPageSectionSchema, updatePageSectionSchema, uuidSchema } from '@/lib/server/validation';
 
 // GET page sections
+// Admins ven drafts, público solo ve publicadas
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const pageName = searchParams.get('pageName');
     
-    const where = pageName ? { pageName } : {};
+    // Verificar si es admin
+    let isAdmin = false;
+    try {
+      requireAdmin(request);
+      isAdmin = true;
+    } catch {
+      // No es admin
+    }
+    
+    // Filtros base
+    const where: any = pageName ? { pageName } : {};
+    
+    // Público solo ve secciones publicadas
+    if (!isAdmin) {
+      where.isPublished = true;
+    }
     
     const sections = await prisma.pageSection.findMany({
       where,
       orderBy: { order: 'asc' },
     });
 
-    return NextResponse.json({ data: sections, total: sections.length });
+    // Si es admin, mergear draft fields con published fields
+    const processed = isAdmin ? sections.map((section: any) => ({
+      ...section,
+      title: section.draftTitle ?? section.title,
+      subtitle: section.draftSubtitle ?? section.subtitle,
+      config: section.draftConfig ?? section.config,
+      visible: section.draftVisible ?? section.visible,
+      _hasDraft: !!(section.draftTitle || section.draftSubtitle || section.draftConfig || section.draftVisible !== null)
+    })) : sections;
+
+    return NextResponse.json({ data: processed, total: processed.length });
   } catch (error) {
     return handleApiError(error);
   }
@@ -40,7 +66,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// PUT update page section (admin)
+// PUT update page section (admin) - GUARDA COMO DRAFT
 export async function PUT(request: NextRequest) {
   try {
     requireAdmin(request);
@@ -55,12 +81,23 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const data = updatePageSectionSchema.parse(body);
 
+    // Guardar cambios como draft
     const section = await prisma.pageSection.update({
       where: { id },
-      data,
+      data: {
+        // Guardar en campos draft en lugar de actualizar directamente
+        draftTitle: data.title,
+        draftSubtitle: data.subtitle,
+        draftConfig: data.config as any,
+        draftVisible: data.visible,
+        isPublished: false // Marcar como no publicado
+      },
     });
 
-    return NextResponse.json(section);
+    return NextResponse.json({
+      message: 'Cambios guardados como borrador. Usa /publish para publicar.',
+      section
+    });
   } catch (error) {
     return handleApiError(error);
   }

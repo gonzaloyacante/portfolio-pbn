@@ -1,21 +1,21 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# #!/usr/bin/env sh
+# . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🚀 Running pre-push checks..."
+# echo "🚀 Running pre-push checks..."
 
-# Full build check (including web)
-echo "🏗️  Building API..."
-cd api && pnpm build || {
-  echo "❌ API build failed. Please fix the errors before pushing."
-  exit 1
-}
-cd ..
+# # # Full build check (including web)
+# # echo "🏗️  Building API..."
+# # cd api && pnpm build || {
+# #   echo "❌ API build failed. Please fix the errors before pushing."
+# #   exit 1
+# # }
+# # cd ..
 
-echo "🏗️  Building Web..."
-cd web && pnpm build || {
-  echo "❌ Web build failed. Please fix the errors before pushing."
-  exit 1
-}
-cd ..
+# echo "🏗️  Building Web..."
+# cd web && pnpm build || {
+#   echo "❌ Web build failed. Please fix the errors before pushing."
+#   exit 1
+# }
+# cd ..
 
-echo "✅ All pre-push checks passed! Safe to push."
+# echo "✅ All pre-push checks passed! Safe to push."

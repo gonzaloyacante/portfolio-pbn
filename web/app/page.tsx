@@ -3,8 +3,8 @@
 import Script from "next/script"
 import Link from "next/link"
 import { ArrowRight, Sparkles, Award, Users, Palette, Star } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import AboutSection from "@/components/about-section"
+import { Button } from "@/components/forms"
+import AboutSection from "@/components/sections/about-section"
 
 export default function Home() {
   return (

@@ -51,7 +51,7 @@ class ApiClient {
     }
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  private async request<T>(endpoint: string, options: RequestInit = {}, retries = 3): Promise<ApiResponse<T>> {
     try {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -77,6 +77,17 @@ class ApiClient {
       const data = await response.json()
       return { data }
     } catch (error) {
+      // Retry logic for connection errors (including Error 10054)
+      if (retries > 0 && (error instanceof Error && (
+        error.message.includes("Connection") || 
+        error.message.includes("fetch") ||
+        error.message.includes("network")
+      ))) {
+        // Exponential backoff: 500ms, 1000ms, 2000ms
+        const delay = Math.pow(2, 3 - retries) * 500
+        await new Promise(resolve => setTimeout(resolve, delay))
+        return this.request<T>(endpoint, options, retries - 1)
+      }
       return { error: "Network error" }
     }
   }
@@ -244,6 +255,11 @@ class ApiClient {
   return result?.data?.data || []
   }
 
+  async getCategory(id: string) {
+    const result = await this.request<any>(`/categories?id=${id}`)
+    return result.data
+  }
+
   async getCategoryBySlug(slug: string) {
     const result = await this.request<any>(`/categories/${slug}`)
     return result.data
@@ -321,6 +337,11 @@ class ApiClient {
   return result?.data?.data || []
   }
 
+  async getSkill(id: string) {
+    const result = await this.request<any>(`/skills?id=${id}`)
+    return result.data
+  }
+
   // Admin
   async createSkill(data: any) {
     const result = await this.request<any>("/skills", {
@@ -350,6 +371,11 @@ class ApiClient {
   async getSocialLinks() {
     const result = await this.request<any>("/social-links")
     return result?.data?.data || []
+  }
+
+  async getSocialLink(id: string) {
+    const result = await this.request<any>(`/social-links?id=${id}`)
+    return result.data
   }
 
   // Admin

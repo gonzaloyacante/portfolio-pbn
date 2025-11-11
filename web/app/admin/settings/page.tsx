@@ -2,12 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { apiClient } from '@/lib/api-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
-import { Loader2, Save } from 'lucide-react';
+import { Button, Card, Loading, Input, Textarea } from '@/components/cms/form-components';
+import { Save } from 'lucide-react';
 
 interface Settings {
   siteName: string;
@@ -67,142 +63,140 @@ export default function AdminSettingsPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
+  if (loading) return <Loading text="Cargando configuración..." />;
 
   return (
-    <div className="p-8">
+    <div className="p-8 max-w-5xl mx-auto">
+      {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Configuración</h1>
-        <p className="text-muted-foreground">Gestiona la configuración del sitio</p>
+        <h1 className="text-3xl font-bold text-neutral-900 dark:text-neutral-100">Configuración General</h1>
+        <p className="text-neutral-600 dark:text-neutral-400 mt-1">
+          Información principal del sitio y datos de contacto
+        </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="p-6 md:col-span-2">
-          <h2 className="text-xl font-semibold mb-4">Información del Sitio</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <Label htmlFor="siteName">Nombre del Sitio</Label>
+      <form onSubmit={handleSubmit}>
+        <div className="space-y-6">
+          {/* Site Info */}
+          <Card>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+              Información del Sitio
+            </h2>
+            
+            <div className="space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <Input
-                  id="siteName"
+                  label="Nombre del Sitio"
                   value={settings.siteName}
                   onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                  placeholder="Portfolio de Paola"
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="ownerName">Nombre del Propietario</Label>
+                
                 <Input
-                  id="ownerName"
+                  label="Nombre Completo"
                   value={settings.ownerName}
                   onChange={(e) => setSettings({ ...settings, ownerName: e.target.value })}
+                  placeholder="Paola Bolívar"
                 />
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="ownerTitle">Título Profesional</Label>
               <Input
-                id="ownerTitle"
+                label="Título Profesional"
                 value={settings.ownerTitle}
                 onChange={(e) => setSettings({ ...settings, ownerTitle: e.target.value })}
-                placeholder="Ej: Maquilladora Profesional"
+                placeholder="Maquilladora Profesional & Artista de Caracterización"
               />
-            </div>
 
-            <div>
-              <Label htmlFor="siteDescription">Descripción del Sitio</Label>
               <Textarea
-                id="siteDescription"
+                label="Descripción del Sitio"
                 value={settings.siteDescription}
                 onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
                 rows={3}
+                helperText="Breve descripción para SEO y redes sociales"
               />
-            </div>
 
-            <div>
-              <Label htmlFor="ownerBio">Biografía</Label>
               <Textarea
-                id="ownerBio"
+                label="Biografía"
                 value={settings.ownerBio}
                 onChange={(e) => setSettings({ ...settings, ownerBio: e.target.value })}
                 rows={4}
+                helperText="Historia profesional y experiencia"
               />
             </div>
+          </Card>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <Label htmlFor="ownerEmail">Email</Label>
+          {/* Contact Info */}
+          <Card>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+              Datos de Contacto
+            </h2>
+            
+            <div className="space-y-5">
+              <div className="grid gap-5 md:grid-cols-2">
                 <Input
-                  id="ownerEmail"
+                  label="Email"
                   type="email"
                   value={settings.ownerEmail}
                   onChange={(e) => setSettings({ ...settings, ownerEmail: e.target.value })}
+                  placeholder="paola@example.com"
                 />
-              </div>
-
-              <div>
-                <Label htmlFor="ownerPhone">Teléfono</Label>
+                
                 <Input
-                  id="ownerPhone"
+                  label="Teléfono"
                   value={settings.ownerPhone}
                   onChange={(e) => setSettings({ ...settings, ownerPhone: e.target.value })}
+                  placeholder="+34 600 123 456"
                 />
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="ownerLocation">Ubicación</Label>
               <Input
-                id="ownerLocation"
+                label="Ubicación"
                 value={settings.ownerLocation}
                 onChange={(e) => setSettings({ ...settings, ownerLocation: e.target.value })}
-                placeholder="Ej: Madrid, España"
+                placeholder="Madrid, España"
               />
             </div>
+          </Card>
 
-            <div>
-              <Label htmlFor="logoUrl">URL del Logo</Label>
+          {/* SEO & Assets */}
+          <Card>
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-100 mb-6">
+              SEO y Recursos
+            </h2>
+            
+            <div className="space-y-5">
               <Input
-                id="logoUrl"
+                label="URL del Logo"
                 value={settings.logoUrl}
                 onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
-                placeholder="https://..."
+                placeholder="https://example.com/logo.png"
+                helperText="Logo principal del sitio"
               />
-            </div>
 
-            <div>
-              <Label htmlFor="metaKeywords">Palabras Clave SEO</Label>
               <Input
-                id="metaKeywords"
+                label="Palabras Clave SEO"
                 value={settings.metaKeywords}
                 onChange={(e) => setSettings({ ...settings, metaKeywords: e.target.value })}
-                placeholder="maquillaje, caracterización, cine, ..."
+                placeholder="maquillaje profesional, caracterización, cine, teatro"
+                helperText="Separadas por comas"
               />
             </div>
+          </Card>
 
-            <Button type="submit" disabled={saving} className="w-full md:w-auto">
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Guardando...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Guardar Cambios
-                </>
-              )}
+          {/* Actions */}
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              icon={Save}
+              loading={saving}
+              disabled={saving}
+              size="lg"
+            >
+              {saving ? 'Guardando...' : 'Guardar Configuración'}
             </Button>
-          </form>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </form>
     </div>
   );
 }
