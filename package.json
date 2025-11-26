@@ -1,61 +1,33 @@
 {
-  "name": "portfolio-pbn-monorepo",
-  "version": "2.0.0",
+  "name": "portfolio-pbn",
+  "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "web",
-    "api"
-  ],
   "scripts": {
-    "web:dev": "yarn --cwd web dev",
-    "web:build": "yarn --cwd web build",
-    "web:lint": "yarn --cwd web lint",
-    "web:lint:fix": "yarn --cwd web lint:fix",
-    "web:format": "yarn --cwd web format",
-    "web:format:check": "yarn --cwd web format:check",
-    "web:type-check": "yarn --cwd web type-check",
-    "web:validate": "yarn --cwd web validate",
-    "api:dev": "yarn --cwd api dev",
-    "api:build": "yarn --cwd api build",
-    "api:lint": "yarn --cwd api lint",
-    "api:lint:fix": "yarn --cwd api lint:fix",
-    "api:format": "yarn --cwd api format",
-    "api:format:check": "yarn --cwd api format:check",
-    "api:type-check": "yarn --cwd api type-check",
-    "api:validate": "yarn --cwd api validate",
-    "api:prisma:generate": "yarn --cwd api prisma:generate",
-    "api:prisma:migrate": "yarn --cwd api prisma:migrate",
-    "api:prisma:deploy": "yarn --cwd api prisma:deploy",
-    "api:prisma:validate": "yarn --cwd api prisma:validate",
-    "api:seed": "yarn --cwd api seed",
-    "build": "yarn api:build && yarn web:build",
-    "dev": "concurrently \"yarn api:dev\" \"yarn web:dev\"",
-    "format": "yarn api:format && yarn web:format",
-    "format:check": "yarn api:format:check && yarn web:format:check",
-    "lint": "yarn api:lint && yarn web:lint",
-    "lint:fix": "yarn api:lint:fix && yarn web:lint:fix",
-    "type-check": "yarn api:type-check && yarn web:type-check",
-    "validate": "yarn api:validate && yarn web:validate",
-    "pre-commit": "yarn validate",
-    "prepare": "husky"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.0.1",
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.8.0",
+    "next": "16.0.4",
+    "next-auth": "^4.24.13",
+    "prisma": "^7.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.7"
-  },
-  "lint-staged": {
-    "api/**/*.{ts,js}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "web/**/*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "**/*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ]
-  },
-  "packageManager": "pnpm@10.21.0+sha512.da3337267e400fdd3d479a6c68079ac6db01d8ca4f67572083e722775a796788a7a9956613749e000fac20d424b594f7a791a5f4e2e13581c5ef947f26968a40"
+    "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
 }

@@ -1,8 +1,0 @@
-export { default as Hero } from './hero'
-export { default as AboutSection } from './about-section'
-export { default as SkillsSection } from './skills-section'
-export { default as ContactSection } from './contact-section'
-export { default as ContactForm } from './contact-form'
-export { default as ContactInfoCard } from './contact-info-card'
-export { default as ProjectsGrid } from './projects-grid'
-export { default as ProjectCard } from './project-card'

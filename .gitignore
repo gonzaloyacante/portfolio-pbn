@@ -1,109 +1,43 @@
-# ============================================
-# ROOT GITIGNORE - Portfolio PBN Monorepo
-# ============================================
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
-node_modules/
-.pnp/
-.pnp.js
-.yarn/
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Build outputs
-web/.next/
-web/out/
-web/build/
-api/dist/
-api/build/
-.next/
-out/
-dist/
-build/
+# testing
+/coverage
 
-# Environment variables (CRITICAL - never commit!)
-.env
-.env*
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-api/.env*
-web/.env*
-!.env.example
-!api/.env.example
-!web/.env.example
+# next.js
+/.next/
+/out/
 
-# Logs
-logs/
-*.log
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-pino-*.log
+.pnpm-debug.log*
 
-# Testing & Coverage
-coverage/
-.nyc_output/
-test-results/
-junit.xml
+# env files (can opt-in for committing if needed)
+.env*
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-Desktop.ini
+# vercel
+.vercel
 
-# IDE / Editor files
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.idea/
-*.swp
-*.swo
-*~
-*.sublime-workspace
-*.sublime-project
-
-# TypeScript
+# typescript
 *.tsbuildinfo
 next-env.d.ts
 
-# Vercel / Deployment
-.vercel/
-.turbo/
-.netlify/
-
-# Prisma
-prisma/*.db
-prisma/*.db-journal
-prisma/migrations/**/*.db
-
-# Temp / Cache
-tmp/
-temp/
-*.tmp
-.cache/
-.parcel-cache/
-.eslintcache
-
-# Lock files (if using single package manager)
-# Uncomment if you want to enforce a single package manager
-# package-lock.json
-# yarn.lock
-# pnpm-lock.yaml
-
-# AI Instructions (if you don't want to version them)
-.github/instructions/*.md
-!.github/instructions/README.md
-
-# Markdown documentation files (except main README)
-*.md
-!README.md
-!.github/**/*.md
+/src/generated/prisma
