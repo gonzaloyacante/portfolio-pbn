@@ -40,4 +40,32 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# prisma generated
 /src/generated/prisma
+
+# ===================================================
+# DOCUMENTACIÓN Y SCRIPTS DE DESARROLLO (NO DEPLOYAR)
+# ===================================================
+# Ignorar documentación interna y scripts que no se necesitan en producción
+docs/
+scripts/
+Portfolio PBN - Desktop/
+Portfolio PBN - Movil/
+
+# Ignorar configuraciones de AI y análisis de código
+.github/instructions/codacy.instructions.md
+
+# Logs y reportes de tests
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Backups y archivos temporales
+*.bak
+*.tmp
+*.swp
+*~
+
+# Archivos de configuración local del IDE
+.vscode/settings.json
+.idea/

@@ -1,9 +1,12 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
   provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -11,7 +14,7 @@ model User {
   email    String @unique
   password String
   name     String?
-  role     String @default("USER")
+  role     String @default("ADMIN")
 }
 
 model Category {
@@ -25,9 +28,15 @@ model Category {
 model Project {
   id          String         @id @default(cuid())
   title       String
+  slug        String         @unique
   description String         @db.Text
+  thumbnailUrl String
   date        DateTime
   categoryId  String
+  isActive    Boolean        @default(true)
+  isDeleted   Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
   category    Category       @relation(fields: [categoryId], references: [id])
   images      ProjectImage[]
 }
@@ -48,4 +57,42 @@ model SiteConfig {
   accentColor  String
   heroImageUrl String?
   aboutText    String? @db.Text
+}
+
+model AnalyticLog {
+  id         String   @id @default(uuid())
+  eventType  String
+  entityId   String?
+  entityType String?
+  timestamp  DateTime @default(now())
+  ipAddress  String?
+  userAgent  String?
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  text      String   @db.Text
+  position  String?
+  avatarUrl String?
+  rating    Int      @default(5)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  ipAddress String?  // Para rate limiting anti-spam
+  isRead    Boolean  @default(false)
+  isReplied Boolean  @default(false)
+  adminNote String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ipAddress, createdAt])
+  @@map("contacts")
 }

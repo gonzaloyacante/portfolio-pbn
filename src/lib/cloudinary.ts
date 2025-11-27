@@ -12,11 +12,13 @@ export const uploadImage = async (file: File) => {
   const buffer = Buffer.from(arrayBuffer)
 
   return new Promise<{ url: string; publicId: string }>((resolve, reject) => {
-    cloudinary.uploader.upload_stream({}, (error, result) => {
-      if (error) return reject(error)
-      if (!result) return reject(new Error('No result from Cloudinary'))
-      resolve({ url: result.secure_url, publicId: result.public_id })
-    }).end(buffer)
+    cloudinary.uploader
+      .upload_stream({}, (error, result) => {
+        if (error) return reject(error)
+        if (!result) return reject(new Error('No result from Cloudinary'))
+        resolve({ url: result.secure_url, publicId: result.public_id })
+      })
+      .end(buffer)
   })
 }
 

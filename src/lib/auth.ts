@@ -1,21 +1,21 @@
-import { NextAuthOptions } from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
-import { prisma } from "@/lib/db"
-import bcrypt from "bcryptjs"
+import { NextAuthOptions, getServerSession } from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials'
+import { prisma } from '@/lib/db'
+import bcrypt from 'bcryptjs'
 
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
+          where: { email: credentials.email },
         })
 
         if (!user) return null
@@ -25,11 +25,11 @@ export const authOptions: NextAuthOptions = {
         if (!isValid) return null
 
         return { id: user.id, email: user.email, name: user.name, role: user.role }
-      }
-    })
+      },
+    }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
@@ -42,14 +42,20 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).role = token.role;
-        (session.user as any).id = token.id;
+        ;(session.user as unknown as { role: string; id: string }).role = token.role
+        ;(session.user as unknown as { role: string; id: string }).id = token.id
       }
       return session
-    }
+    },
   },
   pages: {
     signIn: '/auth/login',
   },
   secret: process.env.JWT_SECRET,
 }
+
+/**
+ * Helper para obtener la sesión del usuario en Server Components
+ * Wrapper de getServerSession que pasa authOptions automáticamente
+ */
+export const auth = () => getServerSession(authOptions)

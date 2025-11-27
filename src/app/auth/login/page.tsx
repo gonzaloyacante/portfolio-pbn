@@ -1,0 +1,83 @@
+'use client'
+
+import { useState } from 'react'
+import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+
+export default function LoginPage() {
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    setIsLoading(true)
+
+    const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        toast.error('Credenciales inválidas')
+      } else {
+        toast.success('¡Bienvenida de nuevo, Paola!')
+        router.push('/admin/dashboard')
+        router.refresh()
+      }
+    } catch {
+      toast.error('Error al iniciar sesión')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="bg-bg flex min-h-screen items-center justify-center p-4">
+      <div className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl">
+        <h2 className="font-script text-primary mb-6 text-center text-2xl">Acceso al Panel</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700" htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              disabled={isLoading}
+              className="focus:border-accent focus:ring-accent mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm disabled:opacity-50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700" htmlFor="password">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              disabled={isLoading}
+              className="focus:border-accent focus:ring-accent mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm disabled:opacity-50"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-primary hover:bg-opacity-90 w-full rounded-md py-2 text-white transition duration-150 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
