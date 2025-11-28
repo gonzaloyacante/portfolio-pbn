@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import ThemeProvider from '@/components/layout/ThemeProvider'
 import { NavigationProgress } from '@/components/layout/NavigationProgress'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import CookieConsent from '@/components/legal/CookieConsent'
 import { getSiteConfig } from '@/actions/settings.actions'
 
 const montserrat = Montserrat({
@@ -46,10 +47,20 @@ export default async function RootLayout({
 
   return (
     <html lang="es">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#6c0a0a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Portfolio PBN" />
+      </head>
       <body className={`${montserrat.variable} ${greatVibes.variable} antialiased`}>
         <NavigationProgress />
         <ErrorBoundary>
-          <ThemeProvider initialConfig={siteConfig}>{children}</ThemeProvider>
+          <ThemeProvider initialConfig={siteConfig}>
+            {children}
+            <CookieConsent />
+          </ThemeProvider>
         </ErrorBoundary>
       </body>
     </html>

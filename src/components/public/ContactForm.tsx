@@ -6,6 +6,7 @@ import { sendContactEmail } from '@/actions/contact.actions'
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -90,6 +91,32 @@ export default function ContactForm() {
           />
         </div>
 
+        {/* Checkbox de Política de Privacidad (GDPR) */}
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="privacy"
+            name="privacy"
+            checked={acceptedPrivacy}
+            onChange={(e) => setAcceptedPrivacy(e.target.checked)}
+            required
+            className="border-wine/30 focus:ring-wine/20 dark:border-pink-hot/30 dark:focus:ring-pink-hot/20 text-wine mt-1 h-4 w-4 rounded border-2 focus:ring-2"
+          />
+          <label htmlFor="privacy" className="text-sm text-gray-700 dark:text-gray-300">
+            He leído y acepto la{' '}
+            <a
+              href="/privacidad"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-wine dark:text-pink-hot underline hover:no-underline"
+            >
+              Política de Privacidad
+            </a>
+            . Consiento el tratamiento de mis datos personales para responder a mi consulta.{' '}
+            <span className="text-red-600 dark:text-red-400">*</span>
+          </label>
+        </div>
+
         {message && (
           <div
             className={`rounded-2xl p-4 ${
@@ -104,7 +131,7 @@ export default function ContactForm() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || !acceptedPrivacy}
           className="bg-wine text-pink-light hover:bg-wine/90 dark:bg-purple-dark dark:text-pink-light dark:hover:bg-purple-dark/80 w-full rounded-2xl px-6 py-4 font-semibold shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (

@@ -13,6 +13,7 @@ const menuItems = [
   { href: '/admin/testimonios', label: 'Testimonios', icon: '💬' },
   { href: '/admin/contactos', label: 'Contactos', icon: '📧' },
   { href: '/admin/configuracion', label: 'Configuración', icon: '⚙️' },
+  { href: '/admin/ayuda', label: 'Centro de Ayuda', icon: '📘' },
 ]
 
 export default function AdminSidebar() {
