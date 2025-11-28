@@ -205,7 +205,7 @@ export default function AyudaPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="border-wine/20 dark:border-pink-hot/20 from-wine/5 to-pink-light/10 dark:from-purple-dark/30 dark:to-pink-hot/10 rounded-3xl border-2 bg-gradient-to-br p-8">
+      <div className="border-wine/20 dark:border-pink-hot/20 from-wine/5 to-pink-light/10 dark:from-purple-dark/30 dark:to-pink-hot/10 rounded-3xl border-2 bg-linear-to-br p-8">
         <h1 className="text-wine dark:text-pink-light mb-4 text-4xl font-bold">
           📘 Centro de Ayuda
         </h1>
@@ -350,7 +350,7 @@ export default function AyudaPage() {
       </div>
 
       {/* Contacto de soporte */}
-      <div className="from-wine/10 to-pink-light/20 dark:from-purple-dark/30 dark:to-pink-hot/10 rounded-3xl bg-gradient-to-br p-6">
+      <div className="from-wine/10 to-pink-light/20 dark:from-purple-dark/30 dark:to-pink-hot/10 rounded-3xl bg-linear-to-br p-6">
         <h3 className="text-wine dark:text-pink-light mb-3 text-xl font-bold">
           🆘 ¿Necesitas ayuda adicional?
         </h3>

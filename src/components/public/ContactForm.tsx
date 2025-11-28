@@ -25,7 +25,7 @@ export default function ContactForm() {
       } else {
         setMessage({ type: 'error', text: result.message })
       }
-    } catch (_error) {
+    } catch {
       setMessage({ type: 'error', text: 'Error inesperado. Intenta de nuevo.' })
     } finally {
       setIsSubmitting(false)

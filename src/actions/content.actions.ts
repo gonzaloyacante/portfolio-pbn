@@ -31,8 +31,13 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     await prisma.project.create({
       data: {
         title,
+        slug: title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/(^-|-$)/g, ''),
         description: description || '',
         date: dateStr ? new Date(dateStr) : new Date(),
+        thumbnailUrl: uploadedImages[0]?.url || '',
         categoryId,
         images: {
           create: uploadedImages.map((img) => ({

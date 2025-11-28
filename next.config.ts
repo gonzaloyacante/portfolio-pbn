@@ -6,7 +6,6 @@ const withPWA = createNextPWA({
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
   reloadOnOnline: true,
-  swcMinify: true,
   disable: process.env.NODE_ENV === 'development',
   workboxOptions: {
     disableDevLogs: true,
@@ -107,6 +106,7 @@ const withPWA = createNextPWA({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  turbopack: {},
 
   // Configuración de imágenes
   images: {

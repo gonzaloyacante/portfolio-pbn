@@ -95,9 +95,9 @@ export default function PrivacidadPage() {
           </h2>
           <p className="leading-relaxed">
             El tratamiento de sus datos personales se basa en el{' '}
-            <strong>consentimiento explícito</strong> que usted otorga al marcar la casilla &quot;Acepto
-            la política de privacidad&quot; antes de enviar el formulario de contacto. Este
-            consentimiento es libre, específico, informado e inequívoco.
+            <strong>consentimiento explícito</strong> que usted otorga al marcar la casilla
+            &quot;Acepto la política de privacidad&quot; antes de enviar el formulario de contacto.
+            Este consentimiento es libre, específico, informado e inequívoco.
           </p>
         </section>
 
@@ -225,8 +225,8 @@ export default function PrivacidadPage() {
             </li>
             <li>
               <strong>Cookies analíticas (opcionales):</strong> Google Analytics para analizar el
-              comportamiento de los usuarios. Solo se activan si acepta "Cookies Analíticas" en el
-              banner.
+              comportamiento de los usuarios. Solo se activan si acepta &quot;Cookies
+              Analíticas&quot; en el banner.
             </li>
           </ul>
         </section>
@@ -267,7 +267,7 @@ export default function PrivacidadPage() {
         </section>
 
         {/* Contacto */}
-        <section className="from-wine/10 to-pink-light/20 dark:from-purple-dark/50 dark:to-pink-hot/10 rounded-3xl bg-gradient-to-br p-6">
+        <section className="from-wine/10 to-pink-light/20 dark:from-purple-dark/50 dark:to-pink-hot/10 rounded-3xl bg-linear-to-br p-6">
           <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
             📧 ¿Tienes dudas?
           </h2>

@@ -23,8 +23,8 @@ async function checkRateLimit(ipAddress: string): Promise<boolean> {
   return !recentContact // true si puede enviar, false si está bloqueado
 }
 
-function getClientIp(): string {
-  const headersList = headers()
+async function getClientIp(): Promise<string> {
+  const headersList = await headers()
 
   // Intentar obtener IP de diferentes headers (proxies, CDNs)
   const forwardedFor = headersList.get('x-forwarded-for')
@@ -64,7 +64,7 @@ export async function sendContactEmail(formData: FormData) {
   }
 
   // Obtener IP del cliente
-  const ipAddress = getClientIp()
+  const ipAddress = await getClientIp()
 
   try {
     // 🔐 RATE LIMITING: Verificar si la IP puede enviar mensajes
