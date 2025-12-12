@@ -12,15 +12,11 @@ export default function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
       href={`/proyectos/${category.slug}`}
-      className="group bg-pink-hot dark:bg-pink-hot/90 flex aspect-square flex-col items-center justify-center rounded-4xl p-8 text-center shadow-lg transition-all hover:scale-105 hover:shadow-2xl"
+      className="group bg-btn-back-bg flex aspect-square flex-col items-center justify-center rounded-4xl p-8 text-center shadow-lg transition-all hover:scale-105 hover:shadow-2xl"
     >
-      <h3 className="font-primary text-wine dark:text-purple-dark text-2xl font-bold">
-        {category.name}
-      </h3>
+      <h3 className="font-primary text-category-title text-2xl font-bold">{category.name}</h3>
       {category.description && (
-        <p className="text-wine/80 dark:text-purple-dark/80 mt-3 line-clamp-3 text-sm">
-          {category.description}
-        </p>
+        <p className="text-btn-back-text/80 mt-3 line-clamp-3 text-sm">{category.description}</p>
       )}
 
       {/* Decorative element */}

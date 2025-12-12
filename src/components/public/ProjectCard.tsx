@@ -12,30 +12,30 @@ export default function ProjectCard({ title, slug, thumbnailUrl, categoryName }:
   return (
     <Link
       href={`/proyectos/${slug}`}
-      className="group bg-pink-hot dark:bg-pink-hot/90 relative block aspect-4/3 overflow-hidden rounded-4xl shadow-lg transition-all hover:scale-105 hover:shadow-2xl"
+      className="group bg-btn-back-bg relative block aspect-square overflow-hidden rounded-3xl transition-all hover:scale-105"
     >
       {/* Image */}
-      <div className="relative h-full w-full">
+      <div className="relative h-full w-full opacity-90 transition-opacity group-hover:opacity-100">
         <Image
           src={thumbnailUrl}
           alt={title}
           fill
-          className="object-cover transition-transform group-hover:scale-110"
-          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover"
+          sizes="(max-width: 768px) 50vw, 33vw"
         />
 
-        {/* Gradient Overlay for text readability */}
-        <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
+        {/* Subtle gradient for text readability if needed, but keeping it clean */}
+        <div className="from-btn-back-bg/80 absolute inset-0 bg-linear-to-t via-transparent to-transparent opacity-60" />
       </div>
 
       {/* Title & Category */}
-      <div className="absolute bottom-4 left-4 z-10">
+      <div className="absolute bottom-3 left-3 z-10 pr-2">
         {categoryName && (
-          <p className="font-primary text-pink-light mb-1 text-xs font-medium tracking-wide uppercase opacity-90">
+          <p className="font-primary text-btn-back-text mb-0.5 text-[10px] font-bold tracking-wider uppercase opacity-80">
             {categoryName}
           </p>
         )}
-        <h3 className="font-primary text-wine dark:text-pink-light text-xl font-bold drop-shadow-lg md:text-2xl">
+        <h3 className="font-primary text-btn-back-text text-sm leading-tight font-bold md:text-lg">
           {title}
         </h3>
       </div>

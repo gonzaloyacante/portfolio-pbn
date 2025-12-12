@@ -1,33 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme')
-      const isDarkMode = savedTheme === 'dark'
-      if (isDarkMode) {
-        document.documentElement.classList.add('dark')
-      }
-      return isDarkMode
-    }
-    return false
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('theme') === 'dark'
   })
 
-  const toggleTheme = () => {
+  useEffect(() => {
     const html = document.documentElement
-    const newIsDark = !isDark
-
-    if (newIsDark) {
+    if (isDark) {
       html.classList.add('dark')
       localStorage.setItem('theme', 'dark')
     } else {
       html.classList.remove('dark')
       localStorage.setItem('theme', 'light')
     }
+  }, [isDark])
 
-    setIsDark(newIsDark)
+  const toggleTheme = () => {
+    setIsDark((v) => !v)
+  }
+
+  if (typeof window === 'undefined') {
+    return <div className="bg-wine/10 dark:bg-pink-hot/10 h-10 w-10 rounded-full" />
   }
 
   return (

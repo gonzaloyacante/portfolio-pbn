@@ -106,7 +106,10 @@ const withPWA = createNextPWA({
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
-  turbopack: {},
+  turbopack: {
+    // Silencia el warning de múltiples lockfiles
+    root: process.cwd(),
+  },
 
   // Configuración de imágenes
   images: {

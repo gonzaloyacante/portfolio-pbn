@@ -56,73 +56,99 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 100, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-        className="fixed right-0 bottom-0 left-0 z-50 bg-white p-4 shadow-2xl sm:p-6 dark:bg-gray-900"
+        className="fixed right-0 bottom-0 left-0 z-50 p-4 sm:p-6"
       >
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            {/* Texto */}
-            <div className="flex-1">
-              <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-                🍪 Usamos cookies
-              </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Utilizamos cookies propias y de terceros para mejorar tu experiencia de navegación y
-                analizar el tráfico del sitio. Puedes aceptar todas las cookies o solo las
-                esenciales.{' '}
-                <button
-                  onClick={() => setShowDetails(!showDetails)}
-                  className="text-wine dark:text-pink-hot underline hover:no-underline"
-                >
-                  {showDetails ? 'Ver menos' : 'Más información'}
-                </button>
-              </p>
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-white/95 shadow-2xl ring-1 ring-black/5 backdrop-blur-md dark:bg-gray-900/95 dark:ring-white/10">
+          <div className="p-6">
+            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+              {/* Contenido */}
+              <div className="flex-1 space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">🍪</span>
+                  <h3 className="font-primary text-xl font-bold text-gray-900 dark:text-white">
+                    Valoramos tu privacidad
+                  </h3>
+                </div>
 
-              {/* Detalles expandibles */}
-              {showDetails && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="mt-3 space-y-2 text-sm text-gray-700 dark:text-gray-300"
-                >
-                  <div>
-                    <strong className="text-wine dark:text-pink-hot">Cookies esenciales:</strong>{' '}
-                    Necesarias para el funcionamiento del sitio (autenticación, preferencias de
-                    tema).
-                  </div>
-                  <div>
-                    <strong className="text-wine dark:text-pink-hot">Cookies analíticas:</strong>{' '}
-                    Google Analytics para entender cómo los usuarios interactúan con el sitio (datos
-                    anónimos).
-                  </div>
-                  <p className="mt-2">
-                    Para más detalles, consulta nuestra{' '}
-                    <a
-                      href="/privacidad"
-                      className="text-wine dark:text-pink-hot underline hover:no-underline"
+                <p className="text-base leading-relaxed text-gray-600 dark:text-gray-300">
+                  Utilizamos cookies propias y de terceros para mejorar tu experiencia de navegación
+                  y analizar el tráfico del sitio.
+                  <button
+                    onClick={() => setShowDetails(!showDetails)}
+                    className="text-wine hover:text-wine/80 dark:text-pink-hot dark:hover:text-pink-hot/80 ml-2 font-medium underline decoration-2 underline-offset-2 transition-colors"
+                  >
+                    {showDetails ? 'Ocultar detalles' : 'Configurar cookies'}
+                  </button>
+                </p>
+
+                {/* Detalles expandibles */}
+                <AnimatePresence>
+                  {showDetails && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="overflow-hidden"
                     >
-                      Política de Privacidad
-                    </a>
-                    .
-                  </p>
-                </motion.div>
-              )}
-            </div>
+                      <div className="mt-4 space-y-3 rounded-2xl bg-gray-50 p-4 text-sm dark:bg-gray-800/50">
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                          <div>
+                            <strong className="block font-semibold text-gray-900 dark:text-white">
+                              Esenciales (Necesarias)
+                            </strong>
+                            <span className="text-gray-600 dark:text-gray-400">
+                              Indispensables para el funcionamiento del sitio (preferencias de tema,
+                              seguridad y carrito). No se pueden desactivar.
+                            </span>
+                          </div>
+                        </div>
 
-            {/* Botones */}
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <button
-                onClick={handleAcceptNecessary}
-                className="border-wine text-wine hover:bg-wine/5 dark:border-pink-hot dark:text-pink-hot dark:hover:bg-pink-hot/10 rounded-2xl border-2 px-6 py-2.5 text-sm font-semibold transition-colors"
-              >
-                Solo Necesarias
-              </button>
-              <button
-                onClick={handleAcceptAll}
-                className="bg-wine hover:bg-wine/90 dark:bg-pink-hot dark:text-purple-dark dark:hover:bg-pink-hot/90 rounded-2xl px-6 py-2.5 text-sm font-semibold text-white transition-colors"
-              >
-                Aceptar Todas
-              </button>
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                          <div>
+                            <strong className="block font-semibold text-gray-900 dark:text-white">
+                              Analíticas (Opcionales)
+                            </strong>
+                            <span className="text-gray-600 dark:text-gray-400">
+                              Nos ayudan a entender cómo usas la web para mejorarla (Google
+                              Analytics). Los datos son anónimos.
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="mt-4 border-t border-gray-200 pt-3 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-500">
+                          Para más información, consulta nuestra{' '}
+                          <a
+                            href="/privacidad"
+                            className="text-wine dark:text-pink-hot font-medium hover:underline"
+                          >
+                            Política de Privacidad
+                          </a>
+                          .
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Botones */}
+              <div className="flex flex-col gap-3 sm:flex-row md:min-w-[300px] md:flex-col lg:flex-row">
+                <button
+                  onClick={handleAcceptNecessary}
+                  className="group relative overflow-hidden rounded-xl border-2 border-gray-200 bg-transparent px-6 py-3 text-sm font-bold text-gray-700 transition-all hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-800"
+                >
+                  <span className="relative z-10">Solo necesarias</span>
+                </button>
+
+                <button
+                  onClick={handleAcceptAll}
+                  className="group bg-wine shadow-wine/20 hover:bg-wine/90 hover:shadow-wine/40 dark:bg-pink-hot dark:text-purple-dark dark:shadow-pink-hot/20 dark:hover:bg-pink-hot/90 dark:hover:shadow-pink-hot/40 relative overflow-hidden rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span className="relative z-10">Aceptar todas</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Montserrat, Great_Vibes } from 'next/font/google'
+import { Open_Sans, Pacifico, Raleway } from 'next/font/google'
 import '@/styles/globals.css'
 import ThemeProvider from '@/components/layout/ThemeProvider'
 import { NavigationProgress } from '@/components/layout/NavigationProgress'
@@ -7,16 +7,25 @@ import { ErrorBoundary } from '@/components/ErrorBoundary'
 import CookieConsent from '@/components/legal/CookieConsent'
 import { getSiteConfig } from '@/actions/settings.actions'
 
-const montserrat = Montserrat({
+// Script font (alternativa a Amsterdam Four) - Para "Make-up" y "Paola Bolívar Nievas"
+const scriptFont = Pacifico({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-script',
+  display: 'swap',
+})
+
+// Primary font (alternativa a Aileron) - Para "Portfolio", NavLinks, Títulos categorías
+const primaryFont = Raleway({
   subsets: ['latin'],
   variable: '--font-primary',
   display: 'swap',
 })
 
-const greatVibes = Great_Vibes({
-  weight: '400',
+// Body font - Para texto de "Sobre mí" y cuerpo general
+const bodyFont = Open_Sans({
   subsets: ['latin'],
-  variable: '--font-script',
+  variable: '--font-body',
   display: 'swap',
 })
 
@@ -54,7 +63,9 @@ export default async function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Portfolio PBN" />
       </head>
-      <body className={`${montserrat.variable} ${greatVibes.variable} antialiased`}>
+      <body
+        className={`${primaryFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
+      >
         <NavigationProgress />
         <ErrorBoundary>
           <ThemeProvider initialConfig={siteConfig}>

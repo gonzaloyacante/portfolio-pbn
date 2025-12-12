@@ -30,8 +30,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files (NUNCA commitear archivos con secretos reales)
+.env
+.env.local
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
 # vercel
 .vercel
@@ -44,7 +49,7 @@ next-env.d.ts
 /src/generated/prisma
 
 # ===================================================
-# DOCUMENTACIÓN Y SCRIPTS DE DESARROLLO (NO DEPLOYAR)
+# ARCHIVOS NO NECESARIOS EN PRODUCCIÓN
 # ===================================================
 # Ignorar documentación interna y scripts que no se necesitan en producción
 docs/

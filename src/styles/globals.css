@@ -1,35 +1,100 @@
 @import "tailwindcss";
 
+/* ============================================
+   DESIGN SYSTEM - COLORES Y FUENTES
+   ============================================ */
+
 :root {
-  /* Default Colors (Light Mode) */
+  /* === COLORES BASE === */
+  --color-wine: #6c0a0a;
+  --color-pink-light: #fff1f9;
+  --color-pink-hot: #ffaadd;
+  --color-black: #000000;
+
+  /* === TEMA CLARO === */
   --color-bg: #fff1f9;
-  --color-primary: #6c0a0a;
-  --color-accent: #ffaadd;
   
-  /* Fonts - Will be set by Next.js Font Loader in layout.tsx */
-  /* --font-primary and --font-script should be defined by the font loader classes */
+  /* Make-up (Script) */
+  --color-makeup: #6c0a0a;
+  
+  /* Portfolio (Primary) */
+  --color-portfolio: #ffaadd;
+  
+  /* NavLinks */
+  --color-navlink-text: #ffaadd;
+  --color-navlink-bg: #6c0a0a;
+  
+  /* Nombre "Paola Bolívar Nievas" */
+  --color-name: #6c0a0a;
+  
+  /* Sobre mí texto */
+  --color-body-text: #000000;
+  
+  /* Títulos categorías */
+  --color-category-title: #6c0a0a;
+  
+  /* Botón volver galería */
+  --color-btn-back-bg: #6c0a0a;
+  --color-btn-back-text: #ffaadd;
 }
 
-/* Dark Mode Colors */
+/* === TEMA OSCURO === */
 .dark {
-  --color-bg: #581c3c;
-  --color-primary: #fff1f9;
-  --color-accent: #ffaadd;
+  --color-bg: #1a1a1a;
+  
+  /* Make-up (Script) */
+  --color-makeup: #000000;
+  
+  /* Portfolio (Primary) */
+  --color-portfolio: #ffaadd;
+  
+  /* NavLinks */
+  --color-navlink-text: #6c0a0a;
+  --color-navlink-bg: #ffaadd;
+  
+  /* Nombre "Paola Bolívar Nievas" */
+  --color-name: #ffaadd;
+  
+  /* Sobre mí texto */
+  --color-body-text: #fff1f9;
+  
+  /* Títulos categorías */
+  --color-category-title: #ffaadd;
+  
+  /* Botón volver galería */
+  --color-btn-back-bg: #ffaadd;
+  --color-btn-back-text: #6c0a0a;
 }
 
 @theme {
-  --color-bg: var(--color-bg);
-  --color-primary: var(--color-primary);
-  --color-accent: var(--color-accent);
+  /* Colores base */
+  --color-wine: #6c0a0a;
+  --color-pink-light: #fff1f9;
+  --color-pink-hot: #ffaadd;
+  --color-black: #000000;
   
-  --font-primary: var(--font-primary);
+  /* Colores semánticos del tema */
+  --color-bg: var(--color-bg);
+  --color-makeup: var(--color-makeup);
+  --color-portfolio: var(--color-portfolio);
+  --color-navlink-text: var(--color-navlink-text);
+  --color-navlink-bg: var(--color-navlink-bg);
+  --color-name: var(--color-name);
+  --color-body-text: var(--color-body-text);
+  --color-category-title: var(--color-category-title);
+  --color-btn-back-bg: var(--color-btn-back-bg);
+  --color-btn-back-text: var(--color-btn-back-text);
+  
+  /* Fuentes */
   --font-script: var(--font-script);
+  --font-primary: var(--font-primary);
+  --font-body: var(--font-body);
 }
 
 body {
   background-color: var(--color-bg);
-  color: var(--color-primary);
-  font-family: var(--font-primary);
+  color: var(--color-body-text);
+  font-family: var(--font-body);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 

@@ -1,1 +1,5 @@
+# Ejecutar checks completos de calidad
+pnpm run pre-commit
+
+# Si los checks pasan, ejecutar lint-staged
 pnpm lint-staged
