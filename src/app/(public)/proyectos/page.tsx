@@ -4,6 +4,7 @@ import ProjectCard from '@/components/public/ProjectCard'
 export default async function ProjectsPage() {
   // Get all active projects with their categories
   let projects = []
+  let errorLoading = false
   try {
     projects = await prisma.project.findMany({
       where: {
@@ -17,7 +18,20 @@ export default async function ProjectsPage() {
       },
     })
   } catch (error) {
-    console.error('Failed to fetch projects, returning empty array:', error)
+    console.error('Failed to fetch projects:', error)
+    errorLoading = true
+  }
+
+  if (errorLoading) {
+    return (
+      <div className="text-center py-20">
+        <h2 className="text-2xl font-bold">Error al cargar los proyectos</h2>
+        <p className="mt-4 text-gray-600">
+          Hubo un problema al conectar con la base de datos. Por favor, inténtalo de nuevo más
+          tarde.
+        </p>
+      </div>
+    )
   }
 
   return (

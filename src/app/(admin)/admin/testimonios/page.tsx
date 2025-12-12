@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import { createTestimonial, deleteTestimonial } from '@/actions/testimonials.actions'
 import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
 
 export default async function TestimonialsPage() {
   const testimonials = await prisma.testimonial.findMany({
@@ -12,7 +13,7 @@ export default async function TestimonialsPage() {
       <h1 className="mb-8 text-3xl font-bold">Gestión de Testimonios</h1>
 
       {/* Formulario de Creación */}
-      <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
+      <Card className="mb-8">
         <h2 className="mb-4 text-xl font-semibold">Crear Nuevo Testimonio</h2>
         <form
           action={async (formData) => {
@@ -68,7 +69,7 @@ export default async function TestimonialsPage() {
 
           <Button type="submit">Crear Testimonio</Button>
         </form>
-      </div>
+      </Card>
 
       {/* Tabla de Testimonios */}
       <div className="overflow-hidden rounded-lg bg-white shadow-md">

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
 import Button from '@/components/ui/Button'
+import Card from '@/components/ui/Card'
 import {
   uploadImageAndCreateProject,
   deleteProject,
@@ -35,7 +36,7 @@ export default async function GestionPage({ params }: { params: Promise<{ entity
       </h1>
 
       {/* Formulario de Creación */}
-      <div className="mb-8 rounded-lg bg-white p-6 shadow-md">
+      <Card className="mb-8">
         <h2 className="mb-4 text-xl font-semibold">
           Crear Nuevo {isProjects ? 'Proyecto' : 'Categoría'}
         </h2>
@@ -134,7 +135,7 @@ export default async function GestionPage({ params }: { params: Promise<{ entity
 
           <Button type="submit">Guardar</Button>
         </form>
-      </div>
+      </Card>
 
       {/* Tabla de Listado */}
       <div className="overflow-hidden rounded-lg bg-white shadow-md">
