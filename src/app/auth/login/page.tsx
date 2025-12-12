@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
+import Button from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
@@ -69,13 +70,9 @@ export default function LoginPage() {
               className="focus:border-accent focus:ring-accent mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm disabled:opacity-50"
             />
           </div>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="bg-primary hover:bg-opacity-90 w-full rounded-md py-2 text-white transition duration-150 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <Button type="submit" isLoading={isLoading} className="w-full">
             {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

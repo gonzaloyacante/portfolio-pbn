@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { sendContactEmail } from '@/actions/contact.actions'
+import Button from '@/components/ui/Button'
 
 export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -124,39 +125,15 @@ export default function ContactForm() {
           </div>
         )}
 
-        <button
+        <Button
           type="submit"
-          disabled={isSubmitting || !acceptedPrivacy}
-          className="bg-btn-back-bg text-btn-back-text hover:bg-btn-back-bg/90 w-full rounded-2xl px-6 py-4 font-semibold shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!acceptedPrivacy}
+          isLoading={isSubmitting}
+          className="w-full"
+          size="lg"
         >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg
-                className="h-5 w-5 animate-spin"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Enviando...
-            </span>
-          ) : (
-            'Enviar Mensaje'
-          )}
-        </button>
+          {isSubmitting ? 'Enviando...' : 'Enviar Mensaje'}
+        </Button>
       </form>
     </div>
   )

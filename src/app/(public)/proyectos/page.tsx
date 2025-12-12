@@ -3,17 +3,22 @@ import ProjectCard from '@/components/public/ProjectCard'
 
 export default async function ProjectsPage() {
   // Get all active projects with their categories
-  const projects = await prisma.project.findMany({
-    where: {
-      isDeleted: false,
-    },
-    include: {
-      category: true,
-    },
-    orderBy: {
-      date: 'desc',
-    },
-  })
+  let projects = []
+  try {
+    projects = await prisma.project.findMany({
+      where: {
+        isDeleted: false,
+      },
+      include: {
+        category: true,
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    })
+  } catch (error) {
+    console.error('Failed to fetch projects, returning empty array:', error)
+  }
 
   return (
     <div className="container mx-auto space-y-8 px-4 py-8">

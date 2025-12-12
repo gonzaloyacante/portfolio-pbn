@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
 import { createTestimonial, deleteTestimonial } from '@/actions/testimonials.actions'
+import Button from '@/components/ui/Button'
 
 export default async function TestimonialsPage() {
   const testimonials = await prisma.testimonial.findMany({
@@ -65,12 +66,7 @@ export default async function TestimonialsPage() {
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="bg-primary hover:bg-opacity-90 rounded-md px-6 py-2 text-white transition-colors"
-          >
-            Crear Testimonio
-          </button>
+          <Button type="submit">Crear Testimonio</Button>
         </form>
       </div>
 
@@ -122,9 +118,9 @@ export default async function TestimonialsPage() {
                       await deleteTestimonial(testimonial.id)
                     }}
                   >
-                    <button type="submit" className="text-red-600 hover:text-red-900">
+                    <Button type="submit" variant="danger" size="sm">
                       Eliminar
-                    </button>
+                    </Button>
                   </form>
                 </td>
               </tr>

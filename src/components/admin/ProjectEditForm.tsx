@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Project, ProjectImage, Category } from '@prisma/client'
+import Button from '@/components/ui/Button'
 import {
   DndContext,
   closestCenter,
@@ -150,14 +151,15 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
           <div className="mb-4">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-sm text-gray-500">Arrastra las imágenes para reordenar</span>
-              <button
+              <Button
                 type="button"
                 onClick={handleSaveOrder}
-                disabled={isSaving}
-                className="rounded bg-gray-100 px-3 py-1 text-sm text-gray-700 hover:bg-gray-200 disabled:opacity-50"
+                isLoading={isSaving}
+                variant="secondary"
+                size="sm"
               >
                 {isSaving ? 'Guardando...' : 'Guardar Orden'}
-              </button>
+              </Button>
             </div>
 
             <DndContext
@@ -187,12 +189,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
         </div>
 
         <div className="flex justify-end pt-4">
-          <button
-            type="submit"
-            className="bg-primary hover:bg-opacity-90 rounded-md px-6 py-2 text-white shadow-sm transition-colors"
-          >
-            Actualizar Proyecto
-          </button>
+          <Button type="submit">Actualizar Proyecto</Button>
         </div>
       </form>
     </div>

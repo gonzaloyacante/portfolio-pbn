@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { prisma } from '@/lib/db'
+import Button from '@/components/ui/Button'
 import {
   uploadImageAndCreateProject,
   deleteProject,
@@ -131,12 +132,7 @@ export default async function GestionPage({ params }: { params: Promise<{ entity
             </>
           )}
 
-          <button
-            type="submit"
-            className="bg-primary hover:bg-opacity-90 rounded-md px-4 py-2 text-white transition-colors"
-          >
-            Guardar
-          </button>
+          <Button type="submit">Guardar</Button>
         </form>
       </div>
 
@@ -205,9 +201,9 @@ export default async function GestionPage({ params }: { params: Promise<{ entity
                         }
                       }}
                     >
-                      <button type="submit" className="text-red-600 hover:text-red-900">
+                      <Button type="submit" variant="danger" size="sm">
                         Eliminar
-                      </button>
+                      </Button>
                     </form>
                   </td>
                 </tr>
