@@ -24,22 +24,20 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
-      <div className="flex flex-col gap-12">
-        <FadeIn duration={0.8}>
-          <HeroSection heroImageUrl={siteConfig?.heroImageUrl} title="Paola Bolívar Nievas" />
-        </FadeIn>
+      <FadeIn duration={0.8}>
+        <HeroSection heroImageUrl={siteConfig?.heroImageUrl} title="Paola Bolívar Nievas" />
+      </FadeIn>
 
-        {testimonials.length > 0 && (
-          <SlideIn direction="up" delay={0.3}>
-            <section className="container mx-auto px-4 py-12">
-              <h2 className="font-script text-primary mb-8 text-center text-4xl">
-                Lo que dicen mis clientes
-              </h2>
-              <TestimonialSlider testimonials={testimonials} />
-            </section>
-          </SlideIn>
-        )}
-      </div>
+      {testimonials.length > 0 && (
+        <SlideIn direction="up" delay={0.3}>
+          <section className="container mx-auto px-4 pb-12">
+            <h2 className="font-script text-primary mb-8 text-center text-4xl">
+              Lo que dicen mis clientes
+            </h2>
+            <TestimonialSlider testimonials={testimonials} />
+          </section>
+        </SlideIn>
+      )}
     </>
   )
 }
