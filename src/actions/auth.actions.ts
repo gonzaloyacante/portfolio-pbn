@@ -27,7 +27,7 @@ export async function requestPasswordReset(email: string) {
     const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password?token=${token}`
 
     await resend.emails.send({
-      from: process.env.EMAIL_FROM,
+      from: process.env.EMAIL_FROM || 'noreply@portfolio-pbn.com',
       to: email,
       subject: 'Recuperación de Contraseña',
       html: `<p>Haz clic <a href="${resetLink}">aquí</a> para resetear tu contraseña.</p>`,

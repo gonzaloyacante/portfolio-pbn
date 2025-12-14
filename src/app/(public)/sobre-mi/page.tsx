@@ -1,105 +1,105 @@
 import Image from 'next/image'
-import { getSiteConfig } from '@/actions/settings.actions'
+import { getPageContent } from '@/actions/theme.actions'
 
 export default async function AboutPage() {
-  const siteConfig = await getSiteConfig()
+  const pageContent = await getPageContent('about')
+
+  let bioData = {
+    title: 'Sobre mi',
+    bio: `Hola, soy Paola.
+
+Maquilladora especializada en audiovisuales, llevo formándome desde 2021 adquiriendo títulos como técnica en estética y belleza, y técnica en caracterizacion y maquillaje profesional.
+
+A lo largo de mis estudios y experiencia he trabajado en distintos entornos creativos que me han permitido desarrollar habilidades tanto en maquillaje social como en caracterización, efectos especiales, peluquería de plató y creación de personajes.
+
+Mi meta es establecerme como maquilladora y caracterizadora profesional en la industria del cine y la televisión, contribuyendo a proyectos que inspiren y cautiven al público.
+
+En este portfolio, encontrarás mis trabajos y proyectos, cada uno fruto de dedicación, creatividad y amor por mi profesión.`,
+    showImage: true,
+    imagePosition: 'right',
+    imageUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1753747019/IMG-20250729-WA0014_2_plir9l.jpg',
+  }
+
+  if (pageContent?.content) {
+    try {
+      const parsed = JSON.parse(pageContent.content)
+      bioData = { ...bioData, ...parsed }
+    } catch (e) {
+      console.error('Error parsing page content:', e)
+    }
+  }
+
+  // Dividir bio en párrafos
+  const paragraphs = bioData.bio.split('\n\n').filter(Boolean)
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-5xl">
-        {/* Header */}
-        <div className="mb-16 text-center">
-          <h1 className="font-script text-wine dark:text-pink-hot mb-4 text-5xl md:text-6xl">
-            Sobre Mí
-          </h1>
-          <p className="text-wine/70 dark:text-pink-light/70 mx-auto max-w-2xl text-lg">
-            Conoce mi historia y pasión por el maquillaje artístico
-          </p>
-        </div>
-
-        {/* Content */}
-        <div className="grid gap-12 md:grid-cols-2 md:items-center">
-          {/* Photo */}
-          <div className="flex justify-center md:justify-end">
-            <div className="relative h-80 w-80 md:h-96 md:w-96">
-              <div className="border-pink-hot dark:border-wine absolute inset-0 overflow-hidden rounded-full border-8 shadow-2xl">
-                {siteConfig?.heroImageUrl ? (
-                  <Image
-                    src={siteConfig.heroImageUrl}
-                    alt="Paola Bolívar Nievas"
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="from-pink-hot to-pink-dark flex h-full w-full flex-col items-center justify-center bg-linear-to-br text-white">
-                    <div className="text-6xl">✨</div>
-                    <p className="font-script mt-4 text-2xl">Paola</p>
-                  </div>
-                )}
-              </div>
-
-              {/* Decorative elements */}
-              <div className="absolute -top-4 -right-4 text-6xl">💄</div>
-              <div className="absolute -bottom-4 -left-4 text-5xl">✨</div>
-            </div>
+    <section
+      className="min-h-screen w-full"
+      style={{ backgroundColor: 'var(--color-background, #fff1f9)' }}
+    >
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-4 py-12 sm:px-6 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+        {/* Columna Izquierda - Texto */}
+        <div className="order-2 lg:order-1">
+          {/* Título con nombre en script + icono */}
+          <div className="mb-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start lg:gap-4">
+            <h1
+              className="font-script"
+              style={{
+                color: 'var(--color-text-primary, #6c0a0a)',
+                fontSize: 'clamp(2rem, 5vw, 4rem)',
+              }}
+            >
+              Paola Bolívar Nievas
+            </h1>
+            <span className="text-4xl sm:text-5xl">💄</span>
           </div>
 
-          {/* Text */}
-          <div className="space-y-6">
-            <div className="bg-pink-hot/30 dark:bg-purple-dark/30 rounded-4xl p-8">
-              <div className="prose prose-lg text-wine dark:text-pink-light max-w-none">
-                {siteConfig?.aboutText ? (
-                  <p className="leading-relaxed whitespace-pre-wrap">{siteConfig.aboutText}</p>
-                ) : (
-                  <>
-                    <p className="mb-4 leading-relaxed">
-                      Hola, soy <span className="font-script text-2xl">Paola Bolívar Nievas</span>,
-                      maquilladora profesional con años de experiencia en el mundo de la belleza y
-                      el arte.
-                    </p>
-                    <p className="mb-4 leading-relaxed">
-                      Mi pasión por el maquillaje comenzó desde muy joven, y con el tiempo se
-                      transformó en mi carrera profesional. Me especializo en maquillaje para
-                      eventos, novias, sesiones fotográficas y producciones artísticas.
-                    </p>
-                    <p className="leading-relaxed">
-                      Cada rostro es un lienzo único, y mi objetivo es resaltar la belleza natural
-                      de cada persona, creando looks que reflejen su personalidad y estilo.
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
+          {/* Biografía */}
+          <div
+            className="space-y-5 text-justify leading-relaxed"
+            style={{
+              color: 'var(--color-text-primary, #6c0a0a)',
+              fontSize: 'clamp(0.95rem, 1.2vw, 1.1rem)',
+              lineHeight: '1.8',
+            }}
+          >
+            {paragraphs.map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
+        </div>
 
-            {/* Skills/Specialties */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-wine dark:bg-purple-dark rounded-3xl p-6 text-center shadow-md">
-                <div className="mb-2 text-4xl">💼</div>
-                <h3 className="text-pink-light font-semibold">Eventos</h3>
-                <p className="text-pink-light/80 text-sm">Bodas & Fiestas</p>
+        {/* Columna Derecha - Imagen OVAL */}
+        <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
+          <div
+            className="relative aspect-[3/4] w-full max-w-xs overflow-hidden shadow-2xl sm:max-w-sm lg:max-w-md"
+            style={{
+              borderRadius: '50% / 45%',
+            }}
+          >
+            {bioData.imageUrl ? (
+              <Image
+                src={bioData.imageUrl}
+                alt="Paola Bolívar Nievas"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 80vw, (max-width: 1024px) 40vw, 400px"
+                priority
+              />
+            ) : (
+              <div
+                className="flex h-full items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, var(--color-primary, #ffaadd), var(--color-accent, #7a2556))`,
+                }}
+              >
+                <span className="text-8xl">💄</span>
               </div>
-
-              <div className="bg-wine dark:bg-purple-dark rounded-3xl p-6 text-center shadow-md">
-                <div className="mb-2 text-4xl">📸</div>
-                <h3 className="text-pink-light font-semibold">Fotografía</h3>
-                <p className="text-pink-light/80 text-sm">Editorial & Fashion</p>
-              </div>
-
-              <div className="bg-wine dark:bg-purple-dark rounded-3xl p-6 text-center shadow-md">
-                <div className="mb-2 text-4xl">🎨</div>
-                <h3 className="text-pink-light font-semibold">Artístico</h3>
-                <p className="text-pink-light/80 text-sm">Creatividad & Color</p>
-              </div>
-
-              <div className="bg-wine dark:bg-purple-dark rounded-3xl p-6 text-center shadow-md">
-                <div className="mb-2 text-4xl">👰</div>
-                <h3 className="text-pink-light font-semibold">Novias</h3>
-                <p className="text-pink-light/80 text-sm">Tu día especial</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

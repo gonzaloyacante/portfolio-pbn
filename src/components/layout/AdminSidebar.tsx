@@ -12,6 +12,7 @@ const menuItems = [
   { href: '/admin/gestion/categories', label: 'Categorías', icon: '📁' },
   { href: '/admin/testimonios', label: 'Testimonios', icon: '💬' },
   { href: '/admin/contactos', label: 'Contactos', icon: '📧' },
+  { href: '/admin/tema', label: 'Editor de Tema', icon: '🎨' },
   { href: '/admin/configuracion', label: 'Configuración', icon: '⚙️' },
   { href: '/admin/ayuda', label: 'Centro de Ayuda', icon: '📘' },
 ]

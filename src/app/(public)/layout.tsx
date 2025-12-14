@@ -1,4 +1,5 @@
 import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 import JsonLd from '@/components/seo/JsonLd'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
@@ -17,10 +18,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <header className="bg-bg/80 border-primary/10 sticky top-0 z-50 border-b backdrop-blur-sm">
           <Navbar />
         </header>
-        <main className="container mx-auto flex-1 px-4 py-8">{children}</main>
-        <footer className="border-primary/10 text-primary/60 font-primary border-t p-8 text-center text-sm">
-          © {new Date().getFullYear()} Paola Bolívar Nievas. All rights reserved.
-        </footer>
+        <main className="flex-1">{children}</main>
+        <Footer />
       </div>
     </>
   )

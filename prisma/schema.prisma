@@ -4,9 +4,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -23,6 +22,8 @@ model Category {
   slug        String    @unique
   description String?
   projects    Project[]
+
+  @@index([slug])
 }
 
 model Project {
@@ -39,6 +40,10 @@ model Project {
   updatedAt   DateTime       @updatedAt
   category    Category       @relation(fields: [categoryId], references: [id])
   images      ProjectImage[]
+
+  @@index([categoryId, date(sort: Desc)])
+  @@index([slug])
+  @@index([isActive, isDeleted])
 }
 
 model ProjectImage {
@@ -57,6 +62,37 @@ model SiteConfig {
   accentColor  String
   heroImageUrl String?
   aboutText    String? @db.Text
+}
+
+model ThemeSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  category    String   // colors, typography, spacing, layout
+  label       String
+  value       String
+  type        String   // hex, number, select, text, font
+  description String?
+  options     String?  @db.Text // JSON array para select types
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([category, order])
+  @@map("theme_settings")
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  pageKey   String   @unique // home, about, projects, contact
+  sectionKey String  // hero, bio, cta, etc
+  content   String   @db.Text // JSON con todo el contenido
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pageKey, sectionKey])
+  @@map("page_content")
 }
 
 model AnalyticLog {

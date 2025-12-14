@@ -74,3 +74,7 @@ playwright/.cache/
 # Archivos de configuración local del IDE
 .vscode/settings.json
 .idea/
+
+
+#Ignore cursor AI rules
+.cursor/rules/codacy.mdc

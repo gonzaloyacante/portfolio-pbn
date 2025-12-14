@@ -1,26 +1,58 @@
+'use client'
+
 import Link from 'next/link'
 
 interface CategoryCardProps {
-  category: {
-    name: string
-    slug: string
-    description?: string | null
-  }
+  name: string
+  slug: string
+  count?: number
 }
 
-export default function CategoryCard({ category }: CategoryCardProps) {
+export default function CategoryCard({ name, slug, count = 0 }: CategoryCardProps) {
   return (
     <Link
-      href={`/proyectos/${category.slug}`}
-      className="group bg-btn-back-bg flex aspect-square flex-col items-center justify-center rounded-4xl p-8 text-center shadow-lg transition-all hover:scale-105 hover:shadow-2xl"
+      href={`/proyectos/${slug}`}
+      className="group relative flex aspect-square flex-col items-center justify-center p-8 text-center transition-all"
+      style={{
+        borderRadius: 'var(--layout-border-radius, 42px)',
+        backgroundColor: 'var(--color-primary, #ffaadd)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        transitionDuration: 'var(--effect-transition-duration, 300ms)',
+      }}
+      onMouseEnter={(e) => {
+        const scale = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--effect-hover-scale') ||
+            '1.05'
+        )
+        e.currentTarget.style.transform = `scale(${scale})`
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)'
+      }}
     >
-      <h3 className="font-primary text-category-title text-2xl font-bold">{category.name}</h3>
-      {category.description && (
-        <p className="text-btn-back-text/80 mt-3 line-clamp-3 text-sm">{category.description}</p>
-      )}
+      <h3
+        className="font-heading font-bold"
+        style={{
+          fontSize: 'clamp(20px, 3vw, var(--font-size-nav, 24px))',
+          color: 'var(--color-text-primary, #6c0a0a)',
+          fontWeight: 'var(--font-heading-weight, 700)',
+        }}
+      >
+        {name}
+      </h3>
 
-      {/* Decorative element */}
-      <div className="mt-4 text-3xl opacity-50 transition-opacity group-hover:opacity-100">✨</div>
+      {count > 0 && (
+        <p
+          className="font-body mt-2"
+          style={{
+            fontSize: '14px',
+            color: 'var(--color-text-primary, #6c0a0a)',
+            opacity: 0.7,
+          }}
+        >
+          {count} {count === 1 ? 'proyecto' : 'proyectos'}
+        </p>
+      )}
     </Link>
   )
 }

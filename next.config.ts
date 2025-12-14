@@ -124,7 +124,12 @@ const nextConfig: NextConfig = {
   },
 
   // 🛡️ Security Headers
+  // 🛡️ Security Headers
   async headers() {
+    if (process.env.NODE_ENV === 'development') {
+      return []
+    }
+
     return [
       {
         source: '/:path*',

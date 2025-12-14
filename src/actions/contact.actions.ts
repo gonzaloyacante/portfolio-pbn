@@ -4,6 +4,12 @@ import { prisma } from '@/lib/db'
 import { recordAnalyticEvent } from '@/actions/analytics.actions'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
+import { contactFormSchema } from '@/lib/validations'
+import { z } from 'zod'
+
+/**
+ * Acciones de contacto con validación robusta y rate limiting
+ */
 
 // Rate limiting: 15 minutos entre mensajes desde la misma IP
 const RATE_LIMIT_MINUTES = 15
@@ -38,36 +44,41 @@ async function getClientIp(): Promise<string> {
   return realIp || cfConnectingIp || 'unknown'
 }
 
+/**
+ * Sanitizar texto para evitar XSS
+ */
+function sanitizeText(text: string): string {
+  return text
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+    .replace(/\//g, '&#x2F;')
+    .trim()
+}
+
 export async function sendContactEmail(formData: FormData) {
-  const name = formData.get('name') as string
-  const email = formData.get('email') as string
-  const message = formData.get('message') as string
-
-  // Validación de campos
-  if (!name || !email || !message) {
-    return { success: false, message: 'Todos los campos son requeridos' }
+  const rawData = {
+    name: formData.get('name') as string,
+    email: formData.get('email') as string,
+    message: formData.get('message') as string,
   }
-
-  // Validar longitud
-  if (name.length < 2 || name.length > 100) {
-    return { success: false, message: 'El nombre debe tener entre 2 y 100 caracteres' }
-  }
-
-  if (message.length < 10 || message.length > 1000) {
-    return { success: false, message: 'El mensaje debe tener entre 10 y 1000 caracteres' }
-  }
-
-  // Validar email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email)) {
-    return { success: false, message: 'Email inválido' }
-  }
-
-  // Obtener IP del cliente
-  const ipAddress = await getClientIp()
 
   try {
-    // 🔐 RATE LIMITING: Verificar si la IP puede enviar mensajes
+    // 🔐 VALIDACIÓN CON ZOD
+    const validatedData = contactFormSchema.parse(rawData)
+
+    // 🛡️ SANITIZACIÓN
+    const sanitizedData = {
+      name: sanitizeText(validatedData.name),
+      email: validatedData.email.toLowerCase().trim(),
+      message: sanitizeText(validatedData.message),
+    }
+
+    // 🔐 OBTENER IP
+    const ipAddress = await getClientIp()
+
+    // 🔐 RATE LIMITING
     const canSend = await checkRateLimit(ipAddress)
 
     if (!canSend) {
@@ -77,21 +88,24 @@ export async function sendContactEmail(formData: FormData) {
       }
     }
 
-    // Guardar en base de datos
+    // 💾 GUARDAR EN BD
     await prisma.contact.create({
       data: {
-        name,
-        email,
-        message,
+        ...sanitizedData,
         ipAddress,
       },
     })
 
-    // Record analytic event
+    // 📊 ANALÍTICA
     await recordAnalyticEvent('CONTACT_SUBMIT')
 
     return { success: true, message: '¡Mensaje enviado! Te responderemos pronto.' }
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      const firstError = error.issues[0]
+      return { success: false, message: firstError?.message || 'Datos inválidos' }
+    }
+
     console.error('Error al guardar contacto:', error)
     return { success: false, message: 'Error al enviar el mensaje. Intenta de nuevo.' }
   }

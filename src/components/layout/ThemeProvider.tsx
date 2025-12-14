@@ -1,45 +1,41 @@
 'use client'
 
 import { useEffect } from 'react'
-import { getSiteConfig } from '@/actions/settings.actions'
 
 interface ThemeProviderProps {
   children: React.ReactNode
-  initialConfig?: {
-    bgColor: string
-    primaryColor: string
-    accentColor: string
-  } | null
+  themeValues?: Record<string, string>
 }
 
-export default function ThemeProvider({ children, initialConfig }: ThemeProviderProps) {
+export default function ThemeProvider({ children, themeValues }: ThemeProviderProps) {
   useEffect(() => {
-    const applyTheme = (config: { bgColor: string; primaryColor: string; accentColor: string }) => {
-      const body = document.body
-      if (config.bgColor) body.style.setProperty('--color-bg', config.bgColor)
-      if (config.primaryColor) body.style.setProperty('--color-primary', config.primaryColor)
-      if (config.accentColor) body.style.setProperty('--color-accent', config.accentColor)
-    }
+    if (!themeValues) return
 
-    // Apply initial config if available
-    if (initialConfig) {
-      applyTheme(initialConfig)
-    }
+    // Aplicar todos los valores del tema como CSS variables
+    const root = document.documentElement
 
-    // Fetch latest config on mount as requested
-    const fetchConfig = async () => {
-      try {
-        const config = await getSiteConfig()
-        if (config) {
-          applyTheme(config)
-        }
-      } catch (error) {
-        console.error('Failed to load theme config:', error)
+    Object.entries(themeValues).forEach(([key, value]) => {
+      // Convertir key de snake_case a kebab-case para CSS
+      const cssKey = key.replace(/_/g, '-')
+      root.style.setProperty(`--${cssKey}`, value)
+
+      // También setear compatibilidad con variables antiguas
+      if (key === 'color_background') {
+        root.style.setProperty('--color-bg', value)
+        root.style.setProperty('--color-pink-light', value)
       }
-    }
-
-    fetchConfig()
-  }, [initialConfig])
+      if (key === 'color_primary') {
+        root.style.setProperty('--color-primary', value)
+        root.style.setProperty('--color-wine', value)
+        root.style.setProperty('--color-makeup', value)
+      }
+      if (key === 'color_accent') {
+        root.style.setProperty('--color-accent', value)
+        root.style.setProperty('--color-pink-hot', value)
+        root.style.setProperty('--color-portfolio', value)
+      }
+    })
+  }, [themeValues])
 
   return <>{children}</>
 }

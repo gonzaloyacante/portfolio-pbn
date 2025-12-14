@@ -5,7 +5,8 @@ import ThemeProvider from '@/components/layout/ThemeProvider'
 import { NavigationProgress } from '@/components/layout/NavigationProgress'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import CookieConsent from '@/components/legal/CookieConsent'
-import { getSiteConfig } from '@/actions/settings.actions'
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
+import { getThemeValues } from '@/actions/theme.actions'
 
 // Script font (alternativa a Amsterdam Four) - Para "Make-up" y "Paola Bolívar Nievas"
 const scriptFont = Pacifico({
@@ -52,13 +53,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const siteConfig = await getSiteConfig()
+  const themeValues = await getThemeValues()
 
   return (
     <html lang="es">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#6c0a0a" />
+        <meta name="theme-color" content={themeValues.color_text_primary || '#6c0a0a'} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Portfolio PBN" />
@@ -68,11 +69,12 @@ export default async function RootLayout({
       >
         <NavigationProgress />
         <ErrorBoundary>
-          <ThemeProvider initialConfig={siteConfig}>
+          <ThemeProvider themeValues={themeValues}>
             {children}
             <CookieConsent />
           </ThemeProvider>
         </ErrorBoundary>
+        <GoogleAnalytics />
       </body>
     </html>
   )
