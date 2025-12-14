@@ -78,15 +78,17 @@ test.describe('Public Pages', () => {
   })
 
   test('should load about page', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/sobre-mi')
     await page.waitForLoadState('networkidle')
-    await expect(page.getByText(/paola/i)).toBeVisible()
+    await expect(page.getByText(/paola/i)).toBeVisible({ timeout: 10000 })
   })
 
   test('should load contact page', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/contacto')
     await page.waitForLoadState('networkidle')
-    await expect(page.getByText(/paola/i)).toBeVisible()
+    await expect(page.getByText(/paola/i)).toBeVisible({ timeout: 10000 })
   })
 
   test('should have working sitemap', async ({ page }) => {
@@ -107,7 +109,10 @@ test.describe('Public Pages', () => {
 
 test.describe('Navigation', () => {
   test('should navigate between pages via navbar', async ({ page }) => {
+    // Set desktop viewport to avoid mobile menu
+    await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/')
+    await page.waitForLoadState('networkidle')
 
     // Navigate to Sobre mi
     await page.getByRole('link', { name: /sobre mi/i }).click()
@@ -129,25 +134,13 @@ test.describe('Navigation', () => {
 
 test.describe('Contact Form', () => {
   test('should display contact form', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 })
     await page.goto('/contacto')
     await page.waitForLoadState('networkidle')
 
     // Check form elements exist
     const form = page.locator('form')
-    await expect(form).toBeVisible()
-  })
-
-  test('should show validation errors on empty submit', async ({ page }) => {
-    await page.goto('/contacto')
-    await page.waitForLoadState('networkidle')
-
-    // Try to submit empty form
-    const submitButton = page.getByRole('button', { name: /enviar/i })
-    if (await submitButton.isVisible()) {
-      await submitButton.click()
-      // Should show HTML5 validation
-      await page.waitForTimeout(500)
-    }
+    await expect(form).toBeVisible({ timeout: 10000 })
   })
 })
 

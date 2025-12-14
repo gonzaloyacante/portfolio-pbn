@@ -118,22 +118,24 @@ export default async function CategoryProjectsPage({
           </h1>
         </div>
 
-        {/* Galería masonry */}
+        {/* Galería grid con aspect-ratio fijo para evitar saltos */}
         {allImages.length > 0 ? (
-          <div className="columns-1 gap-4 sm:columns-2 sm:gap-5 lg:columns-3 xl:columns-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
             {allImages.map((image) => (
               <div
                 key={image.id}
-                className="group relative mb-4 overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl sm:mb-5"
-                style={{ borderRadius: 'var(--layout-border-radius, 16px)' }}
+                className="group relative aspect-[3/4] overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl"
+                style={{
+                  borderRadius: 'var(--layout-border-radius, 16px)',
+                  backgroundColor: 'var(--color-primary, #ffaadd)',
+                }}
               >
                 <Image
                   src={image.url}
                   alt={image.projectTitle}
-                  width={600}
-                  height={800}
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   loading="lazy"
                 />
 

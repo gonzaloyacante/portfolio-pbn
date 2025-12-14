@@ -30,7 +30,7 @@ export default function HeroSection({
             className="font-script relative z-10 leading-none"
             style={{
               color: 'var(--color-text-primary, #6c0a0a)',
-              fontSize: 'clamp(3rem, 10vw, 8rem)',
+              fontSize: 'clamp(2.5rem, 8vw, 5rem)',
             }}
           >
             Make-up
@@ -38,10 +38,10 @@ export default function HeroSection({
 
           {/* Portfolio grande - superpuesto */}
           <h1
-            className="font-heading -mt-4 leading-none font-bold sm:-mt-6 lg:-mt-10"
+            className="font-heading -mt-2 leading-none font-bold sm:-mt-4 lg:-mt-6"
             style={{
               color: 'var(--color-primary, #ffaadd)',
-              fontSize: 'clamp(4.5rem, 18vw, 18rem)',
+              fontSize: 'clamp(3rem, 10vw, 8rem)',
               letterSpacing: '-0.04em',
               fontWeight: 'var(--font-heading-weight, 700)',
             }}
@@ -59,7 +59,7 @@ export default function HeroSection({
             className="font-script leading-tight"
             style={{
               color: 'var(--color-text-primary, #6c0a0a)',
-              fontSize: 'clamp(2rem, 6vw, 5rem)',
+              fontSize: 'clamp(1.5rem, 4vw, 3.5rem)',
             }}
           >
             {title}
