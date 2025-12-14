@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💄 Portfolio PBN
 
-## Getting Started
+**Portfolio profesional para Paola Bolívar Nievas** - Maquilladora especializada en audiovisuales, FX, teatro y caracterización.
 
-First, run the development server:
+![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwindcss)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)
+
+---
+
+## ✨ Características
+
+### 🎨 **CMS Dinámico Completo**
+
+- Panel de administración con autenticación segura
+- Gestión de proyectos, categorías y contenido
+- Editor de tema visual: colores, fuentes, espaciados
+- Todo configurable sin tocar código
+
+### 🌙 **Modo Claro/Oscuro**
+
+- Toggle integrado en navbar
+- Persistencia en localStorage
+- Respeta preferencias del sistema
+
+### 📱 **100% Responsive**
+
+- Diseño mobile-first
+- Menú hamburguesa en móvil
+- Galería masonry adaptativa
+
+### 🔒 **Seguridad**
+
+- Autenticación con NextAuth.js
+- Rate limiting para formularios
+- Headers de seguridad (CSP, XSS Protection)
+- Recuperación de contraseña por email
+
+### 📊 **Analytics & SEO**
+
+- Google Analytics integrado
+- Meta tags dinámicos
+- Open Graph / Twitter Cards
+- Sitemap y robots.txt automáticos
+
+---
+
+## 🛠️ Stack Tecnológico
+
+| Categoría         | Tecnología                            |
+| ----------------- | ------------------------------------- |
+| **Frontend**      | Next.js 15, React 19, TypeScript      |
+| **Estilos**       | Tailwind CSS, CSS Variables dinámicas |
+| **Base de datos** | PostgreSQL + Prisma ORM               |
+| **Autenticación** | NextAuth.js                           |
+| **Email**         | Resend                                |
+| **Imágenes**      | Cloudinary                            |
+| **Deploy**        | Vercel                                |
+| **Testing**       | Playwright (E2E)                      |
+
+---
+
+## 🚀 Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Clonar repositorio
+git clone https://github.com/gonzaloyacante/portfolio-pbn.git
+cd portfolio-pbn
+
+# Instalar dependencias
+pnpm install
+
+# Configurar variables de entorno
+cp .env.example .env
+# Editar .env con tus credenciales
+
+# Ejecutar migraciones
+pnpm prisma migrate dev
+
+# Poblar datos iniciales
+pnpm prisma db seed
+
+# Iniciar servidor de desarrollo
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Estructura del Proyecto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # App Router de Next.js
+│   ├── (admin)/           # Rutas del panel admin
+│   ├── (public)/          # Rutas públicas
+│   └── auth/              # Autenticación
+├── components/
+│   ├── admin/             # Componentes del admin
+│   ├── layout/            # Navbar, Footer, etc.
+│   ├── public/            # Hero, Cards, etc.
+│   └── ui/                # Botones, Inputs, etc.
+├── actions/               # Server Actions
+├── lib/                   # Utilidades
+└── styles/                # CSS global
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 📝 Scripts Disponibles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Script               | Descripción                 |
+| -------------------- | --------------------------- |
+| `pnpm dev`           | Servidor de desarrollo      |
+| `pnpm build`         | Build de producción         |
+| `pnpm lint`          | Verificar código con ESLint |
+| `pnpm format`        | Formatear con Prettier      |
+| `pnpm test`          | Ejecutar tests E2E          |
+| `pnpm prisma studio` | Interfaz visual de DB       |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 👨‍💻 Desarrollador
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Gonzalo Yacante** - Full Stack Developer
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 🌐 Portfolio: [gonzaloyacante.dev](https://gonzaloyacante.dev)
+- 💼 LinkedIn: [/in/gonzaloyacante](https://linkedin.com/in/gonzaloyacante)
+- 🐙 GitHub: [@gonzaloyacante](https://github.com/gonzaloyacante)
+
+---
+
+## 📄 Licencia
+
+Este proyecto es privado y pertenece a Paola Bolívar Nievas.
+Desarrollado por Gonzalo Yacante.
+
+---
+
+<p align="center">
+  Hecho con 💄 y ☕ por <strong>Gonzalo Yacante</strong>
+</p>

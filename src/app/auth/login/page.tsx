@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
+import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -74,6 +75,11 @@ export default function LoginPage() {
             {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </Button>
         </form>
+        <div className="mt-4 text-center">
+          <Link href="/auth/forgot-password" className="text-accent text-sm hover:underline">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
       </div>
     </div>
   )

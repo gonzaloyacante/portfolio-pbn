@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 /**
  * Navbar - Diseño exacto de Canva
  * Desktop: Horizontal con botón activo con fondo wine
- * Mobile: Hamburger menu
+ * Mobile: Hamburger menu + Theme Toggle
  */
 
 const navItems = [
@@ -59,35 +60,39 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
+          <ThemeToggle />
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="flex h-10 w-10 items-center justify-center lg:hidden"
-          style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
-          aria-label="Menu"
-        >
-          {isMenuOpen ? (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
-        </button>
+        {/* Mobile: Theme Toggle + Menu Button */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex h-10 w-10 items-center justify-center"
+            style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
+            aria-label="Menu"
+          >
+            {isMenuOpen ? (
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            ) : (
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

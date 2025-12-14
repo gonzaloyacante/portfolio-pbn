@@ -29,12 +29,7 @@ export default function Button({
     lg: 'px-8 py-3 text-lg',
   }
 
-  const classes = clsx(
-    baseStyles,
-    variantStyles[variant],
-    sizeStyles[size],
-    className
-  )
+  const classes = clsx(baseStyles, variantStyles[variant], sizeStyles[size], className)
 
   return (
     <button className={classes} disabled={isLoading} {...props}>
