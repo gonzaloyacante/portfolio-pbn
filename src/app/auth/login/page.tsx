@@ -13,14 +13,42 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [errorField, setErrorField] = useState<'email' | 'password' | 'general' | null>(null)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setErrorField(null)
 
     try {
+      // Primero verificar con nuestra API para obtener errores específicos
+      const verifyRes = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const verifyData = await verifyRes.json()
+
+      if (!verifyRes.ok) {
+        // Mostrar error específico
+        if (verifyData.code === 'USER_NOT_FOUND') {
+          setError('No existe una cuenta con este correo')
+          setErrorField('email')
+        } else if (verifyData.code === 'INVALID_PASSWORD') {
+          setError('La contraseña es incorrecta')
+          setErrorField('password')
+        } else {
+          setError(verifyData.error || 'Error al iniciar sesión')
+          setErrorField('general')
+        }
+        setIsLoading(false)
+        return
+      }
+
+      // Si la verificación pasó, hacer login con NextAuth
       const result = await signIn('credentials', {
         email,
         password,
@@ -28,12 +56,8 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        // Mensaje específico según el error
-        if (result.error === 'CredentialsSignin') {
-          setError('Email o contraseña incorrectos')
-        } else {
-          setError('Error al iniciar sesión. Inténtalo de nuevo.')
-        }
+        setError('Error al iniciar sesión. Inténtalo de nuevo.')
+        setErrorField('general')
       } else {
         toast.success('¡Bienvenida de nuevo!')
         router.push('/admin/dashboard')
@@ -41,6 +65,7 @@ export default function LoginPage() {
       }
     } catch {
       setError('Error de conexión. Verifica tu internet.')
+      setErrorField('general')
     } finally {
       setIsLoading(false)
     }
@@ -67,37 +92,54 @@ export default function LoginPage() {
 
           {/* Card del formulario */}
           <div
-            className="rounded-2xl bg-white p-8 shadow-xl"
+            className="rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800"
             style={{ borderTop: '4px solid var(--color-primary, #ffaadd)' }}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Error global */}
-              {error && (
-                <div className="rounded-lg bg-red-50 p-4 text-center text-sm text-red-600">
+              {error && errorField === 'general' && (
+                <div className="rounded-lg bg-red-50 p-4 text-center text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
                   ⚠️ {error}
                 </div>
               )}
 
               {/* Email */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="email">
+                <label
+                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor="email"
+                >
                   Email
                 </label>
                 <input
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    if (errorField === 'email') {
+                      setError('')
+                      setErrorField(null)
+                    }
+                  }}
                   required
                   disabled={isLoading}
                   placeholder="tu@email.com"
-                  className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-300 p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+                  className={`w-full rounded-lg border p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50 dark:bg-gray-700 dark:text-white ${
+                    errorField === 'email'
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                      : 'focus:border-primary focus:ring-primary/20 border-gray-300 dark:border-gray-600'
+                  }`}
                 />
+                {errorField === 'email' && <p className="mt-1 text-sm text-red-500">{error}</p>}
               </div>
 
               {/* Password con toggle */}
               <div>
-                <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="password">
+                <label
+                  className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor="password"
+                >
                   Contraseña
                 </label>
                 <div className="relative">
@@ -105,16 +147,26 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value)
+                      if (errorField === 'password') {
+                        setError('')
+                        setErrorField(null)
+                      }
+                    }}
                     required
                     disabled={isLoading}
                     placeholder="••••••••"
-                    className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-300 p-3 pr-12 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+                    className={`w-full rounded-lg border p-3 pr-12 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50 dark:bg-gray-700 dark:text-white ${
+                      errorField === 'password'
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                        : 'focus:border-primary focus:ring-primary/20 border-gray-300 dark:border-gray-600'
+                    }`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     tabIndex={-1}
                   >
                     {showPassword ? (
@@ -154,6 +206,7 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
+                {errorField === 'password' && <p className="mt-1 text-sm text-red-500">{error}</p>}
               </div>
 
               {/* Botón submit */}
@@ -203,7 +256,10 @@ export default function LoginPage() {
 
           {/* Link volver */}
           <div className="text-center">
-            <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link
+              href="/"
+              className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            >
               ← Volver al sitio público
             </Link>
           </div>

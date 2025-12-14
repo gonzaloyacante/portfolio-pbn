@@ -13,59 +13,57 @@
   --color-purple-dark: #581c3c;
   --color-black: #000000;
 
-  /* === TEMA CLARO === */
+  /* === TEMA CLARO (por defecto) === */
+  --color-background: #fff1f9;
+  --color-primary: #ffaadd;
+  --color-text-primary: #6c0a0a;
+  --color-accent: #7a2556;
+  --color-secondary: #ffa1da;
+  --color-dark: #511a3a;
+  
+  /* Colores para compatibilidad */
   --color-bg: #fff1f9;
-  
-  /* Make-up (Script) */
   --color-makeup: #6c0a0a;
-  
-  /* Portfolio (Primary) */
   --color-portfolio: #ffaadd;
-  
-  /* NavLinks */
   --color-navlink-text: #ffaadd;
   --color-navlink-bg: #6c0a0a;
-  
-  /* Nombre "Paola Bolívar Nievas" */
   --color-name: #6c0a0a;
-  
-  /* Sobre mí texto */
-  --color-body-text: #000000;
-  
-  /* Títulos categorías */
+  --color-body-text: #1a1a1a;
   --color-category-title: #6c0a0a;
-  
-  /* Botón volver galería */
   --color-btn-back-bg: #6c0a0a;
   --color-btn-back-text: #ffaadd;
+  
+  /* Surface colors */
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f9fafb;
+  --color-border: #e5e7eb;
 }
 
 /* === TEMA OSCURO === */
 .dark {
-  --color-bg: #1a1a1a;
+  --color-background: #0f0f0f;
+  --color-primary: #ffaadd;
+  --color-text-primary: #ffa1da;
+  --color-accent: #ff80bf;
+  --color-secondary: #7a2556;
+  --color-dark: #f0f0f0;
   
-  /* Make-up (Script) */
-  --color-makeup: #000000;
-  
-  /* Portfolio (Primary) */
+  /* Colores para compatibilidad */
+  --color-bg: #0f0f0f;
+  --color-makeup: #ffaadd;
   --color-portfolio: #ffaadd;
-  
-  /* NavLinks */
-  --color-navlink-text: #6c0a0a;
+  --color-navlink-text: #0f0f0f;
   --color-navlink-bg: #ffaadd;
-  
-  /* Nombre "Paola Bolívar Nievas" */
   --color-name: #ffaadd;
-  
-  /* Sobre mí texto */
-  --color-body-text: #fff1f9;
-  
-  /* Títulos categorías */
+  --color-body-text: #f9fafb;
   --color-category-title: #ffaadd;
-  
-  /* Botón volver galería */
   --color-btn-back-bg: #ffaadd;
-  --color-btn-back-text: #6c0a0a;
+  --color-btn-back-text: #0f0f0f;
+  
+  /* Surface colors dark */
+  --color-surface: #1f1f1f;
+  --color-surface-secondary: #2a2a2a;
+  --color-border: #374151;
 }
 
 @theme {
@@ -100,6 +98,18 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+/* Mejoras para modo oscuro */
+.dark body,
+.dark {
+  background-color: var(--color-bg);
+  color: var(--color-body-text);
+}
+
+/* Cards y superficies */
+.dark .bg-white {
+  background-color: var(--color-surface) !important;
+}
+
 /* NProgress Styles */
 #nprogress {
   pointer-events: none;
@@ -124,4 +134,23 @@ body {
   box-shadow: 0 0 10px var(--color-primary), 0 0 5px var(--color-primary);
   opacity: 1.0;
   transform: rotate(3deg) translate(0px, -4px);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
 }

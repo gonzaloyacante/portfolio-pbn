@@ -1,63 +1,287 @@
 'use client'
 
-import { useState, ChangeEvent } from 'react'
+import { useState, useCallback, ChangeEvent, DragEvent } from 'react'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
+
+interface UploadedImage {
+  url: string
+  publicId: string
+  file?: File
+  isUploading?: boolean
+  error?: string
+}
 
 interface ImageUploadProps {
   name: string
   multiple?: boolean
   label?: string
+  folder?: string
+  value?: string[]
+  onChange?: (urls: string[], publicIds: string[]) => void
+  onUploadStart?: () => void
+  onUploadEnd?: () => void
+  maxFiles?: number
+  maxSizeMB?: number
 }
 
 export default function ImageUpload({
   name,
   multiple = false,
   label = 'Subir Imágenes',
+  folder = 'projects',
+  value = [],
+  onChange,
+  onUploadStart,
+  onUploadEnd,
+  maxFiles = 20,
+  maxSizeMB = 10,
 }: ImageUploadProps) {
-  const [previews, setPreviews] = useState<string[]>([])
+  const [images, setImages] = useState<UploadedImage[]>(value.map((url) => ({ url, publicId: '' })))
+  const [isDragging, setIsDragging] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+
+  const uploadFile = async (file: File): Promise<UploadedImage> => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('folder', folder)
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Error al subir')
+      }
+
+      const data = await res.json()
+      return { url: data.url, publicId: data.publicId }
+    } catch (error) {
+      return { url: '', publicId: '', error: String(error) }
+    }
+  }
+
+  const processFiles = useCallback(
+    async (files: FileList | File[]) => {
+      const fileArray = Array.from(files)
+
+      // Validaciones
+      if (!multiple && fileArray.length > 1) {
+        toast.error('Solo puedes subir una imagen')
+        return
+      }
+
+      if (images.length + fileArray.length > maxFiles) {
+        toast.error(`Máximo ${maxFiles} imágenes permitidas`)
+        return
+      }
+
+      // Validar cada archivo
+      const validFiles: File[] = []
+      for (const file of fileArray) {
+        if (!file.type.startsWith('image/')) {
+          toast.error(`${file.name} no es una imagen válida`)
+          continue
+        }
+        if (file.size > maxSizeMB * 1024 * 1024) {
+          toast.error(`${file.name} supera el límite de ${maxSizeMB}MB`)
+          continue
+        }
+        validFiles.push(file)
+      }
+
+      if (validFiles.length === 0) return
+
+      setIsUploading(true)
+      onUploadStart?.()
+
+      // Crear previews temporales
+      const tempImages: UploadedImage[] = validFiles.map((file) => ({
+        url: URL.createObjectURL(file),
+        publicId: '',
+        file,
+        isUploading: true,
+      }))
+
+      setImages((prev) => (multiple ? [...prev, ...tempImages] : tempImages))
+
+      // Subir archivos
+      const uploadPromises = validFiles.map((file) => uploadFile(file))
+      const results = await Promise.all(uploadPromises)
+
+      // Actualizar con resultados
+      setImages((prev) => {
+        const updated = prev.map((img) => {
+          if (!img.isUploading) return img
+          const result = results.find(
+            (r) => !r.error && !prev.some((p) => p.publicId === r.publicId && p !== img)
+          )
+          if (result && !result.error) {
+            // Limpiar URL temporal
+            if (img.url.startsWith('blob:')) {
+              URL.revokeObjectURL(img.url)
+            }
+            return { url: result.url, publicId: result.publicId }
+          }
+          return { ...img, isUploading: false, error: 'Error al subir' }
+        })
+
+        // Notificar cambios
+        const successfulUploads = updated.filter((img) => img.publicId && !img.error)
+        onChange?.(
+          successfulUploads.map((img) => img.url),
+          successfulUploads.map((img) => img.publicId)
+        )
+
+        return updated
+      })
+
+      const successCount = results.filter((r) => !r.error).length
+      const errorCount = results.filter((r) => r.error).length
+
+      if (successCount > 0) {
+        toast.success(
+          `${successCount} imagen${successCount > 1 ? 'es' : ''} subida${successCount > 1 ? 's' : ''}`
+        )
+      }
+      if (errorCount > 0) {
+        toast.error(
+          `${errorCount} imagen${errorCount > 1 ? 'es' : ''} fallida${errorCount > 1 ? 's' : ''}`
+        )
+      }
+
+      setIsUploading(false)
+      onUploadEnd?.()
+    },
+    [multiple, images.length, maxFiles, maxSizeMB, folder, onChange, onUploadStart, onUploadEnd]
+  )
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
+    if (e.target.files) {
+      processFiles(e.target.files)
+    }
+    // Reset input para permitir subir el mismo archivo de nuevo
+    e.target.value = ''
+  }
 
-    const newPreviews: string[] = []
-    Array.from(files).forEach((file) => {
-      const objectUrl = URL.createObjectURL(file)
-      newPreviews.push(objectUrl)
-    })
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
 
-    setPreviews(newPreviews)
+  const handleDragLeave = (e: DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files) {
+      processFiles(e.dataTransfer.files)
+    }
+  }
+
+  const handleRemove = async (index: number) => {
+    const imageToRemove = images[index]
+
+    // Si tiene publicId, eliminar de Cloudinary
+    if (imageToRemove.publicId) {
+      try {
+        await fetch('/api/upload', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ publicId: imageToRemove.publicId }),
+        })
+      } catch (error) {
+        console.error('Error deleting image:', error)
+      }
+    }
+
+    // Limpiar URL temporal si existe
+    if (imageToRemove.url.startsWith('blob:')) {
+      URL.revokeObjectURL(imageToRemove.url)
+    }
+
+    const newImages = images.filter((_, i) => i !== index)
+    setImages(newImages)
+    onChange?.(
+      newImages.map((img) => img.url),
+      newImages.map((img) => img.publicId)
+    )
   }
 
   return (
     <div className="w-full">
-      <label className="mb-2 block text-sm font-medium text-gray-700">{label}</label>
+      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+        {label}
+      </label>
 
-      <div className="flex w-full items-center justify-center">
+      {/* Dropzone */}
+      <div
+        className={`flex w-full items-center justify-center transition-all ${
+          isDragging ? 'scale-[1.02]' : ''
+        }`}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
         <label
           htmlFor={`file-upload-${name}`}
-          className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100"
+          className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+            isDragging
+              ? 'border-primary bg-primary/10'
+              : 'hover:border-primary border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700'
+          } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <svg
-              className="mb-4 h-8 w-8 text-gray-500"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 16"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-              />
-            </svg>
-            <p className="mb-2 text-sm text-gray-500">
-              <span className="font-semibold">Click para subir</span> o arrastra y suelta
-            </p>
-            <p className="text-xs text-gray-500">SVG, PNG, JPG or GIF</p>
+            {isUploading ? (
+              <>
+                <svg className="text-primary mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Subiendo imágenes...</p>
+              </>
+            ) : (
+              <>
+                <svg
+                  className="mb-4 h-10 w-10 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  <span className="text-primary font-semibold">Click para subir</span> o arrastra y
+                  suelta
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  PNG, JPG, GIF, WebP (máx. {maxSizeMB}MB)
+                </p>
+              </>
+            )}
           </div>
           <input
             id={`file-upload-${name}`}
@@ -67,21 +291,89 @@ export default function ImageUpload({
             multiple={multiple}
             accept="image/*"
             onChange={handleFileChange}
+            disabled={isUploading}
           />
         </label>
       </div>
 
-      {previews.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {previews.map((src, index) => (
+      {/* Preview de imágenes */}
+      {images.length > 0 && (
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {images.map((img, index) => (
             <div
-              key={index}
-              className="relative aspect-square overflow-hidden rounded-lg border border-gray-200"
+              key={`${img.publicId || index}-${img.url}`}
+              className={`group relative aspect-square overflow-hidden rounded-lg border-2 ${
+                img.error
+                  ? 'border-red-500'
+                  : img.isUploading
+                    ? 'border-primary'
+                    : 'border-gray-200 dark:border-gray-700'
+              }`}
             >
-              <Image src={src} alt={`Preview ${index}`} fill className="object-cover" />
+              <Image
+                src={img.url}
+                alt={`Imagen ${index + 1}`}
+                fill
+                className={`object-cover ${img.isUploading ? 'opacity-50' : ''}`}
+                sizes="(max-width: 768px) 50vw, 20vw"
+              />
+
+              {/* Overlay de carga */}
+              {img.isUploading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                  <svg className="h-8 w-8 animate-spin text-white" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                </div>
+              )}
+
+              {/* Error overlay */}
+              {img.error && (
+                <div className="absolute inset-0 flex items-center justify-center bg-red-500/50">
+                  <span className="text-2xl">❌</span>
+                </div>
+              )}
+
+              {/* Botón eliminar */}
+              {!img.isUploading && (
+                <button
+                  type="button"
+                  onClick={() => handleRemove(index)}
+                  className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
           ))}
         </div>
+      )}
+
+      {/* Contador */}
+      {multiple && (
+        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+          {images.length} de {maxFiles} imágenes
+        </p>
       )}
     </div>
   )

@@ -18,7 +18,7 @@ export interface ThemeSetting {
   category: ThemeCategory
   label: string
   value: string
-  type: 'hex' | 'number' | 'select' | 'text' | 'font'
+  type: 'hex' | 'number' | 'select' | 'text' | 'font' | 'icon' | 'boolean'
   description?: string | null
   options?: string | null
   order: number

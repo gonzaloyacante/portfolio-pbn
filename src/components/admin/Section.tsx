@@ -1,16 +1,16 @@
 interface SectionProps {
-  title: string
+  title?: string
   children: React.ReactNode
   className?: string
 }
 
 /**
- * Sección con título para paneles admin
+ * Sección con título opcional para paneles admin
  */
 export default function Section({ title, children, className = '' }: SectionProps) {
   return (
-    <div className={`rounded-lg bg-white p-6 shadow-md dark:bg-gray-800 ${className}`}>
-      <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-white">{title}</h2>
+    <div className={`rounded-xl bg-white p-6 shadow-md dark:bg-gray-800 ${className}`}>
+      {title && <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-white">{title}</h2>}
       {children}
     </div>
   )

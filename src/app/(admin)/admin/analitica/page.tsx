@@ -1,10 +1,21 @@
 import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
+import { StatCard, Section } from '@/components/admin'
+import { PageHeader, EmptyState } from '@/components/ui'
+import Link from 'next/link'
 
 export default async function AnalyticsPage() {
   const data = await getAnalyticsDashboardData()
 
   if (!data) {
-    return <div className="p-6 text-red-500">Error cargando datos de analítica.</div>
+    return (
+      <div className="p-6">
+        <EmptyState
+          icon="📊"
+          title="Error cargando analítica"
+          description="No se pudieron cargar los datos de analítica. Intenta de nuevo más tarde."
+        />
+      </div>
+    )
   }
 
   const {
@@ -17,32 +28,76 @@ export default async function AnalyticsPage() {
     topLocations,
   } = data
 
+  const totalDevices = deviceUsage.mobile + deviceUsage.desktop || 1
+  const mobilePercent = Math.round((deviceUsage.mobile / totalDevices) * 100)
+  const desktopPercent = 100 - mobilePercent
+
   return (
-    <div className="space-y-8 p-6">
-      <h1 className="text-3xl font-bold text-gray-800">Dashboard de Rendimiento</h1>
+    <div className="space-y-8">
+      <PageHeader
+        title="📊 Analítica del Portfolio"
+        description="Estadísticas de visitas y engagement de los últimos 7 días"
+      />
+
+      {/* Aviso sobre Google Analytics */}
+      <Section className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+        <div className="flex items-start gap-4">
+          <span className="text-4xl">📈</span>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Métricas avanzadas con Google Analytics
+            </h3>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              Para métricas detalladas como fuentes de tráfico, comportamiento de usuarios,
+              conversiones y mucho más, accede a tu panel de Google Analytics.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <a
+                href="https://analytics.google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+              >
+                <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+                </svg>
+                Abrir Google Analytics
+              </a>
+              <Link
+                href="/admin/configuracion"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                ⚙️ Configurar GA
+              </Link>
+            </div>
+          </div>
+        </div>
+      </Section>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h3 className="text-sm font-medium text-gray-500 uppercase">Visitas Totales (7 días)</h3>
-          <p className="text-primary mt-2 text-3xl font-bold">{totalVisits}</p>
-        </div>
-        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h3 className="text-sm font-medium text-gray-500 uppercase">Interés en Proyectos</h3>
-          <p className="mt-2 text-3xl font-bold text-blue-600">{detailVisits}</p>
-          <p className="mt-1 text-xs text-gray-400">Clics en detalles</p>
-        </div>
-        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h3 className="text-sm font-medium text-gray-500 uppercase">Leads Generados</h3>
-          <p className="mt-2 text-3xl font-bold text-green-600">{contactLeads}</p>
-          <p className="mt-1 text-xs text-gray-400">Formularios enviados</p>
-        </div>
+        <StatCard icon="👀" label="Visitas Totales" value={totalVisits} subtitle="Últimos 7 días" />
+        <StatCard
+          icon="🎨"
+          label="Interés en Proyectos"
+          value={detailVisits}
+          subtitle="Clics en detalles"
+        />
+        <StatCard
+          icon="💌"
+          label="Leads Generados"
+          value={contactLeads}
+          subtitle="Formularios enviados"
+        />
       </div>
 
-      {/* Trend Chart (Simple CSS Bar Chart) */}
-      <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h3 className="mb-6 text-lg font-semibold text-gray-800">
-          Tendencia de Visitas (Última Semana)
+      {/* Gráfico de tendencia */}
+      <Section>
+        <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+          📈 Tendencia de Visitas
+          <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-normal text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+            Última semana
+          </span>
         </h3>
         <div className="flex h-48 items-end justify-between gap-2">
           {trendData.map((day) => {
@@ -50,112 +105,124 @@ export default async function AnalyticsPage() {
             const height = (day.count / max) * 100
             return (
               <div key={day.date} className="group flex flex-1 flex-col items-center">
-                <div className="relative flex h-full w-full items-end justify-center overflow-hidden rounded-t-md bg-gray-50">
+                <div className="relative flex h-full w-full items-end justify-center overflow-hidden rounded-t-lg bg-gray-100 dark:bg-gray-700">
                   <div
-                    style={{ height: `${height}%` }}
-                    className="bg-primary/80 group-hover:bg-primary min-h-1 w-full rounded-t-md transition-all duration-500"
-                  ></div>
-                  <div className="pointer-events-none absolute -top-8 rounded bg-black px-2 py-1 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
-                    {day.count}
+                    style={{ height: `${Math.max(height, 5)}%` }}
+                    className="w-full rounded-t-lg bg-gradient-to-t from-pink-500 to-pink-400 transition-all duration-500 group-hover:from-pink-600 group-hover:to-pink-500"
+                  />
+                  <div className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 rounded-lg bg-gray-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                    {day.count} visitas
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
                   </div>
                 </div>
-                <p className="mt-2 w-full rotate-0 truncate text-center text-xs text-gray-500 md:rotate-0">
-                  {day.date.slice(5)}
+                <p className="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                  {new Date(day.date).toLocaleDateString('es', { weekday: 'short' })}
                 </p>
               </div>
             )
           })}
         </div>
-      </div>
+      </Section>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Top Projects */}
-        <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h3 className="mb-4 text-lg font-semibold text-gray-800">Proyectos Estrella</h3>
-          <div className="overflow-hidden">
-            <table className="min-w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                    Proyecto
-                  </th>
-                  <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
-                    Vistas
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {topProjects && topProjects.length > 0 ? (
-                  // Ensure we map only non-null entries to satisfy TypeScript
-                  topProjects.filter(Boolean).map((project, idx) => (
-                    <tr key={idx}>
-                      <td className="px-4 py-3 text-sm text-gray-700">{project!.title}</td>
-                      <td className="px-4 py-3 text-right text-sm font-medium text-gray-900">
-                        {project!.count}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={2} className="px-4 py-8 text-center text-sm text-gray-500">
-                      Sin datos suficientes
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Device & Location */}
-        <div className="space-y-6">
-          {/* Device Usage */}
-          <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-semibold text-gray-800">Dispositivos</h3>
-            <div className="flex items-center justify-around">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-700">{deviceUsage.mobile}</div>
-                <div className="text-sm text-gray-500">Móvil</div>
-              </div>
-              <div className="h-12 w-px bg-gray-200"></div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-700">{deviceUsage.desktop}</div>
-                <div className="text-sm text-gray-500">Escritorio</div>
-              </div>
-            </div>
-            <div className="mt-4 flex h-2 w-full overflow-hidden rounded-full bg-gray-100">
-              <div
-                style={{
-                  width: `${(deviceUsage.mobile / (deviceUsage.mobile + deviceUsage.desktop || 1)) * 100}%`,
-                }}
-                className="bg-accent h-full"
-              ></div>
-              <div
-                style={{
-                  width: `${(deviceUsage.desktop / (deviceUsage.mobile + deviceUsage.desktop || 1)) * 100}%`,
-                }}
-                className="bg-primary h-full"
-              ></div>
-            </div>
-          </div>
-
-          {/* Top Locations */}
-          <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-semibold text-gray-800">Ubicaciones (Top IPs)</h3>
-            <ul className="space-y-3">
-              {topLocations.map((loc, idx) => (
-                <li key={idx} className="flex items-center justify-between text-sm">
-                  <span className="rounded bg-gray-50 px-2 py-1 font-mono text-gray-600">
-                    {loc.ip}
+        {/* Proyectos Estrella */}
+        <Section>
+          <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+            ⭐ Proyectos Más Vistos
+          </h3>
+          {topProjects && topProjects.length > 0 ? (
+            <div className="space-y-3">
+              {topProjects.filter(Boolean).map((project, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between rounded-lg bg-gray-50 p-4 transition-colors hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-lg dark:bg-pink-900/30">
+                      {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '📸'}
+                    </span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {project!.title}
+                    </span>
+                  </div>
+                  <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm font-semibold">
+                    {project!.count} vistas
                   </span>
-                  <span className="font-medium text-gray-900">{loc.count} visitas</span>
-                </li>
+                </div>
               ))}
-              {topLocations.length === 0 && (
-                <li className="text-center text-sm text-gray-500">Sin datos de ubicación</li>
-              )}
-            </ul>
-          </div>
+            </div>
+          ) : (
+            <EmptyState
+              icon="📊"
+              title="Sin datos suficientes"
+              description="Los proyectos más vistos aparecerán aquí"
+            />
+          )}
+        </Section>
+
+        {/* Dispositivos y Ubicaciones */}
+        <div className="space-y-6">
+          {/* Dispositivos */}
+          <Section>
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+              📱 Dispositivos
+            </h3>
+            <div className="flex items-center justify-around py-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {deviceUsage.mobile}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">📱 Móvil</div>
+                <div className="mt-1 text-xs font-medium text-gray-400">{mobilePercent}%</div>
+              </div>
+              <div className="h-16 w-px bg-gray-200 dark:bg-gray-700" />
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white">
+                  {deviceUsage.desktop}
+                </div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">💻 Escritorio</div>
+                <div className="mt-1 text-xs font-medium text-gray-400">{desktopPercent}%</div>
+              </div>
+            </div>
+            <div className="flex h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                style={{ width: `${mobilePercent}%` }}
+                className="bg-gradient-to-r from-purple-500 to-purple-400"
+              />
+              <div
+                style={{ width: `${desktopPercent}%` }}
+                className="bg-gradient-to-r from-pink-500 to-pink-400"
+              />
+            </div>
+          </Section>
+
+          {/* Ubicaciones */}
+          <Section>
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+              🌍 Top Visitantes
+            </h3>
+            {topLocations.length > 0 ? (
+              <ul className="space-y-2">
+                {topLocations.map((loc, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3 dark:bg-gray-700"
+                  >
+                    <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
+                      {loc.ip}
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {loc.count} visitas
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                Sin datos de ubicación aún
+              </p>
+            )}
+          </Section>
         </div>
       </div>
     </div>
