@@ -10,6 +10,7 @@ export { default as Section } from './Section'
 // Forms
 export { default as ImageUpload } from './ImageUpload'
 export { default as ProjectEditForm } from './ProjectEditForm'
+export { default as FormField } from './FormField'
 export { SortableImage } from './SortableImage'
 
 // Theme
@@ -18,3 +19,4 @@ export { ThemeSettingInput } from './ThemeSettingInput'
 
 // Data
 export { default as ContactList } from './ContactList'
+export { default as DataTable } from './DataTable'
