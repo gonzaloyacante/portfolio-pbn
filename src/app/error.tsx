@@ -10,34 +10,45 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    // Log error para monitoreo (integrar con Sentry si está disponible)
     console.error('Application Error:', error)
   }, [error])
 
+  const isDev = process.env.NODE_ENV === 'development'
+
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-8 px-4 text-center">
+    <div
+      className="flex min-h-[70vh] flex-col items-center justify-center gap-8 px-4 text-center"
+      style={{ backgroundColor: 'var(--color-background)' }}
+    >
       {/* Emoji decorativo */}
       <div className="text-8xl">😟</div>
 
       <div className="space-y-4">
-        {/* Título con fuente script */}
-        <h1 className="font-script text-wine dark:text-pink-hot text-6xl md:text-7xl">¡Oops!</h1>
+        <h1 className="font-script text-6xl md:text-7xl" style={{ color: 'var(--color-text)' }}>
+          ¡Oops!
+        </h1>
 
-        {/* Subtítulo */}
-        <h2 className="font-primary text-wine dark:text-pink-light text-2xl font-bold md:text-3xl">
+        <h2
+          className="font-primary text-2xl font-bold md:text-3xl"
+          style={{ color: 'var(--color-text)' }}
+        >
           Algo salió mal
         </h2>
 
-        {/* Descripción */}
-        <p className="text-wine/70 dark:text-pink-light/70 mx-auto max-w-lg text-lg">
+        <p
+          className="mx-auto max-w-lg text-lg"
+          style={{ color: 'var(--color-text)', opacity: 0.7 }}
+        >
           No te preocupes, ya estamos trabajando para arreglarlo. Mientras tanto, puedes intentar de
           nuevo o volver al inicio.
         </p>
 
-        {/* Error details (solo en desarrollo) */}
-        {process.env.NODE_ENV === 'development' && error.message && (
+        {/* Error details - SOLO en desarrollo */}
+        {isDev && error.message && (
           <div className="mx-auto mt-4 max-w-2xl rounded-2xl border-2 border-red-300 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/30">
-            <p className="mb-2 font-semibold text-red-800 dark:text-red-400">Error Details:</p>
+            <p className="mb-2 font-semibold text-red-800 dark:text-red-400">
+              Error (solo visible en desarrollo):
+            </p>
             <pre className="overflow-x-auto font-mono text-xs whitespace-pre-wrap text-red-700 dark:text-red-300">
               {error.message}
             </pre>
@@ -52,7 +63,11 @@ export default function Error({
       <div className="flex flex-col gap-4 sm:flex-row">
         <button
           onClick={reset}
-          className="group bg-wine text-pink-light dark:bg-purple-dark relative overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+          className="group cursor-pointer overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all duration-200 hover:scale-105 hover:shadow-2xl active:scale-95"
+          style={{
+            backgroundColor: 'var(--color-btn-bg)',
+            color: 'var(--color-btn-text)',
+          }}
         >
           <span className="relative z-10 flex items-center gap-2">
             <svg
@@ -71,12 +86,15 @@ export default function Error({
             </svg>
             Intentar de Nuevo
           </span>
-          <div className="bg-pink-hot absolute inset-0 opacity-0 transition-opacity group-hover:opacity-20" />
         </button>
 
         <button
           onClick={() => (window.location.href = '/')}
-          className="border-wine text-wine hover:bg-wine hover:text-pink-light dark:border-pink-hot dark:text-pink-hot dark:hover:bg-pink-hot dark:hover:text-purple-dark rounded-3xl border-2 px-8 py-4 font-semibold transition-all"
+          className="cursor-pointer rounded-3xl border-2 px-8 py-4 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+          style={{
+            borderColor: 'var(--color-primary)',
+            color: 'var(--color-text)',
+          }}
         >
           <span className="flex items-center gap-2">
             <svg
@@ -100,9 +118,9 @@ export default function Error({
 
       {/* Decoración inferior */}
       <div className="mt-8 flex gap-4 text-4xl opacity-30">
-        <span>💔</span>
-        <span>😢</span>
-        <span>💔</span>
+        <span>💄</span>
+        <span>✨</span>
+        <span>💄</span>
       </div>
     </div>
   )

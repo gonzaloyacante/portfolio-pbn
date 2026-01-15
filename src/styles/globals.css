@@ -2,115 +2,190 @@
 
 /* ============================================
    DESIGN SYSTEM - COLORES Y FUENTES
+   Sistema de inversión simple para tema oscuro
    ============================================ */
 
 :root {
-  /* === COLORES BASE === */
+  /* === COLORES BASE (constantes) === */
   --color-wine: #6c0a0a;
   --color-pink-light: #fff1f9;
   --color-pink-hot: #ffaadd;
   --color-pink-dark: #ff80bf;
-  --color-purple-dark: #581c3c;
+  --color-purple-dark: #7a2556;
   --color-black: #000000;
 
-  /* === TEMA CLARO (por defecto) === */
-  --color-background: #fff1f9;
-  --color-primary: #ffaadd;
-  --color-text-primary: #6c0a0a;
-  --color-accent: #7a2556;
-  --color-secondary: #ffa1da;
-  --color-dark: #511a3a;
-  
-  /* Colores para compatibilidad */
-  --color-bg: #fff1f9;
-  --color-makeup: #6c0a0a;
-  --color-portfolio: #ffaadd;
-  --color-navlink-text: #ffaadd;
-  --color-navlink-bg: #6c0a0a;
-  --color-name: #6c0a0a;
-  --color-body-text: #1a1a1a;
-  --color-category-title: #6c0a0a;
-  --color-btn-back-bg: #6c0a0a;
-  --color-btn-back-text: #ffaadd;
-  
-  /* Surface colors */
+  /* === TEMA CLARO (por defecto) === 
+     Fondo: rosa claro | Texto: vino oscuro */
+  --color-background: var(--color-pink-light);
+  --color-text: var(--color-wine);
+  --color-primary: var(--color-pink-hot);
+  --color-accent: var(--color-purple-dark);
+
+  /* Superficies y cards */
   --color-surface: #ffffff;
+  --color-surface-hover: #fef7fb;
+  --color-border: var(--color-pink-hot);
+
+  /* Botones */
+  --color-btn-bg: var(--color-wine);
+  --color-btn-text: var(--color-pink-light);
+  --color-btn-hover: var(--color-purple-dark);
+
+  /* Navegación */
+  --color-nav-bg: var(--color-wine);
+  --color-nav-text: var(--color-pink-hot);
+
+  /* Compatibilidad legacy */
+  --color-bg: var(--color-background);
+  --color-text-primary: var(--color-text);
+  --color-body-text: var(--color-text);
+  --color-makeup: var(--color-text);
+  --color-portfolio: var(--color-primary);
+  --color-name: var(--color-text);
+  --color-category-title: var(--color-text);
+  --color-navlink-text: var(--color-nav-text);
+  --color-navlink-bg: var(--color-nav-bg);
+  --color-btn-back-bg: var(--color-btn-bg);
+  --color-btn-back-text: var(--color-btn-text);
+  --color-secondary: var(--color-pink-dark);
+  --color-dark: var(--color-purple-dark);
   --color-surface-secondary: #f9fafb;
-  --color-border: #e5e7eb;
 }
 
-/* === TEMA OSCURO === */
+/* === TEMA OSCURO (inversión simple) ===
+   Fondo: vino oscuro | Texto: rosa claro */
 .dark {
-  --color-background: #0f0f0f;
-  --color-primary: #ffaadd;
-  --color-text-primary: #ffa1da;
-  --color-accent: #ff80bf;
-  --color-secondary: #7a2556;
-  --color-dark: #f0f0f0;
-  
-  /* Colores para compatibilidad */
-  --color-bg: #0f0f0f;
-  --color-makeup: #ffaadd;
-  --color-portfolio: #ffaadd;
-  --color-navlink-text: #0f0f0f;
-  --color-navlink-bg: #ffaadd;
-  --color-name: #ffaadd;
-  --color-body-text: #f9fafb;
-  --color-category-title: #ffaadd;
-  --color-btn-back-bg: #ffaadd;
-  --color-btn-back-text: #0f0f0f;
-  
-  /* Surface colors dark */
-  --color-surface: #1f1f1f;
-  --color-surface-secondary: #2a2a2a;
-  --color-border: #374151;
+  --color-background: var(--color-wine);
+  --color-text: var(--color-pink-light);
+  --color-primary: var(--color-pink-hot);
+  --color-accent: var(--color-pink-dark);
+
+  /* Superficies y cards - tonos oscuros */
+  --color-surface: var(--color-purple-dark);
+  --color-surface-hover: #8a3366;
+  --color-border: var(--color-pink-hot);
+
+  /* Botones - invertidos */
+  --color-btn-bg: var(--color-pink-light);
+  --color-btn-text: var(--color-wine);
+  --color-btn-hover: var(--color-pink-hot);
+
+  /* Navegación - invertida */
+  --color-nav-bg: var(--color-pink-light);
+  --color-nav-text: var(--color-wine);
+
+  /* Compatibilidad legacy */
+  --color-bg: var(--color-background);
+  --color-text-primary: var(--color-text);
+  --color-body-text: var(--color-text);
+  --color-makeup: var(--color-text);
+  --color-portfolio: var(--color-primary);
+  --color-name: var(--color-text);
+  --color-category-title: var(--color-text);
+  --color-navlink-text: var(--color-nav-text);
+  --color-navlink-bg: var(--color-nav-bg);
+  --color-btn-back-bg: var(--color-btn-bg);
+  --color-btn-back-text: var(--color-btn-text);
+  --color-secondary: var(--color-pink-dark);
+  --color-dark: #3d0f29;
+  --color-surface-secondary: #581c3c;
 }
 
-@theme {
-  /* Colores base */
-  --color-wine: #6c0a0a;
-  --color-pink-light: #fff1f9;
-  --color-pink-hot: #ffaadd;
-  --color-black: #000000;
-  
-  /* Colores semánticos del tema */
-  --color-bg: var(--color-bg);
-  --color-makeup: var(--color-makeup);
-  --color-portfolio: var(--color-portfolio);
-  --color-navlink-text: var(--color-navlink-text);
-  --color-navlink-bg: var(--color-navlink-bg);
-  --color-name: var(--color-name);
-  --color-body-text: var(--color-body-text);
-  --color-category-title: var(--color-category-title);
-  --color-btn-back-bg: var(--color-btn-back-bg);
-  --color-btn-back-text: var(--color-btn-back-text);
-  
-  /* Fuentes */
-  --font-script: var(--font-script);
-  --font-primary: var(--font-primary);
-  --font-body: var(--font-body);
+
+
+/* === ESTILOS BASE === */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--color-bg);
-  color: var(--color-body-text);
+  background-color: var(--color-background);
+  color: var(--color-text);
   font-family: var(--font-body);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Mejoras para modo oscuro */
-.dark body,
-.dark {
-  background-color: var(--color-bg);
-  color: var(--color-body-text);
-}
-
-/* Cards y superficies */
+/* === OVERRIDE GLOBAL para modo oscuro === */
+/* Cards blancas -> superficie oscura */
 .dark .bg-white {
   background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
 }
 
-/* NProgress Styles */
+/* Textos grises -> rosa claro */
+.dark .text-gray-600,
+.dark .text-gray-700,
+.dark .text-gray-800,
+.dark .text-gray-900 {
+  color: var(--color-pink-light) !important;
+}
+
+.dark .text-gray-400,
+.dark .text-gray-500 {
+  color: rgba(255, 241, 249, 0.7) !important;
+}
+
+/* Bordes grises -> rosa */
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: var(--color-border) !important;
+}
+
+/* Fondos grises -> superficie oscura */
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: var(--color-surface-secondary) !important;
+}
+
+/* Inputs y formularios */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: var(--color-surface) !important;
+  color: var(--color-text) !important;
+  border-color: var(--color-border) !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 241, 249, 0.5) !important;
+}
+
+/* Labels */
+.dark label {
+  color: var(--color-text) !important;
+}
+
+/* === TRANSICIONES DE PÁGINA === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.page-transition {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* === NProgress Styles === */
 #nprogress {
   pointer-events: none;
 }
@@ -136,7 +211,7 @@ body {
   transform: rotate(3deg) translate(0px, -4px);
 }
 
-/* Scrollbar styling */
+/* === Scrollbar styling === */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -153,4 +228,21 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent);
+}
+
+/* === Estado de carga === */
+.loading-skeleton {
+  background: linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-hover) 50%, var(--color-surface) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }

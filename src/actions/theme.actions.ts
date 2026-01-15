@@ -4,258 +4,148 @@ import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 
 /**
- * Theme Settings Actions
- * Gestión completa de configuración de diseño desde el CMS
+ * Settings Actions
+ * Normalized settings management (NO JSON fields)
  */
 
-// ========== TYPES ==========
+// ========== THEME SETTINGS ==========
 
-export type ThemeCategory = 'colors' | 'typography' | 'spacing' | 'layout' | 'effects'
-
-export interface ThemeSetting {
+export interface ThemeSettingsData {
   id: string
-  key: string
-  category: ThemeCategory
-  label: string
-  value: string
-  type: 'hex' | 'number' | 'select' | 'text' | 'font' | 'icon' | 'boolean'
-  description?: string | null
-  options?: string | null
-  order: number
+  primaryColor: string
+  secondaryColor: string
+  accentColor: string
+  backgroundColor: string
+  textColor: string
+  headingFont: string
+  bodyFont: string
+  borderRadius: number
   isActive: boolean
-  createdAt: Date
-  updatedAt: Date
 }
-
-export interface ThemeSettingsGrouped {
-  colors: ThemeSetting[]
-  typography: ThemeSetting[]
-  spacing: ThemeSetting[]
-  layout: ThemeSetting[]
-  effects: ThemeSetting[]
-}
-
-// ========== GET ==========
 
 /**
- * Obtener todas las configuraciones de tema activas
+ * Get theme settings (singleton - first active row)
  */
-export async function getAllThemeSettings(): Promise<ThemeSetting[]> {
+export async function getThemeSettings(): Promise<ThemeSettingsData | null> {
   try {
-    const settings = await prisma.themeSettings.findMany({
+    const settings = await prisma.themeSettings.findFirst({
       where: { isActive: true },
-      orderBy: [{ category: 'asc' }, { order: 'asc' }],
     })
-    return settings as ThemeSetting[]
+    return settings
   } catch (error) {
     console.error('Error getting theme settings:', error)
-    throw new Error('Error al obtener configuraciones de tema')
-  }
-}
-
-/**
- * Obtener configuraciones de tema agrupadas por categoría
- */
-export async function getThemeSettingsGrouped(): Promise<ThemeSettingsGrouped> {
-  try {
-    const settings = await getAllThemeSettings()
-
-    const grouped: ThemeSettingsGrouped = {
-      colors: [],
-      typography: [],
-      spacing: [],
-      layout: [],
-      effects: [],
-    }
-
-    settings.forEach((setting) => {
-      if (setting.category in grouped) {
-        grouped[setting.category as ThemeCategory].push(setting)
-      }
-    })
-
-    return grouped
-  } catch (error) {
-    console.error('Error grouping theme settings:', error)
-    throw new Error('Error al agrupar configuraciones de tema')
-  }
-}
-
-/**
- * Obtener una configuración específica por key
- */
-export async function getThemeSettingByKey(key: string): Promise<ThemeSetting | null> {
-  try {
-    const setting = await prisma.themeSettings.findUnique({
-      where: { key },
-    })
-    return setting as ThemeSetting | null
-  } catch (error) {
-    console.error(`Error getting theme setting ${key}:`, error)
     return null
   }
 }
 
 /**
- * Obtener valor de una configuración específica
- */
-export async function getThemeValue(key: string, defaultValue: string = ''): Promise<string> {
-  try {
-    const setting = await getThemeSettingByKey(key)
-    return setting?.value ?? defaultValue
-  } catch (error) {
-    console.error(`Error getting theme value ${key}:`, error)
-    return defaultValue
-  }
-}
-
-/**
- * Obtener objeto con todos los valores de tema (para usar en CSS/Tailwind)
+ * Get theme values as CSS variable object
  */
 export async function getThemeValues(): Promise<Record<string, string>> {
   try {
-    const settings = await getAllThemeSettings()
-    const values: Record<string, string> = {}
+    const settings = await getThemeSettings()
+    if (!settings) {
+      return {
+        'primary-color': '#c71585',
+        'secondary-color': '#f0f0f0',
+        'accent-color': '#ff69b4',
+        'background-color': '#ffffff',
+        'text-color': '#1a1a1a',
+        'heading-font': 'Raleway',
+        'body-font': 'Open Sans',
+        'border-radius': '8',
+      }
+    }
 
-    settings.forEach((setting) => {
-      values[setting.key] = setting.value
-    })
-
-    return values
+    return {
+      'primary-color': settings.primaryColor,
+      'secondary-color': settings.secondaryColor,
+      'accent-color': settings.accentColor,
+      'background-color': settings.backgroundColor,
+      'text-color': settings.textColor,
+      'heading-font': settings.headingFont,
+      'body-font': settings.bodyFont,
+      'border-radius': String(settings.borderRadius),
+    }
   } catch (error) {
     console.error('Error getting theme values:', error)
     return {}
   }
 }
 
-// ========== UPDATE ==========
-
 /**
- * Actualizar una configuración de tema
+ * Update theme settings
  */
-export async function updateThemeSetting(key: string, value: string) {
+export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 'id'>>) {
   try {
-    const updated = await prisma.themeSettings.update({
-      where: { key },
-      data: { value },
-    })
+    // Get or create the settings row
+    let settings = await prisma.themeSettings.findFirst({ where: { isActive: true } })
 
-    // Revalidar todas las rutas para aplicar el cambio
-    revalidatePath('/', 'layout')
-
-    return {
-      success: true,
-      setting: updated,
-      message: 'Configuración actualizada correctamente',
-    }
-  } catch (error) {
-    console.error(`Error updating theme setting ${key}:`, error)
-    return {
-      success: false,
-      error: 'Error al actualizar configuración',
-    }
-  }
-}
-
-/**
- * Actualizar múltiples configuraciones de tema
- */
-export async function updateMultipleThemeSettings(settings: Array<{ key: string; value: string }>) {
-  try {
-    const updates = settings.map((setting) =>
-      prisma.themeSettings.update({
-        where: { key: setting.key },
-        data: { value: setting.value },
+    if (!settings) {
+      settings = await prisma.themeSettings.create({
+        data: {
+          primaryColor: data.primaryColor || '#c71585',
+          secondaryColor: data.secondaryColor || '#f0f0f0',
+          accentColor: data.accentColor || '#ff69b4',
+          backgroundColor: data.backgroundColor || '#ffffff',
+          textColor: data.textColor || '#1a1a1a',
+          headingFont: data.headingFont || 'Raleway',
+          bodyFont: data.bodyFont || 'Open Sans',
+          borderRadius: data.borderRadius || 8,
+          isActive: true,
+        },
       })
-    )
-
-    await prisma.$transaction(updates)
-
-    // Revalidar todas las rutas
-    revalidatePath('/', 'layout')
-
-    return {
-      success: true,
-      message: `${settings.length} configuraciones actualizadas correctamente`,
+    } else {
+      settings = await prisma.themeSettings.update({
+        where: { id: settings.id },
+        data,
+      })
     }
-  } catch (error) {
-    console.error('Error updating multiple theme settings:', error)
-    return {
-      success: false,
-      error: 'Error al actualizar configuraciones',
-    }
-  }
-}
-
-// ========== PAGE CONTENT ==========
-
-export interface PageContent {
-  id: string
-  pageKey: string
-  sectionKey: string
-  content: string
-  isActive: boolean
-  createdAt: Date
-  updatedAt: Date
-}
-
-/**
- * Obtener contenido de una página
- */
-export async function getPageContent(pageKey: string): Promise<PageContent | null> {
-  try {
-    const content = await prisma.pageContent.findUnique({
-      where: { pageKey },
-    })
-    return content as PageContent | null
-  } catch (error) {
-    console.error(`Error getting page content ${pageKey}:`, error)
-    return null
-  }
-}
-
-/**
- * Actualizar contenido de una página
- */
-export async function updatePageContent(pageKey: string, content: string) {
-  try {
-    const updated = await prisma.pageContent.update({
-      where: { pageKey },
-      data: { content },
-    })
 
     revalidatePath('/', 'layout')
 
     return {
       success: true,
-      content: updated,
-      message: 'Contenido actualizado correctamente',
+      settings,
+      message: 'Configuración de tema actualizada',
     }
   } catch (error) {
-    console.error(`Error updating page content ${pageKey}:`, error)
+    console.error('Error updating theme settings:', error)
     return {
       success: false,
-      error: 'Error al actualizar contenido',
+      error: 'Error al actualizar configuración de tema',
     }
   }
 }
 
 /**
- * Resetear todas las configuraciones de tema a valores por defecto
+ * Reset theme to defaults
  */
 export async function resetThemeToDefaults() {
   try {
-    // Importar y ejecutar los defaults
-    const { themeDefaults } = await import('../../prisma/seeds/theme-defaults')
+    const settings = await prisma.themeSettings.findFirst({ where: { isActive: true } })
 
-    const updates = themeDefaults.map((setting) =>
-      prisma.themeSettings.update({
-        where: { key: setting.key },
-        data: { value: setting.value },
+    const defaultData = {
+      primaryColor: '#c71585',
+      secondaryColor: '#f0f0f0',
+      accentColor: '#ff69b4',
+      backgroundColor: '#ffffff',
+      textColor: '#1a1a1a',
+      headingFont: 'Raleway',
+      bodyFont: 'Open Sans',
+      borderRadius: 8,
+    }
+
+    if (settings) {
+      await prisma.themeSettings.update({
+        where: { id: settings.id },
+        data: defaultData,
       })
-    )
-
-    await prisma.$transaction(updates)
+    } else {
+      await prisma.themeSettings.create({
+        data: { ...defaultData, isActive: true },
+      })
+    }
 
     revalidatePath('/', 'layout')
 
@@ -264,10 +154,282 @@ export async function resetThemeToDefaults() {
       message: 'Tema reseteado a valores por defecto',
     }
   } catch (error) {
-    console.error('Error resetting theme to defaults:', error)
+    console.error('Error resetting theme:', error)
     return {
       success: false,
       error: 'Error al resetear tema',
     }
   }
+}
+
+// ========== ABOUT SETTINGS ==========
+
+export interface AboutSettingsData {
+  id: string
+  bioTitle: string | null
+  bioDescription: string | null
+  profileImageUrl: string | null
+  skills: string[]
+  yearsExperience: number | null
+  isActive: boolean
+}
+
+/**
+ * Get about page settings
+ */
+export async function getAboutSettings(): Promise<AboutSettingsData | null> {
+  try {
+    const settings = await prisma.aboutSettings.findFirst({
+      where: { isActive: true },
+    })
+    return settings
+  } catch (error) {
+    console.error('Error getting about settings:', error)
+    return null
+  }
+}
+
+/**
+ * Update about page settings
+ */
+export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 'id'>>) {
+  try {
+    let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
+
+    if (!settings) {
+      settings = await prisma.aboutSettings.create({
+        data: {
+          bioTitle: data.bioTitle || 'Sobre Mí',
+          bioDescription: data.bioDescription,
+          profileImageUrl: data.profileImageUrl,
+          skills: data.skills || [],
+          yearsExperience: data.yearsExperience,
+          isActive: true,
+        },
+      })
+    } else {
+      settings = await prisma.aboutSettings.update({
+        where: { id: settings.id },
+        data,
+      })
+    }
+
+    revalidatePath('/sobre-mi')
+
+    return {
+      success: true,
+      settings,
+      message: 'Configuración de "Sobre Mí" actualizada',
+    }
+  } catch (error) {
+    console.error('Error updating about settings:', error)
+    return {
+      success: false,
+      error: 'Error al actualizar configuración',
+    }
+  }
+}
+
+// ========== HOME SETTINGS ==========
+
+export interface HomeSettingsData {
+  id: string
+  heroTitle: string | null
+  heroSubtitle: string | null
+  heroImageUrl: string | null
+  heroCtaText: string | null
+  heroCtaLink: string | null
+  showFeaturedProjects: boolean
+  featuredTitle: string | null
+  featuredCount: number
+  showTestimonials: boolean
+  testimonialsTitle: string | null
+  isActive: boolean
+}
+
+/**
+ * Get home page settings
+ */
+export async function getHomeSettings(): Promise<HomeSettingsData | null> {
+  try {
+    const settings = await prisma.homeSettings.findFirst({
+      where: { isActive: true },
+    })
+    return settings
+  } catch (error) {
+    console.error('Error getting home settings:', error)
+    return null
+  }
+}
+
+/**
+ * Update home page settings
+ */
+export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'id'>>) {
+  try {
+    let settings = await prisma.homeSettings.findFirst({ where: { isActive: true } })
+
+    if (!settings) {
+      settings = await prisma.homeSettings.create({
+        data: {
+          heroTitle: data.heroTitle,
+          heroSubtitle: data.heroSubtitle,
+          heroImageUrl: data.heroImageUrl,
+          heroCtaText: data.heroCtaText || 'Ver Portfolio',
+          heroCtaLink: data.heroCtaLink || '/proyectos',
+          showFeaturedProjects: data.showFeaturedProjects ?? true,
+          featuredTitle: data.featuredTitle || 'Trabajos Destacados',
+          featuredCount: data.featuredCount || 6,
+          showTestimonials: data.showTestimonials ?? true,
+          testimonialsTitle: data.testimonialsTitle || 'Lo que dicen mis clientes',
+          isActive: true,
+        },
+      })
+    } else {
+      settings = await prisma.homeSettings.update({
+        where: { id: settings.id },
+        data,
+      })
+    }
+
+    revalidatePath('/')
+
+    return {
+      success: true,
+      settings,
+      message: 'Configuración de inicio actualizada',
+    }
+  } catch (error) {
+    console.error('Error updating home settings:', error)
+    return {
+      success: false,
+      error: 'Error al actualizar configuración',
+    }
+  }
+}
+
+// ========== CONTACT SETTINGS ==========
+
+export interface ContactSettingsData {
+  id: string
+  emails: string[]
+  phones: string[]
+  addressLine1: string | null
+  addressLine2: string | null
+  city: string | null
+  country: string | null
+  hoursTitle: string | null
+  hoursWeekdays: string | null
+  hoursSaturday: string | null
+  hoursSunday: string | null
+  formTitle: string | null
+  formSuccessMessage: string | null
+  isActive: boolean
+}
+
+/**
+ * Get contact settings
+ */
+export async function getContactSettings(): Promise<ContactSettingsData | null> {
+  try {
+    const settings = await prisma.contactSettings.findFirst({
+      where: { isActive: true },
+    })
+    return settings
+  } catch (error) {
+    console.error('Error getting contact settings:', error)
+    return null
+  }
+}
+
+/**
+ * Update contact settings
+ */
+export async function updateContactSettings(data: Partial<Omit<ContactSettingsData, 'id'>>) {
+  try {
+    let settings = await prisma.contactSettings.findFirst({ where: { isActive: true } })
+
+    if (!settings) {
+      settings = await prisma.contactSettings.create({
+        data: {
+          emails: data.emails || [],
+          phones: data.phones || [],
+          addressLine1: data.addressLine1,
+          addressLine2: data.addressLine2,
+          city: data.city,
+          country: data.country,
+          hoursTitle: data.hoursTitle || 'Horario de Atención',
+          hoursWeekdays: data.hoursWeekdays,
+          hoursSaturday: data.hoursSaturday,
+          hoursSunday: data.hoursSunday,
+          formTitle: data.formTitle || 'Envíame un mensaje',
+          formSuccessMessage: data.formSuccessMessage || '¡Gracias! Tu mensaje ha sido enviado.',
+          isActive: true,
+        },
+      })
+    } else {
+      settings = await prisma.contactSettings.update({
+        where: { id: settings.id },
+        data,
+      })
+    }
+
+    revalidatePath('/contacto')
+
+    return {
+      success: true,
+      settings,
+      message: 'Configuración de contacto actualizada',
+    }
+  } catch (error) {
+    console.error('Error updating contact settings:', error)
+    return {
+      success: false,
+      error: 'Error al actualizar configuración',
+    }
+  }
+}
+
+// ========== LEGACY EXPORTS (Backward Compatibility) ==========
+// These will be removed in future versions
+
+/** @deprecated Use getThemeSettings() instead */
+export async function getAllThemeSettings() {
+  console.warn('getAllThemeSettings is deprecated. Use getThemeSettings().')
+  return getThemeSettings()
+}
+
+/** @deprecated Use getThemeSettings() instead */
+export async function getThemeSettingsGrouped() {
+  console.warn('getThemeSettingsGrouped is deprecated. Use getThemeSettings().')
+  const settings = await getThemeSettings()
+  return {
+    colors: settings ? [settings] : [],
+    typography: [],
+    spacing: [],
+    layout: [],
+    effects: [],
+  }
+}
+
+/** @deprecated Use updateThemeSettings() instead */
+export async function updateMultipleThemeSettings(updates: Array<{ key: string; value: string }>) {
+  console.warn('updateMultipleThemeSettings is deprecated. Use updateThemeSettings().')
+  const data: Record<string, string | number> = {}
+  for (const { key, value } of updates) {
+    // Map old keys to new flat columns
+    const keyMap: Record<string, string> = {
+      'primary-color': 'primaryColor',
+      'secondary-color': 'secondaryColor',
+      'accent-color': 'accentColor',
+      'background-color': 'backgroundColor',
+      'text-color': 'textColor',
+      'heading-font': 'headingFont',
+      'body-font': 'bodyFont',
+      'border-radius': 'borderRadius',
+    }
+    const newKey = keyMap[key] || key
+    data[newKey] = key === 'border-radius' ? parseInt(value) || 8 : value
+  }
+  return updateThemeSettings(data as Partial<ThemeSettingsData>)
 }

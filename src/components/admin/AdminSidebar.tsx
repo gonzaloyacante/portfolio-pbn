@@ -4,19 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
-import ThemeToggle from '@/components/ui/ThemeToggle'
+import { ThemeToggle } from '@/components/ui'
 
-const menuItems = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: '🏠' },
-  { href: '/admin/analitica', label: 'Analítica', icon: '📊' },
-  { href: '/admin/gestion/projects', label: 'Proyectos', icon: '🎨' },
-  { href: '/admin/gestion/categories', label: 'Categorías', icon: '📁' },
-  { href: '/admin/testimonios', label: 'Testimonios', icon: '💬' },
-  { href: '/admin/contactos', label: 'Contactos', icon: '📧' },
-  { href: '/admin/tema', label: 'Editor de Tema', icon: '🎨' },
-  { href: '/admin/configuracion', label: 'Configuración', icon: '⚙️' },
-  { href: '/admin/ayuda', label: 'Centro de Ayuda', icon: '📘' },
-]
+import { menuItems } from '@/config/admin-sidebar'
 
 export default function AdminSidebar() {
   const pathname = usePathname()
@@ -31,52 +21,53 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="flex min-h-screen w-64 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+    <aside className="bg-pink-light/80 dark:bg-purple-dark/20 border-wine/10 dark:border-pink-light/10 sticky top-0 flex h-screen w-64 flex-col border-r backdrop-blur-md transition-colors duration-300">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
-        <Link href="/admin/dashboard" className="block">
-          <h1 className="font-script text-2xl" style={{ color: 'var(--color-primary, #ffaadd)' }}>
-            Admin Panel
-          </h1>
+      <div className="border-wine/10 dark:border-pink-light/10 flex items-center justify-between border-b p-6">
+        <Link
+          href="/admin/dashboard"
+          className="block cursor-pointer transition-all duration-200 hover:scale-105"
+        >
+          <h1 className="font-script text-wine dark:text-pink-hot text-2xl">Admin Panel</h1>
         </Link>
         <ThemeToggle />
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-4">
-        {menuItems.map((item) => {
+      {/* Navigation - Scrollable */}
+      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+        {menuItems.map((item: { href: string; icon: string; label: string }) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-lg px-4 py-3 transition-all ${
+              className={`flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                 isActive
-                  ? 'bg-gradient-to-r from-pink-500 to-pink-600 text-white shadow-md'
-                  : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
+                  ? 'bg-wine text-pink-light dark:bg-pink-hot dark:text-purple-dark shadow-md'
+                  : 'text-wine/80 hover:bg-wine/10 dark:text-pink-light/80 dark:hover:bg-pink-light/10'
               }`}
             >
               <span className="text-xl">{item.icon}</span>
               <span className="font-medium">{item.label}</span>
-              {isActive && <span className="ml-auto h-2 w-2 rounded-full bg-white" />}
+              {isActive && <span className="ml-auto h-2 w-2 rounded-full bg-current opacity-50" />}
             </Link>
           )
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="border-t border-gray-200 p-4 dark:border-gray-700">
+      {/* Footer - Sticky */}
+      <div className="border-wine/10 dark:border-pink-light/10 mt-auto border-t p-4">
         <Link
           href="/"
           target="_blank"
-          className="mb-2 flex w-full items-center gap-3 rounded-lg px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+          className="text-wine hover:bg-wine/10 dark:text-pink-light dark:hover:bg-pink-light/10 mb-2 flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
         >
           <span>🌐</span>
           <span>Ver sitio público</span>
         </Link>
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-gray-300 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+          className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-red-600 transition-all duration-200 hover:scale-[1.02] hover:bg-red-100 active:scale-[0.98] dark:text-red-400 dark:hover:bg-red-900/30"
         >
           <span className="text-xl">🚪</span>
           <span className="font-medium">Cerrar Sesión</span>

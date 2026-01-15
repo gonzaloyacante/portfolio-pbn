@@ -7,15 +7,42 @@ import { logger } from '@/lib/logger'
 
 // --- Projects ---
 
+import { z } from 'zod'
+
+// Schemas
+const ProjectSchema = z.object({
+  title: z.string().min(1, 'El título es requerido'),
+  description: z.string().optional(),
+  categoryId: z.string().min(1, 'La categoría es requerida'),
+  date: z.string().optional(),
+})
+
+const CategorySchema = z.object({
+  name: z.string().min(1, 'El nombre es requerido'),
+  slug: z.string().min(1, 'El slug es requerido'),
+  description: z.string().optional(),
+})
+
+// --- Projects ---
+
 export async function uploadImageAndCreateProject(formData: FormData) {
-  const title = formData.get('title') as string
-  const description = formData.get('description') as string
-  const categoryId = formData.get('categoryId') as string
-  const dateStr = formData.get('date') as string
+  const rawData = {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    categoryId: formData.get('categoryId'),
+    date: formData.get('date'),
+  }
+
+  const validation = ProjectSchema.safeParse(rawData)
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0].message }
+  }
+
+  const { title, description, categoryId, date } = validation.data
   const files = formData.getAll('images') as File[]
 
-  if (!title || !categoryId || files.length === 0) {
-    return { success: false, error: 'Faltan campos requeridos' }
+  if (files.length === 0) {
+    return { success: false, error: 'Se requieren imágenes' }
   }
 
   try {
@@ -36,7 +63,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)/g, ''),
         description: description || '',
-        date: dateStr ? new Date(dateStr) : new Date(),
+        date: date ? new Date(date) : new Date(),
         thumbnailUrl: uploadedImages[0]?.url || '',
         categoryId,
         images: {
@@ -54,7 +81,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     logger.info(`Project created: ${title}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error creating project:', error)
+    logger.error('Error creating project:', { error })
     return { success: false, error: 'Error al crear el proyecto' }
   }
 }
@@ -64,15 +91,19 @@ export async function deleteProject(id: string) {
     // Soft delete - mark as deleted instead of removing
     await prisma.project.update({
       where: { id },
-      data: { isDeleted: true },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
     })
 
     revalidatePath('/proyectos')
     revalidatePath('/admin/gestion/projects')
+    revalidatePath('/admin/papelera')
     logger.info(`Project soft deleted: ${id}`)
     return { success: true, message: 'Proyecto movido a la papelera' }
   } catch (error) {
-    logger.error('Error soft deleting project:', error)
+    logger.error('Error soft deleting project:', { error })
     return { success: false, error: 'Error al eliminar el proyecto' }
   }
 }
@@ -81,15 +112,19 @@ export async function restoreProject(id: string) {
   try {
     await prisma.project.update({
       where: { id },
-      data: { isDeleted: false },
+      data: {
+        isDeleted: false,
+        deletedAt: null,
+      },
     })
 
     revalidatePath('/proyectos')
     revalidatePath('/admin/gestion/projects')
+    revalidatePath('/admin/papelera')
     logger.info(`Project restored: ${id}`)
     return { success: true, message: 'Proyecto restaurado con éxito' }
   } catch (error) {
-    logger.error('Error restoring project:', error)
+    logger.error('Error restoring project:', { error })
     return { success: false, error: 'Error al restaurar el proyecto' }
   }
 }
@@ -114,16 +149,25 @@ export async function permanentDeleteProject(id: string) {
     logger.info(`Project permanently deleted: ${id}`)
     return { success: true, message: 'Proyecto eliminado permanentemente' }
   } catch (error) {
-    logger.error('Error permanently deleting project:', error)
+    logger.error('Error permanently deleting project:', { error })
     return { success: false, error: 'Error al eliminar permanentemente el proyecto' }
   }
 }
 
 export async function updateProject(id: string, formData: FormData) {
-  const title = formData.get('title') as string
-  const description = formData.get('description') as string
-  const categoryId = formData.get('categoryId') as string
-  const dateStr = formData.get('date') as string
+  const rawData = {
+    title: formData.get('title'),
+    description: formData.get('description'),
+    categoryId: formData.get('categoryId'),
+    date: formData.get('date'),
+  }
+
+  const validation = ProjectSchema.safeParse(rawData)
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0].message }
+  }
+
+  const { title, description, categoryId, date } = validation.data
   const newFiles = formData.getAll('newImages') as File[]
 
   try {
@@ -132,8 +176,8 @@ export async function updateProject(id: string, formData: FormData) {
       where: { id },
       data: {
         title,
-        description,
-        date: dateStr ? new Date(dateStr) : undefined,
+        description: description || '',
+        date: date ? new Date(date) : undefined,
         categoryId,
       },
     })
@@ -165,7 +209,7 @@ export async function updateProject(id: string, formData: FormData) {
     logger.info(`Project updated: ${id}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error updating project:', error)
+    logger.error('Error updating project:', { error })
     return { success: false, error: 'Error al actualizar el proyecto' }
   }
 }
@@ -189,7 +233,7 @@ export async function reorderProjectImages(
     logger.info(`Images reordered for project: ${projectId}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error reordering images:', error)
+    logger.error('Error reordering images:', { error })
     return { success: false, error: 'Error al reordenar imágenes' }
   }
 }
@@ -206,7 +250,7 @@ export async function deleteProjectImage(imageId: string) {
     logger.info(`Image deleted: ${imageId}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error deleting image:', error)
+    logger.error('Error deleting image:', { error })
     return { success: false, error: 'Error al eliminar imagen' }
   }
 }
@@ -214,9 +258,17 @@ export async function deleteProjectImage(imageId: string) {
 // --- Categories ---
 
 export async function createCategory(formData: FormData) {
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
-  const description = formData.get('description') as string
+  const rawData = {
+    name: formData.get('name'),
+    slug: formData.get('slug'),
+    description: formData.get('description'),
+  }
+
+  const validation = CategorySchema.safeParse(rawData)
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0].message }
+  }
+  const { name, slug, description } = validation.data
 
   try {
     await prisma.category.create({
@@ -227,15 +279,23 @@ export async function createCategory(formData: FormData) {
     logger.info(`Category created: ${name}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error creating category:', error)
+    logger.error('Error creating category:', { error })
     return { success: false, error: 'Error al crear la categoría' }
   }
 }
 
 export async function updateCategory(id: string, formData: FormData) {
-  const name = formData.get('name') as string
-  const slug = formData.get('slug') as string
-  const description = formData.get('description') as string
+  const rawData = {
+    name: formData.get('name'),
+    slug: formData.get('slug'),
+    description: formData.get('description'),
+  }
+
+  const validation = CategorySchema.safeParse(rawData)
+  if (!validation.success) {
+    return { success: false, error: validation.error.issues[0].message }
+  }
+  const { name, slug, description } = validation.data
 
   try {
     await prisma.category.update({
@@ -247,7 +307,7 @@ export async function updateCategory(id: string, formData: FormData) {
     logger.info(`Category updated: ${id}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error updating category:', error)
+    logger.error('Error updating category:', { error })
     return { success: false, error: 'Error al actualizar la categoría' }
   }
 }
@@ -260,7 +320,7 @@ export async function deleteCategory(id: string) {
     logger.info(`Category deleted: ${id}`)
     return { success: true }
   } catch (error) {
-    logger.error('Error deleting category:', error)
+    logger.error('Error deleting category:', { error })
     return { success: false, error: 'Error al eliminar la categoría' }
   }
 }

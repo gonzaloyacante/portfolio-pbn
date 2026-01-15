@@ -1,25 +1,33 @@
 import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
-import JsonLd from '@/components/seo/JsonLd'
 
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+import JsonLd from '@/components/seo/JsonLd'
+import PageTransition from '@/components/layout/PageTransition'
+import { getSiteConfig } from '@/actions/settings.actions'
+
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
+  const config = await getSiteConfig()
+
   return (
     <>
-      {/* 🤖 SEO: Schema.org Structured Data */}
+      {/* SEO: Schema.org Structured Data */}
       <JsonLd
         type="ProfessionalService"
         data={{
-          name: 'Paola Bolívar Nievas',
-          email: 'contacto@paolamakeup.com',
+          name: config?.ownerName || 'Paola Bolívar Nievas',
+          email: config?.contactEmail || 'contacto@paolamakeup.com',
         }}
       />
 
-      <div className="bg-bg flex min-h-screen flex-col">
-        <header className="bg-bg/80 border-primary/10 sticky top-0 z-50 border-b backdrop-blur-sm">
-          <Navbar />
-        </header>
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <div
+        className="flex min-h-screen flex-col transition-colors duration-300"
+        style={{ backgroundColor: 'var(--color-background)' }}
+      >
+        <Navbar brandName={config?.brandName} />
+        <main className="flex-1">
+          <PageTransition>{children}</PageTransition>
+        </main>
+        {/* Footer removed explicitly as per user request */}
+        {/* <Footer ownerName={config?.ownerName} copyrightText={config?.copyrightText} /> */}
       </div>
     </>
   )

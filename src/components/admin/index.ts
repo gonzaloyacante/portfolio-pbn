@@ -18,7 +18,6 @@ export { SortableImage } from './SortableImage'
 
 // Theme
 export { ThemeEditor } from './ThemeEditor'
-export { ThemeSettingInput } from './ThemeSettingInput'
 export { default as ColorPicker } from './ColorPicker'
 export { default as FontPicker } from './FontPicker'
 export { default as IconPicker } from './IconPicker'

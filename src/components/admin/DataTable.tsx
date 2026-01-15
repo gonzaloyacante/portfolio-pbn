@@ -22,39 +22,47 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="rounded-lg bg-white p-8 text-center shadow-md dark:bg-gray-800">
-        <p className="text-gray-500">{emptyMessage}</p>
+      <div className="border-wine/20 bg-pink-light/30 dark:border-pink-hot/20 dark:bg-purple-dark/20 rounded-2xl border-2 border-dashed p-12 text-center">
+        <p className="text-wine/60 dark:text-pink-light/60 font-medium">{emptyMessage}</p>
       </div>
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-lg bg-white shadow-md dark:bg-gray-800">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-700">
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-300"
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-          {data.map((item) => (
-            <tr key={keyExtractor(item)}>
+    <div className="ring-wine/5 dark:bg-purple-dark/20 dark:ring-pink-light/10 overflow-hidden rounded-2xl bg-white shadow-sm ring-1">
+      <div className="overflow-x-auto">
+        <table className="divide-wine/10 dark:divide-pink-light/10 min-w-full divide-y">
+          <thead className="bg-wine/5 dark:bg-pink-light/5">
+            <tr>
               {columns.map((col) => (
-                <td key={col.key} className="px-6 py-4">
-                  {col.render(item)}
-                </td>
+                <th
+                  key={col.key}
+                  className="text-wine dark:text-pink-hot px-6 py-4 text-left text-xs font-bold tracking-wider uppercase"
+                >
+                  {col.header}
+                </th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-wine/10 dark:divide-pink-light/10 divide-y bg-white/50 dark:bg-transparent">
+            {data.map((item) => (
+              <tr
+                key={keyExtractor(item)}
+                className="hover:bg-wine/5 dark:hover:bg-pink-light/5 transition-colors"
+              >
+                {columns.map((col) => (
+                  <td
+                    key={col.key}
+                    className="text-wine/90 dark:text-pink-light/90 px-6 py-4 text-sm"
+                  >
+                    {col.render(item)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

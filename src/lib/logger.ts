@@ -1,28 +1,121 @@
-type LogLevel = 'info' | 'warn' | 'error' | 'debug'
+type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
-const getTimestamp = () => new Date().toISOString()
+export type LogContext = Record<string, unknown> | undefined
 
-const formatMessage = (level: LogLevel, message: string, data?: unknown) => {
-  const timestamp = getTimestamp()
-  const dataString = data ? `\nData: ${JSON.stringify(data, null, 2)}` : ''
-  return `[${timestamp}] [${level.toUpperCase()}]: ${message}${dataString}`
+function format(level: LogLevel, msg: string, ctx?: LogContext) {
+  const ts = new Date().toISOString()
+  const base = { ts, level, msg } as Record<string, unknown>
+  const merged = ctx ? { ...base, ...ctx } : base
+  return JSON.stringify(merged)
+}
+
+// ---- PII masking helpers ----
+const EMAIL_RE = /([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})/gi
+const PHONE_RE = /\b\+?\d[\d\s().-]{6,}\b/g
+
+function redactEmail(val: string): string {
+  return val.replace(EMAIL_RE, (_m, user, host) => `${String(user).slice(0, 2)}***@${host}`)
+}
+
+function redactPhone(val: string): string {
+  return val.replace(PHONE_RE, (m) => `${m.slice(0, 2)}***${m.slice(-2)}`)
+}
+
+const MAX_DEPTH = 5
+
+function maskValue(v: unknown, depth = 0, seen = new WeakSet()): unknown {
+  if (depth > MAX_DEPTH) return '[Max Depth Reached]'
+
+  if (typeof v === 'string') {
+    let s = v
+    s = redactEmail(s)
+    s = redactPhone(s)
+    return s
+  }
+
+  if (v && typeof v === 'object') {
+    if (seen.has(v)) {
+      return '[Circular]'
+    }
+    seen.add(v)
+  }
+
+  if (Array.isArray(v)) {
+    return v.map((item) => maskValue(item, depth + 1, seen))
+  }
+  if (v && typeof v === 'object') {
+    return maskObject(v as Record<string, unknown>, depth + 1, seen)
+  }
+  return v
+}
+
+function maskObject(
+  obj: Record<string, unknown>,
+  depth = 0,
+  seen = new WeakSet()
+): Record<string, unknown> {
+  if (depth > MAX_DEPTH) return { _truncated: '[Max Depth Reached]' }
+
+  const out: Record<string, unknown> = {}
+  for (const [k, v] of Object.entries(obj)) {
+    if (
+      ['email', 'customerEmail', 'phone', 'customerPhone', 'password', 'token', 'secret'].includes(
+        k
+      )
+    ) {
+      out[k] = typeof v === 'string' ? '***redacted***' : null
+    } else {
+      out[k] = maskValue(v, depth, seen)
+    }
+  }
+  return out
+}
+
+export function safeCtx(ctx?: LogContext): LogContext {
+  if (!ctx) {
+    return ctx
+  }
+  try {
+    const cloned = { ...(ctx as Record<string, unknown>) }
+    const maybeErr = (cloned as Record<string, unknown>).error
+    if (maybeErr instanceof Error) {
+      const err = maybeErr as Error
+      ;(cloned as Record<string, unknown>).error = {
+        name: err.name,
+        message: err.message,
+        stack: err.stack ? err.stack.split('\n').slice(0, 3).join('\\n') : undefined,
+      }
+    }
+
+    return maskObject(cloned as Record<string, unknown>)
+  } catch {
+    return { error: 'ctx_mask_failed' }
+  }
 }
 
 export const logger = {
-  info: (message: string, data?: unknown) => {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(formatMessage('info', message, data))
-    }
+  debug(msg: string, ctx?: LogContext) {
+    console.debug(format('debug', msg, safeCtx(ctx)))
   },
-  warn: (message: string, data?: unknown) => {
-    console.warn(formatMessage('warn', message, data))
+  info(msg: string, ctx?: LogContext) {
+    console.info(format('info', msg, safeCtx(ctx)))
   },
-  error: (message: string, error?: unknown) => {
-    console.error(formatMessage('error', message, error))
+  warn(msg: string, ctx?: LogContext) {
+    console.warn(format('warn', msg, safeCtx(ctx)))
   },
-  debug: (message: string, data?: unknown) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.debug(formatMessage('debug', message, data))
-    }
+  error(msg: string, ctx?: LogContext) {
+    console.error(format('error', msg, safeCtx(ctx)))
   },
+}
+
+export function getRequestId(headers: Headers): string {
+  const existing = headers.get('x-request-id') || headers.get('x-correlation-id')
+  if (existing) {
+    return existing
+  }
+  try {
+    return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`
+  } catch {
+    return `${Date.now()}-${Math.random()}`
+  }
 }

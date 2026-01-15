@@ -112,68 +112,126 @@ const nextConfig: NextConfig = {
   },
 
   // Configuración de imágenes
+  // Configuración de imágenes optimizada (Rastuci Style)
   images: {
+    formats: ['image/webp', 'image/avif'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
-    formats: ['image/avif', 'image/webp'],
   },
 
-  // 🛡️ Security Headers
-  // 🛡️ Security Headers
-  async headers() {
-    if (process.env.NODE_ENV === 'development') {
-      return []
-    }
-
+  async redirects() {
     return [
       {
-        source: '/:path*',
+        source: '/admin/gestion/projects',
+        destination: '/admin/proyectos',
+        permanent: true,
+      },
+      {
+        source: '/admin/gestion/categories',
+        destination: '/admin/proyectos',
+        permanent: true,
+      },
+      {
+        source: '/admin/gestion/:path*',
+        destination: '/admin/proyectos',
+        permanent: true,
+      },
+    ]
+  },
+
+  async rewrites() {
+    return [
+      // Admin Routes (Spanish -> English)
+      { source: '/admin/proyectos', destination: '/admin/projects' },
+      { source: '/admin/proyectos/new', destination: '/admin/projects/new' },
+      { source: '/admin/proyectos/:id/editar', destination: '/admin/projects/:id/edit' },
+
+      { source: '/admin/sobre-mi', destination: '/admin/about' },
+      { source: '/admin/testimonios', destination: '/admin/testimonials' },
+      { source: '/admin/contactos', destination: '/admin/contacts' },
+      { source: '/admin/configuracion', destination: '/admin/settings' },
+      { source: '/admin/mis-datos', destination: '/admin/profile' },
+      { source: '/admin/tema', destination: '/admin/theme' },
+      { source: '/admin/papelera', destination: '/admin/trash' },
+      { source: '/admin/analitica', destination: '/admin/analytics' },
+    ]
+  },
+
+  // 🛡️ Security Headers (Rastuci Strict Policy)
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
         headers: [
           {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'Strict-Transport-Security',
-            value: 'max-age=63072000; includeSubDomains; preload',
-          },
-          {
             key: 'X-Frame-Options',
-            value: 'DENY', // Previene Clickjacking
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff', // Previene MIME-sniffing
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
+            value: 'nosniff',
           },
           {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
           },
           {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
-          },
-          {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline'", // Next.js necesita unsafe-inline
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https: blob:",
-              "font-src 'self' data:",
-              "connect-src 'self' https://res.cloudinary.com",
-              "media-src 'self' https://res.cloudinary.com",
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://va.vercel-scripts.com https://www.googletagmanager.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "img-src 'self' blob: data: https: res.cloudinary.com images.unsplash.com",
+              "font-src 'self' https://fonts.gstatic.com data:",
+              "connect-src 'self' https://res.cloudinary.com https://*.google-analytics.com https://www.googletagmanager.com",
+              "worker-src 'self' blob:",
+              "child-src 'self' blob:",
               "frame-ancestors 'none'",
             ].join('; '),
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+        ],
+      },
+      {
+        source: '/api/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/(.*\\.(?:js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },

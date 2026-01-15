@@ -231,3 +231,36 @@ export async function revalidateProjects() {
   revalidatePath('/proyectos')
   revalidatePath('/', 'layout')
 }
+
+/**
+ * Restaurar proyecto eliminado
+ */
+export async function restoreProject(id: string) {
+  try {
+    await prisma.project.update({
+      where: { id },
+      data: { isDeleted: false, deletedAt: null },
+    })
+    revalidatePath('/admin/papelera')
+    revalidatePath('/admin/proyectos')
+    return { success: true }
+  } catch (error) {
+    console.error('Error restaurando proyecto:', error)
+    return { success: false, error: 'Error al restaurar proyecto' }
+  }
+}
+
+/**
+ * Eliminar proyecto permanentemente
+ */
+export async function permanentlyDeleteProject(id: string) {
+  try {
+    // Las imágenes se eliminan automáticamente con onDelete: Cascade
+    await prisma.project.delete({ where: { id } })
+    revalidatePath('/admin/papelera')
+    return { success: true }
+  } catch (error) {
+    console.error('Error eliminando proyecto permanentemente:', error)
+    return { success: false, error: 'Error al eliminar proyecto' }
+  }
+}

@@ -1,7 +1,7 @@
 interface FormFieldProps {
   label: string
   name: string
-  type?: 'text' | 'email' | 'textarea' | 'select' | 'number'
+  type?: 'text' | 'email' | 'textarea' | 'select' | 'number' | 'password' | 'date'
   required?: boolean
   placeholder?: string
   defaultValue?: string

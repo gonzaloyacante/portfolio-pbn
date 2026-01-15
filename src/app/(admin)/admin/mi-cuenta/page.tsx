@@ -1,0 +1,107 @@
+'use client'
+
+import { useState } from 'react'
+import { Button, PageHeader } from '@/components/ui'
+import { Section, FormField } from '@/components/admin'
+import toast from 'react-hot-toast'
+
+export default function MiCuentaPage() {
+  const [isLoading, setIsLoading] = useState(false)
+
+  async function handleChangePassword(formData: FormData) {
+    const currentPassword = formData.get('currentPassword') as string
+    const newPassword = formData.get('newPassword') as string
+    const confirmPassword = formData.get('confirmPassword') as string
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error('Todos los campos son obligatorios')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      toast.error('Las contraseñas nuevas no coinciden')
+      return
+    }
+
+    if (newPassword.length < 8) {
+      toast.error('La contraseña debe tener al menos 8 caracteres')
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Error al cambiar contraseña')
+      }
+
+      toast.success('Contraseña actualizada correctamente')
+      // Reset form
+      const form = document.getElementById('password-form') as HTMLFormElement
+      form?.reset()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Error al cambiar contraseña')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-8">
+      <PageHeader title="🔐 Mi Cuenta" description="Administra la seguridad de tu cuenta" />
+
+      <Section title="Cambiar Contraseña">
+        <form id="password-form" action={handleChangePassword} className="space-y-4">
+          <FormField
+            label="Contraseña actual"
+            name="currentPassword"
+            type="password"
+            required
+            placeholder="Ingresa tu contraseña actual"
+          />
+
+          <div className="border-pink-hot/20 dark:border-pink-light/20 border-t pt-4">
+            <FormField
+              label="Nueva contraseña"
+              name="newPassword"
+              type="password"
+              required
+              placeholder="Mínimo 8 caracteres"
+            />
+          </div>
+
+          <FormField
+            label="Confirmar nueva contraseña"
+            name="confirmPassword"
+            type="password"
+            required
+            placeholder="Repite la nueva contraseña"
+          />
+
+          <Button type="submit" loading={isLoading}>
+            Cambiar Contraseña
+          </Button>
+        </form>
+      </Section>
+
+      <div className="border-pink-hot/20 bg-pink-light/50 dark:border-pink-light/20 dark:bg-wine/30 rounded-2xl border p-4">
+        <h4 className="text-wine dark:text-pink-light mb-2 font-semibold">
+          🔒 Consejos de seguridad
+        </h4>
+        <ul className="text-wine/80 dark:text-pink-light/80 space-y-1 text-sm">
+          <li>• Usa al menos 8 caracteres</li>
+          <li>• Combina letras, números y símbolos</li>
+          <li>• No uses contraseñas fáciles de adivinar</li>
+          <li>• No compartas tu contraseña con nadie</li>
+        </ul>
+      </div>
+    </div>
+  )
+}

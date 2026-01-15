@@ -88,8 +88,8 @@ export default async function CategoryProjectsPage({
 
   return (
     <section
-      className="min-h-screen w-full"
-      style={{ backgroundColor: 'var(--color-background, #fff1f9)' }}
+      className="min-h-screen w-full transition-colors duration-300"
+      style={{ backgroundColor: 'var(--color-background)' }}
     >
       <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
 
@@ -98,8 +98,8 @@ export default async function CategoryProjectsPage({
         <div className="mb-8 flex flex-col items-start gap-4 sm:mb-10 sm:flex-row sm:items-center sm:gap-6">
           <Link
             href="/proyectos"
-            className="group flex items-center gap-2 transition-opacity hover:opacity-70"
-            style={{ color: 'var(--color-primary, #ffaadd)' }}
+            className="group flex cursor-pointer items-center gap-2 transition-all duration-200 hover:opacity-70"
+            style={{ color: 'var(--color-primary)' }}
           >
             <span className="text-xl transition-transform group-hover:-translate-x-1">◀</span>
             <span className="font-heading text-sm font-bold tracking-wide uppercase">
@@ -109,10 +109,7 @@ export default async function CategoryProjectsPage({
 
           <h1
             className="font-heading text-2xl font-bold sm:text-3xl"
-            style={{
-              color: 'var(--color-text-primary, #6c0a0a)',
-              fontWeight: 'var(--font-heading-weight, 700)',
-            }}
+            style={{ color: 'var(--color-text)' }}
           >
             {category.name}
           </h1>
@@ -124,11 +121,8 @@ export default async function CategoryProjectsPage({
             {allImages.map((image) => (
               <div
                 key={image.id}
-                className="group relative aspect-[3/4] overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl"
-                style={{
-                  borderRadius: 'var(--layout-border-radius, 16px)',
-                  backgroundColor: 'var(--color-primary, #ffaadd)',
-                }}
+                className="group relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
+                style={{ backgroundColor: 'var(--color-primary)' }}
               >
                 <Image
                   src={image.url}
@@ -140,7 +134,7 @@ export default async function CategoryProjectsPage({
                 />
 
                 {/* Overlay con título */}
-                <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-end bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                   <p className="p-3 text-sm font-medium text-white sm:p-4">{image.projectTitle}</p>
                 </div>
               </div>
@@ -152,17 +146,12 @@ export default async function CategoryProjectsPage({
               className="font-script mb-4"
               style={{
                 fontSize: 'clamp(1.5rem, 4vw, 3rem)',
-                color: 'var(--color-accent, #7a2556)',
+                color: 'var(--color-accent)',
               }}
             >
               Próximamente...
             </p>
-            <p
-              style={{
-                color: 'var(--color-text-primary, #6c0a0a)',
-                opacity: 0.7,
-              }}
-            >
+            <p style={{ color: 'var(--color-text)', opacity: 0.7 }}>
               No hay proyectos en esta categoría todavía.
             </p>
           </div>

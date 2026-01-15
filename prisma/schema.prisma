@@ -27,19 +27,20 @@ model Category {
 }
 
 model Project {
-  id          String         @id @default(cuid())
-  title       String
-  slug        String         @unique
-  description String         @db.Text
+  id           String         @id @default(cuid())
+  title        String
+  slug         String         @unique
+  description  String         @db.Text
   thumbnailUrl String
-  date        DateTime
-  categoryId  String
-  isActive    Boolean        @default(true)
-  isDeleted   Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  category    Category       @relation(fields: [categoryId], references: [id])
-  images      ProjectImage[]
+  date         DateTime
+  categoryId   String
+  isActive     Boolean        @default(true)
+  isDeleted    Boolean        @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  category     Category       @relation(fields: [categoryId], references: [id])
+  images       ProjectImage[]
 
   @@index([categoryId, date(sort: Desc)])
   @@index([slug])
@@ -56,43 +57,130 @@ model ProjectImage {
 }
 
 model SiteConfig {
-  id           String  @id @default(cuid())
-  bgColor      String
-  primaryColor String
-  accentColor  String
-  heroImageUrl String?
-  aboutText    String? @db.Text
+  id                  String  @id @default(cuid())
+  // Branding & Identity
+  ownerName           String? // Nombre completo del propietario
+  brandName           String? // Nombre corto/logo (ej: "PBN")
+  // Hero Section
+  heroTitle1          String? // Primer título del hero (ej: "Make-up")
+  heroTitle2          String? // Segundo título del hero (ej: "Portfolio")
+  heroImageUrl        String?
+  silhouetteImageUrl  String? // Imagen de silueta/mujer en hero
+  // Theme Colors
+  bgColor             String
+  primaryColor        String
+  accentColor         String
+  // About
+  aboutText           String? @db.Text
+  // Footer
+  copyrightText       String? // Texto adicional del footer
+  // Datos de contacto
+  contactEmail        String?
+  contactPhone        String?
+  contactLocation     String?
+  // Redes sociales
+  socialInstagram     String?
+  socialTiktok        String?
+  socialWhatsapp      String?
+  socialYoutube       String?
+  socialLinkedin      String?
+  socialFacebook      String?
 }
 
-model ThemeSettings {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  category    String   // colors, typography, spacing, layout
-  label       String
-  value       String
-  type        String   // hex, number, select, text, font
-  description String?
-  options     String?  @db.Text // JSON array para select types
-  order       Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// ============================================
+// NORMALIZED SETTINGS (NO JSON FIELDS)
+// ============================================
 
-  @@index([category, order])
+// Theme: Single row singleton with explicit color/font columns
+model ThemeSettings {
+  id              String   @id @default(cuid())
+  // Colors
+  primaryColor    String   @default("#c71585")
+  secondaryColor  String   @default("#f0f0f0")
+  accentColor     String   @default("#ff69b4")
+  backgroundColor String   @default("#ffffff")
+  textColor       String   @default("#1a1a1a")
+  // Typography
+  headingFont     String   @default("Raleway")
+  bodyFont        String   @default("Open Sans")
+  // Layout
+  borderRadius    Int      @default(8)
+  // Status
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
   @@map("theme_settings")
 }
 
-model PageContent {
-  id        String   @id @default(cuid())
-  pageKey   String   @unique // home, about, projects, contact
-  sectionKey String  // hero, bio, cta, etc
-  content   String   @db.Text // JSON con todo el contenido
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// Home Page Settings (replaces PageContent for 'home')
+model HomeSettings {
+  id                  String   @id @default(cuid())
+  // Hero Section
+  heroTitle           String?
+  heroSubtitle        String?
+  heroImageUrl        String?
+  heroCtaText         String?  @default("Ver Portfolio")
+  heroCtaLink         String?  @default("/proyectos")
+  // Featured Section
+  showFeaturedProjects Boolean @default(true)
+  featuredTitle       String?  @default("Trabajos Destacados")
+  featuredCount       Int      @default(6)
+  // Testimonials Section
+  showTestimonials    Boolean  @default(true)
+  testimonialsTitle   String?  @default("Lo que dicen mis clientes")
+  // Status
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  @@index([pageKey, sectionKey])
-  @@map("page_content")
+  @@map("home_settings")
+}
+
+// About Page Settings (replaces PageContent for 'about')
+model AboutSettings {
+  id              String   @id @default(cuid())
+  // Bio Section
+  bioTitle        String?  @default("Sobre Mí")
+  bioDescription  String?  @db.Text
+  profileImageUrl String?
+  // Skills (stored as array)
+  skills          String[] @default([])
+  // Experience
+  yearsExperience Int?
+  // Status
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("about_settings")
+}
+
+// Contact Settings (normalized from SiteConfig)
+model ContactSettings {
+  id              String   @id @default(cuid())
+  // Contact Info (arrays for multiple)
+  emails          String[] @default([])
+  phones          String[] @default([])
+  // Address
+  addressLine1    String?
+  addressLine2    String?
+  city            String?
+  country         String?
+  // Hours
+  hoursTitle      String?  @default("Horario de Atención")
+  hoursWeekdays   String?
+  hoursSaturday   String?
+  hoursSunday     String?
+  // Form Labels
+  formTitle       String?  @default("Envíame un mensaje")
+  formSuccessMessage String? @default("¡Gracias! Tu mensaje ha sido enviado.")
+  // Status
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("contact_settings")
 }
 
 model AnalyticLog {

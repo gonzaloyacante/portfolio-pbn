@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Project, ProjectImage, Category } from '@prisma/client'
-import Button from '@/components/ui/Button'
+import { Button } from '@/components/ui'
 import {
   DndContext,
   closestCenter,
@@ -22,6 +22,10 @@ import { SortableImage } from './SortableImage'
 import { updateProject, reorderProjectImages, deleteProjectImage } from '@/actions/content.actions'
 import ImageUpload from './ImageUpload'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { projectFormSchema, type ProjectFormData } from '@/lib/validations'
+import { useToast } from '@/components/ui/Toast'
 
 type ProjectWithImages = Project & { images: ProjectImage[] }
 
@@ -32,8 +36,23 @@ interface ProjectEditFormProps {
 
 export default function ProjectEditForm({ project, categories }: ProjectEditFormProps) {
   const router = useRouter()
+  const { show } = useToast()
   const [images, setImages] = useState(project.images)
-  const [isSaving, setIsSaving] = useState(false)
+  const [isSavingOrder, setIsSavingOrder] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ProjectFormData>({
+    resolver: zodResolver(projectFormSchema),
+    defaultValues: {
+      title: project.title,
+      description: project.description,
+      categoryId: project.categoryId,
+      date: new Date(project.date).toISOString().split('T')[0],
+    },
+  })
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -55,7 +74,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
   }
 
   const handleSaveOrder = async () => {
-    setIsSaving(true)
+    setIsSavingOrder(true)
     const orderUpdates = images.map((img, index) => ({
       id: img.id,
       order: index,
@@ -63,12 +82,12 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
 
     const result = await reorderProjectImages(project.id, orderUpdates)
     if (result.success) {
-      alert('Orden actualizado correctamente')
+      show({ type: 'success', message: 'Orden actualizado correctamente' })
       router.refresh()
     } else {
-      alert('Error al actualizar el orden')
+      show({ type: 'error', message: 'Error al actualizar el orden' })
     }
-    setIsSaving(false)
+    setIsSavingOrder(false)
   }
 
   const handleDeleteImage = async (imageId: string) => {
@@ -77,88 +96,109 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     const result = await deleteProjectImage(imageId)
     if (result.success) {
       setImages(images.filter((img) => img.id !== imageId))
+      show({ type: 'success', message: 'Imagen eliminada' })
       router.refresh()
     } else {
-      alert('Error al eliminar la imagen')
+      show({ type: 'error', message: 'Error al eliminar la imagen' })
+    }
+  }
+
+  const onSubmit = async (data: ProjectFormData, event?: React.BaseSyntheticEvent) => {
+    if (!event) return
+    const formData = new FormData(event.target)
+
+    const result = await updateProject(project.id, formData)
+
+    if (result.success) {
+      show({ type: 'success', message: 'Proyecto actualizado correctamente' })
+      router.refresh()
+    } else {
+      show({ type: 'error', message: result.error || 'Error al actualizar proyecto' })
     }
   }
 
   return (
     <div className="space-y-8">
       <form
-        action={async (formData) => {
-          const result = await updateProject(project.id, formData)
-          if (result.success) {
-            alert('Proyecto actualizado')
-            router.refresh()
-          } else {
-            alert('Error al actualizar')
-          }
-        }}
-        className="space-y-6 rounded-lg bg-white p-6 shadow-sm"
+        onSubmit={handleSubmit(onSubmit)}
+        className="border-wine/10 dark:border-pink-light/10 dark:bg-purple-dark/20 space-y-6 rounded-2xl border bg-white/80 p-8 shadow-sm backdrop-blur-sm"
       >
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700">Título</label>
+            <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
+              Título
+            </label>
             <input
-              type="text"
-              name="title"
-              defaultValue={project.title}
-              required
-              className="focus:border-primary focus:ring-primary mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm sm:text-sm"
+              {...register('title')}
+              className="border-wine/20 bg-pink-light/50 text-wine placeholder:text-wine/40 focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
             />
+            {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">Categoría</label>
+            <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
+              Categoría
+            </label>
             <select
-              name="categoryId"
-              defaultValue={project.categoryId}
-              required
-              className="focus:border-primary focus:ring-primary mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm sm:text-sm"
+              {...register('categoryId')}
+              className="border-wine/20 bg-pink-light/50 text-wine focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
             >
+              <option value="">Selecciona una categoría</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
                   {cat.name}
                 </option>
               ))}
             </select>
+            {errors.categoryId && (
+              <p className="mt-1 text-sm text-red-500">{errors.categoryId.message}</p>
+            )}
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Descripción</label>
+          <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
+            Descripción
+          </label>
           <textarea
-            name="description"
-            defaultValue={project.description}
+            {...register('description')}
             rows={4}
-            className="focus:border-primary focus:ring-primary mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm sm:text-sm"
+            className="border-wine/20 bg-pink-light/50 text-wine placeholder:text-wine/40 focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
           ></textarea>
+          {errors.description && (
+            <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>
+          )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Fecha</label>
+          <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
+            Fecha
+          </label>
           <input
+            {...register('date')}
             type="date"
-            name="date"
-            defaultValue={new Date(project.date).toISOString().split('T')[0]}
-            className="focus:border-primary focus:ring-primary mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm sm:text-sm"
+            className="border-wine/20 bg-pink-light/50 text-wine focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
           />
+          {errors.date && <p className="mt-1 text-sm text-red-500">{errors.date.message}</p>}
         </div>
 
         <div>
-          <h3 className="mb-4 text-lg font-medium text-gray-900">Galería de Imágenes</h3>
+          <h3 className="text-wine dark:text-pink-hot mb-4 text-lg font-bold">
+            Galería de Imágenes
+          </h3>
 
           <div className="mb-4">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm text-gray-500">Arrastra las imágenes para reordenar</span>
+              <span className="text-wine/60 dark:text-pink-light/60 text-sm">
+                Arrastra las imágenes para reordenar
+              </span>
               <Button
                 type="button"
                 onClick={handleSaveOrder}
-                isLoading={isSaving}
+                loading={isSavingOrder}
                 variant="secondary"
                 size="sm"
               >
-                {isSaving ? 'Guardando...' : 'Guardar Orden'}
+                {isSavingOrder ? 'Guardando...' : 'Guardar Orden'}
               </Button>
             </div>
 
@@ -182,14 +222,18 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             </DndContext>
           </div>
 
-          <div className="mt-6 border-t pt-6">
-            <h4 className="mb-2 text-sm font-medium text-gray-700">Agregar nuevas imágenes</h4>
+          <div className="border-wine/10 dark:border-pink-light/10 mt-6 border-t pt-6">
+            <h4 className="text-wine dark:text-pink-light mb-2 text-sm font-bold">
+              Agregar nuevas imágenes
+            </h4>
             <ImageUpload name="newImages" multiple label="Subir fotos adicionales" />
           </div>
         </div>
 
         <div className="flex justify-end pt-4">
-          <Button type="submit">Actualizar Proyecto</Button>
+          <Button type="submit" loading={isSubmitting}>
+            Actualizar Proyecto
+          </Button>
         </div>
       </form>
     </div>

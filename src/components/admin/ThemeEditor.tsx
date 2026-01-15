@@ -1,210 +1,204 @@
 'use client'
 
-import { type ThemeSettingsGrouped } from '@/actions/theme.actions'
-import { updateMultipleThemeSettings, resetThemeToDefaults } from '@/actions/theme.actions'
-import { ThemeSettingInput } from './ThemeSettingInput'
+import {
+  ThemeSettingsData,
+  updateThemeSettings,
+  resetThemeToDefaults,
+} from '@/actions/theme.actions'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Button, Input } from '@/components/ui'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
+import { useToast } from '@/components/ui/Toast'
 
 interface ThemeEditorProps {
-  initialSettings: ThemeSettingsGrouped
+  initialSettings: ThemeSettingsData | null
 }
+
+const colorFields = [
+  { key: 'primaryColor', label: 'Color Primario', description: 'Color principal de marca' },
+  { key: 'secondaryColor', label: 'Color Secundario', description: 'Color de fondo secundario' },
+  { key: 'accentColor', label: 'Color Acento', description: 'Color de acentos y CTAs' },
+  { key: 'backgroundColor', label: 'Color de Fondo', description: 'Fondo principal del sitio' },
+  { key: 'textColor', label: 'Color de Texto', description: 'Color del texto principal' },
+] as const
+
+const typographyFields = [
+  { key: 'headingFont', label: 'Fuente de Títulos', description: 'Tipografía para encabezados' },
+  { key: 'bodyFont', label: 'Fuente del Cuerpo', description: 'Tipografía para el texto general' },
+] as const
 
 export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
   const router = useRouter()
-  const [settings] = useState(initialSettings)
-  const [changes, setChanges] = useState<Record<string, string>>({})
-  const [isSaving, setIsSaving] = useState(false)
+  const { show } = useToast()
   const [isResetting, setIsResetting] = useState(false)
-  const [saveMessage, setSaveMessage] = useState('')
 
-  const handleChange = (key: string, value: string) => {
-    setChanges((prev) => ({ ...prev, [key]: value }))
-  }
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ThemeEditorData>({
+    resolver: zodResolver(themeEditorSchema),
+    defaultValues: {
+      primaryColor: initialSettings?.primaryColor || '#c71585',
+      secondaryColor: initialSettings?.secondaryColor || '#f0f0f0',
+      accentColor: initialSettings?.accentColor || '#ff69b4',
+      backgroundColor: initialSettings?.backgroundColor || '#ffffff',
+      textColor: initialSettings?.textColor || '#1a1a1a',
+      headingFont: initialSettings?.headingFont || 'Raleway',
+      bodyFont: initialSettings?.bodyFont || 'Open Sans',
+      borderRadius: initialSettings?.borderRadius || 8,
+    },
+  })
 
-  const hasChanges = Object.keys(changes).length > 0
+  // Watch values for live preview (color pickers need value binding)
+  const formValues = watch()
 
-  const handleSave = async () => {
-    if (!hasChanges) return
-
-    setIsSaving(true)
-    setSaveMessage('')
-
+  const onSubmit = async (data: ThemeEditorData) => {
     try {
-      const settingsArray = Object.entries(changes).map(([key, value]) => ({ key, value }))
-      const result = await updateMultipleThemeSettings(settingsArray)
+      const result = await updateThemeSettings(data)
 
       if (result.success) {
-        setSaveMessage('✅ Cambios guardados correctamente')
-        setChanges({})
+        show({ type: 'success', message: 'Cambios guardados correctamente' })
         router.refresh()
       } else {
-        setSaveMessage('❌ Error al guardar cambios')
+        show({ type: 'error', message: result.error || 'Error al guardar cambios' })
       }
     } catch (error) {
       console.error('Error saving:', error)
-      setSaveMessage('❌ Error al guardar cambios')
-    } finally {
-      setIsSaving(false)
-      setTimeout(() => setSaveMessage(''), 3000)
+      show({ type: 'error', message: 'Error inesperado al guardar' })
     }
   }
 
   const handleReset = async () => {
     if (
-      !confirm(
-        '¿Estás segura de que quieres resetear TODOS los valores a los originales del diseño de Canva? Esta acción no se puede deshacer.'
-      )
+      !confirm('¿Estás segura de que quieres resetear todos los valores a los predeterminados?')
     ) {
       return
     }
 
     setIsResetting(true)
-    setSaveMessage('')
-
     try {
       const result = await resetThemeToDefaults()
 
       if (result.success) {
-        setSaveMessage('✅ Tema reseteado correctamente')
-        setChanges({})
+        // Update local form state to defaults
+        setValue('primaryColor', '#c71585')
+        setValue('secondaryColor', '#f0f0f0')
+        setValue('accentColor', '#ff69b4')
+        setValue('backgroundColor', '#ffffff')
+        setValue('textColor', '#1a1a1a')
+        setValue('headingFont', 'Raleway')
+        setValue('bodyFont', 'Open Sans')
+        setValue('borderRadius', 8)
+
+        show({ type: 'success', message: 'Tema reseteado correctamente' })
         router.refresh()
       } else {
-        setSaveMessage('❌ Error al resetear tema')
+        show({ type: 'error', message: result.error || 'Error al resetear tema' })
       }
     } catch (error) {
       console.error('Error resetting:', error)
-      setSaveMessage('❌ Error al resetear tema')
+      show({ type: 'error', message: 'Error inesperado al resetear' })
     } finally {
       setIsResetting(false)
-      setTimeout(() => setSaveMessage(''), 3000)
     }
   }
 
-  const getCurrentValue = (key: string, originalValue: string) => {
-    return changes[key] ?? originalValue
-  }
-
   return (
-    <div className="space-y-8">
-      {/* Header con botones de acción */}
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      {/* Header */}
       <div className="sticky top-0 z-10 -mx-6 -mt-6 bg-white px-6 py-4 shadow-sm dark:bg-gray-900">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Editor de Tema</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Personaliza completamente el diseño de tu portfolio
+              Personaliza el diseño de tu portfolio
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {saveMessage && <span className="text-sm font-medium">{saveMessage}</span>}
-            {hasChanges && (
-              <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-medium text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                {Object.keys(changes).length} cambio{Object.keys(changes).length !== 1 ? 's' : ''}{' '}
-                sin guardar
-              </span>
-            )}
-            <button
+            <Button
+              type="button"
               onClick={handleReset}
-              disabled={isResetting || isSaving}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+              disabled={isResetting || isSubmitting}
+              variant="outline"
             >
-              {isResetting ? 'Reseteando...' : 'Resetear a Diseño Original'}
-            </button>
-            <button
-              onClick={handleSave}
-              disabled={!hasChanges || isSaving}
-              className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-2 text-sm font-medium text-white disabled:opacity-50"
-            >
-              {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-            </button>
+              {isResetting ? 'Reseteando...' : 'Resetear'}
+            </Button>
+            <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+              Guardar Cambios
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Secciones de configuración */}
-      <div className="space-y-8">
-        {/* COLORES */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">🎨 Colores</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {settings.colors.map((setting) => (
-              <ThemeSettingInput
-                key={setting.key}
-                setting={setting}
-                value={getCurrentValue(setting.key, setting.value)}
-                onChange={handleChange}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* TIPOGRAFÍA */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">
-            ✍️ Tipografía
-          </h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {settings.typography.map((setting) => (
-              <ThemeSettingInput
-                key={setting.key}
-                setting={setting}
-                value={getCurrentValue(setting.key, setting.value)}
-                onChange={handleChange}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* ESPACIADO */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">📏 Espaciado</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {settings.spacing.map((setting) => (
-              <ThemeSettingInput
-                key={setting.key}
-                setting={setting}
-                value={getCurrentValue(setting.key, setting.value)}
-                onChange={handleChange}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* LAYOUT */}
-        <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">📐 Layout</h2>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {settings.layout.map((setting) => (
-              <ThemeSettingInput
-                key={setting.key}
-                setting={setting}
-                value={getCurrentValue(setting.key, setting.value)}
-                onChange={handleChange}
-              />
-            ))}
-          </div>
-        </section>
-
-        {/* EFECTOS */}
-        {settings.effects.length > 0 && (
-          <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">
-              ✨ Efectos y Animaciones
-            </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {settings.effects.map((setting) => (
-                <ThemeSettingInput
-                  key={setting.key}
-                  setting={setting}
-                  value={getCurrentValue(setting.key, setting.value)}
-                  onChange={handleChange}
+      {/* Color Settings */}
+      <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">🎨 Colores</h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {colorFields.map((field) => (
+            <div key={field.key} className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {field.label}
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  {...register(field.key)}
+                  className="h-10 w-14 cursor-pointer rounded border border-gray-300"
                 />
-              ))}
+                <div className="flex-1">
+                  <Input {...register(field.key)} />
+                  {errors[field.key] && (
+                    <p className="mt-1 text-xs text-red-500">{errors[field.key]?.message}</p>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">{field.description}</p>
             </div>
-          </section>
-        )}
-      </div>
-    </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Typography Settings */}
+      <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">✍️ Tipografía</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {typographyFields.map((field) => (
+            <div key={field.key} className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {field.label}
+              </label>
+              <Input {...register(field.key)} />
+              {errors[field.key] && (
+                <p className="mt-1 text-xs text-red-500">{errors[field.key]?.message}</p>
+              )}
+              <p className="text-xs text-gray-500">{field.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Layout Settings */}
+      <section className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+        <h2 className="mb-6 text-lg font-semibold text-gray-900 dark:text-white">📐 Layout</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Radio de Borde
+            </label>
+            <Input type="number" {...register('borderRadius', { valueAsNumber: true })} />
+            {errors.borderRadius && (
+              <p className="mt-1 text-xs text-red-500">{errors.borderRadius.message}</p>
+            )}
+            <p className="text-xs text-gray-500">Redondez de las esquinas en píxeles</p>
+          </div>
+        </div>
+      </section>
+    </form>
   )
 }

@@ -7,28 +7,17 @@ import Image from 'next/image'
  * El usuario hace click en una categoría para ver su galería
  */
 export default async function ProjectsPage() {
-  // Obtener categorías con imagen del primer proyecto
   const categories = await prisma.category.findMany({
     include: {
       projects: {
-        where: {
-          isActive: true,
-          isDeleted: false,
-        },
+        where: { isActive: true, isDeleted: false },
         take: 1,
         orderBy: { date: 'desc' },
-        select: {
-          thumbnailUrl: true,
-        },
+        select: { thumbnailUrl: true },
       },
       _count: {
         select: {
-          projects: {
-            where: {
-              isActive: true,
-              isDeleted: false,
-            },
-          },
+          projects: { where: { isActive: true, isDeleted: false } },
         },
       },
     },
@@ -37,12 +26,12 @@ export default async function ProjectsPage() {
 
   return (
     <section
-      className="min-h-screen w-full"
-      style={{ backgroundColor: 'var(--color-background, #fff1f9)' }}
+      className="min-h-screen w-full transition-colors duration-300"
+      style={{ backgroundColor: 'var(--color-background)' }}
     >
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:px-12 lg:px-16 lg:py-16">
-        {/* Grid de Categorías - 3 columnas */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+        {/* Grid de Categorías - mínimo 2 columnas */}
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 lg:gap-8">
           {categories.map((category) => {
             const thumbnailUrl = category.projects[0]?.thumbnailUrl
 
@@ -50,12 +39,9 @@ export default async function ProjectsPage() {
               <Link
                 key={category.id}
                 href={`/proyectos/${category.slug}`}
-                className="group relative aspect-[4/3] overflow-hidden shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
-                style={{
-                  borderRadius: 'var(--layout-border-radius, 42px)',
-                }}
+                className="group relative aspect-4/3 cursor-pointer overflow-hidden rounded-3xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
               >
-                {/* Fondo - Imagen o color rosa */}
+                {/* Fondo */}
                 {thumbnailUrl ? (
                   <>
                     <Image
@@ -63,14 +49,14 @@ export default async function ProjectsPage() {
                       alt={category.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
                   </>
                 ) : (
                   <div
                     className="absolute inset-0"
-                    style={{ backgroundColor: 'var(--color-primary, #ffaadd)' }}
+                    style={{ backgroundColor: 'var(--color-primary)' }}
                   />
                 )}
 
@@ -79,12 +65,16 @@ export default async function ProjectsPage() {
                   <h2
                     className="font-heading text-lg font-bold sm:text-xl lg:text-2xl"
                     style={{
-                      color: thumbnailUrl ? '#ffffff' : 'var(--color-text-primary, #6c0a0a)',
-                      fontWeight: 'var(--font-heading-weight, 700)',
+                      color: thumbnailUrl ? '#ffffff' : 'var(--color-text)',
                     }}
                   >
                     {category.name}
                   </h2>
+                  {category._count.projects > 0 && (
+                    <p className="mt-1 text-xs opacity-80 sm:text-sm" style={{ color: '#ffffff' }}>
+                      {category._count.projects} proyecto{category._count.projects > 1 ? 's' : ''}
+                    </p>
+                  )}
                 </div>
               </Link>
             )
@@ -94,23 +84,14 @@ export default async function ProjectsPage() {
         {/* Mensaje si no hay categorías */}
         {categories.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
+            <span className="mb-4 text-6xl">🎨</span>
             <p
               className="font-script mb-4"
-              style={{
-                fontSize: 'clamp(2rem, 5vw, 4rem)',
-                color: 'var(--color-accent, #7a2556)',
-              }}
+              style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', color: 'var(--color-accent)' }}
             >
               Próximamente...
             </p>
-            <p
-              className="font-body"
-              style={{
-                fontSize: 'var(--font-size-body, 18px)',
-                color: 'var(--color-text-primary, #6c0a0a)',
-                opacity: 0.7,
-              }}
-            >
+            <p style={{ color: 'var(--color-text)', opacity: 0.7 }}>
               Estamos preparando proyectos increíbles para ti
             </p>
           </div>

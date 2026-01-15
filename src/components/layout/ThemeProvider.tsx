@@ -26,12 +26,14 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
       }
       if (key === 'color_primary') {
         root.style.setProperty('--color-primary', value)
-        root.style.setProperty('--color-wine', value)
+        // No sobreescribir --color-wine con primary, ya que primary suele ser rosa
+        // root.style.setProperty('--color-wine', value)
         root.style.setProperty('--color-makeup', value)
       }
       if (key === 'color_accent') {
         root.style.setProperty('--color-accent', value)
-        root.style.setProperty('--color-pink-hot', value)
+        // No sobreescribir --color-pink-hot con accent (oscuro)
+        // root.style.setProperty('--color-pink-hot', value)
         root.style.setProperty('--color-portfolio', value)
       }
     })

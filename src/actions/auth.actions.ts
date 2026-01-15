@@ -7,14 +7,33 @@ import { prisma } from '@/lib/db'
 import { Resend } from 'resend'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
+import { z } from 'zod'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+// Schemas
+const RequestResetSchema = z.object({
+  email: z.string().email('Email inválido'),
+})
+
+const ResetPasswordSchema = z.object({
+  token: z.string().min(1, 'Token requerido'),
+  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+})
+
 export async function requestPasswordReset(email: string) {
+  const result = RequestResetSchema.safeParse({ email })
+  if (!result.success) {
+    return { success: false, message: result.error.issues[0].message }
+  }
+
   try {
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user) {
-      return { message: 'Si tu email está registrado, recibirás un enlace de recuperación.' }
+      return {
+        success: true,
+        message: 'Si tu email está registrado, recibirás un enlace de recuperación.',
+      }
     }
 
     const token = crypto.randomBytes(32).toString('hex')
@@ -33,19 +52,27 @@ export async function requestPasswordReset(email: string) {
       html: `<p>Haz clic <a href="${resetLink}">aquí</a> para resetear tu contraseña.</p>`,
     })
 
-    return { message: 'Si tu email está registrado, recibirás un enlace de recuperación.' }
+    return {
+      success: true,
+      message: 'Si tu email está registrado, recibirás un enlace de recuperación.',
+    }
   } catch (error) {
     console.error(error)
-    return { message: 'Error al solicitar el reseteo de contraseña.' }
+    return { success: false, message: 'Error al solicitar el reseteo de contraseña.' }
   }
 }
 
 export async function resetPassword(token: string, password: string) {
+  const result = ResetPasswordSchema.safeParse({ token, password })
+  if (!result.success) {
+    return { success: false, message: result.error.issues[0].message }
+  }
+
   try {
     const storedToken = await prisma.passwordResetToken.findUnique({ where: { token } })
 
     if (!storedToken || new Date() > storedToken.expiresAt) {
-      return { message: 'Token inválido o expirado.' }
+      return { success: false, message: 'Token inválido o expirado.' }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -57,10 +84,10 @@ export async function resetPassword(token: string, password: string) {
 
     await prisma.passwordResetToken.delete({ where: { id: storedToken.id } })
 
-    return { message: 'Contraseña actualizada correctamente.' }
+    return { success: true, message: 'Contraseña actualizada correctamente.' }
   } catch (error) {
     console.error(error)
-    return { message: 'Error al resetear la contraseña.' }
+    return { success: false, message: 'Error al resetear la contraseña.' }
   }
 }
 
@@ -80,7 +107,7 @@ export async function signInAction(prevState: SignInState | null, formData: Form
   try {
     // Note: NextAuth signIn needs to be called from client-side
     // This is a placeholder - the actual login is handled by the login page client component
-    return { success: true, email, password }
+    return { success: true, email }
   } catch (error) {
     console.error('Error en signInAction:', error)
     return { success: false, message: 'Error al iniciar sesión' }

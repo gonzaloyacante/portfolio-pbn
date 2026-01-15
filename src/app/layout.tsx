@@ -1,14 +1,16 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Open_Sans, Pacifico, Raleway } from 'next/font/google'
 import '@/styles/globals.css'
-import ThemeProvider from '@/components/layout/ThemeProvider'
+import AppProviders from '@/components/providers/AppProviders'
 import { NavigationProgress } from '@/components/layout/NavigationProgress'
-import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
+import { ErrorBoundary } from '@/components/ui'
 import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues } from '@/actions/theme.actions'
 
-// Script font (alternativa a Amsterdam Four) - Para "Make-up" y "Paola Bolívar Nievas"
+const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
+
+// Script font para títulos elegantes
 const scriptFont = Pacifico({
   weight: '400',
   subsets: ['latin'],
@@ -16,36 +18,95 @@ const scriptFont = Pacifico({
   display: 'swap',
 })
 
-// Primary font (alternativa a Aileron) - Para "Portfolio", NavLinks, Títulos categorías
+// Primary font para headings
 const primaryFont = Raleway({
   subsets: ['latin'],
   variable: '--font-primary',
   display: 'swap',
 })
 
-// Body font - Para texto de "Sobre mí" y cuerpo general
+// Body font para texto general
 const bodyFont = Open_Sans({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fff1f9' },
+    { media: '(prefers-color-scheme: dark)', color: '#6c0a0a' },
+  ],
+}
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Portfolio PBN | Makeup Artist Profesional',
-    template: '%s | Portfolio PBN',
+    default: 'Paola Bolívar Nievas | Maquilladora Profesional',
+    template: '%s | Paola Bolívar Nievas',
   },
   description:
-    'Portfolio profesional de maquillaje artístico. Explora nuestros trabajos y proyectos de maquillaje para eventos, novias, sesiones fotográficas y más.',
-  keywords: ['maquillaje', 'makeup artist', 'portfolio', 'belleza', 'eventos', 'novias'],
-  authors: [{ name: 'Portfolio PBN' }],
+    'Portfolio de Paola Bolívar Nievas - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social en Málaga, España.',
+  keywords: [
+    'maquilladora málaga',
+    'maquillaje profesional',
+    'caracterización',
+    'efectos especiales',
+    'maquillaje audiovisual',
+    'maquillaje cine',
+    'maquillaje teatro',
+    'Paola Bolívar Nievas',
+  ],
+  authors: [{ name: 'Paola Bolívar Nievas' }],
+  creator: 'Paola Bolívar Nievas',
+  publisher: 'Portfolio PBN',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     type: 'website',
     locale: 'es_ES',
-    title: 'Portfolio PBN | Makeup Artist Profesional',
-    description: 'Portfolio profesional de maquillaje artístico',
-    siteName: 'Portfolio PBN',
+    url: SITE_URL,
+    siteName: 'Portfolio Paola Bolívar Nievas',
+    title: 'Paola Bolívar Nievas | Maquilladora Profesional',
+    description:
+      'Maquilladora profesional especializada en audiovisuales, caracterización y efectos especiales. Descubre mi portfolio de trabajos.',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Portfolio Paola Bolívar Nievas - Maquilladora Profesional',
+      },
+    ],
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Paola Bolívar Nievas | Maquilladora Profesional',
+    description: 'Portfolio de maquillaje profesional - Caracterización, efectos especiales y más.',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/icons/icon-192x192.png',
+  },
+  manifest: '/manifest.json',
 }
 
 export default async function RootLayout({
@@ -56,23 +117,20 @@ export default async function RootLayout({
   const themeValues = await getThemeValues()
 
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content={themeValues.color_text_primary || '#6c0a0a'} />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="Portfolio PBN" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body
         className={`${primaryFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
       >
         <NavigationProgress />
         <ErrorBoundary>
-          <ThemeProvider themeValues={themeValues}>
+          <AppProviders themeValues={themeValues}>
             {children}
             <CookieConsent />
-          </ThemeProvider>
+          </AppProviders>
         </ErrorBoundary>
         <GoogleAnalytics />
       </body>

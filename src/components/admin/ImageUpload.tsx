@@ -18,6 +18,7 @@ interface ImageUploadProps {
   label?: string
   folder?: string
   value?: string[]
+  currentImage?: string | null
   onChange?: (urls: string[], publicIds: string[]) => void
   onUploadStart?: () => void
   onUploadEnd?: () => void
@@ -31,38 +32,49 @@ export default function ImageUpload({
   label = 'Subir Imágenes',
   folder = 'projects',
   value = [],
+  currentImage,
   onChange,
   onUploadStart,
   onUploadEnd,
   maxFiles = 20,
   maxSizeMB = 10,
 }: ImageUploadProps) {
-  const [images, setImages] = useState<UploadedImage[]>(value.map((url) => ({ url, publicId: '' })))
+  // Initialize with currentImage if provided and no value
+  const initialImages =
+    value.length > 0
+      ? value.map((url) => ({ url, publicId: '' }))
+      : currentImage
+        ? [{ url: currentImage, publicId: '' }]
+        : []
+  const [images, setImages] = useState<UploadedImage[]>(initialImages)
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
-  const uploadFile = async (file: File): Promise<UploadedImage> => {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('folder', folder)
+  const uploadFile = useCallback(
+    async (file: File): Promise<UploadedImage> => {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', folder)
 
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      })
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
 
-      if (!res.ok) {
+        if (!res.ok) {
+          const data = await res.json()
+          throw new Error(data.error || 'Error al subir')
+        }
+
         const data = await res.json()
-        throw new Error(data.error || 'Error al subir')
+        return { url: data.url, publicId: data.publicId }
+      } catch (error) {
+        return { url: '', publicId: '', error: String(error) }
       }
-
-      const data = await res.json()
-      return { url: data.url, publicId: data.publicId }
-    } catch (error) {
-      return { url: '', publicId: '', error: String(error) }
-    }
-  }
+    },
+    [folder]
+  )
 
   const processFiles = useCallback(
     async (files: FileList | File[]) => {
@@ -156,7 +168,7 @@ export default function ImageUpload({
       setIsUploading(false)
       onUploadEnd?.()
     },
-    [multiple, images.length, maxFiles, maxSizeMB, folder, onChange, onUploadStart, onUploadEnd]
+    [multiple, images.length, maxFiles, maxSizeMB, onChange, onUploadStart, onUploadEnd, uploadFile]
   )
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -231,16 +243,16 @@ export default function ImageUpload({
       >
         <label
           htmlFor={`file-upload-${name}`}
-          className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+          className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all ${
             isDragging
-              ? 'border-primary bg-primary/10'
-              : 'hover:border-primary border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:hover:bg-gray-700'
+              ? 'border-pink-hot bg-pink-hot/10'
+              : 'border-wine/20 bg-pink-light/30 hover:bg-pink-light/50 hover:border-wine/40 dark:border-pink-light/20 dark:bg-purple-dark/30 dark:hover:bg-purple-dark/50 dark:hover:border-pink-hot/40'
           } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             {isUploading ? (
               <>
-                <svg className="text-primary mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
+                <svg className="text-pink-hot mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -256,12 +268,12 @@ export default function ImageUpload({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Subiendo imágenes...</p>
+                <p className="text-wine/60 dark:text-pink-light/60 text-sm">Subiendo imágenes...</p>
               </>
             ) : (
               <>
                 <svg
-                  className="mb-4 h-10 w-10 text-gray-400"
+                  className="text-wine/40 dark:text-pink-light/40 mb-4 h-10 w-10"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -273,11 +285,11 @@ export default function ImageUpload({
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="text-primary font-semibold">Click para subir</span> o arrastra y
-                  suelta
+                <p className="text-wine/80 dark:text-pink-light/80 mb-2 text-sm">
+                  <span className="text-pink-hot font-bold hover:underline">Click para subir</span>{' '}
+                  o arrastra y suelta
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-wine/50 dark:text-pink-light/50 text-xs">
                   PNG, JPG, GIF, WebP (máx. {maxSizeMB}MB)
                 </p>
               </>

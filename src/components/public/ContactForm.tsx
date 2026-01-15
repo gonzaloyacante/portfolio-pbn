@@ -1,58 +1,78 @@
 'use client'
 
-import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { contactFormSchema, type ContactFormData } from '@/lib/validations'
 import { sendContactEmail } from '@/actions/contact.actions'
-import Button from '@/components/ui/Button'
+import { Button } from '@/components/ui'
+import { useToast } from '@/components/ui/Toast'
 
-export default function ContactForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
-  const [acceptedPrivacy, setAcceptedPrivacy] = useState(false)
+interface ContactFormProps {
+  formTitle?: string
+  successMessage?: string
+}
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setMessage(null)
+export default function ContactForm({ formTitle, successMessage }: ContactFormProps) {
+  const { show } = useToast()
 
-    const formData = new FormData(e.currentTarget)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      message: '',
+      privacy: false, // Initial value false, validation requires true
+    },
+  })
 
+  const onSubmit = async (data: ContactFormData) => {
     try {
+      // Create FormData to keep compatibility with server action if it expects FormData
+      const formData = new FormData()
+      formData.append('name', data.name)
+      formData.append('email', data.email)
+      formData.append('message', data.message)
+      formData.append('privacy', data.privacy ? 'on' : 'off')
+
       const result = await sendContactEmail(formData)
 
       if (result.success) {
-        setMessage({ type: 'success', text: result.message })
-        // Reset form
-        e.currentTarget.reset()
+        show({
+          type: 'success',
+          message: successMessage || result.message || '¡Gracias! Tu mensaje ha sido enviado.',
+        })
+        reset()
       } else {
-        setMessage({ type: 'error', text: result.message })
+        show({ type: 'error', message: result.message || 'Error al enviar mensaje' })
       }
     } catch {
-      setMessage({ type: 'error', text: 'Error inesperado. Intenta de nuevo.' })
-    } finally {
-      setIsSubmitting(false)
+      show({ type: 'error', message: 'Error inesperado. Intenta de nuevo.' })
     }
   }
 
   return (
     <div className="dark:bg-purple-dark/30 rounded-4xl bg-white p-8 shadow-lg">
-      <h2 className="font-primary text-name mb-6 text-2xl font-bold">Envíame un mensaje</h2>
+      <h2 className="font-primary text-name mb-6 text-2xl font-bold">
+        {formTitle || 'Envíame un mensaje'}
+      </h2>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label htmlFor="name" className="text-body-text mb-2 block font-medium">
             Nombre completo
           </label>
           <input
-            type="text"
+            {...register('name')}
             id="name"
-            name="name"
-            required
-            minLength={2}
-            maxLength={100}
             className="border-navlink-bg/20 bg-pink-light text-body-text placeholder:text-body-text/40 focus:border-navlink-bg focus:ring-navlink-bg/20 w-full rounded-2xl border-2 px-4 py-3 transition-all focus:ring-2 focus:outline-none"
             placeholder="Tu nombre"
-            disabled={isSubmitting}
           />
+          {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
         </div>
 
         <div>
@@ -60,14 +80,13 @@ export default function ContactForm() {
             Email
           </label>
           <input
+            {...register('email')}
             type="email"
             id="email"
-            name="email"
-            required
             className="border-navlink-bg/20 bg-pink-light text-body-text placeholder:text-body-text/40 focus:border-navlink-bg focus:ring-navlink-bg/20 w-full rounded-2xl border-2 px-4 py-3 transition-all focus:ring-2 focus:outline-none"
             placeholder="tu@email.com"
-            disabled={isSubmitting}
           />
+          {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
         </div>
 
         <div>
@@ -75,60 +94,45 @@ export default function ContactForm() {
             Mensaje
           </label>
           <textarea
+            {...register('message')}
             id="message"
-            name="message"
             rows={6}
-            required
-            minLength={10}
-            maxLength={1000}
             className="border-navlink-bg/20 bg-pink-light text-body-text placeholder:text-body-text/40 focus:border-navlink-bg focus:ring-navlink-bg/20 w-full resize-none rounded-2xl border-2 px-4 py-3 transition-all focus:ring-2 focus:outline-none"
             placeholder="Escribe tu mensaje aquí..."
-            disabled={isSubmitting}
           />
+          {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message.message}</p>}
         </div>
 
         {/* Checkbox de Política de Privacidad (GDPR) */}
-        <div className="flex items-start gap-3">
-          <input
-            type="checkbox"
-            id="privacy"
-            name="privacy"
-            checked={acceptedPrivacy}
-            onChange={(e) => setAcceptedPrivacy(e.target.checked)}
-            required
-            className="border-navlink-bg/30 focus:ring-navlink-bg/20 text-navlink-bg mt-1 h-4 w-4 rounded border-2 focus:ring-2"
-          />
-          <label htmlFor="privacy" className="text-body-text/80 text-sm">
-            He leído y acepto la{' '}
-            <a
-              href="/privacidad"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-navlink-bg underline hover:no-underline"
-            >
-              Política de Privacidad
-            </a>
-            . Consiento el tratamiento de mis datos personales para responder a mi consulta.{' '}
-            <span className="text-red-600 dark:text-red-400">*</span>
-          </label>
-        </div>
-
-        {message && (
-          <div
-            className={`rounded-2xl p-4 ${
-              message.type === 'success'
-                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-            }`}
-          >
-            {message.text}
+        <div>
+          <div className="flex items-start gap-3">
+            <input
+              {...register('privacy')}
+              type="checkbox"
+              id="privacy"
+              className="border-navlink-bg/30 focus:ring-navlink-bg/20 text-navlink-bg mt-1 h-4 w-4 rounded border-2 focus:ring-2"
+            />
+            <label htmlFor="privacy" className="text-body-text/80 text-sm">
+              He leído y acepto la{' '}
+              <a
+                href="/privacidad"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-navlink-bg underline hover:no-underline"
+              >
+                Política de Privacidad
+              </a>
+              . Consiento el tratamiento de mis datos personales para responder a mi consulta.{' '}
+              <span className="text-red-600 dark:text-red-400">*</span>
+            </label>
           </div>
-        )}
+          {errors.privacy && <p className="mt-1 text-sm text-red-500">{errors.privacy.message}</p>}
+        </div>
 
         <Button
           type="submit"
-          disabled={!acceptedPrivacy}
-          isLoading={isSubmitting}
+          disabled={isSubmitting}
+          loading={isSubmitting}
           className="w-full"
           size="lg"
         >

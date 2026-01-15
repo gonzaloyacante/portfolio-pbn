@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { requestPasswordReset } from '@/actions/auth.actions'
-import { FadeIn } from '@/components/ui/Animations'
+import { FadeIn } from '@/components/ui'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -18,8 +18,13 @@ export default function ForgotPasswordPage() {
 
     try {
       const result = await requestPasswordReset(email)
-      setStatus('success')
-      setMessage(result.message)
+      if (result.success) {
+        setStatus('success')
+        setMessage(result.message)
+      } else {
+        setStatus('error')
+        setMessage(result.message || 'Error desconocido')
+      }
     } catch {
       setStatus('error')
       setMessage('Error al enviar el email. Inténtalo de nuevo.')
@@ -44,12 +49,14 @@ export default function ForgotPasswordPage() {
             >
               Recuperar Contraseña
             </h1>
-            <p className="mt-2 text-gray-600">Te enviaremos un enlace a tu email</p>
+            <p className="text-wine/70 dark:text-pink-light/70 mt-2">
+              Te enviaremos un enlace a tu email
+            </p>
           </div>
 
           {/* Card */}
           <div
-            className="rounded-2xl bg-white p-8 shadow-xl"
+            className="dark:bg-wine/30 rounded-2xl bg-white p-8 shadow-xl"
             style={{ borderTop: '4px solid var(--color-primary, #ffaadd)' }}
           >
             {status === 'success' ? (
@@ -70,8 +77,10 @@ export default function ForgotPasswordPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">¡Email enviado!</h3>
-                  <p className="mt-2 text-sm text-gray-600">{message}</p>
+                  <h3 className="text-wine dark:text-pink-light text-lg font-semibold">
+                    ¡Email enviado!
+                  </h3>
+                  <p className="text-wine/70 dark:text-pink-light/70 mt-2 text-sm">{message}</p>
                 </div>
                 <Link
                   href="/auth/login"
@@ -90,7 +99,10 @@ export default function ForgotPasswordPage() {
                 )}
 
                 <div>
-                  <label className="mb-1 block text-sm font-medium text-gray-700" htmlFor="email">
+                  <label
+                    className="text-wine dark:text-pink-light mb-1 block text-sm font-medium"
+                    htmlFor="email"
+                  >
                     Email
                   </label>
                   <input
@@ -101,7 +113,7 @@ export default function ForgotPasswordPage() {
                     required
                     disabled={isLoading}
                     placeholder="tu@email.com"
-                    className="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-gray-300 p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+                    className="focus:border-primary focus:ring-primary/20 border-pink-hot/30 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full rounded-lg border p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
                   />
                 </div>
 

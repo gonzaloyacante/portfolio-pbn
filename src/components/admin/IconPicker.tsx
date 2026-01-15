@@ -256,25 +256,23 @@ export default function IconPicker({ value, onChange, label, description }: Icon
   return (
     <div className="space-y-2" ref={pickerRef}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}
-        </label>
+        <label className="text-wine dark:text-pink-light block text-sm font-bold">{label}</label>
       )}
-      {description && <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>}
+      {description && <p className="text-wine/50 dark:text-pink-light/50 text-xs">{description}</p>}
 
       {/* Input principal */}
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full items-center gap-3 rounded-lg border border-gray-300 bg-white p-3 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800"
+          className="border-wine/20 bg-pink-light/30 hover:border-wine/40 dark:border-pink-light/20 dark:bg-purple-dark/20 dark:hover:border-pink-hot/40 flex w-full items-center gap-3 rounded-2xl border-2 p-3 transition-colors"
         >
           <span className="text-3xl">{value || '📷'}</span>
-          <span className="flex-1 text-left text-sm text-gray-500">
+          <span className="text-wine/60 dark:text-pink-light/60 flex-1 text-left text-sm">
             {value ? 'Click para cambiar' : 'Seleccionar icono'}
           </span>
           <svg
-            className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`text-wine/40 dark:text-pink-light/40 h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -285,14 +283,14 @@ export default function IconPicker({ value, onChange, label, description }: Icon
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 z-50 mt-2 w-80 rounded-lg border border-gray-200 bg-white p-4 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+          <div className="border-wine/10 dark:border-pink-light/10 dark:bg-purple-dark/95 absolute top-full left-0 z-50 mt-2 w-80 rounded-2xl border bg-white/90 p-4 shadow-xl backdrop-blur-md">
             {/* Búsqueda */}
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar o pegar emoji..."
-              className="focus:border-primary focus:ring-primary/20 mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:outline-none dark:border-gray-600 dark:bg-gray-700"
+              className="border-wine/10 bg-pink-light/30 text-wine placeholder:text-wine/40 focus:border-wine/40 dark:border-pink-light/10 dark:bg-purple-dark/50 dark:text-pink-light dark:placeholder:text-pink-light/40 dark:focus:border-pink-hot/40 mb-3 w-full rounded-xl border-2 px-3 py-2 text-sm focus:outline-none"
             />
 
             {/* Categorías */}
@@ -300,10 +298,10 @@ export default function IconPicker({ value, onChange, label, description }: Icon
               <button
                 type="button"
                 onClick={() => setActiveCategory(null)}
-                className={`rounded-full px-2 py-1 text-xs font-medium transition-colors ${
+                className={`rounded-full px-2 py-1 text-xs font-bold transition-colors ${
                   !activeCategory
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300'
+                    ? 'bg-pink-hot text-white'
+                    : 'bg-wine/5 text-wine/60 hover:bg-wine/10 dark:bg-pink-light/5 dark:text-pink-light/60 dark:hover:bg-pink-light/10'
                 }`}
               >
                 Todos
@@ -313,10 +311,10 @@ export default function IconPicker({ value, onChange, label, description }: Icon
                   key={cat}
                   type="button"
                   onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
-                  className={`rounded-full px-2 py-1 text-xs font-medium transition-colors ${
+                  className={`rounded-full px-2 py-1 text-xs font-bold transition-colors ${
                     activeCategory === cat
-                      ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300'
+                      ? 'bg-pink-hot text-white'
+                      : 'bg-wine/5 text-wine/60 hover:bg-wine/10 dark:bg-pink-light/5 dark:text-pink-light/60 dark:hover:bg-pink-light/10'
                   }`}
                 >
                   {cat}
@@ -334,8 +332,8 @@ export default function IconPicker({ value, onChange, label, description }: Icon
                     onChange(emoji)
                     setIsOpen(false)
                   }}
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg text-xl transition-all hover:scale-110 hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                    value === emoji ? 'bg-primary/20 ring-primary ring-2' : ''
+                  className={`hover:bg-wine/10 dark:hover:bg-pink-light/10 flex h-10 w-10 items-center justify-center rounded-lg text-xl transition-all hover:scale-110 ${
+                    value === emoji ? 'bg-pink-hot/20 ring-pink-hot ring-2' : ''
                   }`}
                 >
                   {emoji}
@@ -344,19 +342,23 @@ export default function IconPicker({ value, onChange, label, description }: Icon
             </div>
 
             {filteredEmojis.length === 0 && (
-              <p className="py-8 text-center text-sm text-gray-500">No se encontraron iconos</p>
+              <p className="text-wine/40 dark:text-pink-light/40 py-8 text-center text-sm">
+                No se encontraron iconos
+              </p>
             )}
 
             {/* Input manual */}
-            <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
-              <p className="mb-2 text-xs text-gray-500">O pega cualquier emoji:</p>
+            <div className="border-wine/10 dark:border-pink-light/10 mt-4 border-t pt-4">
+              <p className="text-wine/50 dark:text-pink-light/50 mb-2 text-xs">
+                O pega cualquier emoji:
+              </p>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   placeholder="🎨"
-                  className="focus:border-primary focus:ring-primary/20 flex-1 rounded-lg border border-gray-300 px-3 py-2 text-center text-2xl focus:ring-2 focus:outline-none dark:border-gray-600 dark:bg-gray-700"
+                  className="border-wine/10 bg-pink-light/30 text-wine placeholder:text-wine/20 focus:border-wine/40 dark:border-pink-light/10 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot/40 flex-1 rounded-xl border-2 px-3 py-2 text-center text-2xl focus:outline-none"
                 />
               </div>
             </div>
