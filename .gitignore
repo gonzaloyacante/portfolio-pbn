@@ -1,80 +1,120 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# ===================================================
+# DEPENDENCIES
+# ===================================================
 /node_modules
 /.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+.pnp.js
+.yarn/install-state.gz
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.pnpm-store
+.npm
 
-# testing
+# ===================================================
+# TESTING
+# ===================================================
 /coverage
+*.lcov
+test-results/
+playwright-report/
+playwright/.cache/
+test-results/
+blob-report/
+playwright-report/
+test-results/
 
-# next.js
+# ===================================================
+# NEXT.JS & VERCEL
+# ===================================================
 /.next/
 /out/
-
-# production
 /build
+.vercel
+*.tsbuildinfo
+next-env.d.ts
 
-# misc
-.DS_Store
+# ===================================================
+# ENVIRONMENT & SECRETS (CRITICAL)
+# ===================================================
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 *.pem
+*.key
+*.cert
+id_rsa
+id_rsa.pub
 
-# debug
+# ===================================================
+# LOGS
+# ===================================================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
-# env files (NUNCA commitear archivos con secretos reales)
-.env
-.env.local
-.env*.local
-.env.development.local
-.env.test.local
-.env.production.local
+# ===================================================
+# SYSTEM FILES (OS)
+# ===================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# vercel
-.vercel
+# ===================================================
+# IDEs & EDITORS
+# ===================================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# prisma generated
+# ===================================================
+# PRISMA & DATABASE
+# ===================================================
 /src/generated/prisma
+*.sqlite
+*.sqlite-journal
 
 # ===================================================
-# ARCHIVOS NO NECESARIOS EN PRODUCCIÓN
+# BACKUPS & TEMP FILES
 # ===================================================
-# Ignorar documentación interna y scripts que no se necesitan en producción
-docs/
-scripts/
-Portfolio PBN - Desktop/
-Portfolio PBN - Movil/
-
-# Ignorar configuraciones de AI y análisis de código
-.github/instructions/codacy.instructions.md
-
-# Logs y reportes de tests
-test-results/
-playwright-report/
-playwright/.cache/
-
-# Backups y archivos temporales
 *.bak
 *.tmp
-*.swp
-*~
+*.temp
+/tmp
+/temp
 
-# Archivos de configuración local del IDE
-.vscode/settings.json
-.idea/
-
-
-#Ignore cursor AI rules
+# ===================================================
+# PROJECT SPECIFIC / DOCUMENTATION / SCRIPTS
+# ===================================================
+/scripts/
+/docs/
+Portfolio PBN - Desktop/
+Portfolio PBN - Movil/
+.github/instructions/codacy.instructions.md
 .cursor/rules/codacy.mdc
+.cursorrules
+
+# ===================================================
+# MISC
+# ===================================================
+.codacy/
+
