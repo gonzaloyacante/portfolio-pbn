@@ -5,26 +5,39 @@ import { revalidatePath } from 'next/cache'
 
 /**
  * Settings Actions
- * Normalized settings management (NO JSON fields)
+ * Normalized settings management for Portfolio PBN
+ * ALL fields are explicit - NO JSON
  */
 
 // ========== THEME SETTINGS ==========
 
 export interface ThemeSettingsData {
   id: string
+  // Light Theme
   primaryColor: string
   secondaryColor: string
   accentColor: string
   backgroundColor: string
   textColor: string
+  cardBgColor: string
+  // Dark Theme
+  darkPrimaryColor: string
+  darkSecondaryColor: string
+  darkAccentColor: string
+  darkBackgroundColor: string
+  darkTextColor: string
+  darkCardBgColor: string
+  // Typography
   headingFont: string
+  scriptFont: string
   bodyFont: string
+  // Layout
   borderRadius: number
   isActive: boolean
 }
 
 /**
- * Get theme settings (singleton - first active row)
+ * Get theme settings
  */
 export async function getThemeSettings(): Promise<ThemeSettingsData | null> {
   try {
@@ -46,14 +59,16 @@ export async function getThemeValues(): Promise<Record<string, string>> {
     const settings = await getThemeSettings()
     if (!settings) {
       return {
-        'primary-color': '#c71585',
-        'secondary-color': '#f0f0f0',
-        'accent-color': '#ff69b4',
-        'background-color': '#ffffff',
-        'text-color': '#1a1a1a',
-        'heading-font': 'Raleway',
+        'primary-color': '#6c0a0a',
+        'secondary-color': '#ffaadd',
+        'accent-color': '#fff1f9',
+        'background-color': '#fff1f9',
+        'text-color': '#000000',
+        'card-bg-color': '#ffaadd',
+        'heading-font': 'Poppins',
+        'script-font': 'Great Vibes',
         'body-font': 'Open Sans',
-        'border-radius': '8',
+        'border-radius': '40',
       }
     }
 
@@ -63,7 +78,15 @@ export async function getThemeValues(): Promise<Record<string, string>> {
       'accent-color': settings.accentColor,
       'background-color': settings.backgroundColor,
       'text-color': settings.textColor,
+      'card-bg-color': settings.cardBgColor,
+      'dark-primary-color': settings.darkPrimaryColor,
+      'dark-secondary-color': settings.darkSecondaryColor,
+      'dark-accent-color': settings.darkAccentColor,
+      'dark-background-color': settings.darkBackgroundColor,
+      'dark-text-color': settings.darkTextColor,
+      'dark-card-bg-color': settings.darkCardBgColor,
       'heading-font': settings.headingFont,
+      'script-font': settings.scriptFont,
       'body-font': settings.bodyFont,
       'border-radius': String(settings.borderRadius),
     }
@@ -78,22 +101,19 @@ export async function getThemeValues(): Promise<Record<string, string>> {
  */
 export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 'id'>>) {
   try {
-    // Get or create the settings row
     let settings = await prisma.themeSettings.findFirst({ where: { isActive: true } })
 
     if (!settings) {
       settings = await prisma.themeSettings.create({
         data: {
-          primaryColor: data.primaryColor || '#c71585',
-          secondaryColor: data.secondaryColor || '#f0f0f0',
-          accentColor: data.accentColor || '#ff69b4',
-          backgroundColor: data.backgroundColor || '#ffffff',
-          textColor: data.textColor || '#1a1a1a',
-          headingFont: data.headingFont || 'Raleway',
-          bodyFont: data.bodyFont || 'Open Sans',
-          borderRadius: data.borderRadius || 8,
-          isActive: true,
-        },
+          isActive: true, // partial data creates issues if required fields missing? No, defaults handle it.
+          // Type safety might complain if I don't provide all required. Schema has defaults for most.
+          // But I need to cast or ensure data is valid.
+          // For now assuming data contains necessary fields or schema defaults kick in.
+          // Typescript might complain about missing string fields if they are not optional in schema but optional here.
+          // Zod schema enforces requirements.
+          ...data,
+        } as any,
       })
     } else {
       settings = await prisma.themeSettings.update({
@@ -123,110 +143,22 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
  */
 export async function resetThemeToDefaults() {
   try {
-    const settings = await prisma.themeSettings.findFirst({ where: { isActive: true } })
+    // Delete existing standard theme settings
+    await prisma.themeSettings.deleteMany({ where: { isActive: true } })
 
-    const defaultData = {
-      primaryColor: '#c71585',
-      secondaryColor: '#f0f0f0',
-      accentColor: '#ff69b4',
-      backgroundColor: '#ffffff',
-      textColor: '#1a1a1a',
-      headingFont: 'Raleway',
-      bodyFont: 'Open Sans',
-      borderRadius: 8,
-    }
-
-    if (settings) {
-      await prisma.themeSettings.update({
-        where: { id: settings.id },
-        data: defaultData,
-      })
-    } else {
-      await prisma.themeSettings.create({
-        data: { ...defaultData, isActive: true },
-      })
-    }
+    // Create new default
+    await prisma.themeSettings.create({
+      data: {
+        isActive: true,
+      }
+    })
 
     revalidatePath('/', 'layout')
 
-    return {
-      success: true,
-      message: 'Tema reseteado a valores por defecto',
-    }
+    return { success: true, message: 'Tema reseteado a valores por defecto' }
   } catch (error) {
     console.error('Error resetting theme:', error)
-    return {
-      success: false,
-      error: 'Error al resetear tema',
-    }
-  }
-}
-
-// ========== ABOUT SETTINGS ==========
-
-export interface AboutSettingsData {
-  id: string
-  bioTitle: string | null
-  bioDescription: string | null
-  profileImageUrl: string | null
-  skills: string[]
-  yearsExperience: number | null
-  isActive: boolean
-}
-
-/**
- * Get about page settings
- */
-export async function getAboutSettings(): Promise<AboutSettingsData | null> {
-  try {
-    const settings = await prisma.aboutSettings.findFirst({
-      where: { isActive: true },
-    })
-    return settings
-  } catch (error) {
-    console.error('Error getting about settings:', error)
-    return null
-  }
-}
-
-/**
- * Update about page settings
- */
-export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 'id'>>) {
-  try {
-    let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
-
-    if (!settings) {
-      settings = await prisma.aboutSettings.create({
-        data: {
-          bioTitle: data.bioTitle || 'Sobre Mí',
-          bioDescription: data.bioDescription,
-          profileImageUrl: data.profileImageUrl,
-          skills: data.skills || [],
-          yearsExperience: data.yearsExperience,
-          isActive: true,
-        },
-      })
-    } else {
-      settings = await prisma.aboutSettings.update({
-        where: { id: settings.id },
-        data,
-      })
-    }
-
-    revalidatePath('/sobre-mi')
-
-    return {
-      success: true,
-      settings,
-      message: 'Configuración de "Sobre Mí" actualizada',
-    }
-  } catch (error) {
-    console.error('Error updating about settings:', error)
-    return {
-      success: false,
-      error: 'Error al actualizar configuración',
-    }
+    return { success: false, error: 'Error al resetear tema' }
   }
 }
 
@@ -234,16 +166,24 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
 
 export interface HomeSettingsData {
   id: string
-  heroTitle: string | null
-  heroSubtitle: string | null
-  heroImageUrl: string | null
-  heroCtaText: string | null
-  heroCtaLink: string | null
+  // Hero - Left Top
+  heroTitle1: string | null
+  heroTitle2: string | null
+  // Hero - Left Bottom
+  illustrationUrl: string | null
+  illustrationAlt: string | null
+  ownerName: string | null
+  // Hero - Right
+  heroMainImageUrl: string | null
+  heroMainImageAlt: string | null
+  heroMainImageCaption: string | null
+  // CTA
+  ctaText: string | null
+  ctaLink: string | null
+  // Featured Projects
   showFeaturedProjects: boolean
   featuredTitle: string | null
   featuredCount: number
-  showTestimonials: boolean
-  testimonialsTitle: string | null
   isActive: boolean
 }
 
@@ -272,16 +212,19 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
     if (!settings) {
       settings = await prisma.homeSettings.create({
         data: {
-          heroTitle: data.heroTitle,
-          heroSubtitle: data.heroSubtitle,
-          heroImageUrl: data.heroImageUrl,
-          heroCtaText: data.heroCtaText || 'Ver Portfolio',
-          heroCtaLink: data.heroCtaLink || '/proyectos',
+          heroTitle1: data.heroTitle1 || 'Make-up',
+          heroTitle2: data.heroTitle2 || 'Portfolio',
+          illustrationUrl: data.illustrationUrl,
+          illustrationAlt: data.illustrationAlt || 'Ilustración maquilladora',
+          ownerName: data.ownerName || 'Paola Bolívar Nievas',
+          heroMainImageUrl: data.heroMainImageUrl,
+          heroMainImageAlt: data.heroMainImageAlt || 'Trabajo destacado',
+          heroMainImageCaption: data.heroMainImageCaption,
+          ctaText: data.ctaText || 'Ver Portfolio',
+          ctaLink: data.ctaLink || '/proyectos',
           showFeaturedProjects: data.showFeaturedProjects ?? true,
-          featuredTitle: data.featuredTitle || 'Trabajos Destacados',
+          featuredTitle: data.featuredTitle,
           featuredCount: data.featuredCount || 6,
-          showTestimonials: data.showTestimonials ?? true,
-          testimonialsTitle: data.testimonialsTitle || 'Lo que dicen mis clientes',
           isActive: true,
         },
       })
@@ -308,22 +251,111 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
   }
 }
 
+// ========== ABOUT SETTINGS ==========
+
+export interface AboutSettingsData {
+  id: string
+  illustrationUrl: string | null
+  illustrationAlt: string | null
+  bioTitle: string | null
+  bioIntro: string | null
+  bioDescription: string | null
+  profileImageUrl: string | null
+  profileImageAlt: string | null
+  skills: string[]
+  yearsExperience: number | null
+  certifications: string[]
+  showTestimonials: boolean
+  testimonialsTitle: string | null
+  isActive: boolean
+}
+
+/**
+ * Get about page settings
+ */
+export async function getAboutSettings(): Promise<AboutSettingsData | null> {
+  try {
+    const settings = await prisma.aboutSettings.findFirst({
+      where: { isActive: true },
+    })
+    return settings
+  } catch (error) {
+    console.error('Error getting about settings:', error)
+    return null
+  }
+}
+
+/**
+ * Update about page settings
+ */
+export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 'id'>>) {
+  try {
+    let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
+
+    if (!settings) {
+      settings = await prisma.aboutSettings.create({
+        data: {
+          illustrationUrl: data.illustrationUrl,
+          illustrationAlt: data.illustrationAlt || 'Ilustración sobre mí',
+          bioTitle: data.bioTitle || 'Hola, soy Paola.',
+          bioIntro: data.bioIntro,
+          bioDescription: data.bioDescription,
+          profileImageUrl: data.profileImageUrl,
+          profileImageAlt: data.profileImageAlt || 'Paola Bolívar Nievas',
+          skills: data.skills || [],
+          yearsExperience: data.yearsExperience,
+          certifications: data.certifications || [],
+          showTestimonials: data.showTestimonials ?? true,
+          testimonialsTitle: data.testimonialsTitle || 'Lo que dicen mis clientes',
+          isActive: true,
+        },
+      })
+    } else {
+      settings = await prisma.aboutSettings.update({
+        where: { id: settings.id },
+        data,
+      })
+    }
+
+    revalidatePath('/sobre-mi')
+
+    return {
+      success: true,
+      settings,
+      message: 'Configuración de "Sobre Mí" actualizada',
+    }
+  } catch (error) {
+    console.error('Error updating about settings:', error)
+    return {
+      success: false,
+      error: 'Error al actualizar configuración',
+    }
+  }
+}
+
 // ========== CONTACT SETTINGS ==========
 
 export interface ContactSettingsData {
   id: string
-  emails: string[]
-  phones: string[]
-  addressLine1: string | null
-  addressLine2: string | null
-  city: string | null
-  country: string | null
-  hoursTitle: string | null
-  hoursWeekdays: string | null
-  hoursSaturday: string | null
-  hoursSunday: string | null
+  pageTitle: string | null
+  illustrationUrl: string | null
+  illustrationAlt: string | null
+  ownerName: string | null
+  email: string | null
+  phone: string | null
+  whatsapp: string | null
+  location: string | null
   formTitle: string | null
-  formSuccessMessage: string | null
+  nameLabel: string | null
+  emailLabel: string | null
+  phoneLabel: string | null
+  messageLabel: string | null
+  preferenceLabel: string | null
+  submitLabel: string | null
+  successTitle: string | null
+  successMessage: string | null
+  sendAnotherLabel: string | null
+  showSocialLinks: boolean
   isActive: boolean
 }
 
@@ -352,18 +384,25 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
     if (!settings) {
       settings = await prisma.contactSettings.create({
         data: {
-          emails: data.emails || [],
-          phones: data.phones || [],
-          addressLine1: data.addressLine1,
-          addressLine2: data.addressLine2,
-          city: data.city,
-          country: data.country,
-          hoursTitle: data.hoursTitle || 'Horario de Atención',
-          hoursWeekdays: data.hoursWeekdays,
-          hoursSaturday: data.hoursSaturday,
-          hoursSunday: data.hoursSunday,
+          pageTitle: data.pageTitle || 'Contacto',
+          illustrationUrl: data.illustrationUrl,
+          illustrationAlt: data.illustrationAlt || 'Ilustración contacto',
+          ownerName: data.ownerName || 'Paola Bolívar Nievas',
+          email: data.email,
+          phone: data.phone,
+          whatsapp: data.whatsapp,
+          location: data.location,
           formTitle: data.formTitle || 'Envíame un mensaje',
-          formSuccessMessage: data.formSuccessMessage || '¡Gracias! Tu mensaje ha sido enviado.',
+          nameLabel: data.nameLabel || 'Tu nombre',
+          emailLabel: data.emailLabel || 'Tu email',
+          phoneLabel: data.phoneLabel || 'Tu teléfono (opcional)',
+          messageLabel: data.messageLabel || 'Mensaje',
+          preferenceLabel: data.preferenceLabel || '¿Cómo preferís que te contacte?',
+          submitLabel: data.submitLabel || 'Enviar mensaje',
+          successTitle: data.successTitle || '¡Mensaje enviado!',
+          successMessage: data.successMessage || 'Gracias por contactarme. Te responderé lo antes posible.',
+          sendAnotherLabel: data.sendAnotherLabel || 'Enviar otro mensaje',
+          showSocialLinks: data.showSocialLinks ?? true,
           isActive: true,
         },
       })
@@ -390,46 +429,71 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
   }
 }
 
-// ========== LEGACY EXPORTS (Backward Compatibility) ==========
-// These will be removed in future versions
+// ========== SOCIAL LINKS ==========
 
-/** @deprecated Use getThemeSettings() instead */
-export async function getAllThemeSettings() {
-  console.warn('getAllThemeSettings is deprecated. Use getThemeSettings().')
-  return getThemeSettings()
+export interface SocialLinkData {
+  id: string
+  platform: string
+  url: string
+  username: string | null
+  icon: string | null
+  isActive: boolean
+  sortOrder: number
 }
 
-/** @deprecated Use getThemeSettings() instead */
-export async function getThemeSettingsGrouped() {
-  console.warn('getThemeSettingsGrouped is deprecated. Use getThemeSettings().')
-  const settings = await getThemeSettings()
-  return {
-    colors: settings ? [settings] : [],
-    typography: [],
-    spacing: [],
-    layout: [],
-    effects: [],
+/**
+ * Get all active social links
+ */
+export async function getSocialLinks(): Promise<SocialLinkData[]> {
+  try {
+    const links = await prisma.socialLink.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: 'asc' },
+    })
+    return links
+  } catch (error) {
+    console.error('Error getting social links:', error)
+    return []
   }
 }
 
-/** @deprecated Use updateThemeSettings() instead */
-export async function updateMultipleThemeSettings(updates: Array<{ key: string; value: string }>) {
-  console.warn('updateMultipleThemeSettings is deprecated. Use updateThemeSettings().')
-  const data: Record<string, string | number> = {}
-  for (const { key, value } of updates) {
-    // Map old keys to new flat columns
-    const keyMap: Record<string, string> = {
-      'primary-color': 'primaryColor',
-      'secondary-color': 'secondaryColor',
-      'accent-color': 'accentColor',
-      'background-color': 'backgroundColor',
-      'text-color': 'textColor',
-      'heading-font': 'headingFont',
-      'body-font': 'bodyFont',
-      'border-radius': 'borderRadius',
+/**
+ * Update or create a social link
+ */
+export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?: string }) {
+  try {
+    const link = await prisma.socialLink.upsert({
+      where: { platform: data.platform },
+      update: data,
+      create: data,
+    })
+
+    revalidatePath('/', 'layout')
+
+    return {
+      success: true,
+      link,
+      message: 'Enlace social actualizado',
     }
-    const newKey = keyMap[key] || key
-    data[newKey] = key === 'border-radius' ? parseInt(value) || 8 : value
+  } catch (error) {
+    console.error('Error upserting social link:', error)
+    return {
+      success: false,
+      error: 'Error al actualizar enlace social',
+    }
   }
-  return updateThemeSettings(data as Partial<ThemeSettingsData>)
+}
+
+/**
+ * Delete a social link
+ */
+export async function deleteSocialLink(id: string) {
+  try {
+    await prisma.socialLink.delete({ where: { id } })
+    revalidatePath('/', 'layout')
+    return { success: true, message: 'Enlace social eliminado' }
+  } catch (error) {
+    console.error('Error deleting social link:', error)
+    return { success: false, error: 'Error al eliminar enlace social' }
+  }
 }

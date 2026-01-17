@@ -1,85 +1,113 @@
+'use client'
+
+import { HomeSettingsData } from '@/actions/theme.actions'
+import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
+import { FadeIn, SlideIn } from '@/components/ui/Animations'
 
 interface HeroSectionProps {
-  heroImageUrl?: string | null
-  silhouetteImageUrl?: string | null
-  ownerName?: string | null
-  heroTitle1?: string | null
-  heroTitle2?: string | null
+  settings: HomeSettingsData | null
 }
 
-/**
- * Hero Section - Diseño según Canva
- * Columna izquierda: Textos Make-up, Portfolio, nombre + silueta/icono
- * Columna derecha: Imagen de Paola
- */
-export default function HeroSection({
-  heroImageUrl,
-  silhouetteImageUrl,
-  ownerName,
-  heroTitle1,
-  heroTitle2,
-}: HeroSectionProps) {
-  const displayName = ownerName || 'Paola Bolívar Nievas'
-  const title1 = heroTitle1 || 'Make-up'
-  const title2 = heroTitle2 || 'Portfolio'
+export default function HeroSection({ settings }: HeroSectionProps) {
+  if (!settings) return null
+
+  // Use defaults if settings fields are missing (though basic required fields are set in DB)
+  const title1 = settings.heroTitle1 || 'Make-up'
+  const title2 = settings.heroTitle2 || 'Portfolio'
+  const mainImage = settings.heroMainImageUrl
+  const illustration = settings.illustrationUrl
 
   return (
-    <section className="bg-pink-light dark:bg-bg min-h-[calc(100vh-80px)] w-full transition-colors duration-300">
-      <div className="mx-auto grid min-h-[calc(100vh-80px)] max-w-7xl grid-cols-1 items-center gap-8 px-4 py-12 sm:px-6 md:px-12 lg:grid-cols-2 lg:gap-12 lg:px-16">
-        {/* Columna Izquierda - Textos */}
-        <div className="order-2 flex flex-col items-center text-center lg:order-1 lg:items-start lg:text-left">
-          {/* Make-up en script */}
-          <h2 className="font-script text-wine dark:text-pink-hot relative z-10 text-[2.5rem] leading-none sm:text-[4rem] lg:text-[5rem]">
-            {title1}
-          </h2>
+    <section className="relative flex min-h-[90vh] w-full items-center justify-center overflow-hidden bg-[var(--background)] px-4 pt-20 transition-colors duration-500 sm:px-8 lg:px-16">
 
-          {/* Portfolio grande */}
-          <h1 className="font-heading text-wine dark:text-pink-light -mt-2 text-[3.5rem] leading-none font-bold tracking-tighter uppercase sm:-mt-4 sm:text-[5rem] lg:-mt-6 lg:text-[7rem] xl:text-[8rem]">
-            {title2}
-          </h1>
+      {/* Container Principal con Grid */}
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12">
 
-          {/* Silueta/Icono editable */}
-          <div className="my-6 lg:my-10">
-            {silhouetteImageUrl ? (
-              <div className="relative h-24 w-24 sm:h-32 sm:w-32 lg:h-40 lg:w-40">
-                <Image
-                  src={silhouetteImageUrl}
-                  alt="Silueta"
-                  fill
-                  className="object-contain"
-                  sizes="160px"
-                />
+        {/* Columna Izquierda: Textos e Ilustración */}
+        <div className="relative z-10 flex flex-col justify-center lg:col-span-5 lg:h-full lg:justify-end lg:pb-20">
+
+          <FadeIn delay={0.2} className="relative z-20">
+            {/* Título Script (Make-up) */}
+            <h1 className="font-script -mb-4 text-7xl text-[var(--primary)] sm:text-8xl lg:text-[7rem] xl:text-[8rem]">
+              {title1}
+            </h1>
+          </FadeIn>
+
+          <SlideIn direction="left" delay={0.4} className="relative z-10">
+            {/* Título Heading (Portfolio) */}
+            <h2 className="font-heading text-6xl font-bold uppercase leading-none tracking-tighter text-[var(--accent)] text-shadow sm:text-8xl lg:text-[6rem] xl:text-[7rem]">
+              {title2}
+            </h2>
+          </SlideIn>
+
+          {/* Información Owner e Ilustración */}
+          <div className="relative mt-8 flex items-center gap-6">
+            <FadeIn delay={0.6}>
+              <div className="max-w-[150px] space-y-2">
+                <p className="font-heading text-sm font-bold uppercase tracking-widest text-[var(--text)]">
+                  {settings.ownerName}
+                </p>
+                <div className="h-1 w-12 bg-[var(--primary)]"></div>
+                <Link
+                  href={settings.ctaLink || '/proyectos'}
+                  className="mt-4 inline-block text-xs font-bold uppercase text-[var(--text)] underline decoration-[var(--primary)] underline-offset-4 hover:text-[var(--primary)]"
+                >
+                  {settings.ctaText}
+                </Link>
               </div>
-            ) : (
-              <span className="text-6xl sm:text-7xl lg:text-8xl">💄</span>
+            </FadeIn>
+
+            {/* Ilustración Decorativa (detrás/al lado) */}
+            {illustration && (
+              <FadeIn delay={0.8} className="absolute -right-10 -top-20 -z-10 opacity-80 mix-blend-multiply dark:mix-blend-screen md:left-40 md:top-auto">
+                <div className="relative h-64 w-64 md:h-80 md:w-80">
+                  <Image
+                    src={illustration}
+                    alt={settings.illustrationAlt || 'Ilustración'}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </FadeIn>
             )}
           </div>
-
-          {/* Nombre en script */}
-          <h3 className="font-script text-wine dark:text-pink-hot text-2xl leading-tight sm:text-3xl lg:text-4xl">
-            {displayName}
-          </h3>
         </div>
 
-        {/* Columna Derecha - Imagen */}
-        <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
-          <div className="bg-wine dark:bg-pink-hot relative aspect-4/5 w-full max-w-sm overflow-hidden rounded-[2rem] shadow-2xl sm:max-w-md lg:max-w-lg lg:rounded-[3rem]">
-            {heroImageUrl ? (
-              <Image
-                src={heroImageUrl}
-                alt={displayName}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 90vw, (max-width: 1024px) 50vw, 500px"
-                priority
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center">
-                <span className="text-9xl opacity-50">📸</span>
+        {/* Columna Derecha: Imagen Principal */}
+        <div className="relative flex h-[50vh] w-full items-center justify-center lg:col-span-7 lg:h-[80vh]">
+          {mainImage && (
+            <FadeIn delay={0.5} className="relative h-full w-full">
+              {/* Imagen con forma personalizada (rounded large) */}
+              <div className="relative h-full w-full overflow-hidden rounded-[2.5rem] shadow-2xl">
+                <Image
+                  src={mainImage}
+                  alt={settings.heroMainImageAlt || 'Hero Image'}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                />
+
+                {/* Overlay gradiente sutil */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+
+                {/* Caption flotante */}
+                {settings.heroMainImageCaption && (
+                  <div className="absolute bottom-8 right-8 max-w-xs rounded-xl bg-white/10 p-4 backdrop-blur-md">
+                    <p className="font-script text-2xl text-white">
+                      {settings.heroMainImageCaption}
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </FadeIn>
+          )}
+
+          {/* Elementos decorativos flotantes (círculos, formas) */}
+          <div className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-[var(--secondary)] opacity-20 blur-2xl"></div>
+          <div className="absolute -right-10 top-20 h-40 w-40 rounded-full bg-[var(--primary)] opacity-10 blur-3xl"></div>
         </div>
       </div>
     </section>

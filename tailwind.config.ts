@@ -17,6 +17,7 @@ const config: Config = {
         accent: 'var(--color-accent, #7a2556)',
         secondary: 'var(--color-secondary, #ffa1da)',
         dark: 'var(--color-dark, #511a3a)',
+        foreground: 'var(--color-foreground, #000000)',
 
         // Compatibilidad con nombres anteriores
         wine: 'var(--color-text-primary, #6c0a0a)',
@@ -31,9 +32,9 @@ const config: Config = {
         bg: 'var(--color-background, #fff1f9)',
       },
       fontFamily: {
-        heading: ['var(--font-heading, Aileron)', 'var(--font-primary)', 'sans-serif'],
-        body: ['var(--font-body, Open Sans)', 'sans-serif'],
-        script: ['var(--font-script, Amsterdam Four)', 'var(--font-script)', 'cursive'],
+        heading: ['var(--font-heading)', 'Poppins', 'sans-serif'],
+        body: ['var(--font-body)', 'Open Sans', 'sans-serif'],
+        script: ['var(--font-script)', 'Great Vibes', 'cursive'],
         primary: ['var(--font-primary)', 'sans-serif'],
       },
       fontSize: {

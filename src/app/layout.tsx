@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Open_Sans, Pacifico, Raleway } from 'next/font/google'
+import { Great_Vibes, Open_Sans, Poppins } from 'next/font/google'
 import '@/styles/globals.css'
 import AppProviders from '@/components/providers/AppProviders'
 import { NavigationProgress } from '@/components/layout/NavigationProgress'
@@ -10,22 +10,25 @@ import { getThemeValues } from '@/actions/theme.actions'
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
 
-// Script font para títulos elegantes
-const scriptFont = Pacifico({
+// Script font para "Make-up", firmas y detalles elegantes
+// Alternativa a Amsterdam Four (Canva)
+const scriptFont = Great_Vibes({
   weight: '400',
   subsets: ['latin'],
   variable: '--font-script',
   display: 'swap',
 })
 
-// Primary font para headings
-const primaryFont = Raleway({
+// Heading font para títulos y navegación
+// Alternativa a Aileron (Canva) - Geometric sans-serif
+const headingFont = Poppins({
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
-  variable: '--font-primary',
+  variable: '--font-heading',
   display: 'swap',
 })
 
-// Body font para texto general
+// Body font para textos generales
 const bodyFont = Open_Sans({
   subsets: ['latin'],
   variable: '--font-body',
@@ -123,7 +126,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body
-        className={`${primaryFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
+        className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
       >
         <NavigationProgress />
         <ErrorBoundary>

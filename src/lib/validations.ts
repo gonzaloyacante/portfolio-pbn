@@ -4,17 +4,17 @@ import { z } from 'zod'
  * Validaciones con Zod para seguridad y consistencia
  */
 
-// Contacto
+// ============================================
+// PUBLIC FORMS
+// ============================================
+
+// Contact Form (Public)
 export const contactFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, 'El nombre debe tener al menos 2 caracteres')
-    .max(100, 'El nombre es demasiado largo'),
-  email: z.string().email('Email inválido'),
-  message: z
-    .string()
-    .min(10, 'El mensaje debe tener al menos 10 caracteres')
-    .max(1000, 'El mensaje es demasiado largo'),
+  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+  email: z.email('Email inválido'),
+  phone: z.string().optional(),
+  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres').max(2000),
+  responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
   privacy: z.boolean().refine((val) => val === true, {
     message: 'Debes aceptar la política de privacidad',
   }),
@@ -22,102 +22,138 @@ export const contactFormSchema = z.object({
 
 export type ContactFormData = z.infer<typeof contactFormSchema>
 
-// Proyecto (UI Form)
-export const projectFormSchema = z.object({
-  title: z.string().min(3, 'El título debe tener al menos 3 caracteres').max(200),
-  description: z.string().max(5000).optional(),
-  categoryId: z.string().min(1, 'Selecciona una categoría'),
-  date: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: 'Fecha inválida',
-  }),
+// Testimonial Form (Public)
+export const testimonialFormSchema = z.object({
+  name: z.string().min(2, 'El nombre es obligatorio'),
+  text: z.string().min(10, 'El testimonio debe tener al menos 10 caracteres'),
+  position: z.string().optional(),
+  rating: z.number().min(1).max(5).default(5),
+  avatarUrl: z.string().optional(),
 })
 
-export type ProjectFormData = z.infer<typeof projectFormSchema>
+export type TestimonialFormData = z.infer<typeof testimonialFormSchema>
 
-// Proyecto (Full Model Validation)
-export const projectSchema = z.object({
-  title: z.string().min(3, 'El título debe tener al menos 3 caracteres').max(200),
-  slug: z
-    .string()
-    .min(3)
-    .max(200)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug inválido'),
-  description: z.string().min(10).max(5000),
-  categoryId: z.string().cuid(),
-  thumbnailUrl: z.string().url(),
-  date: z.date(),
-  isActive: z.boolean().default(true),
-})
 
-// Categoría
-export const categorySchema = z.object({
-  name: z.string().min(2).max(100),
-  slug: z
-    .string()
-    .min(2)
-    .max(100)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug inválido'),
-  description: z.string().max(500).optional(),
-})
+// ============================================
+// ADMIN SETTINGS SCHEMAS
+// ============================================
 
-// Theme Setting (Full Editor)
+// Theme Editor
 export const themeEditorSchema = z.object({
+  // Light Mode
   primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
   secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
   accentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
   backgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
   textColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  headingFont: z.string().min(1, 'Fuente requerida'),
-  bodyFont: z.string().min(1, 'Fuente requerida'),
-  borderRadius: z.number().min(0).max(50),
+  cardBgColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+
+  // Dark Mode
+  darkPrimaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  darkSecondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  darkAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  darkBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  darkTextColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  darkCardBgColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+
+  // Typography & Layout
+  headingFont: z.string().min(1),
+  scriptFont: z.string().min(1),
+  bodyFont: z.string().min(1),
+  borderRadius: z.number().min(0).max(100),
 })
 
 export type ThemeEditorData = z.infer<typeof themeEditorSchema>
 
-// Contact Settings (Admin)
+// Home Settings
+export const homeSettingsSchema = z.object({
+  heroTitle1: z.string().optional(),
+  heroTitle2: z.string().optional(),
+  illustrationUrl: z.string().optional(),
+  illustrationAlt: z.string().optional(),
+  ownerName: z.string().optional(),
+  heroMainImageUrl: z.string().optional(),
+  heroMainImageAlt: z.string().optional(),
+  heroMainImageCaption: z.string().optional(),
+  ctaText: z.string().optional(),
+  ctaLink: z.string().optional(),
+  showFeaturedProjects: z.boolean(),
+  featuredTitle: z.string().optional(),
+  featuredCount: z.number().min(1).max(20),
+})
+
+export type HomeSettingsFormData = z.infer<typeof homeSettingsSchema>
+
+// About Settings
+export const aboutSettingsSchema = z.object({
+  illustrationUrl: z.string().optional(),
+  illustrationAlt: z.string().optional(),
+  bioTitle: z.string().optional(),
+  bioIntro: z.string().optional(),
+  bioDescription: z.string().optional(),
+  profileImageUrl: z.string().optional(),
+  profileImageAlt: z.string().optional(),
+  skills: z.array(z.string()).optional(),
+  yearsExperience: z.number().optional(),
+  certifications: z.array(z.string()).optional(),
+  showTestimonials: z.boolean(),
+  testimonialsTitle: z.string().optional(),
+})
+
+export type AboutSettingsFormData = z.infer<typeof aboutSettingsSchema>
+
+// Contact Settings
 export const contactSettingsSchema = z.object({
-  emails: z.array(z.string().email('Email inválido')),
-  phones: z.array(z.string()),
-  addressLine1: z.string().optional(),
-  addressLine2: z.string().optional(),
-  city: z.string().optional(),
-  country: z.string().optional(),
-  hoursTitle: z.string().optional(),
-  hoursWeekdays: z.string().optional(),
-  hoursSaturday: z.string().optional(),
-  hoursSunday: z.string().optional(),
-  formTitle: z.string().min(1, 'Título requerido'),
-  formSuccessMessage: z.string().min(1, 'Mensaje requerido'),
-  isActive: z.boolean(),
+  pageTitle: z.string().optional(),
+  illustrationUrl: z.string().optional(),
+  illustrationAlt: z.string().optional(),
+  ownerName: z.string().optional(),
+  email: z.email(),
+  phone: z.string().optional(),
+  whatsapp: z.string().optional(),
+  location: z.string().optional(),
+  formTitle: z.string().optional(),
+  nameLabel: z.string().optional(),
+  emailLabel: z.string().optional(),
+  phoneLabel: z.string().optional(),
+  messageLabel: z.string().optional(),
+  preferenceLabel: z.string().optional(),
+  submitLabel: z.string().optional(),
+  successTitle: z.string().optional(),
+  successMessage: z.string().optional(),
+  sendAnotherLabel: z.string().optional(),
+  showSocialLinks: z.boolean(),
 })
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>
 
-// Auth
-export const loginSchema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+
+// ============================================
+// DATA MODELS
+// ============================================
+
+// Project
+export const projectFormSchema = z.object({
+  title: z.string().min(3).max(200),
+  description: z.string().optional(),
+  categoryId: z.string().min(1, 'Categoría requerida'),
+  date: z.string(), // date input returns string
+  thumbnailUrl: z.string().optional(),
+  isFeatured: z.boolean().optional(),
 })
 
-export const registerSchema = z.object({
-  email: z.string().email('Email inválido'),
+export type ProjectFormData = z.infer<typeof projectFormSchema>
+
+// Category
+export const categorySchema = z.object({
   name: z.string().min(2).max(100),
-  password: z
-    .string()
-    .min(12, 'La contraseña debe tener al menos 12 caracteres')
-    .regex(/[A-Z]/, 'Debe contener al menos una mayúscula')
-    .regex(/[a-z]/, 'Debe contener al menos una minúscula')
-    .regex(/[0-9]/, 'Debe contener al menos un número')
-    .regex(/[^A-Za-z0-9]/, 'Debe contener al menos un carácter especial'),
+  slug: z.string().min(2).max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  description: z.string().optional(),
+  sortOrder: z.number().optional(),
 })
 
-export const resetPasswordSchema = z.object({
-  token: z.string().min(1),
-  password: z
-    .string()
-    .min(12, 'La contraseña debe tener al menos 12 caracteres')
-    .regex(/[A-Z]/, 'Debe contener al menos una mayúscula')
-    .regex(/[a-z]/, 'Debe contener al menos una minúscula')
-    .regex(/[0-9]/, 'Debe contener al menos un número')
-    .regex(/[^A-Za-z0-9]/, 'Debe contener al menos un carácter especial'),
+// Auth schemas
+export const loginSchema = z.object({
+  email: z.email(),
+  password: z.string().min(1),
 })

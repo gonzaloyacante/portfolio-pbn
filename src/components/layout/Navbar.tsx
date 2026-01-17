@@ -2,11 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { ThemeToggle } from '@/components/ui'
 
 /**
- * Navbar - Sin menú hamburguesa
- * Navegación siempre visible en todas las resoluciones
+ * Navbar - Block-Active Design (Canva Spec)
+ * - Rectángulos perfectos (rounded-none)
+ * - Animación suave del fondo activo con framer-motion layoutId
+ * - Mobile: Links apilados verticalmente
  */
 
 const navItems = [
@@ -30,34 +33,49 @@ export default function Navbar({ brandName }: NavbarProps) {
   }
 
   return (
-    <nav className="bg-pink-light/80 dark:bg-purple-dark/20 border-wine/10 dark:border-pink-light/10 sticky top-0 z-50 w-full border-b backdrop-blur-md transition-colors duration-300">
-      <div className="mx-auto flex max-w-7xl flex-col items-center px-2 py-3 sm:flex-row sm:justify-between sm:px-4 md:px-8 lg:px-16">
-        {/* Logo - solo visible en pantallas grandes */}
+    <nav className="sticky top-0 z-50 w-full border-b border-foreground/10 bg-background/95 backdrop-blur-md transition-all duration-500">
+      <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
+        {/* Logo - visible en pantallas grandes */}
         <Link
           href="/"
-          className="font-script text-wine dark:text-pink-hot mb-2 hidden text-2xl transition-all duration-200 hover:scale-105 sm:mb-0 sm:block"
+          className="mb-4 hidden font-script text-3xl text-foreground transition-transform duration-200 hover:scale-105 md:mb-0 md:block"
         >
           {displayBrand}
         </Link>
 
-        {/* Navegación siempre visible */}
-        <div className="flex w-full items-center justify-center gap-1 sm:w-auto sm:gap-2 md:gap-4 lg:gap-6">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`font-heading cursor-pointer rounded-xl px-2 py-1.5 text-xs font-bold transition-all duration-200 sm:px-3 sm:py-2 sm:text-sm md:px-4 md:text-base lg:px-5 lg:py-2.5 ${
-                isActive(item.href)
-                  ? 'bg-wine text-pink-light dark:bg-pink-hot dark:text-purple-dark shadow-md'
-                  : 'text-wine/80 hover:bg-wine/10 dark:text-pink-light/80 dark:hover:bg-pink-light/10'
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+        {/* Navegación con block-active */}
+        <div className="relative flex flex-wrap items-center justify-center gap-1 md:gap-0">
+          {navItems.map((item) => {
+            const active = isActive(item.href)
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="relative px-6 py-3 font-heading text-sm font-semibold uppercase tracking-wide transition-colors duration-300 md:px-8 md:text-base"
+              >
+                {/* Fondo animado para el estado activo */}
+                {active && (
+                  <motion.span
+                    layoutId="navbar-active-bg"
+                    className="absolute inset-0 bg-primary rounded-none"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                {/* Texto */}
+                <span
+                  className={`relative z-10 ${active
+                    ? 'text-background'
+                    : 'text-foreground hover:text-accent'
+                    }`}
+                >
+                  {item.label}
+                </span>
+              </Link>
+            )
+          })}
 
           {/* Theme Toggle */}
-          <div className="ml-1 sm:ml-2">
+          <div className="ml-4">
             <ThemeToggle />
           </div>
         </div>

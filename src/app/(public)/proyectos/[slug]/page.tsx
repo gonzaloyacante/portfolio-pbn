@@ -3,7 +3,10 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
+import { FadeIn, StaggerChildren } from '@/components/ui/Animations'
+import { ArrowLeft } from 'lucide-react'
 import { Metadata } from 'next'
+import JsonLd from '@/components/seo/JsonLd'
 
 export async function generateMetadata({
   params,
@@ -11,7 +14,17 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const category = await prisma.category.findUnique({ where: { slug } })
+  const category = await prisma.category.findUnique({
+    where: { slug },
+    include: {
+      projects: {
+        where: { isDeleted: false, isActive: true },
+        take: 1,
+        orderBy: { date: 'desc' },
+        select: { thumbnailUrl: true },
+      },
+    },
+  })
 
   if (!category) {
     return { title: 'Categoría no encontrada' }
@@ -20,12 +33,18 @@ export async function generateMetadata({
   return {
     title: `${category.name} | Portfolio PBN`,
     description: category.description || `Explora nuestros proyectos de ${category.name}`,
+    openGraph: {
+      title: category.name,
+      description: category.description || `Galería de ${category.name}`,
+      images: category.projects[0]?.thumbnailUrl ? [category.projects[0].thumbnailUrl] : [],
+    },
   }
 }
 
 /**
- * Página de Galería de Categoría
- * Muestra TODAS las imágenes de TODOS los proyectos mezcladas
+ * Category Detail Page
+ * Design: 4-column masonry-style grid (consistent aspect ratios)
+ * Interaction: Click to open Project Detail
  */
 export default async function CategoryProjectsPage({
   params,
@@ -38,15 +57,7 @@ export default async function CategoryProjectsPage({
     where: { slug },
     include: {
       projects: {
-        where: {
-          isDeleted: false,
-          isActive: true,
-        },
-        include: {
-          images: {
-            orderBy: { order: 'asc' },
-          },
-        },
+        where: { isDeleted: false, isActive: true },
         orderBy: { date: 'desc' },
       },
     },
@@ -56,104 +67,82 @@ export default async function CategoryProjectsPage({
     notFound()
   }
 
-  // Recopilar TODAS las imágenes de todos los proyectos
-  const allImages: Array<{
-    id: string
-    url: string
-    projectTitle: string
-    projectSlug: string
-  }> = []
-
-  for (const project of category.projects) {
-    // Agregar thumbnail primero
-    allImages.push({
-      id: `${project.id}-thumb`,
-      url: project.thumbnailUrl,
-      projectTitle: project.title,
-      projectSlug: project.slug,
-    })
-
-    // Agregar resto de imágenes
-    for (const image of project.images) {
-      if (image.url !== project.thumbnailUrl) {
-        allImages.push({
-          id: image.id,
-          url: image.url,
-          projectTitle: project.title,
-          projectSlug: project.slug,
-        })
-      }
-    }
-  }
-
   return (
-    <section
-      className="min-h-screen w-full transition-colors duration-300"
-      style={{ backgroundColor: 'var(--color-background)' }}
-    >
+    <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
       <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
+      <JsonLd
+        type="CollectionPage"
+        data={{
+          name: category.name,
+          description: category.description || `Galería de ${category.name}`,
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/proyectos/${category.slug}`,
+          mainEntity: category.projects.map((p) => ({
+            name: p.title,
+            url: `${process.env.NEXT_PUBLIC_BASE_URL}/proyectos/${category.slug}/${p.slug}`,
+            image: p.thumbnailUrl,
+          })),
+        }}
+      />
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12 lg:px-16 lg:py-12">
-        {/* Header con botón volver */}
-        <div className="mb-8 flex flex-col items-start gap-4 sm:mb-10 sm:flex-row sm:items-center sm:gap-6">
-          <Link
-            href="/proyectos"
-            className="group flex cursor-pointer items-center gap-2 transition-all duration-200 hover:opacity-70"
-            style={{ color: 'var(--color-primary)' }}
-          >
-            <span className="text-xl transition-transform group-hover:-translate-x-1">◀</span>
-            <span className="font-heading text-sm font-bold tracking-wide uppercase">
-              Volver a proyectos
-            </span>
-          </Link>
+        {/* Header */}
+        <div className="mb-10 flex flex-col items-start gap-6 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <Link
+              href="/proyectos"
+              className="group flex items-center gap-2 text-[var(--primary)] transition-colors hover:opacity-70"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--primary)] transition-all group-hover:-translate-x-1 group-hover:bg-[var(--primary)] group-hover:text-white">
+                <ArrowLeft size={20} />
+              </div>
+            </Link>
 
-          <h1
-            className="font-heading text-2xl font-bold sm:text-3xl"
-            style={{ color: 'var(--color-text)' }}
-          >
-            {category.name}
-          </h1>
+            <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-[var(--foreground)] sm:text-4xl">
+              {category.name}
+            </h1>
+          </div>
+
+          <p className="max-w-md text-sm text-[var(--text-body)] opacity-80 sm:text-right">
+            {category.description || `Explora la galería de ${category.name}`}
+          </p>
         </div>
 
-        {/* Galería grid con aspect-ratio fijo para evitar saltos */}
-        {allImages.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {allImages.map((image) => (
-              <div
-                key={image.id}
-                className="group relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
-                style={{ backgroundColor: 'var(--color-primary)' }}
-              >
-                <Image
-                  src={image.url}
-                  alt={image.projectTitle}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  loading="lazy"
-                />
+        {/* Project Grid - 4 Columns */}
+        {category.projects.length > 0 ? (
+          <StaggerChildren className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+            {category.projects.map((project, index) => (
+              <FadeIn key={project.id}>
+                <Link
+                  href={`/proyectos/${category.slug}/${project.slug}`}
+                  className="group relative block aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-[var(--card-bg)] shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                >
+                  <Image
+                    src={project.thumbnailUrl}
+                    alt={project.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    priority={index < 4}
+                  />
 
-                {/* Overlay con título */}
-                <div className="absolute inset-0 flex items-end bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <p className="p-3 text-sm font-medium text-white sm:p-4">{image.projectTitle}</p>
-                </div>
-              </div>
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                  {/* Hover Content */}
+                  <div className="absolute inset-x-0 bottom-0 translate-y-4 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                    <h3 className="line-clamp-2 font-[family-name:var(--font-heading)] text-lg font-bold leading-tight text-white">
+                      {project.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-white/80">Ver proyecto &rarr;</p>
+                  </div>
+                </Link>
+              </FadeIn>
             ))}
-          </div>
+          </StaggerChildren>
         ) : (
-          <div className="py-20 text-center">
-            <p
-              className="font-script mb-4"
-              style={{
-                fontSize: 'clamp(1.5rem, 4vw, 3rem)',
-                color: 'var(--color-accent)',
-              }}
-            >
-              Próximamente...
-            </p>
-            <p style={{ color: 'var(--color-text)', opacity: 0.7 }}>
-              No hay proyectos en esta categoría todavía.
-            </p>
+          <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
+            <span className="mb-4 text-4xl">📁</span>
+            <p className="text-lg text-[var(--text-body)]">No hay proyectos disponibles en esta categoría.</p>
           </div>
         )}
       </div>

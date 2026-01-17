@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "library"
 }
 
@@ -7,6 +7,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// ============================================
+// CORE MODELS
+// ============================================
 
 model User {
   id       String @id @default(cuid())
@@ -21,9 +25,11 @@ model Category {
   name        String
   slug        String    @unique
   description String?
+  sortOrder   Int       @default(0)
   projects    Project[]
 
   @@index([slug])
+  @@index([sortOrder])
 }
 
 model Project {
@@ -34,6 +40,7 @@ model Project {
   thumbnailUrl String
   date         DateTime
   categoryId   String
+  isFeatured   Boolean        @default(false)
   isActive     Boolean        @default(true)
   isDeleted    Boolean        @default(false)
   deletedAt    DateTime?
@@ -45,6 +52,7 @@ model Project {
   @@index([categoryId, date(sort: Desc)])
   @@index([slug])
   @@index([isActive, isDeleted])
+  @@index([isFeatured])
 }
 
 model ProjectImage {
@@ -52,60 +60,135 @@ model ProjectImage {
   url       String
   publicId  String
   order     Int
+  alt       String?
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-}
 
-model SiteConfig {
-  id                  String  @id @default(cuid())
-  // Branding & Identity
-  ownerName           String? // Nombre completo del propietario
-  brandName           String? // Nombre corto/logo (ej: "PBN")
-  // Hero Section
-  heroTitle1          String? // Primer título del hero (ej: "Make-up")
-  heroTitle2          String? // Segundo título del hero (ej: "Portfolio")
-  heroImageUrl        String?
-  silhouetteImageUrl  String? // Imagen de silueta/mujer en hero
-  // Theme Colors
-  bgColor             String
-  primaryColor        String
-  accentColor         String
-  // About
-  aboutText           String? @db.Text
-  // Footer
-  copyrightText       String? // Texto adicional del footer
-  // Datos de contacto
-  contactEmail        String?
-  contactPhone        String?
-  contactLocation     String?
-  // Redes sociales
-  socialInstagram     String?
-  socialTiktok        String?
-  socialWhatsapp      String?
-  socialYoutube       String?
-  socialLinkedin      String?
-  socialFacebook      String?
+  @@index([projectId, order])
 }
 
 // ============================================
-// NORMALIZED SETTINGS (NO JSON FIELDS)
+// SETTINGS - NORMALIZED (NO JSON)
 // ============================================
 
-// Theme: Single row singleton with explicit color/font columns
+/// Home Page Hero and Featured Settings
+model HomeSettings {
+  id                   String   @id @default(cuid())
+  // Hero - Left Top (Titles)
+  heroTitle1           String?  @default("Make-up")
+  heroTitle2           String?  @default("Portfolio")
+  // Hero - Left Bottom (Illustration + Name)
+  illustrationUrl      String?
+  illustrationAlt      String?  @default("Ilustración maquilladora")
+  ownerName            String?  @default("Paola Bolívar Nievas")
+  // Hero - Right (Main Image)
+  heroMainImageUrl     String?
+  heroMainImageAlt     String?  @default("Trabajo destacado")
+  heroMainImageCaption String?
+  // CTA
+  ctaText              String?  @default("Ver Portfolio")
+  ctaLink              String?  @default("/proyectos")
+  // Featured Projects Section
+  showFeaturedProjects Boolean  @default(true)
+  featuredTitle        String?
+  featuredCount        Int      @default(6)
+  // Meta
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("home_settings")
+}
+
+/// About Page Bio and Profile Settings
+model AboutSettings {
+  id               String   @id @default(cuid())
+  // Illustration
+  illustrationUrl  String?
+  illustrationAlt  String?  @default("Ilustración sobre mí")
+  // Bio
+  bioTitle         String?  @default("Hola, soy Paola.")
+  bioIntro         String?  @db.Text
+  bioDescription   String?  @db.Text
+  // Profile Image (oval)
+  profileImageUrl  String?
+  profileImageAlt  String?  @default("Paola Bolívar Nievas")
+  // Skills
+  skills           String[] @default([])
+  yearsExperience  Int?
+  // Certifications (for professional credibility)
+  certifications   String[] @default([])
+  // Show Testimonials on About page
+  showTestimonials Boolean  @default(true)
+  testimonialsTitle String? @default("Lo que dicen mis clientes")
+  // Meta
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("about_settings")
+}
+
+/// Contact Page Settings with Form Labels
+model ContactSettings {
+  id                   String   @id @default(cuid())
+  // Page Title
+  pageTitle            String?  @default("Contacto")
+  // Illustration
+  illustrationUrl      String?
+  illustrationAlt      String?  @default("Ilustración contacto")
+  ownerName            String?  @default("Paola Bolívar Nievas")
+  // Contact Info
+  email                String?
+  phone                String?
+  whatsapp             String?
+  location             String?
+  // Form Configuration
+  formTitle            String?  @default("Envíame un mensaje")
+  nameLabel            String?  @default("Tu nombre")
+  emailLabel           String?  @default("Tu email")
+  phoneLabel           String?  @default("Tu teléfono (opcional)")
+  messageLabel         String?  @default("Mensaje")
+  preferenceLabel      String?  @default("¿Cómo preferís que te contacte?")
+  submitLabel          String?  @default("Enviar mensaje")
+  // Success Messages
+  successTitle         String?  @default("¡Mensaje enviado!")
+  successMessage       String?  @default("Gracias por contactarme. Te responderé lo antes posible.")
+  sendAnotherLabel     String?  @default("Enviar otro mensaje")
+  // Show Social Links
+  showSocialLinks      Boolean  @default(true)
+  // Meta
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("contact_settings")
+}
+
+/// Theme Colors and Typography
 model ThemeSettings {
   id              String   @id @default(cuid())
-  // Colors
-  primaryColor    String   @default("#c71585")
-  secondaryColor  String   @default("#f0f0f0")
-  accentColor     String   @default("#ff69b4")
-  backgroundColor String   @default("#ffffff")
-  textColor       String   @default("#1a1a1a")
+  // Light Theme Colors
+  primaryColor    String   @default("#6c0a0a")
+  secondaryColor  String   @default("#ffaadd")
+  accentColor     String   @default("#fff1f9")
+  backgroundColor String   @default("#fff1f9")
+  textColor       String   @default("#000000")
+  cardBgColor     String   @default("#ffaadd")
+  // Dark Theme Colors
+  darkPrimaryColor    String   @default("#ffaadd")
+  darkSecondaryColor  String   @default("#6c0a0a")
+  darkAccentColor     String   @default("#000000")
+  darkBackgroundColor String   @default("#6c0a0a")
+  darkTextColor       String   @default("#fff1f9")
+  darkCardBgColor     String   @default("#ffaadd")
   // Typography
-  headingFont     String   @default("Raleway")
+  headingFont     String   @default("Poppins")
+  scriptFont      String   @default("Great Vibes")
   bodyFont        String   @default("Open Sans")
   // Layout
-  borderRadius    Int      @default(8)
-  // Status
+  borderRadius    Int      @default(40)
+  // Meta
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -113,75 +196,70 @@ model ThemeSettings {
   @@map("theme_settings")
 }
 
-// Home Page Settings (replaces PageContent for 'home')
-model HomeSettings {
-  id                  String   @id @default(cuid())
-  // Hero Section
-  heroTitle           String?
-  heroSubtitle        String?
-  heroImageUrl        String?
-  heroCtaText         String?  @default("Ver Portfolio")
-  heroCtaLink         String?  @default("/proyectos")
-  // Featured Section
-  showFeaturedProjects Boolean @default(true)
-  featuredTitle       String?  @default("Trabajos Destacados")
-  featuredCount       Int      @default(6)
-  // Testimonials Section
-  showTestimonials    Boolean  @default(true)
-  testimonialsTitle   String?  @default("Lo que dicen mis clientes")
-  // Status
-  isActive            Boolean  @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+/// Social Media Links (Normalized)
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String   // instagram, tiktok, youtube, whatsapp, linkedin, facebook
+  url       String
+  username  String?
+  icon      String?  // lucide-react icon name
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@map("home_settings")
+  @@unique([platform])
+  @@index([isActive, sortOrder])
+  @@map("social_links")
 }
 
-// About Page Settings (replaces PageContent for 'about')
-model AboutSettings {
-  id              String   @id @default(cuid())
-  // Bio Section
-  bioTitle        String?  @default("Sobre Mí")
-  bioDescription  String?  @db.Text
-  profileImageUrl String?
-  // Skills (stored as array)
-  skills          String[] @default([])
-  // Experience
-  yearsExperience Int?
-  // Status
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+// ============================================
+// CONTENT MODELS
+// ============================================
 
-  @@map("about_settings")
+/// Testimonials (shown on About page)
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  text      String   @db.Text
+  position  String?
+  company   String?
+  avatarUrl String?
+  rating    Int      @default(5)
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
 }
 
-// Contact Settings (normalized from SiteConfig)
-model ContactSettings {
-  id              String   @id @default(cuid())
-  // Contact Info (arrays for multiple)
-  emails          String[] @default([])
-  phones          String[] @default([])
-  // Address
-  addressLine1    String?
-  addressLine2    String?
-  city            String?
-  country         String?
-  // Hours
-  hoursTitle      String?  @default("Horario de Atención")
-  hoursWeekdays   String?
-  hoursSaturday   String?
-  hoursSunday     String?
-  // Form Labels
-  formTitle       String?  @default("Envíame un mensaje")
-  formSuccessMessage String? @default("¡Gracias! Tu mensaje ha sido enviado.")
-  // Status
-  isActive        Boolean  @default(true)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+/// Contact Form Submissions
+model Contact {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String
+  phone              String?
+  message            String   @db.Text
+  responsePreference String   @default("EMAIL") // EMAIL, PHONE, WHATSAPP
+  // Admin fields
+  ipAddress          String?
+  userAgent          String?
+  isRead             Boolean  @default(false)
+  isReplied          Boolean  @default(false)
+  adminNote          String?  @db.Text
+  // Timestamps
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 
-  @@map("contact_settings")
+  @@index([ipAddress, createdAt])
+  @@index([isRead, createdAt])
+  @@map("contacts")
 }
+
+// ============================================
+// ANALYTICS & SECURITY
+// ============================================
 
 model AnalyticLog {
   id         String   @id @default(uuid())
@@ -191,34 +269,10 @@ model AnalyticLog {
   timestamp  DateTime @default(now())
   ipAddress  String?
   userAgent  String?
-}
+  metadata   String?  @db.Text
 
-model Testimonial {
-  id        String   @id @default(cuid())
-  name      String
-  text      String   @db.Text
-  position  String?
-  avatarUrl String?
-  rating    Int      @default(5)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Contact {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  message   String   @db.Text
-  ipAddress String?  // Para rate limiting anti-spam
-  isRead    Boolean  @default(false)
-  isReplied Boolean  @default(false)
-  adminNote String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([ipAddress, createdAt])
-  @@map("contacts")
+  @@index([eventType, timestamp])
+  @@index([entityType, entityId])
 }
 
 model PasswordResetToken {
@@ -226,6 +280,8 @@ model PasswordResetToken {
   email     String
   token     String   @unique
   expiresAt DateTime
+  createdAt DateTime @default(now())
 
+  @@index([email])
   @@map("password_reset_tokens")
 }

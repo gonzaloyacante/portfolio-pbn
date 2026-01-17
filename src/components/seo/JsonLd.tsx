@@ -1,9 +1,13 @@
+
 interface JsonLdProps {
-  type: 'Person' | 'ProfessionalService' | 'LocalBusiness'
+  type: 'Person' | 'ProfessionalService' | 'LocalBusiness' | 'CollectionPage' | 'CreativeWork'
   data?: {
     name?: string
     url?: string
     image?: string
+    description?: string
+    datePublished?: string
+    author?: string
     sameAs?: string[]
     jobTitle?: string
     address?: {
@@ -16,26 +20,27 @@ interface JsonLdProps {
     priceRange?: string
     telephone?: string
     email?: string
+    mainEntity?: {
+      name: string
+      url: string
+      image: string
+    }[]
   }
 }
 
 export default function JsonLd({ type, data }: JsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://portfolio-pbn.vercel.app'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
 
   const defaultData = {
     name: 'Paola Bolívar Nievas',
     url: baseUrl,
     image: `${baseUrl}/og-image.jpg`,
     jobTitle: 'Professional Makeup Artist',
-    sameAs: [
-      // Agregar redes sociales reales cuando estén disponibles
-      // 'https://instagram.com/paolamakeup',
-      // 'https://facebook.com/paolamakeup',
-    ],
+    sameAs: [],
     address: {
-      addressLocality: 'Ciudad Autónoma de Buenos Aires',
-      addressRegion: 'Buenos Aires',
-      addressCountry: 'AR',
+      addressLocality: 'Málaga',
+      addressRegion: 'Málaga',
+      addressCountry: 'ES',
     },
     priceRange: '$$',
   }
@@ -75,7 +80,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           email: mergedData.email,
           areaServed: {
             '@type': 'City',
-            name: 'Ciudad Autónoma de Buenos Aires',
+            name: 'Málaga',
           },
           serviceType: [
             'Maquillaje de novias',
@@ -107,14 +112,42 @@ export default function JsonLd({ type, data }: JsonLdProps) {
               opens: '09:00',
               closes: '18:00',
             },
-            {
-              '@type': 'OpeningHoursSpecification',
-              dayOfWeek: 'Saturday',
-              opens: '10:00',
-              closes: '14:00',
-            },
           ],
           sameAs: mergedData.sameAs,
+        }
+
+      case 'CollectionPage':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: mergedData.name,
+          description: mergedData.description,
+          url: mergedData.url,
+          mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: mergedData.mainEntity?.map((item, index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: item.url,
+              name: item.name,
+              image: item.image,
+            })),
+          },
+        }
+
+      case 'CreativeWork':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'CreativeWork',
+          name: mergedData.name,
+          description: mergedData.description,
+          image: mergedData.image,
+          url: mergedData.url,
+          datePublished: mergedData.datePublished,
+          author: {
+            '@type': 'Person',
+            name: mergedData.author || 'Paola Bolívar Nievas',
+          },
         }
 
       default:

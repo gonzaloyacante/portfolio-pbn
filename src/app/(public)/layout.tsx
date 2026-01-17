@@ -1,11 +1,13 @@
 import Navbar from '@/components/layout/Navbar'
-
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransition from '@/components/layout/PageTransition'
-import { getSiteConfig } from '@/actions/settings.actions'
+import { getThemeSettings, getContactSettings } from '@/actions/theme.actions'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const config = await getSiteConfig()
+  const [themeSettings, contactSettings] = await Promise.all([
+    getThemeSettings(),
+    getContactSettings(),
+  ])
 
   return (
     <>
@@ -13,21 +15,22 @@ export default async function PublicLayout({ children }: { children: React.React
       <JsonLd
         type="ProfessionalService"
         data={{
-          name: config?.ownerName || 'Paola Bolívar Nievas',
-          email: config?.contactEmail || 'contacto@paolamakeup.com',
+          name: contactSettings?.ownerName || 'Paola Bolívar Nievas',
+          email: contactSettings?.email || 'contacto@paolamakeup.com',
+          telephone: contactSettings?.phone || undefined,
+          address: contactSettings?.location
+            ? { addressLocality: contactSettings.location }
+            : undefined,
         }}
       />
 
       <div
-        className="flex min-h-screen flex-col transition-colors duration-300"
-        style={{ backgroundColor: 'var(--color-background)' }}
+        className="flex min-h-screen flex-col bg-background transition-colors duration-300"
       >
-        <Navbar brandName={config?.brandName} />
+        <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} />
         <main className="flex-1">
           <PageTransition>{children}</PageTransition>
         </main>
-        {/* Footer removed explicitly as per user request */}
-        {/* <Footer ownerName={config?.ownerName} copyrightText={config?.copyrightText} /> */}
       </div>
     </>
   )

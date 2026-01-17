@@ -8,48 +8,24 @@ interface CategoryCardProps {
   count?: number
 }
 
+/**
+ * CategoryCard - Canva Spec
+ * - Fondo: var(--card-bg) (#ffaadd)
+ * - Bordes: rounded-[2.5rem]
+ * - Hover: Scale suave
+ */
 export default function CategoryCard({ name, slug, count = 0 }: CategoryCardProps) {
   return (
     <Link
       href={`/proyectos/${slug}`}
-      className="group relative flex aspect-square flex-col items-center justify-center p-8 text-center transition-all"
-      style={{
-        borderRadius: 'var(--layout-border-radius, 42px)',
-        backgroundColor: 'var(--color-primary, #ffaadd)',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        transitionDuration: 'var(--effect-transition-duration, 300ms)',
-      }}
-      onMouseEnter={(e) => {
-        const scale = parseFloat(
-          getComputedStyle(document.documentElement).getPropertyValue('--effect-hover-scale') ||
-            '1.05'
-        )
-        e.currentTarget.style.transform = `scale(${scale})`
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'scale(1)'
-      }}
+      className="group relative flex aspect-square flex-col items-center justify-center rounded-[2.5rem] bg-[var(--card-bg)] p-8 text-center shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
     >
-      <h3
-        className="font-heading font-bold"
-        style={{
-          fontSize: 'clamp(20px, 3vw, var(--font-size-nav, 24px))',
-          color: 'var(--color-text-primary, #6c0a0a)',
-          fontWeight: 'var(--font-heading-weight, 700)',
-        }}
-      >
+      <h3 className="font-[family-name:var(--font-heading)] text-lg font-bold text-[var(--foreground)] sm:text-xl md:text-2xl">
         {name}
       </h3>
 
       {count > 0 && (
-        <p
-          className="font-body mt-2"
-          style={{
-            fontSize: '14px',
-            color: 'var(--color-text-primary, #6c0a0a)',
-            opacity: 0.7,
-          }}
-        >
+        <p className="mt-2 font-[family-name:var(--font-body)] text-sm text-[var(--foreground)]/70">
           {count} {count === 1 ? 'proyecto' : 'proyectos'}
         </p>
       )}

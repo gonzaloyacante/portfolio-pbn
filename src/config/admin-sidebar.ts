@@ -5,42 +5,48 @@ export const menuItems = [
     icon: '📊',
   },
   {
-    href: '/admin/proyectos',
+    href: '/admin/home',
+    label: 'Inicio',
+    icon: '🏠',
+  },
+  {
+    href: '/admin/projects',
     label: 'Proyectos',
     icon: '🎨',
   },
   {
-    href: '/admin/testimonios',
+    href: '/admin/testimonials',
     label: 'Testimonios',
     icon: '💬',
   },
   {
-    href: '/admin/contactos',
-    label: 'Contactos',
+    href: '/admin/contacts', // View messages
+    label: 'Mensajes',
     icon: '📬',
   },
   {
-    href: '/admin/sobre-mi',
+    href: '/admin/about',
     label: 'Sobre Mí',
     icon: '👤',
   },
   {
-    href: '/admin/configuracion',
-    label: 'Configuración',
+    href: '/admin/settings', // Contact & General Config
+    label: 'Contacto y Redes',
     icon: '⚙️',
   },
   {
-    href: '/admin/tema',
+    href: '/admin/theme',
     label: 'Tema',
-    icon: '🎨',
+    icon: '🖌️',
   },
   {
-    href: '/admin/analitica',
+    href: '/admin/analytics',
     label: 'Analítica',
     icon: '📈',
   },
+  // Trash can be useful
   {
-    href: '/admin/papelera',
+    href: '/admin/trash',
     label: 'Papelera',
     icon: '🗑️',
   },
