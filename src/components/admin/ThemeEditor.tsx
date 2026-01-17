@@ -11,8 +11,8 @@ import { Button, Input } from '@/components/ui'
 import { useForm, UseFormRegister, FieldError } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
-import { useToast } from '@/components/ui/Toast'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { useToast } from '@/components/ui'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 
 interface ThemeEditorProps {
   initialSettings: ThemeSettingsData | null

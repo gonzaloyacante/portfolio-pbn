@@ -1,21 +1,29 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { ReactNode } from 'react'
 
-interface FadeInProps {
+/**
+ * FadeIn Component
+ * Simple fade-in animation for elements when they enter the viewport
+ */
+export function FadeIn({
+  children,
+  className,
+  delay = 0,
+  duration = 0.5,
+}: {
   children: ReactNode
+  className?: string
   delay?: number
   duration?: number
-  className?: string
-}
-
-export function FadeIn({ children, delay = 0, duration = 0.5, className }: FadeInProps) {
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration, delay }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration, delay, ease: 'easeOut' }}
       className={className}
     >
       {children}
@@ -23,33 +31,36 @@ export function FadeIn({ children, delay = 0, duration = 0.5, className }: FadeI
   )
 }
 
-interface SlideInProps {
+/**
+ * SlideIn Component
+ * Slide from side when entering viewport
+ */
+export function SlideIn({
+  children,
+  className,
+  direction = 'left',
+  delay = 0,
+  duration = 0.5,
+}: {
   children: ReactNode
+  className?: string
   direction?: 'left' | 'right' | 'up' | 'down'
   delay?: number
   duration?: number
-  className?: string
-}
-
-export function SlideIn({
-  children,
-  direction = 'up',
-  delay = 0,
-  duration = 0.5,
-  className,
-}: SlideInProps) {
-  const directionMap = {
+}) {
+  const directions = {
     left: { x: -50, y: 0 },
     right: { x: 50, y: 0 },
-    up: { x: 0, y: 20 },
-    down: { x: 0, y: -20 },
+    up: { x: 0, y: 50 },
+    down: { x: 0, y: -50 },
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0, ...directionMap[direction] }}
-      animate={{ opacity: 1, x: 0, y: 0 }}
-      transition={{ duration, delay }}
+      initial={{ opacity: 0, ...directions[direction] }}
+      whileInView={{ opacity: 1, x: 0, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration, delay, ease: 'easeOut' }}
       className={className}
     >
       {children}
@@ -57,18 +68,26 @@ export function SlideIn({
   )
 }
 
-interface ScaleInProps {
+/**
+ * ScaleIn Component
+ * Scale up animation
+ */
+export function ScaleIn({
+  children,
+  delay = 0,
+  duration = 0.3,
+  className,
+}: {
   children: ReactNode
   delay?: number
   duration?: number
   className?: string
-}
-
-export function ScaleIn({ children, delay = 0, duration = 0.3, className }: ScaleInProps) {
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
       transition={{ duration, delay }}
       className={className}
     >
@@ -77,21 +96,24 @@ export function ScaleIn({ children, delay = 0, duration = 0.3, className }: Scal
   )
 }
 
-interface StaggerContainerProps {
-  children: ReactNode
-  staggerDelay?: number
-  className?: string
-}
-
-export function StaggerContainer({
+/**
+ * StaggerChildren Component
+ * Container that staggers the appearance of its children
+ */
+export function StaggerChildren({
   children,
-  staggerDelay = 0.1,
   className,
-}: StaggerContainerProps) {
+  staggerDelay = 0.1,
+}: {
+  children: ReactNode
+  className?: string
+  staggerDelay?: number
+}) {
   return (
     <motion.div
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-50px' }}
       variants={{
         visible: {
           transition: {
@@ -106,7 +128,15 @@ export function StaggerContainer({
   )
 }
 
-export const staggerItem = {
+/**
+ * StaggerContainer alias for compatibility if needed, or simply prefer StaggerChildren
+ */
+export const StaggerContainer = StaggerChildren
+
+/**
+ * Reusable variants for staggering items manually
+ */
+export const staggerItem: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
@@ -116,3 +146,5 @@ export const staggerItem = {
     },
   },
 }
+
+export { AnimatePresence }

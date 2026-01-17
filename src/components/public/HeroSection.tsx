@@ -3,7 +3,7 @@
 import { HomeSettingsData } from '@/actions/theme.actions'
 import Image from 'next/image'
 import Link from 'next/link'
-import { FadeIn, SlideIn } from '@/components/ui/Animations'
+import { FadeIn, SlideIn } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 
 interface HeroSectionProps {

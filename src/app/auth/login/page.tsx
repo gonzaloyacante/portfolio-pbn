@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/lib/validations'
 import { z } from 'zod'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@/components/ui'
 
 type LoginFormData = z.infer<typeof loginSchema>
 

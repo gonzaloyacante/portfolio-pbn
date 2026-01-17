@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import Image from 'next/image'
-import { FadeIn, StaggerChildren } from '@/components/ui/Animations'
+import { FadeIn, StaggerChildren } from '@/components/ui'
 
 export const metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',

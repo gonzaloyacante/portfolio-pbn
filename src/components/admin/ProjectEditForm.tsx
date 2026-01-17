@@ -25,7 +25,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { projectFormSchema, type ProjectFormData } from '@/lib/validations'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@/components/ui'
 
 type ProjectWithImages = Project & { images: ProjectImage[] }
 

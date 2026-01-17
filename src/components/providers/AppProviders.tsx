@@ -1,7 +1,7 @@
 'use client'
 
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
-import { ToastProvider } from '@/components/ui/Toast'
+import { ToastProvider } from '@/components/ui'
 import { SessionProvider } from 'next-auth/react'
 import { SWRConfig } from 'swr'
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider'

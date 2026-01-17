@@ -25,29 +25,61 @@
 
 ```
 src/
-├── actions/        # Server Actions (mutations)
+├── actions/        # Server Actions (mutations). 100% Inglés.
 ├── app/
-│   ├── (admin)/    # Rutas protegidas CMS
-│   ├── (public)/   # Rutas públicas SEO-friendly
-│   └── api/        # Solo webhooks/endpoints externos
+│   ├── (admin)/    # Rutas protegidas CMS. Carpetas en Inglés.
+│   ├── (public)/   # Rutas SEO-friendly. Carpetas en Inglés.
+│   └── api/        # Solo webhooks/endpoints externos.
+├── config/
+│   └── routes.ts   # Única fuente de verdad para URLs en Español (centralizado).
 ├── components/
-│   ├── admin/      # Forms de edición, tablas
-│   ├── layout/     # Navbar, Footer, ThemeProvider
-│   ├── providers/  # AppProviders.tsx (ÚNICO lugar para Contexts)
-│   ├── public/     # Hero, Gallery, ContactForm
-│   └── ui/         # Átomos de diseño (Button, Card, Input)
-├── lib/
-│   ├── db.ts       # Singleton Prisma
-│   ├── seo.ts      # Helpers metadata
-│   ├── utils.ts    # cn() y formateadores
-│   └── validations.ts  # Schemas Zod compartidos
-└── styles/
-    └── globals.css # Tokens CSS + Tailwind
+│   ├── admin/      # Forms de edición, tablas del CMS.
+│   ├── layout/     # Navbar, Footer, ThemeProvider.
+│   ├── providers/  # AppProviders.tsx (Contexts).
+│   ├── public/     # Hero, Gallery, ContactForm (Landing).
+│   └── ui/         # Átomos de diseño (Atomizados y Centralizados).
+├── lib/            # Singletons, Helpers, Validaciones.
+└── styles/         # Tokens CSS + Tailwind.
 ```
 
 ---
 
-## 3. 🎨 Sistema de Diseño (Canva Spec)
+## 3. 🧩 Estándar de Componentes UI (`src/components/ui`)
+
+Para evitar duplicidad y mantener consistencia, los componentes atómicos deben seguir esta estructura estrictamente:
+
+### Organización de Carpetas
+
+- **`forms/`**: Inputs, Buttons, Selects, Switches, DatePickers (Todo lo que sea entrada de datos).
+- **`layout/`**: Card, Badge, Modal, Tabs, PageHeader.
+- **`feedback/`**: Toast, EmptyState, ErrorState, LoadingState, Skeleton.
+- **`animations/`**: FadeIn, SlideIn, StaggerChildren (Framer Motion wrappers).
+- **`media/`**: OptimizedImage, VideoPlayer.
+
+### Reglas de Oro para Componentes
+
+1. **Un Solo Archivo por Componente**: Se prefieren archivos planos (`Button.tsx`) en lugar de carpetas con `index.tsx` a menos que sea un componente extremadamente complejo.
+2. **Barrel File**: **TODO** componente en `ui/` debe exportarse desde `src/components/ui/index.ts`.
+3. **Importación Centralizada**: Los archivos externos **SIEMPRE** deben importar desde `@/components/ui`.
+   - ✅ `import { Button, Input } from '@/components/ui'`
+   - ❌ `import Button from '@/components/ui/forms/Button'` (PROHIBIDO)
+4. **Variantes**: Usar el patrón de objetos de clases (`const variants = { ... }`) y `cn()` para combinar estilos dinámicos.
+5. **Polimorfismo**: Los componentes clave (Button, Input) deben soportar `forwardRef` y opcionalmente `asChild`.
+
+---
+
+## 4. 🔗 Manejo de Rutas
+
+- **Código e Internals**: 100% Inglés (`/projects`, `/contact`).
+- **URLs Públicas**: 100% Español (`/proyectos`, `/contacto`).
+- **Implementación**:
+  1. Definir el mapeo en `next.config.ts` (Rewrites).
+  2. Definir la constante en `src/config/routes.ts`.
+  3. **REGLA**: Nunca usar strings hardcodeados para rutas en componentes o actions. Usar siempre el objeto `ROUTES`.
+
+---
+
+## 5. 🎨 Sistema de Diseño (Canva Spec)
 
 ### Tokens CSS (`globals.css`)
 
