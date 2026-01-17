@@ -16,8 +16,8 @@ export default async function ProjectsPage() {
   const categories = await prisma.category.findMany({
     where: {
       projects: {
-        some: { isActive: true, isDeleted: false }
-      }
+        some: { isActive: true, isDeleted: false },
+      },
     },
     include: {
       projects: {
@@ -38,10 +38,9 @@ export default async function ProjectsPage() {
   return (
     <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-12 lg:px-16 lg:py-20">
-
         {/* Header */}
         <div className="mb-12 text-center lg:text-left">
-          <h1 className="mb-4 font-[family-name:var(--font-heading)] text-4xl font-bold uppercase tracking-tight text-[var(--foreground)] sm:text-5xl lg:text-6xl">
+          <h1 className="mb-4 font-[family-name:var(--font-heading)] text-4xl font-bold tracking-tight text-[var(--foreground)] uppercase sm:text-5xl lg:text-6xl">
             Portfolio
           </h1>
           <p className="max-w-xl font-[family-name:var(--font-body)] text-lg text-[var(--text-body)] lg:mx-0">

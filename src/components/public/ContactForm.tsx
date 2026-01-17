@@ -9,6 +9,8 @@ import { useToast } from '@/components/ui/Toast'
 import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2 } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ROUTES } from '@/config/routes'
+import Link from 'next/link'
 
 // Response preference type
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP'
@@ -80,7 +82,10 @@ export default function ContactForm({
   const onSubmit = async (data: ContactFormData) => {
     try {
       // Validate phone if preference requires it
-      if ((data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') && !data.phone?.trim()) {
+      if (
+        (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
+        !data.phone?.trim()
+      ) {
         show({ type: 'error', message: 'Por favor, ingresa tu teléfono para poder contactarte' })
         return
       }
@@ -159,13 +164,16 @@ export default function ContactForm({
         {/* Name & Email Row */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-semibold text-[var(--foreground)]">
+            <label
+              htmlFor="name"
+              className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
+            >
               {nameLabel || 'Tu nombre'} *
             </label>
             <input
               {...register('name')}
               id="name"
-              className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] placeholder:text-[var(--text-body)]/50 transition-all focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+              className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
               placeholder="Tu nombre completo"
               autoComplete="name"
             />
@@ -173,14 +181,17 @@ export default function ContactForm({
           </div>
 
           <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-[var(--foreground)]">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
+            >
               {emailLabel || 'Tu email'} *
             </label>
             <input
               {...register('email')}
               type="email"
               id="email"
-              className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] placeholder:text-[var(--text-body)]/50 transition-all focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+              className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
               placeholder="tu@email.com"
               autoComplete="email"
             />
@@ -190,7 +201,10 @@ export default function ContactForm({
 
         {/* Phone */}
         <div>
-          <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-[var(--foreground)]">
+          <label
+            htmlFor="phone"
+            className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
+          >
             {phoneLabel || 'Tu teléfono'}
             {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') && ' *'}
           </label>
@@ -198,7 +212,7 @@ export default function ContactForm({
             {...register('phone')}
             type="tel"
             id="phone"
-            className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] placeholder:text-[var(--text-body)]/50 transition-all focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+            className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
             placeholder="+34 600 000 000"
             autoComplete="tel"
           />
@@ -230,29 +244,34 @@ export default function ContactForm({
             />
           </div>
           <AnimatePresence>
-            {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') && !watch('phone') && (
-              <motion.p
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="mt-2 text-xs text-amber-600"
-              >
-                * Para contactarte por {responsePreference === 'PHONE' ? 'teléfono' : 'WhatsApp'}, necesitamos tu número
-              </motion.p>
-            )}
+            {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') &&
+              !watch('phone') && (
+                <motion.p
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  className="mt-2 text-xs text-amber-600"
+                >
+                  * Para contactarte por {responsePreference === 'PHONE' ? 'teléfono' : 'WhatsApp'},
+                  necesitamos tu número
+                </motion.p>
+              )}
           </AnimatePresence>
         </div>
 
         {/* Message */}
         <div>
-          <label htmlFor="message" className="mb-2 block text-sm font-semibold text-[var(--foreground)]">
+          <label
+            htmlFor="message"
+            className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
+          >
             {messageLabel || 'Mensaje'} *
           </label>
           <textarea
             {...register('message')}
             id="message"
             rows={5}
-            className="w-full resize-none rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] placeholder:text-[var(--text-body)]/50 transition-all focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/20"
+            className="w-full resize-none rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
           />
@@ -269,14 +288,14 @@ export default function ContactForm({
           />
           <label htmlFor="privacy" className="text-sm text-[var(--text-body)]/80">
             He leído y acepto la{' '}
-            <a
-              href="/privacidad"
+            <Link
+              href={ROUTES.public.privacy}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[var(--primary)] underline hover:no-underline"
             >
               Política de Privacidad
-            </a>
+            </Link>
             . <span className="text-red-500">*</span>
           </label>
         </div>
@@ -324,10 +343,11 @@ function PreferenceButton({
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${active
-        ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
-        : 'border-[var(--primary)]/20 bg-[var(--background)] text-[var(--text-body)] hover:border-[var(--primary)]/50'
-        }`}
+      className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${
+        active
+          ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
+          : 'border-[var(--primary)]/20 bg-[var(--background)] text-[var(--text-body)] hover:border-[var(--primary)]/50'
+      }`}
     >
       {icon}
       <span className="text-sm font-medium">{label}</span>

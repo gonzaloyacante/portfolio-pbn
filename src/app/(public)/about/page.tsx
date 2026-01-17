@@ -47,7 +47,6 @@ export default async function AboutPage() {
       />
       {/* Main Content Grid */}
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-6 py-12 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
-
         {/* ========== LEFT COLUMN: Text Content ========== */}
         <div className="order-2 lg:order-1">
           {/* Signature in script font */}

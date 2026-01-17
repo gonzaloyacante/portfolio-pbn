@@ -5,7 +5,9 @@ import { recordAnalyticEvent } from '@/actions/analytics.actions'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { contactFormSchema } from '@/lib/validations'
+import { emailService } from '@/lib/email-service'
 import { z } from 'zod'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Acciones de contacto con validación robusta y rate limiting
@@ -61,7 +63,10 @@ export async function sendContactEmail(formData: FormData) {
   const rawData = {
     name: formData.get('name') as string,
     email: formData.get('email') as string,
+    phone: formData.get('phone') as string,
     message: formData.get('message') as string,
+    responsePreference: formData.get('responsePreference') as 'EMAIL' | 'PHONE' | 'WHATSAPP',
+    privacy: formData.get('privacy') === 'on', // Checkbox sends 'on'
   }
 
   try {
@@ -72,7 +77,9 @@ export async function sendContactEmail(formData: FormData) {
     const sanitizedData = {
       name: sanitizeText(validatedData.name),
       email: validatedData.email.toLowerCase().trim(),
+      phone: validatedData.phone ? sanitizeText(validatedData.phone) : undefined,
       message: sanitizeText(validatedData.message),
+      responsePreference: validatedData.responsePreference,
     }
 
     // 🔐 OBTENER IP
@@ -98,6 +105,20 @@ export async function sendContactEmail(formData: FormData) {
 
     // 📊 ANALÍTICA
     await recordAnalyticEvent('CONTACT_SUBMIT')
+
+    // 📧 ENVIAR NOTIFICACIÓN AL ADMIN
+    try {
+      await emailService.notifyNewContact({
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone,
+        message: sanitizedData.message,
+        preference: sanitizedData.responsePreference,
+      })
+    } catch (emailError) {
+      console.error('Error enviando notificación de email:', emailError)
+      // No fallamos la request si el email falla, pero lo logueamos
+    }
 
     return { success: true, message: '¡Mensaje enviado! Te responderemos pronto.' }
   } catch (error) {
@@ -129,7 +150,7 @@ export async function markContactAsRead(id: string) {
     where: { id },
     data: { isRead: true },
   })
-  revalidatePath('/admin/contactos')
+  revalidatePath(ROUTES.admin.contacts)
 }
 
 export async function markContactAsReplied(id: string, adminNote?: string) {
@@ -141,12 +162,12 @@ export async function markContactAsReplied(id: string, adminNote?: string) {
       adminNote,
     },
   })
-  revalidatePath('/admin/contactos')
+  revalidatePath(ROUTES.admin.contacts)
 }
 
 export async function deleteContact(id: string) {
   await prisma.contact.delete({
     where: { id },
   })
-  revalidatePath('/admin/contactos')
+  revalidatePath(ROUTES.admin.contacts)
 }

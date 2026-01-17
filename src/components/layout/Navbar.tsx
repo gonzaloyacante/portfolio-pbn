@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ThemeToggle } from '@/components/ui'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Navbar - Block-Active Design (Canva Spec)
@@ -13,10 +14,10 @@ import { ThemeToggle } from '@/components/ui'
  */
 
 const navItems = [
-  { href: '/', label: 'Inicio' },
-  { href: '/sobre-mi', label: 'Sobre mi' },
-  { href: '/proyectos', label: 'Proyectos' },
-  { href: '/contacto', label: 'Contacto' },
+  { href: ROUTES.home, label: 'Inicio' },
+  { href: ROUTES.public.about, label: 'Sobre mi' },
+  { href: ROUTES.public.projects, label: 'Proyectos' },
+  { href: ROUTES.public.contact, label: 'Contacto' },
 ]
 
 interface NavbarProps {
@@ -28,17 +29,17 @@ export default function Navbar({ brandName }: NavbarProps) {
   const displayBrand = brandName || 'PBN'
 
   const isActive = (href: string) => {
-    if (href === '/') return pathname === '/'
+    if (href === ROUTES.home) return pathname === ROUTES.home
     return pathname?.startsWith(href) ?? false
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-foreground/10 bg-background/95 backdrop-blur-md transition-all duration-500">
+    <nav className="border-foreground/10 bg-background/95 sticky top-0 z-50 w-full border-b backdrop-blur-md transition-all duration-500">
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
         {/* Logo - visible en pantallas grandes */}
         <Link
-          href="/"
-          className="mb-4 hidden font-script text-3xl text-foreground transition-transform duration-200 hover:scale-105 md:mb-0 md:block"
+          href={ROUTES.home}
+          className="font-script text-foreground mb-4 hidden text-3xl transition-transform duration-200 hover:scale-105 md:mb-0 md:block"
         >
           {displayBrand}
         </Link>
@@ -51,22 +52,21 @@ export default function Navbar({ brandName }: NavbarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative px-6 py-3 font-heading text-sm font-semibold uppercase tracking-wide transition-colors duration-300 md:px-8 md:text-base"
+                className="font-heading relative px-6 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 md:px-8 md:text-base"
               >
                 {/* Fondo animado para el estado activo */}
                 {active && (
                   <motion.span
                     layoutId="navbar-active-bg"
-                    className="absolute inset-0 bg-primary rounded-none"
+                    className="bg-primary absolute inset-0 rounded-none"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
                 {/* Texto */}
                 <span
-                  className={`relative z-10 ${active
-                    ? 'text-background'
-                    : 'text-foreground hover:text-accent'
-                    }`}
+                  className={`relative z-10 ${
+                    active ? 'text-background' : 'text-foreground hover:text-accent'
+                  }`}
                 >
                   {item.label}
                 </span>

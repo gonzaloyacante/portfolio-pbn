@@ -34,12 +34,12 @@ const AVAILABLE_FONTS = [
   { name: 'Libre Baskerville', category: 'Serif' },
 ]
 
-const CATEGORIES = ['Todas', 'Script', 'Sans Serif', 'Serif']
+const CATEGORIES = ['All', 'Script', 'Sans Serif', 'Serif']
 
 export default function FontPicker({ value, onChange, label, description }: FontPickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('Todas')
+  const [category, setCategory] = useState('All')
   const pickerRef = useRef<HTMLDivElement>(null)
 
   // Cerrar picker al hacer click fuera
@@ -55,7 +55,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
 
   const filteredFonts = AVAILABLE_FONTS.filter((font) => {
     const matchesSearch = font.name.toLowerCase().includes(search.toLowerCase())
-    const matchesCategory = category === 'Todas' || font.category === category
+    const matchesCategory = category === 'All' || font.category === category
     return matchesSearch && matchesCategory
   })
 
@@ -113,7 +113,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300'
                   }`}
                 >
-                  {cat}
+                  {cat === 'All' ? 'Todas' : cat}
                 </button>
               ))}
             </div>

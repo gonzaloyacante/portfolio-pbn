@@ -7,6 +7,7 @@
 
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Obtener proyectos con paginación
@@ -228,8 +229,8 @@ export async function getRelatedProjects(projectId: string, categoryId: string, 
  * Revalidar paths de proyectos
  */
 export async function revalidateProjects() {
-  revalidatePath('/proyectos')
-  revalidatePath('/', 'layout')
+  revalidatePath(ROUTES.public.projects)
+  revalidatePath(ROUTES.home, 'layout')
 }
 
 /**
@@ -241,8 +242,8 @@ export async function restoreProject(id: string) {
       where: { id },
       data: { isDeleted: false, deletedAt: null },
     })
-    revalidatePath('/admin/papelera')
-    revalidatePath('/admin/proyectos')
+    revalidatePath(ROUTES.admin.trash)
+    revalidatePath(ROUTES.admin.projects)
     return { success: true }
   } catch (error) {
     console.error('Error restaurando proyecto:', error)
@@ -257,7 +258,7 @@ export async function permanentlyDeleteProject(id: string) {
   try {
     // Las imágenes se eliminan automáticamente con onDelete: Cascade
     await prisma.project.delete({ where: { id } })
-    revalidatePath('/admin/papelera')
+    revalidatePath(ROUTES.admin.trash)
     return { success: true }
   } catch (error) {
     console.error('Error eliminando proyecto permanentemente:', error)

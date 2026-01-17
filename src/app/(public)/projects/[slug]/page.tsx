@@ -130,7 +130,7 @@ export default async function CategoryProjectsPage({
 
                   {/* Hover Content */}
                   <div className="absolute inset-x-0 bottom-0 translate-y-4 p-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                    <h3 className="line-clamp-2 font-[family-name:var(--font-heading)] text-lg font-bold leading-tight text-white">
+                    <h3 className="line-clamp-2 font-[family-name:var(--font-heading)] text-lg leading-tight font-bold text-white">
                       {project.title}
                     </h3>
                     <p className="mt-1 text-xs text-white/80">Ver proyecto &rarr;</p>
@@ -142,7 +142,9 @@ export default async function CategoryProjectsPage({
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
             <span className="mb-4 text-4xl">📁</span>
-            <p className="text-lg text-[var(--text-body)]">No hay proyectos disponibles en esta categoría.</p>
+            <p className="text-lg text-[var(--text-body)]">
+              No hay proyectos disponibles en esta categoría.
+            </p>
           </div>
         )}
       </div>

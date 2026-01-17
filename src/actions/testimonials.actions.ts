@@ -3,7 +3,10 @@
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
+
 import { logger } from '@/lib/logger'
+import { emailService } from '@/lib/email-service'
+import { ROUTES } from '@/config/routes'
 
 // Rate limiting cache (simple in-memory, for production use Redis)
 const recentSubmissions = new Map<string, number>()
@@ -42,8 +45,8 @@ export async function createTestimonial(formData: FormData) {
       data: { name, text, position, rating, isActive: true },
     })
 
-    revalidatePath('/')
-    revalidatePath('/sobre-mi')
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
     logger.info(`Testimonial created: ${name}`)
     return { success: true }
   } catch (error) {
@@ -104,7 +107,19 @@ export async function submitPublicTestimonial(formData: FormData) {
     recentSubmissions.set(ip, now)
     cleanOldRateLimitEntries(now)
 
-    revalidatePath('/admin/testimonios')
+    // 📧 NOTIFICAR AL ADMIN
+    try {
+      await emailService.notifyNewTestimonial({
+        name,
+        rating,
+        text,
+        email: email ? (email as string) : undefined,
+      })
+    } catch (emailError) {
+      logger.error('Error sending testimonial email:', { error: emailError })
+    }
+
+    revalidatePath(ROUTES.admin.testimonials)
     logger.info(`Public testimonial submitted: ${name}`)
     return {
       success: true,
@@ -137,8 +152,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
       data: { name, text, position, rating, isActive },
     })
 
-    revalidatePath('/')
-    revalidatePath('/sobre-mi')
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
     logger.info(`Testimonial updated: ${id}`)
     return { success: true }
   } catch (error) {
@@ -151,8 +166,8 @@ export async function deleteTestimonial(id: string) {
   try {
     await prisma.testimonial.delete({ where: { id } })
 
-    revalidatePath('/')
-    revalidatePath('/sobre-mi')
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
     logger.info(`Testimonial deleted: ${id}`)
     return { success: true }
   } catch (error) {
@@ -173,9 +188,9 @@ export async function toggleTestimonial(id: string) {
       data: { isActive: !testimonial.isActive },
     })
 
-    revalidatePath('/')
-    revalidatePath('/sobre-mi')
-    revalidatePath('/admin/testimonios')
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.admin.testimonials)
     logger.info(`Testimonial toggled: ${id} -> ${!testimonial.isActive}`)
     return { success: true, isActive: !testimonial.isActive }
   } catch (error) {

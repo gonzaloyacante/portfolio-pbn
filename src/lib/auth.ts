@@ -2,6 +2,8 @@ import { NextAuthOptions, getServerSession } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
+import { emailService } from '@/lib/email-service'
+import { headers } from 'next/headers'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -46,6 +48,26 @@ export const authOptions: NextAuthOptions = {
         ;(session.user as unknown as { role: string; id: string }).id = token.id
       }
       return session
+    },
+  },
+  events: {
+    async signIn({ user }) {
+      if (!user.email) return
+
+      try {
+        const headersList = await headers()
+        const ip =
+          headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'Unknown IP'
+        const userAgent = headersList.get('user-agent') || 'Unknown Device'
+
+        await emailService.sendLoginAlert({
+          email: user.email,
+          ipAddress: ip,
+          userAgent: userAgent,
+        })
+      } catch (error) {
+        console.error('Error sending login alert:', error)
+      }
     },
   },
   pages: {

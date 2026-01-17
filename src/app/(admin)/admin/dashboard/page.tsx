@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/ui'
 import { auth } from '@/lib/auth'
 import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 const DAYS_ES = ['D', 'L', 'M', 'X', 'J', 'V', 'S']
 
@@ -31,14 +32,14 @@ export default async function DashboardPage() {
   const userName = session?.user?.name || 'Administrador'
 
   const contentStats = [
-    { label: 'Proyectos', value: projectsCount, icon: '🎨', href: '/admin/proyectos' },
-    { label: 'Categorías', value: categoriesCount, icon: '📁', href: '/admin/proyectos' },
-    { label: 'Testimonios', value: testimonialsCount, icon: '💬', href: '/admin/testimonios' },
+    { label: 'Proyectos', value: projectsCount, icon: '🎨', href: ROUTES.admin.projects },
+    { label: 'Categorías', value: categoriesCount, icon: '📁', href: ROUTES.admin.projects },
+    { label: 'Testimonios', value: testimonialsCount, icon: '💬', href: ROUTES.admin.testimonials },
     {
       label: 'Mensajes',
       value: contactsCount,
       icon: '📬',
-      href: '/admin/contactos',
+      href: ROUTES.admin.contacts,
       highlight: contactsCount > 0,
     },
   ]
@@ -69,7 +70,7 @@ export default async function DashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {contactsCount > 0 && (
               <Link
-                href="/admin/contactos"
+                href={ROUTES.admin.contacts}
                 className="group dark:bg-purple-dark/20 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-yellow-400/50 bg-white/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-yellow-400 hover:shadow-md active:scale-[0.98] dark:border-yellow-400/30"
               >
                 <span className="text-3xl transition-transform group-hover:scale-110">📬</span>
@@ -86,7 +87,7 @@ export default async function DashboardPage() {
             )}
             {pendingTestimonials > 0 && (
               <Link
-                href="/admin/testimonios"
+                href={ROUTES.admin.testimonials}
                 className="group dark:bg-purple-dark/20 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-blue-400/50 bg-white/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-blue-400 hover:shadow-md active:scale-[0.98] dark:border-blue-400/30"
               >
                 <span className="text-3xl transition-transform group-hover:scale-110">⭐</span>
@@ -103,7 +104,7 @@ export default async function DashboardPage() {
             )}
             {deletedCount > 0 && (
               <Link
-                href="/admin/papelera"
+                href={ROUTES.admin.trash}
                 className="group dark:bg-purple-dark/20 flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-red-400/50 bg-white/50 p-4 transition-all duration-200 hover:scale-[1.02] hover:border-red-400 hover:shadow-md active:scale-[0.98] dark:border-red-400/30"
               >
                 <span className="text-3xl transition-transform group-hover:scale-110">🗑️</span>

@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Settings Actions
@@ -113,7 +114,7 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
           // Typescript might complain about missing string fields if they are not optional in schema but optional here.
           // Zod schema enforces requirements.
           ...data,
-        } as any,
+        },
       })
     } else {
       settings = await prisma.themeSettings.update({
@@ -122,7 +123,7 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
       })
     }
 
-    revalidatePath('/', 'layout')
+    revalidatePath(ROUTES.home, 'layout')
 
     return {
       success: true,
@@ -150,10 +151,10 @@ export async function resetThemeToDefaults() {
     await prisma.themeSettings.create({
       data: {
         isActive: true,
-      }
+      },
     })
 
-    revalidatePath('/', 'layout')
+    revalidatePath(ROUTES.home, 'layout')
 
     return { success: true, message: 'Tema reseteado a valores por defecto' }
   } catch (error) {
@@ -221,7 +222,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
           heroMainImageAlt: data.heroMainImageAlt || 'Trabajo destacado',
           heroMainImageCaption: data.heroMainImageCaption,
           ctaText: data.ctaText || 'Ver Portfolio',
-          ctaLink: data.ctaLink || '/proyectos',
+          ctaLink: data.ctaLink || ROUTES.public.projects,
           showFeaturedProjects: data.showFeaturedProjects ?? true,
           featuredTitle: data.featuredTitle,
           featuredCount: data.featuredCount || 6,
@@ -235,7 +236,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
       })
     }
 
-    revalidatePath('/')
+    revalidatePath(ROUTES.home)
 
     return {
       success: true,
@@ -317,7 +318,7 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
       })
     }
 
-    revalidatePath('/sobre-mi')
+    revalidatePath(ROUTES.public.about)
 
     return {
       success: true,
@@ -400,7 +401,8 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
           preferenceLabel: data.preferenceLabel || '¿Cómo preferís que te contacte?',
           submitLabel: data.submitLabel || 'Enviar mensaje',
           successTitle: data.successTitle || '¡Mensaje enviado!',
-          successMessage: data.successMessage || 'Gracias por contactarme. Te responderé lo antes posible.',
+          successMessage:
+            data.successMessage || 'Gracias por contactarme. Te responderé lo antes posible.',
           sendAnotherLabel: data.sendAnotherLabel || 'Enviar otro mensaje',
           showSocialLinks: data.showSocialLinks ?? true,
           isActive: true,
@@ -413,7 +415,7 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
       })
     }
 
-    revalidatePath('/contacto')
+    revalidatePath(ROUTES.public.contact)
 
     return {
       success: true,
@@ -468,7 +470,7 @@ export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?:
       create: data,
     })
 
-    revalidatePath('/', 'layout')
+    revalidatePath(ROUTES.home, 'layout')
 
     return {
       success: true,
@@ -490,7 +492,7 @@ export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?:
 export async function deleteSocialLink(id: string) {
   try {
     await prisma.socialLink.delete({ where: { id } })
-    revalidatePath('/', 'layout')
+    revalidatePath(ROUTES.home, 'layout')
     return { success: true, message: 'Enlace social eliminado' }
   } catch (error) {
     console.error('Error deleting social link:', error)

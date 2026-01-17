@@ -7,17 +7,17 @@
 
 ## 1. 🛠 Stack & Herramientas (Estricto)
 
-| Herramienta | Versión/Detalle | Restricción |
-| :--- | :--- | :--- |
-| **Package Manager** | `pnpm` | **PROHIBIDO** usar `npm` o `yarn`. |
-| **Framework** | Next.js 16 (App Router) | Server Actions y Server Components por defecto. |
-| **Lenguaje** | TypeScript | **Strict Mode**. Prohibido `any`. |
-| **Base de Datos** | PostgreSQL (Neon Tech) | Usar Pooling. Branching: `main` (prod) / `develop` (dev). |
-| **ORM** | Prisma | Schema en `prisma/schema.prisma`. |
-| **Estilos** | Tailwind CSS 4 | Variables CSS en `globals.css`. Prohibido hardcodear HEX. |
-| **Componentes** | Radix/Shadcn modificados | `@/components/ui`. Iconos: `lucide-react`. |
-| **Forms** | React Hook Form + Zod | Schema único en `src/lib/validations.ts`. |
-| **Testing** | Vitest + Playwright | Unitarios + E2E. |
+| Herramienta         | Versión/Detalle          | Restricción                                               |
+| :------------------ | :----------------------- | :-------------------------------------------------------- |
+| **Package Manager** | `pnpm`                   | **PROHIBIDO** usar `npm` o `yarn`.                        |
+| **Framework**       | Next.js 16 (App Router)  | Server Actions y Server Components por defecto.           |
+| **Lenguaje**        | TypeScript               | **Strict Mode**. Prohibido `any`.                         |
+| **Base de Datos**   | PostgreSQL (Neon Tech)   | Usar Pooling. Branching: `main` (prod) / `develop` (dev). |
+| **ORM**             | Prisma                   | Schema en `prisma/schema.prisma`.                         |
+| **Estilos**         | Tailwind CSS 4           | Variables CSS en `globals.css`. Prohibido hardcodear HEX. |
+| **Componentes**     | Radix/Shadcn modificados | `@/components/ui`. Iconos: `lucide-react`.                |
+| **Forms**           | React Hook Form + Zod    | Schema único en `src/lib/validations.ts`.                 |
+| **Testing**         | Vitest + Playwright      | Unitarios + E2E.                                          |
 
 ---
 
@@ -50,22 +50,25 @@ src/
 ## 3. 🎨 Sistema de Diseño (Canva Spec)
 
 ### Tokens CSS (`globals.css`)
-| Token | Light | Dark |
-|-------|-------|------|
+
+| Token          | Light     | Dark      |
+| -------------- | --------- | --------- |
 | `--background` | `#fff1f9` | `#6c0a0a` |
 | `--foreground` | `#6c0a0a` | `#ffaadd` |
-| `--primary` | `#6c0a0a` | `#ffaadd` |
-| `--accent` | `#ffaadd` | `#000000` |
-| `--card-bg` | `#ffaadd` | `#ffaadd` |
+| `--primary`    | `#6c0a0a` | `#ffaadd` |
+| `--accent`     | `#ffaadd` | `#000000` |
+| `--card-bg`    | `#ffaadd` | `#ffaadd` |
 
 ### Tipografía (Google Fonts)
-| Uso | Fuente | Variable |
-|-----|--------|----------|
-| Script (firmas) | Great Vibes | `--font-script` |
-| Headings | Poppins | `--font-heading` |
-| Body | Open Sans | `--font-body` |
+
+| Uso             | Fuente      | Variable         |
+| --------------- | ----------- | ---------------- |
+| Script (firmas) | Great Vibes | `--font-script`  |
+| Headings        | Poppins     | `--font-heading` |
+| Body            | Open Sans   | `--font-body`    |
 
 ### Reglas
+
 - **No hardcodear colores**: Usar `text-[var(--foreground)]`, `bg-[var(--background)]`.
 - **Transiciones**: Usar `duration-500` para cambios de tema.
 - **Rounded extremos**: Cards con `rounded-[2.5rem]`.
@@ -74,12 +77,13 @@ src/
 
 ## 4. 🗄️ Base de Datos (Neon Branching)
 
-| Entorno | Branch Git | Branch Neon | .env File |
-|---------|------------|-------------|-----------|
-| Producción | `main` | `main` | `.env.production` |
-| Desarrollo | `develop` | `preview/develop` | `.env` |
+| Entorno    | Branch Git | Branch Neon       | .env File         |
+| ---------- | ---------- | ----------------- | ----------------- |
+| Producción | `main`     | `main`            | `.env.production` |
+| Desarrollo | `develop`  | `preview/develop` | `.env`            |
 
 ### Scripts de Seeding
+
 ```bash
 pnpm db:seed          # Poblar datos de desarrollo
 pnpm db:seed:admin    # Crear usuario admin (dev)
@@ -118,3 +122,13 @@ pnpm db:seed          # Poblar DB desarrollo
 - ❌ Usar `useEffect` para fetch (usar Server Components).
 - ❌ Dejar `console.log` en producción.
 - ❌ Modificar `node_modules` o migrations manualmente.
+
+---
+
+## 8. ⚠️ Regla de Oro: Verificación de Regresiones
+
+> **JAMÁS** eliminar código, importaciones o variables sin verificar al 100% que no se usan.
+
+1. **Antes de editar**: Leer el archivo completo y entender las dependencias.
+2. **Después de borrar algo**: Correr `npx tsc --noEmit` OBLIGATORIAMENTE para detectar errores de tipos o imports faltantes.
+3. **Refactorización**: Si mueves lógica a un helper (ej. emails), verifica que el archivo original siga teniendo todo lo necesario (Zod, tipos, utils) para funcionar.

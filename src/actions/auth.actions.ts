@@ -4,12 +4,10 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-import { Resend } from 'resend'
+import { emailService } from '@/lib/email-service'
+import { z } from 'zod'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
-import { z } from 'zod'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
 
 // Schemas
 const RequestResetSchema = z.object({
@@ -43,14 +41,12 @@ export async function requestPasswordReset(email: string) {
       data: { email, token, expiresAt },
     })
 
-    const resetLink = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password?token=${token}`
-
-    await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'noreply@portfolio-pbn.com',
-      to: email,
-      subject: 'Recuperación de Contraseña',
-      html: `<p>Haz clic <a href="${resetLink}">aquí</a> para resetear tu contraseña.</p>`,
-    })
+    try {
+      await emailService.sendPasswordReset(email, token)
+    } catch (emailError) {
+      console.error('Error sending reset email:', emailError)
+      // Continue to return success to avoid leaking user existence, but log error
+    }
 
     return {
       success: true,

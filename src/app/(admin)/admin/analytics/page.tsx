@@ -2,6 +2,7 @@ import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
 import { StatCard, Section } from '@/components/admin'
 import { PageHeader, EmptyState } from '@/components/ui'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 export default async function AnalyticsPage() {
   const data = await getAnalyticsDashboardData()
@@ -64,7 +65,7 @@ export default async function AnalyticsPage() {
                 Abrir Google Analytics
               </a>
               <Link
-                href="/admin/configuracion"
+                href={ROUTES.admin.settings}
                 className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 ⚙️ Configurar GA

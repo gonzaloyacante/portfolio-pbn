@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { uploadImage, deleteImage } from '@/lib/cloudinary'
 import { revalidatePath } from 'next/cache'
 import { logger } from '@/lib/logger'
+import { ROUTES } from '@/config/routes'
 
 // --- Projects ---
 
@@ -76,8 +77,8 @@ export async function uploadImageAndCreateProject(formData: FormData) {
       },
     })
 
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/projects')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Project created: ${title}`)
     return { success: true }
   } catch (error) {
@@ -97,9 +98,9 @@ export async function deleteProject(id: string) {
       },
     })
 
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/projects')
-    revalidatePath('/admin/papelera')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.admin.trash)
     logger.info(`Project soft deleted: ${id}`)
     return { success: true, message: 'Proyecto movido a la papelera' }
   } catch (error) {
@@ -118,9 +119,9 @@ export async function restoreProject(id: string) {
       },
     })
 
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/projects')
-    revalidatePath('/admin/papelera')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.admin.trash)
     logger.info(`Project restored: ${id}`)
     return { success: true, message: 'Proyecto restaurado con éxito' }
   } catch (error) {
@@ -144,8 +145,8 @@ export async function permanentDeleteProject(id: string) {
     // Delete from DB
     await prisma.project.delete({ where: { id } })
 
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/projects')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Project permanently deleted: ${id}`)
     return { success: true, message: 'Proyecto eliminado permanentemente' }
   } catch (error) {
@@ -203,9 +204,9 @@ export async function updateProject(id: string, formData: FormData) {
       })
     }
 
-    revalidatePath('/proyectos')
-    revalidatePath(`/admin/gestion/projects/${id}`)
-    revalidatePath('/admin/gestion/projects')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(`${ROUTES.admin.projects}/${id}`)
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Project updated: ${id}`)
     return { success: true }
   } catch (error) {
@@ -228,8 +229,8 @@ export async function reorderProjectImages(
       )
     )
 
-    revalidatePath('/proyectos')
-    revalidatePath(`/admin/gestion/projects/${projectId}`)
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(`${ROUTES.admin.projects}/${projectId}`)
     logger.info(`Images reordered for project: ${projectId}`)
     return { success: true }
   } catch (error) {
@@ -246,7 +247,7 @@ export async function deleteProjectImage(imageId: string) {
     await deleteImage(image.publicId)
     await prisma.projectImage.delete({ where: { id: imageId } })
 
-    revalidatePath('/proyectos')
+    revalidatePath(ROUTES.public.projects)
     logger.info(`Image deleted: ${imageId}`)
     return { success: true }
   } catch (error) {
@@ -274,8 +275,8 @@ export async function createCategory(formData: FormData) {
     await prisma.category.create({
       data: { name, slug, description },
     })
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/categories')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Category created: ${name}`)
     return { success: true }
   } catch (error) {
@@ -302,8 +303,8 @@ export async function updateCategory(id: string, formData: FormData) {
       where: { id },
       data: { name, slug, description },
     })
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/categories')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Category updated: ${id}`)
     return { success: true }
   } catch (error) {
@@ -315,8 +316,8 @@ export async function updateCategory(id: string, formData: FormData) {
 export async function deleteCategory(id: string) {
   try {
     await prisma.category.delete({ where: { id } })
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/gestion/categories')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Category deleted: ${id}`)
     return { success: true }
   } catch (error) {

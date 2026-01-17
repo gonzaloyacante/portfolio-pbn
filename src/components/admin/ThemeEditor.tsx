@@ -8,7 +8,7 @@ import {
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
-import { useForm } from 'react-hook-form'
+import { useForm, UseFormRegister, FieldError } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
 import { useToast } from '@/components/ui/Toast'
@@ -20,7 +20,11 @@ interface ThemeEditorProps {
 
 const lightColorFields = [
   { key: 'primaryColor', label: 'Primario', description: 'Color principal de marca' },
-  { key: 'secondaryColor', label: 'Secundario', description: 'Color de fondo secundario/decorativo' },
+  {
+    key: 'secondaryColor',
+    label: 'Secundario',
+    description: 'Color de fondo secundario/decorativo',
+  },
   { key: 'accentColor', label: 'Acento', description: 'Color para destacar elementos' },
   { key: 'backgroundColor', label: 'Fondo', description: 'Fondo principal del sitio' },
   { key: 'textColor', label: 'Texto', description: 'Color del texto principal' },
@@ -28,8 +32,16 @@ const lightColorFields = [
 ] as const
 
 const darkColorFields = [
-  { key: 'darkPrimaryColor', label: 'Primario (Dark)', description: 'Color principal en modo oscuro' },
-  { key: 'darkSecondaryColor', label: 'Secundario (Dark)', description: 'Secundario en modo oscuro' },
+  {
+    key: 'darkPrimaryColor',
+    label: 'Primario (Dark)',
+    description: 'Color principal en modo oscuro',
+  },
+  {
+    key: 'darkSecondaryColor',
+    label: 'Secundario (Dark)',
+    description: 'Secundario en modo oscuro',
+  },
   { key: 'darkAccentColor', label: 'Acento (Dark)', description: 'Acento en modo oscuro' },
   { key: 'darkBackgroundColor', label: 'Fondo (Dark)', description: 'Fondo principal oscuro' },
   { key: 'darkTextColor', label: 'Texto (Dark)', description: 'Texto claro sobre fondo oscuro' },
@@ -50,7 +62,6 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<ThemeEditorData>({
@@ -200,10 +211,7 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
             {/* Border Radius */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Radio de Borde (px)</label>
-              <Input
-                type="number"
-                {...register('borderRadius', { valueAsNumber: true })}
-              />
+              <Input type="number" {...register('borderRadius', { valueAsNumber: true })} />
               <p className="text-xs text-gray-500">Redondez de las tarjetas (ej. 40)</p>
               {errors.borderRadius && (
                 <span className="text-xs text-red-500">{errors.borderRadius.message}</span>
@@ -216,7 +224,15 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
   )
 }
 
-function ColorInput({ label, description, name, register, error }: any) {
+interface ColorInputProps {
+  label: string
+  description: string
+  name: keyof ThemeEditorData
+  register: UseFormRegister<ThemeEditorData>
+  error?: FieldError
+}
+
+function ColorInput({ label, description, name, register, error }: ColorInputProps) {
   return (
     <div className="rounded-lg border p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
       <div className="mb-2 flex items-center justify-between">
