@@ -6,7 +6,7 @@ export const metadata: Metadata = {
     'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
 }
 
-export default function PrivacidadPage() {
+export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="font-primary text-wine dark:text-pink-light mb-8 text-4xl font-bold">

@@ -11,9 +11,9 @@ import JsonLd from '@/components/seo/JsonLd'
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string; projectSlug: string }>
+  params: Promise<{ category: string; project: string }>
 }): Promise<Metadata> {
-  const { projectSlug } = await params
+  const { project: projectSlug } = await params
   const project = await prisma.project.findUnique({ where: { slug: projectSlug } })
 
   if (!project) {
@@ -44,15 +44,15 @@ import ProjectNavigation from '@/components/public/ProjectNavigation'
 export default async function ProjectDetailPage({
   params,
 }: {
-  params: Promise<{ slug: string; projectSlug: string }>
+  params: Promise<{ category: string; project: string }>
 }) {
-  const { slug, projectSlug } = await params
+  const { category: categorySlug, project: projectSlug } = await params
 
   // 1. Fetch project with all images
   const project = await prisma.project.findFirst({
     where: {
       slug: projectSlug,
-      category: { slug }, // Ensure it belongs to this category
+      category: { slug: categorySlug }, // Ensure it belongs to this category
       isActive: true,
       isDeleted: false,
     },
@@ -101,7 +101,7 @@ export default async function ProjectDetailPage({
           name: project.title,
           description: project.description,
           image: project.thumbnailUrl,
-          url: `${process.env.NEXT_PUBLIC_BASE_URL}/proyectos/${slug}/${projectSlug}`,
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/proyectos/${categorySlug}/${projectSlug}`,
           datePublished: project.date.toISOString(),
         }}
       />
@@ -110,7 +110,7 @@ export default async function ProjectDetailPage({
         {/* Navigation */}
         <div className="mb-8">
           <Link
-            href={`/proyectos/${slug}`}
+            href={`/proyectos/${categorySlug}`}
             className="group inline-flex items-center gap-2 text-[var(--primary)] transition-colors hover:opacity-80"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--primary)] transition-all group-hover:-translate-x-1 group-hover:bg-[var(--primary)] group-hover:text-white">
@@ -182,7 +182,7 @@ export default async function ProjectDetailPage({
       <ProjectNavigation
         previous={adjacentProjects.previous}
         next={adjacentProjects.next}
-        categorySlug={slug}
+        categorySlug={categorySlug}
         currentSlug={projectSlug}
       />
     </section>

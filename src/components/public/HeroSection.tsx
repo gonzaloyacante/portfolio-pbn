@@ -10,16 +10,20 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ settings }: HeroSectionProps) {
-  if (!settings) return null
-
-  // Use defaults if settings fields are missing (though basic required fields are set in DB)
-  const title1 = settings.heroTitle1 || 'Make-up'
-  const title2 = settings.heroTitle2 || 'Portfolio'
-  const mainImage = settings.heroMainImageUrl
-  const illustration = settings.illustrationUrl
+  // Safe defaults to prevent "White Screen" if DB is empty
+  const title1 = settings?.heroTitle1 || 'Make-up'
+  const title2 = settings?.heroTitle2 || 'Portfolio'
+  const mainImage = settings?.heroMainImageUrl
+  const illustration = settings?.illustrationUrl
+  const ownerName = settings?.ownerName || 'Paola Bolívar Nievas'
+  const ctaText = settings?.ctaText || 'Ver Portfolio'
+  const ctaLink = settings?.ctaLink || ROUTES.public.projects
+  const illustrationAlt = settings?.illustrationAlt || 'Ilustración'
+  const mainImageAlt = settings?.heroMainImageAlt || 'Hero Image'
+  const caption = settings?.heroMainImageCaption
 
   return (
-    <section className="relative flex min-h-[90vh] w-full items-center justify-center overflow-hidden bg-[var(--background)] px-4 pt-20 transition-colors duration-500 sm:px-8 lg:px-16">
+    <section className="relative flex min-h-[calc(100vh-80px)] w-full items-center justify-center overflow-hidden bg-[var(--background)] px-4 pt-8 transition-colors duration-500 sm:px-8 lg:px-16 lg:pt-0">
       {/* Container Principal con Grid */}
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-center gap-12 lg:grid-cols-12">
         {/* Columna Izquierda: Textos e Ilustración */}
@@ -43,15 +47,15 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <FadeIn delay={0.6}>
               <div className="max-w-[150px] space-y-2">
                 <p className="font-heading text-sm font-bold tracking-widest text-[var(--text)] uppercase">
-                  {settings.ownerName}
+                  {ownerName}
                 </p>
                 <div className="h-1 w-12 bg-[var(--primary)]"></div>
                 <MagneticButton className="mt-4">
                   <Link
-                    href={settings.ctaLink || ROUTES.public.projects}
+                    href={ctaLink}
                     className="inline-block text-xs font-bold text-[var(--text)] uppercase underline decoration-[var(--primary)] underline-offset-4 hover:text-[var(--primary)]"
                   >
-                    {settings.ctaText}
+                    {ctaText}
                   </Link>
                 </MagneticButton>
               </div>
@@ -66,7 +70,7 @@ export default function HeroSection({ settings }: HeroSectionProps) {
                 <div className="relative h-64 w-64 md:h-80 md:w-80">
                   <OptimizedImage
                     src={illustration}
-                    alt={settings.illustrationAlt || 'Ilustración'}
+                    alt={illustrationAlt}
                     fill
                     className="object-contain"
                   />
@@ -78,13 +82,13 @@ export default function HeroSection({ settings }: HeroSectionProps) {
 
         {/* Columna Derecha: Imagen Principal */}
         <div className="relative flex h-[50vh] w-full items-center justify-center lg:col-span-7 lg:h-[80vh]">
-          {mainImage && (
+          {mainImage ? (
             <FadeIn delay={0.5} className="relative h-full w-full">
               {/* Imagen con forma personalizada (rounded large) */}
               <div className="relative h-full w-full overflow-hidden rounded-[2.5rem] shadow-2xl">
                 <OptimizedImage
                   src={mainImage}
-                  alt={settings.heroMainImageAlt || 'Hero Image'}
+                  alt={mainImageAlt}
                   fill
                   priority
                   variant="hero"
@@ -96,15 +100,18 @@ export default function HeroSection({ settings }: HeroSectionProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
 
                 {/* Caption flotante */}
-                {settings.heroMainImageCaption && (
+                {caption && (
                   <div className="absolute right-8 bottom-8 max-w-xs rounded-xl bg-white/10 p-4 backdrop-blur-md">
-                    <p className="font-script text-2xl text-white">
-                      {settings.heroMainImageCaption}
-                    </p>
+                    <p className="font-script text-2xl text-white">{caption}</p>
                   </div>
                 )}
               </div>
             </FadeIn>
+          ) : (
+            // Placeholder visual si no hay imagen
+            <div className="bg-primary/5 border-primary/20 flex h-full w-full items-center justify-center rounded-[2.5rem] border-2 border-dashed">
+              <span className="text-primary/40">Sin Imagen Destacada</span>
+            </div>
           )}
 
           {/* Elementos decorativos flotantes (círculos, formas) */}
