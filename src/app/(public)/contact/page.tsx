@@ -1,7 +1,8 @@
-import Image from 'next/image'
 import { getContactSettings, getSocialLinks } from '@/actions/theme.actions'
 import ContactForm from '@/components/public/ContactForm'
 import { Instagram, Music2, MessageCircle, Youtube, Linkedin, Facebook } from 'lucide-react'
+import { OptimizedImage, FadeIn } from '@/components/ui'
+import { Suspense } from 'react'
 
 /**
  * Contact Page - Canva Design
@@ -27,10 +28,10 @@ export default async function ContactPage() {
         {/* ========== LEFT COLUMN: Illustration + Name + Social ========== */}
         <div className="order-2 flex flex-col items-center lg:order-1 lg:items-start">
           {/* Large Illustration */}
-          <div className="mb-8">
+          <FadeIn className="mb-8">
             {contactSettings?.illustrationUrl ? (
               <div className="relative h-48 w-48 sm:h-64 sm:w-64 lg:h-80 lg:w-80">
-                <Image
+                <OptimizedImage
                   src={contactSettings.illustrationUrl}
                   alt={contactSettings.illustrationAlt || 'Ilustración contacto'}
                   fill
@@ -41,7 +42,7 @@ export default async function ContactPage() {
             ) : (
               <span className="text-[10rem] sm:text-[12rem] lg:text-[14rem]">💄</span>
             )}
-          </div>
+          </FadeIn>
 
           {/* Owner Name */}
           <h1 className="mb-8 text-center font-[family-name:var(--font-script)] text-3xl text-[var(--foreground)] sm:text-4xl lg:text-left lg:text-5xl">
@@ -52,7 +53,7 @@ export default async function ContactPage() {
           <div className="mb-8 space-y-4 text-center lg:text-left">
             {contactSettings?.email && (
               <a
-                href={`mailto:${contactSettings.email}`}
+                href={`mailto:${contactSettings.email} `}
                 className="flex items-center justify-center gap-3 text-[var(--text-body)] transition-colors hover:text-[var(--primary)] lg:justify-start"
               >
                 <span className="text-xl">📧</span>
@@ -61,7 +62,7 @@ export default async function ContactPage() {
             )}
             {contactSettings?.phone && (
               <a
-                href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
+                href={`tel:${contactSettings.phone.replace(/\s+/g, '')} `}
                 className="flex items-center justify-center gap-3 text-[var(--text-body)] transition-colors hover:text-[var(--primary)] lg:justify-start"
               >
                 <span className="text-xl">📱</span>
@@ -97,18 +98,22 @@ export default async function ContactPage() {
 
         {/* ========== RIGHT COLUMN: Contact Form ========== */}
         <div className="order-1 lg:order-2">
-          <ContactForm
-            formTitle={contactSettings?.formTitle}
-            nameLabel={contactSettings?.nameLabel}
-            emailLabel={contactSettings?.emailLabel}
-            phoneLabel={contactSettings?.phoneLabel}
-            messageLabel={contactSettings?.messageLabel}
-            preferenceLabel={contactSettings?.preferenceLabel}
-            submitLabel={contactSettings?.submitLabel}
-            successTitle={contactSettings?.successTitle}
-            successMessage={contactSettings?.successMessage}
-            sendAnotherLabel={contactSettings?.sendAnotherLabel}
-          />
+          <Suspense
+            fallback={<div className="h-96 w-full animate-pulse rounded-[2.5rem] bg-gray-100" />}
+          >
+            <ContactForm
+              formTitle={contactSettings?.formTitle}
+              nameLabel={contactSettings?.nameLabel}
+              emailLabel={contactSettings?.emailLabel}
+              phoneLabel={contactSettings?.phoneLabel}
+              messageLabel={contactSettings?.messageLabel}
+              preferenceLabel={contactSettings?.preferenceLabel}
+              submitLabel={contactSettings?.submitLabel}
+              successTitle={contactSettings?.successTitle}
+              successMessage={contactSettings?.successMessage}
+              sendAnotherLabel={contactSettings?.sendAnotherLabel}
+            />
+          </Suspense>
         </div>
       </div>
     </section>

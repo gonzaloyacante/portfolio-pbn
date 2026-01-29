@@ -1,7 +1,6 @@
 'use client'
 
 import { HomeSettingsData, updateHomeSettings } from '@/actions/theme.actions'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
 import { useForm } from 'react-hook-form'
@@ -22,7 +21,7 @@ export function HomeEditor({ settings }: HomeEditorProps) {
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<HomeSettingsFormData>({
     resolver: zodResolver(homeSettingsSchema),
     defaultValues: {

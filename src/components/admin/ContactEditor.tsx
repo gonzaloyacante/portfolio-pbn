@@ -57,7 +57,6 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
   })
 
   // Social Links State (Simple local management before save? No, immediate actions)
-  const [isDeletingGoogle, setIsDeletingLink] = useState<string | null>(null)
 
   const onSettingsSubmit = async (data: ContactSettingsFormData) => {
     try {
@@ -70,22 +69,6 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       }
     } catch {
       show({ type: 'error', message: 'Error inesperado' })
-    }
-  }
-
-  const handleDeleteLink = async (id: string) => {
-    if (!confirm('¿Eliminar este enlace?')) return
-    setIsDeletingLink(id)
-    try {
-      const result = await deleteSocialLink(id)
-      if (result.success) {
-        show({ type: 'success', message: 'Enlace eliminado' })
-        router.refresh()
-      } else {
-        show({ type: 'error', message: result.error || 'Error desconocido' })
-      }
-    } finally {
-      setIsDeletingLink(null)
     }
   }
 

@@ -1,5 +1,5 @@
 generator client {
-  provider   = "prisma-client-js"
+  provider = "prisma-client-js"
   engineType = "library"
 }
 
@@ -232,6 +232,32 @@ model Testimonial {
   updatedAt DateTime @updatedAt
 
   @@index([isActive, sortOrder])
+}
+
+/// Services offered by the professional (shown on Services page)
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?  @db.Text
+  // Pricing
+  price       Decimal? @db.Decimal(10, 2)
+  priceLabel  String?  @default("desde") // "desde", "fijo", "consultar"
+  duration    String?  // "2 horas", "3-4 horas"
+  // Media
+  imageUrl    String?
+  iconName    String?  // lucide-react icon name
+  // Display
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  sortOrder   Int      @default(0)
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+  @@index([slug])
+  @@map("services")
 }
 
 /// Contact Form Submissions

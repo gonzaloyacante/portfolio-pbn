@@ -1,7 +1,6 @@
 'use client'
 
 import { AboutSettingsData, updateAboutSettings } from '@/actions/theme.actions'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
 import { useForm } from 'react-hook-form'

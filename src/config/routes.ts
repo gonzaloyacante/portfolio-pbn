@@ -4,6 +4,7 @@ export const ROUTES = {
     dashboard: '/admin/panel',
     contacts: '/admin/contactos',
     projects: '/admin/proyectos',
+    services: '/admin/servicios',
     testimonials: '/admin/testimonios',
     about: '/admin/sobre-mi',
     settings: '/admin/configuracion',
@@ -16,6 +17,7 @@ export const ROUTES = {
   public: {
     about: '/sobre-mi',
     projects: '/proyectos',
+    services: '/servicios',
     contact: '/contacto',
     privacy: '/privacidad',
   },

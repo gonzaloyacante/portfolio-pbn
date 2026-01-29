@@ -40,3 +40,5 @@ export {
 
 // Media
 export { OptimizedImage } from './media/OptimizedImage'
+export { MagneticButton } from './animations/MagneticButton'
+export { ScrollProgress } from './animations/ScrollProgress'

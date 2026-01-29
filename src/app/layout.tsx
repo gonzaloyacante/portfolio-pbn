@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
 import { Great_Vibes, Open_Sans, Poppins } from 'next/font/google'
 import '@/styles/globals.css'
 import AppProviders from '@/components/providers/AppProviders'
@@ -128,14 +129,18 @@ export default async function RootLayout({
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
       >
-        <NavigationProgress />
+        <Suspense fallback={null}>
+          <NavigationProgress />
+        </Suspense>
         <ErrorBoundary>
           <AppProviders themeValues={themeValues}>
             {children}
             <CookieConsent />
           </AppProviders>
         </ErrorBoundary>
-        <GoogleAnalytics />
+        <Suspense fallback={null}>
+          <GoogleAnalytics />
+        </Suspense>
       </body>
     </html>
   )

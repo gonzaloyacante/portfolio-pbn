@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import { getAboutSettings } from '@/actions/theme.actions'
 import { getActiveTestimonials } from '@/actions/testimonials.actions'
 import TestimonialForm from '@/components/public/TestimonialForm'
 import TestimonialSlider from '@/components/public/TestimonialSlider'
 import JsonLd from '@/components/seo/JsonLd'
+import { FadeIn, SlideIn, OptimizedImage } from '@/components/ui'
 
 /**
  * About Page - Canva Design
@@ -50,15 +50,17 @@ export default async function AboutPage() {
         {/* ========== LEFT COLUMN: Text Content ========== */}
         <div className="order-2 lg:order-1">
           {/* Signature in script font */}
-          <h1 className="mb-4 font-[family-name:var(--font-script)] text-3xl text-[var(--primary)] sm:text-4xl lg:text-5xl">
-            {bioTitle}
-          </h1>
+          <FadeIn>
+            <h1 className="mb-4 font-[family-name:var(--font-script)] text-3xl text-[var(--primary)] sm:text-4xl lg:text-5xl">
+              {bioTitle}
+            </h1>
+          </FadeIn>
 
           {/* Small Illustration (optional) */}
           {illustrationUrl && (
-            <div className="mb-6">
+            <FadeIn delay={0.2} className="mb-6">
               <div className="relative h-24 w-24 sm:h-28 sm:w-28">
-                <Image
+                <OptimizedImage
                   src={illustrationUrl}
                   alt={illustrationAlt}
                   fill
@@ -66,28 +68,30 @@ export default async function AboutPage() {
                   sizes="120px"
                 />
               </div>
-            </div>
+            </FadeIn>
           )}
 
           {/* Bio Intro */}
           <div className="mb-6 max-w-2xl font-[family-name:var(--font-body)] text-base leading-relaxed text-[var(--text-body)]">
             {introParagraphs.map((paragraph, index) => (
-              <p key={index} className={index > 0 ? 'mt-4' : ''}>
-                {paragraph}
-              </p>
+              <FadeIn key={index} delay={0.3 + index * 0.1} className={index > 0 ? 'mt-4' : ''}>
+                <p>{paragraph}</p>
+              </FadeIn>
             ))}
           </div>
 
           {/* Bio Description */}
           <div className="max-w-2xl space-y-4 font-[family-name:var(--font-body)] text-base leading-relaxed text-[var(--text-body)]">
             {descParagraphs.map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
+              <FadeIn key={index} delay={0.5 + index * 0.1}>
+                <p>{paragraph}</p>
+              </FadeIn>
             ))}
           </div>
 
           {/* Skills Tags */}
           {skills.length > 0 && (
-            <div className="mt-8">
+            <FadeIn delay={0.6} className="mt-8">
               <h3 className="mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--foreground)]">
                 Especialidades
               </h3>
@@ -101,12 +105,12 @@ export default async function AboutPage() {
                   </span>
                 ))}
               </div>
-            </div>
+            </FadeIn>
           )}
 
           {/* Certifications */}
           {certifications.length > 0 && (
-            <div className="mt-6">
+            <FadeIn delay={0.7} className="mt-6">
               <h3 className="mb-3 font-[family-name:var(--font-heading)] text-lg font-semibold text-[var(--foreground)]">
                 Formación
               </h3>
@@ -115,31 +119,34 @@ export default async function AboutPage() {
                   <li key={index}>{cert}</li>
                 ))}
               </ul>
-            </div>
+            </FadeIn>
           )}
         </div>
 
         {/* ========== RIGHT COLUMN: Oval Image ========== */}
         <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
-          <div
-            className="relative aspect-[3/4] w-full max-w-xs overflow-hidden shadow-2xl sm:max-w-sm lg:max-w-md"
-            style={{ clipPath: 'ellipse(50% 45% at 50% 50%)' }}
-          >
-            {profileImageUrl ? (
-              <Image
-                src={profileImageUrl}
-                alt={profileImageAlt}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 80vw, (max-width: 1024px) 40vw, 400px"
-                priority
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]">
-                <span className="text-8xl">💄</span>
-              </div>
-            )}
-          </div>
+          <SlideIn direction="right" className="flex w-full justify-center lg:justify-end">
+            <div
+              className="relative aspect-[3/4] w-full max-w-xs overflow-hidden shadow-2xl sm:max-w-sm lg:max-w-md"
+              style={{ clipPath: 'ellipse(50% 45% at 50% 50%)' }}
+            >
+              {profileImageUrl ? (
+                <OptimizedImage
+                  src={profileImageUrl}
+                  alt={profileImageAlt}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 80vw, (max-width: 1024px) 40vw, 400px"
+                  priority
+                  variant="card"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]">
+                  <span className="text-8xl">💄</span>
+                </div>
+              )}
+            </div>
+          </SlideIn>
         </div>
       </div>
 

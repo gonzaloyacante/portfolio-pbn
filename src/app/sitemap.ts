@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ROUTES.public.about,
     ROUTES.public.contact,
     ROUTES.public.projects,
+    ROUTES.public.services,
   ].map((route) => ({
     url: `${baseUrl}${route === '/' ? '' : route}`,
     lastModified: new Date(),
@@ -43,16 +44,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categories = await prisma.category.findMany({
     select: {
       slug: true,
-      // updatedAt: true, // Not available in Category model
     },
   })
 
   const categoryRoutes = categories.map((category) => ({
     url: `${baseUrl}${ROUTES.public.projects}/${category.slug}`,
-    lastModified: new Date(), // Fallback to current date
+    lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
   }))
 
-  return [...routes, ...categoryRoutes, ...projectRoutes]
+  // Dynamic services
+  const services = await prisma.service.findMany({
+    where: { isActive: true },
+    select: {
+      slug: true,
+      updatedAt: true,
+    },
+  })
+
+  const serviceRoutes = services.map((service) => ({
+    url: `${baseUrl}${ROUTES.public.services}/${service.slug}`,
+    lastModified: service.updatedAt,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
+
+  return [...routes, ...categoryRoutes, ...projectRoutes, ...serviceRoutes]
 }

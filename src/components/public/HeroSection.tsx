@@ -1,9 +1,8 @@
 'use client'
 
 import { HomeSettingsData } from '@/actions/theme.actions'
-import Image from 'next/image'
 import Link from 'next/link'
-import { FadeIn, SlideIn } from '@/components/ui'
+import { FadeIn, SlideIn, OptimizedImage, MagneticButton } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 
 interface HeroSectionProps {
@@ -47,12 +46,14 @@ export default function HeroSection({ settings }: HeroSectionProps) {
                   {settings.ownerName}
                 </p>
                 <div className="h-1 w-12 bg-[var(--primary)]"></div>
-                <Link
-                  href={settings.ctaLink || ROUTES.public.projects}
-                  className="mt-4 inline-block text-xs font-bold text-[var(--text)] uppercase underline decoration-[var(--primary)] underline-offset-4 hover:text-[var(--primary)]"
-                >
-                  {settings.ctaText}
-                </Link>
+                <MagneticButton className="mt-4">
+                  <Link
+                    href={settings.ctaLink || ROUTES.public.projects}
+                    className="inline-block text-xs font-bold text-[var(--text)] uppercase underline decoration-[var(--primary)] underline-offset-4 hover:text-[var(--primary)]"
+                  >
+                    {settings.ctaText}
+                  </Link>
+                </MagneticButton>
               </div>
             </FadeIn>
 
@@ -63,7 +64,7 @@ export default function HeroSection({ settings }: HeroSectionProps) {
                 className="absolute -top-20 -right-10 -z-10 opacity-80 mix-blend-multiply md:top-auto md:left-40 dark:mix-blend-screen"
               >
                 <div className="relative h-64 w-64 md:h-80 md:w-80">
-                  <Image
+                  <OptimizedImage
                     src={illustration}
                     alt={settings.illustrationAlt || 'Ilustración'}
                     fill
@@ -81,11 +82,12 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <FadeIn delay={0.5} className="relative h-full w-full">
               {/* Imagen con forma personalizada (rounded large) */}
               <div className="relative h-full w-full overflow-hidden rounded-[2.5rem] shadow-2xl">
-                <Image
+                <OptimizedImage
                   src={mainImage}
                   alt={settings.heroMainImageAlt || 'Hero Image'}
                   fill
                   priority
+                  variant="hero"
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 60vw"
                 />

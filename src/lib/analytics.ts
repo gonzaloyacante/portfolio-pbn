@@ -16,7 +16,7 @@ class AnalyticsManager {
           console.warn('Analytics Error:', err)
         }
       })
-    } catch (error) {
+    } catch {
       // Silent fail
     }
   }

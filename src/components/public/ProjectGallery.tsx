@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { motion } from 'framer-motion'
+import { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Project, ProjectImage } from '@prisma/client'
 import { recordAnalyticEvent } from '@/actions/analytics.actions'
+import { ChevronLeft, ChevronRight, X, ZoomIn, Maximize2 } from 'lucide-react'
+import { OptimizedImage } from '@/components/ui/media/OptimizedImage'
 
 type ProjectWithImages = Project & { images: ProjectImage[] }
 
@@ -31,11 +32,64 @@ const itemVariants = {
 
 export default function ProjectGallery({ projects }: { projects: ProjectWithImages[] }) {
   const [selectedProject, setSelectedProject] = useState<ProjectWithImages | null>(null)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  // Zoom state
+  const [isZoomed, setIsZoomed] = useState(false)
+  const [scale, setScale] = useState(1)
 
   const handleProjectClick = (project: ProjectWithImages) => {
     setSelectedProject(project)
+    setCurrentImageIndex(0)
+    setIsZoomed(false)
+    setScale(1)
     recordAnalyticEvent('PROJECT_DETAIL_OPEN', project.id, 'Project')
   }
+
+  const closeLightbox = useCallback(() => {
+    setSelectedProject(null)
+    setCurrentImageIndex(0)
+    setIsZoomed(false)
+    setScale(1)
+  }, [])
+
+  const goToPrevious = useCallback(() => {
+    if (!selectedProject) return
+    setIsZoomed(false)
+    setScale(1)
+    setCurrentImageIndex((prev) => (prev === 0 ? selectedProject.images.length - 1 : prev - 1))
+  }, [selectedProject])
+
+  const goToNext = useCallback(() => {
+    if (!selectedProject) return
+    setIsZoomed(false)
+    setScale(1)
+    setCurrentImageIndex((prev) => (prev === selectedProject.images.length - 1 ? 0 : prev + 1))
+  }, [selectedProject])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedProject) return
+      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'ArrowLeft') goToPrevious()
+      if (e.key === 'ArrowRight') goToNext()
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedProject, closeLightbox, goToPrevious, goToNext])
+
+  // Prevent body scroll when lightbox is open
+  useEffect(() => {
+    if (selectedProject) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [selectedProject])
 
   return (
     <>
@@ -56,10 +110,11 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
           >
             <div className="bg-accent/20 relative mb-3 aspect-square overflow-hidden rounded-xl shadow-md transition-all hover:shadow-lg">
               {project.images[0] ? (
-                <Image
+                <OptimizedImage
                   src={project.images[0].url}
                   alt={project.title}
                   fill
+                  variant="thumbnail"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               ) : (
@@ -67,7 +122,9 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
                   Sin Foto
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/30">
+                <Maximize2 className="h-8 w-8 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+              </div>
             </div>
             <h3 className="text-primary group-hover:text-accent text-center text-lg font-medium transition-colors">
               {project.title}
@@ -76,70 +133,133 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
         ))}
       </motion.div>
 
-      {/* Lightbox Modal */}
-      {selectedProject && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm"
-          onClick={() => setSelectedProject(null)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+      {/* Enhanced Lightbox Modal */}
+      <AnimatePresence>
+        {selectedProject && (
           <motion.div
-            className="relative flex max-h-[90vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
+            onClick={closeLightbox}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between border-b bg-gray-50 p-4">
-              <div>
-                <h2 className="text-primary text-2xl font-bold">{selectedProject.title}</h2>
-                {selectedProject.description && (
-                  <p className="mt-1 text-sm text-gray-600">{selectedProject.description}</p>
-                )}
-              </div>
-              <button
-                className="rounded-full p-2 transition-colors hover:bg-gray-200"
-                onClick={() => setSelectedProject(null)}
-              >
-                <svg
-                  className="h-6 w-6 text-gray-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+            {/* Close Button */}
+            <button
+              className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
+              onClick={closeLightbox}
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            {/* Project Title */}
+            <div className="absolute top-4 left-4 z-10 max-w-md">
+              <h2 className="text-2xl font-bold text-white drop-shadow-lg">
+                {selectedProject.title}
+              </h2>
+              <p className="text-sm text-white/70">
+                {currentImageIndex + 1} / {selectedProject.images.length}
+              </p>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto bg-gray-100 p-6">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {selectedProject.images.map((img) => (
-                  <div key={img.id} className="group relative overflow-hidden rounded-lg shadow-sm">
-                    <Image
+            {/* Navigation Arrows */}
+            {selectedProject.images.length > 1 && (
+              <>
+                <button
+                  className="absolute left-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goToPrevious()
+                  }}
+                >
+                  <ChevronLeft className="h-8 w-8" />
+                </button>
+                <button
+                  className="absolute right-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    goToNext()
+                  }}
+                >
+                  <ChevronRight className="h-8 w-8" />
+                </button>
+              </>
+            )}
+
+            {/* Main Image Container */}
+            <motion.div
+              key={currentImageIndex}
+              className={`relative flex items-center justify-center overflow-hidden transition-all duration-300 ${isZoomed ? 'cursor-grab active:cursor-grabbing' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsZoomed(!isZoomed)
+                setScale(isZoomed ? 1 : 2)
+              }}
+              style={{
+                maxHeight: isZoomed ? '100vh' : '85vh',
+                maxWidth: isZoomed ? '100vw' : '90vw',
+                height: isZoomed ? '100vh' : 'auto',
+                width: isZoomed ? '100vw' : 'auto',
+              }}
+              drag={isZoomed}
+              dragConstraints={{ left: -400, right: 400, top: -300, bottom: 300 }}
+              dragElastic={0.2}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: scale }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              {selectedProject.images[currentImageIndex] && (
+                <div className="relative flex h-full w-full items-center justify-center">
+                  <OptimizedImage
+                    src={selectedProject.images[currentImageIndex].url}
+                    alt={`${selectedProject.title} - Imagen ${currentImageIndex + 1}`}
+                    variant={isZoomed ? 'original' : 'full'}
+                    width={isZoomed ? 1920 : 1200}
+                    height={isZoomed ? 1280 : 800}
+                    className={`max-h-[85vh] w-auto rounded-lg object-contain shadow-2xl transition-all ${isZoomed ? 'max-h-screen rounded-none' : ''}`}
+                    priority
+                  />
+
+                  {/* Zoom Hint Indicator */}
+                  {!isZoomed && (
+                    <div className="pointer-events-none absolute right-4 bottom-4 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                      <ZoomIn className="h-5 w-5" />
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+
+            {/* Thumbnail Strip */}
+            {selectedProject.images.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 z-10 flex max-w-[90vw] -translate-x-1/2 gap-2 overflow-x-auto rounded-lg bg-black/50 p-2 backdrop-blur-sm">
+                {selectedProject.images.map((img, index) => (
+                  <button
+                    key={img.id}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setCurrentImageIndex(index)
+                    }}
+                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${
+                      index === currentImageIndex
+                        ? 'ring-2 ring-white'
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
+                  >
+                    <OptimizedImage
                       src={img.url}
-                      alt={`${selectedProject.title} image`}
-                      width={1200}
-                      height={800}
-                      className="h-auto w-full bg-white object-contain"
+                      alt={`Thumbnail ${index + 1}`}
+                      fill
+                      variant="thumbnail"
+                      className="object-cover"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
-            </div>
+            )}
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </AnimatePresence>
     </>
   )
 }

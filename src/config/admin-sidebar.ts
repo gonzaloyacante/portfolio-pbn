@@ -15,6 +15,11 @@ export const menuItems = [
     icon: '🎨',
   },
   {
+    href: '/admin/services',
+    label: 'Servicios',
+    icon: '💅',
+  },
+  {
     href: '/admin/testimonials',
     label: 'Testimonios',
     icon: '💬',

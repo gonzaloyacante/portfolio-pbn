@@ -1,6 +1,11 @@
-
 interface JsonLdProps {
-  type: 'Person' | 'ProfessionalService' | 'LocalBusiness' | 'CollectionPage' | 'CreativeWork'
+  type:
+    | 'Person'
+    | 'ProfessionalService'
+    | 'LocalBusiness'
+    | 'CollectionPage'
+    | 'CreativeWork'
+    | 'Service'
   data?: {
     name?: string
     url?: string
@@ -148,6 +153,34 @@ export default function JsonLd({ type, data }: JsonLdProps) {
             '@type': 'Person',
             name: mergedData.author || 'Paola Bolívar Nievas',
           },
+        }
+
+      case 'Service':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          name: mergedData.name,
+          description: mergedData.description,
+          url: mergedData.url,
+          image: mergedData.image,
+          provider: {
+            '@type': 'Person',
+            name: 'Paola Bolívar Nievas',
+            url: baseUrl,
+          },
+          areaServed: {
+            '@type': 'City',
+            name: 'Málaga',
+          },
+          ...(mergedData.priceRange && {
+            offers: {
+              '@type': 'Offer',
+              priceSpecification: {
+                '@type': 'PriceSpecification',
+                priceCurrency: 'EUR',
+              },
+            },
+          }),
         }
 
       default:

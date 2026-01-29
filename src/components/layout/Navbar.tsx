@@ -17,6 +17,7 @@ const navItems = [
   { href: ROUTES.home, label: 'Inicio' },
   { href: ROUTES.public.about, label: 'Sobre mi' },
   { href: ROUTES.public.projects, label: 'Proyectos' },
+  { href: ROUTES.public.services, label: 'Servicios' },
   { href: ROUTES.public.contact, label: 'Contacto' },
 ]
 

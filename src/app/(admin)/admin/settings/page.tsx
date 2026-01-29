@@ -8,10 +8,7 @@ export const metadata = {
 }
 
 export default async function ContactSettingsPage() {
-  const [settings, socialLinks] = await Promise.all([
-    getContactSettings(),
-    getSocialLinks(),
-  ])
+  const [settings, socialLinks] = await Promise.all([getContactSettings(), getSocialLinks()])
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">

@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
@@ -8,7 +8,7 @@ interface PageTransitionProps {
   children: ReactNode
 }
 
-const pageVariants = {
+const pageVariants: Variants = {
   initial: {
     opacity: 0,
     y: 20,
@@ -41,8 +41,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
         initial="initial"
         animate="enter"
         exit="exit"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        variants={pageVariants as any}
+        variants={pageVariants}
       >
         {children}
       </motion.div>

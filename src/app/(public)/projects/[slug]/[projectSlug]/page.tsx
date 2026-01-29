@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
-import { FadeIn, StaggerChildren } from '@/components/ui'
+import { FadeIn, StaggerChildren, ScrollProgress } from '@/components/ui'
 import { ArrowLeft, Calendar } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
@@ -38,6 +38,9 @@ export async function generateMetadata({
  * Project Detail Page
  * Layout: Title/Description on top, Masonry Grid of images below
  */
+import { getAdjacentProjects } from '@/actions/projects.actions'
+import ProjectNavigation from '@/components/public/ProjectNavigation'
+
 export default async function ProjectDetailPage({
   params,
 }: {
@@ -45,7 +48,7 @@ export default async function ProjectDetailPage({
 }) {
   const { slug, projectSlug } = await params
 
-  // Fetch project with all images
+  // 1. Fetch project with all images
   const project = await prisma.project.findFirst({
     where: {
       slug: projectSlug,
@@ -60,6 +63,17 @@ export default async function ProjectDetailPage({
       },
     },
   })
+
+  // 2. Fetch adjacent projects for navigation
+  // We need project.id to find adjacents and category.id
+  let adjacentProjects: {
+    previous: { title: string; slug: string; thumbnailUrl: string | null } | null
+    next: { title: string; slug: string; thumbnailUrl: string | null } | null
+  } = { previous: null, next: null }
+
+  if (project) {
+    adjacentProjects = await getAdjacentProjects(project.id, project.category.id)
+  }
 
   if (!project) {
     notFound()
@@ -79,6 +93,7 @@ export default async function ProjectDetailPage({
 
   return (
     <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
+      <ScrollProgress />
       <AnalyticsTracker eventType="PROJECT_VIEW" entityId={project.id} entityType="Project" />
       <JsonLd
         type="CreativeWork"
@@ -162,6 +177,14 @@ export default async function ProjectDetailPage({
           )}
         </StaggerChildren>
       </div>
+
+      {/* Circular Navigation */}
+      <ProjectNavigation
+        previous={adjacentProjects.previous}
+        next={adjacentProjects.next}
+        categorySlug={slug}
+        currentSlug={projectSlug}
+      />
     </section>
   )
 }

@@ -24,10 +24,7 @@ export default async function Home() {
 
       {/* Featured Projects Section */}
       {homeSettings?.showFeaturedProjects && (
-        <FeaturedProjects
-          title={homeSettings.featuredTitle}
-          count={homeSettings.featuredCount}
-        />
+        <FeaturedProjects title={homeSettings.featuredTitle} count={homeSettings.featuredCount} />
       )}
     </main>
   )

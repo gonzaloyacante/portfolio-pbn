@@ -7,10 +7,11 @@ import { sendContactEmail } from '@/actions/contact.actions'
 import { Button } from '@/components/ui'
 import { useToast } from '@/components/ui'
 import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ROUTES } from '@/config/routes'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 // Response preference type
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP'
@@ -57,6 +58,8 @@ export default function ContactForm({
 }: ContactFormProps) {
   const { show } = useToast()
   const [submitted, setSubmitted] = useState(false)
+  const searchParams = useSearchParams()
+  const serviceName = searchParams.get('service')
 
   const {
     register,
@@ -76,6 +79,16 @@ export default function ContactForm({
       privacy: false,
     },
   })
+
+  // Pre-fill message if service param exists
+  useEffect(() => {
+    if (serviceName) {
+      setValue(
+        'message',
+        `Hola, estoy interesado/a en recibir más información sobre el servicio de "${serviceName}".`
+      )
+    }
+  }, [serviceName, setValue])
 
   const responsePreference = watch('responsePreference')
 

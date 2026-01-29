@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
-import Image from 'next/image'
-import { FadeIn, StaggerChildren } from '@/components/ui'
+import { FadeIn, StaggerChildren, OptimizedImage } from '@/components/ui'
 import { ArrowRight } from 'lucide-react'
 
 interface FeaturedProjectsProps {
@@ -57,10 +56,11 @@ export default async function FeaturedProjects({ title, count = 6 }: FeaturedPro
               >
                 {/* Image */}
                 {project.thumbnailUrl ? (
-                  <Image
+                  <OptimizedImage
                     src={project.thumbnailUrl}
                     alt={project.title}
                     fill
+                    variant="card"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />

@@ -1,70 +1,143 @@
 import { PrismaClient } from '@prisma/client'
-import bcrypt from 'bcryptjs'
-import { themeDefaults, pageContentDefaults } from './seeds/theme-defaults'
+import { adminUser } from './seeds/users'
+import { themeSettings } from './seeds/theme'
+import { homeSettings, aboutSettings, contactSettings } from './seeds/settings'
+import { categories, services, testimonials, socialLinks } from './seeds/content'
+import { projects } from './seeds/projects'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Seeding database...')
+  console.log('🌱 Starting Comprehensive Seed...')
 
-  // 1. Crear usuario admin
-  const email = 'admin@example.com'
-  const password = await bcrypt.hash('admin123', 10)
-
-  const user = await prisma.user.upsert({
-    where: { email },
+  // 1. Admin User
+  console.log('👤 Seeding Admin User...')
+  await prisma.user.upsert({
+    where: { email: adminUser.email },
     update: {},
-    create: {
-      email,
-      password,
-      name: 'Admin User',
-      role: 'ADMIN',
-    },
+    create: adminUser,
   })
 
-  console.log('✅ Usuario admin creado:', { email: user.email })
+  // 2. Settings (Theme & Pages)
+  console.log('⚙️  Seeding Settings...')
+  await prisma.themeSettings.upsert({
+    where: { id: themeSettings.id },
+    update: themeSettings,
+    create: themeSettings,
+  })
 
-  // 2. Crear theme settings por defecto
-  console.log('🎨 Creando configuración de tema...')
+  await prisma.homeSettings.upsert({
+    where: { id: homeSettings.id },
+    update: homeSettings,
+    create: homeSettings,
+  })
 
-  for (const setting of themeDefaults) {
-    await prisma.themeSettings.upsert({
-      where: { key: setting.key },
-      update: {},
-      create: {
-        ...setting,
-        isActive: true,
-      },
+  await prisma.aboutSettings.upsert({
+    where: { id: aboutSettings.id },
+    update: aboutSettings,
+    create: aboutSettings,
+  })
+
+  await prisma.contactSettings.upsert({
+    where: { id: contactSettings.id },
+    update: contactSettings,
+    create: contactSettings,
+  })
+
+  // 3. Social Links
+  console.log('🔗 Seeding Social Links...')
+  for (const link of socialLinks) {
+    await prisma.socialLink.upsert({
+      where: { platform: link.platform },
+      update: link,
+      create: link,
     })
   }
 
-  console.log(`✅ ${themeDefaults.length} configuraciones de tema creadas`)
+  // 4. Content (Categories, Services, Testimonials)
+  console.log('📚 Seeding Content...')
 
-  // 3. Crear page content por defecto
-  console.log('📄 Creando contenido de páginas...')
-
-  for (const page of pageContentDefaults) {
-    await prisma.pageContent.upsert({
-      where: { pageKey: page.pageKey },
-      update: {},
-      create: {
-        ...page,
-        isActive: true,
-      },
+  // Categories
+  for (const cat of categories) {
+    await prisma.category.upsert({
+      where: { slug: cat.slug },
+      update: cat,
+      create: cat,
     })
   }
 
-  console.log(`✅ ${pageContentDefaults.length} páginas configuradas`)
+  // Services
+  for (const service of services) {
+    await prisma.service.upsert({
+      where: { slug: service.slug },
+      update: service,
+      create: service,
+    })
+  }
 
-  console.log('🎉 Seeding completado exitosamente!')
+  // Testimonials
+  for (const t of testimonials) {
+    await prisma.testimonial.upsert({
+      where: { id: t.id },
+      update: t,
+      create: t,
+    })
+  }
+
+  // 5. Projects
+  console.log('🎨 Seeding Projects...')
+  for (const project of projects) {
+    const { categorySlug, images, ...projectData } = project
+
+    // Find category ID
+    const category = await prisma.category.findUnique({
+      where: { slug: categorySlug },
+    })
+
+    if (!category) {
+      console.warn(`⚠️  Category ${categorySlug} not found for project ${project.title}`)
+      continue
+    }
+
+    // Upsert project
+    const createdProject = await prisma.project.upsert({
+      where: { slug: projectData.slug },
+      update: {
+        ...projectData,
+        categoryId: category.id,
+      },
+      create: {
+        ...projectData,
+        categoryId: category.id,
+      },
+    })
+
+    // Create images for project (delete existing first to reset order)
+    await prisma.projectImage.deleteMany({
+      where: { projectId: createdProject.id },
+    })
+
+    for (const img of images) {
+      await prisma.projectImage.create({
+        data: {
+          url: img.url,
+          alt: img.alt,
+          order: img.order,
+          publicId: `seed-${projectData.slug}-${img.order}`, // Fake publicId
+          projectId: createdProject.id,
+        },
+      })
+    }
+  }
+
+  console.log('🎉 Seeding Completed Successfully!')
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
+  .catch((e) => {
+    console.error('❌ Error during seeding:', e)
     process.exit(1)
+  })
+  .finally(async () => {
+    await prisma.$disconnect()
   })

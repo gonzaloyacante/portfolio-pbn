@@ -33,7 +33,6 @@ export const testimonialFormSchema = z.object({
 
 export type TestimonialFormData = z.infer<typeof testimonialFormSchema>
 
-
 // ============================================
 // ADMIN SETTINGS SCHEMAS
 // ============================================
@@ -127,7 +126,6 @@ export const contactSettingsSchema = z.object({
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>
 
-
 // ============================================
 // DATA MODELS
 // ============================================
@@ -147,7 +145,11 @@ export type ProjectFormData = z.infer<typeof projectFormSchema>
 // Category
 export const categorySchema = z.object({
   name: z.string().min(2).max(100),
-  slug: z.string().min(2).max(100).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  slug: z
+    .string()
+    .min(2)
+    .max(100)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   description: z.string().optional(),
   sortOrder: z.number().optional(),
 })

@@ -265,3 +265,64 @@ export async function permanentlyDeleteProject(id: string) {
     return { success: false, error: 'Error al eliminar proyecto' }
   }
 }
+
+/**
+ * Obtener proyectos adyacentes (circular/infinite loop)
+ * Previous: Proyecto más nuevo (o el más viejo si no hay más nuevos)
+ * Next: Proyecto más viejo (o el más nuevo si no hay más viejos)
+ */
+export async function getAdjacentProjects(currentProjectId: string, categoryId: string) {
+  try {
+    const currentProject = await prisma.project.findUnique({
+      where: { id: currentProjectId },
+      select: { date: true },
+    })
+
+    if (!currentProject) return { previous: null, next: null }
+
+    const [previous, next, first, last] = await Promise.all([
+      // Previous: Newer than current (date > current) -> Order by date ASC to get closest
+      prisma.project.findFirst({
+        where: {
+          categoryId,
+          isActive: true,
+          isDeleted: false,
+          date: { gt: currentProject.date },
+        },
+        orderBy: { date: 'asc' },
+        select: { title: true, slug: true, thumbnailUrl: true },
+      }),
+      // Next: Older than current (date < current) -> Order by date DESC to get closest
+      prisma.project.findFirst({
+        where: {
+          categoryId,
+          isActive: true,
+          isDeleted: false,
+          date: { lt: currentProject.date },
+        },
+        orderBy: { date: 'desc' },
+        select: { title: true, slug: true, thumbnailUrl: true },
+      }),
+      // First (Newest) - for wrapping
+      prisma.project.findFirst({
+        where: { categoryId, isActive: true, isDeleted: false },
+        orderBy: { date: 'desc' },
+        select: { title: true, slug: true, thumbnailUrl: true },
+      }),
+      // Last (Oldest) - for wrapping
+      prisma.project.findFirst({
+        where: { categoryId, isActive: true, isDeleted: false },
+        orderBy: { date: 'asc' },
+        select: { title: true, slug: true, thumbnailUrl: true },
+      }),
+    ])
+
+    return {
+      previous: previous || last, // If no newer (we are at start), wrap to oldest (last)
+      next: next || first, // If no older (we are at end), wrap to newest (first)
+    }
+  } catch (error) {
+    console.error('Error fetching adjacent projects:', error)
+    return { previous: null, next: null }
+  }
+}

@@ -4,10 +4,7 @@ import PageTransition from '@/components/layout/PageTransition'
 import { getThemeSettings, getContactSettings } from '@/actions/theme.actions'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [themeSettings, contactSettings] = await Promise.all([
-    getThemeSettings(),
-    getContactSettings(),
-  ])
+  const [, contactSettings] = await Promise.all([getThemeSettings(), getContactSettings()])
 
   return (
     <>
@@ -24,9 +21,7 @@ export default async function PublicLayout({ children }: { children: React.React
         }}
       />
 
-      <div
-        className="flex min-h-screen flex-col bg-background transition-colors duration-300"
-      >
+      <div className="bg-background flex min-h-screen flex-col transition-colors duration-300">
         <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} />
         <main className="flex-1">
           <PageTransition>{children}</PageTransition>

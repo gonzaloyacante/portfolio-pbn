@@ -2,12 +2,13 @@
 
 import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
+import { getOptimizedUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
 
 const COMMON_SIZES = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\/([^/]+)\/image\/upload\/(v\d+\/)?(.+)$/
 
-// Simple lazy image hook
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function useLazyImage(_src: string, _options: { quality?: number; priority?: boolean }) {
+// Simple lazy image state hook
+function useLazyImage() {
   const [isInView, setIsInView] = useState(false)
   return { isInView, setIsInView }
 }
@@ -15,8 +16,8 @@ function useLazyImage(_src: string, _options: { quality?: number; priority?: boo
 interface OptimizedImageProps {
   src: string
   alt: string
-  width: number
-  height: number
+  width?: number
+  height?: number
   className?: string
   priority?: boolean
   quality?: number
@@ -27,6 +28,7 @@ interface OptimizedImageProps {
   onLoad?: () => void
   onError?: () => void
   fill?: boolean
+  variant?: 'thumbnail' | 'card' | 'hero' | 'full' | 'original'
 }
 
 export function OptimizedImage({
@@ -36,7 +38,7 @@ export function OptimizedImage({
   height,
   className = '',
   priority = false,
-  quality = 75,
+  quality,
   sizes = COMMON_SIZES,
   placeholder = 'blur',
   blurDataURL,
@@ -44,12 +46,51 @@ export function OptimizedImage({
   onLoad,
   onError,
   fill = false,
+  variant,
 }: OptimizedImageProps) {
   const [imageError, setImageError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const imgRef = useRef<HTMLDivElement>(null)
 
-  const { isInView, setIsInView } = useLazyImage(src, { quality, priority })
+  const { isInView, setIsInView } = useLazyImage()
+
+  // Determine final image URL based on variant or default optimization
+  const finalSrc = variant
+    ? getOptimizedUrl(src, { width: width || 800, quality: quality || 'auto' }) // If variant logic needed, strictly use helper's getVariantUrl, but here we keep flex logic
+    : src // If not customized, let Next.js Image handle optimization or pass through
+
+  // But we want to enforce Cloudinary optimization if it IS a Cloudinary URL
+  const isCloudinary = CLOUDINARY_REGEX.test(src)
+  const optimizeCloudinary = isCloudinary && !src.includes('w_') // Avoid double optimizing if already has params
+
+  const optimizedSrc = optimizeCloudinary
+    ? (() => {
+        const match = src.match(CLOUDINARY_REGEX)
+        if (!match) return src
+
+        const [, cloudName, version, publicId] = match
+
+        // Construct new URL with transformations
+        // transformations format: f_auto,q_auto,w_...,h_...,c_...
+        const transformations = []
+        if (width || (fill ? 1200 : undefined)) {
+          transformations.push(`w_${width || (fill ? 1200 : undefined)}`)
+        }
+        if (quality || 'auto') {
+          transformations.push(`q_${quality || 'auto'}`)
+        }
+
+        const transformationString = transformations.join(',')
+
+        return `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}/${version || ''}${publicId}`
+      })()
+    : finalSrc
+
+  // Generate blur placeholder automatically for Cloudinary images
+  const computedBlurDataURL =
+    isCloudinary && placeholder === 'blur' && !blurDataURL
+      ? getBlurPlaceholderUrl(src)
+      : blurDataURL
 
   // Intersection Observer for lazy loading
   useEffect(() => {
@@ -65,7 +106,7 @@ export function OptimizedImage({
           observer.disconnect()
         }
       },
-      { threshold: 0.1, rootMargin: '50px' }
+      { threshold: 0.01, rootMargin: '100px' }
     )
 
     if (imgRef.current) {
@@ -85,9 +126,9 @@ export function OptimizedImage({
     onError?.()
   }
 
-  // Generate blur placeholder if not provided
+  // Fallback SVG placeholder
   const defaultBlurDataURL = `data:image/svg+xml;base64,${Buffer.from(
-    `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    `<svg width="${width || 100}" height="${height || 100}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="#f3f4f6"/>
     </svg>`
   ).toString('base64')}`
@@ -117,13 +158,27 @@ export function OptimizedImage({
   return (
     <div
       ref={imgRef}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative overflow-hidden bg-gray-50 dark:bg-gray-900 ${className}`}
       style={fill ? { position: 'absolute', inset: 0 } : undefined}
     >
       {(isInView || priority) && (
         <>
+          {/* Background Blurred Placeholder (Always visible until load) */}
+          {(computedBlurDataURL || placeholder === 'blur') && (
+            <Image
+              src={computedBlurDataURL || defaultBlurDataURL}
+              alt={alt}
+              fill={fill}
+              width={fill ? undefined : width}
+              height={fill ? undefined : height}
+              className={`absolute inset-0 object-cover opacity-100 transition-opacity duration-700 ${isLoaded ? 'opacity-0' : ''}`}
+              priority={true}
+              aria-hidden="true"
+            />
+          )}
+
           <Image
-            src={src}
+            src={optimizedSrc}
             alt={alt}
             width={fill ? undefined : width}
             height={fill ? undefined : height}
@@ -131,30 +186,12 @@ export function OptimizedImage({
             quality={quality}
             sizes={sizes}
             priority={priority}
-            placeholder={placeholder}
-            blurDataURL={blurDataURL || defaultBlurDataURL}
-            className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`transition-all duration-300 ${isLoaded ? 'scale-100 opacity-100' : 'scale-105 opacity-0'} ${fill ? 'object-cover' : ''}`}
             style={fill ? { objectFit: 'cover' } : undefined}
             onLoad={handleLoad}
             onError={handleError}
           />
-
-          {/* Loading skeleton */}
-          {!isLoaded && (
-            <div
-              className="absolute inset-0 animate-pulse bg-gray-200 dark:bg-gray-700"
-              style={fill ? undefined : { width, height }}
-            />
-          )}
         </>
-      )}
-
-      {/* Lazy loading placeholder */}
-      {!isInView && !priority && (
-        <div
-          className="animate-pulse bg-gray-100 dark:bg-gray-800"
-          style={fill ? { position: 'absolute', inset: 0 } : { width, height }}
-        />
       )}
     </div>
   )
