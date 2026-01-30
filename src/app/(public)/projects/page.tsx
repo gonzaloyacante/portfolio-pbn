@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
+import { getProjectSettings } from '@/actions/project-settings.actions'
 
 export const metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',
@@ -10,30 +11,38 @@ export const metadata = {
 
 /**
  * Projects Page - Category Grid
- * Design: 3x2 Grid, extreme rounded corners, pink/card background.
+ * Design: Grid 1x 2x 4x for 4 items balance.
  */
 export default async function ProjectsPage() {
-  const categories = await prisma.category.findMany({
-    where: {
-      projects: {
-        some: { isActive: true, isDeleted: false },
-      },
-    },
-    include: {
-      projects: {
-        where: { isActive: true, isDeleted: false },
-        take: 1,
-        orderBy: { date: 'desc' },
-        select: { thumbnailUrl: true },
-      },
-      _count: {
-        select: {
-          projects: { where: { isActive: true, isDeleted: false } },
+  const [categories] = await Promise.all([
+    prisma.category.findMany({
+      where: {
+        projects: {
+          some: { isActive: true, isDeleted: false },
         },
       },
-    },
-    orderBy: { sortOrder: 'asc' },
-  })
+      include: {
+        projects: {
+          where: { isActive: true, isDeleted: false },
+          take: 1,
+          orderBy: { date: 'desc' },
+          select: { thumbnailUrl: true },
+        },
+        // Count removed from UI requirement, but fetching it doesn't hurt if we need it later invisibly
+        _count: {
+          select: {
+            projects: { where: { isActive: true, isDeleted: false } },
+          },
+        },
+      },
+      orderBy: { sortOrder: 'asc' },
+    }),
+    getProjectSettings(),
+  ])
+
+  // Default to showing everything if settings not yet created
+  // const showTitles = settings?.showCardTitles ?? true
+  // const showCategory = settings?.showCardCategory ?? true // Not used in Category list, but good context
 
   return (
     <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
@@ -50,7 +59,7 @@ export default async function ProjectsPage() {
 
         {/* Categories Grid */}
         {categories.length > 0 ? (
-          <StaggerChildren className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
+          <StaggerChildren className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             {categories.map((category) => {
               const thumbnailUrl = category.projects[0]?.thumbnailUrl
 
@@ -58,7 +67,7 @@ export default async function ProjectsPage() {
                 <FadeIn key={category.id}>
                   <Link
                     href={`/proyectos/${category.slug}`}
-                    className="group relative block aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-[var(--card-bg)] shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
+                    className="group relative block aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-[var(--card-bg)] shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
                   >
                     {/* Background Image */}
                     {thumbnailUrl ? (
@@ -68,10 +77,10 @@ export default async function ProjectsPage() {
                           alt={category.name}
                           fill
                           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          priority={category.sortOrder <= 3}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          priority={category.sortOrder <= 4}
                         />
-                        {/* Overlay Gradient */}
+                        {/* Overlay Gradient - Only if showing text */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
                       </>
                     ) : (
@@ -85,10 +94,8 @@ export default async function ProjectsPage() {
                       <h2 className="translate-y-2 font-[family-name:var(--font-heading)] text-2xl font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-3xl">
                         {category.name}
                       </h2>
-                      <div className="mt-2 flex items-center justify-between border-t border-white/30 pt-3 text-sm text-white/90 opacity-0 transition-all duration-300 group-hover:opacity-100">
-                        <span>{category._count.projects} proyectos</span>
-                        <span className="font-medium">Ver galería &rarr;</span>
-                      </div>
+                      {/* Removed "X proyectos" count as requested */}
+                      <div className="mt-2 h-1 w-12 rounded-full bg-white/50 transition-all group-hover:w-20 group-hover:bg-white" />
                     </div>
                   </Link>
                 </FadeIn>

@@ -2,8 +2,13 @@
 
 import { useState } from 'react'
 import { submitPublicTestimonial } from '@/actions/testimonials.actions'
+import { Button, Input, TextArea } from '@/components/ui'
 import toast from 'react-hot-toast'
 
+/**
+ * TestimonialForm - Refactored to use UI components
+ * Uses Input, TextArea, Button from @/components/ui instead of inline styles
+ */
 export default function TestimonialForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -45,48 +50,12 @@ export default function TestimonialForm() {
 
   return (
     <form action={handleSubmit} className="space-y-6">
-      <div>
-        <label
-          htmlFor="name"
-          className="mb-2 block text-sm font-medium"
-          style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
-        >
-          Tu nombre *
-        </label>
-        <input
-          type="text"
-          id="name"
-          name="name"
-          required
-          placeholder="¿Cómo te llamas?"
-          className="border-pink-hot/30 focus:border-wine focus:ring-wine/20 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full rounded-lg border bg-white px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-        />
-      </div>
+      <Input label="Tu nombre *" name="name" required placeholder="¿Cómo te llamas?" />
+
+      <Input label="Email (opcional)" name="email" type="email" placeholder="tu@email.com" />
 
       <div>
-        <label
-          htmlFor="email"
-          className="mb-2 block text-sm font-medium"
-          style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
-        >
-          Email (opcional)
-        </label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="tu@email.com"
-          className="border-pink-hot/30 focus:border-wine focus:ring-wine/20 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full rounded-lg border bg-white px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-        />
-      </div>
-
-      <div>
-        <label
-          className="mb-2 block text-sm font-medium"
-          style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
-        >
-          Tu calificación *
-        </label>
+        <label className="text-foreground mb-2 block text-sm font-medium">Tu calificación *</label>
         <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -101,57 +70,18 @@ export default function TestimonialForm() {
         </div>
       </div>
 
-      <div>
-        <label
-          htmlFor="text"
-          className="mb-2 block text-sm font-medium"
-          style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
-        >
-          Tu experiencia *
-        </label>
-        <textarea
-          id="text"
-          name="text"
-          required
-          rows={4}
-          minLength={20}
-          maxLength={500}
-          placeholder="Cuéntanos tu experiencia trabajando con Paola..."
-          className="border-pink-hot/30 focus:border-wine focus:ring-wine/20 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full resize-none rounded-lg border bg-white px-4 py-3 transition-colors focus:ring-2 focus:outline-none"
-        />
-        <p className="mt-1 text-xs text-gray-500">Entre 20 y 500 caracteres</p>
-      </div>
+      <TextArea
+        label="Tu experiencia *"
+        name="text"
+        required
+        rows={4}
+        placeholder="Cuéntanos tu experiencia trabajando con Paola..."
+        helperText="Entre 20 y 500 caracteres"
+      />
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full cursor-pointer rounded-lg px-6 py-3 font-bold text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: 'var(--color-text-primary, #6c0a0a)' }}
-      >
-        {isSubmitting ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-                fill="none"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
-            </svg>
-            Enviando...
-          </span>
-        ) : (
-          'Enviar Testimonio'
-        )}
-      </button>
+      <Button type="submit" loading={isSubmitting} className="w-full">
+        Enviar Testimonio
+      </Button>
     </form>
   )
 }

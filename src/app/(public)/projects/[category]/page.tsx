@@ -31,6 +31,10 @@ export async function generateMetadata({
  * Category Gallery Page
  * Displays a unified gallery of ALL images from ALL projects in this category.
  */
+import { getProjectSettings } from '@/actions/project-settings.actions'
+
+// ...
+
 export default async function CategoryProjectsPage({
   params,
 }: {
@@ -38,25 +42,30 @@ export default async function CategoryProjectsPage({
 }) {
   const { category: categorySlug } = await params
 
-  // Fetch category with projects AND their images
-  const category = await prisma.category.findUnique({
-    where: { slug: categorySlug },
-    include: {
-      projects: {
-        where: { isDeleted: false, isActive: true },
-        orderBy: { date: 'desc' },
-        include: {
-          images: {
-            orderBy: { order: 'asc' },
+  // Fetch category and settings
+  const [category, settings] = await Promise.all([
+    prisma.category.findUnique({
+      where: { slug: categorySlug },
+      include: {
+        projects: {
+          where: { isDeleted: false, isActive: true },
+          orderBy: { date: 'desc' },
+          include: {
+            images: {
+              orderBy: { order: 'asc' },
+            },
           },
         },
       },
-    },
-  })
+    }),
+    getProjectSettings(),
+  ])
 
   if (!category) {
     notFound()
   }
+
+  const showTitles = settings?.showCardTitles ?? true
 
   // Flatten images for the gallery
   const allImages = category.projects.flatMap((project) =>
@@ -107,7 +116,11 @@ export default async function CategoryProjectsPage({
 
         {/* Gallery */}
         {allImages.length > 0 ? (
-          <CategoryGallery images={allImages} categoryName={category.name} />
+          <CategoryGallery
+            images={allImages}
+            categoryName={category.name}
+            showTitles={showTitles}
+          />
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
             <span className="mb-4 text-4xl">📷</span>

@@ -34,19 +34,13 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div
-      className="flex min-h-screen items-center justify-center p-4"
-      style={{ backgroundColor: 'var(--color-background, #fff1f9)' }}
-    >
+    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] p-4">
       <FadeIn duration={0.5}>
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="text-center">
             <span className="text-6xl">🔐</span>
-            <h1
-              className="font-script mt-4 text-4xl"
-              style={{ color: 'var(--color-text-primary, #6c0a0a)' }}
-            >
+            <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">
               Recuperar Contraseña
             </h1>
             <p className="text-wine/70 dark:text-pink-light/70 mt-2">
@@ -55,10 +49,7 @@ export default function ForgotPasswordPage() {
           </div>
 
           {/* Card */}
-          <div
-            className="dark:bg-wine/30 rounded-2xl bg-white p-8 shadow-xl"
-            style={{ borderTop: '4px solid var(--color-primary, #ffaadd)' }}
-          >
+          <div className="dark:bg-wine/30 rounded-2xl border-t-4 border-[var(--primary)] bg-[var(--card-bg)] p-8 shadow-xl">
             {status === 'success' ? (
               <div className="space-y-6 text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
@@ -84,8 +75,7 @@ export default function ForgotPasswordPage() {
                 </div>
                 <Link
                   href="/auth/login"
-                  className="inline-block rounded-lg px-6 py-2 text-sm font-medium text-white transition-colors"
-                  style={{ backgroundColor: 'var(--color-text-primary, #6c0a0a)' }}
+                  className="inline-block rounded-lg bg-[var(--foreground)] px-6 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:opacity-90"
                 >
                   Volver a Iniciar Sesión
                 </Link>
@@ -120,8 +110,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full rounded-lg py-3 font-semibold text-white transition-all hover:scale-[1.02] disabled:scale-100 disabled:opacity-50"
-                  style={{ backgroundColor: 'var(--color-text-primary, #6c0a0a)' }}
+                  className="w-full rounded-lg bg-[var(--foreground)] py-3 font-semibold text-[var(--background)] transition-all hover:scale-[1.02] disabled:scale-100 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -154,8 +143,7 @@ export default function ForgotPasswordPage() {
               <div className="mt-6 text-center">
                 <Link
                   href="/auth/login"
-                  className="text-sm transition-colors hover:underline"
-                  style={{ color: 'var(--color-accent, #7a2556)' }}
+                  className="text-sm text-[var(--primary)] transition-colors hover:underline"
                 >
                   ← Volver a Iniciar Sesión
                 </Link>

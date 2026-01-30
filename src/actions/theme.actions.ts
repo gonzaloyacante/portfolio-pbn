@@ -282,8 +282,6 @@ export interface AboutSettingsData {
   skills: string[]
   yearsExperience: number | null
   certifications: string[]
-  showTestimonials: boolean
-  testimonialsTitle: string | null
   isActive: boolean
 }
 
@@ -322,8 +320,6 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
           skills: data.skills || [],
           yearsExperience: data.yearsExperience,
           certifications: data.certifications || [],
-          showTestimonials: data.showTestimonials ?? true,
-          testimonialsTitle: data.testimonialsTitle || 'Lo que dicen mis clientes',
           isActive: true,
         },
       })

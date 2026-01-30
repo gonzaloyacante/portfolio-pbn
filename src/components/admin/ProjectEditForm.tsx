@@ -1,241 +1,157 @@
 'use client'
 
 import { useState } from 'react'
-import { Project, ProjectImage, Category } from '@prisma/client'
-import { Button } from '@/components/ui'
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from '@dnd-kit/core'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy,
-} from '@dnd-kit/sortable'
-import { SortableImage } from './SortableImage'
-import { updateProject, reorderProjectImages, deleteProjectImage } from '@/actions/content.actions'
-import ImageUpload from './ImageUpload'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { projectFormSchema, type ProjectFormData } from '@/lib/validations'
+import { Category, Project, ProjectImage } from '@prisma/client'
+import { updateProject, deleteProjectImage } from '@/actions/content.actions'
+import { Button, Input, TextArea } from '@/components/ui'
 import { useToast } from '@/components/ui'
 
-type ProjectWithImages = Project & { images: ProjectImage[] }
+type ProjectWithRelations = Project & {
+  category: Category
+  images: ProjectImage[]
+}
 
 interface ProjectEditFormProps {
-  project: ProjectWithImages
+  project: ProjectWithRelations
   categories: Category[]
 }
 
 export default function ProjectEditForm({ project, categories }: ProjectEditFormProps) {
   const router = useRouter()
   const { show } = useToast()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [images, setImages] = useState(project.images)
-  const [isSavingOrder, setIsSavingOrder] = useState(false)
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ProjectFormData>({
-    resolver: zodResolver(projectFormSchema),
-    defaultValues: {
-      title: project.title,
-      description: project.description,
-      categoryId: project.categoryId,
-      date: new Date(project.date).toISOString().split('T')[0],
-    },
-  })
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-
-    if (over && active.id !== over.id) {
-      setImages((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id)
-        const newIndex = items.findIndex((item) => item.id === over.id)
-        return arrayMove(items, oldIndex, newIndex)
-      })
+  async function handleSubmit(formData: FormData) {
+    setIsSubmitting(true)
+    try {
+      const result = await updateProject(project.id, formData)
+      if (result.success) {
+        show({ type: 'success', message: 'Proyecto actualizado correctamente' })
+        router.refresh()
+      } else {
+        show({ type: 'error', message: result.error || 'Error al actualizar' })
+      }
+    } catch {
+      show({ type: 'error', message: 'Error inesperado' })
+    } finally {
+      setIsSubmitting(false)
     }
-  }
-
-  const handleSaveOrder = async () => {
-    setIsSavingOrder(true)
-    const orderUpdates = images.map((img, index) => ({
-      id: img.id,
-      order: index,
-    }))
-
-    const result = await reorderProjectImages(project.id, orderUpdates)
-    if (result.success) {
-      show({ type: 'success', message: 'Orden actualizado correctamente' })
-      router.refresh()
-    } else {
-      show({ type: 'error', message: 'Error al actualizar el orden' })
-    }
-    setIsSavingOrder(false)
   }
 
   const handleDeleteImage = async (imageId: string) => {
     if (!confirm('¿Estás seguro de eliminar esta imagen?')) return
 
-    const result = await deleteProjectImage(imageId)
-    if (result.success) {
-      setImages(images.filter((img) => img.id !== imageId))
-      show({ type: 'success', message: 'Imagen eliminada' })
-      router.refresh()
-    } else {
-      show({ type: 'error', message: 'Error al eliminar la imagen' })
-    }
-  }
-
-  const onSubmit = async (data: ProjectFormData, event?: React.BaseSyntheticEvent) => {
-    if (!event) return
-    const formData = new FormData(event.target)
-
-    const result = await updateProject(project.id, formData)
-
-    if (result.success) {
-      show({ type: 'success', message: 'Proyecto actualizado correctamente' })
-      router.refresh()
-    } else {
-      show({ type: 'error', message: result.error || 'Error al actualizar proyecto' })
+    try {
+      const result = await deleteProjectImage(imageId)
+      if (result.success) {
+        setImages((prev) => prev.filter((img) => img.id !== imageId))
+        show({ type: 'success', message: 'Imagen eliminada correctly' })
+        router.refresh()
+      } else {
+        show({ type: 'error', message: result.error || 'Error al eliminar imagen' })
+      }
+    } catch {
+      show({ type: 'error', message: 'Error al eliminar imagen' })
     }
   }
 
   return (
-    <div className="space-y-8">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="border-wine/10 dark:border-pink-light/10 dark:bg-purple-dark/20 space-y-6 rounded-2xl border bg-white/80 p-8 shadow-sm backdrop-blur-sm"
-      >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
-              Título
-            </label>
-            <input
-              {...register('title')}
-              className="border-wine/20 bg-pink-light/50 text-wine placeholder:text-wine/40 focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
-            />
-            {errors.title && <p className="mt-1 text-sm text-red-500">{errors.title.message}</p>}
-          </div>
-          <div>
-            <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
-              Categoría
-            </label>
-            <select
-              {...register('categoryId')}
-              className="border-wine/20 bg-pink-light/50 text-wine focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
-            >
-              <option value="">Selecciona una categoría</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-            {errors.categoryId && (
-              <p className="mt-1 text-sm text-red-500">{errors.categoryId.message}</p>
-            )}
-          </div>
-        </div>
-
+    <form action={handleSubmit} className="space-y-8">
+      {/* Información Básica */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <Input label="Título" name="title" defaultValue={project.title} required />
         <div>
-          <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
-            Descripción
+          <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">
+            Categoría
           </label>
-          <textarea
-            {...register('description')}
-            rows={4}
-            className="border-wine/20 bg-pink-light/50 text-wine placeholder:text-wine/40 focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
-          ></textarea>
-          {errors.description && (
-            <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>
-          )}
+          <select
+            name="categoryId"
+            defaultValue={project.categoryId}
+            className="w-full rounded-lg border bg-[var(--background)] px-4 py-3 text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+            required
+          >
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <TextArea
+        label="Descripción"
+        name="description"
+        defaultValue={project.description || ''}
+        rows={4}
+      />
+
+      <Input
+        label="Fecha"
+        name="date"
+        type="date"
+        defaultValue={project.date ? new Date(project.date).toISOString().split('T')[0] : ''}
+      />
+
+      {/* Gestión de Impergenes */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-medium text-[var(--foreground)]">Imágenes del Proyecto</h3>
+
+        {/* Lista de imágenes existentes */}
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {images.map((img) => (
+            <div
+              key={img.id}
+              className="group relative aspect-square overflow-hidden rounded-lg border border-[var(--primary)]/20"
+            >
+              <Image
+                src={img.url}
+                alt="Imagen del proyecto"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 50vw, 20vw"
+              />
+              <button
+                type="button"
+                onClick={() => handleDeleteImage(img.id)}
+                className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
+                title="Eliminar imagen"
+              >
+                🗑️
+              </button>
+            </div>
+          ))}
         </div>
 
-        <div>
-          <label className="text-wine dark:text-pink-light mb-2 block text-sm font-bold">
-            Fecha
+        {/* Subir nuevas imágenes */}
+        <div className="card-bg rounded-xl border border-dashed border-[var(--primary)] p-6">
+          <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">
+            Agregar más fotos
           </label>
           <input
-            {...register('date')}
-            type="date"
-            className="border-wine/20 bg-pink-light/50 text-wine focus:border-wine focus:ring-wine/20 dark:border-pink-light/20 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot w-full rounded-xl border-2 px-4 py-2 transition-all focus:ring-2 focus:outline-none"
+            type="file"
+            name="newImages"
+            multiple
+            accept="image/*"
+            className="w-full text-sm text-[var(--foreground)] file:mr-4 file:rounded-full file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[var(--primary-foreground)] hover:file:opacity-90"
           />
-          {errors.date && <p className="mt-1 text-sm text-red-500">{errors.date.message}</p>}
+          <p className="mt-2 text-xs opacity-70">
+            Selecciona múltiples archivos para agregar a la galería existente.
+          </p>
         </div>
+      </div>
 
-        <div>
-          <h3 className="text-wine dark:text-pink-hot mb-4 text-lg font-bold">
-            Galería de Imágenes
-          </h3>
-
-          <div className="mb-4">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-wine/60 dark:text-pink-light/60 text-sm">
-                Arrastra las imágenes para reordenar
-              </span>
-              <Button
-                type="button"
-                onClick={handleSaveOrder}
-                loading={isSavingOrder}
-                variant="secondary"
-                size="sm"
-              >
-                {isSavingOrder ? 'Guardando...' : 'Guardar Orden'}
-              </Button>
-            </div>
-
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext items={images.map((img) => img.id)} strategy={rectSortingStrategy}>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                  {images.map((img) => (
-                    <SortableImage
-                      key={img.id}
-                      id={img.id}
-                      url={img.url}
-                      onDelete={handleDeleteImage}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-          </div>
-
-          <div className="border-wine/10 dark:border-pink-light/10 mt-6 border-t pt-6">
-            <h4 className="text-wine dark:text-pink-light mb-2 text-sm font-bold">
-              Agregar nuevas imágenes
-            </h4>
-            <ImageUpload name="newImages" multiple label="Subir fotos adicionales" />
-          </div>
-        </div>
-
-        <div className="flex justify-end pt-4">
-          <Button type="submit" loading={isSubmitting}>
-            Actualizar Proyecto
-          </Button>
-        </div>
-      </form>
-    </div>
+      <div className="flex justify-end gap-4 border-t border-[var(--primary)]/20 pt-6">
+        <Button type="button" variant="secondary" onClick={() => router.back()}>
+          Cancelar
+        </Button>
+        <Button type="submit" loading={isSubmitting}>
+          Guardar Cambios
+        </Button>
+      </div>
+    </form>
   )
 }

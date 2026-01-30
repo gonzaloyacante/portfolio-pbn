@@ -95,7 +95,7 @@ export const homeSettingsSchema = z.object({
 
 export type HomeSettingsFormData = z.infer<typeof homeSettingsSchema>
 
-// About Settings
+// About Settings (SRP: no longer contains testimonial fields)
 export const aboutSettingsSchema = z.object({
   illustrationUrl: z.string().optional(),
   illustrationAlt: z.string().optional(),
@@ -107,11 +107,18 @@ export const aboutSettingsSchema = z.object({
   skills: z.array(z.string()).optional(),
   yearsExperience: z.number().optional(),
   certifications: z.array(z.string()).optional(),
-  showTestimonials: z.boolean(),
-  testimonialsTitle: z.string().optional(),
 })
 
 export type AboutSettingsFormData = z.infer<typeof aboutSettingsSchema>
+
+// Testimonial Display Settings (SRP: separate from About)
+export const testimonialSettingsSchema = z.object({
+  showOnAbout: z.boolean(),
+  title: z.string().optional(),
+  maxDisplay: z.number().min(1).max(20),
+})
+
+export type TestimonialSettingsFormData = z.infer<typeof testimonialSettingsSchema>
 
 // Contact Settings
 export const contactSettingsSchema = z.object({
@@ -137,6 +144,15 @@ export const contactSettingsSchema = z.object({
 })
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>
+
+// Project Display Settings
+export const projectSettingsSchema = z.object({
+  showCardTitles: z.boolean(),
+  showCardCategory: z.boolean(),
+  gridColumns: z.number().min(1).max(4),
+})
+
+export type ProjectSettingsFormData = z.infer<typeof projectSettingsSchema>
 
 // ============================================
 // DATA MODELS

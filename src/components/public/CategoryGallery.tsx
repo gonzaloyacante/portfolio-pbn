@@ -17,58 +17,54 @@ interface GalleryImage {
 export default function CategoryGallery({
   images,
   categoryName,
+  showTitles = true,
 }: {
   images: GalleryImage[]
   categoryName: string
+  showTitles?: boolean
 }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [isZoomed, setIsZoomed] = useState(false)
 
-  // Lock body scroll
-  useEffect(() => {
-    if (selectedIndex !== null) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = 'unset'
-    }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
-  }, [selectedIndex])
-
-  // Reset zoom handled in navigation actions
+  const handlePrev = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      if (selectedIndex !== null) {
+        setSelectedIndex(selectedIndex === 0 ? images.length - 1 : selectedIndex - 1)
+        setIsZoomed(false)
+      }
+    },
+    [selectedIndex, images.length]
+  )
 
   const handleNext = useCallback(
-    (e?: React.MouseEvent) => {
-      e?.stopPropagation()
-      if (selectedIndex === null) return
-      setSelectedIndex((prev) => (prev! + 1) % images.length)
-      setIsZoomed(false)
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      if (selectedIndex !== null) {
+        setSelectedIndex(selectedIndex === images.length - 1 ? 0 : selectedIndex + 1)
+        setIsZoomed(false)
+      }
     },
-    [images.length, selectedIndex]
+    [selectedIndex, images.length]
   )
 
-  const handlePrev = useCallback(
-    (e?: React.MouseEvent) => {
-      e?.stopPropagation()
-      if (selectedIndex === null) return
-      setSelectedIndex((prev) => (prev! - 1 + images.length) % images.length)
-      setIsZoomed(false)
-    },
-    [images.length, selectedIndex]
-  )
-
-  // Keyboard
+  // Keyboard navigation
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedIndex === null) return
-      if (e.key === 'Escape') setSelectedIndex(null)
-      if (e.key === 'ArrowRight') handleNext()
-      if (e.key === 'ArrowLeft') handlePrev()
+      if (e.key === 'ArrowLeft') {
+        setSelectedIndex(selectedIndex === 0 ? images.length - 1 : selectedIndex - 1)
+        setIsZoomed(false)
+      } else if (e.key === 'ArrowRight') {
+        setSelectedIndex(selectedIndex === images.length - 1 ? 0 : selectedIndex + 1)
+        setIsZoomed(false)
+      } else if (e.key === 'Escape') {
+        setSelectedIndex(null)
+      }
     }
-    window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [selectedIndex, handleNext, handlePrev])
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedIndex, images.length])
 
   return (
     <>
@@ -92,9 +88,13 @@ export default function CategoryGallery({
                 variant="card"
               />
               <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
-              <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
-                <p className="truncate text-xs font-bold text-white drop-shadow-md">{img.title}</p>
-              </div>
+              {showTitles && (
+                <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
+                  <p className="truncate text-xs font-bold text-white drop-shadow-md">
+                    {img.title}
+                  </p>
+                </div>
+              )}
             </div>
           </motion.div>
         ))}

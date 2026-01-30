@@ -90,7 +90,11 @@ export default async function ProjectsManagementPage() {
 
                   {/* Actions */}
                   <div className="border-wine/5 dark:border-pink-light/5 mt-4 flex gap-2 border-t pt-2">
-                    <Link href={`/proyecto/${project.slug}`} target="_blank" className="flex-1">
+                    <Link
+                      href={`/projects/${project.category.slug}/${project.slug}`}
+                      target="_blank"
+                      className="flex-1"
+                    >
                       <Button variant="secondary" size="sm" className="w-full justify-center">
                         👀 Ver
                       </Button>

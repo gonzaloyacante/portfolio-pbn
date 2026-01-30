@@ -36,8 +36,6 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       skills: settings?.skills || [],
       yearsExperience: settings?.yearsExperience || 0,
       certifications: settings?.certifications || [],
-      showTestimonials: settings?.showTestimonials ?? true,
-      testimonialsTitle: settings?.testimonialsTitle || 'Lo que dicen mis clientes',
     },
   })
 
@@ -167,24 +165,6 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             label="Años de Experiencia"
             {...register('yearsExperience', { valueAsNumber: true })}
           />
-        </div>
-      </div>
-
-      {/* Testimonials Toggle */}
-      <div className="border-t pt-6">
-        <div className="flex items-center gap-4">
-          <input
-            type="checkbox"
-            {...register('showTestimonials')}
-            id="showTests"
-            className="h-5 w-5 rounded"
-          />
-          <label htmlFor="showTests" className="font-medium">
-            Mostrar Sección de Testimonios
-          </label>
-        </div>
-        <div className="mt-4 w-1/2">
-          <Input label="Título Sección Testimonios" {...register('testimonialsTitle')} />
         </div>
       </div>
 

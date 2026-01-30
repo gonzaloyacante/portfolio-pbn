@@ -118,9 +118,6 @@ model AboutSettings {
   yearsExperience  Int?
   // Certifications (for professional credibility)
   certifications   String[] @default([])
-  // Show Testimonials on About page
-  showTestimonials Boolean  @default(true)
-  testimonialsTitle String? @default("Lo que dicen mis clientes")
   // Meta
   isActive         Boolean  @default(true)
   createdAt        DateTime @default(now())
@@ -163,6 +160,36 @@ model ContactSettings {
   updatedAt            DateTime @updatedAt
 
   @@map("contact_settings")
+}
+
+/// Project Display Settings
+model ProjectSettings {
+  id               String   @id @default(cuid())
+  // Card Display Options
+  showCardTitles   Boolean  @default(true)
+  showCardCategory Boolean  @default(true)
+  // Grid Layout Options (Future proofing)
+  gridColumns      Int      @default(3)
+  // Meta
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("project_settings")
+}
+
+/// Testimonial Display Settings (SRP: separate from About)
+model TestimonialSettings {
+  id          String   @id @default(cuid())
+  showOnAbout Boolean  @default(true)
+  title       String?  @default("Lo que dicen mis clientes")
+  maxDisplay  Int      @default(6)
+  // Meta
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonial_settings")
 }
 
 /// Theme Colors and Typography

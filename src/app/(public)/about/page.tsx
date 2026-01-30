@@ -1,5 +1,6 @@
 import { getAboutSettings } from '@/actions/theme.actions'
 import { getActiveTestimonials } from '@/actions/testimonials.actions'
+import { getTestimonialSettings } from '@/actions/testimonial-settings.actions'
 import TestimonialForm from '@/components/public/TestimonialForm'
 import TestimonialSlider from '@/components/public/TestimonialSlider'
 import JsonLd from '@/components/seo/JsonLd'
@@ -12,9 +13,10 @@ import { FadeIn, SlideIn, OptimizedImage } from '@/components/ui'
  * Bottom: Testimonials (moved from homepage)
  */
 export default async function AboutPage() {
-  const [testimonials, aboutSettings] = await Promise.all([
+  const [testimonials, aboutSettings, testimonialSettings] = await Promise.all([
     getActiveTestimonials(6),
     getAboutSettings(),
+    getTestimonialSettings(),
   ])
 
   const bioTitle = aboutSettings?.bioTitle || 'Hola, soy Paola.'
@@ -24,8 +26,8 @@ export default async function AboutPage() {
   const profileImageAlt = aboutSettings?.profileImageAlt || 'Paola Bolívar Nievas'
   const illustrationUrl = aboutSettings?.illustrationUrl
   const illustrationAlt = aboutSettings?.illustrationAlt || 'Ilustración'
-  const showTestimonials = aboutSettings?.showTestimonials ?? true
-  const testimonialsTitle = aboutSettings?.testimonialsTitle || 'Lo que dicen mis clientes'
+  const showTestimonials = testimonialSettings?.showOnAbout ?? true
+  const testimonialsTitle = testimonialSettings?.title || 'Lo que dicen mis clientes'
   const skills = aboutSettings?.skills || []
   const certifications = aboutSettings?.certifications || []
 
