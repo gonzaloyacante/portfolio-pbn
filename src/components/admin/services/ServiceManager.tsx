@@ -5,7 +5,7 @@ import { Service } from '@prisma/client'
 import { Button, Card, Badge, Modal } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/services.actions'
 import ServiceForm from './ServiceForm'
-import { Edit, Trash2, Plus, GripVertical } from 'lucide-react'
+import { Edit, Trash2, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import React from 'react'
 
@@ -14,7 +14,6 @@ interface ServiceManagerProps {
 }
 
 export default function ServiceManager({ initialServices }: ServiceManagerProps) {
-  const [services] = useState(initialServices) // In a real app with real-time needs, we might use router.refresh() results
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingService, setEditingService] = useState<Service | null>(null)
 

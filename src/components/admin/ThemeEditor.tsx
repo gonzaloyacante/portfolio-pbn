@@ -8,7 +8,7 @@ import {
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
-import { useForm, UseFormRegister, FieldError } from 'react-hook-form'
+import { useForm, UseFormRegister, FieldError, FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
 import { useToast } from '@/components/ui'
@@ -48,12 +48,6 @@ const darkColorFields = [
   { key: 'darkCardBgColor', label: 'Cards (Dark)', description: 'Fondo de tarjetas en oscuro' },
 ] as const
 
-const typographyFields = [
-  { key: 'headingFont', label: 'Títulos', description: 'Fuente para encabezados (Google Fonts)' },
-  { key: 'scriptFont', label: 'Script/Firma', description: 'Fuente cursiva para detalles' },
-  { key: 'bodyFont', label: 'Cuerpo', description: 'Fuente para texto general' },
-] as const
-
 export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
   const router = useRouter()
   const { show } = useToast()
@@ -81,10 +75,21 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
       darkBackgroundColor: initialSettings?.darkBackgroundColor || '#6c0a0a',
       darkTextColor: initialSettings?.darkTextColor || '#fff1f9',
       darkCardBgColor: initialSettings?.darkCardBgColor || '#ffaadd',
-      // Fonts
+      // Fonts Base
       headingFont: initialSettings?.headingFont || 'Poppins',
+      headingFontUrl: initialSettings?.headingFontUrl,
       scriptFont: initialSettings?.scriptFont || 'Great Vibes',
+      scriptFontUrl: initialSettings?.scriptFontUrl,
       bodyFont: initialSettings?.bodyFont || 'Open Sans',
+      bodyFontUrl: initialSettings?.bodyFontUrl,
+      // Fonts Brand
+      brandFont: initialSettings?.brandFont || 'Saira Extra Condensed',
+      brandFontUrl: initialSettings?.brandFontUrl,
+      portfolioFont: initialSettings?.portfolioFont || 'Saira Extra Condensed',
+      portfolioFontUrl: initialSettings?.portfolioFontUrl,
+      signatureFont: initialSettings?.signatureFont || 'Dawning of a New Day',
+      signatureFontUrl: initialSettings?.signatureFontUrl,
+      // Layout
       borderRadius: initialSettings?.borderRadius || 40,
     },
   })
@@ -153,7 +158,7 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
         </div>
       </div>
 
-      <Tabs defaultValue="light" className="w-full">
+      <Tabs defaultValue="typography" className="w-full">
         <TabsList className="mb-6 grid w-full grid-cols-3 lg:w-[400px]">
           <TabsTrigger value="light">☀️ Claro</TabsTrigger>
           <TabsTrigger value="dark">🌙 Oscuro</TabsTrigger>
@@ -193,30 +198,77 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
         </TabsContent>
 
         {/* TYPOGRAPHY TAB */}
-        <TabsContent value="typography" className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
-            {typographyFields.map((field) => (
-              <div key={field.key} className="space-y-2">
-                <label className="text-sm font-medium">{field.label}</label>
-                <Input {...register(field.key as keyof ThemeEditorData)} />
-                <p className="text-xs text-gray-500">{field.description}</p>
-                {errors[field.key as keyof ThemeEditorData] && (
-                  <span className="text-xs text-red-500">
-                    {errors[field.key as keyof ThemeEditorData]?.message}
-                  </span>
-                )}
-              </div>
-            ))}
-
-            {/* Border Radius */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Radio de Borde (px)</label>
-              <Input type="number" {...register('borderRadius', { valueAsNumber: true })} />
-              <p className="text-xs text-gray-500">Redondez de las tarjetas (ej. 40)</p>
-              {errors.borderRadius && (
-                <span className="text-xs text-red-500">{errors.borderRadius.message}</span>
-              )}
+        <TabsContent value="typography" className="space-y-8">
+          {/* Base Typography */}
+          <section className="space-y-4">
+            <h3 className="border-b pb-2 text-lg font-semibold">Fuentes Base</h3>
+            <div className="grid gap-6 md:grid-cols-2">
+              <FontField
+                label="Títulos (Heading)"
+                description="Fuente para H1, H2, H3. Ej: Poppins"
+                fontKey="headingFont"
+                urlKey="headingFontUrl"
+                register={register}
+                errors={errors}
+              />
+              <FontField
+                label="Cuerpo (Body)"
+                description="Fuente para texto general. Ej: Open Sans"
+                fontKey="bodyFont"
+                urlKey="bodyFontUrl"
+                register={register}
+                errors={errors}
+              />
+              <FontField
+                label="Script / Detalles"
+                description="Fuente cursiva para adornos. Ej: Great Vibes"
+                fontKey="scriptFont"
+                urlKey="scriptFontUrl"
+                register={register}
+                errors={errors}
+              />
             </div>
+          </section>
+
+          {/* Brand Typography */}
+          <section className="space-y-4">
+            <h3 className="border-b pb-2 text-lg font-semibold">Fuentes de Marca</h3>
+            <div className="grid gap-6 md:grid-cols-2">
+              <FontField
+                label="Marca 'Make-up'"
+                description="Texto grande en Hero. Ej: Saira Extra Condensed"
+                fontKey="brandFont"
+                urlKey="brandFontUrl"
+                register={register}
+                errors={errors}
+              />
+              <FontField
+                label="Palabra 'PORTFOLIO'"
+                description="Subtítulo principal. Ej: Saira Extra Condensed"
+                fontKey="portfolioFont"
+                urlKey="portfolioFontUrl"
+                register={register}
+                errors={errors}
+              />
+              <FontField
+                label="Firma 'Paola Bolívar'"
+                description="Firma personal en About/Hero. Ej: Dawning of a New Day"
+                fontKey="signatureFont"
+                urlKey="signatureFontUrl"
+                register={register}
+                errors={errors}
+              />
+            </div>
+          </section>
+
+          {/* Border Radius */}
+          <div className="max-w-xs space-y-2">
+            <label className="text-sm font-medium">Radio de Borde (px)</label>
+            <Input type="number" {...register('borderRadius', { valueAsNumber: true })} />
+            <p className="text-xs text-gray-500">Redondez de las tarjetas (ej. 40)</p>
+            {errors.borderRadius && (
+              <span className="text-xs text-red-500">{errors.borderRadius.message}</span>
+            )}
           </div>
         </TabsContent>
       </Tabs>
@@ -246,6 +298,39 @@ function ColorInput({ label, description, name, register, error }: ColorInputPro
       <Input {...register(name)} className="font-mono text-sm" />
       {error && <p className="mt-1 text-xs text-red-500">{error.message}</p>}
       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{description}</p>
+    </div>
+  )
+}
+
+interface FontFieldProps {
+  label: string
+  description: string
+  fontKey: keyof ThemeEditorData
+  urlKey: keyof ThemeEditorData
+  register: UseFormRegister<ThemeEditorData>
+  errors: FieldErrors<ThemeEditorData>
+}
+
+function FontField({ label, description, fontKey, urlKey, register, errors }: FontFieldProps) {
+  return (
+    <div className="space-y-3 rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+      <div>
+        <label className="mb-1 block text-sm font-medium">{label} (Familia)</label>
+        <Input placeholder="Ej: Poppins" {...register(fontKey)} />
+        {errors[fontKey] && (
+          <span className="text-xs text-red-500">{errors[fontKey]?.message}</span>
+        )}
+      </div>
+      <div>
+        <label className="mb-1 block text-sm font-medium">Google Fonts URL</label>
+        <Input
+          placeholder="Pegar Link de Google Fonts"
+          {...register(urlKey)}
+          className="font-mono text-xs"
+        />
+        {errors[urlKey] && <span className="text-xs text-red-500">{errors[urlKey]?.message}</span>}
+      </div>
+      <p className="text-xs text-gray-500">{description}</p>
     </div>
   )
 }

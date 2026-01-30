@@ -7,7 +7,8 @@ import { NavigationProgress } from '@/components/layout/NavigationProgress'
 import { ErrorBoundary } from '@/components/ui'
 import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
-import { getThemeValues } from '@/actions/theme.actions'
+import { getThemeValues, getThemeSettings } from '@/actions/theme.actions'
+import FontLoader from '@/components/layout/FontLoader'
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
 
@@ -118,7 +119,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const themeValues = await getThemeValues()
+  const [themeValues, settings] = await Promise.all([getThemeValues(), getThemeSettings()])
+
+  // Extract font URLs from settings
+  const fonts = {
+    headingUrl: settings?.headingFontUrl,
+    bodyUrl: settings?.bodyFontUrl,
+    scriptUrl: settings?.scriptFontUrl,
+    brandUrl: settings?.brandFontUrl,
+    portfolioUrl: settings?.portfolioFontUrl,
+    signatureUrl: settings?.signatureFontUrl,
+  }
 
   return (
     <html lang="es" suppressHydrationWarning>
@@ -129,6 +140,7 @@ export default async function RootLayout({
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
       >
+        <FontLoader fonts={fonts} />
         <Suspense fallback={null}>
           <NavigationProgress />
         </Suspense>

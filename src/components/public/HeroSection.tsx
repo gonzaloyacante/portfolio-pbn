@@ -29,15 +29,21 @@ export default function HeroSection({ settings }: HeroSectionProps) {
         {/* Columna Izquierda: Textos e Ilustración */}
         <div className="relative z-10 flex flex-col justify-center lg:col-span-5 lg:h-full lg:justify-end lg:pb-20">
           <FadeIn delay={0.2} className="relative z-20">
-            {/* Título Script (Make-up) */}
-            <h1 className="font-script -mb-4 text-7xl text-[var(--primary)] sm:text-8xl lg:text-[7rem] xl:text-[8rem]">
+            {/* Título Brand (Make-up) */}
+            <h1
+              className="-mb-4 text-7xl text-[var(--primary)] sm:text-8xl lg:text-[7rem] xl:text-[8rem]"
+              style={{ fontFamily: 'var(--font-brand, var(--font-script))' }}
+            >
               {title1}
             </h1>
           </FadeIn>
 
           <SlideIn direction="left" delay={0.4} className="relative z-10">
-            {/* Título Heading (Portfolio) */}
-            <h2 className="font-heading text-shadow text-6xl leading-none font-bold tracking-tighter text-[var(--accent)] uppercase sm:text-8xl lg:text-[6rem] xl:text-[7rem]">
+            {/* Título Portfolio */}
+            <h2
+              className="text-shadow text-6xl leading-none font-bold tracking-tighter text-[var(--accent)] sm:text-8xl lg:text-[6rem] xl:text-[7rem]"
+              style={{ fontFamily: 'var(--font-portfolio, var(--font-heading))' }}
+            >
               {title2}
             </h2>
           </SlideIn>
@@ -46,7 +52,10 @@ export default function HeroSection({ settings }: HeroSectionProps) {
           <div className="relative mt-8 flex items-center gap-6">
             <FadeIn delay={0.6}>
               <div className="max-w-[150px] space-y-2">
-                <p className="font-heading text-sm font-bold tracking-widest text-[var(--text)] uppercase">
+                <p
+                  className="text-sm font-bold tracking-widest text-[var(--foreground)]"
+                  style={{ fontFamily: 'var(--font-signature, var(--font-heading))' }}
+                >
                   {ownerName}
                 </p>
                 <div className="h-1 w-12 bg-[var(--primary)]"></div>

@@ -55,10 +55,22 @@ export const themeEditorSchema = z.object({
   darkTextColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
   darkCardBgColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
 
-  // Typography & Layout
-  headingFont: z.string().min(1),
-  scriptFont: z.string().min(1),
-  bodyFont: z.string().min(1),
+  // Typography - Base
+  headingFont: z.string().min(1, 'Fuente requerida'),
+  headingFontUrl: z.string().optional().nullable(),
+  scriptFont: z.string().min(1, 'Fuente requerida'),
+  scriptFontUrl: z.string().optional().nullable(),
+  bodyFont: z.string().min(1, 'Fuente requerida'),
+  bodyFontUrl: z.string().optional().nullable(),
+
+  // Typography - Brand
+  brandFont: z.string().optional().nullable(),
+  brandFontUrl: z.string().optional().nullable(),
+  portfolioFont: z.string().optional().nullable(),
+  portfolioFontUrl: z.string().optional().nullable(),
+  signatureFont: z.string().optional().nullable(),
+  signatureFontUrl: z.string().optional().nullable(),
+
   borderRadius: z.number().min(0).max(100),
 })
 

@@ -31,7 +31,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
 
       toast.success(isEditing ? 'Servicio actualizado' : 'Servicio creado')
       onSuccess()
-    } catch (error) {
+    } catch {
       toast.error('Ocurrió un error inesperado')
     } finally {
       setIsLoading(false)

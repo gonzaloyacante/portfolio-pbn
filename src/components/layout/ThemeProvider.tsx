@@ -47,6 +47,10 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
     if (themeValues['heading-font']) setVar('--font-heading', themeValues['heading-font'])
     if (themeValues['script-font']) setVar('--font-script', themeValues['script-font'])
     if (themeValues['body-font']) setVar('--font-body', themeValues['body-font'])
+    if (themeValues['brand-font']) setVar('--font-brand', themeValues['brand-font'])
+    if (themeValues['portfolio-font']) setVar('--font-portfolio', themeValues['portfolio-font'])
+    if (themeValues['signature-font']) setVar('--font-signature', themeValues['signature-font'])
+
     if (themeValues['border-radius']) setVar('--radius', `${themeValues['border-radius']}px`)
   }, [themeValues, resolvedTheme])
 

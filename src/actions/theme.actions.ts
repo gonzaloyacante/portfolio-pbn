@@ -28,10 +28,20 @@ export interface ThemeSettingsData {
   darkBackgroundColor: string
   darkTextColor: string
   darkCardBgColor: string
-  // Typography
+  // Typography Values (Family Names)
   headingFont: string
   scriptFont: string
   bodyFont: string
+  brandFont: string | null
+  portfolioFont: string | null
+  signatureFont: string | null
+  // Typography URLs (Google Fonts Embed)
+  headingFontUrl: string | null
+  scriptFontUrl: string | null
+  bodyFontUrl: string | null
+  brandFontUrl: string | null
+  portfolioFontUrl: string | null
+  signatureFontUrl: string | null
   // Layout
   borderRadius: number
   isActive: boolean
@@ -69,6 +79,9 @@ export async function getThemeValues(): Promise<Record<string, string>> {
         'heading-font': 'Poppins',
         'script-font': 'Great Vibes',
         'body-font': 'Open Sans',
+        'brand-font': 'Saira Extra Condensed',
+        'portfolio-font': 'Saira Extra Condensed',
+        'signature-font': 'Dawning of a New Day',
         'border-radius': '40',
       }
     }
@@ -89,6 +102,9 @@ export async function getThemeValues(): Promise<Record<string, string>> {
       'heading-font': settings.headingFont,
       'script-font': settings.scriptFont,
       'body-font': settings.bodyFont,
+      'brand-font': settings.brandFont || 'inherit',
+      'portfolio-font': settings.portfolioFont || 'inherit',
+      'signature-font': settings.signatureFont || 'inherit',
       'border-radius': String(settings.borderRadius),
     }
   } catch (error) {

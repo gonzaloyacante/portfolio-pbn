@@ -3,16 +3,7 @@
 import { useState, useEffect } from 'react'
 import { getBookingsByRange, updateBookingStatus } from '@/actions/bookings.actions'
 import { Button, Modal, Badge } from '@/components/ui'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Calendar as CalendarIcon,
-  Clock,
-  User,
-  Mail,
-  Phone,
-  FileText,
-} from 'lucide-react'
+import { ChevronLeft, ChevronRight, Clock, User, Mail, Phone, FileText } from 'lucide-react'
 import {
   format,
   startOfMonth,
@@ -47,7 +38,6 @@ type Booking = {
 export default function CalendarView() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [bookings, setBookings] = useState<Booking[]>([])
-  const [isLoading, setIsLoading] = useState(false)
 
   // Modal State
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
@@ -64,19 +54,16 @@ export default function CalendarView() {
   // Fetch bookings when month changes
   useEffect(() => {
     async function fetchBookings() {
-      setIsLoading(true)
       try {
         // Fetch slightly more than the visible range to be safe
         const data = await getBookingsByRange(startDate, endDate)
         setBookings(data as Booking[])
-      } catch (error) {
+      } catch {
         toast.error('Error al cargar reservas')
-      } finally {
-        setIsLoading(false)
       }
     }
     fetchBookings()
-  }, [currentDate])
+  }, [currentDate, startDate, endDate])
 
   const nextMonth = () => setCurrentDate(addMonths(currentDate, 1))
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1))
@@ -102,7 +89,7 @@ export default function CalendarView() {
       } else {
         toast.error(res.error || 'Error')
       }
-    } catch (e) {
+    } catch {
       toast.error('Error de conexión')
     }
   }
@@ -167,7 +154,7 @@ export default function CalendarView() {
 
         {/* Days Cells */}
         <div className="grid auto-rows-[120px] grid-cols-7">
-          {calendarDays.map((day, idx) => {
+          {calendarDays.map((day) => {
             const dayBookings = bookings.filter((b) => isSameDay(new Date(b.date), day))
             const isCurrentMonth = isSameMonth(day, currentDate)
 

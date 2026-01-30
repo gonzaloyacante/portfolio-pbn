@@ -40,6 +40,9 @@
   --font-heading: 'Poppins', sans-serif;
   --font-script: 'Great Vibes', cursive;
   --font-body: 'Open Sans', sans-serif;
+  --font-brand: var(--font-script);
+  --font-portfolio: var(--font-heading);
+  --font-signature: var(--font-heading);
   --radius: 40px;
 
   /* Mapping Active Theme Variables */

@@ -183,9 +183,20 @@ model ThemeSettings {
   darkTextColor       String   @default("#fff1f9")
   darkCardBgColor     String   @default("#ffaadd")
   // Typography
+  // Typography - Base
   headingFont     String   @default("Poppins")
+  headingFontUrl  String?
   scriptFont      String   @default("Great Vibes")
+  scriptFontUrl   String?
   bodyFont        String   @default("Open Sans")
+  bodyFontUrl     String?
+  // Typography - Brand (Specifics)
+  brandFont       String?  @default("Saira Extra Condensed") // "Make-up"
+  brandFontUrl    String?
+  portfolioFont   String?  @default("Saira Extra Condensed") // "Portfolio" text
+  portfolioFontUrl String?
+  signatureFont   String?  @default("Dawning of a New Day") // "Paola Bolivar Nievas"
+  signatureFontUrl String?
   // Layout
   borderRadius    Int      @default(40)
   // Meta

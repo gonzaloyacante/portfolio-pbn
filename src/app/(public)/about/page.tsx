@@ -72,7 +72,7 @@ export default async function AboutPage() {
           )}
 
           {/* Bio Intro */}
-          <div className="mb-6 max-w-2xl font-[family-name:var(--font-body)] text-base leading-relaxed text-[var(--text-body)]">
+          <div className="font-body mb-6 max-w-2xl text-base leading-relaxed text-[var(--foreground)]">
             {introParagraphs.map((paragraph, index) => (
               <FadeIn key={index} delay={0.3 + index * 0.1} className={index > 0 ? 'mt-4' : ''}>
                 <p>{paragraph}</p>
@@ -81,7 +81,7 @@ export default async function AboutPage() {
           </div>
 
           {/* Bio Description */}
-          <div className="max-w-2xl space-y-4 font-[family-name:var(--font-body)] text-base leading-relaxed text-[var(--text-body)]">
+          <div className="font-body max-w-2xl space-y-4 text-base leading-relaxed text-[var(--foreground)]">
             {descParagraphs.map((paragraph, index) => (
               <FadeIn key={index} delay={0.5 + index * 0.1}>
                 <p>{paragraph}</p>
