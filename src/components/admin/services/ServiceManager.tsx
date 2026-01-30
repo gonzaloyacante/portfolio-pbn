@@ -1,0 +1,141 @@
+'use client'
+
+import { useState } from 'react'
+import { Service } from '@prisma/client'
+import { Button, Card, Badge, Modal } from '@/components/ui'
+import { toggleService, deleteService } from '@/actions/services.actions'
+import ServiceForm from './ServiceForm'
+import { Edit, Trash2, Plus, GripVertical } from 'lucide-react'
+import toast from 'react-hot-toast'
+import React from 'react'
+
+interface ServiceManagerProps {
+  initialServices: Service[]
+}
+
+export default function ServiceManager({ initialServices }: ServiceManagerProps) {
+  const [services] = useState(initialServices) // In a real app with real-time needs, we might use router.refresh() results
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingService, setEditingService] = useState<Service | null>(null)
+
+  const handleCreate = () => {
+    setEditingService(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEdit = (service: Service) => {
+    setEditingService(service)
+    setIsModalOpen(true)
+  }
+
+  const handleClose = () => {
+    setIsModalOpen(false)
+    setEditingService(null)
+  }
+
+  // Optimistic UI updates could be handled here, but for now we rely on Server Actions + revalidatePath
+  // The page will reload content automatically on action success due to revalidatePath in action.
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-wine dark:text-pink-light text-3xl font-bold">Gestión de Servicios</h1>
+        <Button onClick={handleCreate} className="gap-2">
+          <Plus size={18} />
+          Nuevo Servicio
+        </Button>
+      </div>
+
+      <Card>
+        {initialServices.length === 0 ? (
+          <div className="text-wine/60 dark:text-pink-light/60 flex flex-col items-center justify-center py-12 text-center">
+            <span className="mb-4 text-4xl">💅</span>
+            <p className="font-medium">No hay servicios aún</p>
+            <p className="text-sm">Crea tu primer servicio arriba</p>
+          </div>
+        ) : (
+          <div className="divide-wine/5 dark:divide-pink-light/5 divide-y">
+            {initialServices.map((s) => (
+              <div
+                key={s.id}
+                className="group flex flex-col gap-4 py-6 md:flex-row md:items-start md:justify-between"
+              >
+                <div className="flex-1 space-y-2">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-wine dark:text-pink-light flex items-center gap-2 font-bold">
+                      {s.name}
+                    </span>
+                    <Badge variant={s.isActive ? 'success' : 'default'}>
+                      {s.isActive ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                    {s.isFeatured && <Badge variant="warning">⭐ Destacado</Badge>}
+                  </div>
+                  <p className="text-wine/60 dark:text-pink-light/60 text-sm">/{s.slug}</p>
+                  {s.description && (
+                    <p className="text-wine/80 dark:text-pink-light/80 line-clamp-2 text-sm">
+                      {s.description}
+                    </p>
+                  )}
+                  <div className="text-wine/60 dark:text-pink-light/60 flex flex-wrap items-center gap-4 text-sm">
+                    {s.price && (
+                      <span>
+                        💰 {s.priceLabel === 'desde' ? 'Desde ' : ''}
+                        {Number(s.price).toFixed(0)}€
+                      </span>
+                    )}
+                    {s.duration && <span>⏱️ {s.duration}</span>}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 self-end md:self-start">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleEdit(s)}
+                    className="gap-2"
+                  >
+                    <Edit size={14} />
+                    Editar
+                  </Button>
+
+                  <form
+                    action={async () => {
+                      await toggleService(s.id)
+                      toast.success('Estado actualizado')
+                    }}
+                  >
+                    <Button type="submit" variant={s.isActive ? 'secondary' : 'ghost'} size="sm">
+                      {s.isActive ? 'Ocultar' : 'Activar'}
+                    </Button>
+                  </form>
+
+                  <form
+                    action={async () => {
+                      if (confirm('¿Estás seguro de eliminar este servicio?')) {
+                        await deleteService(s.id)
+                        toast.success('Servicio eliminado')
+                      }
+                    }}
+                  >
+                    <Button type="submit" variant="destructive" size="sm" className="px-3">
+                      <Trash2 size={14} />
+                    </Button>
+                  </form>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        title={editingService ? 'Editar Servicio' : 'Crear Nuevo Servicio'}
+        size="lg"
+      >
+        <ServiceForm service={editingService} onSuccess={handleClose} onCancel={handleClose} />
+      </Modal>
+    </div>
+  )
+}

@@ -1,34 +1,24 @@
+import { Skeleton } from '@/components/ui'
+
 export default function PublicLoading() {
   return (
-    <div
-      className="flex min-h-[60vh] flex-col items-center justify-center"
-      style={{ backgroundColor: 'var(--color-background)' }}
-    >
-      <div className="relative">
-        {/* Logo animado */}
-        <div className="animate-pulse text-7xl">💄</div>
+    <div className="min-h-screen w-full bg-[var(--background)] px-6 py-12 lg:px-16 lg:py-20">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        {/* Left Column Skeleton */}
+        <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">
+          <Skeleton className="h-16 w-3/4 rounded-xl" /> {/* Title */}
+          <Skeleton className="h-12 w-1/2 rounded-xl" /> {/* Subtitle */}
+          <div className="mt-8 flex flex-col items-center gap-4 lg:items-start">
+            <Skeleton className="h-64 w-64 rounded-full" variant="circular" /> {/* Illustration */}
+            <Skeleton className="h-8 w-48 rounded-lg" /> {/* Name */}
+          </div>
+        </div>
 
-        {/* Barra de carga */}
-        <div
-          className="mt-6 h-1 w-32 overflow-hidden rounded-full"
-          style={{ backgroundColor: 'var(--color-surface)' }}
-        >
-          <div
-            className="h-full animate-[shimmer_1.5s_ease-in-out_infinite] rounded-full"
-            style={{
-              backgroundColor: 'var(--color-primary)',
-              width: '40%',
-            }}
-          />
+        {/* Right Column Skeleton */}
+        <div className="hidden lg:block">
+          <Skeleton className="h-[600px] w-full max-w-md rounded-[2.5rem]" />
         </div>
       </div>
-
-      <p
-        className="mt-4 animate-pulse font-sans text-sm"
-        style={{ color: 'var(--color-text)', opacity: 0.6 }}
-      >
-        Cargando...
-      </p>
     </div>
   )
 }

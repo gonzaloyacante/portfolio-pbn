@@ -25,6 +25,7 @@ export { ToastProvider, useToast } from './feedback/Toast'
 export { default as EmptyState } from './feedback/EmptyState'
 export { default as ErrorState } from './feedback/ErrorState'
 export { default as LoadingState } from './feedback/LoadingState'
+export { Skeleton } from './feedback/Skeleton'
 export { SkeletonCard, SkeletonGrid, SkeletonTestimonial } from './feedback/SkeletonCard'
 export { ErrorBoundary } from './feedback/ErrorBoundary'
 

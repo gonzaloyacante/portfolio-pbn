@@ -4,9 +4,18 @@ import { useState } from 'react'
 import { Button, PageHeader } from '@/components/ui'
 import { Section, FormField } from '@/components/admin'
 import toast from 'react-hot-toast'
+import { calculatePasswordStrength } from '@/lib/password'
 
 export default function MiCuentaPage() {
   const [isLoading, setIsLoading] = useState(false)
+  const [password, setPassword] = useState('')
+  const [strength, setStrength] = useState({ score: 0, label: '', color: '' })
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.target.value
+    setPassword(newVal)
+    setStrength(calculatePasswordStrength(newVal))
+  }
 
   async function handleChangePassword(formData: FormData) {
     const currentPassword = formData.get('currentPassword') as string
@@ -74,7 +83,26 @@ export default function MiCuentaPage() {
               type="password"
               required
               placeholder="Mínimo 8 caracteres"
+              onChange={handlePasswordChange}
             />
+            {/* Password Strength Meter */}
+            {password && (
+              <div className="mt-2 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="font-medium text-[var(--foreground)]">
+                    Fortaleza: {strength.label}
+                  </span>
+                </div>
+                <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-full flex-1 transition-all duration-300 ${i < strength.score ? strength.color : 'bg-transparent'}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <FormField
