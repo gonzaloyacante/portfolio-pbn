@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card-bg: var(--card-bg);
+  --color-wine: #6c0a0a;
+  --color-pink-hot: #ffaadd;
+  --font-heading: var(--font-heading);
+  --font-script: var(--font-script);
+  --font-body: var(--font-body);
+}
+
+/* ============================================
+   DESIGN SYSTEM v2 - CANVA SPEC (Dynamic)
+   ============================================ */
+
+:root {
+  /* Defaults (fallback) - Light Mode */
+  --primary-light: #6c0a0a;
+  --secondary-light: #ffaadd;
+  --accent-light: #fff1f9;
+  --background-light: #fff1f9;
+  --text-light: #000000;
+  --card-bg-light: #ffaadd;
+
+  /* Defaults (fallback) - Dark Mode */
+  --primary-dark: #ffaadd;
+  --secondary-dark: #6c0a0a;
+  --accent-dark: #000000;
+  --background-dark: #6c0a0a;
+  --text-dark: #fff1f9;
+  --card-bg-dark: #ffaadd;
+  /* Dark mode card might need contrast */
+
+  /* Fonts */
+  --font-heading: 'Poppins', sans-serif;
+  --font-script: 'Great Vibes', cursive;
+  --font-body: 'Open Sans', sans-serif;
+  --font-brand: var(--font-script);
+  --font-portfolio: var(--font-heading);
+  --font-signature: var(--font-heading);
+  --radius: 40px;
+
+  /* Mapping Active Theme Variables */
+  --primary: var(--primary-light);
+  --secondary: var(--secondary-light);
+  --accent: var(--accent-light);
+  --background: var(--background-light);
+  --foreground: var(--text-light);
+  --card-bg: var(--card-bg-light);
+
+  /* Text aliases */
+  --color-text: var(--foreground);
+  --text-body: var(--foreground);
+}
+
+.dark {
+  /* Mapping Active Theme Variables - Dark Mode Override */
+  --primary: var(--primary-dark);
+  --secondary: var(--secondary-dark);
+  --accent: var(--accent-dark);
+  --background: var(--background-dark);
+  --foreground: var(--text-dark);
+  --card-bg: var(--card-bg-dark);
+
+  /* Fixes for dark mode contrast */
+  --color-surface: rgba(0, 0, 0, 0.2);
+}
+
+/* === ESTILOS BASE === */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* === UTILITIES FOR TYPOGRAPHY === */
+.font-script {
+  font-family: var(--font-script);
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}

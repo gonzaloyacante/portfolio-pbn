@@ -1,0 +1,107 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║      🚀 PORTFOLIO PBN PRE-COMMIT VERIFICATION SUITE         ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+# Verificar que estamos en el workspace correcto
+if [ ! -f "package.json" ]; then
+  echo "❌ Error: package.json no encontrado. Ejecutar desde la raíz del proyecto."
+  exit 1
+fi
+
+# Track start time
+START_TIME=$(date +%s)
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP 1: LINT-STAGED (formato y linting de archivos modificados)
+# ═══════════════════════════════════════════════════════════════════
+echo "📋 [1/5] Lint-Staged: Formateando archivos modificados..."
+if ! npx lint-staged; then
+  echo "❌ Error en lint-staged. Revisa errores de formato/linting."
+  exit 1
+fi
+echo "✅ Lint-staged completado"
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP 2: TYPESCRIPT TYPE CHECKING (compilación sin emitir)
+# ═══════════════════════════════════════════════════════════════════
+echo "🔍 [2/5] TypeScript: Verificando tipos..."
+if ! npx tsc --noEmit; then
+  echo "❌ Error en type checking. Revisa errores de TypeScript."
+  exit 1
+fi
+echo "✅ TypeScript type check completado"
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP 3: ESLINT (errores críticos)
+# ═══════════════════════════════════════════════════════════════════
+echo "🧹 [3/5] ESLint: Verificando código..."
+if ! npx eslint "src/**/*.{ts,tsx}" --quiet; then
+  echo "❌ Error en ESLint. Revisa errores."
+  exit 1
+fi
+echo "✅ ESLint completado sin errores"
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP 4: PRISMA VALIDATION (schema correcto)
+# ═══════════════════════════════════════════════════════════════════
+echo "🗄️  [4/5] Prisma: Validando schema..."
+if [ -f "prisma/schema.prisma" ]; then
+  if ! npx prisma validate; then
+    echo "❌ Error en Prisma schema. Revisa prisma/schema.prisma."
+    exit 1
+  fi
+  echo "✅ Prisma schema válido"
+else
+  echo "ℹ️  No se encontró schema de Prisma, saltando..."
+fi
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════
+# STEP 5: NEXT.JS BUILD (verificación de producción)
+# ═══════════════════════════════════════════════════════════════════
+echo "🏗️  [5/5] Next.js: Verificando build de producción..."
+if ! npx next build; then
+  echo "❌ Error en build de Next.js. El código no compila correctamente."
+  exit 1
+fi
+echo "✅ Build de producción exitoso"
+echo ""
+
+# ═══════════════════════════════════════════════════════════════════
+# VERIFICACIONES FINALES
+# ═══════════════════════════════════════════════════════════════════
+echo "⚙️  Verificando archivos de configuración..."
+CONFIG_OK=true
+for config_file in "next.config.ts" "tsconfig.json" "package.json" "tailwind.config.ts"; do
+  if [ -f "$config_file" ]; then
+    echo "  ✓ $config_file"
+  else
+    echo "  ✗ $config_file faltante!"
+    CONFIG_OK=false
+  fi
+done
+
+if [ "$CONFIG_OK" = false ]; then
+  echo "❌ Archivos de configuración faltantes."
+  exit 1
+fi
+
+# Calcular tiempo total
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║     ✅ TODAS LAS VERIFICACIONES COMPLETADAS EXITOSAMENTE    ║"
+echo "║                   Tiempo total: ${DURATION}s                        ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📦 Listo para commit seguro. ¡Código de calidad garantizada!"
