@@ -33,7 +33,7 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // 1. Verify with custom API first (legacy/specific error handling)
+      // 1. Verify existence first (Optimized: only checks DB existence, no bcrypt)
       const verifyRes = await fetch('/api/auth/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -43,7 +43,7 @@ export default function LoginPage() {
       const verifyData = await verifyRes.json()
 
       if (!verifyRes.ok) {
-        // Manejo de errores específicos por campo
+        // Si falla aquí, es porque el usuario NO existe (único chequeo que hace la API ahora)
         if (verifyData.code === 'USER_NOT_FOUND') {
           setError('email', {
             type: 'manual',
@@ -52,23 +52,15 @@ export default function LoginPage() {
           return
         }
 
-        if (verifyData.code === 'INVALID_PASSWORD') {
-          setError('password', {
-            type: 'manual',
-            message: 'La contraseña es incorrecta',
-          })
-          return
-        }
-
-        // Error genérico o de otro tipo
+        // Error genérico de API
         show({
           type: 'error',
-          message: verifyData.error || 'Error de verificación',
+          message: verifyData.error || 'Error de servidores',
         })
         return
       }
 
-      // 2. Sign in with NextAuth
+      // 2. Sign in with NextAuth (Here is where bcrypt happens)
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
@@ -76,12 +68,15 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        // Si falló NextAuth pero pasó la verificación previa, es algo raro (servidor caído, etc)
-        show({ type: 'error', message: 'Error al iniciar sesión' })
+        // SI llegamos aquí, el email EXISTE (pasó paso 1), así que el error ES la contraseña
+        setError('password', {
+          type: 'manual',
+          message: 'La contraseña es incorrecta',
+        })
       } else {
         show({ type: 'success', message: '¡Bienvenida de nuevo!' })
         router.push('/admin/dashboard')
-        router.refresh()
+        // Removed router.refresh() for instant navigation
       }
     } catch {
       show({ type: 'error', message: 'Error de conexión' })

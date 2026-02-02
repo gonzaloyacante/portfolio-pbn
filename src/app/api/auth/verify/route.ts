@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     // Verificar si el usuario existe
     const user = await prisma.user.findUnique({
       where: { email },
+      select: { email: true }, // Solo necesitamos saber si existe
     })
 
     if (!user) {
@@ -29,17 +30,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Verificar contraseña
-    const isValid = await bcrypt.compare(password, user.password)
-
-    if (!isValid) {
-      return NextResponse.json(
-        { error: 'La contraseña es incorrecta', code: 'INVALID_PASSWORD' },
-        { status: 401 }
-      )
-    }
-
-    // Credenciales válidas
+    // Si existe, retornamos éxito. La contraseña se verificará en el signIn de NextAuth.
     return NextResponse.json({ success: true, email: user.email })
   } catch (error) {
     console.error('Error verifying credentials:', error)
