@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import '@/lib/env' // ✅ Validate environment variables on server startup
 import { Suspense } from 'react'
 import { Great_Vibes, Open_Sans, Poppins } from 'next/font/google'
 import '@/styles/globals.css'

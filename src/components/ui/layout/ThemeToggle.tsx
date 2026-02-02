@@ -68,7 +68,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="bg-wine/10 dark:bg-pink-light/10 text-wine dark:text-pink-hot flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
+      className="bg-secondary text-secondary-foreground hover:bg-secondary/80 flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
       aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
       title={isDark ? 'Modo claro' : 'Modo oscuro'}
     >

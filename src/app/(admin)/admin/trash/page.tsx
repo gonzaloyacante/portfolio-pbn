@@ -41,10 +41,10 @@ export default async function PapeleraPage() {
             {projectsWithDays.map((project) => (
               <div
                 key={project.id}
-                className="border-pink-hot/20 dark:border-pink-light/20 dark:bg-wine/30 flex items-center gap-4 rounded-xl border bg-white p-4"
+                className="border-border bg-card hover:bg-muted/50 flex items-center gap-4 rounded-xl border p-4 transition-colors"
               >
                 {/* Thumbnail */}
-                <div className="bg-pink-light dark:bg-wine relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                <div className="bg-muted relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
                   {project.images[0]?.url ? (
                     <Image
                       src={project.images[0].url}
@@ -61,8 +61,8 @@ export default async function PapeleraPage() {
 
                 {/* Info */}
                 <div className="flex-1">
-                  <h3 className="text-wine dark:text-pink-light font-semibold">{project.title}</h3>
-                  <p className="text-wine/70 dark:text-pink-light/70 text-sm">
+                  <h3 className="text-foreground font-semibold">{project.title}</h3>
+                  <p className="text-muted-foreground text-sm">
                     {project.category?.name || 'Sin categoría'}
                   </p>
                   <p className="mt-1 text-xs text-red-600 dark:text-red-400">

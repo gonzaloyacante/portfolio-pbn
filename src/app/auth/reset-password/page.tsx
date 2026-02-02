@@ -72,11 +72,11 @@ function ResetPasswordForm() {
           <div className="text-center">
             <span className="text-6xl">🔑</span>
             <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">Nueva Contraseña</h1>
-            <p className="text-wine/70 dark:text-pink-light/70 mt-2">Ingresa tu nueva contraseña</p>
+            <p className="text-muted-foreground mt-2">Ingresa tu nueva contraseña</p>
           </div>
 
           {/* Card */}
-          <div className="dark:bg-wine/30 rounded-2xl border-t-4 border-[var(--primary)] bg-[var(--card-bg)] p-8 shadow-xl">
+          <div className="bg-card dark:bg-muted/10 border-primary rounded-2xl border-t-4 p-8 shadow-xl">
             {status === 'success' ? (
               <div className="space-y-6 text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
@@ -95,10 +95,10 @@ function ResetPasswordForm() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-wine dark:text-pink-light text-lg font-semibold">
+                  <h3 className="text-foreground text-lg font-semibold">
                     ¡Contraseña actualizada!
                   </h3>
-                  <p className="text-wine/70 dark:text-pink-light/70 mt-2 text-sm">{message}</p>
+                  <p className="text-muted-foreground mt-2 text-sm">{message}</p>
                 </div>
                 <Link
                   href="/auth/login"
@@ -117,7 +117,7 @@ function ResetPasswordForm() {
 
                 <div>
                   <label
-                    className="text-wine dark:text-pink-light mb-1 block text-sm font-medium"
+                    className="text-foreground mb-1 block text-sm font-medium"
                     htmlFor="password"
                   >
                     Nueva contraseña
@@ -132,12 +132,12 @@ function ResetPasswordForm() {
                       required
                       disabled={isLoading}
                       placeholder="Mínimo 8 caracteres"
-                      className="border-pink-hot/30 focus:border-wine focus:ring-wine/20 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full rounded-lg border p-3 pr-12 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+                      className="border-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border p-3 pr-12 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-wine/50 hover:text-wine dark:text-pink-light/50 dark:hover:text-pink-light absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                      className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                       tabIndex={-1}
                     >
                       {showPassword ? '🙈' : '👁️'}
@@ -151,7 +151,7 @@ function ResetPasswordForm() {
 
                 <div>
                   <label
-                    className="text-wine dark:text-pink-light mb-1 block text-sm font-medium"
+                    className="text-foreground mb-1 block text-sm font-medium"
                     htmlFor="confirmPassword"
                   >
                     Confirmar contraseña
@@ -163,7 +163,7 @@ function ResetPasswordForm() {
                     required
                     disabled={isLoading}
                     placeholder="Repite la contraseña"
-                    className="border-pink-hot/30 focus:border-wine focus:ring-wine/20 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full rounded-lg border p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+                    className="border-input focus:border-primary focus:ring-primary/20 w-full rounded-lg border p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
                   />
                 </div>
 
@@ -221,7 +221,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
-          <span className="text-wine dark:text-pink-light">Cargando...</span>
+          <span className="text-foreground">Cargando...</span>
         </div>
       }
     >

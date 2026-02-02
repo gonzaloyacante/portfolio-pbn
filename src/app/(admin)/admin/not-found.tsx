@@ -10,11 +10,9 @@ export default function AdminNotFound() {
       <div className="animate-bounce text-6xl">🔍</div>
 
       <div className="space-y-3">
-        <h1 className="text-wine dark:text-pink-hot text-5xl font-bold">404</h1>
-        <h2 className="text-wine/80 dark:text-pink-light text-xl font-bold">
-          Página no encontrada
-        </h2>
-        <p className="text-wine/60 dark:text-pink-light/60 max-w-md">
+        <h1 className="text-primary text-5xl font-bold">404</h1>
+        <h2 className="text-foreground text-xl font-bold">Página no encontrada</h2>
+        <p className="text-muted-foreground max-w-md">
           La página que buscas no existe en el panel de administración.
         </p>
       </div>
@@ -22,7 +20,7 @@ export default function AdminNotFound() {
       <div className="flex gap-4">
         <Link
           href="/admin/dashboard"
-          className="bg-pink-hot shadow-pink-hot/20 hover:bg-pink-hot/90 flex items-center gap-2 rounded-xl px-6 py-3 font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95"
+          className="bg-primary text-primary-foreground flex items-center gap-2 rounded-xl px-6 py-3 font-bold shadow-lg transition-all hover:scale-105 active:scale-95"
         >
           <svg
             className="h-5 w-5"

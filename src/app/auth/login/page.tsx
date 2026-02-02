@@ -78,18 +78,15 @@ export default function LoginPage() {
           <div className="text-center">
             <span className="text-6xl">💄</span>
             <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">Panel Admin</h1>
-            <p className="text-wine/70 dark:text-pink-light/70 mt-2">Ingresa tus credenciales</p>
+            <p className="text-muted-foreground mt-2">Ingresa tus credenciales</p>
           </div>
 
           {/* Card del formulario */}
-          <div className="dark:bg-wine/30 rounded-2xl border-t-4 border-[var(--primary)] bg-[var(--card-bg)] p-8 shadow-xl">
+          <div className="bg-card dark:bg-muted/10 border-primary rounded-2xl border-t-4 p-8 shadow-xl">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               {/* Email */}
               <div>
-                <label
-                  className="text-wine dark:text-pink-light mb-1 block text-sm font-medium"
-                  htmlFor="email"
-                >
+                <label className="text-foreground mb-1 block text-sm font-medium" htmlFor="email">
                   Email
                 </label>
                 <Input {...register('email')} id="email" type="email" placeholder="tu@email.com" />
@@ -101,7 +98,7 @@ export default function LoginPage() {
               {/* Password */}
               <div>
                 <label
-                  className="text-wine dark:text-pink-light mb-1 block text-sm font-medium"
+                  className="text-foreground mb-1 block text-sm font-medium"
                   htmlFor="password"
                 >
                   Contraseña
@@ -116,7 +113,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="text-wine/50 hover:text-wine dark:text-pink-light/50 dark:hover:text-pink-light absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
+                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
                     tabIndex={-1}
                   >
                     {showPassword ? '🙈' : '👁️'}
@@ -151,10 +148,7 @@ export default function LoginPage() {
 
           {/* Link volver */}
           <div className="text-center">
-            <Link
-              href="/"
-              className="text-wine/70 hover:text-wine dark:text-pink-light/70 dark:hover:text-pink-light text-sm"
-            >
+            <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
               ← Volver al sitio público
             </Link>
           </div>

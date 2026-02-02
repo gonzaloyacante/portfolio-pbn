@@ -154,7 +154,7 @@ export default async function AboutPage() {
 
       {/* ========== TESTIMONIALS SECTION (moved from homepage) ========== */}
       {showTestimonials && testimonials.length > 0 && (
-        <div className="border-t border-[var(--primary)]/10 bg-[var(--background)] py-16 transition-colors duration-500">
+        <div className="border-border bg-muted/30 border-t py-16 transition-colors duration-500">
           <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
             <h2 className="mb-12 text-center font-[family-name:var(--font-heading)] text-3xl font-bold text-[var(--foreground)]">
               {testimonialsTitle}
@@ -166,15 +166,15 @@ export default async function AboutPage() {
                 {testimonials.map((testimonial) => (
                   <div
                     key={testimonial.id}
-                    className="rounded-[2rem] bg-[var(--card-bg)] p-6 shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                    className="bg-card border-border/50 rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg"
                   >
                     <div className="mb-3 text-yellow-400">{'⭐'.repeat(testimonial.rating)}</div>
-                    <p className="mb-4 text-sm leading-relaxed text-[var(--text-body)]">
+                    <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
                       &quot;{testimonial.text}&quot;
                     </p>
-                    <p className="font-semibold text-[var(--foreground)]">— {testimonial.name}</p>
+                    <p className="text-card-foreground font-semibold">— {testimonial.name}</p>
                     {testimonial.position && (
-                      <p className="text-xs text-[var(--text-body)]/70">{testimonial.position}</p>
+                      <p className="text-muted-foreground text-xs">{testimonial.position}</p>
                     )}
                   </div>
                 ))}
@@ -188,7 +188,7 @@ export default async function AboutPage() {
               <h3 className="mb-6 text-center text-xl font-bold text-[var(--foreground)]">
                 ¿Has trabajado conmigo? ¡Deja tu opinión!
               </h3>
-              <div className="rounded-[2rem] bg-[var(--card-bg)] p-6 shadow-lg">
+              <div className="bg-card border-border/50 rounded-2xl border p-6 shadow-md">
                 <TestimonialForm />
               </div>
             </div>

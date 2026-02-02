@@ -63,13 +63,13 @@ export default function Modal({
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       <div
-        className={`w-full ${sizeClasses[size]} border-pink-hot/20 dark:border-pink-light/20 dark:bg-wine max-h-[90vh] overflow-auto rounded-2xl border bg-white shadow-2xl`}
+        className={`w-full ${sizeClasses[size]} border-border/50 bg-card max-h-[90vh] overflow-auto rounded-xl border shadow-2xl`}
       >
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className="border-pink-hot/20 dark:border-pink-light/20 flex items-center justify-between border-b px-6 py-4">
+          <div className="border-border/50 flex items-center justify-between border-b px-6 py-4">
             {title && (
-              <h2 id="modal-title" className="text-wine dark:text-pink-light text-xl font-bold">
+              <h2 id="modal-title" className="text-foreground text-xl font-bold">
                 {title}
               </h2>
             )}
@@ -77,7 +77,7 @@ export default function Modal({
               <button
                 type="button"
                 onClick={onClose}
-                className="text-wine hover:bg-pink-light/50 dark:text-pink-light dark:hover:bg-pink-light/10 cursor-pointer rounded-lg p-2 transition-colors"
+                className="text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer rounded-lg p-2 transition-colors"
                 aria-label="Cerrar"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

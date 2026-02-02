@@ -9,16 +9,14 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="font-primary text-wine dark:text-pink-light mb-8 text-4xl font-bold">
+      <h1 className="font-primary text-foreground mb-8 text-4xl font-bold">
         Política de Privacidad
       </h1>
 
       <div className="space-y-8 text-gray-700 dark:text-gray-300">
         {/* Introducción */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
-            1. Información General
-          </h2>
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">1. Información General</h2>
           <p className="leading-relaxed">
             En cumplimiento de la normativa vigente en materia de protección de datos personales, el
             Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo de 27 de abril de 2016
@@ -26,7 +24,7 @@ export default function PrivacyPage() {
             de diciembre, de Protección de Datos Personales y garantía de los derechos digitales
             (LOPDGDD), le informamos de la presente Política de Privacidad.
           </p>
-          <div className="bg-pink-light/20 dark:bg-purple-dark/30 mt-4 rounded-2xl p-4">
+          <div className="bg-muted/50 mt-4 rounded-2xl p-4">
             <p className="text-sm">
               <strong>Responsable del tratamiento:</strong> Paola Bolívar Nievas
               <br />
@@ -39,7 +37,7 @@ export default function PrivacyPage() {
 
         {/* Datos recopilados */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             2. ¿Qué datos recopilamos?
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -65,7 +63,7 @@ export default function PrivacyPage() {
 
         {/* Finalidad */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             3. ¿Para qué utilizamos sus datos?
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -90,7 +88,7 @@ export default function PrivacyPage() {
 
         {/* Base Legal */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             4. Base Legal del Tratamiento
           </h2>
           <p className="leading-relaxed">
@@ -103,7 +101,7 @@ export default function PrivacyPage() {
 
         {/* Conservación */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             5. ¿Cuánto tiempo conservamos sus datos?
           </h2>
           <p className="leading-relaxed">
@@ -116,7 +114,7 @@ export default function PrivacyPage() {
 
         {/* Destinatarios */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             6. ¿Compartimos sus datos con terceros?
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -146,7 +144,7 @@ export default function PrivacyPage() {
 
         {/* Derechos */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             7. Sus Derechos (ARCO + otros)
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -179,12 +177,12 @@ export default function PrivacyPage() {
               a la licitud del tratamiento basado en el consentimiento previo.
             </li>
           </ul>
-          <div className="bg-pink-light/20 dark:bg-purple-dark/30 mt-4 rounded-2xl p-4">
+          <div className="bg-muted/50 mt-4 rounded-2xl p-4">
             <p className="text-sm">
               Para ejercer sus derechos, envíe un email a{' '}
               <a
                 href="mailto:admin@paolabolivar.com"
-                className="text-wine dark:text-pink-hot underline hover:no-underline"
+                className="text-primary underline hover:no-underline"
               >
                 admin@paolabolivar.com
               </a>{' '}
@@ -199,7 +197,7 @@ export default function PrivacyPage() {
               href="https://www.aepd.es"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-wine dark:text-pink-hot underline hover:no-underline"
+              className="text-primary underline hover:no-underline"
             >
               www.aepd.es
             </a>
@@ -209,9 +207,7 @@ export default function PrivacyPage() {
 
         {/* Cookies */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
-            8. Uso de Cookies
-          </h2>
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">8. Uso de Cookies</h2>
           <p className="mb-4 leading-relaxed">
             Este sitio web utiliza cookies propias y de terceros para mejorar la experiencia del
             usuario y analizar el tráfico. Puede consultar nuestra{' '}
@@ -233,9 +229,7 @@ export default function PrivacyPage() {
 
         {/* Seguridad */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
-            9. Seguridad de los Datos
-          </h2>
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">9. Seguridad de los Datos</h2>
           <p className="leading-relaxed">
             Hemos implementado medidas técnicas y organizativas adecuadas para proteger sus datos
             personales contra acceso no autorizado, pérdida, alteración o divulgación. Estas medidas
@@ -252,7 +246,7 @@ export default function PrivacyPage() {
 
         {/* Modificaciones */}
         <section>
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
             10. Modificaciones de la Política de Privacidad
           </h2>
           <p className="leading-relaxed">
@@ -267,10 +261,8 @@ export default function PrivacyPage() {
         </section>
 
         {/* Contacto */}
-        <section className="from-wine/10 to-pink-light/20 dark:from-purple-dark/50 dark:to-pink-hot/10 rounded-3xl bg-linear-to-br p-6">
-          <h2 className="text-wine dark:text-pink-hot mb-4 text-2xl font-semibold">
-            📧 ¿Tienes dudas?
-          </h2>
+        <section className="bg-muted/50 rounded-3xl p-6">
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">📧 ¿Tienes dudas?</h2>
           <p className="leading-relaxed">
             Si tiene alguna pregunta sobre esta Política de Privacidad o sobre el tratamiento de sus
             datos personales, puede contactarnos en:
@@ -280,7 +272,7 @@ export default function PrivacyPage() {
               <strong>Email:</strong>{' '}
               <a
                 href="mailto:admin@paolabolivar.com"
-                className="text-wine dark:text-pink-hot underline hover:no-underline"
+                className="text-primary underline hover:no-underline"
               >
                 admin@paolabolivar.com
               </a>

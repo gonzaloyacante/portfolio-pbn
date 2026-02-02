@@ -37,11 +37,9 @@ const sizeClasses = {
 
 const variantClasses = {
   default:
-    'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary focus:ring-2 focus:ring-primary/20',
-  filled:
-    'border-0 bg-gray-100 dark:bg-gray-700 focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-primary/20',
-  ghost:
-    'border-0 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 focus:ring-2 focus:ring-primary/20',
+    'border border-input bg-background text-foreground focus:border-ring focus:ring-2 focus:ring-ring/20',
+  filled: 'border-0 bg-muted focus:bg-background focus:ring-2 focus:ring-ring/20',
+  ghost: 'border-0 bg-transparent hover:bg-muted focus:bg-muted focus:ring-2 focus:ring-ring/20',
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -97,17 +95,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={cn('w-full', containerClassName)}>
         {label && (
-          <label
-            htmlFor={id}
-            className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
+          <label htmlFor={id} className="text-foreground mb-2 block text-sm font-medium">
             {label}
             {required && <span className="ml-1 text-red-500">*</span>}
           </label>
         )}
         <div className="relative">
           {hasLeftIcon && (
-            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <span className="text-muted-foreground pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               {leftIcon}
             </span>
           )}
@@ -129,7 +124,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             }}
             className={cn(
               'w-full rounded-lg transition-all duration-200 outline-none',
-              'placeholder:text-gray-400',
+              'placeholder:text-muted-foreground',
               'disabled:cursor-not-allowed disabled:opacity-50',
               sizeClasses[inputSize],
               variantClasses[variant],
@@ -142,7 +137,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           />
 
           {hasRightIcon && !showClearButton && !showToggle && (
-            <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400">
+            <span className="text-muted-foreground pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
               {rightIcon}
             </span>
           )}
@@ -154,7 +149,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               onClick={onClear}
               className={cn(
                 'absolute inset-y-0 flex items-center justify-center p-0',
-                'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200',
+                'text-muted-foreground hover:text-foreground',
                 'transition-colors focus:outline-none',
                 showToggle ? 'right-10' : 'right-3'
               )}
@@ -168,7 +163,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               type="button"
               aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-400 transition-colors hover:text-gray-600 focus:outline-none dark:hover:text-gray-200"
+              className="text-muted-foreground hover:text-foreground absolute inset-y-0 right-3 flex items-center transition-colors focus:outline-none"
             >
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
@@ -182,7 +177,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
 
         {helpText && !error && (
-          <p id={`${id}-help`} className="mt-1.5 text-xs text-gray-500">
+          <p id={`${id}-help`} className="text-muted-foreground mt-1.5 text-xs">
             {helpText}
           </p>
         )}

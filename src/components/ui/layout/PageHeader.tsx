@@ -25,13 +25,13 @@ export default function PageHeader({
       {backUrl && (
         <Link
           href={backUrl}
-          className="text-wine/60 dark:text-pink-light/60 hover:text-wine dark:hover:text-pink-light mb-4 inline-flex items-center text-sm transition-colors"
+          className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center text-sm transition-colors"
         >
           ← Volver
         </Link>
       )}
       <h1 className="font-script text-primary mb-2 text-4xl">{title}</h1>
-      {text && <p className="text-gray-600 dark:text-gray-400">{text}</p>}
+      {text && <p className="text-muted-foreground">{text}</p>}
     </header>
   )
 }

@@ -55,10 +55,8 @@ export class ErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            <h2 className="text-wine dark:text-pink-light mb-2 text-xl font-semibold">
-              Algo salió mal
-            </h2>
-            <p className="text-wine/60 dark:text-pink-light/60 mb-6">
+            <h2 className="text-foreground mb-2 text-xl font-semibold">Algo salió mal</h2>
+            <p className="text-muted-foreground mb-6">
               Ha ocurrido un error inesperado. Por favor, intenta recargar la página.
             </p>
             <div className="flex flex-col items-center space-y-3">
@@ -71,10 +69,10 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-6 w-full text-left">
-                <summary className="text-wine/50 dark:text-pink-light/50 cursor-pointer text-sm">
+                <summary className="text-muted-foreground cursor-pointer text-sm">
                   Detalles del error (desarrollo)
                 </summary>
-                <pre className="mt-2 max-h-40 overflow-auto rounded bg-gray-100 p-3 text-xs dark:bg-gray-800">
+                <pre className="bg-muted mt-2 max-h-40 overflow-auto rounded p-3 text-xs">
                   {this.state.error.stack}
                 </pre>
               </details>

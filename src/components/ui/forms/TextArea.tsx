@@ -17,10 +17,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <div className="w-full">
         {label && (
-          <label
-            htmlFor={inputId}
-            className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-          >
+          <label htmlFor={inputId} className="text-foreground mb-1 block text-sm font-medium">
             {label}
           </label>
         )}
@@ -32,15 +29,15 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             'focus:ring-2 focus:outline-none',
             'min-h-[100px] resize-y',
             error
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
-              : 'focus:border-primary focus:ring-primary/20 border-gray-300 dark:border-gray-600 dark:bg-gray-800',
+              ? 'border-destructive focus:border-destructive focus:ring-destructive/20'
+              : 'border-input bg-background text-foreground focus:border-ring focus:ring-ring/20',
             'disabled:cursor-not-allowed disabled:opacity-50',
             className
           )}
           {...props}
         />
         {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
-        {helperText && !error && <p className="mt-1 text-sm text-gray-500">{helperText}</p>}
+        {helperText && !error && <p className="text-muted-foreground mt-1 text-sm">{helperText}</p>}
       </div>
     )
   }

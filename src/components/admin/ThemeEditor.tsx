@@ -136,11 +136,11 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Header Sticky */}
-      <div className="sticky top-0 z-10 -mx-6 -mt-6 bg-white/80 px-6 py-4 backdrop-blur-md dark:bg-gray-900/80">
+      <div className="bg-background/80 sticky top-0 z-10 -mx-6 -mt-6 px-6 py-4 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Editor de Tema</h1>
-            <p className="text-sm text-gray-500">Personaliza la apariencia global</p>
+            <h1 className="text-foreground text-2xl font-bold">Editor de Tema</h1>
+            <p className="text-muted-foreground text-sm">Personaliza la apariencia global</p>
           </div>
           <div className="flex gap-3">
             <Button
@@ -286,9 +286,9 @@ interface ColorInputProps {
 
 function ColorInput({ label, description, name, register, error }: ColorInputProps) {
   return (
-    <div className="rounded-lg border p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
       <div className="mb-2 flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-900 dark:text-gray-100">{label}</label>
+        <label className="text-foreground text-sm font-medium">{label}</label>
         <input
           type="color"
           {...register(name)}
@@ -296,8 +296,8 @@ function ColorInput({ label, description, name, register, error }: ColorInputPro
         />
       </div>
       <Input {...register(name)} className="font-mono text-sm" />
-      {error && <p className="mt-1 text-xs text-red-500">{error.message}</p>}
-      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{description}</p>
+      {error && <p className="text-destructive mt-1 text-xs">{error.message}</p>}
+      <p className="text-muted-foreground mt-2 text-xs">{description}</p>
     </div>
   )
 }
@@ -313,12 +313,12 @@ interface FontFieldProps {
 
 function FontField({ label, description, fontKey, urlKey, register, errors }: FontFieldProps) {
   return (
-    <div className="space-y-3 rounded-lg border bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
+    <div className="border-border bg-muted/50 space-y-3 rounded-lg border p-4">
       <div>
         <label className="mb-1 block text-sm font-medium">{label} (Familia)</label>
         <Input placeholder="Ej: Poppins" {...register(fontKey)} />
         {errors[fontKey] && (
-          <span className="text-xs text-red-500">{errors[fontKey]?.message}</span>
+          <span className="text-destructive text-xs">{errors[fontKey]?.message}</span>
         )}
       </div>
       <div>
@@ -330,7 +330,7 @@ function FontField({ label, description, fontKey, urlKey, register, errors }: Fo
         />
         {errors[urlKey] && <span className="text-xs text-red-500">{errors[urlKey]?.message}</span>}
       </div>
-      <p className="text-xs text-gray-500">{description}</p>
+      <p className="text-muted-foreground text-xs">{description}</p>
     </div>
   )
 }

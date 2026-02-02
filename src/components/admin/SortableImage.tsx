@@ -22,7 +22,7 @@ export function SortableImage({ id, url, onDelete }: SortableImageProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="group border-wine/10 bg-pink-light/20 hover:border-pink-hot/50 dark:border-pink-light/10 dark:bg-purple-dark/30 dark:hover:border-pink-hot/50 relative aspect-square overflow-hidden rounded-2xl border-2 shadow-sm transition-all hover:shadow-md"
+      className="group border-input bg-muted/30 hover:border-primary relative aspect-square overflow-hidden rounded-2xl border-2 shadow-sm transition-all hover:shadow-md"
     >
       <div {...attributes} {...listeners} className="absolute inset-0 z-10 cursor-move" />
 
@@ -51,7 +51,7 @@ export function SortableImage({ id, url, onDelete }: SortableImageProps) {
         </svg>
       </button>
 
-      <div className="from-wine/80 pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t to-transparent p-2 pt-8 text-center text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="pointer-events-none absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent p-2 pt-8 text-center text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
         Arrastrar para ordenar
       </div>
     </div>

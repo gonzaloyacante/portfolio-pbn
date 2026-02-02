@@ -35,7 +35,7 @@ export default async function NewProjectPage() {
           <FormField label="Fecha" name="date" type="date" placeholder="YYYY-MM-DD" />
           <ImageUpload name="images" label="Imágenes del proyecto" multiple />
 
-          <div className="border-wine/10 dark:border-pink-light/10 flex justify-end gap-4 border-t pt-4">
+          <div className="border-border flex justify-end gap-4 border-t pt-4">
             <Button type="submit" size="lg">
               Publicar Proyecto
             </Button>

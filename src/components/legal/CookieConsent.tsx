@@ -75,7 +75,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                   y analizar el tráfico del sitio.
                   <button
                     onClick={() => setShowDetails(!showDetails)}
-                    className="text-wine hover:text-wine/80 dark:text-pink-hot dark:hover:text-pink-hot/80 ml-2 font-medium underline decoration-2 underline-offset-2 transition-colors"
+                    className="text-primary hover:text-primary/80 ml-2 font-medium underline decoration-2 underline-offset-2 transition-colors"
                   >
                     {showDetails ? 'Ocultar detalles' : 'Configurar cookies'}
                   </button>
@@ -121,7 +121,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                           Para más información, consulta nuestra{' '}
                           <a
                             href="/privacidad"
-                            className="text-wine dark:text-pink-hot font-medium hover:underline"
+                            className="text-primary font-medium hover:underline"
                           >
                             Política de Privacidad
                           </a>
@@ -144,7 +144,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
 
                 <button
                   onClick={handleAcceptAll}
-                  className="group bg-wine shadow-wine/20 hover:bg-wine/90 hover:shadow-wine/40 dark:bg-pink-hot dark:text-purple-dark dark:shadow-pink-hot/20 dark:hover:bg-pink-hot/90 dark:hover:shadow-pink-hot/40 relative overflow-hidden rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="group bg-primary shadow-primary/20 hover:bg-primary/90 hover:shadow-primary/40 text-primary-foreground relative overflow-hidden rounded-xl px-6 py-3 text-sm font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span className="relative z-10">Aceptar todas</span>
                 </button>

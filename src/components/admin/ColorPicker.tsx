@@ -77,19 +77,15 @@ export default function ColorPicker({ value, onChange, label, description }: Col
 
   return (
     <div className="space-y-2" ref={pickerRef}>
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}
-        </label>
-      )}
-      {description && <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>}
+      {label && <label className="text-foreground block text-sm font-medium">{label}</label>}
+      {description && <p className="text-muted-foreground text-xs">{description}</p>}
 
       {/* Input principal */}
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full items-center gap-3 rounded-lg border border-gray-300 bg-white p-2 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800"
+          className="border-input bg-background hover:border-accent flex w-full items-center gap-3 rounded-lg border p-2"
         >
           <div
             className="h-8 w-8 rounded-md border border-gray-300 shadow-inner dark:border-gray-600"
@@ -108,7 +104,7 @@ export default function ColorPicker({ value, onChange, label, description }: Col
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-lg border border-gray-200 bg-white p-4 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+          <div className="border-border bg-popover absolute top-full left-0 z-50 mt-2 w-full rounded-lg border p-4 shadow-xl">
             {/* Color picker nativo */}
             <div className="mb-4 flex items-center gap-3">
               <input
@@ -122,26 +118,24 @@ export default function ColorPicker({ value, onChange, label, description }: Col
                 value={localValue}
                 onChange={(e) => handleColorChange(e.target.value)}
                 placeholder="#000000"
-                className="focus:border-primary focus:ring-primary/20 flex-1 rounded-lg border border-gray-300 px-3 py-2 font-mono text-sm focus:ring-2 focus:outline-none dark:border-gray-600 dark:bg-gray-700"
+                className="focus:border-primary focus:ring-ring/20 border-input bg-background flex-1 rounded-lg border px-3 py-2 font-mono text-sm focus:ring-2 focus:outline-none"
               />
             </div>
 
             {/* Preview */}
-            <div className="mb-4 flex items-center gap-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-700">
+            <div className="bg-muted mb-4 flex items-center gap-3 rounded-lg p-3">
               <div
                 className="h-10 w-10 rounded-lg shadow-md"
                 style={{ backgroundColor: localValue }}
               />
               <div className="text-sm">
-                <p className="font-medium">Vista previa</p>
-                <p className="text-gray-500 dark:text-gray-400">{localValue}</p>
+                <p className="text-foreground font-medium">Vista previa</p>
+                <p className="text-muted-foreground">{localValue}</p>
               </div>
             </div>
 
             {/* Paleta de colores */}
-            <p className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">
-              Colores sugeridos
-            </p>
+            <p className="text-muted-foreground mb-2 text-xs font-medium">Colores sugeridos</p>
             <div className="grid grid-cols-8 gap-2">
               {PRESET_COLORS.map((color) => (
                 <button
@@ -154,7 +148,7 @@ export default function ColorPicker({ value, onChange, label, description }: Col
                   className={`h-8 w-full rounded-md border-2 transition-transform hover:scale-110 ${
                     localValue === color
                       ? 'border-primary ring-primary ring-2 ring-offset-2'
-                      : 'border-gray-200 dark:border-gray-600'
+                      : 'border-input'
                   }`}
                   style={{ backgroundColor: color }}
                   title={color}

@@ -85,12 +85,10 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
         <TabsContent value="general">
           <form
             onSubmit={handleSubmit(onSettingsSubmit)}
-            className="space-y-6 rounded-lg border bg-white p-6 shadow-sm dark:bg-gray-800"
+            className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm"
           >
-            <h2 className="text-lg font-semibold">Información de Contacto</h2>
-
             <div className="grid gap-6 md:grid-cols-2">
-              <div className="space-y-4">
+              <div className="grid gap-4">
                 <Input
                   label="Título de Página"
                   {...register('pageTitle')}
@@ -142,7 +140,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
         <TabsContent value="form">
           <form
             onSubmit={handleSubmit(onSettingsSubmit)}
-            className="space-y-6 rounded-lg border bg-white p-6 shadow-sm dark:bg-gray-800"
+            className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm"
           >
             <h2 className="text-lg font-semibold">Textos del Formulario</h2>
             <div className="grid gap-6 md:grid-cols-2">
@@ -176,7 +174,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
 
         {/* SOCIAL LINKS TAB */}
         <TabsContent value="social">
-          <div className="space-y-6 rounded-lg border bg-white p-6 shadow-sm dark:bg-gray-800">
+          <div className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Redes Sociales</h2>
               {/* Add new link form is separate or modal - for simplicity, just a list here */}

@@ -76,7 +76,7 @@ export default function MiCuentaPage() {
             placeholder="Ingresa tu contraseña actual"
           />
 
-          <div className="border-pink-hot/20 dark:border-pink-light/20 border-t pt-4">
+          <div className="border-border border-t pt-4">
             <FormField
               label="Nueva contraseña"
               name="newPassword"
@@ -93,7 +93,7 @@ export default function MiCuentaPage() {
                     Fortaleza: {strength.label}
                   </span>
                 </div>
-                <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
+                <div className="bg-muted flex h-1.5 w-full gap-1 overflow-hidden rounded-full">
                   {[...Array(4)].map((_, i) => (
                     <div
                       key={i}
@@ -119,11 +119,9 @@ export default function MiCuentaPage() {
         </form>
       </Section>
 
-      <div className="border-pink-hot/20 bg-pink-light/50 dark:border-pink-light/20 dark:bg-wine/30 rounded-2xl border p-4">
-        <h4 className="text-wine dark:text-pink-light mb-2 font-semibold">
-          🔒 Consejos de seguridad
-        </h4>
-        <ul className="text-wine/80 dark:text-pink-light/80 space-y-1 text-sm">
+      <div className="border-border bg-card rounded-2xl border p-4">
+        <h4 className="text-foreground mb-2 font-semibold">🔒 Consejos de seguridad</h4>
+        <ul className="text-muted-foreground space-y-1 text-sm">
           <li>• Usa al menos 8 caracteres</li>
           <li>• Combina letras, números y símbolos</li>
           <li>• No uses contraseñas fáciles de adivinar</li>

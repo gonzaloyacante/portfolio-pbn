@@ -21,14 +21,14 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="bg-pink-light/80 dark:bg-purple-dark/20 border-wine/10 dark:border-pink-light/10 sticky top-0 flex h-screen w-64 flex-col border-r backdrop-blur-md transition-colors duration-300">
+    <aside className="bg-card border-border sticky top-0 flex h-screen w-64 flex-col border-r backdrop-blur-md transition-colors duration-300">
       {/* Header */}
-      <div className="border-wine/10 dark:border-pink-light/10 flex items-center justify-between border-b p-6">
+      <div className="border-border flex items-center justify-between border-b p-6">
         <Link
           href="/admin/dashboard"
           className="block cursor-pointer transition-all duration-200 hover:scale-105"
         >
-          <h1 className="font-script text-wine dark:text-pink-hot text-2xl">Admin Panel</h1>
+          <h1 className="font-script text-primary text-2xl">Admin Panel</h1>
         </Link>
         <ThemeToggle />
       </div>
@@ -43,8 +43,8 @@ export default function AdminSidebar() {
               href={item.href}
               className={`flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                 isActive
-                  ? 'bg-wine text-pink-light dark:bg-pink-hot dark:text-purple-dark shadow-md'
-                  : 'text-wine/80 hover:bg-wine/10 dark:text-pink-light/80 dark:hover:bg-pink-light/10'
+                  ? 'bg-primary text-primary-foreground shadow-md'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`}
             >
               <span className="text-xl">{item.icon}</span>
@@ -56,18 +56,18 @@ export default function AdminSidebar() {
       </nav>
 
       {/* Footer - Sticky */}
-      <div className="border-wine/10 dark:border-pink-light/10 mt-auto border-t p-4">
+      <div className="border-border mt-auto border-t p-4">
         <Link
           href="/"
           target="_blank"
-          className="text-wine hover:bg-wine/10 dark:text-pink-light dark:hover:bg-pink-light/10 mb-2 flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          className="text-muted-foreground hover:bg-accent hover:text-accent-foreground mb-2 flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
         >
           <span>🌐</span>
           <span>Ver sitio público</span>
         </Link>
         <button
           onClick={handleSignOut}
-          className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-3 text-red-600 transition-all duration-200 hover:scale-[1.02] hover:bg-red-100 active:scale-[0.98] dark:text-red-400 dark:hover:bg-red-900/30"
+          className="text-destructive hover:bg-destructive/10 flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
         >
           <span className="text-xl">🚪</span>
           <span className="font-medium">Cerrar Sesión</span>

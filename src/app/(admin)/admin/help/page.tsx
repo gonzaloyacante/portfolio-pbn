@@ -255,10 +255,8 @@ export default function AyudaPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="border-wine/20 dark:border-pink-hot/20 from-wine/5 to-pink-light/10 dark:from-purple-dark/30 dark:to-pink-hot/10 rounded-3xl border-2 bg-linear-to-br p-8">
-        <h1 className="text-wine dark:text-pink-light mb-4 text-4xl font-bold">
-          📘 Centro de Ayuda
-        </h1>
+      <div className="border-border bg-card rounded-3xl border p-8">
+        <h1 className="text-foreground mb-4 text-4xl font-bold">📘 Centro de Ayuda</h1>
         <p className="text-lg text-gray-700 dark:text-gray-300">
           Bienvenida al manual de usuario de tu portfolio. Aquí encontrarás guías paso a paso para
           gestionar todos los aspectos de tu sitio web profesional.
@@ -267,34 +265,30 @@ export default function AyudaPage() {
 
       {/* Tutoriales */}
       <div className="space-y-6">
-        <h2 className="text-wine dark:text-pink-hot text-2xl font-bold">
-          🎓 Tutoriales Interactivos
-        </h2>
+        <h2 className="text-foreground text-2xl font-bold">🎓 Tutoriales Interactivos</h2>
         <div className="grid gap-6 md:grid-cols-2">
           {tutorials.map((tutorial) => (
             <div
               key={tutorial.id}
-              className="border-wine/10 dark:border-pink-hot/10 rounded-3xl border-2 bg-white p-6 shadow-md transition-shadow hover:shadow-lg dark:bg-gray-800"
+              className="border-border bg-card rounded-3xl border p-6 shadow-md transition-shadow hover:shadow-lg"
             >
               <div className="mb-4 flex items-start gap-3">
                 <span className="text-4xl">{tutorial.icon}</span>
                 <div>
-                  <h3 className="text-wine dark:text-pink-light text-xl font-bold">
-                    {tutorial.title}
-                  </h3>
+                  <h3 className="text-foreground text-xl font-bold">{tutorial.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{tutorial.description}</p>
                 </div>
               </div>
 
               {/* Pasos */}
               <div className="mb-4">
-                <h4 className="text-wine dark:text-pink-hot mb-2 text-sm font-semibold tracking-wide uppercase">
+                <h4 className="text-foreground mb-2 text-sm font-semibold tracking-wide uppercase">
                   Pasos a seguir
                 </h4>
                 <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                   {tutorial.steps.map((step, index) => (
                     <li key={index} className="flex gap-2">
-                      <span className="text-wine dark:text-pink-hot font-bold">{index + 1}.</span>
+                      <span className="text-foreground font-bold">{index + 1}.</span>
                       <span>{step}</span>
                     </li>
                   ))}
@@ -303,14 +297,14 @@ export default function AyudaPage() {
 
               {/* Tips */}
               {tutorial.tips && (
-                <div className="border-wine/20 dark:border-pink-hot/20 bg-pink-light/20 dark:bg-purple-dark/20 rounded-2xl border-l-4 p-4">
-                  <h4 className="text-wine dark:text-pink-hot mb-2 flex items-center gap-2 text-sm font-semibold">
+                <div className="border-primary/20 bg-primary/20 rounded-2xl border-l-4 p-4">
+                  <h4 className="text-primary mb-2 flex items-center gap-2 text-sm font-semibold">
                     💡 Tips Profesionales
                   </h4>
                   <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
                     {tutorial.tips.map((tip, index) => (
                       <li key={index} className="flex gap-2">
-                        <span className="text-wine dark:text-pink-hot">•</span>
+                        <span className="text-primary">•</span>
                         <span>{tip}</span>
                       </li>
                     ))}
@@ -324,15 +318,15 @@ export default function AyudaPage() {
 
       {/* Glosario */}
       <div className="space-y-4">
-        <h2 className="text-wine dark:text-pink-hot text-2xl font-bold">📖 Glosario de Términos</h2>
-        <div className="border-wine/10 dark:border-pink-hot/10 rounded-3xl border-2 bg-white p-6 dark:bg-gray-800">
+        <h2 className="text-foreground text-2xl font-bold">📖 Glosario de Términos</h2>
+        <div className="border-border bg-card rounded-3xl border p-6">
           <dl className="space-y-4">
             {glossary.map((entry, index) => (
               <div
                 key={index}
                 className="border-b border-gray-200 pb-4 last:border-0 dark:border-gray-700"
               >
-                <dt className="text-wine dark:text-pink-hot mb-1 font-semibold">{entry.term}</dt>
+                <dt className="text-foreground mb-1 font-semibold">{entry.term}</dt>
                 <dd className="text-sm text-gray-700 dark:text-gray-300">{entry.definition}</dd>
               </div>
             ))}
@@ -342,10 +336,10 @@ export default function AyudaPage() {
 
       {/* FAQ Rápido */}
       <div className="space-y-4">
-        <h2 className="text-wine dark:text-pink-hot text-2xl font-bold">❓ Preguntas Frecuentes</h2>
+        <h2 className="text-foreground text-2xl font-bold">❓ Preguntas Frecuentes</h2>
         <div className="space-y-4">
-          <details className="border-wine/10 dark:border-pink-hot/10 group rounded-2xl border-2 bg-white p-4 dark:bg-gray-800">
-            <summary className="text-wine dark:text-pink-hot cursor-pointer font-semibold">
+          <details className="border-border group bg-card rounded-2xl border p-4">
+            <summary className="text-foreground cursor-pointer font-semibold">
               ¿Puedo recuperar un proyecto eliminado?
             </summary>
             <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
@@ -355,8 +349,8 @@ export default function AyudaPage() {
             </p>
           </details>
 
-          <details className="border-wine/10 dark:border-pink-hot/10 group rounded-2xl border-2 bg-white p-4 dark:bg-gray-800">
-            <summary className="text-wine dark:text-pink-hot cursor-pointer font-semibold">
+          <details className="border-border group bg-card rounded-2xl border p-4">
+            <summary className="text-foreground cursor-pointer font-semibold">
               ¿Cuántas imágenes puedo subir por proyecto?
             </summary>
             <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
@@ -365,8 +359,8 @@ export default function AyudaPage() {
             </p>
           </details>
 
-          <details className="border-wine/10 dark:border-pink-hot/10 group rounded-2xl border-2 bg-white p-4 dark:bg-gray-800">
-            <summary className="text-wine dark:text-pink-hot cursor-pointer font-semibold">
+          <details className="border-border group bg-card rounded-2xl border p-4">
+            <summary className="text-foreground cursor-pointer font-semibold">
               ¿Qué tamaño de imagen es el ideal?
             </summary>
             <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
@@ -375,8 +369,8 @@ export default function AyudaPage() {
             </p>
           </details>
 
-          <details className="border-wine/10 dark:border-pink-hot/10 group rounded-2xl border-2 bg-white p-4 dark:bg-gray-800">
-            <summary className="text-wine dark:text-pink-hot cursor-pointer font-semibold">
+          <details className="border-border group bg-card rounded-2xl border p-4">
+            <summary className="text-foreground cursor-pointer font-semibold">
               ¿Cómo instalo la app en mi celular?
             </summary>
             <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
@@ -387,8 +381,8 @@ export default function AyudaPage() {
             </p>
           </details>
 
-          <details className="border-wine/10 dark:border-pink-hot/10 group rounded-2xl border-2 bg-white p-4 dark:bg-gray-800">
-            <summary className="text-wine dark:text-pink-hot cursor-pointer font-semibold">
+          <details className="border-border group bg-card rounded-2xl border p-4">
+            <summary className="text-foreground cursor-pointer font-semibold">
               ¿Por qué no puedo eliminar una categoría?
             </summary>
             <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
@@ -400,10 +394,8 @@ export default function AyudaPage() {
       </div>
 
       {/* Contacto de soporte */}
-      <div className="from-wine/10 to-pink-light/20 dark:from-purple-dark/30 dark:to-pink-hot/10 rounded-3xl bg-linear-to-br p-6">
-        <h3 className="text-wine dark:text-pink-light mb-3 text-xl font-bold">
-          🆘 ¿Necesitas ayuda adicional?
-        </h3>
+      <div className="bg-muted/50 rounded-3xl p-6">
+        <h3 className="text-foreground mb-3 text-xl font-bold">🆘 ¿Necesitas ayuda adicional?</h3>
         <p className="mb-4 text-gray-700 dark:text-gray-300">
           Si tienes alguna pregunta técnica que no esté cubierta en este manual, no dudes en
           contactarnos:
@@ -413,17 +405,14 @@ export default function AyudaPage() {
             <strong>Email de Soporte:</strong>{' '}
             <a
               href="mailto:soporte@paolabolivar.com"
-              className="text-wine dark:text-pink-hot underline hover:no-underline"
+              className="text-primary underline hover:no-underline"
             >
               soporte@paolabolivar.com
             </a>
           </p>
           <p>
             <strong>Documentación Técnica:</strong>{' '}
-            <Link
-              href="/docs"
-              className="text-wine dark:text-pink-hot underline hover:no-underline"
-            >
+            <Link href="/docs" className="text-primary underline hover:no-underline">
               Ver documentación completa
             </Link>
           </p>

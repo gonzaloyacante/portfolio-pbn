@@ -43,13 +43,11 @@ export default function ForgotPasswordPage() {
             <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">
               Recuperar Contraseña
             </h1>
-            <p className="text-wine/70 dark:text-pink-light/70 mt-2">
-              Te enviaremos un enlace a tu email
-            </p>
+            <p className="text-muted-foreground mt-2">Te enviaremos un enlace a tu email</p>
           </div>
 
           {/* Card */}
-          <div className="dark:bg-wine/30 rounded-2xl border-t-4 border-[var(--primary)] bg-[var(--card-bg)] p-8 shadow-xl">
+          <div className="bg-card dark:bg-muted/10 border-primary rounded-2xl border-t-4 p-8 shadow-xl">
             {status === 'success' ? (
               <div className="space-y-6 text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
@@ -68,10 +66,8 @@ export default function ForgotPasswordPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-wine dark:text-pink-light text-lg font-semibold">
-                    ¡Email enviado!
-                  </h3>
-                  <p className="text-wine/70 dark:text-pink-light/70 mt-2 text-sm">{message}</p>
+                  <h3 className="text-foreground text-lg font-semibold">¡Email enviado!</h3>
+                  <p className="text-muted-foreground mt-2 text-sm">{message}</p>
                 </div>
                 <Link
                   href="/auth/login"
@@ -89,10 +85,7 @@ export default function ForgotPasswordPage() {
                 )}
 
                 <div>
-                  <label
-                    className="text-wine dark:text-pink-light mb-1 block text-sm font-medium"
-                    htmlFor="email"
-                  >
+                  <label className="text-foreground mb-1 block text-sm font-medium" htmlFor="email">
                     Email
                   </label>
                   <input
@@ -103,7 +96,7 @@ export default function ForgotPasswordPage() {
                     required
                     disabled={isLoading}
                     placeholder="tu@email.com"
-                    className="focus:border-primary focus:ring-primary/20 border-pink-hot/30 dark:border-pink-light/30 dark:bg-wine/30 dark:text-pink-light w-full rounded-lg border p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
+                    className="focus:border-primary focus:ring-primary/20 border-input w-full rounded-lg border p-3 transition-colors focus:ring-2 focus:outline-none disabled:opacity-50"
                   />
                 </div>
 

@@ -245,14 +245,14 @@ export default function ImageUpload({
           htmlFor={`file-upload-${name}`}
           className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all ${
             isDragging
-              ? 'border-pink-hot bg-pink-hot/10'
-              : 'border-wine/20 bg-pink-light/30 hover:bg-pink-light/50 hover:border-wine/40 dark:border-pink-light/20 dark:bg-purple-dark/30 dark:hover:bg-purple-dark/50 dark:hover:border-pink-hot/40'
+              ? 'border-primary bg-primary/10'
+              : 'border-input bg-muted/30 hover:bg-muted/50 hover:border-primary/50'
           } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             {isUploading ? (
               <>
-                <svg className="text-pink-hot mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
+                <svg className="text-primary mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -268,12 +268,12 @@ export default function ImageUpload({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                <p className="text-wine/60 dark:text-pink-light/60 text-sm">Subiendo imágenes...</p>
+                <p className="text-muted-foreground text-sm">Subiendo imágenes...</p>
               </>
             ) : (
               <>
                 <svg
-                  className="text-wine/40 dark:text-pink-light/40 mb-4 h-10 w-10"
+                  className="text-muted-foreground mb-4 h-10 w-10"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -285,11 +285,11 @@ export default function ImageUpload({
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                <p className="text-wine/80 dark:text-pink-light/80 mb-2 text-sm">
-                  <span className="text-pink-hot font-bold hover:underline">Click para subir</span>{' '}
-                  o arrastra y suelta
+                <p className="text-muted-foreground mb-2 text-sm">
+                  <span className="text-primary font-bold hover:underline">Click para subir</span> o
+                  arrastra y suelta
                 </p>
-                <p className="text-wine/50 dark:text-pink-light/50 text-xs">
+                <p className="text-muted-foreground text-xs">
                   PNG, JPG, GIF, WebP (máx. {maxSizeMB}MB)
                 </p>
               </>

@@ -45,9 +45,9 @@ export interface ThemeValues {
 
 // Valores por defecto del diseño de Canva
 const defaultTheme: ThemeValues = {
-  colorBackground: '#fff1f9',
-  colorPrimary: '#ffaadd',
-  colorTextPrimary: '#6c0a0a',
+  colorBackground: 'var(--background)',
+  colorPrimary: 'var(--primary)',
+  colorTextPrimary: 'var(--foreground)',
   colorAccent: '#7a2556',
   colorSecondary: '#ffa1da',
   colorDark: '#511a3a',

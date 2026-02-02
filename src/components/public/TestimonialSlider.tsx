@@ -27,7 +27,7 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
   const currentTestimonial = testimonials[currentIndex]
 
   return (
-    <div className="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow-lg">
+    <div className="bg-card border-border/50 mx-auto max-w-3xl rounded-xl border p-8 shadow-lg">
       <div className="mb-4 flex justify-center">
         {Array.from({ length: currentTestimonial.rating }).map((_, i) => (
           <svg key={i} className="h-5 w-5 fill-current text-yellow-400" viewBox="0 0 20 20">
@@ -36,14 +36,14 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
         ))}
       </div>
 
-      <blockquote className="mb-6 text-center text-lg text-gray-700 italic">
+      <blockquote className="text-muted-foreground mb-6 text-center text-lg italic">
         &ldquo;{currentTestimonial.text}&rdquo;
       </blockquote>
 
       <div className="text-center">
-        <p className="font-semibold text-gray-900">{currentTestimonial.name}</p>
+        <p className="text-foreground font-semibold">{currentTestimonial.name}</p>
         {currentTestimonial.position && (
-          <p className="text-sm text-gray-500">{currentTestimonial.position}</p>
+          <p className="text-muted-foreground text-sm">{currentTestimonial.position}</p>
         )}
       </div>
 
@@ -54,7 +54,7 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`h-2 w-2 rounded-full transition-all ${
-                index === currentIndex ? 'bg-primary w-8' : 'bg-gray-300'
+                index === currentIndex ? 'bg-primary w-8' : 'bg-muted-foreground/30'
               }`}
               aria-label={`Go to testimonial ${index + 1}`}
             />

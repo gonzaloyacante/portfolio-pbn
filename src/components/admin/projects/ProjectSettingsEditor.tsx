@@ -98,7 +98,7 @@ export default function ProjectSettingsEditor({ initialSettings }: ProjectSettin
         </Card>
 
         {/* Preview / Instructions Card */}
-        <Card className="bg-gray-50 p-6 dark:bg-gray-800/50">
+        <Card className="bg-muted/30 p-6">
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Vista Previa</h3>
           <p className="mb-4 text-sm text-gray-500">
             Así se verá aproximadamente una tarjeta de proyecto según tu configuración actual:

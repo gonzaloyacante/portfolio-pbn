@@ -38,7 +38,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-wine dark:text-pink-light text-3xl font-bold">Gestión de Servicios</h1>
+        <h1 className="text-foreground text-3xl font-bold">Gestión de Servicios</h1>
         <Button onClick={handleCreate} className="gap-2">
           <Plus size={18} />
           Nuevo Servicio
@@ -47,13 +47,13 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
 
       <Card>
         {initialServices.length === 0 ? (
-          <div className="text-wine/60 dark:text-pink-light/60 flex flex-col items-center justify-center py-12 text-center">
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
             <span className="mb-4 text-4xl">💅</span>
             <p className="font-medium">No hay servicios aún</p>
             <p className="text-sm">Crea tu primer servicio arriba</p>
           </div>
         ) : (
-          <div className="divide-wine/5 dark:divide-pink-light/5 divide-y">
+          <div className="divide-border divide-y">
             {initialServices.map((s) => (
               <div
                 key={s.id}
@@ -61,7 +61,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
               >
                 <div className="flex-1 space-y-2">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-wine dark:text-pink-light flex items-center gap-2 font-bold">
+                    <span className="text-foreground flex items-center gap-2 font-bold">
                       {s.name}
                     </span>
                     <Badge variant={s.isActive ? 'success' : 'default'}>
@@ -69,13 +69,11 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
                     </Badge>
                     {s.isFeatured && <Badge variant="warning">⭐ Destacado</Badge>}
                   </div>
-                  <p className="text-wine/60 dark:text-pink-light/60 text-sm">/{s.slug}</p>
+                  <p className="text-muted-foreground text-sm">/{s.slug}</p>
                   {s.description && (
-                    <p className="text-wine/80 dark:text-pink-light/80 line-clamp-2 text-sm">
-                      {s.description}
-                    </p>
+                    <p className="text-muted-foreground line-clamp-2 text-sm">{s.description}</p>
                   )}
-                  <div className="text-wine/60 dark:text-pink-light/60 flex flex-wrap items-center gap-4 text-sm">
+                  <div className="text-muted-foreground flex flex-wrap items-center gap-4 text-sm">
                     {s.price && (
                       <span>
                         💰 {s.priceLabel === 'desde' ? 'Desde ' : ''}

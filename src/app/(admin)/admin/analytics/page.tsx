@@ -66,7 +66,7 @@ export default async function AnalyticsPage() {
               </a>
               <Link
                 href={ROUTES.admin.settings}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                className="bg-card text-foreground hover:bg-muted inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium transition-colors"
               >
                 ⚙️ Configurar GA
               </Link>
@@ -94,7 +94,7 @@ export default async function AnalyticsPage() {
 
       {/* Gráfico de tendencia */}
       <Section>
-        <h3 className="mb-6 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+        <h3 className="text-foreground mb-6 flex items-center gap-2 text-lg font-semibold">
           📈 Tendencia de Visitas
           <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-normal text-gray-500 dark:bg-gray-700 dark:text-gray-400">
             Última semana
@@ -109,7 +109,7 @@ export default async function AnalyticsPage() {
                 <div className="relative flex h-full w-full items-end justify-center overflow-hidden rounded-t-lg bg-gray-100 dark:bg-gray-700">
                   <div
                     style={{ height: `${Math.max(height, 5)}%` }}
-                    className="w-full rounded-t-lg bg-gradient-to-t from-pink-500 to-pink-400 transition-all duration-500 group-hover:from-pink-600 group-hover:to-pink-500"
+                    className="bg-primary/80 group-hover:bg-primary w-full rounded-t-lg transition-all duration-500"
                   />
                   <div className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 rounded-lg bg-gray-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                     {day.count} visitas
@@ -128,7 +128,7 @@ export default async function AnalyticsPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Proyectos Estrella */}
         <Section>
-          <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+          <h3 className="text-foreground mb-4 flex items-center gap-2 text-lg font-semibold">
             ⭐ Proyectos Más Vistos
           </h3>
           {topProjects && topProjects.length > 0 ? (
@@ -139,7 +139,7 @@ export default async function AnalyticsPage() {
                   className="flex items-center justify-between rounded-lg bg-gray-50 p-4 transition-colors hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-lg dark:bg-pink-900/30">
+                    <span className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full text-lg">
                       {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '📸'}
                     </span>
                     <span className="font-medium text-gray-900 dark:text-white">
@@ -165,7 +165,7 @@ export default async function AnalyticsPage() {
         <div className="space-y-6">
           {/* Dispositivos */}
           <Section>
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+            <h3 className="text-foreground mb-4 flex items-center gap-2 text-lg font-semibold">
               📱 Dispositivos
             </h3>
             <div className="flex items-center justify-around py-4">
@@ -188,18 +188,18 @@ export default async function AnalyticsPage() {
             <div className="flex h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
               <div
                 style={{ width: `${mobilePercent}%` }}
-                className="bg-gradient-to-r from-purple-500 to-purple-400"
+                className="bg-primary h-2 w-2 rounded-full"
               />
               <div
                 style={{ width: `${desktopPercent}%` }}
-                className="bg-gradient-to-r from-pink-500 to-pink-400"
+                className="bg-secondary h-2 w-2 rounded-full"
               />
             </div>
           </Section>
 
           {/* Ubicaciones */}
           <Section>
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-white">
+            <h3 className="text-foreground mb-4 flex items-center gap-2 text-lg font-semibold">
               🌍 Top Visitantes
             </h3>
             {topLocations.length > 0 ? (
