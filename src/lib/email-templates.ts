@@ -27,7 +27,7 @@ export const EMAIL_STYLES = {
 }
 
 export const COLORS = {
-  primary: '#be185d', // Pink 700
+  primary: '#6c0a0a', // Brand Wine
   secondary: '#000000',
   success: '#059669',
   warning: '#d97706',

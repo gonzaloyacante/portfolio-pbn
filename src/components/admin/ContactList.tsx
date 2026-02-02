@@ -78,7 +78,7 @@ export default function ContactList({ contacts }: ContactListProps) {
       {/* Lista de contactos */}
       <div className="space-y-4 lg:col-span-1">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-wine dark:text-pink-light text-lg font-bold">
+          <h2 className="text-foreground text-lg font-bold">
             Mensajes ({filteredContacts.length})
           </h2>
           <select
@@ -87,7 +87,7 @@ export default function ContactList({ contacts }: ContactListProps) {
               setFilter(e.target.value as 'all' | 'unread' | 'replied')
               setCurrentPage(1)
             }}
-            className="border-wine/20 bg-pink-light/30 text-wine focus:border-wine/40 dark:border-pink-light/20 dark:bg-purple-dark/30 dark:text-pink-light dark:focus:border-pink-hot/40 rounded-xl border-2 px-3 py-1.5 text-sm focus:outline-none"
+            className="border-input bg-background text-foreground focus:border-ring rounded-xl border px-3 py-1.5 text-sm focus:outline-none"
           >
             <option value="all">Todos</option>
             <option value="unread">No leídos</option>
@@ -100,40 +100,36 @@ export default function ContactList({ contacts }: ContactListProps) {
             <button
               key={contact.id}
               onClick={() => setSelectedContact(contact)}
-              className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
+              className={`w-full rounded-2xl border p-4 text-left transition-all ${
                 selectedContact?.id === contact.id
-                  ? 'border-pink-hot bg-pink-hot/10 shadow-md'
-                  : 'border-wine/10 hover:border-wine/30 hover:bg-pink-light/30 dark:border-pink-light/10 dark:bg-purple-dark/20 dark:hover:border-pink-hot/30 dark:hover:bg-purple-dark/40 bg-white/50'
+                  ? 'border-primary bg-primary/10 shadow-md'
+                  : 'border-border hover:bg-muted bg-card'
               }`}
             >
               <div className="mb-2 flex items-start justify-between gap-2">
-                <h3 className="text-wine dark:text-pink-light font-bold">{contact.name}</h3>
+                <h3 className="text-foreground font-bold">{contact.name}</h3>
                 <div className="flex gap-1">
                   {!contact.isRead && (
-                    <span className="bg-pink-hot rounded-full px-2 py-0.5 text-xs font-bold text-white">
+                    <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs font-bold">
                       Nuevo
                     </span>
                   )}
                   {contact.isReplied && (
-                    <span className="bg-wine/20 text-wine dark:text-pink-light rounded-full px-2 py-0.5 text-xs font-bold">
+                    <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-bold">
                       ✓
                     </span>
                   )}
                 </div>
               </div>
-              <p className="text-wine/80 dark:text-pink-light/80 mb-1 text-sm">{contact.email}</p>
-              <p className="text-wine/60 dark:text-pink-light/60 line-clamp-2 text-sm">
-                {contact.message}
-              </p>
-              <p className="text-wine/40 dark:text-pink-light/40 mt-2 text-xs">
-                {formatDate(contact.createdAt)}
-              </p>
+              <p className="text-muted-foreground mb-1 text-sm">{contact.email}</p>
+              <p className="text-muted-foreground line-clamp-2 text-sm">{contact.message}</p>
+              <p className="text-muted-foreground mt-2 text-xs">{formatDate(contact.createdAt)}</p>
             </button>
           ))}
 
           {filteredContacts.length === 0 && (
-            <div className="border-wine/20 bg-pink-light/20 dark:border-pink-light/20 dark:bg-purple-dark/20 rounded-2xl border-2 border-dashed p-8 text-center">
-              <p className="text-wine/60 dark:text-pink-light/60 font-medium">
+            <div className="border-border bg-muted/20 rounded-2xl border-2 border-dashed p-8 text-center">
+              <p className="text-muted-foreground font-medium">
                 {filter === 'all'
                   ? 'No hay mensajes aún'
                   : `No hay mensajes ${filter === 'unread' ? 'sin leer' : 'respondidos'}`}
@@ -144,8 +140,8 @@ export default function ContactList({ contacts }: ContactListProps) {
 
         {/* Paginación */}
         {totalPages > 1 && (
-          <div className="border-wine/10 dark:border-pink-light/10 flex items-center justify-between border-t pt-4">
-            <p className="text-wine/60 dark:text-pink-light/60 text-sm">
+          <div className="border-border flex items-center justify-between border-t pt-4">
+            <p className="text-muted-foreground text-sm">
               Mostrando {(currentPage - 1) * ITEMS_PER_PAGE + 1} -{' '}
               {Math.min(currentPage * ITEMS_PER_PAGE, filteredContacts.length)} de{' '}
               {filteredContacts.length}
@@ -154,17 +150,17 @@ export default function ContactList({ contacts }: ContactListProps) {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                 disabled={currentPage === 1}
-                className="bg-wine dark:bg-pink-hot rounded-lg px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-bold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Anterior
               </button>
-              <span className="text-wine dark:text-pink-light flex items-center px-3 text-sm font-medium">
+              <span className="text-muted-foreground flex items-center px-3 text-sm font-medium">
                 {currentPage} / {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                 disabled={currentPage === totalPages}
-                className="bg-wine dark:bg-pink-hot rounded-lg px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-bold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Siguiente
               </button>
@@ -176,19 +172,17 @@ export default function ContactList({ contacts }: ContactListProps) {
       {/* Detalle del contacto */}
       <div className="lg:col-span-2">
         {selectedContact ? (
-          <div className="border-wine/10 dark:border-pink-light/10 dark:bg-purple-dark/20 rounded-3xl border bg-white/80 p-8 shadow-sm backdrop-blur-sm">
+          <div className="border-border bg-card rounded-3xl border p-8 shadow-sm backdrop-blur-sm">
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
               <div>
-                <h2 className="text-wine dark:text-pink-light text-2xl font-bold">
-                  {selectedContact.name}
-                </h2>
+                <h2 className="text-foreground text-2xl font-bold">{selectedContact.name}</h2>
                 <a
                   href={`mailto:${selectedContact.email}`}
-                  className="text-pink-hot font-medium hover:underline"
+                  className="text-primary font-medium hover:underline"
                 >
                   {selectedContact.email}
                 </a>
-                <p className="text-wine/60 dark:text-pink-light/60 mt-1 text-sm">
+                <p className="text-muted-foreground mt-1 text-sm">
                   {formatDate(selectedContact.createdAt)}
                 </p>
               </div>
@@ -198,7 +192,7 @@ export default function ContactList({ contacts }: ContactListProps) {
                   <button
                     onClick={() => handleMarkAsRead(selectedContact.id)}
                     disabled={isLoading}
-                    className="bg-pink-light text-wine hover:bg-pink-light/80 dark:bg-pink-hot rounded-xl px-4 py-2 text-sm font-bold disabled:opacity-50 dark:text-white"
+                    className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-xl px-4 py-2 text-sm font-bold disabled:opacity-50"
                   >
                     Marcar leído
                   </button>
@@ -206,7 +200,7 @@ export default function ContactList({ contacts }: ContactListProps) {
                 <button
                   onClick={() => handleDelete(selectedContact.id)}
                   disabled={isLoading}
-                  className="rounded-xl border-2 border-red-500/20 bg-red-50 px-4 py-2 text-sm font-bold text-red-600 hover:bg-red-100 disabled:opacity-50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+                  className="border-destructive bg-destructive/10 text-destructive hover:bg-destructive/20 rounded-xl border px-4 py-2 text-sm font-bold disabled:opacity-50"
                 >
                   Eliminar
                 </button>
@@ -214,9 +208,9 @@ export default function ContactList({ contacts }: ContactListProps) {
             </div>
 
             <div className="mb-6">
-              <h3 className="text-wine dark:text-pink-light mb-3 font-bold">Mensaje:</h3>
-              <div className="bg-pink-light/30 dark:bg-purple-dark/30 rounded-2xl p-6">
-                <p className="text-wine/90 dark:text-pink-light/90 leading-relaxed whitespace-pre-wrap">
+              <h3 className="text-foreground mb-3 font-bold">Mensaje:</h3>
+              <div className="bg-muted rounded-2xl p-6">
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                   {selectedContact.message}
                 </p>
               </div>
@@ -224,11 +218,9 @@ export default function ContactList({ contacts }: ContactListProps) {
 
             {selectedContact.adminNote && (
               <div className="mb-6">
-                <h3 className="text-wine dark:text-pink-light mb-3 font-bold">
-                  Nota del administrador:
-                </h3>
+                <h3 className="text-foreground mb-3 font-bold">Nota del administrador:</h3>
                 <div className="rounded-2xl border-l-4 border-yellow-400 bg-yellow-50 p-6 dark:bg-yellow-900/10">
-                  <p className="text-wine/90 dark:text-pink-light/90 italy whitespace-pre-wrap">
+                  <p className="text-foreground italy whitespace-pre-wrap">
                     {selectedContact.adminNote}
                   </p>
                 </div>
@@ -237,20 +229,20 @@ export default function ContactList({ contacts }: ContactListProps) {
 
             {!selectedContact.isReplied && (
               <div>
-                <h3 className="text-wine dark:text-pink-light mb-3 font-bold">
+                <h3 className="text-foreground mb-3 font-bold">
                   Agregar nota / Marcar como respondido:
                 </h3>
                 <textarea
                   value={adminNote}
                   onChange={(e) => setAdminNote(e.target.value)}
                   placeholder="Opcional: Agrega una nota sobre cómo respondiste..."
-                  className="border-wine/20 bg-pink-light/20 text-wine placeholder:text-wine/40 focus:border-wine/40 dark:border-pink-light/20 dark:bg-purple-dark/30 dark:text-pink-light dark:placeholder:text-pink-light/40 dark:focus:border-pink-hot/40 mb-4 w-full rounded-2xl border-2 p-4 focus:outline-none"
+                  className="border-input bg-input text-foreground placeholder:text-muted-foreground focus:border-ring mb-4 w-full rounded-2xl border p-4 focus:outline-none"
                   rows={4}
                 />
                 <button
                   onClick={() => handleMarkAsReplied(selectedContact.id)}
                   disabled={isLoading}
-                  className="bg-wine shadow-wine/20 hover:shadow-wine/30 dark:bg-pink-hot dark:shadow-pink-hot/20 w-full rounded-xl px-6 py-4 font-bold text-white shadow-lg transition-all hover:translate-y-[-2px] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 dark:text-white"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground w-full rounded-xl px-6 py-4 font-bold shadow-lg transition-all hover:translate-y-[-2px] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoading ? 'Guardando...' : 'Marcar como respondido'}
                 </button>
@@ -258,10 +250,10 @@ export default function ContactList({ contacts }: ContactListProps) {
             )}
           </div>
         ) : (
-          <div className="border-wine/10 dark:border-pink-light/10 dark:bg-purple-dark/10 flex h-96 items-center justify-center rounded-3xl border-2 border-dashed bg-white/50">
+          <div className="border-border bg-muted/20 flex h-96 items-center justify-center rounded-3xl border-2 border-dashed">
             <div className="text-center">
               <span className="mb-4 block text-4xl">📩</span>
-              <p className="text-wine/60 dark:text-pink-light/60 font-medium">
+              <p className="text-muted-foreground font-medium">
                 Selecciona un mensaje para ver los detalles
               </p>
             </div>

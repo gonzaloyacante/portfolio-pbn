@@ -255,24 +255,22 @@ export default function IconPicker({ value, onChange, label, description }: Icon
 
   return (
     <div className="space-y-2" ref={pickerRef}>
-      {label && (
-        <label className="text-wine dark:text-pink-light block text-sm font-bold">{label}</label>
-      )}
-      {description && <p className="text-wine/50 dark:text-pink-light/50 text-xs">{description}</p>}
+      {label && <label className="text-foreground block text-sm font-bold">{label}</label>}
+      {description && <p className="text-muted-foreground text-xs">{description}</p>}
 
       {/* Input principal */}
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="border-wine/20 bg-pink-light/30 hover:border-wine/40 dark:border-pink-light/20 dark:bg-purple-dark/20 dark:hover:border-pink-hot/40 flex w-full items-center gap-3 rounded-2xl border-2 p-3 transition-colors"
+          className="border-input bg-background hover:bg-accent hover:border-accent-foreground flex w-full items-center gap-3 rounded-2xl border p-3 transition-colors"
         >
           <span className="text-3xl">{value || '📷'}</span>
-          <span className="text-wine/60 dark:text-pink-light/60 flex-1 text-left text-sm">
+          <span className="text-muted-foreground flex-1 text-left text-sm">
             {value ? 'Click para cambiar' : 'Seleccionar icono'}
           </span>
           <svg
-            className={`text-wine/40 dark:text-pink-light/40 h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`text-muted-foreground h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -283,14 +281,14 @@ export default function IconPicker({ value, onChange, label, description }: Icon
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="border-wine/10 dark:border-pink-light/10 dark:bg-purple-dark/95 absolute top-full left-0 z-50 mt-2 w-80 rounded-2xl border bg-white/90 p-4 shadow-xl backdrop-blur-md">
+          <div className="border-border bg-popover absolute top-full left-0 z-50 mt-2 w-80 rounded-2xl border p-4 shadow-xl backdrop-blur-md">
             {/* Búsqueda */}
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar o pegar emoji..."
-              className="border-wine/10 bg-pink-light/30 text-wine placeholder:text-wine/40 focus:border-wine/40 dark:border-pink-light/10 dark:bg-purple-dark/50 dark:text-pink-light dark:placeholder:text-pink-light/40 dark:focus:border-pink-hot/40 mb-3 w-full rounded-xl border-2 px-3 py-2 text-sm focus:outline-none"
+              className="border-input bg-input text-foreground placeholder:text-muted-foreground focus:border-ring mb-3 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none"
             />
 
             {/* Categorías */}
@@ -300,8 +298,8 @@ export default function IconPicker({ value, onChange, label, description }: Icon
                 onClick={() => setActiveCategory(null)}
                 className={`rounded-full px-2 py-1 text-xs font-bold transition-colors ${
                   !activeCategory
-                    ? 'bg-pink-hot text-white'
-                    : 'bg-wine/5 text-wine/60 hover:bg-wine/10 dark:bg-pink-light/5 dark:text-pink-light/60 dark:hover:bg-pink-light/10'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground hover:bg-accent'
                 }`}
               >
                 Todos
@@ -313,8 +311,8 @@ export default function IconPicker({ value, onChange, label, description }: Icon
                   onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
                   className={`rounded-full px-2 py-1 text-xs font-bold transition-colors ${
                     activeCategory === cat
-                      ? 'bg-pink-hot text-white'
-                      : 'bg-wine/5 text-wine/60 hover:bg-wine/10 dark:bg-pink-light/5 dark:text-pink-light/60 dark:hover:bg-pink-light/10'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground hover:bg-accent'
                   }`}
                 >
                   {cat}
@@ -332,8 +330,8 @@ export default function IconPicker({ value, onChange, label, description }: Icon
                     onChange(emoji)
                     setIsOpen(false)
                   }}
-                  className={`hover:bg-wine/10 dark:hover:bg-pink-light/10 flex h-10 w-10 items-center justify-center rounded-lg text-xl transition-all hover:scale-110 ${
-                    value === emoji ? 'bg-pink-hot/20 ring-pink-hot ring-2' : ''
+                  className={`hover:bg-muted/50 flex h-10 w-10 items-center justify-center rounded-lg text-xl transition-all hover:scale-110 ${
+                    value === emoji ? 'bg-primary/20 ring-primary ring-2' : ''
                   }`}
                 >
                   {emoji}
@@ -342,23 +340,21 @@ export default function IconPicker({ value, onChange, label, description }: Icon
             </div>
 
             {filteredEmojis.length === 0 && (
-              <p className="text-wine/40 dark:text-pink-light/40 py-8 text-center text-sm">
+              <p className="text-muted-foreground py-8 text-center text-sm">
                 No se encontraron iconos
               </p>
             )}
 
             {/* Input manual */}
-            <div className="border-wine/10 dark:border-pink-light/10 mt-4 border-t pt-4">
-              <p className="text-wine/50 dark:text-pink-light/50 mb-2 text-xs">
-                O pega cualquier emoji:
-              </p>
+            <div className="border-border mt-4 border-t pt-4">
+              <p className="text-muted-foreground mb-2 text-xs">O pega cualquier emoji:</p>
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   placeholder="🎨"
-                  className="border-wine/10 bg-pink-light/30 text-wine placeholder:text-wine/20 focus:border-wine/40 dark:border-pink-light/10 dark:bg-purple-dark/50 dark:text-pink-light dark:focus:border-pink-hot/40 flex-1 rounded-xl border-2 px-3 py-2 text-center text-2xl focus:outline-none"
+                  className="border-input bg-input text-foreground placeholder:text-muted-foreground focus:border-ring flex-1 rounded-xl border px-3 py-2 text-center text-2xl focus:outline-none"
                 />
               </div>
             </div>

@@ -35,7 +35,7 @@ export default function LoadingState({ message = 'Cargando...', size = 'md' }: L
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
-      {message && <p className="mt-4 text-gray-600 dark:text-gray-400">{message}</p>}
+      {message && <p className="text-muted-foreground mt-4">{message}</p>}
     </div>
   )
 }

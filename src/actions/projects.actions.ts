@@ -1,78 +1,86 @@
 /**
  * Server Actions optimizadas para proyectos
- * Con paginación y queries eficientes
+ * Con paginación, queries eficientes y caché
  */
 
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 
 /**
- * Obtener proyectos con paginación
+ * Obtener proyectos con paginación (cached)
  */
-export async function getPaginatedProjects(page: number = 1, limit: number = 12) {
-  const skip = (page - 1) * limit
+export const getPaginatedProjects = unstable_cache(
+  async (page: number = 1, limit: number = 12) => {
+    const skip = (page - 1) * limit
 
-  try {
-    const [projects, total] = await Promise.all([
-      prisma.project.findMany({
-        where: {
-          isActive: true,
-          isDeleted: false,
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          thumbnailUrl: true,
-          date: true,
-          category: {
-            select: {
-              name: true,
-              slug: true,
+    try {
+      const [projects, total] = await Promise.all([
+        prisma.project.findMany({
+          where: {
+            isActive: true,
+            isDeleted: false,
+          },
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            thumbnailUrl: true,
+            date: true,
+            category: {
+              select: {
+                name: true,
+                slug: true,
+              },
             },
           },
-        },
-        orderBy: {
-          date: 'desc',
-        },
-        take: limit,
-        skip,
-      }),
-      prisma.project.count({
-        where: {
-          isActive: true,
-          isDeleted: false,
-        },
-      }),
-    ])
+          orderBy: {
+            date: 'desc',
+          },
+          take: limit,
+          skip,
+        }),
+        prisma.project.count({
+          where: {
+            isActive: true,
+            isDeleted: false,
+          },
+        }),
+      ])
 
-    return {
-      projects,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        hasMore: skip + projects.length < total,
-      },
+      return {
+        projects,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+          hasMore: skip + projects.length < total,
+        },
+      }
+    } catch (error) {
+      console.error('Error al obtener proyectos paginados:', error)
+      return {
+        projects: [],
+        pagination: {
+          page: 1,
+          limit,
+          total: 0,
+          totalPages: 0,
+          hasMore: false,
+        },
+      }
     }
-  } catch (error) {
-    console.error('Error al obtener proyectos paginados:', error)
-    return {
-      projects: [],
-      pagination: {
-        page: 1,
-        limit,
-        total: 0,
-        totalPages: 0,
-        hasMore: false,
-      },
-    }
+  },
+  [CACHE_TAGS.projects],
+  {
+    revalidate: CACHE_DURATIONS.MEDIUM,
+    tags: [CACHE_TAGS.projects],
   }
-}
+)
 
 /**
  * Obtener proyectos por categoría con paginación
@@ -150,43 +158,52 @@ export async function getProjectsByCategory(
 }
 
 /**
- * Obtener proyecto individual (optimizado)
+ * Obtener proyecto individual (optimizado y cached)
  */
 export async function getProjectBySlug(slug: string) {
-  try {
-    return await prisma.project.findUnique({
-      where: { slug },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        description: true,
-        thumbnailUrl: true,
-        date: true,
-        category: {
+  return unstable_cache(
+    async () => {
+      try {
+        return await prisma.project.findUnique({
+          where: { slug },
           select: {
             id: true,
-            name: true,
+            title: true,
             slug: true,
+            description: true,
+            thumbnailUrl: true,
+            date: true,
+            category: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+              },
+            },
+            images: {
+              select: {
+                id: true,
+                url: true,
+                order: true,
+              },
+              orderBy: {
+                order: 'asc',
+              },
+            },
+            updatedAt: true,
           },
-        },
-        images: {
-          select: {
-            id: true,
-            url: true,
-            order: true,
-          },
-          orderBy: {
-            order: 'asc',
-          },
-        },
-        updatedAt: true,
-      },
-    })
-  } catch (error) {
-    console.error('Error al obtener proyecto:', error)
-    return null
-  }
+        })
+      } catch (error) {
+        console.error('Error al obtener proyecto:', error)
+        return null
+      }
+    },
+    [CACHE_TAGS.projectBySlug(slug)],
+    {
+      revalidate: CACHE_DURATIONS.MEDIUM,
+      tags: [CACHE_TAGS.projectBySlug(slug)],
+    }
+  )()
 }
 
 /**
@@ -226,11 +243,13 @@ export async function getRelatedProjects(projectId: string, categoryId: string, 
 }
 
 /**
- * Revalidar paths de proyectos
+ * Revalidar paths y tags de proyectos
  */
 export async function revalidateProjects() {
   revalidatePath(ROUTES.public.projects)
   revalidatePath(ROUTES.home, 'layout')
+  revalidateTag(CACHE_TAGS.projects, 'max')
+  revalidateTag(CACHE_TAGS.featuredProjects, 'max')
 }
 
 /**

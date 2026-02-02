@@ -15,12 +15,12 @@ export default function ErrorState({
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <span className="mb-4 text-6xl">⚠️</span>
-      <h3 className="mb-2 text-xl font-semibold text-red-600 dark:text-red-400">{title}</h3>
-      <p className="mb-6 max-w-sm text-gray-600 dark:text-gray-400">{message}</p>
+      <h3 className="text-destructive mb-2 text-xl font-semibold">{title}</h3>
+      <p className="text-muted-foreground mb-6 max-w-sm">{message}</p>
       {onRetry && (
         <button
           onClick={onRetry}
-          className="rounded-lg bg-red-600 px-6 py-2 font-semibold text-white transition-colors hover:bg-red-700"
+          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg px-6 py-2 font-semibold transition-colors"
         >
           Reintentar
         </button>

@@ -58,7 +58,7 @@ export function HomeEditor({ settings }: HomeEditorProps) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="space-y-8 rounded-lg border bg-white p-6 shadow-sm dark:bg-gray-800"
+      className="border-border bg-card space-y-8 rounded-lg border p-6 shadow-sm"
     >
       <h2 className="text-lg font-semibold">Sección Hero (Cabecera)</h2>
 

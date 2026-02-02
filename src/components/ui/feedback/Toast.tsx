@@ -100,7 +100,7 @@ function ToastItem({ toast, onDismiss }: { toast: ToastState; onDismiss: () => v
       role="status"
       aria-live="polite"
       className={cn(
-        'pointer-events-auto flex items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800',
+        'border-border bg-card pointer-events-auto flex items-start gap-3 rounded-lg border p-3 shadow-lg',
         'border-l-4',
         borderColors[type],
         'translate-x-0 opacity-100',
@@ -110,17 +110,13 @@ function ToastItem({ toast, onDismiss }: { toast: ToastState; onDismiss: () => v
     >
       <div className="mt-0.5 shrink-0">{icons[type]}</div>
       <div className="min-w-0 flex-1">
-        {title && (
-          <div className="mb-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100">
-            {title}
-          </div>
-        )}
-        <div className="text-sm text-gray-600 dark:text-gray-400">{message}</div>
+        {title && <div className="text-foreground mb-0.5 text-sm font-semibold">{title}</div>}
+        <div className="text-muted-foreground text-sm">{message}</div>
       </div>
       <button
         aria-label="Cerrar notificación"
         onClick={onDismiss}
-        className="shrink-0 rounded-full p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+        className="text-muted-foreground hover:bg-muted hover:text-foreground shrink-0 rounded-full p-1 transition-colors"
       >
         <X className="h-4 w-4" />
       </button>

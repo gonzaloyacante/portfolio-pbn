@@ -10,26 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Sistema de colores dinámico desde DB
-        background: 'var(--color-background, #fff1f9)',
-        primary: 'var(--color-primary, #ffaadd)',
-        'text-primary': 'var(--color-text-primary, #6c0a0a)',
-        accent: 'var(--color-accent, #7a2556)',
-        secondary: 'var(--color-secondary, #ffa1da)',
-        dark: 'var(--color-dark, #511a3a)',
-        foreground: 'var(--color-foreground, #000000)',
-
-        // Compatibilidad con nombres anteriores
-        wine: 'var(--color-text-primary, #6c0a0a)',
-        pink: {
-          light: 'var(--color-background, #fff1f9)',
-          hot: 'var(--color-primary, #ffaadd)',
-          dark: 'var(--color-accent, #7a2556)',
-        },
-        purple: {
-          dark: 'var(--color-dark, #511a3a)',
-        },
-        bg: 'var(--color-background, #fff1f9)',
+        // Redundant colors removed - using CSS variables via @theme
       },
       fontFamily: {
         heading: ['var(--font-heading)', 'Poppins', 'sans-serif'],

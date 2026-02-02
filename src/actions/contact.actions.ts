@@ -8,28 +8,15 @@ import { contactFormSchema } from '@/lib/validations'
 import { emailService } from '@/lib/email-service'
 import { z } from 'zod'
 import { ROUTES } from '@/config/routes'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/rate-limit-config'
 
 /**
  * Acciones de contacto con validación robusta y rate limiting
  */
 
-// Rate limiting: 15 minutos entre mensajes desde la misma IP
-const RATE_LIMIT_MINUTES = 15
-
-async function checkRateLimit(ipAddress: string): Promise<boolean> {
-  const fifteenMinutesAgo = new Date(Date.now() - RATE_LIMIT_MINUTES * 60 * 1000)
-
-  const recentContact = await prisma.contact.findFirst({
-    where: {
-      ipAddress,
-      createdAt: {
-        gte: fifteenMinutesAgo,
-      },
-    },
-  })
-
-  return !recentContact // true si puede enviar, false si está bloqueado
-}
+// Create rate limiter instance
+const contactLimiter = createRateLimiter(RATE_LIMITS.CONTACT)
 
 async function getClientIp(): Promise<string> {
   const headersList = await headers()
@@ -86,14 +73,20 @@ export async function sendContactEmail(formData: FormData) {
     const ipAddress = await getClientIp()
 
     // 🔐 RATE LIMITING
-    const canSend = await checkRateLimit(ipAddress)
+    const rateLimitResult = await contactLimiter.check(ipAddress)
 
-    if (!canSend) {
+    if (!rateLimitResult.allowed) {
       return {
         success: false,
-        message: `Por favor espera ${RATE_LIMIT_MINUTES} minutos antes de enviar otro mensaje.`,
+        message: RATE_LIMITS.CONTACT.errorMessage,
       }
     }
+
+    // Registrar intento
+    await contactLimiter.record(ipAddress, {
+      email: sanitizedData.email,
+      name: sanitizedData.name,
+    })
 
     // 💾 GUARDAR EN BD
     await prisma.contact.create({

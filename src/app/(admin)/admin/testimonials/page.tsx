@@ -14,7 +14,7 @@ export default async function TestimonialsPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8 p-6">
-      <h1 className="text-wine dark:text-pink-light text-3xl font-bold">Gestión de Testimonios</h1>
+      <h1 className="text-foreground text-3xl font-bold">Gestión de Testimonios</h1>
 
       {/* Formulario */}
       <Section title="Crear Nuevo Testimonio">
@@ -50,13 +50,13 @@ export default async function TestimonialsPage() {
       {/* Lista */}
       <Card>
         {testimonials.length === 0 ? (
-          <div className="text-wine/60 dark:text-pink-light/60 flex flex-col items-center justify-center py-12 text-center">
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
             <span className="mb-4 text-4xl">💬</span>
             <p className="font-medium">No hay testimonios aún</p>
             <p className="text-sm">Tus testimonios aparecerán aquí</p>
           </div>
         ) : (
-          <div className="divide-wine/5 dark:divide-pink-light/5 divide-y">
+          <div className="divide-border divide-y">
             {testimonials.map((t) => (
               <div
                 key={t.id}
@@ -64,17 +64,15 @@ export default async function TestimonialsPage() {
               >
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-3">
-                    <span className="text-wine dark:text-pink-light font-bold">{t.name}</span>
+                    <span className="text-foreground font-bold">{t.name}</span>
                     <Badge variant={t.isActive ? 'success' : 'default'} className="shadow-sm">
                       {t.isActive ? 'Activo' : 'Pendiente'}
                     </Badge>
-                    <span className="text-wine/40 dark:text-pink-light/40 text-xs">
+                    <span className="text-muted-foreground text-xs">
                       {new Date(t.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  {t.position && (
-                    <p className="text-wine/60 dark:text-pink-light/60 text-sm">{t.position}</p>
-                  )}
+                  {t.position && <p className="text-muted-foreground text-sm">{t.position}</p>}
                   <div className="flex items-center gap-1">
                     {'⭐'
                       .repeat(t.rating)
@@ -85,9 +83,7 @@ export default async function TestimonialsPage() {
                         </span>
                       ))}
                   </div>
-                  <p className="text-wine/80 dark:text-pink-light/80 mt-2 text-sm italic">
-                    &quot;{t.text}&quot;
-                  </p>
+                  <p className="text-muted-foreground mt-2 text-sm italic">&quot;{t.text}&quot;</p>
                 </div>
 
                 <div className="flex items-center gap-2 self-end md:self-start">

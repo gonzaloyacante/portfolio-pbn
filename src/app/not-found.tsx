@@ -8,15 +8,15 @@ export default function NotFound() {
 
       <div className="space-y-4">
         {/* Número 404 con fuente script */}
-        <h1 className="font-script text-wine dark:text-pink-hot text-7xl md:text-9xl">404</h1>
+        <h1 className="font-script text-primary text-7xl md:text-9xl">404</h1>
 
         {/* Título */}
-        <h2 className="font-primary text-wine dark:text-pink-light text-3xl font-bold md:text-4xl">
+        <h2 className="font-primary text-foreground text-3xl font-bold md:text-4xl">
           ¡Ups! Página no encontrada
         </h2>
 
         {/* Descripción */}
-        <p className="text-wine/70 dark:text-pink-light/70 mx-auto max-w-md text-lg">
+        <p className="text-muted-foreground mx-auto max-w-md text-lg">
           Parece que esta página se fue a retocar su maquillaje. No podemos encontrarla por ningún
           lado.
         </p>
@@ -25,7 +25,7 @@ export default function NotFound() {
       {/* Botón estilizado */}
       <Link
         href="/"
-        className="group bg-wine text-pink-light dark:bg-purple-dark relative overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
+        className="group bg-primary text-primary-foreground relative overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
       >
         <span className="relative z-10 flex items-center gap-2">
           <svg
@@ -44,7 +44,7 @@ export default function NotFound() {
           </svg>
           Volver al Inicio
         </span>
-        <div className="bg-pink-hot absolute inset-0 opacity-0 transition-opacity group-hover:opacity-20" />
+        <div className="absolute inset-0 bg-white/20 opacity-0 transition-opacity group-hover:opacity-20" />
       </Link>
 
       {/* Decoración inferior */}

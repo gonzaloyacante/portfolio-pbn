@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { getBookingsByRange, updateBookingStatus } from '@/actions/bookings.actions'
 import { Button, Modal, Badge } from '@/components/ui'
-import { ChevronLeft, ChevronRight, Clock, User, Mail, Phone, FileText } from 'lucide-react'
+import { ChevronLeft, User, Mail, Phone, FileText } from 'lucide-react'
 import {
   format,
   startOfMonth,
@@ -41,6 +41,7 @@ export default function CalendarView() {
 
   // Modal State
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date()) // Default to today
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Calendar calculations
@@ -112,8 +113,8 @@ export default function CalendarView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-wine dark:text-pink-light text-2xl font-bold capitalize">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-foreground text-2xl font-bold capitalize">
           {format(currentDate, 'MMMM yyyy', { locale: es })}
         </h2>
         <div className="flex items-center gap-2">
@@ -123,10 +124,13 @@ export default function CalendarView() {
           <Button variant="outline" size="sm" onClick={goToToday}>
             Hoy
           </Button>
-          <Button variant="outline" size="sm" onClick={nextMonth}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <div className="ml-2 border-l pl-2 dark:border-white/10">
+          <button
+            onClick={nextMonth}
+            className="text-muted-foreground hover:text-foreground p-2 text-2xl"
+          >
+            →
+          </button>
+          <div className="border-border ml-2 border-l pl-2">
             <Button
               variant="ghost"
               size="sm"
@@ -138,15 +142,12 @@ export default function CalendarView() {
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="border-pink-hot/20 dark:border-pink-light/10 dark:bg-wine rounded-xl border bg-white shadow-sm md:block">
-        {/* Days Header */}
-        <div className="border-pink-hot/20 dark:border-pink-light/10 grid grid-cols-7 border-b">
+      {/* Grid */}
+      <div className="border-border bg-card hidden rounded-xl border shadow-sm md:block">
+        {/* Header Días */}
+        <div className="border-border grid grid-cols-7 border-b">
           {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day) => (
-            <div
-              key={day}
-              className="text-wine/60 dark:text-pink-light/60 py-3 text-center text-sm font-semibold"
-            >
+            <div key={day} className="text-muted-foreground py-3 text-center text-sm font-semibold">
               {day}
             </div>
           ))}
@@ -161,13 +162,14 @@ export default function CalendarView() {
             return (
               <div
                 key={day.toString()}
-                className={`relative flex flex-col gap-1 border-r border-b p-2 transition-colors hover:bg-gray-50 dark:hover:bg-white/5 ${!isCurrentMonth ? 'bg-gray-50/50 text-gray-400 dark:bg-black/20 dark:text-gray-600' : ''} ${isToday(day) ? 'bg-pink-light/20 dark:bg-pink-light/5' : ''} border-pink-hot/10 dark:border-pink-light/5`}
+                className={`border-border hover:bg-muted/50 relative flex flex-col gap-1 border-r border-b p-2 transition-colors ${!isCurrentMonth ? 'bg-muted/30 text-muted-foreground' : ''} ${isToday(day) ? 'bg-primary/5' : ''}`}
+                onClick={() => setSelectedDate(day)}
               >
-                <span
-                  className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium ${isToday(day) ? 'bg-wine dark:bg-pink-light dark:text-wine text-white' : ''} `}
+                <div
+                  className={`flex h-7 w-7 items-center justify-center rounded-full text-sm font-medium ${isToday(day) ? 'bg-primary text-primary-foreground' : ''} `}
                 >
                   {format(day, 'd')}
-                </span>
+                </div>
 
                 {/* Booking Dots/Bars */}
                 <div className="flex flex-col gap-1 overflow-y-auto">
@@ -192,13 +194,13 @@ export default function CalendarView() {
         {selectedBooking && (
           <div className="space-y-6">
             {/* Header Info */}
-            <div className="flex items-center justify-between border-b pb-4 dark:border-white/10">
+            <div className="border-border flex items-center justify-between border-b pb-4">
               <div>
-                <h3 className="text-wine dark:text-pink-light text-xl font-bold">
+                <h3 className="text-foreground text-xl font-bold">
                   {format(new Date(selectedBooking.date), "EEEE d 'de' MMMM", { locale: es })}
                 </h3>
-                <p className="text-wine/60 dark:text-pink-light/60 flex items-center gap-2">
-                  <Clock size={16} />
+                <p className="text-muted-foreground flex items-center gap-2">
+                  📅 {format(selectedDate!, "d 'de' MMMM, yyyy", { locale: es })}
                   {format(new Date(selectedBooking.date), 'HH:mm')} hs
                   {selectedBooking.service.duration && ` • ${selectedBooking.service.duration}`}
                 </p>
@@ -220,20 +222,20 @@ export default function CalendarView() {
 
             {/* Client Info */}
             <div className="space-y-3">
-              <h4 className="text-wine dark:text-pink-light font-semibold">Datos del Cliente</h4>
-              <div className="text-wine/80 dark:text-pink-light/80 grid gap-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <User size={16} className="text-wine/40 dark:text-pink-light/40" />
+              <h4 className="text-foreground font-semibold">Datos del Cliente</h4>
+              <div className="text-muted-foreground grid gap-3 text-sm">
+                <div className="flex items-center gap-2">
+                  <User size={16} className="text-muted-foreground/60" />
                   {selectedBooking.clientName}
                 </div>
-                <div className="flex items-center gap-3">
-                  <Mail size={16} className="text-wine/40 dark:text-pink-light/40" />
-                  {selectedBooking.clientEmail}
+                <div className="flex items-center gap-2">
+                  <Mail size={16} className="text-muted-foreground/60" />
+                  <span>{selectedBooking.clientEmail}</span>
                 </div>
                 {selectedBooking.clientPhone && (
-                  <div className="flex items-center gap-3">
-                    <Phone size={16} className="text-wine/40 dark:text-pink-light/40" />
-                    {selectedBooking.clientPhone}
+                  <div className="flex items-center gap-2">
+                    <Phone size={16} className="text-muted-foreground/60" />
+                    <span>{selectedBooking.clientPhone}</span>
                   </div>
                 )}
               </div>
@@ -241,24 +243,20 @@ export default function CalendarView() {
 
             {/* Service & Notes */}
             <div className="space-y-3">
-              <h4 className="text-wine dark:text-pink-light font-semibold">Servicio</h4>
-              <div className="bg-pink-light/20 rounded-lg p-3 text-sm dark:bg-white/5">
-                <p className="text-wine dark:text-pink-light font-medium">
-                  {selectedBooking.service.name}
-                </p>
+              <h4 className="text-foreground font-semibold">Servicio</h4>
+              <div className="bg-muted/50 rounded-lg p-3 text-sm">
+                <p className="text-foreground font-medium">{selectedBooking.service.name}</p>
                 {selectedBooking.notes && (
-                  <div className="border-wine/10 mt-2 flex gap-2 border-t pt-2 dark:border-white/10">
-                    <FileText size={16} className="text-wine/40 dark:text-pink-light/40 shrink-0" />
-                    <p className="text-wine/70 dark:text-pink-light/70 italic">
-                      {selectedBooking.notes}
-                    </p>
+                  <div className="border-border mt-2 flex gap-2 border-t pt-2">
+                    <FileText size={16} className="text-muted-foreground/60 shrink-0" />
+                    <p className="text-muted-foreground italic">{selectedBooking.notes}</p>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-2 border-t pt-4 dark:border-white/10">
+            <div className="border-border flex justify-end gap-2 border-t pt-4">
               {selectedBooking.status === 'PENDING' && (
                 <>
                   <Button variant="destructive" onClick={() => handleStatusUpdate('CANCELLED')}>

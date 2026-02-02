@@ -70,10 +70,7 @@ export const Select = ({
   return (
     <div ref={containerRef} className={cn('relative w-full', className)}>
       {label && (
-        <label
-          htmlFor={id}
-          className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor={id} className="text-foreground mb-2 block text-sm font-medium">
           {label}
         </label>
       )}
@@ -81,11 +78,11 @@ export const Select = ({
         type="button"
         className={cn(
           'flex h-10 w-full items-center justify-between px-3 py-2 text-left text-sm transition-all duration-200',
-          'rounded-lg border bg-white dark:bg-gray-800',
-          'border-gray-300 dark:border-gray-600',
-          'focus:ring-primary/20 focus:border-primary focus:ring-2 focus:outline-none',
+          'bg-background rounded-lg border',
+          'border-input',
+          'focus:ring-ring/20 focus:border-ring focus:ring-2 focus:outline-none',
           disabled && 'cursor-not-allowed opacity-60',
-          error && 'border-red-500 focus:border-red-500 focus:ring-red-200'
+          error && 'border-destructive focus:border-destructive focus:ring-destructive/20'
         )}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
@@ -94,7 +91,7 @@ export const Select = ({
         aria-expanded={isOpen}
       >
         <span className="mr-2 min-w-0 flex-1 truncate">
-          <span className={value ? '' : 'text-gray-400'}>
+          <span className={value ? '' : 'text-muted-foreground'}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
         </span>
@@ -106,15 +103,15 @@ export const Select = ({
                 e.stopPropagation()
                 onChange('')
               }}
-              className="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="hover:bg-muted rounded p-1"
               aria-label="Limpiar selección"
             >
-              <X className="h-4 w-4 text-gray-400" />
+              <X className="text-muted-foreground h-4 w-4" />
             </button>
           )}
           <ChevronDown
             className={cn(
-              'h-5 w-5 text-gray-400 transition-transform duration-200',
+              'text-muted-foreground h-5 w-5 transition-transform duration-200',
               isOpen && 'rotate-180'
             )}
           />
@@ -124,31 +121,33 @@ export const Select = ({
 
       {isOpen && (
         <ul
-          className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-gray-200 bg-white py-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800"
+          className="border-border bg-popover absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-lg border py-1 text-sm shadow-lg"
           role="listbox"
         >
           {searchable && (
-            <li className="sticky top-0 bg-white px-2 pb-1 dark:bg-gray-800">
+            <li className="bg-background sticky top-0 px-2 pb-1">
               <input
                 ref={inputRef}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="focus:ring-primary/20 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:outline-none dark:border-gray-600"
+                className="focus:ring-ring/20 border-input bg-background text-foreground w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
                 placeholder="Buscar..."
                 aria-label="Buscar opción"
                 autoFocus
               />
             </li>
           )}
-          {options.length === 0 && <li className="px-4 py-2 text-gray-400">Sin opciones</li>}
+          {options.length === 0 && (
+            <li className="text-muted-foreground px-4 py-2">Sin opciones</li>
+          )}
           {filteredOptions.map((option) => (
             <li
               key={option.value}
               className={cn(
                 'mx-1 cursor-pointer rounded px-4 py-2 transition-colors',
                 option.value === value
-                  ? 'bg-primary font-semibold text-white'
-                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'bg-primary text-primary-foreground font-semibold'
+                  : 'hover:bg-muted'
               )}
               onClick={() => handleOptionClick(option.value)}
               role="option"

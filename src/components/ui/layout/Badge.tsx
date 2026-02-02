@@ -17,14 +17,13 @@ export default function Badge({
   className,
 }: BadgeProps) {
   const variants = {
-    default: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
-    success: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-    danger: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    destructive: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200', // Alias for danger
-    info: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    outline:
-      'bg-transparent border border-gray-300 text-gray-700 dark:border-gray-600 dark:text-gray-300',
+    default: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+    success: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200',
+    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200',
+    danger: 'bg-destructive/10 text-destructive dark:bg-destructive/20',
+    destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+    info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
+    outline: 'text-foreground border border-border',
   }
 
   const sizes = {

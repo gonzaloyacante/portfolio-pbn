@@ -1,98 +1,131 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: var(--primary);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
+  /* Semantic Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-card-bg: var(--card-bg);
-  --color-wine: #6c0a0a;
-  --color-pink-hot: #ffaadd;
-  --font-heading: var(--font-heading);
-  --font-script: var(--font-script);
-  --font-body: var(--font-body);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-/* ============================================
-   DESIGN SYSTEM v2 - CANVA SPEC (Dynamic)
-   ============================================ */
 
-:root {
-  /* Defaults (fallback) - Light Mode */
-  --primary-light: #6c0a0a;
-  --secondary-light: #ffaadd;
-  --accent-light: #fff1f9;
-  --background-light: #fff1f9;
-  --text-light: #000000;
-  --card-bg-light: #ffaadd;
-
-  /* Defaults (fallback) - Dark Mode */
-  --primary-dark: #ffaadd;
-  --secondary-dark: #6c0a0a;
-  --accent-dark: #000000;
-  --background-dark: #6c0a0a;
-  --text-dark: #fff1f9;
-  --card-bg-dark: #ffaadd;
-  /* Dark mode card might need contrast */
 
   /* Fonts */
   --font-heading: 'Poppins', sans-serif;
   --font-script: 'Great Vibes', cursive;
   --font-body: 'Open Sans', sans-serif;
-  --font-brand: var(--font-script);
-  --font-portfolio: var(--font-heading);
-  --font-signature: var(--font-heading);
-  --radius: 40px;
-
-  /* Mapping Active Theme Variables */
-  --primary: var(--primary-light);
-  --secondary: var(--secondary-light);
-  --accent: var(--accent-light);
-  --background: var(--background-light);
-  --foreground: var(--text-light);
-  --card-bg: var(--card-bg-light);
-
-  /* Text aliases */
-  --color-text: var(--foreground);
-  --text-body: var(--foreground);
 }
 
-.dark {
-  /* Mapping Active Theme Variables - Dark Mode Override */
-  --primary: var(--primary-dark);
-  --secondary: var(--secondary-dark);
-  --accent: var(--accent-dark);
-  --background: var(--background-dark);
-  --foreground: var(--text-dark);
-  --card-bg: var(--card-bg-dark);
+/* Base Styles */
+@layer base {
+  :root {
+    /* Light Mode - Professional & Clean */
+    --background: #fff8fc;
+    /* Very subtle pink-white (tinted) */
+    --foreground: #1a050a;
+    /* Almost black with red tint */
 
-  /* Fixes for dark mode contrast */
-  --color-surface: rgba(0, 0, 0, 0.2);
+    --card: #ffffff;
+    --card-foreground: #1a050a;
+
+    --popover: #ffffff;
+    --popover-foreground: #1a050a;
+
+    --primary: #6c0a0a;
+    /* Wine (Brand) */
+    --primary-foreground: #ffffff;
+
+    --secondary: #fce7f3;
+    /* Light Pink (Rose-100) */
+    --secondary-foreground: #6c0a0a;
+
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+
+    --accent: #fff1f9;
+    /* Original Light Pink */
+    --accent-foreground: #6c0a0a;
+
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+
+    --border: #e5e5e5;
+    --input: #e5e5e5;
+    --ring: #6c0a0a;
+
+    /* Radius */
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark Mode - Elegant & Contrast */
+    --background: #0f0505;
+    /* Deep dark wine-black */
+    --foreground: #fafafa;
+
+    --card: #1c0a0f;
+    /* Slightly lighter dark */
+    --card-foreground: #fafafa;
+
+    --popover: #1c0a0f;
+    --popover-foreground: #fafafa;
+
+    --primary: #fb7185;
+    /* Rose-400 (Brighter pink for dark mode) */
+    --primary-foreground: #1a050a;
+
+    --secondary: #881337;
+    /* Dark Wine */
+    --secondary-foreground: #ffffff;
+
+    --muted: #2a1015;
+    --muted-foreground: #a3a3a3;
+
+    --accent: #2a1015;
+    --accent-foreground: #fafafa;
+
+    --destructive: #7f1d1d;
+    --destructive-foreground: #fafafa;
+
+    --border: #2a1015;
+    --input: #2a1015;
+    --ring: #fb7185;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading;
+  }
 }
 
-/* === ESTILOS BASE === */
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-/* === UTILITIES FOR TYPOGRAPHY === */
-.font-script {
-  font-family: var(--font-script);
-}
-
-.font-heading {
-  font-family: var(--font-heading);
-}
-
-/* === ANIMATIONS === */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -109,20 +142,15 @@ body {
   animation: fadeIn 0.6s ease-out forwards;
 }
 
-/* === SCROLLBAR === */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  @apply bg-background;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--secondary);
+  @apply bg-primary/50 rounded-full hover:bg-primary;
 }

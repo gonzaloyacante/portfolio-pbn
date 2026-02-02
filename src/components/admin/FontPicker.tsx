@@ -73,7 +73,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex w-full items-center gap-3 rounded-lg border border-gray-300 bg-white p-3 hover:border-gray-400 dark:border-gray-600 dark:bg-gray-800"
+          className="border-input bg-card hover:border-accent flex w-full items-center gap-3 rounded-lg border p-3"
         >
           <span className="flex-1 text-left text-lg" style={{ fontFamily: value }}>
             {value}
@@ -90,7 +90,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 z-50 mt-2 w-full rounded-lg border border-gray-200 bg-white p-4 shadow-xl dark:border-gray-700 dark:bg-gray-800">
+          <div className="border-border bg-popover absolute top-full left-0 z-50 mt-2 w-full rounded-lg border p-4 shadow-xl">
             {/* Búsqueda */}
             <input
               type="text"

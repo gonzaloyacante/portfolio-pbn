@@ -22,39 +22,33 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="border-wine/20 bg-pink-light/30 dark:border-pink-hot/20 dark:bg-purple-dark/20 rounded-2xl border-2 border-dashed p-12 text-center">
-        <p className="text-wine/60 dark:text-pink-light/60 font-medium">{emptyMessage}</p>
+      <div className="border-border bg-muted/30 rounded-2xl border-2 border-dashed p-12 text-center">
+        <p className="text-muted-foreground font-medium">{emptyMessage}</p>
       </div>
     )
   }
 
   return (
-    <div className="ring-wine/5 dark:bg-purple-dark/20 dark:ring-pink-light/10 overflow-hidden rounded-2xl bg-white shadow-sm ring-1">
+    <div className="bg-card border-border overflow-hidden rounded-2xl border shadow-sm">
       <div className="overflow-x-auto">
-        <table className="divide-wine/10 dark:divide-pink-light/10 min-w-full divide-y">
-          <thead className="bg-wine/5 dark:bg-pink-light/5">
+        <table className="w-full">
+          <thead className="bg-muted">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="text-wine dark:text-pink-hot px-6 py-4 text-left text-xs font-bold tracking-wider uppercase"
+                  className="text-foreground px-6 py-4 text-left text-xs font-bold tracking-wider uppercase"
                 >
                   {col.header}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-wine/10 dark:divide-pink-light/10 divide-y bg-white/50 dark:bg-transparent">
+          <tbody className="divide-border bg-card divide-y">
             {data.map((item) => (
-              <tr
-                key={keyExtractor(item)}
-                className="hover:bg-wine/5 dark:hover:bg-pink-light/5 transition-colors"
-              >
+              <tr key={keyExtractor(item)} className="hover:bg-muted/50 transition-colors">
                 {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    className="text-wine/90 dark:text-pink-light/90 px-6 py-4 text-sm"
-                  >
+                  <td key={col.key} className="text-foreground px-6 py-4 text-sm">
                     {col.render(item)}
                   </td>
                 ))}

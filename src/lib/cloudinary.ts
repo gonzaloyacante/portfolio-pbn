@@ -20,10 +20,14 @@ export const uploadImage = async (
   const buffer = Buffer.from(arrayBuffer)
 
   return new Promise((resolve, reject) => {
+    // Determine root folder based on environment
+    const isProduction = process.env.NODE_ENV === 'production'
+    const rootFolder = isProduction ? 'pbn-prod' : 'pbn-dev'
+
     cloudinary.uploader
       .upload_stream(
         {
-          folder: `portfolio-pbn/${folder}`,
+          folder: `${rootFolder}/${folder}`,
           resource_type: 'image',
           transformation: [{ quality: 'auto:best' }, { fetch_format: 'auto' }],
         },
