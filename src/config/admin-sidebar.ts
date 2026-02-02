@@ -15,9 +15,9 @@ export const menuItems = [
     icon: '🎨',
   },
   {
-    href: '/admin/projects/settings',
-    label: 'Config. Proyectos',
-    icon: '✨',
+    href: '/admin/categories',
+    label: 'Categorías',
+    icon: '📁',
   },
   {
     href: '/admin/services',

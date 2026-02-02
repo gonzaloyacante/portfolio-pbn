@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,12 +9,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/lib/validations'
 import { z } from 'zod'
 import { useToast } from '@/components/ui'
+import { Mail, Lock } from 'lucide-react'
 
 type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const { show } = useToast()
-  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
   const {
@@ -43,7 +42,6 @@ export default function LoginPage() {
       const verifyData = await verifyRes.json()
 
       if (!verifyRes.ok) {
-        // Si falla aquí, es porque el usuario NO existe (único chequeo que hace la API ahora)
         if (verifyData.code === 'USER_NOT_FOUND') {
           setError('email', {
             type: 'manual',
@@ -52,7 +50,6 @@ export default function LoginPage() {
           return
         }
 
-        // Error genérico de API
         show({
           type: 'error',
           message: verifyData.error || 'Error de servidores',
@@ -60,7 +57,7 @@ export default function LoginPage() {
         return
       }
 
-      // 2. Sign in with NextAuth (Here is where bcrypt happens)
+      // 2. Sign in with NextAuth
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
@@ -68,7 +65,6 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
-        // SI llegamos aquí, el email EXISTE (pasó paso 1), así que el error ES la contraseña
         setError('password', {
           type: 'manual',
           message: 'La contraseña es incorrecta',
@@ -76,7 +72,6 @@ export default function LoginPage() {
       } else {
         show({ type: 'success', message: '¡Bienvenida de nuevo!' })
         router.push('/admin/dashboard')
-        // Removed router.refresh() for instant navigation
       }
     } catch {
       show({ type: 'error', message: 'Error de conexión' })
@@ -87,81 +82,62 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-[var(--background)] p-4">
       <FadeIn duration={0.5}>
         <div className="w-full max-w-md space-y-8">
-          {/* Logo/Título */}
+          {/* Header */}
           <div className="text-center">
             <span className="text-6xl">💄</span>
             <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">Panel Admin</h1>
             <p className="text-muted-foreground mt-2">Ingresa tus credenciales</p>
           </div>
 
-          {/* Card del formulario */}
-          <div className="bg-card dark:bg-muted/10 border-primary rounded-2xl border-t-4 p-8 shadow-xl">
+          {/* Card - Matcha ContactForm style strict */}
+          <div className="rounded-[2.5rem] bg-[var(--card)] p-8 shadow-lg">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* Email */}
-              <div>
-                <label className="text-foreground mb-1 block text-sm font-medium" htmlFor="email">
-                  Email
-                </label>
-                <Input {...register('email')} id="email" type="email" placeholder="tu@email.com" />
-                {errors.email && (
-                  <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
-                )}
-              </div>
+              <Input
+                label="Email"
+                type="email"
+                placeholder="tu@email.com"
+                leftIcon={<Mail className="h-5 w-5" />}
+                error={errors.email?.message}
+                {...register('email')}
+              />
 
-              {/* Password */}
-              <div>
-                <label
-                  className="text-foreground mb-1 block text-sm font-medium"
-                  htmlFor="password"
+              <Input
+                label="Contraseña"
+                type="password"
+                placeholder="••••••••"
+                leftIcon={<Lock className="h-5 w-5" />}
+                allowPasswordToggle
+                error={errors.password?.message}
+                {...register('password')}
+              />
+
+              <div className="mt-2 text-right">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-sm text-[var(--primary)] transition-colors hover:underline"
                 >
-                  Contraseña
-                </label>
-                <div className="relative">
-                  <Input
-                    {...register('password')}
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
-                    tabIndex={-1}
-                  >
-                    {showPassword ? '🙈' : '👁️'}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
-                )}
+                  ¿Olvidaste tu contraseña?
+                </Link>
               </div>
 
-              {/* Botón submit */}
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                fullWidth
+                size="lg"
                 loading={isSubmitting}
-                className="w-full bg-[var(--foreground)] text-[var(--background)] hover:opacity-90"
+                className="rounded-xl"
               >
                 Iniciar Sesión
               </Button>
             </form>
-
-            {/* Link forgot password */}
-            <div className="mt-6 text-center">
-              <Link
-                href="/auth/forgot-password"
-                className="text-sm text-[var(--primary)] transition-colors hover:underline"
-              >
-                ¿Olvidaste tu contraseña?
-              </Link>
-            </div>
           </div>
 
           {/* Link volver */}
           <div className="text-center">
-            <Link href="/" className="text-muted-foreground hover:text-foreground text-sm">
+            <Link
+              href="/"
+              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
+            >
               ← Volver al sitio público
             </Link>
           </div>

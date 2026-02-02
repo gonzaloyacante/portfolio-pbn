@@ -1,18 +1,20 @@
 import { prisma } from '@/lib/db'
 import { deleteProject } from '@/actions/content.actions'
+import { getProjectSettings, updateProjectSettings } from '@/actions/project-settings.actions'
 import { Button, Card, Badge, PageHeader } from '@/components/ui'
+import VisualConfigModal from '@/components/admin/shared/VisualConfigModal'
 import { Section } from '@/components/admin'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default async function ProjectsManagementPage() {
-  const [projects, categories] = await Promise.all([
+  const [projects, settings] = await Promise.all([
     prisma.project.findMany({
       where: { isDeleted: false },
       include: { category: true, images: { take: 1, orderBy: { order: 'asc' } } },
       orderBy: { createdAt: 'desc' },
     }),
-    prisma.category.findMany({ orderBy: { name: 'asc' } }),
+    getProjectSettings(),
   ])
 
   return (
@@ -22,8 +24,29 @@ export default async function ProjectsManagementPage() {
         description="Crea, edita y organiza tus proyectos de portfolio"
       />
 
-      {/* Crear nuevo proyecto */}
-      <div className="flex justify-end">
+      {/* Acciones: Crear y Configuar */}
+      <div className="flex flex-wrap justify-end gap-4">
+        <VisualConfigModal
+          initialSettings={settings}
+          onSave={updateProjectSettings}
+          title="Configurar Tarjetas de Proyecto"
+          description="Personaliza cómo se ven los proyectos en las galerías."
+          previewVariant="project"
+          triggerLabel="Config. Visual"
+          fields={[
+            {
+              key: 'showCardTitles',
+              label: 'Mostrar Títulos',
+              description: 'Ocultar para ver solo la imagen.',
+            },
+            {
+              key: 'showCardCategory',
+              label: 'Mostrar Categoría',
+              description: 'Etiqueta sobre la imagen.',
+            },
+          ]}
+        />
+
         <Link href="/admin/proyectos/new">
           <Button size="lg" className="shadow-lg transition-transform hover:scale-105">
             ✨ Crear Nuevo Proyecto
@@ -121,27 +144,6 @@ export default async function ProjectsManagementPage() {
             ))}
           </div>
         )}
-      </Section>
-
-      {/* Gestión de Categorías */}
-      <Section title="📁 Categorías">
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <Badge key={cat.id} className="bg-muted text-muted-foreground hover:bg-muted/80">
-              {cat.name}
-            </Badge>
-          ))}
-          {categories.length === 0 && (
-            <p className="text-muted-foreground">No hay categorías creadas.</p>
-          )}
-        </div>
-        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-4 dark:border-blue-900/30 dark:bg-blue-900/20">
-          <p className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
-            <span>💡</span>
-            Para gestionar categorías, contacta al desarrollador o usa la base de datos
-            directamente.
-          </p>
-        </div>
       </Section>
     </div>
   )

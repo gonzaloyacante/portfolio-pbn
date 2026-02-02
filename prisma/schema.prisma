@@ -178,6 +178,21 @@ model ProjectSettings {
   @@map("project_settings")
 }
 
+/// Category Display Settings
+model CategorySettings {
+  id               String   @id @default(cuid())
+  showDescription  Boolean  @default(true)
+  showProjectCount Boolean  @default(true)
+  // Layout
+  gridColumns      Int      @default(4)
+  // Meta
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("category_settings")
+}
+
 /// Testimonial Display Settings (SRP: separate from About)
 model TestimonialSettings {
   id          String   @id @default(cuid())

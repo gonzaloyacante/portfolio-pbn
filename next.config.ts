@@ -50,6 +50,10 @@ const nextConfig: NextConfig = {
       { source: '/admin/proyectos', destination: '/admin/projects' },
       { source: '/admin/proyectos/nuevo', destination: '/admin/projects/new' },
       { source: '/admin/proyectos/:id/editar', destination: '/admin/projects/:id/edit' },
+      // { source: '/admin/proyectos/configuracion', destination: '/admin/projects/settings' }, // REMOVED (Merged into /projects)
+
+      // Categorías
+      { source: '/admin/categorias', destination: '/admin/categories' },
 
       // Testimonios
       { source: '/admin/testimonios', destination: '/admin/testimonials' },
