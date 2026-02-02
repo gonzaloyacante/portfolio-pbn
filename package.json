@@ -101,5 +101,11 @@
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
-  }
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@sentry/cli"
+    ]
+  },
+  "packageManager": "pnpm@10.28.0"
 }
