@@ -2,7 +2,7 @@ import { Skeleton } from '@/components/ui'
 
 export default function PublicLoading() {
   return (
-    <div className="min-h-screen w-full bg-[var(--background)] px-6 py-12 lg:px-16 lg:py-20">
+    <div className="w-full bg-[var(--background)] px-6 py-12 lg:px-16 lg:py-20">
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
         {/* Left Column Skeleton */}
         <div className="flex flex-col items-center gap-6 text-center lg:items-start lg:text-left">

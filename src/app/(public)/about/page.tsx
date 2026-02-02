@@ -36,7 +36,7 @@ export default async function AboutPage() {
   const descParagraphs = bioDescription.split('\n\n').filter(Boolean)
 
   return (
-    <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="w-full bg-[var(--background)] transition-colors duration-500">
       <JsonLd
         type="Person"
         data={{

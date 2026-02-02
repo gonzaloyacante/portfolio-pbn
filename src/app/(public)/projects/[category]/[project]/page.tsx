@@ -92,7 +92,7 @@ export default async function ProjectDetailPage({
   })
 
   return (
-    <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="w-full bg-[var(--background)] transition-colors duration-500">
       <ScrollProgress />
       <AnalyticsTracker eventType="PROJECT_VIEW" entityId={project.id} entityType="Project" />
       <JsonLd

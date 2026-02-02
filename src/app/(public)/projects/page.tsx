@@ -45,7 +45,7 @@ export default async function ProjectsPage() {
   // const showCategory = settings?.showCardCategory ?? true // Not used in Category list, but good context
 
   return (
-    <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="w-full bg-[var(--background)] transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-6 py-12 md:px-12 lg:px-16 lg:py-20">
         {/* Header */}
         <div className="mb-12 text-center lg:text-left">

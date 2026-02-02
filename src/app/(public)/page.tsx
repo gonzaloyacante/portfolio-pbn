@@ -18,7 +18,7 @@ export default async function Home() {
   const homeSettings = await getHomeSettings()
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between">
+    <main className="flex flex-col items-center justify-between">
       {/* Hero Section */}
       <HeroSection settings={homeSettings} />
 

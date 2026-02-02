@@ -40,7 +40,7 @@ export default async function ServicesPage() {
     : null
 
   return (
-    <main className="min-h-screen py-12 md:py-20">
+    <main className="py-12 md:py-20">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <FadeIn className="mb-12 text-center">

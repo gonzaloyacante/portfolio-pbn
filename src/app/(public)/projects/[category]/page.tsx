@@ -79,7 +79,7 @@ export default async function CategoryProjectsPage({
   )
 
   return (
-    <section className="min-h-screen w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="w-full bg-[var(--background)] transition-colors duration-500">
       <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
       <JsonLd
         type="CollectionPage"
