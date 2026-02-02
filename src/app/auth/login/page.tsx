@@ -21,6 +21,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -42,11 +43,27 @@ export default function LoginPage() {
       const verifyData = await verifyRes.json()
 
       if (!verifyRes.ok) {
+        // Manejo de errores específicos por campo
+        if (verifyData.code === 'USER_NOT_FOUND') {
+          setError('email', {
+            type: 'manual',
+            message: 'No existe una cuenta con este correo',
+          })
+          return
+        }
+
+        if (verifyData.code === 'INVALID_PASSWORD') {
+          setError('password', {
+            type: 'manual',
+            message: 'La contraseña es incorrecta',
+          })
+          return
+        }
+
+        // Error genérico o de otro tipo
         show({
           type: 'error',
-          message:
-            verifyData.error ||
-            (verifyData.code === 'USER_NOT_FOUND' ? 'No existe cuenta' : 'Error de verificación'),
+          message: verifyData.error || 'Error de verificación',
         })
         return
       }
@@ -59,6 +76,7 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
+        // Si falló NextAuth pero pasó la verificación previa, es algo raro (servidor caído, etc)
         show({ type: 'error', message: 'Error al iniciar sesión' })
       } else {
         show({ type: 'success', message: '¡Bienvenida de nuevo!' })
