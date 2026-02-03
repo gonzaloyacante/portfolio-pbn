@@ -40,6 +40,7 @@ model Project {
   thumbnailUrl String
   date         DateTime
   categoryId   String
+  sortOrder    Int            @default(0)
   isFeatured   Boolean        @default(false)
   isActive     Boolean        @default(true)
   isDeleted    Boolean        @default(false)
@@ -50,6 +51,7 @@ model Project {
   images       ProjectImage[]
 
   @@index([categoryId, date(sort: Desc)])
+  @@index([categoryId, sortOrder])
   @@index([slug])
   @@index([isActive, isDeleted])
   @@index([isFeatured])

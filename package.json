@@ -54,7 +54,6 @@
     "@prisma/client": "6.19.0",
     "@sentry/nextjs": "^10.38.0",
     "bcryptjs": "^3.0.3",
-    "prisma": "6.19.0",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
@@ -68,6 +67,7 @@
     "next-themes": "^0.4.6",
     "nprogress": "^0.2.0",
     "pg": "^8.17.2",
+    "prisma": "6.19.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.71.1",
@@ -104,11 +104,13 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "@sentry/cli",
       "@prisma/client",
       "@prisma/engines",
+      "@sentry/cli",
+      "esbuild",
       "prisma",
-      "sharp"
+      "sharp",
+      "unrs-resolver"
     ]
   },
   "packageManager": "pnpm@10.28.0"

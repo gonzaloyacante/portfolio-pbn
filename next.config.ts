@@ -54,6 +54,8 @@ const nextConfig: NextConfig = {
 
       // Categorías
       { source: '/admin/categorias', destination: '/admin/categories' },
+      { source: '/admin/categorias/nueva', destination: '/admin/categories/new' },
+      { source: '/admin/categorias/:id/editar', destination: '/admin/categories/:id/edit' },
 
       // Testimonios
       { source: '/admin/testimonios', destination: '/admin/testimonials' },

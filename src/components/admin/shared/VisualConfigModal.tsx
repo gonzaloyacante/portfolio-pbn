@@ -11,6 +11,9 @@ export interface ConfigField {
   key: string
   label: string
   description?: string
+  type?: 'boolean' | 'number'
+  min?: number
+  max?: number
 }
 
 interface VisualConfigModalProps<T extends object> {
@@ -95,12 +98,29 @@ export default function VisualConfigModal<T extends object>({
                       <p className="text-muted-foreground text-xs">{field.description}</p>
                     )}
                   </div>
-                  <Switch
-                    checked={!!getValue(field.key)}
-                    onCheckedChange={(checked) =>
-                      setValue(field.key as Path<T>, checked as PathValue<T, Path<T>>)
-                    }
-                  />
+
+                  {field.type === 'number' ? (
+                    <input
+                      type="number"
+                      min={field.min ?? 1}
+                      max={field.max ?? 10}
+                      value={getValue(field.key) ?? field.min ?? 1}
+                      onChange={(e) =>
+                        setValue(
+                          field.key as Path<T>,
+                          parseInt(e.target.value) as PathValue<T, Path<T>>
+                        )
+                      }
+                      className="border-border bg-background text-foreground w-20 rounded-md border px-3 py-1.5 text-sm"
+                    />
+                  ) : (
+                    <Switch
+                      checked={!!getValue(field.key)}
+                      onCheckedChange={(checked) =>
+                        setValue(field.key as Path<T>, checked as PathValue<T, Path<T>>)
+                      }
+                    />
+                  )}
                 </div>
               ))}
             </div>

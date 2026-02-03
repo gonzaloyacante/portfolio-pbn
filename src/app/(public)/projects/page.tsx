@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
-import { getProjectSettings } from '@/actions/project-settings.actions'
+import { getCategorySettings } from '@/actions/category-settings.actions'
 
 export const metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',
@@ -14,7 +14,7 @@ export const metadata = {
  * Design: Grid 1x 2x 4x for 4 items balance.
  */
 export default async function ProjectsPage() {
-  const [categories] = await Promise.all([
+  const [categories, categorySettings] = await Promise.all([
     prisma.category.findMany({
       where: {
         projects: {
@@ -28,7 +28,6 @@ export default async function ProjectsPage() {
           orderBy: { date: 'desc' },
           select: { thumbnailUrl: true },
         },
-        // Count removed from UI requirement, but fetching it doesn't hurt if we need it later invisibly
         _count: {
           select: {
             projects: { where: { isActive: true, isDeleted: false } },
@@ -37,8 +36,12 @@ export default async function ProjectsPage() {
       },
       orderBy: { sortOrder: 'asc' },
     }),
-    getProjectSettings(),
+    getCategorySettings(),
   ])
+
+  const gridCols = categorySettings?.gridColumns ?? 4
+  const showCount = categorySettings?.showProjectCount ?? false
+  const showDesc = categorySettings?.showDescription ?? false
 
   // Default to showing everything if settings not yet created
   // const showTitles = settings?.showCardTitles ?? true
@@ -59,7 +62,9 @@ export default async function ProjectsPage() {
 
         {/* Categories Grid */}
         {categories.length > 0 ? (
-          <StaggerChildren className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+          <StaggerChildren
+            className={`grid gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-1 sm:grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : ''} `}
+          >
             {categories.map((category) => {
               const thumbnailUrl = category.projects[0]?.thumbnailUrl
 
@@ -80,7 +85,7 @@ export default async function ProjectsPage() {
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           priority={category.sortOrder <= 4}
                         />
-                        {/* Overlay Gradient - Only if showing text */}
+                        {/* Overlay Gradient */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
                       </>
                     ) : (
@@ -94,7 +99,22 @@ export default async function ProjectsPage() {
                       <h2 className="translate-y-2 font-[family-name:var(--font-heading)] text-2xl font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-3xl">
                         {category.name}
                       </h2>
-                      {/* Removed "X proyectos" count as requested */}
+
+                      {/* Description - Conditional */}
+                      {showDesc && category.description && (
+                        <p className="mt-2 line-clamp-2 text-sm text-white/80">
+                          {category.description}
+                        </p>
+                      )}
+
+                      {/* Count - Conditional */}
+                      {showCount && (
+                        <p className="mt-2 text-xs text-white/60">
+                          {category._count.projects} proyecto
+                          {category._count.projects !== 1 ? 's' : ''}
+                        </p>
+                      )}
+
                       <div className="mt-2 h-1 w-12 rounded-full bg-white/50 transition-all group-hover:w-20 group-hover:bg-white" />
                     </div>
                   </Link>
