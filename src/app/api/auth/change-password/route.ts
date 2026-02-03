@@ -1,17 +1,33 @@
-import { NextResponse } from 'next/server'
-import { auth } from '@/lib/auth'
+import { NextResponse, NextRequest } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
+import { getToken } from 'next-auth/jwt'
 import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
+    // 1. Intentar obtener sesión completa (Server-side)
+    const session = await getServerSession(authOptions)
+    let isAuthenticated = !!session?.user?.email
+    let userEmail = session?.user?.email
 
-    if (!session?.user?.email) {
+    // 2. Fallback: Verificar Token JWT directamente
+    if (!isAuthenticated) {
+      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+      if (token?.email) {
+        isAuthenticated = true
+        userEmail = token.email
+        console.log('API ChangePassword - Auth via JWT Token')
+      }
+    }
+
+    if (!isAuthenticated || !userEmail) {
+      console.error('API ChangePassword - 401 Unauthorized')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const { currentPassword, newPassword } = await request.json()
+    const { currentPassword, newPassword } = await req.json()
 
     if (!currentPassword || !newPassword) {
       return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
@@ -26,7 +42,7 @@ export async function POST(request: Request) {
 
     // Buscar usuario
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { email: userEmail as string },
     })
 
     if (!user?.password) {

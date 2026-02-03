@@ -3,15 +3,33 @@ import { uploadImage, deleteImage } from '@/lib/cloudinary'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
+import { getToken } from 'next-auth/jwt'
+
 /**
  * POST /api/upload - Subir imagen a Cloudinary
  */
 export async function POST(req: NextRequest) {
   try {
-    // Verificar autenticación
+    // 1. Intentar obtener sesión completa (Server-side)
     const session = await getServerSession(authOptions)
-    if (!session) {
-      console.error('API Upload - 401 Unauthorized - No session found')
+    let isAuthenticated = !!session
+
+    // 2. Fallback: Verificar Token JWT directamente (si getServerSession falla en Route Handler)
+    if (!isAuthenticated) {
+      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+      if (token) {
+        isAuthenticated = true
+        console.log('API Upload - Auth via JWT Token (getServerSession failed)')
+      }
+    }
+
+    if (!isAuthenticated) {
+      console.error('API Upload - 401 Unauthorized - No session or token found')
+      // Debug: Log cookie names only
+      console.log(
+        'Cookies received:',
+        req.cookies.getAll().map((c) => c.name)
+      )
       return NextResponse.json({ error: 'No autorizado - Sesión no encontrada' }, { status: 401 })
     }
 
@@ -56,8 +74,16 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     // Verificar autenticación
+    let isAuthenticated = false
     const session = await getServerSession(authOptions)
-    if (!session) {
+    if (session) isAuthenticated = true
+
+    if (!isAuthenticated) {
+      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+      if (token) isAuthenticated = true
+    }
+
+    if (!isAuthenticated) {
       console.error('API Delete - 401 Unauthorized - No session found')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
