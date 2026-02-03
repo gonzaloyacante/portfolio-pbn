@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Button, PageHeader } from '@/components/ui'
-import { Section, FormField } from '@/components/admin'
+import { Button, SmartField as FormField } from '@/components/ui'
+import { Section, PageHeader } from '@/components/layout'
 import toast from 'react-hot-toast'
 import { calculatePasswordStrength } from '@/lib/password'
 

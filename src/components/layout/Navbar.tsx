@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ThemeToggle } from '@/components/ui'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 import { ROUTES } from '@/config/routes'
 
 /**

@@ -3,11 +3,11 @@
 import { AboutSettingsData, updateAboutSettings } from '@/actions/theme.actions'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
 import { useToast } from '@/components/ui'
-import { ImageUpload } from '@/components/admin'
+import { ImageUpload } from '@/components/ui'
 
 interface AboutEditorProps {
   settings: AboutSettingsData | null
@@ -100,7 +100,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             <ImageUpload
               name="profileImageUrl"
               currentImage={settings?.profileImageUrl}
-              onChange={(urls) => setValue('profileImageUrl', urls[0])}
+              onChange={(urls: string[]) => setValue('profileImageUrl', urls[0])}
             />
           </div>
 

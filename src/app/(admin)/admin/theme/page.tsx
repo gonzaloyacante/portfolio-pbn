@@ -1,5 +1,5 @@
 import { getThemeSettings } from '@/actions/theme.actions'
-import { ThemeEditor } from '@/components/admin/ThemeEditor'
+import { ThemeEditor } from '@/components/features/theme/ThemeEditor'
 import { Suspense } from 'react'
 
 export const metadata = {
@@ -13,7 +13,7 @@ export default async function TemaPage() {
   return (
     <div className="container mx-auto px-6 py-8">
       <Suspense fallback={<div>Cargando configuración de tema...</div>}>
-        <ThemeEditor initialSettings={settings} />
+        <ThemeEditor initialData={settings} />
       </Suspense>
     </div>
   )

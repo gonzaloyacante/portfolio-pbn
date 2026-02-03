@@ -1,6 +1,6 @@
 import { getHomeSettings } from '@/actions/theme.actions'
-import { HomeEditor } from '@/components/admin/HomeEditor'
-import { PageHeader } from '@/components/ui'
+import { HomeEditor } from '@/components/features/home/HomeEditor'
+import { PageHeader } from '@/components/layout'
 
 export const metadata = {
   title: 'Página Inicio | Admin',

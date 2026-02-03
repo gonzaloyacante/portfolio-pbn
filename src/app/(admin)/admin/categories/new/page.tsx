@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createCategory } from '@/actions/content.actions'
-import { PageHeader, Button, Input, Card } from '@/components/ui'
+import { Button, Input, Card } from '@/components/ui'
+import { PageHeader } from '@/components/layout'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { ROUTES } from '@/config/routes'

@@ -5,7 +5,8 @@ import {
   toggleTestimonial,
 } from '@/actions/testimonials.actions'
 import { Button, Card, Badge } from '@/components/ui'
-import { FormField, Section } from '@/components/admin'
+import { SmartField as FormField } from '@/components/ui'
+import { Section } from '@/components/layout'
 
 export default async function TestimonialsPage() {
   const testimonials = await prisma.testimonial.findMany({

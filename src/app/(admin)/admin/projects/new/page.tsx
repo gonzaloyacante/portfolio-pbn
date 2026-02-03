@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db'
 import { uploadImageAndCreateProject } from '@/actions/content.actions'
-import { Button, PageHeader } from '@/components/ui'
-import { FormField, Section, ImageUpload } from '@/components/admin'
+import { Button, SmartField as FormField, ImageUpload } from '@/components/ui'
+import { PageHeader, Section } from '@/components/layout'
 
 export default async function NewProjectPage() {
   const categories = await prisma.category.findMany({ orderBy: { name: 'asc' } })

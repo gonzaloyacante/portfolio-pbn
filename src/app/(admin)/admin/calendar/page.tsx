@@ -1,4 +1,4 @@
-import CalendarView from '@/components/admin/bookings/CalendarView'
+import CalendarView from '@/components/features/contact/bookings/CalendarView'
 
 export const dynamic = 'force-dynamic'
 

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { createService, updateService } from '@/actions/services.actions'
 import { Button } from '@/components/ui'
-import { FormField } from '@/components/admin'
+import { SmartField as FormField } from '@/components/ui'
 import toast from 'react-hot-toast'
 import { Service } from '@prisma/client'
 

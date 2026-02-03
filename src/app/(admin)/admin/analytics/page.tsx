@@ -1,6 +1,7 @@
 import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
-import { StatCard, Section } from '@/components/admin'
-import { PageHeader, EmptyState } from '@/components/ui'
+import { StatCard } from '@/components/ui'
+import { Section, PageHeader } from '@/components/layout'
+import { EmptyState } from '@/components/ui'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 

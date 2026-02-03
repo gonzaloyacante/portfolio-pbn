@@ -39,7 +39,7 @@ export async function generateMetadata({
  * Layout: Title/Description on top, Masonry Grid of images below
  */
 import { getAdjacentProjects } from '@/actions/projects.actions'
-import ProjectNavigation from '@/components/public/ProjectNavigation'
+import ProjectNavigation from '@/components/features/projects/ProjectNavigation'
 
 export default async function ProjectDetailPage({
   params,

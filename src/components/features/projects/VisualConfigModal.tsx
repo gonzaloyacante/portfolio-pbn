@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useForm, DefaultValues, Path, PathValue } from 'react-hook-form'
 import { Button, Modal, Switch } from '@/components/ui'
 import toast from 'react-hot-toast'
-import PreviewCard from './PreviewCard'
+import PreviewCard from '@/components/ui/data-display/PreviewCard'
 
 export interface ConfigField {
   key: string

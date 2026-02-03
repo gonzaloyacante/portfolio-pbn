@@ -1,4 +1,4 @@
-import { AdminSidebar } from '@/components/admin'
+import AdminSidebar from '@/components/layout/AdminSidebar'
 import ToastProvider from '@/components/layout/ToastProvider'
 import PageTransition from '@/components/layout/PageTransition'
 

@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
-import { Button, PageHeader, EmptyState } from '@/components/ui'
-import { Section } from '@/components/admin'
+import { Button, EmptyState } from '@/components/ui'
+import { Section, PageHeader } from '@/components/layout'
 import Image from 'next/image'
 import { restoreProject, permanentlyDeleteProject } from '@/actions/projects.actions'
 

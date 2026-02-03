@@ -1,7 +1,7 @@
 'use client'
 
 import { LayoutGrid, List } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui'
 
 export type ViewMode = 'grid' | 'list'
@@ -21,15 +21,20 @@ export default function ViewToggle({
   const [view, setView] = useState<ViewMode>(defaultView)
 
   // Sync with localStorage on client mount only
-  useState(() => {
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(storageKey) as ViewMode | null
       if (saved && (saved === 'grid' || saved === 'list')) {
         setView(saved)
-        onViewChange?.(saved)
+        // We only update internal state, avoiding parent re-render loop on mount
+        // If parent needs to know, we should call onViewChange but ONLY if it differs from default
+        if (saved !== defaultView) {
+          onViewChange?.(saved)
+        }
       }
     }
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleToggle = (newView: ViewMode) => {
     setView(newView)

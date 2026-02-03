@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/db'
 import { getProjectSettings, updateProjectSettings } from '@/actions/project-settings.actions'
-import { Button, PageHeader } from '@/components/ui'
-import VisualConfigModal from '@/components/admin/shared/VisualConfigModal'
-import { Section } from '@/components/admin'
+import { Button } from '@/components/ui'
+import { PageHeader, Section } from '@/components/layout'
+import VisualConfigModal from '@/components/features/projects/VisualConfigModal'
 import Link from 'next/link'
 import ProjectsContent from './ProjectsContent'
 

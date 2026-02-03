@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import ServiceManager from '@/components/admin/services/ServiceManager'
+import ServiceManager from '@/components/features/services/ServiceManager'
 
 export const dynamic = 'force-dynamic'
 

@@ -21,7 +21,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { useConfirmDialog } from '@/components/ui'
 
 interface ProjectImage {
   id: string

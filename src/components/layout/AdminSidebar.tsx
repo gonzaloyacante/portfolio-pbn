@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
-import { ThemeToggle } from '@/components/ui'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 import { menuItems } from '@/config/admin-sidebar'
 

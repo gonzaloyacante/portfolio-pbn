@@ -1,6 +1,6 @@
 import { getHomeSettings } from '@/actions/theme.actions'
-import HeroSection from '@/components/public/HeroSection'
-import FeaturedProjects from '@/components/public/FeaturedProjects'
+import HeroSection from '@/components/features/home/HeroSection'
+import FeaturedProjects from '@/components/features/home/FeaturedProjects'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

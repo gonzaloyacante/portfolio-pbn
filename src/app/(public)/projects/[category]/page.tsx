@@ -5,7 +5,7 @@ import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
 import { ArrowLeft } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
-import CategoryGallery from '@/components/public/CategoryGallery'
+import CategoryGallery from '@/components/features/categories/CategoryGallery'
 
 export async function generateMetadata({
   params,

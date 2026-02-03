@@ -19,7 +19,7 @@ function NavigationProgressInternal() {
   return null
 }
 
-export function NavigationProgress() {
+export default function NavigationProgress() {
   return (
     <Suspense fallback={null}>
       <NavigationProgressInternal />

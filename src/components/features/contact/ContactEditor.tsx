@@ -18,12 +18,12 @@ import {
   TabsList,
   TabsTrigger,
   useConfirmDialog,
+  ImageUpload,
 } from '@/components/ui'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
 import { Plus, Trash2, Save } from 'lucide-react'
-import { ImageUpload } from '@/components/admin'
 
 interface ContactEditorProps {
   settings: ContactSettingsData | null
@@ -131,7 +131,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
                 <ImageUpload
                   name="illustrationUrl"
                   currentImage={settings?.illustrationUrl}
-                  onChange={(urls) => setValue('illustrationUrl', urls[0])}
+                  onChange={(urls: string[]) => setValue('illustrationUrl', urls[0])}
                 />
                 <Input label="Alt Text Ilustración" {...register('illustrationAlt')} />
               </div>

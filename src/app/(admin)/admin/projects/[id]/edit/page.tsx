@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/db'
-import { PageHeader } from '@/components/ui'
-import { Section } from '@/components/admin'
-import ProjectEditForm from '@/components/admin/ProjectEditForm'
+import { PageHeader, Section } from '@/components/layout'
+import ProjectEditForm from '@/components/features/projects/ProjectEditForm'
 
 interface EditProjectPageProps {
   params: Promise<{

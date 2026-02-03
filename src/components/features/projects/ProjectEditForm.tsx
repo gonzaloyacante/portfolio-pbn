@@ -7,7 +7,7 @@ import { updateProject, deleteProjectImage, reorderProjectImages } from '@/actio
 import { setProjectThumbnail } from '@/actions/project.actions'
 import { Button, Input, TextArea } from '@/components/ui'
 import { useToast } from '@/components/ui'
-import SortableImageGrid from './SortableImageGrid'
+import SortableImageGrid from '@/components/ui/media/SortableImageGrid'
 
 type ProjectWithRelations = Project & {
   category: Category

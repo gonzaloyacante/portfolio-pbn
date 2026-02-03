@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
-import { StatCard, Section } from '@/components/admin'
-import { PageHeader } from '@/components/ui'
+import { StatCard } from '@/components/ui'
+import { Section, PageHeader } from '@/components/layout'
 import { auth } from '@/lib/auth'
 import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
 import Link from 'next/link'

@@ -10,7 +10,7 @@ interface SortableImageProps {
   onDelete: (id: string) => void
 }
 
-export function SortableImage({ id, url, onDelete }: SortableImageProps) {
+export default function SortableImage({ id, url, onDelete }: SortableImageProps) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id })
 
   const style = {

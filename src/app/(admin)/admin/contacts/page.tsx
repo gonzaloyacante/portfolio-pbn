@@ -1,5 +1,5 @@
 import { getContacts } from '@/actions/contact.actions'
-import ContactList from '@/components/admin/ContactList'
+import ContactList from '@/components/features/contact/ContactList'
 import Link from 'next/link'
 
 export default async function AdminContactsPage() {

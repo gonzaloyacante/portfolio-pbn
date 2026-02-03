@@ -1,5 +1,5 @@
 import { getContactSettings, getSocialLinks } from '@/actions/theme.actions'
-import ContactForm from '@/components/public/ContactForm'
+import ContactForm from '@/components/features/contact/ContactForm'
 import { Instagram, Music2, MessageCircle, Youtube, Linkedin, Facebook } from 'lucide-react'
 import { OptimizedImage, FadeIn } from '@/components/ui'
 import { Suspense } from 'react'

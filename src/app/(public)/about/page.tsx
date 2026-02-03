@@ -1,8 +1,8 @@
 import { getAboutSettings } from '@/actions/theme.actions'
 import { getActiveTestimonials } from '@/actions/testimonials.actions'
 import { getTestimonialSettings } from '@/actions/testimonial-settings.actions'
-import TestimonialForm from '@/components/public/TestimonialForm'
-import TestimonialSlider from '@/components/public/TestimonialSlider'
+import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
+import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import JsonLd from '@/components/seo/JsonLd'
 import { FadeIn, SlideIn, OptimizedImage } from '@/components/ui'
 

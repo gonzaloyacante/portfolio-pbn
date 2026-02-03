@@ -1,6 +1,6 @@
 import { getContactSettings, getSocialLinks } from '@/actions/theme.actions'
-import { ContactEditor } from '@/components/admin/ContactEditor'
-import { PageHeader } from '@/components/ui'
+import { ContactEditor } from '@/components/features/contact/ContactEditor'
+import { PageHeader } from '@/components/layout'
 
 export const metadata = {
   title: 'Contacto y Redes | Admin',

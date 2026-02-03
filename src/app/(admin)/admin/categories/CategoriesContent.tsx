@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { deleteCategoryAction, reorderCategories } from '@/actions/category.actions'
 import { Button, Card, Badge } from '@/components/ui'
-import ViewToggle, { type ViewMode } from '@/components/admin/shared/ViewToggle'
-import SortableGrid from '@/components/admin/shared/SortableGrid'
+import ViewToggle, { type ViewMode } from '@/components/layout/ViewToggle'
+import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
@@ -13,7 +13,6 @@ import type { Category } from '@prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
 import { TOAST_MESSAGES } from '@/lib/toast-messages'
-import { ADMIN_GRID_COLUMNS } from '@/lib/admin-constants'
 
 type CategoryWithCount = Category & {
   _count: { projects: number }
@@ -31,11 +30,7 @@ export default function CategoriesContent({
   const [view, setView] = useState<ViewMode>('grid')
 
   // Optimistic reordering using custom hook
-  const {
-    items: categories,
-    handleReorder,
-    isReordering,
-  } = useOptimisticReorder<CategoryWithCount>({
+  const { items: categories, handleReorder } = useOptimisticReorder<CategoryWithCount>({
     initialItems: initialCategories,
     reorderAction: reorderCategories,
     getId: (c) => c.id,

@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { homeSettingsSchema, type HomeSettingsFormData } from '@/lib/validations'
 import { useToast } from '@/components/ui'
-import { ImageUpload } from '@/components/admin'
+import { ImageUpload } from '@/components/ui'
 
 interface HomeEditorProps {
   settings: HomeSettingsData | null
@@ -77,7 +77,7 @@ export function HomeEditor({ settings }: HomeEditorProps) {
             <ImageUpload
               name="illustrationUrl"
               currentImage={settings?.illustrationUrl}
-              onChange={(urls) => setValue('illustrationUrl', urls[0])}
+              onChange={(urls: string[]) => setValue('illustrationUrl', urls[0])}
             />
           </div>
         </div>
