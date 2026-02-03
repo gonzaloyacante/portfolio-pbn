@@ -9,7 +9,7 @@ import { useToast, useConfirmDialog } from '@/components/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { updateThemeSettings, resetThemeToDefaults } from '@/actions/theme.actions'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Save, RotateCcw, Palette, Type, LayoutTemplate } from 'lucide-react'
 import ThemeColorSection from './ThemeColorSection'
 import ThemeTypographySection from './ThemeTypographySection'
@@ -117,7 +117,7 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
       } else {
         show({ type: 'error', message: result.error || 'Error al guardar' })
       }
-    } catch (error) {
+    } catch {
       show({ type: 'error', message: 'Error inesperado' })
     }
   }
@@ -153,6 +153,16 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
     }
   }
 
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const currentTab = searchParams.get('tab') || 'colors'
+
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams)
+    params.set('tab', value)
+    router.replace(`${pathname}?${params.toString()}`)
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Header Actions */}
@@ -182,7 +192,7 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
       <div className="grid gap-8 lg:grid-cols-12">
         {/* Main Editor */}
         <div className="space-y-6 lg:col-span-8">
-          <Tabs defaultValue="colors" className="w-full">
+          <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="bg-muted/50 mb-4 w-full justify-start p-1">
               <TabsTrigger value="colors" className="flex-1 gap-2 md:flex-none">
                 <Palette size={16} /> Colores

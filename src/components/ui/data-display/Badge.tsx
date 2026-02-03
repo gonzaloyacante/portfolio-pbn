@@ -1,6 +1,6 @@
 import { clsx } from 'clsx'
 
-interface BadgeProps {
+interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
   variant?: 'default' | 'success' | 'warning' | 'danger' | 'info' | 'destructive' | 'outline'
   size?: 'sm' | 'md'
@@ -15,6 +15,7 @@ export default function Badge({
   variant = 'default',
   size = 'md',
   className,
+  ...props
 }: BadgeProps) {
   const variants = {
     default: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
@@ -39,6 +40,7 @@ export default function Badge({
         sizes[size],
         className
       )}
+      {...props}
     >
       {children}
     </span>

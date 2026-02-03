@@ -5,19 +5,25 @@ import * as React from 'react'
 export const Tabs = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    defaultValue: string
+    defaultValue?: string
+    value?: string
     onValueChange?: (value: string) => void
   }
->(({ defaultValue, onValueChange, children, ...props }, ref) => {
-  const [value, setValue] = React.useState(defaultValue)
+>(({ defaultValue, value, onValueChange, children, ...props }, ref) => {
+  const [internalValue, setInternalValue] = React.useState(defaultValue)
+
+  const isControlled = value !== undefined
+  const currentValue = isControlled ? value : internalValue
 
   const handleValueChange = (newValue: string) => {
-    setValue(newValue)
+    if (!isControlled) {
+      setInternalValue(newValue)
+    }
     onValueChange?.(newValue)
   }
 
   return (
-    <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
+    <TabsContext.Provider value={{ value: currentValue || '', onValueChange: handleValueChange }}>
       <div ref={ref} {...props}>
         {children}
       </div>

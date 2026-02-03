@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
-import { Check, ChevronsUpDown, Search, Loader2, AlertCircle } from 'lucide-react'
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import { Check, ChevronsUpDown, Search, Loader2, AlertCircle, Type } from 'lucide-react'
 import {
   fetchGoogleFonts,
   getFontsByCategory,
@@ -10,6 +10,7 @@ import {
 } from '@/lib/google-fonts'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import Badge from '@/components/ui/data-display/Badge'
 
 interface GoogleFontPickerProps {
   value: string // Font name
@@ -30,6 +31,35 @@ export function GoogleFontPicker({
   const [fonts, setFonts] = useState<GoogleFont[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [previewText, setPreviewText] = useState('The quick brown fox')
+  const [visibleCount, setVisibleCount] = useState(20)
+
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+
+  // Custom hook for infinite scroll intersection observer
+  useEffect(() => {
+    if (!open) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => prev + 20)
+        }
+      },
+      { threshold: 0.5 }
+    )
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current)
+    }
+
+    return () => observer.disconnect()
+  }, [open, visibleCount])
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(20)
+  }, [search, category, open])
 
   // Fetch fonts on mount
   useEffect(() => {
@@ -39,12 +69,12 @@ export function GoogleFontPicker({
       try {
         const fetchedFonts = await fetchGoogleFonts()
         if (fetchedFonts.length === 0) {
-          setError('No se pudieron cargar las fuentes. Verifica la configuración de la API key.')
+          setError('No fonts loaded. Check API Key.')
         }
         setFonts(fetchedFonts)
       } catch (err) {
         console.error('Failed to load fonts:', err)
-        setError('Error al cargar fuentes. Por favor recarga la página.')
+        setError('Error loading fonts.')
       } finally {
         setLoading(false)
       }
@@ -67,9 +97,17 @@ export function GoogleFontPicker({
     setSearch('')
   }
 
+  // Dynamic font loading for preview (only load visible ones ideally, but for now we rely on browser)
+  // Note: In a real app with 1400 fonts, we shouldn't inject ALL links.
+  // But the browser usually handles lazy loading of fonts well enough for dropdowns if we don't request too many variants.
+
   return (
-    <div className="space-y-2">
-      {label && <label className="text-sm font-medium">{label}</label>}
+    <div className="space-y-3">
+      {label && (
+        <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          {label}
+        </label>
+      )}
 
       <div className="relative">
         <Button
@@ -77,19 +115,26 @@ export function GoogleFontPicker({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between"
+          className="h-12 w-full justify-between px-4 text-left font-normal"
           onClick={() => setOpen(!open)}
           disabled={loading}
         >
-          <span className="truncate" style={{ fontFamily: value || 'inherit' }}>
-            {loading
-              ? 'Cargando fuentes...'
-              : error
-                ? 'Error al cargar'
-                : value || 'Selecciona una fuente...'}
-          </span>
+          <div className="flex flex-col items-start gap-1 overflow-hidden">
+            <span className="text-muted-foreground text-xs">Fuente seleccionada</span>
+            <span
+              className="truncate text-base font-medium"
+              style={{ fontFamily: value || 'inherit' }}
+            >
+              {loading
+                ? 'Cargando biblioteca...'
+                : error
+                  ? 'Error al cargar'
+                  : value || 'Seleccionar fuente'}
+            </span>
+          </div>
+
           {loading ? (
-            <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin" />
+            <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-50" />
           ) : error ? (
             <AlertCircle className="text-destructive ml-2 h-4 w-4 shrink-0" />
           ) : (
@@ -98,101 +143,132 @@ export function GoogleFontPicker({
         </Button>
 
         {open && !loading && (
-          <div className="bg-popover text-popover-foreground absolute top-full z-50 mt-2 max-h-[400px] w-full overflow-auto rounded-md border shadow-md">
+          <div className="bg-popover text-popover-foreground animate-in fade-in-0 zoom-in-95 fixed right-0 left-0 z-50 mt-2 flex flex-col overflow-hidden rounded-xl border shadow-2xl duration-200 md:absolute md:top-full md:left-auto md:w-[400px]">
             {error ? (
-              <div className="space-y-2 p-4">
-                <div className="text-destructive flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5" />
-                  <span className="font-semibold">Error de configuración</span>
+              <div className="space-y-4 p-6 text-center">
+                <div className="bg-destructive/10 text-destructive mx-auto flex h-12 w-12 items-center justify-center rounded-full">
+                  <AlertCircle className="h-6 w-6" />
                 </div>
-                <p className="text-muted-foreground text-sm">
-                  La Google Fonts API requiere una API key. Sigue estos pasos:
-                </p>
-                <ol className="text-muted-foreground ml-4 list-decimal space-y-1 text-xs">
-                  <li>
-                    Ve a{' '}
-                    <a
-                      href="https://console.cloud.google.com/apis/credentials"
-                      target="_blank"
-                      rel="noopener"
-                      className="text-primary hover:underline"
-                    >
-                      Google Cloud Console
-                    </a>
-                  </li>
-                  <li>Crea un proyecto o selecciona uno existente</li>
-                  <li>Habilita &quot;Web Fonts Developer API&quot;</li>
-                  <li>Crea una API Key (es GRATIS)</li>
-                  <li>
-                    Agrega a .env.local:{' '}
-                    <code className="bg-muted rounded px-1">GOOGLE_FONTS_API_KEY=tu_key_aqui</code>
-                  </li>
-                </ol>
+                <div className="space-y-1">
+                  <h4 className="text-destructive font-semibold">Error de Configuración</h4>
+                  <p className="text-muted-foreground text-sm text-balance">
+                    Falta la API Key de Google Fonts.
+                  </p>
+                </div>
+                <div className="bg-muted rounded-md p-3 text-left font-mono text-xs break-all">
+                  GOOGLE_FONTS_API_KEY=...
+                </div>
               </div>
             ) : (
               <>
-                {/* Search */}
-                <div className="border-border sticky top-0 border-b bg-white p-2 dark:bg-gray-900">
+                {/* Header: Search & Preview */}
+                <div className="bg-muted/30 space-y-3 border-b p-3">
                   <div className="relative">
-                    <Search className="text-muted-foreground absolute top-2.5 left-2 h-4 w-4" />
+                    <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
                     <input
                       type="text"
-                      placeholder="Buscar fuente..."
+                      placeholder="Buscar familia tipográfica..."
                       value={search}
+                      autoFocus
                       onChange={(e) => setSearch(e.target.value)}
-                      className="bg-background border-input focus:ring-primary w-full rounded-md border py-2 pr-2 pl-8 text-sm focus:ring-2 focus:outline-none"
+                      className="bg-background border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-9 w-full rounded-md border pr-3 pl-9 text-sm shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <Type className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
+                    <input
+                      type="text"
+                      placeholder="Texto de prueba..."
+                      value={previewText}
+                      onChange={(e) => setPreviewText(e.target.value)}
+                      className="bg-background/50 border-input/50 placeholder:text-muted-foreground focus-visible:ring-ring hover:bg-background h-9 w-full rounded-md border pr-3 pl-9 text-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
                     />
                   </div>
                 </div>
 
-                {/* Category Filter */}
-                <div className="border-border flex gap-1 overflow-x-auto border-b p-2">
-                  {FONT_CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.value}
-                      type="button"
-                      onClick={() => setCategory(cat.value)}
-                      className={cn(
-                        'rounded-md px-3 py-1 text-xs font-medium whitespace-nowrap transition-colors',
-                        category === cat.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted hover:bg-muted/80'
-                      )}
-                    >
-                      {cat.label}
-                    </button>
-                  ))}
+                {/* Filter Tabs */}
+                <div className="bg-background border-b px-2 py-2">
+                  <div className="scrollbar-none mask-fade-right flex gap-2 overflow-x-auto pb-1">
+                    {FONT_CATEGORIES.map((cat) => (
+                      <Badge
+                        key={cat.value}
+                        variant={category === cat.value ? 'default' : 'outline'}
+                        className={cn(
+                          'hover:bg-primary/90 cursor-pointer px-3 py-1 text-xs font-normal transition-all',
+                          category !== cat.value && 'hover:bg-accent text-muted-foreground'
+                        )}
+                        onClick={() => setCategory(cat.value)}
+                      >
+                        {cat.label}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
 
-                {/* Font List */}
-                <div className="max-h-64 overflow-y-auto p-1">
+                {/* Scrollable List */}
+                <div className="scrollbar-thin scrollbar-thumb-muted-foreground/20 h-[300px] overflow-y-auto">
                   {filteredFonts.length === 0 ? (
-                    <div className="text-muted-foreground p-4 text-center text-sm">
-                      No se encontraron fuentes
+                    <div className="text-muted-foreground flex h-full flex-col items-center justify-center space-y-2 p-8 text-center">
+                      <Search className="h-8 w-8 opacity-20" />
+                      <p className="text-sm">No se encontraron fuentes</p>
                     </div>
                   ) : (
-                    filteredFonts.slice(0, 100).map((font) => (
-                      <button
-                        key={font.name}
-                        type="button"
-                        onClick={() => handleSelect(font.name, font.url)}
-                        className={cn(
-                          'hover:bg-accent flex w-full items-center justify-between rounded-sm px-2 py-2 text-sm transition-colors',
-                          value === font.name && 'bg-accent'
-                        )}
-                      >
-                        <span className="truncate" style={{ fontFamily: font.name }}>
-                          {font.name}
-                        </span>
-                        {value === font.name && <Check className="h-4 w-4 shrink-0" />}
-                      </button>
-                    ))
-                  )}
-                  {filteredFonts.length > 100 && (
-                    <div className="text-muted-foreground p-2 text-center text-xs">
-                      Mostrando 100 de {filteredFonts.length} fuentes. Usa la búsqueda para filtrar.
+                    <div className="space-y-1 p-1">
+                      {filteredFonts.slice(0, visibleCount).map((font) => (
+                        <button
+                          key={font.name}
+                          type="button"
+                          onClick={() => handleSelect(font.name, font.url)}
+                          className={cn(
+                            'group hover:bg-accent/50 relative flex w-full flex-col items-start gap-1 overflow-hidden rounded-lg px-4 py-3 text-left transition-all',
+                            value === font.name ? 'bg-accent ring-border shadow-sm ring-1' : ''
+                          )}
+                        >
+                          {/* Font Name Tag */}
+                          <div className="flex w-full items-center justify-between">
+                            <span
+                              className={cn(
+                                'text-muted-foreground group-hover:text-foreground text-[10px] font-semibold tracking-wider uppercase transition-colors',
+                                value === font.name && 'text-primary'
+                              )}
+                            >
+                              {font.name} · {font.category}
+                            </span>
+                            {value === font.name && (
+                              <div className="bg-primary h-2 w-2 animate-pulse rounded-full" />
+                            )}
+                          </div>
+
+                          {/* Live Preview */}
+                          <span
+                            className="w-full truncate pr-8 text-xl leading-none"
+                            style={{ fontFamily: font.name }}
+                          >
+                            {previewText || font.name}
+                          </span>
+
+                          {/* Selected Check */}
+                          {value === font.name && (
+                            <Check className="text-primary absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
+                          )}
+                        </button>
+                      ))}
+
+                      {/* Interactive Scroll Trigger */}
+                      {filteredFonts.length > visibleCount && (
+                        <div ref={loadMoreRef} className="py-4 text-center">
+                          <Loader2 className="text-muted-foreground/50 mx-auto h-5 w-5 animate-spin" />
+                        </div>
+                      )}
                     </div>
                   )}
+                </div>
+
+                {/* Footer Count */}
+                <div className="bg-muted/10 text-muted-foreground border-t p-2 text-center text-[10px]">
+                  Mostrando {Math.min(visibleCount, filteredFonts.length)} de {filteredFonts.length}{' '}
+                  fuentes
                 </div>
               </>
             )}
@@ -201,12 +277,6 @@ export function GoogleFontPicker({
       </div>
 
       {description && <p className="text-muted-foreground text-xs">{description}</p>}
-      {error && !open && (
-        <p className="text-destructive flex items-center gap-1 text-xs">
-          <AlertCircle className="h-3 w-3" />
-          Configuración de API pendiente
-        </p>
-      )}
     </div>
   )
 }
