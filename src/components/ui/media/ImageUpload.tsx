@@ -227,75 +227,75 @@ export default function ImageUpload({
     )
   }
 
+  // Single image mode: show image inside dropzone with overlay buttons
+  const hasSingleImage = !multiple && images.length > 0 && !images[0].isUploading
+
+  // Handle edit button click - triggers file input
+  const handleEditClick = () => {
+    const input = document.getElementById(`file-upload-${name}`) as HTMLInputElement
+    if (input) input.click()
+  }
+
   return (
     <div className="w-full">
       <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
       </label>
 
-      {/* Dropzone */}
-      <div
-        className={`flex w-full items-center justify-center transition-all ${
-          isDragging ? 'scale-[1.02]' : ''
-        }`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
-        <label
-          htmlFor={`file-upload-${name}`}
-          className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all ${
-            isDragging
-              ? 'border-primary bg-primary/10'
-              : 'border-input bg-muted/30 hover:bg-muted/50 hover:border-primary/50'
-          } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
+      {/* Single Image Mode: Image inside dropzone */}
+      {hasSingleImage ? (
+        <div
+          className="group border-input bg-muted/30 relative h-48 w-full overflow-hidden rounded-2xl border-2"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
         >
-          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            {isUploading ? (
-              <>
-                <svg className="text-primary mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                <p className="text-muted-foreground text-sm">Subiendo imágenes...</p>
-              </>
-            ) : (
-              <>
-                <svg
-                  className="text-muted-foreground mb-4 h-10 w-10"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                <p className="text-muted-foreground mb-2 text-sm">
-                  <span className="text-primary font-bold hover:underline">Click para subir</span> o
-                  arrastra y suelta
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  PNG, JPG, GIF, WebP (máx. {maxSizeMB}MB)
-                </p>
-              </>
-            )}
+          <Image
+            src={images[0].url}
+            alt="Imagen subida"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+
+          {/* Hover Overlay with Edit/Delete buttons */}
+          <div className="absolute inset-0 flex items-center justify-center gap-4 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+            {/* Edit Button */}
+            <button
+              type="button"
+              onClick={handleEditClick}
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-lg transition-transform hover:scale-110 hover:bg-white"
+              title="Cambiar imagen"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                />
+              </svg>
+            </button>
+
+            {/* Delete Button */}
+            <button
+              type="button"
+              onClick={() => handleRemove(0)}
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500 text-white shadow-lg transition-transform hover:scale-110 hover:bg-red-600"
+              title="Eliminar imagen"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                />
+              </svg>
+            </button>
           </div>
+
+          {/* Hidden file input - still needed for edit functionality */}
           <input
             id={`file-upload-${name}`}
             name={name}
@@ -306,11 +306,87 @@ export default function ImageUpload({
             onChange={handleFileChange}
             disabled={isUploading}
           />
-        </label>
-      </div>
+        </div>
+      ) : (
+        /* Empty/Multi Dropzone */
+        <div
+          className={`flex w-full items-center justify-center transition-all ${
+            isDragging ? 'scale-[1.02]' : ''
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <label
+            htmlFor={`file-upload-${name}`}
+            className={`flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed transition-all ${
+              isDragging
+                ? 'border-primary bg-primary/10'
+                : 'border-input bg-muted/30 hover:bg-muted/50 hover:border-primary/50'
+            } ${isUploading ? 'pointer-events-none opacity-50' : ''}`}
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              {isUploading ? (
+                <>
+                  <svg className="text-primary mb-4 h-10 w-10 animate-spin" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  <p className="text-muted-foreground text-sm">Subiendo imagen...</p>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="text-muted-foreground mb-4 h-10 w-10"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  <p className="text-muted-foreground mb-2 text-sm">
+                    <span className="text-primary font-bold hover:underline">Click para subir</span>{' '}
+                    o arrastra y suelta
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    PNG, JPG, GIF, WebP (máx. {maxSizeMB}MB)
+                  </p>
+                </>
+              )}
+            </div>
+            <input
+              id={`file-upload-${name}`}
+              name={name}
+              type="file"
+              className="hidden"
+              multiple={multiple}
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={isUploading}
+            />
+          </label>
+        </div>
+      )}
 
-      {/* Preview de imágenes */}
-      {images.length > 0 && (
+      {/* Multi-image gallery (only for multiple mode) */}
+      {multiple && images.length > 0 && (
         <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {images.map((img, index) => (
             <div
@@ -360,22 +436,25 @@ export default function ImageUpload({
                 </div>
               )}
 
-              {/* Botón eliminar */}
+              {/* Edit and Delete buttons for multi-image */}
               {!img.isUploading && (
-                <button
-                  type="button"
-                  onClick={() => handleRemove(index)}
-                  className="absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
-                >
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                <div className="absolute top-2 right-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(index)}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
+                    title="Eliminar"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
               )}
             </div>
           ))}

@@ -77,7 +77,9 @@ export function HomeEditor({ settings }: HomeEditorProps) {
             <ImageUpload
               name="illustrationUrl"
               currentImage={settings?.illustrationUrl}
-              onChange={(urls: string[]) => setValue('illustrationUrl', urls[0])}
+              onChange={(urls: string[]) =>
+                setValue('illustrationUrl', urls[0], { shouldDirty: true })
+              }
             />
           </div>
         </div>
@@ -92,7 +94,7 @@ export function HomeEditor({ settings }: HomeEditorProps) {
             <ImageUpload
               name="heroMainImageUrl"
               currentImage={settings?.heroMainImageUrl}
-              onChange={(urls) => setValue('heroMainImageUrl', urls[0])}
+              onChange={(urls) => setValue('heroMainImageUrl', urls[0], { shouldDirty: true })}
             />
           </div>
           <Input label="Caption Imagen (Texto flotante)" {...register('heroMainImageCaption')} />
