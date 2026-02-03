@@ -29,6 +29,7 @@ interface OptimizedImageProps {
   onError?: () => void
   fill?: boolean
   variant?: 'thumbnail' | 'card' | 'hero' | 'full' | 'original'
+  transparentBackground?: boolean
 }
 
 export function OptimizedImage({
@@ -47,6 +48,7 @@ export function OptimizedImage({
   onError,
   fill = false,
   variant,
+  transparentBackground = false,
 }: OptimizedImageProps) {
   const [imageError, setImageError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -137,7 +139,7 @@ export function OptimizedImage({
     return (
       <div
         ref={imgRef}
-        className={`border-border bg-muted flex items-center justify-center border ${className} ${fill ? 'absolute inset-0' : ''}`}
+        className={`border-border flex items-center justify-center border ${transparentBackground ? 'bg-transparent' : 'bg-muted'} ${className} ${fill ? 'absolute inset-0' : ''}`}
         style={fill ? undefined : { width, height }}
       >
         <div className="p-4 text-center">
@@ -158,7 +160,7 @@ export function OptimizedImage({
   return (
     <div
       ref={imgRef}
-      className={`bg-muted relative overflow-hidden ${className}`}
+      className={`${transparentBackground ? 'bg-transparent' : 'bg-muted'} relative overflow-hidden ${className}`}
       style={fill ? { position: 'absolute', inset: 0 } : undefined}
     >
       {(isInView || priority) && (

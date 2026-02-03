@@ -87,6 +87,7 @@ model HomeSettings {
   heroMainImageUrl     String?
   heroMainImageAlt     String?  @default("Trabajo destacado")
   heroMainImageCaption String?
+  heroImageStyle       String?  @default("original") // original, square, circle, landscape, portrait, star, etc.
   // CTA
   ctaText              String?  @default("Ver Portfolio")
   ctaLink              String?  @default("/proyectos")
@@ -230,17 +231,23 @@ model ThemeSettings {
   // Typography - Base
   headingFont     String   @default("Poppins")
   headingFontUrl  String?
+  headingFontSize Int      @default(32)
   scriptFont      String   @default("Great Vibes")
   scriptFontUrl   String?
+  scriptFontSize  Int      @default(24)
   bodyFont        String   @default("Open Sans")
   bodyFontUrl     String?
+  bodyFontSize    Int      @default(16)
   // Typography - Brand (Specifics)
   brandFont       String?  @default("Saira Extra Condensed") // "Make-up"
   brandFontUrl    String?
+  brandFontSize   Int      @default(112)
   portfolioFont   String?  @default("Saira Extra Condensed") // "Portfolio" text
   portfolioFontUrl String?
+  portfolioFontSize Int      @default(96)
   signatureFont   String?  @default("Dawning of a New Day") // "Paola Bolivar Nievas"
   signatureFontUrl String?
+  signatureFontSize Int      @default(36)
   // Layout
   borderRadius    Int      @default(40)
   // Meta

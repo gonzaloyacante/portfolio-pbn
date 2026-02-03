@@ -30,11 +30,17 @@ export interface ThemeSettingsData {
   darkCardBgColor: string
   // Typography Values (Family Names)
   headingFont: string
+  headingFontSize: number
   scriptFont: string
+  scriptFontSize: number
   bodyFont: string
+  bodyFontSize: number
   brandFont: string | null
+  brandFontSize: number
   portfolioFont: string | null
+  portfolioFontSize: number
   signatureFont: string | null
+  signatureFontSize: number
   // Typography URLs (Google Fonts Embed)
   headingFontUrl: string | null
   scriptFontUrl: string | null
@@ -77,11 +83,17 @@ export async function getThemeValues(): Promise<Record<string, string>> {
         'text-color': '#000000',
         'card-bg-color': '#ffaadd',
         'heading-font': 'Poppins',
+        'heading-font-size': '32',
         'script-font': 'Great Vibes',
+        'script-font-size': '24',
         'body-font': 'Open Sans',
+        'body-font-size': '16',
         'brand-font': 'Saira Extra Condensed',
+        'brand-font-size': '112',
         'portfolio-font': 'Saira Extra Condensed',
+        'portfolio-font-size': '96',
         'signature-font': 'Dawning of a New Day',
+        'signature-font-size': '36',
         'border-radius': '40',
       }
     }
@@ -100,11 +112,17 @@ export async function getThemeValues(): Promise<Record<string, string>> {
       'dark-text-color': settings.darkTextColor,
       'dark-card-bg-color': settings.darkCardBgColor,
       'heading-font': settings.headingFont,
+      'heading-font-size': String(settings.headingFontSize),
       'script-font': settings.scriptFont,
+      'script-font-size': String(settings.scriptFontSize),
       'body-font': settings.bodyFont,
+      'body-font-size': String(settings.bodyFontSize),
       'brand-font': settings.brandFont || 'inherit',
+      'brand-font-size': String(settings.brandFontSize),
       'portfolio-font': settings.portfolioFont || 'inherit',
+      'portfolio-font-size': String(settings.portfolioFontSize),
       'signature-font': settings.signatureFont || 'inherit',
+      'signature-font-size': String(settings.signatureFontSize),
       'border-radius': String(settings.borderRadius),
     }
   } catch (error) {
@@ -213,6 +231,7 @@ export interface HomeSettingsData {
   heroMainImageUrl: string | null
   heroMainImageAlt: string | null
   heroMainImageCaption: string | null
+  heroImageStyle: string | null
   // CTA
   ctaText: string | null
   ctaLink: string | null
@@ -256,6 +275,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
           heroMainImageUrl: data.heroMainImageUrl,
           heroMainImageAlt: data.heroMainImageAlt || 'Trabajo destacado',
           heroMainImageCaption: data.heroMainImageCaption,
+          heroImageStyle: data.heroImageStyle || 'original',
           ctaText: data.ctaText || 'Ver Portfolio',
           ctaLink: data.ctaLink || ROUTES.public.projects,
           showFeaturedProjects: data.showFeaturedProjects ?? true,

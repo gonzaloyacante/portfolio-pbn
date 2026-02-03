@@ -51,11 +51,28 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
 
     // Fonts & Layout (Universal - Always apply)
     if (themeValues['heading-font']) setVar('--font-heading', themeValues['heading-font'])
+    if (themeValues['heading-font-size'])
+      setVar('--font-size-heading', `${themeValues['heading-font-size']}px`)
+
     if (themeValues['script-font']) setVar('--font-script', themeValues['script-font'])
+    if (themeValues['script-font-size'])
+      setVar('--font-size-script', `${themeValues['script-font-size']}px`)
+
     if (themeValues['body-font']) setVar('--font-body', themeValues['body-font'])
+    if (themeValues['body-font-size'])
+      setVar('--font-size-body', `${themeValues['body-font-size']}px`)
+
     if (themeValues['brand-font']) setVar('--font-brand', themeValues['brand-font'])
+    if (themeValues['brand-font-size'])
+      setVar('--font-size-brand', `${themeValues['brand-font-size']}px`)
+
     if (themeValues['portfolio-font']) setVar('--font-portfolio', themeValues['portfolio-font'])
+    if (themeValues['portfolio-font-size'])
+      setVar('--font-size-portfolio', `${themeValues['portfolio-font-size']}px`)
+
     if (themeValues['signature-font']) setVar('--font-signature', themeValues['signature-font'])
+    if (themeValues['signature-font-size'])
+      setVar('--font-size-signature', `${themeValues['signature-font-size']}px`)
 
     if (themeValues['border-radius']) setVar('--radius', `${themeValues['border-radius']}px`)
   }, [themeValues, resolvedTheme])

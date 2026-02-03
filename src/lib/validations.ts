@@ -58,18 +58,24 @@ export const themeEditorSchema = z.object({
   // Typography - Base
   headingFont: z.string().min(1, 'Fuente requerida'),
   headingFontUrl: z.string().optional().nullable(),
+  headingFontSize: z.number().min(10).max(200),
   scriptFont: z.string().min(1, 'Fuente requerida'),
   scriptFontUrl: z.string().optional().nullable(),
+  scriptFontSize: z.number().min(10).max(200),
   bodyFont: z.string().min(1, 'Fuente requerida'),
   bodyFontUrl: z.string().optional().nullable(),
+  bodyFontSize: z.number().min(10).max(200),
 
   // Typography - Brand
   brandFont: z.string().optional().nullable(),
   brandFontUrl: z.string().optional().nullable(),
+  brandFontSize: z.number().min(10).max(300),
   portfolioFont: z.string().optional().nullable(),
   portfolioFontUrl: z.string().optional().nullable(),
+  portfolioFontSize: z.number().min(10).max(300),
   signatureFont: z.string().optional().nullable(),
   signatureFontUrl: z.string().optional().nullable(),
+  signatureFontSize: z.number().min(10).max(200),
 
   borderRadius: z.number().min(0).max(100),
 })
@@ -86,6 +92,7 @@ export const homeSettingsSchema = z.object({
   heroMainImageUrl: z.string().optional(),
   heroMainImageAlt: z.string().optional(),
   heroMainImageCaption: z.string().optional(),
+  heroImageStyle: z.string().optional(),
   ctaText: z.string().optional(),
   ctaLink: z.string().optional(),
   showFeaturedProjects: z.boolean(),

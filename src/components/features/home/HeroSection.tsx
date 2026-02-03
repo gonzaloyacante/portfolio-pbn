@@ -21,6 +21,48 @@ export default function HeroSection({ settings }: HeroSectionProps) {
   const illustrationAlt = settings?.illustrationAlt || 'Ilustración'
   const mainImageAlt = settings?.heroMainImageAlt || 'Hero Image'
   const caption = settings?.heroMainImageCaption
+  const imageStyle = settings?.heroImageStyle || 'original'
+
+  // Helper to get container classes and image object-fit based on shape
+  const getImageStyleClasses = (style: string) => {
+    switch (style) {
+      case 'square':
+        return {
+          container: 'aspect-square w-full max-w-md mx-auto',
+          image: 'object-cover rounded-lg',
+        }
+      case 'circle':
+        return {
+          container: 'aspect-square w-full max-w-md mx-auto',
+          image: 'object-cover rounded-full',
+        }
+      case 'landscape':
+        return {
+          container: 'aspect-video w-full',
+          image: 'object-cover rounded-lg',
+        }
+      case 'portrait':
+        return {
+          container: 'aspect-[3/4] w-full max-w-md mx-auto',
+          image: 'object-cover rounded-lg',
+        }
+      case 'star':
+        return {
+          container: 'aspect-square w-full max-w-md mx-auto',
+          image: 'object-cover',
+          clipPath:
+            'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+        }
+      case 'original':
+      default:
+        return {
+          container: 'h-[50vh] w-full lg:h-[60vh]',
+          image: 'object-contain',
+        }
+    }
+  }
+
+  const imageStyles = getImageStyleClasses(imageStyle)
 
   return (
     <section className="relative flex min-h-[calc(100vh-80px)] w-full items-center justify-center overflow-hidden bg-[var(--background)] px-4 pt-8 transition-colors duration-500 sm:px-8 lg:px-16 lg:pt-0">
@@ -33,8 +75,12 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <FadeIn delay={0.2}>
               {/* Título Brand (Make-up) - Script Font */}
               <h1
-                className="relative z-20 text-6xl text-[var(--primary)] sm:text-7xl lg:text-8xl xl:text-[7rem]"
-                style={{ fontFamily: 'var(--font-brand, var(--font-script))' }}
+                className="relative z-20 text-[var(--primary)]"
+                style={{
+                  fontFamily: 'var(--font-brand, var(--font-script))',
+                  fontSize: 'var(--font-size-brand, 7rem)', // Dynamic size
+                  lineHeight: 1,
+                }}
               >
                 {title1}
               </h1>
@@ -43,8 +89,12 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <SlideIn direction="left" delay={0.4}>
               {/* Título Portfolio - superpuesto ~20% sobre Make-up */}
               <h2
-                className="text-shadow relative z-10 -mt-4 text-5xl leading-none font-bold tracking-tighter text-[var(--accent)] sm:-mt-6 sm:text-6xl lg:-mt-8 lg:text-7xl xl:-mt-10 xl:text-8xl"
-                style={{ fontFamily: 'var(--font-portfolio, var(--font-heading))' }}
+                className="text-shadow relative z-10 -mt-4 font-bold tracking-tighter text-[var(--accent)] sm:-mt-6 lg:-mt-8 xl:-mt-10"
+                style={{
+                  fontFamily: 'var(--font-portfolio, var(--font-heading))',
+                  fontSize: 'var(--font-size-portfolio, 6rem)', // Dynamic size
+                  lineHeight: 1,
+                }}
               >
                 {title2}
               </h2>
@@ -62,6 +112,7 @@ export default function HeroSection({ settings }: HeroSectionProps) {
                     alt={illustrationAlt}
                     fill
                     className="object-contain"
+                    transparentBackground={true}
                   />
                 </div>
               </FadeIn>
@@ -70,9 +121,10 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             {/* Nombre del Owner - superpuesto sobre la ilustración */}
             <FadeIn delay={0.8}>
               <p
-                className="-mt-6 w-full text-3xl leading-tight tracking-tight text-[var(--primary)] sm:-mt-8 sm:text-4xl lg:-mt-10 lg:text-5xl xl:text-6xl"
+                className="-mt-6 w-full leading-tight tracking-tight text-[var(--primary)] sm:-mt-8 lg:-mt-10"
                 style={{
                   fontFamily: 'var(--font-signature, var(--font-script))',
+                  fontSize: 'var(--font-size-signature, 3.75rem)', // Dynamic size
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -84,28 +136,49 @@ export default function HeroSection({ settings }: HeroSectionProps) {
 
         {/* ===== COLUMNA DERECHA: Imagen Principal + CTA ===== */}
         <div className="relative flex flex-col items-center justify-center gap-6 lg:min-h-[70vh]">
-          {/* Imagen Destacada - SIN bordes redondeados, SIN zoom */}
+          {/* Imagen Destacada - Forma dinámica */}
           {mainImage ? (
-            <FadeIn delay={0.5} className="relative h-[50vh] w-full lg:h-[60vh]">
-              {/* Contenedor sin bordes redondeados, fondo transparente */}
-              <div className="relative h-full w-full" style={{ background: 'transparent' }}>
-                <OptimizedImage
-                  src={mainImage}
-                  alt={mainImageAlt}
-                  fill
-                  priority
-                  variant="hero"
-                  className="object-contain"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
+            <FadeIn delay={0.5} className="relative flex w-full items-center justify-center">
+              {imageStyle === 'original' ? (
+                // Modo Original: NO usar fill, respetar aspect ratio natural
+                <div className="relative w-full bg-transparent">
+                  <OptimizedImage
+                    src={mainImage}
+                    alt={mainImageAlt}
+                    width={1200}
+                    height={800}
+                    priority
+                    variant="hero"
+                    className="h-auto w-full object-contain"
+                    transparentBackground={true}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
 
-                {/* Caption flotante (si existe) */}
-                {caption && (
-                  <div className="absolute right-6 bottom-6 max-w-xs rounded-xl bg-white/10 p-4 backdrop-blur-md">
-                    <p className="font-script text-xl text-white">{caption}</p>
-                  </div>
-                )}
-              </div>
+                  {/* Caption flotante (si existe) */}
+                  {caption && (
+                    <div className="absolute right-6 bottom-6 max-w-xs rounded-xl bg-white/10 p-4 backdrop-blur-md">
+                      <p className="font-script text-xl text-white">{caption}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                // Modos con forma: usar fill con contenedor de dimensiones fijas
+                <div
+                  className={`relative bg-transparent ${imageStyles.container}`}
+                  style={imageStyles.clipPath ? { clipPath: imageStyles.clipPath } : undefined}
+                >
+                  <OptimizedImage
+                    src={mainImage}
+                    alt={mainImageAlt}
+                    fill
+                    priority
+                    variant="hero"
+                    className={imageStyles.image}
+                    transparentBackground={true}
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                  />
+                </div>
+              )}
             </FadeIn>
           ) : (
             // Placeholder visual si no hay imagen
