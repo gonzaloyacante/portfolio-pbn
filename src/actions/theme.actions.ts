@@ -220,24 +220,50 @@ export async function resetThemeToDefaults() {
 
 export interface HomeSettingsData {
   id: string
-  // Hero - Left Top
-  heroTitle1: string | null
-  heroTitle2: string | null
-  // Hero - Left Bottom
-  illustrationUrl: string | null
-  illustrationAlt: string | null
-  ownerName: string | null
-  // Hero - Right
+  // Título 1
+  heroTitle1Text: string | null
+  heroTitle1Font: string | null
+  heroTitle1FontUrl: string | null
+  heroTitle1FontSize: number | null
+  heroTitle1Color: string | null
+  heroTitle1ColorDark: string | null
+  // Título 2
+  heroTitle2Text: string | null
+  heroTitle2Font: string | null
+  heroTitle2FontUrl: string | null
+  heroTitle2FontSize: number | null
+  heroTitle2Color: string | null
+  heroTitle2ColorDark: string | null
+  // Nombre propietario
+  ownerNameText: string | null
+  ownerNameFont: string | null
+  ownerNameFontUrl: string | null
+  ownerNameFontSize: number | null
+  ownerNameColor: string | null
+  ownerNameColorDark: string | null
+  // Imágenes
   heroMainImageUrl: string | null
   heroMainImageAlt: string | null
   heroMainImageCaption: string | null
   heroImageStyle: string | null
-  // CTA
+  illustrationUrl: string | null
+  illustrationAlt: string | null
+  // Botón CTA
   ctaText: string | null
   ctaLink: string | null
-  // Featured Projects
+  ctaFont: string | null
+  ctaFontUrl: string | null
+  ctaFontSize: number | null
+  ctaVariant: string | null
+  ctaSize: string | null
+  // Sección destacados
   showFeaturedProjects: boolean
   featuredTitle: string | null
+  featuredTitleFont: string | null
+  featuredTitleFontUrl: string | null
+  featuredTitleFontSize: number | null
+  featuredTitleColor: string | null
+  featuredTitleColorDark: string | null
   featuredCount: number
   isActive: boolean
 }
@@ -267,19 +293,32 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
     if (!settings) {
       settings = await prisma.homeSettings.create({
         data: {
-          heroTitle1: data.heroTitle1 || 'Make-up',
-          heroTitle2: data.heroTitle2 || 'Portfolio',
+          // Título 1
+          heroTitle1Text: data.heroTitle1Text || 'Make-up',
+          heroTitle1FontSize: data.heroTitle1FontSize || 112,
+          // Título 2
+          heroTitle2Text: data.heroTitle2Text || 'Portfolio',
+          heroTitle2FontSize: data.heroTitle2FontSize || 96,
+          // Nombre
+          ownerNameText: data.ownerNameText || 'Paola Bolívar Nievas',
+          ownerNameFontSize: data.ownerNameFontSize || 36,
+          // Imágenes
           illustrationUrl: data.illustrationUrl,
           illustrationAlt: data.illustrationAlt || 'Ilustración maquilladora',
-          ownerName: data.ownerName || 'Paola Bolívar Nievas',
           heroMainImageUrl: data.heroMainImageUrl,
           heroMainImageAlt: data.heroMainImageAlt || 'Trabajo destacado',
           heroMainImageCaption: data.heroMainImageCaption,
           heroImageStyle: data.heroImageStyle || 'original',
+          // Botón
           ctaText: data.ctaText || 'Ver Portfolio',
           ctaLink: data.ctaLink || ROUTES.public.projects,
+          ctaFontSize: data.ctaFontSize || 16,
+          ctaVariant: data.ctaVariant || 'default',
+          ctaSize: data.ctaSize || 'default',
+          // Destacados
           showFeaturedProjects: data.showFeaturedProjects ?? true,
-          featuredTitle: data.featuredTitle,
+          featuredTitle: data.featuredTitle || 'Proyectos Destacados',
+          featuredTitleFontSize: data.featuredTitleFontSize || 32,
           featuredCount: data.featuredCount || 6,
           isActive: true,
         },

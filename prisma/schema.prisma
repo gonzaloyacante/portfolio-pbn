@@ -75,30 +75,66 @@ model ProjectImage {
 
 /// Home Page Hero and Featured Settings
 model HomeSettings {
-  id                   String   @id @default(cuid())
-  // Hero - Left Top (Titles)
-  heroTitle1           String?  @default("Make-up")
-  heroTitle2           String?  @default("Portfolio")
-  // Hero - Left Bottom (Illustration + Name)
-  illustrationUrl      String?
-  illustrationAlt      String?  @default("Ilustración maquilladora")
-  ownerName            String?  @default("Paola Bolívar Nievas")
-  // Hero - Right (Main Image)
+  id String @id @default(cuid())
+
+  // ===== TÍTULO 1 ("Make-up") =====
+  heroTitle1Text      String? @default("Make-up")
+  heroTitle1Font      String? // null = hereda --font-brand del Theme
+  heroTitle1FontUrl   String?
+  heroTitle1FontSize  Int?    @default(112)
+  heroTitle1Color     String? // Light mode, null = hereda --primary
+  heroTitle1ColorDark String? // Dark mode, null = hereda --primary
+
+  // ===== TÍTULO 2 ("Portfolio") =====
+  heroTitle2Text      String? @default("Portfolio")
+  heroTitle2Font      String?
+  heroTitle2FontUrl   String?
+  heroTitle2FontSize  Int?    @default(96)
+  heroTitle2Color     String?
+  heroTitle2ColorDark String?
+
+  // ===== NOMBRE PROPIETARIO ("Paola Bolívar Nievas") =====
+  ownerNameText      String? @default("Paola Bolívar Nievas")
+  ownerNameFont      String?
+  ownerNameFontUrl   String?
+  ownerNameFontSize  Int?    @default(36)
+  ownerNameColor     String?
+  ownerNameColorDark String?
+
+  // ===== IMAGEN PRINCIPAL =====
   heroMainImageUrl     String?
-  heroMainImageAlt     String?  @default("Trabajo destacado")
+  heroMainImageAlt     String? @default("Trabajo destacado")
   heroMainImageCaption String?
-  heroImageStyle       String?  @default("original") // original, square, circle, landscape, portrait, star, etc.
-  // CTA
-  ctaText              String?  @default("Ver Portfolio")
-  ctaLink              String?  @default("/proyectos")
-  // Featured Projects Section
-  showFeaturedProjects Boolean  @default(true)
-  featuredTitle        String?
-  featuredCount        Int      @default(6)
+  heroImageStyle       String? @default("original") // original, square, circle, landscape, portrait, star
+
+  // ===== ILUSTRACIÓN =====
+  illustrationUrl String?
+  illustrationAlt String? @default("Ilustración maquilladora")
+
+  // ===== BOTÓN CTA =====
+  ctaText     String? @default("Ver Portfolio")
+  ctaLink     String? @default("/proyectos")
+  ctaFont     String? // null = hereda font del theme
+  ctaFontUrl  String?
+  ctaFontSize Int?    @default(16)
+  ctaVariant  String? @default("default") // default, secondary, outline, ghost
+  ctaSize     String? @default("default") // sm, default, lg (padding/height)
+  // ⚠️ NO hay colores individuales - usa Theme global según variant
+
+  // ===== SECCIÓN PROYECTOS DESTACADOS =====
+  showFeaturedProjects  Boolean @default(true)
+  featuredTitle         String? @default("Proyectos Destacados")
+  featuredTitleFont     String?
+  featuredTitleFontUrl  String?
+  featuredTitleFontSize Int?    @default(32)
+  featuredTitleColor    String?
+  featuredTitleColorDark String?
+  featuredCount         Int     @default(6)
+
   // Meta
-  isActive             Boolean  @default(true)
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("home_settings")
 }

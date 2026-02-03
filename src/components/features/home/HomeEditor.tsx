@@ -26,11 +26,11 @@ export function HomeEditor({ settings }: HomeEditorProps) {
   } = useForm<HomeSettingsFormData>({
     resolver: zodResolver(homeSettingsSchema),
     defaultValues: {
-      heroTitle1: settings?.heroTitle1 || 'Make-up',
-      heroTitle2: settings?.heroTitle2 || 'Portfolio',
+      heroTitle1Text: settings?.heroTitle1Text || 'Make-up',
+      heroTitle2Text: settings?.heroTitle2Text || 'Portfolio',
       illustrationUrl: settings?.illustrationUrl || undefined,
       illustrationAlt: settings?.illustrationAlt || 'Ilustración',
-      ownerName: settings?.ownerName || 'Paola Bolívar Nievas',
+      ownerNameText: settings?.ownerNameText || 'Paola Bolívar Nievas',
       heroMainImageUrl: settings?.heroMainImageUrl || undefined,
       heroMainImageAlt: settings?.heroMainImageAlt || 'Foto principal',
       heroMainImageCaption: settings?.heroMainImageCaption || '',
@@ -70,9 +70,9 @@ export function HomeEditor({ settings }: HomeEditorProps) {
           <h3 className="text-sm font-bold tracking-wider text-gray-500 uppercase">
             Columna Izquierda (Títulos)
           </h3>
-          <Input label="Título Línea 1 (Script)" {...register('heroTitle1')} />
-          <Input label="Título Línea 2 (Heading)" {...register('heroTitle2')} />
-          <Input label="Nombre Propietario" {...register('ownerName')} />
+          <Input label="Título Línea 1 (Script)" {...register('heroTitle1Text')} />
+          <Input label="Título Línea 2 (Heading)" {...register('heroTitle2Text')} />
+          <Input label="Nombre Propietario" {...register('ownerNameText')} />
 
           <div className="pt-4">
             <label className="mb-2 block text-sm font-medium">Ilustración Media</label>

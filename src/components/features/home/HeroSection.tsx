@@ -11,11 +11,11 @@ interface HeroSectionProps {
 
 export default function HeroSection({ settings }: HeroSectionProps) {
   // Safe defaults to prevent "White Screen" if DB is empty
-  const title1 = settings?.heroTitle1 || 'Make-up'
-  const title2 = settings?.heroTitle2 || 'Portfolio'
+  const title1 = settings?.heroTitle1Text || 'Make-up'
+  const title2 = settings?.heroTitle2Text || 'Portfolio'
   const mainImage = settings?.heroMainImageUrl
   const illustration = settings?.illustrationUrl
-  const ownerName = settings?.ownerName || 'Paola Bolívar Nievas'
+  const ownerName = settings?.ownerNameText || 'Paola Bolívar Nievas'
   const ctaText = settings?.ctaText || 'Ver Portfolio'
   const ctaLink = settings?.ctaLink || ROUTES.public.projects
   const illustrationAlt = settings?.illustrationAlt || 'Ilustración'

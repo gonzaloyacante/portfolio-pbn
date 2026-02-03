@@ -84,19 +84,87 @@ export type ThemeEditorData = z.infer<typeof themeEditorSchema>
 
 // Home Settings
 export const homeSettingsSchema = z.object({
-  heroTitle1: z.string().optional(),
-  heroTitle2: z.string().optional(),
-  illustrationUrl: z.string().optional(),
-  illustrationAlt: z.string().optional(),
-  ownerName: z.string().optional(),
+  // Título 1
+  heroTitle1Text: z.string().optional(),
+  heroTitle1Font: z.string().optional().nullable(),
+  heroTitle1FontUrl: z.string().optional().nullable(),
+  heroTitle1FontSize: z.number().min(10).max(300).optional(),
+  heroTitle1Color: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  heroTitle1ColorDark: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+
+  // Título 2
+  heroTitle2Text: z.string().optional(),
+  heroTitle2Font: z.string().optional().nullable(),
+  heroTitle2FontUrl: z.string().optional().nullable(),
+  heroTitle2FontSize: z.number().min(10).max(300).optional(),
+  heroTitle2Color: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  heroTitle2ColorDark: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+
+  // Nombre propietario
+  ownerNameText: z.string().optional(),
+  ownerNameFont: z.string().optional().nullable(),
+  ownerNameFontUrl: z.string().optional().nullable(),
+  ownerNameFontSize: z.number().min(10).max(100).optional(),
+  ownerNameColor: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  ownerNameColorDark: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+
+  // Imágenes
   heroMainImageUrl: z.string().optional(),
   heroMainImageAlt: z.string().optional(),
   heroMainImageCaption: z.string().optional(),
   heroImageStyle: z.string().optional(),
+  illustrationUrl: z.string().optional(),
+  illustrationAlt: z.string().optional(),
+
+  // Botón CTA
   ctaText: z.string().optional(),
   ctaLink: z.string().optional(),
+  ctaFont: z.string().optional().nullable(),
+  ctaFontUrl: z.string().optional().nullable(),
+  ctaFontSize: z.number().min(10).max(32).optional(),
+  ctaVariant: z.string().optional(),
+  ctaSize: z.string().optional(),
+
+  // Sección destacados
   showFeaturedProjects: z.boolean(),
   featuredTitle: z.string().optional(),
+  featuredTitleFont: z.string().optional().nullable(),
+  featuredTitleFontUrl: z.string().optional().nullable(),
+  featuredTitleFontSize: z.number().min(10).max(100).optional(),
+  featuredTitleColor: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  featuredTitleColorDark: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
   featuredCount: z.number().min(1).max(20),
 })
 
