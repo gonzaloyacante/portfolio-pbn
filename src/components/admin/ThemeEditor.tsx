@@ -114,22 +114,34 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
     if (typeof window === 'undefined') return
 
     const root = document.documentElement
+    // We cannot easily know 'resolvedTheme' inside this effect without reading from hook or DOM
+    // But since this is a preview, we can apply variables based on specific class .dark if present
+    // OR, better yet, we just apply them all but we need to respect how usage works.
 
-    // Apply light theme colors
-    root.style.setProperty('--primary', watchedColors[0] || '#6c0a0a')
-    root.style.setProperty('--secondary', watchedColors[1] || '#ffaadd')
-    root.style.setProperty('--accent', watchedColors[2] || '#fff1f9')
-    root.style.setProperty('--background', watchedColors[3] || '#fff1f9')
-    root.style.setProperty('--foreground', watchedColors[4] || '#000000')
-    root.style.setProperty('--card', watchedColors[5] || '#ffaadd')
+    // Actually, ThemeEditor preview needs to start assuming we are editing what we see.
+    // If the user is in Dark Mode, they see Dark Colors changes.
+    // The Preview Section has hardcoded styles so that's fine.
 
-    // Apply dark theme colors
-    root.style.setProperty('--dark-primary', watchedColors[6] || '#ffaadd')
-    root.style.setProperty('--dark-secondary', watchedColors[7] || '#6c0a0a')
-    root.style.setProperty('--dark-accent', watchedColors[8] || '#000000')
-    root.style.setProperty('--dark-background', watchedColors[9] || '#6c0a0a')
-    root.style.setProperty('--dark-foreground', watchedColors[10] || '#fff1f9')
-    root.style.setProperty('--dark-card', watchedColors[11] || '#ffaadd')
+    // BUT the global page Preview (what surrounds the form) reflects the current theme.
+    // So we should try to detect current theme or just update the variable that matches the current class.
+
+    const isDark = root.classList.contains('dark')
+
+    if (isDark) {
+      root.style.setProperty('--primary', watchedColors[6] || '#fb7185') // darkPrimary
+      root.style.setProperty('--secondary', watchedColors[7] || '#881337')
+      root.style.setProperty('--accent', watchedColors[8] || '#2a1015')
+      root.style.setProperty('--background', watchedColors[9] || '#0f0505')
+      root.style.setProperty('--foreground', watchedColors[10] || '#fafafa')
+      root.style.setProperty('--card', watchedColors[11] || '#1c0a0f')
+    } else {
+      root.style.setProperty('--primary', watchedColors[0] || '#6c0a0a')
+      root.style.setProperty('--secondary', watchedColors[1] || '#ffaadd')
+      root.style.setProperty('--accent', watchedColors[2] || '#fff1f9')
+      root.style.setProperty('--background', watchedColors[3] || '#fff1f9')
+      root.style.setProperty('--foreground', watchedColors[4] || '#000000')
+      root.style.setProperty('--card', watchedColors[5] || '#ffaadd')
+    }
   }, [watchedColors])
 
   const onSubmit = async (data: ThemeEditorData) => {

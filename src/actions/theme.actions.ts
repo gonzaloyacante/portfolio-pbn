@@ -172,6 +172,20 @@ export async function resetThemeToDefaults() {
     await prisma.themeSettings.create({
       data: {
         isActive: true,
+        // Light Defaults
+        primaryColor: '#6c0a0a',
+        secondaryColor: '#fce7f3',
+        accentColor: '#fff1f9',
+        backgroundColor: '#fff8fc',
+        textColor: '#1a050a',
+        cardBgColor: '#ffffff',
+        // Dark Defaults (Fixed)
+        darkPrimaryColor: '#fb7185',
+        darkSecondaryColor: '#881337',
+        darkAccentColor: '#2a1015',
+        darkBackgroundColor: '#0f0505',
+        darkTextColor: '#fafafa',
+        darkCardBgColor: '#1c0a0f',
       },
     })
 
