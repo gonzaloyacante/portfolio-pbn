@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { uploadImage, deleteImage } from '@/lib/cloudinary'
-import { auth } from '@/lib/auth'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
 /**
  * POST /api/upload - Subir imagen a Cloudinary
@@ -8,9 +9,10 @@ import { auth } from '@/lib/auth'
 export async function POST(req: NextRequest) {
   try {
     // Verificar autenticación
-    const session = await auth()
+    const session = await getServerSession(authOptions)
     if (!session) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+      console.error('API Upload - 401 Unauthorized - No session found')
+      return NextResponse.json({ error: 'No autorizado - Sesión no encontrada' }, { status: 401 })
     }
 
     const formData = await req.formData()
@@ -54,8 +56,9 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     // Verificar autenticación
-    const session = await auth()
+    const session = await getServerSession(authOptions)
     if (!session) {
+      console.error('API Delete - 401 Unauthorized - No session found')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
