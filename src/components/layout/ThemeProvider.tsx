@@ -21,12 +21,33 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
       root.style.setProperty(key, value)
     }
 
-    // Colors are now handled by CSS variables in globals.css to ensure consistency
-    // Mapping DB values to legacy variables is disabled to prevent style conflicts
-    /*
-    if (themeValues['primary-color']) setVar('--primary-light', themeValues['primary-color'])
-    ...
-    */
+    // Light theme colors
+    if (themeValues['primary-color']) setVar('--primary', themeValues['primary-color'])
+    if (themeValues['secondary-color']) setVar('--secondary', themeValues['secondary-color'])
+    if (themeValues['accent-color']) setVar('--accent', themeValues['accent-color'])
+    if (themeValues['background-color']) setVar('--background', themeValues['background-color'])
+    if (themeValues['text-color']) setVar('--foreground', themeValues['text-color'])
+    if (themeValues['card-bg-color']) setVar('--card', themeValues['card-bg-color'])
+
+    // Dark theme colors
+    if (themeValues['dark-primary-color']) {
+      setVar('--dark-primary', themeValues['dark-primary-color'])
+    }
+    if (themeValues['dark-secondary-color']) {
+      setVar('--dark-secondary', themeValues['dark-secondary-color'])
+    }
+    if (themeValues['dark-accent-color']) {
+      setVar('--dark-accent', themeValues['dark-accent-color'])
+    }
+    if (themeValues['dark-background-color']) {
+      setVar('--dark-background', themeValues['dark-background-color'])
+    }
+    if (themeValues['dark-text-color']) {
+      setVar('--dark-foreground', themeValues['dark-text-color'])
+    }
+    if (themeValues['dark-card-bg-color']) {
+      setVar('--dark-card', themeValues['dark-card-bg-color'])
+    }
 
     // Fonts & Layout (Universal)
     if (themeValues['heading-font']) setVar('--font-heading', themeValues['heading-font'])

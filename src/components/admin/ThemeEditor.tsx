@@ -5,7 +5,7 @@ import {
   updateThemeSettings,
   resetThemeToDefaults,
 } from '@/actions/theme.actions'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
 import { useForm, UseFormRegister, FieldError, FieldErrors } from 'react-hook-form'
@@ -94,8 +94,43 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
     },
   })
 
-  // Watch for live feedback if implemented later
-  watch()
+  // Live preview: Apply colors in real-time
+  const watchedColors = watch([
+    'primaryColor',
+    'secondaryColor',
+    'accentColor',
+    'backgroundColor',
+    'textColor',
+    'cardBgColor',
+    'darkPrimaryColor',
+    'darkSecondaryColor',
+    'darkAccentColor',
+    'darkBackgroundColor',
+    'darkTextColor',
+    'darkCardBgColor',
+  ])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    const root = document.documentElement
+
+    // Apply light theme colors
+    root.style.setProperty('--primary', watchedColors[0] || '#6c0a0a')
+    root.style.setProperty('--secondary', watchedColors[1] || '#ffaadd')
+    root.style.setProperty('--accent', watchedColors[2] || '#fff1f9')
+    root.style.setProperty('--background', watchedColors[3] || '#fff1f9')
+    root.style.setProperty('--foreground', watchedColors[4] || '#000000')
+    root.style.setProperty('--card', watchedColors[5] || '#ffaadd')
+
+    // Apply dark theme colors
+    root.style.setProperty('--dark-primary', watchedColors[6] || '#ffaadd')
+    root.style.setProperty('--dark-secondary', watchedColors[7] || '#6c0a0a')
+    root.style.setProperty('--dark-accent', watchedColors[8] || '#000000')
+    root.style.setProperty('--dark-background', watchedColors[9] || '#6c0a0a')
+    root.style.setProperty('--dark-foreground', watchedColors[10] || '#fff1f9')
+    root.style.setProperty('--dark-card', watchedColors[11] || '#ffaadd')
+  }, [watchedColors])
 
   const onSubmit = async (data: ThemeEditorData) => {
     try {
@@ -158,6 +193,22 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
         </div>
       </div>
 
+      {/* Live Preview Info */}
+      <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">👁️</span>
+          <div>
+            <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+              Vista Previa en Tiempo Real
+            </p>
+            <p className="mt-1 text-xs text-blue-700 dark:text-blue-300">
+              Los cambios se aplican instantáneamente mientras editas. Recuerda hacer click en
+              &quot;Guardar Cambios&quot; para persistir los colores en toda la aplicación.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <Tabs defaultValue="typography" className="w-full">
         <TabsList className="mb-6 grid w-full grid-cols-3 lg:w-[400px]">
           <TabsTrigger value="light">☀️ Claro</TabsTrigger>
@@ -167,6 +218,26 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
 
         {/* LIGHT MODE TAB */}
         <TabsContent value="light" className="space-y-6">
+          {/* Preview Section */}
+          <div className="bg-muted/50 border-border mb-8 rounded-lg border p-6">
+            <h3 className="mb-4 text-sm font-semibold">Vista Previa</h3>
+            <div className="flex flex-wrap gap-4">
+              <div className="bg-primary text-primary-foreground rounded-lg px-4 py-2 shadow-sm">
+                Botón Primario
+              </div>
+              <div className="bg-secondary text-secondary-foreground rounded-lg px-4 py-2 shadow-sm">
+                Secundario
+              </div>
+              <div className="bg-accent text-accent-foreground rounded-lg px-4 py-2 shadow-sm">
+                Acento
+              </div>
+              <div className="bg-card text-card-foreground border-border rounded-lg border px-4 py-2 shadow-sm">
+                Tarjeta
+              </div>
+            </div>
+          </div>
+
+          {/* Color Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {lightColorFields.map((field) => (
               <ColorInput
@@ -183,6 +254,35 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
 
         {/* DARK MODE TAB */}
         <TabsContent value="dark" className="space-y-6">
+          {/* Preview Section */}
+          <div className="bg-muted/50 border-border mb-8 rounded-lg border p-6">
+            <h3 className="mb-4 text-sm font-semibold">Vista Previa (Modo Oscuro)</h3>
+            <p className="text-muted-foreground mb-4 text-xs">
+              Activa el modo oscuro en tu tema para ver estos colores en acción
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <div
+                className="rounded-lg px-4 py-2 shadow-sm"
+                style={{ backgroundColor: watchedColors[6], color: watchedColors[10] }}
+              >
+                Primario Oscuro
+              </div>
+              <div
+                className="rounded-lg px-4 py-2 shadow-sm"
+                style={{ backgroundColor: watchedColors[7], color: watchedColors[10] }}
+              >
+                Secundario
+              </div>
+              <div
+                className="rounded-lg px-4 py-2 shadow-sm"
+                style={{ backgroundColor: watchedColors[8], color: watchedColors[10] }}
+              >
+                Acento
+              </div>
+            </div>
+          </div>
+
+          {/* Color Grid */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {darkColorFields.map((field) => (
               <ColorInput
@@ -285,19 +385,60 @@ interface ColorInputProps {
 }
 
 function ColorInput({ label, description, name, register, error }: ColorInputProps) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = (e: React.MouseEvent, value: string) => {
+    e.preventDefault()
+    navigator.clipboard.writeText(value)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
-    <div className="border-border bg-card rounded-lg border p-4 shadow-sm">
-      <div className="mb-2 flex items-center justify-between">
-        <label className="text-foreground text-sm font-medium">{label}</label>
+    <div className="border-border bg-card group relative rounded-lg border p-4 shadow-sm transition-shadow hover:shadow-md">
+      <div className="mb-3 flex items-start justify-between">
+        <div className="flex-1">
+          <label className="text-foreground mb-1 block text-sm font-medium">{label}</label>
+          <p className="text-muted-foreground text-xs">{description}</p>
+        </div>
         <input
           type="color"
           {...register(name)}
-          className="h-8 w-8 cursor-pointer rounded border-none bg-transparent p-0"
+          className="border-border h-12 w-12 cursor-pointer rounded-lg border-2 bg-transparent transition-transform hover:scale-110"
         />
       </div>
-      <Input {...register(name)} className="font-mono text-sm" />
-      {error && <p className="text-destructive mt-1 text-xs">{error.message}</p>}
-      <p className="text-muted-foreground mt-2 text-xs">{description}</p>
+
+      <div className="relative">
+        <Input {...register(name)} className="pr-20 font-mono text-sm" />
+        <button
+          type="button"
+          onClick={(e) =>
+            handleCopy(
+              e,
+              (document.querySelector(`input[name="${name}"]`) as HTMLInputElement)?.value || ''
+            )
+          }
+          className="bg-muted hover:bg-muted-foreground/10 absolute top-1/2 right-2 -translate-y-1/2 rounded px-2 py-1 text-xs transition-colors"
+        >
+          {copied ? '✓ Copiado' : 'Copiar'}
+        </button>
+      </div>
+
+      {error && <p className="text-destructive mt-2 text-xs">{error.message}</p>}
+
+      {/* Live preview swatch */}
+      <div className="mt-3 flex items-center gap-2">
+        <div
+          className="border-border h-8 w-16 rounded border-2"
+          style={{
+            backgroundColor: `var(--${name
+              .replace('Color', '')
+              .replace(/([A-Z])/g, '-$1')
+              .toLowerCase()})`,
+          }}
+        />
+        <span className="text-muted-foreground text-xs">Vista previa</span>
+      </div>
     </div>
   )
 }

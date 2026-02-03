@@ -139,7 +139,12 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
       })
     }
 
-    revalidatePath(ROUTES.home, 'layout')
+    // Revalidate all critical paths to apply theme changes
+    revalidatePath('/', 'layout') // All layouts including admin
+    revalidatePath('/projects') // Projects page
+    revalidatePath('/about') // About page
+    revalidatePath('/contact') // Contact page
+    revalidatePath('/admin') // Admin dashboard
 
     return {
       success: true,
