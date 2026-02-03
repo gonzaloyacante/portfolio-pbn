@@ -21,6 +21,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useConfirmDialog } from '@/components/ui/ConfirmDialog'
 
 interface ProjectImage {
   id: string
@@ -72,6 +73,8 @@ export default function SortableImageGrid({
     }
   }
 
+  const { confirm, Dialog } = useConfirmDialog()
+
   return (
     <div className="space-y-4">
       <h3 className="text-foreground text-lg font-medium">Imágenes del Proyecto</h3>
@@ -84,8 +87,15 @@ export default function SortableImageGrid({
                 key={img.id}
                 image={img}
                 isThumbnail={img.url === currentThumbnail}
-                onDelete={() => {
-                  if (confirm('¿Eliminar esta imagen?')) {
+                onDelete={async () => {
+                  const isConfirmed = await confirm({
+                    title: '¿Eliminar imagen?',
+                    message: 'Esta acción no se puede deshacer.',
+                    confirmText: 'Eliminar',
+                    variant: 'danger',
+                  })
+
+                  if (isConfirmed) {
                     setLocalImages((prev) => prev.filter((i) => i.id !== img.id))
                     onDelete(img.id)
                   }
@@ -102,6 +112,7 @@ export default function SortableImageGrid({
           <p className="text-muted-foreground text-sm">No hay imágenes aún</p>
         </div>
       )}
+      <Dialog />
     </div>
   )
 }

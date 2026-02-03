@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { markContactAsRead, markContactAsReplied, deleteContact } from '@/actions/contact.actions'
+import { useConfirmDialog } from '@/components/ui'
 
 interface Contact {
   id: string
@@ -54,8 +55,19 @@ export default function ContactList({ contacts }: ContactListProps) {
     setIsLoading(false)
   }
 
+  // Confirmation Dialog
+  const { confirm, Dialog } = useConfirmDialog()
+
   const handleDelete = async (id: string) => {
-    if (confirm('¿Estás seguro de que quieres eliminar este mensaje?')) {
+    const isConfirmed = await confirm({
+      title: '¿Eliminar mensaje?',
+      message:
+        '¿Estás seguro de que quieres eliminar este mensaje? Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    })
+
+    if (isConfirmed) {
       setIsLoading(true)
       await deleteContact(id)
       setSelectedContact(null)
@@ -260,6 +272,7 @@ export default function ContactList({ contacts }: ContactListProps) {
           </div>
         )}
       </div>
+      <Dialog />
     </div>
   )
 }

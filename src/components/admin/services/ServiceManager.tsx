@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Service } from '@prisma/client'
-import { Button, Card, Badge, Modal } from '@/components/ui'
+import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/services.actions'
 import ServiceForm from './ServiceForm'
 import { Edit, Trash2, Plus } from 'lucide-react'
@@ -17,6 +17,9 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingService, setEditingService] = useState<Service | null>(null)
 
+  // Confirmation Dialog
+  const { confirm, Dialog } = useConfirmDialog()
+
   const handleCreate = () => {
     setEditingService(null)
     setIsModalOpen(true)
@@ -30,6 +33,20 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
   const handleClose = () => {
     setIsModalOpen(false)
     setEditingService(null)
+  }
+
+  const handleDeleteService = async (id: string) => {
+    const isConfirmed = await confirm({
+      title: '¿Eliminar servicio?',
+      message: 'Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    })
+
+    if (isConfirmed) {
+      await deleteService(id)
+      toast.success('Servicio eliminado')
+    }
   }
 
   // Optimistic UI updates could be handled here, but for now we rely on Server Actions + revalidatePath
@@ -106,18 +123,14 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
                     </Button>
                   </form>
 
-                  <form
-                    action={async () => {
-                      if (confirm('¿Estás seguro de eliminar este servicio?')) {
-                        await deleteService(s.id)
-                        toast.success('Servicio eliminado')
-                      }
-                    }}
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="px-3"
+                    onClick={() => handleDeleteService(s.id)}
                   >
-                    <Button type="submit" variant="destructive" size="sm" className="px-3">
-                      <Trash2 size={14} />
-                    </Button>
-                  </form>
+                    <Trash2 size={14} />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -133,6 +146,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
       >
         <ServiceForm service={editingService} onSuccess={handleClose} onCancel={handleClose} />
       </Modal>
+      <Dialog />
     </div>
   )
 }

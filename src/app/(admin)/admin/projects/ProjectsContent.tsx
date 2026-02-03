@@ -8,7 +8,7 @@ import { Category, Project, ProjectImage } from '@prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pencil, Trash2, Eye } from 'lucide-react'
 
-import { Button, Card, Badge, useToast } from '@/components/ui'
+import { Button, Card, Badge, useToast, useConfirmDialog } from '@/components/ui'
 import { deleteProjectAction, reorderProjects } from '@/actions/project.actions'
 import FilterBar from '@/components/admin/shared/FilterBar'
 import SortableGrid from '@/components/admin/shared/SortableGrid'
@@ -64,9 +64,19 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
     errorMessage: TOAST_MESSAGES.projects.reorder.error,
   })
 
+  // Confirmation Dialog
+  const { confirm, Dialog } = useConfirmDialog()
+
   // Delete handler
   const handleDelete = async (projectId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este proyecto?')) return
+    const isConfirmed = await confirm({
+      title: '¿Eliminar proyecto?',
+      message: 'Esta acción no se puede deshacer. Se eliminarán todas las imágenes asociadas.',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    })
+
+    if (!isConfirmed) return
 
     try {
       await deleteProjectAction(projectId)
@@ -267,6 +277,7 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
           )}
         </motion.div>
       </AnimatePresence>
+      <Dialog />
     </div>
   )
 }

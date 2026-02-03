@@ -9,7 +9,16 @@ import {
 } from '@/actions/theme.actions'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, useToast, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
+import {
+  Button,
+  Input,
+  useToast,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  useConfirmDialog,
+} from '@/components/ui'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
@@ -208,6 +217,9 @@ function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean
     sortOrder: link?.sortOrder || 0,
   })
 
+  // Confirmation Dialog
+  const { confirm, Dialog } = useConfirmDialog()
+
   // Simple save handler per row
   const handleSave = async () => {
     if (!data.platform || !data.url)
@@ -231,60 +243,73 @@ function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean
   }
 
   const handleDelete = async () => {
-    if (!link?.id || !confirm('¿Borrar?')) return
-    setLoading(true)
-    await deleteSocialLink(link.id)
-    router.refresh()
-    setLoading(false)
+    if (!link?.id) return
+
+    const isConfirmed = await confirm({
+      title: '¿Eliminar red social?',
+      message: 'Esta acción no se puede deshacer.',
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    })
+
+    if (isConfirmed) {
+      setLoading(true)
+      await deleteSocialLink(link.id)
+      router.refresh()
+      setLoading(false)
+    }
   }
 
   return (
-    <div
-      className={`grid grid-cols-12 items-center gap-2 rounded border p-3 ${isNew ? 'border-dashed border-gray-300 bg-gray-50' : 'border-gray-100'}`}
-    >
-      <div className="col-span-2">
-        {isNew ? (
+    <>
+      <div
+        className={`grid grid-cols-12 items-center gap-2 rounded border p-3 ${isNew ? 'border-dashed border-gray-300 bg-gray-50' : 'border-gray-100'}`}
+      >
+        <div className="col-span-2">
+          {isNew ? (
+            <Input
+              placeholder="Plataforma (ej: instagram)"
+              value={data.platform}
+              onChange={(e) => setData({ ...data, platform: e.target.value.toLowerCase() })}
+              className="h-9 text-xs"
+            />
+          ) : (
+            <span className="ml-2 text-sm font-medium capitalize">{data.platform}</span>
+          )}
+        </div>
+        <div className="col-span-4">
           <Input
-            placeholder="Plataforma (ej: instagram)"
-            value={data.platform}
-            onChange={(e) => setData({ ...data, platform: e.target.value.toLowerCase() })}
+            placeholder="URL Completa"
+            value={data.url}
+            onChange={(e) => setData({ ...data, url: e.target.value })}
             className="h-9 text-xs"
           />
-        ) : (
-          <span className="ml-2 text-sm font-medium capitalize">{data.platform}</span>
-        )}
-      </div>
-      <div className="col-span-4">
-        <Input
-          placeholder="URL Completa"
-          value={data.url}
-          onChange={(e) => setData({ ...data, url: e.target.value })}
-          className="h-9 text-xs"
-        />
-      </div>
-      <div className="col-span-3">
-        <Input
-          placeholder="@usuario"
-          value={data.username || ''}
-          onChange={(e) => setData({ ...data, username: e.target.value })}
-          className="h-9 text-xs"
-        />
-      </div>
-      <div className="col-span-3 flex justify-end gap-2">
-        <Button
-          size="sm"
-          variant={isNew ? 'primary' : 'ghost'}
-          onClick={handleSave}
-          disabled={loading}
-        >
-          {isNew ? <Plus size={16} /> : <Save size={16} className="text-blue-600" />}
-        </Button>
-        {!isNew && (
-          <Button size="sm" variant="ghost" onClick={handleDelete} disabled={loading}>
-            <Trash2 size={16} className="text-red-500" />
+        </div>
+        <div className="col-span-3">
+          <Input
+            placeholder="@usuario"
+            value={data.username || ''}
+            onChange={(e) => setData({ ...data, username: e.target.value })}
+            className="h-9 text-xs"
+          />
+        </div>
+        <div className="col-span-3 flex justify-end gap-2">
+          <Button
+            size="sm"
+            variant={isNew ? 'primary' : 'ghost'}
+            onClick={handleSave}
+            disabled={loading}
+          >
+            {isNew ? <Plus size={16} /> : <Save size={16} className="text-blue-600" />}
           </Button>
-        )}
+          {!isNew && (
+            <Button size="sm" variant="ghost" onClick={handleDelete} disabled={loading}>
+              <Trash2 size={16} className="text-red-500" />
+            </Button>
+          )}
+        </div>
       </div>
-    </div>
+      <Dialog />
+    </>
   )
 }

@@ -11,7 +11,7 @@ import { Button, Input } from '@/components/ui'
 import { useForm, UseFormRegister, FieldError, FieldErrors } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
-import { useToast } from '@/components/ui'
+import { useToast, useConfirmDialog } from '@/components/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 
 interface ThemeEditorProps {
@@ -160,8 +160,19 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
     }
   }
 
+  // Confirmation Dialog
+  const { confirm, Dialog } = useConfirmDialog()
+
   const handleReset = async () => {
-    if (!confirm('¿Resetear a los colores por defecto?')) return
+    const isConfirmed = await confirm({
+      title: '¿Resetear tema?',
+      message:
+        'Se perderán todos los colores y fuentes personalizados. Volverán los valores por defecto.',
+      confirmText: 'Sí, resetear',
+      variant: 'danger',
+    })
+
+    if (!isConfirmed) return
 
     setIsResetting(true)
     try {
@@ -384,6 +395,7 @@ export function ThemeEditor({ initialSettings }: ThemeEditorProps) {
           </div>
         </TabsContent>
       </Tabs>
+      <Dialog />
     </form>
   )
 }

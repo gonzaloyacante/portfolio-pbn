@@ -17,15 +17,18 @@ export default function ViewToggle({
   onViewChange,
   storageKey = 'admin-view-mode',
 }: ViewToggleProps) {
-  // Initialize from localStorage or defaultView
-  const [view, setView] = useState<ViewMode>(() => {
+  // Initialize with defaultView to match server render
+  const [view, setView] = useState<ViewMode>(defaultView)
+
+  // Sync with localStorage on client mount only
+  useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(storageKey) as ViewMode | null
       if (saved && (saved === 'grid' || saved === 'list')) {
-        return saved
+        setView(saved)
+        onViewChange?.(saved)
       }
     }
-    return defaultView
   })
 
   const handleToggle = (newView: ViewMode) => {

@@ -28,6 +28,7 @@ export { default as LoadingState } from './feedback/LoadingState'
 export { Skeleton } from './feedback/Skeleton'
 export { SkeletonCard, SkeletonGrid, SkeletonTestimonial } from './feedback/SkeletonCard'
 export { ErrorBoundary } from './feedback/ErrorBoundary'
+export { ConfirmDialog, useConfirmDialog } from './ConfirmDialog'
 
 // Animations
 export {
