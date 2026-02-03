@@ -30,6 +30,7 @@ interface SortableGridProps<T> {
   columns?: number
   gap?: string
   strategy?: 'grid' | 'vertical'
+  disabled?: boolean
 }
 
 export default function SortableGrid<T>({
@@ -40,6 +41,7 @@ export default function SortableGrid<T>({
   columns = 3,
   gap = 'gap-6',
   strategy = 'grid',
+  disabled = false,
 }: SortableGridProps<T>) {
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -70,7 +72,11 @@ export default function SortableGrid<T>({
       : `flex flex-col ${gap}`
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={disabled ? [] : sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
       <SortableContext
         items={items.map(getItemId)}
         strategy={strategy === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}

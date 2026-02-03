@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -8,12 +8,15 @@ import { Category, Project, ProjectImage } from '@prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pencil, Trash2, Eye } from 'lucide-react'
 
-import { Button, Card, Badge } from '@/components/ui'
-import { reorderProjects, deleteProjectAction } from '@/actions/project.actions'
+import { Button, Card, Badge, useToast } from '@/components/ui'
+import { deleteProjectAction, reorderProjects } from '@/actions/project.actions'
 import FilterBar from '@/components/admin/shared/FilterBar'
 import SortableGrid from '@/components/admin/shared/SortableGrid'
 import ViewToggle from '@/components/admin/shared/ViewToggle'
-import { useToast } from '@/components/ui'
+import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
+import { useFilteredItems } from '@/hooks/useFilteredItems'
+import { TOAST_MESSAGES } from '@/lib/toast-messages'
+import { ADMIN_GRID_COLUMNS } from '@/lib/admin-constants'
 
 type ProjectWithRelations = Project & {
   category: Category
@@ -35,64 +38,42 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
   const [searchTerm, setSearchTerm] = useState('')
   const [showActive, setShowActive] = useState<boolean>()
 
-  // Filter Logic (Memoized)
-  const filteredProjects = useMemo(() => {
-    let result = [...projects] // Clone to sort safely
+  // Filter and sort using custom hook
+  const filteredProjects = useFilteredItems({
+    items: projects,
+    filters: {
+      category: selectedCategory ? (p) => p.categoryId === selectedCategory : undefined,
+      search: searchTerm
+        ? (p) => p.title.toLowerCase().includes(searchTerm.toLowerCase())
+        : undefined,
+      active: showActive !== undefined ? (p) => p.isActive === showActive : undefined,
+    },
+    sortBy: (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+  })
 
-    if (selectedCategory) {
-      result = result.filter((p) => p.categoryId === selectedCategory)
-    }
+  // Optimistic reordering using custom hook
+  const {
+    items: optimisticProjects,
+    handleReorder,
+    isReordering,
+  } = useOptimisticReorder<ProjectWithRelations>({
+    initialItems: filteredProjects,
+    reorderAction: reorderProjects,
+    getId: (p) => p.id,
+    successMessage: TOAST_MESSAGES.projects.reorder.success,
+    errorMessage: TOAST_MESSAGES.projects.reorder.error,
+  })
 
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase()
-      result = result.filter((p) => p.title.toLowerCase().includes(term))
-    }
-
-    if (showActive !== undefined) {
-      result = result.filter((p) => p.isActive === showActive)
-    }
-
-    // Always sort by sortOrder locally to reflect current state
-    result.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-
-    return result
-  }, [projects, selectedCategory, searchTerm, showActive])
-
-  // Local state for optimistic reordering
-  const [optimisticProjects, setOptimisticProjects] = useState<ProjectWithRelations[]>([])
-
-  // Sync optimistic state with filtered results when filters change
-  useEffect(() => {
-    setOptimisticProjects(filteredProjects)
-  }, [filteredProjects])
-
-  // Handlers
-  const handleReorder = async (reorderedItems: ProjectWithRelations[]) => {
-    // Optimistic update
-    setOptimisticProjects(reorderedItems)
-
-    try {
-      await reorderProjects(reorderedItems.map((p) => p.id))
-      show({ type: 'success', message: 'Orden actualizado' })
-    } catch {
-      show({ type: 'error', message: 'Error al reordenar' })
-      // Revert on error
-      setOptimisticProjects(filteredProjects)
-      router.refresh()
-    }
-  }
-
+  // Delete handler
   const handleDelete = async (projectId: string) => {
     if (!confirm('¿Estás seguro de que quieres eliminar este proyecto?')) return
 
     try {
       await deleteProjectAction(projectId)
-      show({ type: 'success', message: 'Proyecto eliminado' })
-      // Optimistic remove
-      setOptimisticProjects((prev) => prev.filter((p) => p.id !== projectId))
+      show({ type: 'success', message: TOAST_MESSAGES.projects.delete.success })
       router.refresh()
     } catch {
-      show({ type: 'error', message: 'Error al eliminar' })
+      show({ type: 'error', message: TOAST_MESSAGES.projects.delete.error })
     }
   }
 
@@ -273,9 +254,9 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
               getItemId={(p) => p.id}
               onReorder={handleReorder}
               renderItem={renderProjectItem}
-              strategy={view === 'grid' ? 'grid' : 'vertical'}
-              columns={3}
+              columns={ADMIN_GRID_COLUMNS}
               gap="gap-6"
+              disabled={isReordering}
             />
           ) : (
             <Card className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">

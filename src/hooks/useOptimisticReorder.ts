@@ -1,0 +1,73 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/components/ui'
+
+interface UseOptimisticReorderOptions<T> {
+  initialItems: T[]
+  reorderAction: (ids: string[]) => Promise<void>
+  getId: (item: T) => string
+  successMessage: string
+  errorMessage: string
+}
+
+interface UseOptimisticReorderReturn<T> {
+  items: T[]
+  handleReorder: (reorderedItems: T[]) => Promise<void>
+  isReordering: boolean
+}
+
+/**
+ * Custom hook for optimistic reordering with error recovery
+ *
+ * @example
+ * ```tsx
+ * const { items, handleReorder, isReordering } = useOptimisticReorder({
+ *   initialItems: projects,
+ *   reorderAction: reorderProjects,
+ *   getId: (p) => p.id,
+ *   successMessage: 'Orden actualizado',
+ *   errorMessage: 'Error al reordenar'
+ * })
+ * ```
+ */
+export function useOptimisticReorder<T>({
+  initialItems,
+  reorderAction,
+  getId,
+  successMessage,
+  errorMessage,
+}: UseOptimisticReorderOptions<T>): UseOptimisticReorderReturn<T> {
+  const [items, setItems] = useState<T[]>(initialItems)
+  const [isReordering, setIsReordering] = useState(false)
+  const router = useRouter()
+  const { show } = useToast()
+
+  // Sync with initialItems when they change (e.g., filters applied)
+  useEffect(() => {
+    setItems(initialItems)
+  }, [initialItems])
+
+  const handleReorder = async (reorderedItems: T[]) => {
+    // Optimistic update
+    setItems(reorderedItems)
+    setIsReordering(true)
+
+    try {
+      const ids = reorderedItems.map(getId)
+      await reorderAction(ids)
+      show({ type: 'success', message: successMessage })
+    } catch (err) {
+      console.error('Reorder error:', err)
+      show({ type: 'error', message: errorMessage })
+      // Revert on error
+      setItems(initialItems)
+      router.refresh()
+    } finally {
+      setIsReordering(false)
+    }
+  }
+
+  return { items, handleReorder, isReordering }
+}

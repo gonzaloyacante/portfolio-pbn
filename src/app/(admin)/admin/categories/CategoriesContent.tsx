@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { deleteCategoryAction, reorderCategories } from '@/actions/category.actions'
 import { Button, Card, Badge } from '@/components/ui'
-import { useToast } from '@/components/ui'
 import ViewToggle, { type ViewMode } from '@/components/admin/shared/ViewToggle'
 import SortableGrid from '@/components/admin/shared/SortableGrid'
 import Link from 'next/link'
@@ -11,8 +10,10 @@ import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
 import { Plus, ExternalLink, Pencil, Trash2 } from 'lucide-react'
 import type { Category } from '@prisma/client'
-import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
+import { TOAST_MESSAGES } from '@/lib/toast-messages'
+import { ADMIN_GRID_COLUMNS } from '@/lib/admin-constants'
 
 type CategoryWithCount = Category & {
   _count: { projects: number }
@@ -26,29 +27,21 @@ interface CategoriesContentProps {
 export default function CategoriesContent({
   categories: initialCategories,
 }: CategoriesContentProps) {
-  const router = useRouter()
-  const { show } = useToast()
-
   // State
   const [view, setView] = useState<ViewMode>('grid')
-  const [categories, setCategories] = useState(initialCategories)
 
-  // Handlers
-  const handleReorder = async (reorderedItems: CategoryWithCount[]) => {
-    // Optimistic update
-    setCategories(reorderedItems)
-
-    try {
-      await reorderCategories(reorderedItems.map((c) => c.id))
-      show({ type: 'success', message: 'Orden actualizado' })
-    } catch {
-      show({ type: 'error', message: 'Error al reordenar categorías' })
-      // Revert on error
-      setCategories(initialCategories)
-      router.refresh()
-    }
-  }
-
+  // Optimistic reordering using custom hook
+  const {
+    items: categories,
+    handleReorder,
+    isReordering,
+  } = useOptimisticReorder<CategoryWithCount>({
+    initialItems: initialCategories,
+    reorderAction: reorderCategories,
+    getId: (c) => c.id,
+    successMessage: TOAST_MESSAGES.categories.reorder.success,
+    errorMessage: TOAST_MESSAGES.categories.reorder.error,
+  })
   const renderCategoryItem = (category: CategoryWithCount, isDragging: boolean) => {
     const thumbnailUrl = category.projects[0]?.thumbnailUrl
 
