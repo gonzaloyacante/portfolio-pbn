@@ -11,7 +11,7 @@ interface ButtonVariantPickerProps {
 }
 
 const VARIANTS = [
-  { id: 'default', label: 'Default', bg: 'bg-primary', text: 'text-primary-foreground' },
+  { id: 'primary', label: 'Primary', bg: 'bg-primary', text: 'text-primary-foreground' },
   { id: 'secondary', label: 'Secondary', bg: 'bg-secondary', text: 'text-secondary-foreground' },
   {
     id: 'outline',

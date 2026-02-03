@@ -2,8 +2,10 @@
 
 import { HomeSettingsData } from '@/actions/theme.actions'
 import Link from 'next/link'
-import { FadeIn, SlideIn, OptimizedImage, MagneticButton } from '@/components/ui'
+import { FadeIn, SlideIn, OptimizedImage, MagneticButton, Button } from '@/components/ui'
+import type { ButtonProps } from '@/components/ui/forms/Button'
 import { ROUTES } from '@/config/routes'
+import { FontLoader } from './FontLoader'
 
 interface HeroSectionProps {
   settings: HomeSettingsData | null
@@ -22,6 +24,36 @@ export default function HeroSection({ settings }: HeroSectionProps) {
   const mainImageAlt = settings?.heroMainImageAlt || 'Hero Image'
   const caption = settings?.heroMainImageCaption
   const imageStyle = settings?.heroImageStyle || 'original'
+
+  // Fonts to load
+  const fontsToLoad = [
+    { name: settings?.heroTitle1Font, url: settings?.heroTitle1FontUrl },
+    { name: settings?.heroTitle2Font, url: settings?.heroTitle2FontUrl },
+    { name: settings?.ownerNameFont, url: settings?.ownerNameFontUrl },
+    { name: settings?.ctaFont, url: settings?.ctaFontUrl },
+  ]
+
+  // Dynamic Styles Helpers
+  const getTextStyle = (
+    size?: number | null,
+    font?: string | null,
+    color?: string | null,
+    colorDark?: string | null,
+    defaultSize?: string
+  ) => {
+    return {
+      fontSize: size ? `${size}px` : defaultSize,
+      fontFamily: font ? `"${font}", sans-serif` : undefined,
+      '--text-color': color || undefined,
+      '--text-color-dark': colorDark || color || undefined,
+    } as React.CSSProperties
+  }
+
+  // Classes for text color that use the variables
+  const getDynamicColorClass = (hasCustomColor: boolean) =>
+    hasCustomColor
+      ? 'text-[var(--text-color)] dark:text-[var(--text-color-dark)] transition-colors duration-300'
+      : ''
 
   // Helper to get container classes and image object-fit based on shape
   const getImageStyleClasses = (style: string) => {
@@ -66,6 +98,8 @@ export default function HeroSection({ settings }: HeroSectionProps) {
 
   return (
     <section className="relative flex min-h-[calc(100vh-80px)] w-full items-center justify-center overflow-hidden bg-[var(--background)] px-4 pt-8 transition-colors duration-500 sm:px-8 lg:px-16 lg:pt-0">
+      <FontLoader fonts={fontsToLoad} />
+
       {/* Container Principal con Grid */}
       <div className="mx-auto grid w-full max-w-7xl grid-cols-1 items-stretch gap-8 lg:grid-cols-2 lg:gap-12">
         {/* ===== COLUMNA IZQUIERDA ===== */}
@@ -75,11 +109,16 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <FadeIn delay={0.2}>
               {/* Título Brand (Make-up) - Script Font */}
               <h1
-                className="relative z-20 text-[var(--primary)]"
+                className={`font-script relative z-20 ${getDynamicColorClass(!!settings?.heroTitle1Color)} ${!settings?.heroTitle1Color ? 'text-[var(--primary)]' : ''}`}
                 style={{
-                  fontFamily: 'var(--font-brand, var(--font-script))',
-                  fontSize: 'var(--font-size-brand, 7rem)', // Dynamic size
                   lineHeight: 1,
+                  ...getTextStyle(
+                    settings?.heroTitle1FontSize,
+                    settings?.heroTitle1Font,
+                    settings?.heroTitle1Color,
+                    settings?.heroTitle1ColorDark,
+                    '7rem'
+                  ),
                 }}
               >
                 {title1}
@@ -89,11 +128,16 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             <SlideIn direction="left" delay={0.4}>
               {/* Título Portfolio - superpuesto ~20% sobre Make-up */}
               <h2
-                className="text-shadow relative z-10 -mt-4 font-bold tracking-tighter text-[var(--accent)] sm:-mt-6 lg:-mt-8 xl:-mt-10"
+                className={`text-shadow relative z-10 -mt-4 font-bold tracking-tighter sm:-mt-6 lg:-mt-8 xl:-mt-10 ${getDynamicColorClass(!!settings?.heroTitle2Color)} ${!settings?.heroTitle2Color ? 'text-[var(--accent)]' : ''}`}
                 style={{
-                  fontFamily: 'var(--font-portfolio, var(--font-heading))',
-                  fontSize: 'var(--font-size-portfolio, 6rem)', // Dynamic size
                   lineHeight: 1,
+                  ...getTextStyle(
+                    settings?.heroTitle2FontSize,
+                    settings?.heroTitle2Font,
+                    settings?.heroTitle2Color,
+                    settings?.heroTitle2ColorDark,
+                    '6rem'
+                  ),
                 }}
               >
                 {title2}
@@ -121,11 +165,16 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             {/* Nombre del Owner - superpuesto sobre la ilustración */}
             <FadeIn delay={0.8}>
               <p
-                className="-mt-6 w-full leading-tight tracking-tight text-[var(--primary)] sm:-mt-8 lg:-mt-10"
+                className={`-mt-6 w-full leading-tight tracking-tight sm:-mt-8 lg:-mt-10 ${getDynamicColorClass(!!settings?.ownerNameColor)} ${!settings?.ownerNameColor ? 'text-[var(--primary)]' : ''}`}
                 style={{
-                  fontFamily: 'var(--font-signature, var(--font-script))',
-                  fontSize: 'var(--font-size-signature, 3.75rem)', // Dynamic size
                   whiteSpace: 'nowrap',
+                  ...getTextStyle(
+                    settings?.ownerNameFontSize,
+                    settings?.ownerNameFont,
+                    settings?.ownerNameColor,
+                    settings?.ownerNameColorDark,
+                    '3.75rem'
+                  ),
                 }}
               >
                 {ownerName}
@@ -187,23 +236,21 @@ export default function HeroSection({ settings }: HeroSectionProps) {
             </div>
           )}
 
-          {/* Botón CTA - Estilo simple subrayado (sin fondo pill) */}
+          {/* Botón CTA - Usando componente Button con variantes */}
           <FadeIn delay={0.7}>
             <MagneticButton>
-              <Link
-                href={ctaLink}
-                className="inline-flex items-center gap-2 text-sm font-bold tracking-wider text-[var(--foreground)] uppercase underline decoration-[var(--primary)] underline-offset-4 transition-colors hover:text-[var(--primary)]"
+              <Button
+                asChild
+                size="lg"
+                variant={(settings?.ctaVariant || 'primary') as ButtonProps['variant']}
+                className="h-auto px-8 py-6 text-lg"
+                style={{
+                  fontSize: settings?.ctaFontSize ? `${settings?.ctaFontSize}px` : undefined,
+                  fontFamily: settings?.ctaFont ? `"${settings.ctaFont}", sans-serif` : undefined,
+                }}
               >
-                {ctaText}
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 8l4 4m0 0l-4 4m4-4H3"
-                  />
-                </svg>
-              </Link>
+                <Link href={ctaLink}>{ctaText}</Link>
+              </Button>
             </MagneticButton>
           </FadeIn>
         </div>
