@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
-import { UseFormRegister, FieldErrors } from 'react-hook-form'
-import { Input } from '@/components/ui'
+import { UseFormRegister, UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form'
 import { ThemeEditorData } from '@/lib/validations'
+import { GoogleFontPicker } from '@/components/ui'
 
 interface FontFieldProps {
   label: string
@@ -12,6 +12,8 @@ interface FontFieldProps {
   urlKey: keyof ThemeEditorData
   register: UseFormRegister<ThemeEditorData>
   errors: FieldErrors<ThemeEditorData>
+  setValue: UseFormSetValue<ThemeEditorData>
+  watch: UseFormWatch<ThemeEditorData>
 }
 
 export const FontField: React.FC<FontFieldProps> = ({
@@ -19,32 +21,28 @@ export const FontField: React.FC<FontFieldProps> = ({
   description,
   fontKey,
   urlKey,
-  register,
+  setValue,
+  watch,
   errors,
 }) => {
+  const currentFont = watch(fontKey) as string
+
+  const handleFontChange = (fontName: string, fontUrl: string) => {
+    setValue(fontKey, fontName, { shouldDirty: true })
+    setValue(urlKey, fontUrl, { shouldDirty: true })
+  }
+
   return (
     <div className="bg-card hover:border-primary/50 space-y-3 rounded-lg border p-4 shadow-sm transition-all">
-      <div>
-        <label className="mb-1 block text-sm font-medium">{label}</label>
-        <Input placeholder="Ej: Poppins" {...register(fontKey)} />
-        {errors[fontKey] && (
-          <span className="text-destructive text-xs">{errors[fontKey]?.message}</span>
-        )}
-      </div>
-      <div>
-        <label className="text-muted-foreground mb-1 block text-xs font-medium tracking-wider uppercase">
-          Google Fonts Import URL
-        </label>
-        <Input
-          placeholder="https://fonts.googleapis.com..."
-          {...register(urlKey)}
-          className="text-muted-foreground font-mono text-xs"
-        />
-        {errors[urlKey] && (
-          <span className="text-destructive text-xs">{errors[urlKey]?.message}</span>
-        )}
-      </div>
-      <p className="text-muted-foreground text-xs">{description}</p>
+      <GoogleFontPicker
+        value={currentFont || ''}
+        onValueChange={handleFontChange}
+        label={label}
+        description={description}
+      />
+      {errors[fontKey] && (
+        <span className="text-destructive text-xs">{errors[fontKey]?.message}</span>
+      )}
     </div>
   )
 }

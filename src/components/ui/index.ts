@@ -13,6 +13,7 @@ export { default as DatePicker } from './forms/DatePicker'
 export { FormLabel, FormMessage, FormField } from './forms/Form'
 export { default as SmartField } from './forms/SmartField'
 export { default as ColorPicker, ColorPicker as ColorPickerComponent } from './forms/ColorPicker'
+export { GoogleFontPicker } from './forms/GoogleFontPicker'
 export { default as IconPicker } from './forms/IconPicker'
 export { default as FontPicker } from './forms/FontPicker'
 

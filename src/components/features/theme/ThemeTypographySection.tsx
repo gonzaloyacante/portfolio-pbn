@@ -1,18 +1,22 @@
 'use client'
 
 import React from 'react'
-import { UseFormRegister, FieldErrors } from 'react-hook-form'
+import { UseFormRegister, UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form'
 import { ThemeEditorData } from '@/lib/validations'
 import { FontField } from './FontField'
 
 interface ThemeTypographySectionProps {
   register: UseFormRegister<ThemeEditorData>
   errors: FieldErrors<ThemeEditorData>
+  setValue: UseFormSetValue<ThemeEditorData>
+  watch: UseFormWatch<ThemeEditorData>
 }
 
 export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
   register,
   errors,
+  setValue,
+  watch,
 }) => {
   return (
     <div className="animate-in fade-in-50 space-y-8">
@@ -33,6 +37,8 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
             urlKey="headingFontUrl"
             register={register}
             errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
           <FontField
             label="Cuerpo (Body)"
@@ -41,6 +47,8 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
             urlKey="bodyFontUrl"
             register={register}
             errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
           <FontField
             label="Script / Detalles"
@@ -49,6 +57,8 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
             urlKey="scriptFontUrl"
             register={register}
             errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
         </div>
       </section>
@@ -70,6 +80,8 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
             urlKey="brandFontUrl"
             register={register}
             errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
           <FontField
             label="Subtítulo Portfolio"
@@ -78,6 +90,8 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
             urlKey="portfolioFontUrl"
             register={register}
             errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
           <FontField
             label="Firma Personal"
@@ -86,6 +100,8 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
             urlKey="signatureFontUrl"
             register={register}
             errors={errors}
+            setValue={setValue}
+            watch={watch}
           />
         </div>
       </section>

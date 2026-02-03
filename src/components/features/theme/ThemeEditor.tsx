@@ -203,7 +203,12 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
             </TabsContent>
 
             <TabsContent value="typography">
-              <ThemeTypographySection register={register} errors={errors} />
+              <ThemeTypographySection
+                register={register}
+                errors={errors}
+                setValue={form.setValue}
+                watch={watch}
+              />
             </TabsContent>
 
             <TabsContent value="layout">
