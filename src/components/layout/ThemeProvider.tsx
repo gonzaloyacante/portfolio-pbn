@@ -17,9 +17,15 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
     const root = document.documentElement
     const isDark = resolvedTheme === 'dark'
 
-    // Helper to set variable
+    // Debug: Log theme application
+    console.log('[ThemeProvider] Applying theme:', {
+      mode: isDark ? 'dark' : 'light',
+      themeValues,
+    })
+
+    // Helper to set variable with priority (important)
     const setVar = (key: string, value: string) => {
-      root.style.setProperty(key, value)
+      root.style.setProperty(key, value, 'important')
     }
 
     // Dynamic Color Injection based on Theme Mode
@@ -33,9 +39,6 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
         setVar('--background', themeValues['dark-background-color'])
       if (themeValues['dark-text-color']) setVar('--foreground', themeValues['dark-text-color'])
       if (themeValues['dark-card-bg-color']) setVar('--card', themeValues['dark-card-bg-color'])
-      // Border logic specifically for dark mode if needed, usually same color as border/input
-      // We can map border to a dimmer version of foreground or specific color if we had it
-      // For now, let's ensure border contrast is okay.
     } else {
       // Light Mode Mapping
       if (themeValues['primary-color']) setVar('--primary', themeValues['primary-color'])
