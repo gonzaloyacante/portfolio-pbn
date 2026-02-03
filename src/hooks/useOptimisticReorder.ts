@@ -44,10 +44,17 @@ export function useOptimisticReorder<T>({
   const router = useRouter()
   const { show } = useToast()
 
-  // Sync with initialItems when they change (e.g., filters applied)
+  // Sync with initialItems when they change, but prevent infinite loops
+  // by checking if the IDs actually changed (deep comparison via string)
+  const prevIds = items.map(getId).join(',')
+  const nextIds = initialItems.map(getId).join(',')
+
   useEffect(() => {
-    setItems(initialItems)
-  }, [initialItems])
+    if (prevIds !== nextIds) {
+      setItems(initialItems)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nextIds]) // Only depend on the IDs signature
 
   const handleReorder = async (reorderedItems: T[]) => {
     // Optimistic update
