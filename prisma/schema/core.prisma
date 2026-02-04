@@ -1,0 +1,165 @@
+// ============================================
+// CORE MODELS - Enhanced with Professional Fields
+// ============================================
+
+/// User management with comprehensive audit trail
+model User {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  password         String    // Hashed with bcrypt
+  name             String?
+  role             String    @default("ADMIN") // ADMIN, EDITOR, VIEWER
+  avatarUrl        String?
+  bio              String?   @db.Text
+  // Security
+  emailVerified    DateTime?
+  twoFactorEnabled Boolean   @default(false)
+  lastLoginAt      DateTime?
+  lastLoginIp      String?
+  failedLoginCount Int       @default(0)
+  lockedUntil      DateTime?
+  // Preferences
+  locale           String    @default("es")
+  timezone         String    @default("America/Argentina/Buenos_Aires")
+  notifications    Boolean   @default(true)
+  // Audit
+  isActive         Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime? // Soft delete
+
+  @@index([email])
+  @@index([isActive, deletedAt])
+  @@index([lastLoginAt])
+  @@map("users")
+}
+
+/// Portfolio categories with full SEO support
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?   @db.Text
+  // SEO
+  metaTitle       String?
+  metaDescription String?   @db.Text
+  metaKeywords    String[]  @default([])
+  ogImage         String?
+  // Display
+  thumbnailUrl    String?
+  iconName        String?   // lucide-react icon
+  color           String?   // Brand color for category
+  sortOrder       Int       @default(0)
+  // Stats (denormalized for performance)
+  projectCount    Int       @default(0)
+  viewCount       Int       @default(0)
+  // Audit
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime? // Soft delete
+  // Relations
+  projects        Project[]
+
+  @@index([slug])
+  @@index([sortOrder])
+  @@index([isActive, deletedAt])
+  @@index([viewCount])
+  @@map("categories")
+}
+
+/// Portfolio projects with versioning and analytics
+model Project {
+  id           String         @id @default(cuid())
+  title        String
+  slug         String         @unique
+  description  String         @db.Text
+  excerpt      String?        @db.Text // Short summary for cards
+  // Media
+  thumbnailUrl String
+  videoUrl     String?        // Optional video showcase
+  // Metadata
+  date         DateTime       // Project completion date
+  duration     String?        // "2 semanas", "1 mes"
+  client       String?        // Client name (optional)
+  location     String?        // Where it was done
+  tags         String[]       @default([]) // Freeform tags
+  // SEO
+  metaTitle       String?
+  metaDescription String?   @db.Text
+  metaKeywords    String[]  @default([])
+  ogImage         String?
+  canonicalUrl    String?
+  // Display
+  categoryId   String
+  sortOrder    Int            @default(0)
+  isFeatured   Boolean        @default(false)
+  isPinned     Boolean        @default(false) // Always show first
+  layout       String?        @default("grid") // grid, masonry, carousel
+  // Analytics
+  viewCount    Int            @default(0)
+  likeCount    Int            @default(0)
+  shareCount   Int            @default(0)
+  lastViewedAt DateTime?
+  // Versioning
+  version      Int            @default(1)
+  publishedAt  DateTime?
+  // State
+  isActive     Boolean        @default(true)
+  isDeleted    Boolean        @default(false)
+  deletedAt    DateTime?
+  deletedBy    String?        // User ID who deleted
+  // Audit
+  createdAt    DateTime       @default(now())
+  createdBy    String?        // User ID
+  updatedAt    DateTime       @updatedAt
+  updatedBy    String?        // User ID
+  // Relations
+  category     Category       @relation(fields: [categoryId], references: [id], onUpdate: Cascade)
+  images       ProjectImage[]
+
+  @@index([categoryId, date(sort: Desc)])
+  @@index([categoryId, sortOrder])
+  @@index([slug])
+  @@index([isActive, isDeleted])
+  @@index([isFeatured, isPinned])
+  @@index([publishedAt])
+  @@index([viewCount])
+  @@index([tags])
+  @@map("projects")
+}
+
+/// Project images with advanced media metadata
+model ProjectImage {
+  id        String   @id @default(cuid())
+  url       String
+  publicId  String   // Cloudinary public ID
+  order     Int
+  // Metadata
+  alt       String?
+  caption   String?  @db.Text
+  title     String?
+  // Technical
+  width     Int?
+  height    Int?
+  format    String?  // jpg, png, webp
+  bytes     Int?     // File size
+  // SEO
+  seoAlt    String?  // Optimized alt for SEO
+  // Display
+  isCover   Boolean  @default(false) // Main image for project
+  isHero    Boolean  @default(false) // Use in hero/banner
+  // Analytics
+  viewCount Int      @default(0)
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([projectId, order])
+  @@index([isCover])
+  @@index([isHero])
+  @@map("project_images")
+}

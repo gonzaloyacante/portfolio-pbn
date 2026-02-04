@@ -1,0 +1,339 @@
+// ============================================
+// SETTINGS - NORMALIZED (NO JSON)
+// ============================================
+
+/// Home Page Hero and Featured Settings
+model HomeSettings {
+  id String @id @default(cuid())
+
+  // ===== TÍTULO 1 ("Make-up") =====
+  heroTitle1Text      String? @default("Make-up")
+  heroTitle1Font      String? // null = hereda --font-brand del Theme
+  heroTitle1FontUrl   String?
+  heroTitle1FontSize  Int?    @default(112)
+  heroTitle1Color     String? // Light mode, null = hereda --primary
+  heroTitle1ColorDark String? // Dark mode, null = hereda --primary
+  heroTitle1ZIndex    Int?    @default(20)
+  heroTitle1OffsetX   Int?    @default(0) // Ajuste horizontal (px)
+  heroTitle1OffsetY   Int?    @default(0) // Ajuste vertical (px)
+
+  // ===== TÍTULO 2 ("Portfolio") =====
+  heroTitle2Text      String? @default("Portfolio")
+  heroTitle2Font      String?
+  heroTitle2FontUrl   String?
+  heroTitle2FontSize  Int?    @default(96)
+  heroTitle2Color     String?
+  heroTitle2ColorDark String?
+  heroTitle2ZIndex    Int?    @default(10)
+  heroTitle2OffsetX   Int?    @default(0)
+  heroTitle2OffsetY   Int?    @default(0)
+
+  // ===== NOMBRE PROPIETARIO ("Paola Bolívar Nievas") =====
+  ownerNameText      String? @default("Paola Bolívar Nievas")
+  ownerNameFont      String?
+  ownerNameFontUrl   String?
+  ownerNameFontSize  Int?    @default(36)
+  ownerNameColor     String?
+  ownerNameColorDark String?
+  ownerNameZIndex    Int?    @default(15)
+  ownerNameOffsetX   Int?    @default(0)
+  ownerNameOffsetY   Int?    @default(0)
+
+  // ===== IMAGEN PRINCIPAL =====
+  heroMainImageUrl     String?
+  heroMainImageAlt     String? @default("Trabajo destacado")
+  heroMainImageCaption String?
+  heroImageStyle       String? @default("original") // original, square, circle, landscape, portrait, star
+  heroMainImageZIndex  Int?    @default(5)
+  heroMainImageOffsetX Int?    @default(0)
+  heroMainImageOffsetY Int?    @default(0)
+
+  // ===== ILUSTRACIÓN =====
+  illustrationUrl     String?
+  illustrationAlt     String? @default("Ilustración maquilladora")
+  illustrationZIndex  Int?    @default(10)
+  illustrationOpacity Int?    @default(100)
+  illustrationSize    Int?    @default(100)
+  illustrationOffsetX Int?    @default(0)
+  illustrationOffsetY Int?    @default(0)
+  illustrationRotation Int?   @default(0) // Grados
+
+  // ===== BOTÓN CTA =====
+  ctaText     String? @default("Ver Portfolio")
+  ctaLink     String? @default("/proyectos")
+  ctaFont     String? // null = hereda font del theme
+  ctaFontUrl  String?
+  ctaFontSize Int?    @default(16)
+  ctaVariant  String? @default("default") // default, secondary, outline, ghost
+  ctaSize     String? @default("default") // sm, default, lg (padding/height)
+  // ⚠️ NO hay colores individuales - usa Theme global según variant
+  ctaOffsetX  Int?    @default(0)
+  ctaOffsetY  Int?    @default(0)
+
+  // ===== SECCIÓN PROYECTOS DESTACADOS =====
+  showFeaturedProjects  Boolean @default(true)
+  featuredTitle         String? @default("Proyectos Destacados")
+  featuredTitleFont     String?
+  featuredTitleFontUrl  String?
+  featuredTitleFontSize Int?    @default(32)
+  featuredTitleColor    String?
+  featuredTitleColorDark String?
+  featuredCount         Int     @default(6)
+
+  // Meta
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("home_settings")
+}
+
+/// About Page Bio and Profile Settings
+model AboutSettings {
+  id               String   @id @default(cuid())
+  // Illustration
+  illustrationUrl  String?
+  illustrationAlt  String?  @default("Ilustración sobre mí")
+  // Bio
+  bioTitle         String?  @default("Hola, soy Paola.")
+  bioIntro         String?  @db.Text
+  bioDescription   String?  @db.Text
+  // Profile Image (oval)
+  profileImageUrl  String?
+  profileImageAlt  String?  @default("Paola Bolívar Nievas")
+  // Skills
+  skills           String[] @default([])
+  yearsExperience  Int?
+  // Certifications (for professional credibility)
+  certifications   String[] @default([])
+  // Meta
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("about_settings")
+}
+
+/// Contact Page Settings with Form Labels
+model ContactSettings {
+  id                   String   @id @default(cuid())
+  // Page Title
+  pageTitle            String?  @default("Contacto")
+  // Illustration
+  illustrationUrl      String?
+  illustrationAlt      String?  @default("Ilustración contacto")
+  ownerName            String?  @default("Paola Bolívar Nievas")
+  // Contact Info
+  email                String?
+  phone                String?
+  whatsapp             String?
+  location             String?
+  // Form Configuration
+  formTitle            String?  @default("Envíame un mensaje")
+  nameLabel            String?  @default("Tu nombre")
+  emailLabel           String?  @default("Tu email")
+  phoneLabel           String?  @default("Tu teléfono (opcional)")
+  messageLabel         String?  @default("Mensaje")
+  preferenceLabel      String?  @default("¿Cómo preferís que te contacte?")
+  submitLabel          String?  @default("Enviar mensaje")
+  // Success Messages
+  successTitle         String?  @default("¡Mensaje enviado!")
+  successMessage       String?  @default("Gracias por contactarme. Te responderé lo antes posible.")
+  sendAnotherLabel     String?  @default("Enviar otro mensaje")
+  // Show Social Links
+  showSocialLinks      Boolean  @default(true)
+  // Meta
+  isActive             Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("contact_settings")
+}
+
+/// Project Display Settings
+model ProjectSettings {
+  id               String   @id @default(cuid())
+  // Card Display Options
+  showCardTitles   Boolean  @default(true)
+  showCardCategory Boolean  @default(true)
+  // Grid Layout Options (Future proofing)
+  gridColumns      Int      @default(3)
+  // Meta
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("project_settings")
+}
+
+/// Category Display Settings
+model CategorySettings {
+  id               String   @id @default(cuid())
+  showDescription  Boolean  @default(true)
+  showProjectCount Boolean  @default(true)
+  // Layout
+  gridColumns      Int      @default(4)
+  // Meta
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("category_settings")
+}
+
+/// Testimonial Display Settings (SRP: separate from About)
+model TestimonialSettings {
+  id          String   @id @default(cuid())
+  showOnAbout Boolean  @default(true)
+  title       String?  @default("Lo que dicen mis clientes")
+  maxDisplay  Int      @default(6)
+  // Meta
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("testimonial_settings")
+}
+
+/// Theme Colors and Typography
+model ThemeSettings {
+  id              String   @id @default(cuid())
+  // Light Theme Colors
+  primaryColor    String   @default("#6c0a0a")
+  secondaryColor  String   @default("#ffaadd")
+  accentColor     String   @default("#fff1f9")
+  backgroundColor String   @default("#fff1f9")
+  textColor       String   @default("#000000")
+  cardBgColor     String   @default("#ffaadd")
+  // Dark Theme Colors
+  darkPrimaryColor    String   @default("#ffaadd")
+  darkSecondaryColor  String   @default("#6c0a0a")
+  darkAccentColor     String   @default("#000000")
+  darkBackgroundColor String   @default("#6c0a0a")
+  darkTextColor       String   @default("#fff1f9")
+  darkCardBgColor     String   @default("#ffaadd")
+  // Typography - Base
+  headingFont     String   @default("Poppins")
+  headingFontUrl  String?
+  headingFontSize Int      @default(32)
+  scriptFont      String   @default("Great Vibes")
+  scriptFontUrl   String?
+  scriptFontSize  Int      @default(24)
+  bodyFont        String   @default("Open Sans")
+  bodyFontUrl     String?
+  bodyFontSize    Int      @default(16)
+  // Typography - Brand (Specifics)
+  brandFont       String?  @default("Saira Extra Condensed") // "Make-up"
+  brandFontUrl    String?
+  brandFontSize   Int      @default(112)
+  portfolioFont   String?  @default("Saira Extra Condensed") // "Portfolio" text
+  portfolioFontUrl String?
+  portfolioFontSize Int      @default(96)
+  signatureFont   String?  @default("Dawning of a New Day") // "Paola Bolivar Nievas"
+  signatureFontUrl String?
+  signatureFontSize Int      @default(36)
+  // Layout
+  borderRadius    Int      @default(40)
+  // Meta
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("theme_settings")
+}
+
+/// Social Media Links (Normalized)
+model SocialLink {
+  id        String   @id @default(cuid())
+  platform  String   // instagram, tiktok, youtube, whatsapp, linkedin, facebook
+  url       String
+  username  String?
+  icon      String?  // lucide-react icon name
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([platform])
+  @@index([isActive, sortOrder])
+  @@map("social_links")
+}
+
+// ============================================
+// GLOBAL SETTINGS - Site-wide configuration
+// ============================================
+
+/// Site-wide SEO and branding settings
+model SiteSettings {
+  id String @id @default(cuid())
+  
+  // Branding
+  siteName        String  @default("Paola Bolívar Nievas - Make-up Artist")
+  siteTagline     String? @default("Especialista en maquillaje profesional")
+  logoUrl         String?
+  faviconUrl      String?
+  
+  // SEO
+  defaultMetaTitle       String? @default("Paola Bolívar Nievas | Make-up Artist Portfolio")
+  defaultMetaDescription String? @db.Text
+  defaultOgImage         String?
+  
+  // Contact
+  defaultEmail    String?
+  defaultPhone    String?
+  defaultWhatsapp String?
+  defaultAddress  String? @db.Text
+  
+  // Business hours (JSON for flexibility)
+  businessHours   Json?   // {monday: {open: "09:00", close: "18:00"}, ...}
+  
+  // Analytics
+  googleAnalyticsId String?
+  facebookPixelId   String?
+  googleTagManagerId String?
+  
+  // Legal
+  privacyPolicyUrl  String?
+  termsOfServiceUrl String?
+  cookiePolicyUrl   String?
+  
+  // Features
+  maintenanceMode   Boolean @default(false)
+  maintenanceMessage String? @db.Text
+  allowIndexing     Boolean @default(true) // SEO robots
+  
+  // Meta
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("site_settings")
+}
+
+/// Email notification settings
+model EmailSettings {
+  id String @id @default(cuid())
+  
+  // SMTP Configuration
+  smtpHost     String?
+  smtpPort     Int?    @default(587)
+  smtpUser     String?
+  smtpPassword String? // Encrypted
+  smtpFrom     String? @default("noreply@portfolio.com")
+  smtpFromName String? @default("Paola Bolívar Nievas")
+  
+  // Notification toggles
+  sendContactNotifications Boolean @default(true)
+  sendBookingNotifications Boolean @default(true)
+  sendTestimonialNotifications Boolean @default(true)
+  
+  // Recipients
+  notificationEmails String[] @default([])
+  
+  // Meta
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("email_settings")
+}

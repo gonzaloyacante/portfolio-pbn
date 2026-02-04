@@ -84,6 +84,9 @@ model HomeSettings {
   heroTitle1FontSize  Int?    @default(112)
   heroTitle1Color     String? // Light mode, null = hereda --primary
   heroTitle1ColorDark String? // Dark mode, null = hereda --primary
+  heroTitle1ZIndex    Int?    @default(20)
+  heroTitle1OffsetX   Int?    @default(0) // Ajuste horizontal (px)
+  heroTitle1OffsetY   Int?    @default(0) // Ajuste vertical (px)
 
   // ===== TÍTULO 2 ("Portfolio") =====
   heroTitle2Text      String? @default("Portfolio")
@@ -92,6 +95,9 @@ model HomeSettings {
   heroTitle2FontSize  Int?    @default(96)
   heroTitle2Color     String?
   heroTitle2ColorDark String?
+  heroTitle2ZIndex    Int?    @default(10)
+  heroTitle2OffsetX   Int?    @default(0)
+  heroTitle2OffsetY   Int?    @default(0)
 
   // ===== NOMBRE PROPIETARIO ("Paola Bolívar Nievas") =====
   ownerNameText      String? @default("Paola Bolívar Nievas")
@@ -100,16 +106,28 @@ model HomeSettings {
   ownerNameFontSize  Int?    @default(36)
   ownerNameColor     String?
   ownerNameColorDark String?
+  ownerNameZIndex    Int?    @default(15)
+  ownerNameOffsetX   Int?    @default(0)
+  ownerNameOffsetY   Int?    @default(0)
 
   // ===== IMAGEN PRINCIPAL =====
   heroMainImageUrl     String?
   heroMainImageAlt     String? @default("Trabajo destacado")
   heroMainImageCaption String?
   heroImageStyle       String? @default("original") // original, square, circle, landscape, portrait, star
+  heroMainImageZIndex  Int?    @default(5)
+  heroMainImageOffsetX Int?    @default(0)
+  heroMainImageOffsetY Int?    @default(0)
 
   // ===== ILUSTRACIÓN =====
-  illustrationUrl String?
-  illustrationAlt String? @default("Ilustración maquilladora")
+  illustrationUrl     String?
+  illustrationAlt     String? @default("Ilustración maquilladora")
+  illustrationZIndex  Int?    @default(10)
+  illustrationOpacity Int?    @default(100)
+  illustrationSize    Int?    @default(100)
+  illustrationOffsetX Int?    @default(0)
+  illustrationOffsetY Int?    @default(0)
+  illustrationRotation Int?   @default(0) // Grados
 
   // ===== BOTÓN CTA =====
   ctaText     String? @default("Ver Portfolio")
@@ -120,6 +138,8 @@ model HomeSettings {
   ctaVariant  String? @default("default") // default, secondary, outline, ghost
   ctaSize     String? @default("default") // sm, default, lg (padding/height)
   // ⚠️ NO hay colores individuales - usa Theme global según variant
+  ctaOffsetX  Int?    @default(0)
+  ctaOffsetY  Int?    @default(0)
 
   // ===== SECCIÓN PROYECTOS DESTACADOS =====
   showFeaturedProjects  Boolean @default(true)

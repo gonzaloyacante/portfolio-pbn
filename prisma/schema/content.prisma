@@ -1,0 +1,204 @@
+// ============================================
+// CONTENT MODELS - Enhanced with CRM & Analytics
+// ============================================
+
+/// Client testimonials with moderation and analytics
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  text      String   @db.Text
+  excerpt   String?  // Short version for cards
+  // Contact info (optional, for follow-up)
+  email     String?
+  phone     String?
+  // Professional details
+  position  String?
+  company   String?
+  website   String?
+  avatarUrl String?
+  // Social proof
+  rating    Int      @default(5) // 1-5 stars
+  verified  Boolean  @default(false) // Email verified
+  featured  Boolean  @default(false) // Show in hero/featured section
+  // Source tracking
+  source    String?  // "website", "instagram", "referral"
+  projectId String?  // Link to related project (optional)
+  // Moderation
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  moderatedBy String?
+  moderatedAt DateTime?
+  moderationNote String? @db.Text
+  // Display
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  // Analytics
+  viewCount Int      @default(0)
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([isActive, sortOrder])
+  @@index([status, featured])
+  @@index([rating])
+  @@index([viewCount])
+  @@map("testimonials")
+}
+
+/// Professional services with pricing tiers and availability
+model Service {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?   @db.Text
+  shortDesc   String?   @db.Text // For cards/previews
+  // Pricing
+  price       Decimal?  @db.Decimal(10, 2)
+  priceLabel  String?   @default("desde") // "desde", "fijo", "consultar", "gratis"
+  currency    String    @default("ARS")
+  // Pricing tiers (JSON for flexibility)
+  pricingTiers Json?    // [{name: "Básico", price: 5000}, {name: "Premium", price: 8000}]
+  // Time
+  duration    String?   // "2 horas", "3-4 horas", "Todo el día"
+  durationMinutes Int?  // For calculations
+  // Availability
+  isAvailable Boolean   @default(true)
+  maxBookingsPerDay Int? @default(3)
+  advanceNoticeDays Int? @default(2) // Minimum days in advance
+  // Media
+  imageUrl    String?
+  galleryUrls String[]  @default([])
+  videoUrl    String?
+  iconName    String?   // lucide-react icon name
+  // Display
+  color       String?   // Brand color
+  isActive    Boolean   @default(true)
+  isFeatured  Boolean   @default(false)
+  sortOrder   Int       @default(0)
+  // SEO
+  metaTitle       String?
+  metaDescription String? @db.Text
+  metaKeywords    String[] @default([])
+  // Stats
+  bookingCount    Int @default(0)
+  viewCount       Int @default(0)
+  // Requirements / Notes
+  requirements    String?   @db.Text // What client needs to bring/know
+  cancellationPolicy String? @db.Text
+  // Relations
+  bookings    Booking[]
+  // Audit
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@index([isActive, sortOrder])
+  @@index([isFeatured])
+  @@index([slug])
+  @@index([isAvailable])
+  @@map("services")
+}
+
+/// Contact form submissions with CRM workflow
+model Contact {
+  id                 String   @id @default(cuid())
+  name               String
+  email              String
+  phone              String?
+  message            String   @db.Text
+  subject            String?  // Optional subject line
+  responsePreference String   @default("EMAIL") // EMAIL, PHONE, WHATSAPP
+  // Lead scoring
+  leadScore          Int?     @default(0) // 0-100
+  leadSource         String?  // "website", "instagram", "referral"
+  // CRM Workflow
+  status             String   @default("NEW") // NEW, IN_PROGRESS, REPLIED, CLOSED, SPAM
+  priority           String   @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  assignedTo         String?  // User ID
+  // Follow-up
+  isRead             Boolean  @default(false)
+  readAt             DateTime?
+  readBy             String?  // User ID
+  isReplied          Boolean  @default(false)
+  repliedAt          DateTime?
+  repliedBy          String?  // User ID
+  replyText          String?  @db.Text
+  // Admin notes
+  adminNote          String?  @db.Text
+  tags               String[] @default([])
+  // Tracking
+  ipAddress          String?
+  userAgent          String?
+  referrer           String?
+  utmSource          String?
+  utmMedium          String?
+  utmCampaign        String?
+  // Timestamps
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  deletedAt          DateTime?
+
+  @@index([ipAddress, createdAt])
+  @@index([isRead, status])
+  @@index([status, priority])
+  @@index([assignedTo])
+  @@index([leadScore])
+  @@map("contacts")
+}
+
+/// Booking system with workflow states and reminders
+model Booking {
+  id          String   @id @default(cuid())
+  date        DateTime // Fecha y Hora de la reserva
+  endDate     DateTime? // Optional end time (for multi-hour bookings)
+  status      String   @default("PENDING") // PENDING, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+  
+  // Cliente
+  clientName  String
+  clientEmail String
+  clientPhone String?
+  // Additional client data
+  clientNotes String?  @db.Text // Client's special requests
+  guestCount  Int?     @default(1)
+  
+  // Admin workflow
+  adminNotes      String?  @db.Text
+  confirmedAt     DateTime?
+  confirmedBy     String?  // User ID
+  cancelledAt     DateTime?
+  cancelledBy     String?  // client | admin
+  cancellationReason String? @db.Text
+  
+  // Payment (future-proofing)
+  totalAmount     Decimal? @db.Decimal(10, 2)
+  paidAmount      Decimal? @db.Decimal(10, 2)
+  paymentStatus   String?  @default("PENDING") // PENDING, PARTIAL, PAID, REFUNDED
+  paymentMethod   String?  // "cash", "transfer", "mercadopago"
+  paymentRef      String?  // Reference number
+  
+  // Reminders
+  reminderSentAt  DateTime?
+  reminderCount   Int      @default(0)
+  
+  // Follow-up
+  feedbackSent    Boolean  @default(false)
+  feedbackRating  Int?     // 1-5
+  feedbackText    String?  @db.Text
+
+  // Relaciones
+  serviceId   String
+  service     Service  @relation(fields: [serviceId], references: [id], onUpdate: Cascade)
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+
+  @@index([date])
+  @@index([status])
+  @@index([clientEmail])
+  @@index([serviceId, date])
+  @@index([paymentStatus])
+  @@map("bookings")
+}
+
