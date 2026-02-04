@@ -1,4 +1,4 @@
-import { getThemeSettings } from '@/actions/theme.actions'
+import { getThemeSettings } from '@/actions/settings/theme'
 import { ThemeEditor } from '@/components/features/theme/ThemeEditor'
 import { Suspense } from 'react'
 

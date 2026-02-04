@@ -99,6 +99,7 @@ export const homeSettingsSchema = z.object({
     .regex(/^#[A-Fa-f0-9]{6}$/)
     .optional()
     .nullable(),
+  heroTitle1ZIndex: z.number().int().optional(),
 
   // Título 2
   heroTitle2Text: z.string().optional(),
@@ -115,6 +116,7 @@ export const homeSettingsSchema = z.object({
     .regex(/^#[A-Fa-f0-9]{6}$/)
     .optional()
     .nullable(),
+  heroTitle2ZIndex: z.number().int().optional(),
 
   // Nombre propietario
   ownerNameText: z.string().optional(),
@@ -131,14 +133,19 @@ export const homeSettingsSchema = z.object({
     .regex(/^#[A-Fa-f0-9]{6}$/)
     .optional()
     .nullable(),
+  ownerNameZIndex: z.number().int().optional(),
 
   // Imágenes
   heroMainImageUrl: z.string().optional(),
   heroMainImageAlt: z.string().optional(),
   heroMainImageCaption: z.string().optional(),
   heroImageStyle: z.string().optional(),
+  heroMainImageZIndex: z.number().int().optional(),
   illustrationUrl: z.string().optional(),
   illustrationAlt: z.string().optional(),
+  illustrationZIndex: z.number().int().optional(),
+  illustrationOpacity: z.number().min(0).max(100).optional(),
+  illustrationSize: z.number().min(10).max(200).optional(),
 
   // Botón CTA
   ctaText: z.string().optional(),

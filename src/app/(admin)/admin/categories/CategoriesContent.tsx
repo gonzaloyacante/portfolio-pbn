@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { deleteCategoryAction, reorderCategories } from '@/actions/category.actions'
+import { deleteCategoryAction, reorderCategories } from '@/actions/cms/category'
 import { Button, Card, Badge } from '@/components/ui'
 import ViewToggle, { type ViewMode } from '@/components/layout/ViewToggle'
 import SortableGrid from '@/components/layout/SortableGrid'

@@ -1,4 +1,4 @@
-import { getHomeSettings } from '@/actions/theme.actions'
+import { getHomeSettings } from '@/actions/settings/home'
 import { HomeEditor } from '@/components/features/home/HomeEditor'
 import { PageHeader } from '@/components/layout'
 

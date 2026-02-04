@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import { getProjectSettings, updateProjectSettings } from '@/actions/project-settings.actions'
+import { getProjectSettings, updateProjectSettings } from '@/actions/settings/projects'
 import { Button } from '@/components/ui'
 import { PageHeader, Section } from '@/components/layout'
 import VisualConfigModal from '@/components/features/projects/VisualConfigModal'

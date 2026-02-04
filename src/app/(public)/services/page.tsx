@@ -1,5 +1,5 @@
-import { getActiveServices } from '@/actions/services.actions'
-import { getContactSettings } from '@/actions/theme.actions'
+import { getActiveServices } from '@/actions/cms/services'
+import { getContactSettings } from '@/actions/settings/contact'
 import { Metadata } from 'next'
 import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/ui'
 import Link from 'next/link'
@@ -40,7 +40,7 @@ export default async function ServicesPage() {
     : null
 
   return (
-    <main className="py-12 md:py-20">
+    <main className="py-8 md:py-12">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <FadeIn className="mb-12 text-center">
@@ -65,34 +65,40 @@ export default async function ServicesPage() {
               return (
                 <ScaleIn key={service.id}>
                   <article className="border-border bg-card group relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                    {/* Image or Icon Header */}
-                    <div className="bg-muted/30 relative flex h-48 items-center justify-center overflow-hidden">
-                      {service.imageUrl ? (
-                        <OptimizedImage
-                          src={service.imageUrl}
-                          alt={service.name}
-                          width={400}
-                          height={300}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                      ) : IconComponent ? (
-                        <IconComponent className="text-muted-foreground/30 h-24 w-24" />
-                      ) : (
-                        <span className="text-6xl opacity-30">💄</span>
-                      )}
-                      {service.isFeatured && (
-                        <span className="bg-primary text-primary-foreground absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-bold shadow-lg">
-                          ⭐ Destacado
-                        </span>
-                      )}
-                    </div>
+                    <Link href={`/servicios/${service.slug}`} className="relative block">
+                      {/* Image or Icon Header */}
+                      <div className="bg-muted/30 relative flex h-48 items-center justify-center overflow-hidden">
+                        {service.imageUrl ? (
+                          <OptimizedImage
+                            src={service.imageUrl}
+                            alt={service.name}
+                            width={400}
+                            height={300}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : IconComponent ? (
+                          <IconComponent className="text-muted-foreground/30 h-24 w-24" />
+                        ) : (
+                          <span className="text-6xl opacity-30">💄</span>
+                        )}
+                        {service.isFeatured && (
+                          <span className="bg-primary text-primary-foreground absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-bold shadow-lg">
+                            ⭐ Destacado
+                          </span>
+                        )}
+                      </div>
+                    </Link>
 
                     {/* Content */}
                     <div className="flex flex-1 flex-col p-6">
-                      <h2 className="text-foreground mb-2 text-xl font-bold">{service.name}</h2>
-                      {service.description && (
+                      <Link href={`/servicios/${service.slug}`}>
+                        <h2 className="text-foreground hover:text-primary mb-2 text-xl font-bold transition-colors">
+                          {service.name}
+                        </h2>
+                      </Link>
+                      {(service.shortDesc || service.description) && (
                         <p className="text-muted-foreground mb-4 line-clamp-3 flex-1 text-sm">
-                          {service.description}
+                          {service.shortDesc || service.description}
                         </p>
                       )}
 
@@ -137,11 +143,10 @@ export default async function ServicesPage() {
                         )}
 
                         <Link
-                          href={`/contacto?service=${encodeURIComponent(service.name)}`}
+                          href={`/servicios/${service.slug}`}
                           className="border-input text-foreground hover:bg-muted flex items-center justify-center gap-2 rounded-xl border px-4 py-3 font-semibold transition-all duration-300"
                         >
-                          <icons.Mail className="h-5 w-5" />
-                          Consultar por Email
+                          Ver Detalles & Precios
                         </Link>
                       </div>
                     </div>

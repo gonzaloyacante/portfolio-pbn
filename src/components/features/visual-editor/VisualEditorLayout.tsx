@@ -21,7 +21,12 @@ export function VisualEditorLayout({ preview, propertyPanel }: VisualEditorLayou
             Haz clic en cualquier elemento para editarlo
           </span>
         </div>
-        <div className="bg-background overflow-hidden rounded-lg border">{preview}</div>
+        <div className="bg-background relative h-[500px] w-full overflow-hidden rounded-lg border">
+          {/* Contenedor Escalado: Simula pantalla completa (aprox 1280px width) en espacio reducido */}
+          <div className="pointer-events-auto absolute top-0 left-0 h-[200%] w-[200%] origin-top-left scale-[0.5]">
+            {preview}
+          </div>
+        </div>
       </div>
 
       {/* Panel de Propiedades */}

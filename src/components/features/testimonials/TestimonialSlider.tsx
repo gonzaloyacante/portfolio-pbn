@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Testimonial } from '@/lib/testimonials'
+import { Testimonial } from '@prisma/client'
 
 interface TestimonialSliderProps {
   testimonials: Testimonial[]
@@ -30,21 +30,61 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
     <div className="bg-card border-border/50 mx-auto max-w-3xl rounded-xl border p-8 shadow-lg">
       <div className="mb-4 flex justify-center">
         {Array.from({ length: currentTestimonial.rating }).map((_, i) => (
-          <svg key={i} className="h-5 w-5 fill-current text-yellow-400" viewBox="0 0 20 20">
-            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-          </svg>
+          <span key={i} className="text-xl text-yellow-400 drop-shadow-sm">
+            ⭐
+          </span>
         ))}
       </div>
 
-      <blockquote className="text-muted-foreground mb-6 text-center text-lg italic">
+      <blockquote className="text-muted-foreground relative mb-6 text-center text-lg italic">
         &ldquo;{currentTestimonial.text}&rdquo;
       </blockquote>
 
-      <div className="text-center">
-        <p className="text-foreground font-semibold">{currentTestimonial.name}</p>
-        {currentTestimonial.position && (
-          <p className="text-muted-foreground text-sm">{currentTestimonial.position}</p>
+      <div className="flex flex-col items-center gap-3">
+        {currentTestimonial.avatarUrl ? (
+          <img
+            src={currentTestimonial.avatarUrl}
+            alt={currentTestimonial.name}
+            className="h-12 w-12 rounded-full border-2 border-[var(--primary)] object-cover"
+          />
+        ) : (
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--primary)]/10 text-lg font-bold text-[var(--primary)]">
+            {currentTestimonial.name.charAt(0)}
+          </div>
         )}
+
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2">
+            <p className="text-foreground text-lg font-semibold">{currentTestimonial.name}</p>
+            {currentTestimonial.verified && (
+              <span title="Cliente Verificado" className="text-blue-500">
+                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+              </span>
+            )}
+          </div>
+
+          <div className="text-muted-foreground flex flex-col gap-0.5 text-sm">
+            {currentTestimonial.position && <span>{currentTestimonial.position}</span>}
+            {currentTestimonial.company && (
+              <span className="text-primary font-medium">
+                {currentTestimonial.website ? (
+                  <a
+                    href={currentTestimonial.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    @{currentTestimonial.company}
+                  </a>
+                ) : (
+                  `@${currentTestimonial.company}`
+                )}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {testimonials.length > 1 && (

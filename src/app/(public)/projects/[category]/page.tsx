@@ -31,7 +31,7 @@ export async function generateMetadata({
  * Category Gallery Page
  * Displays a unified gallery of ALL images from ALL projects in this category.
  */
-import { getProjectSettings } from '@/actions/project-settings.actions'
+import { getProjectSettings } from '@/actions/settings/projects'
 
 // ...
 

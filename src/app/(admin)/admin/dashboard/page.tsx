@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { StatCard } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import { auth } from '@/lib/auth'
-import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
+import { getAnalyticsDashboardData } from '@/actions/analytics'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 

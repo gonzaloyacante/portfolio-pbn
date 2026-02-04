@@ -21,9 +21,17 @@ const TestimonialSchema = z.object({
     .min(20, 'El testimonio debe tener al menos 20 caracteres')
     .max(500, 'El testimonio no puede superar los 500 caracteres'),
   position: z.string().optional(),
+  company: z.string().optional(),
+  website: z.string().url().optional().or(z.literal('')),
+  avatarUrl: z.string().url().optional().or(z.literal('')),
   email: z.string().email().optional().or(z.literal('')),
   rating: z.number().min(1).max(5).default(5),
+  // Admin fields
   isActive: z.boolean().optional(),
+  isVerified: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED']).optional(),
+  moderationNote: z.string().optional(),
 })
 
 export async function createTestimonial(formData: FormData) {
@@ -136,24 +144,47 @@ export async function updateTestimonial(id: string, formData: FormData) {
     name: formData.get('name'),
     text: formData.get('text'),
     position: formData.get('position'),
+    company: formData.get('company'),
+    website: formData.get('website'),
+    avatarUrl: formData.get('avatarUrl'),
     rating: parseInt(formData.get('rating') as string),
     isActive: formData.get('isActive') === 'true',
+    isVerified: formData.get('isVerified') === 'true',
+    isFeatured: formData.get('isFeatured') === 'true',
+    status: formData.get('status'),
+    moderationNote: formData.get('moderationNote'),
   }
 
   const validation = TestimonialSchema.safeParse(rawData)
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
-  const { name, text, position, rating, isActive } = validation.data
+  const data = validation.data
 
   try {
     await prisma.testimonial.update({
       where: { id },
-      data: { name, text, position, rating, isActive },
+      data: {
+        name: data.name,
+        text: data.text,
+        position: data.position,
+        company: data.company,
+        website: data.website,
+        avatarUrl: data.avatarUrl,
+        rating: data.rating,
+        isActive: data.isActive,
+        verified: data.isVerified, // Schema uses 'verified' boolean
+        featured: data.isFeatured, // Schema uses 'featured' boolean
+        status: data.status,
+        moderationNote: data.moderationNote,
+        moderatedAt: new Date(),
+        // moderatedBy: currentUserId // TODO: Get from auth
+      },
     })
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.admin.testimonials)
     logger.info(`Testimonial updated: ${id}`)
     return { success: true }
   } catch (error) {

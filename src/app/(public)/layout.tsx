@@ -1,7 +1,8 @@
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransition from '@/components/layout/PageTransition'
-import { getThemeSettings, getContactSettings } from '@/actions/theme.actions'
+import { getThemeSettings } from '@/actions/settings/theme'
+import { getContactSettings } from '@/actions/settings/contact'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const [, contactSettings] = await Promise.all([getThemeSettings(), getContactSettings()])

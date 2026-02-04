@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { submitPublicTestimonial } from '@/actions/testimonials.actions'
+import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import toast from 'react-hot-toast'
 

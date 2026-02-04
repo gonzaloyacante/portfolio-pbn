@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { deleteCategory } from '@/actions/content.actions'
+import { deleteCategory } from '@/actions/cms/content'
 import { revalidatePath } from 'next/cache'
 import { ROUTES } from '@/config/routes'
 

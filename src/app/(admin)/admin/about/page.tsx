@@ -1,4 +1,4 @@
-import { getAboutSettings } from '@/actions/theme.actions'
+import { getAboutSettings } from '@/actions/settings/about'
 import { AboutEditor } from '@/components/features/about/AboutEditor'
 import { PageHeader } from '@/components/layout'
 

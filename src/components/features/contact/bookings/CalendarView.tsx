@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getBookingsByRange, updateBookingStatus } from '@/actions/bookings.actions'
+import { getBookingsByRange, updateBookingStatus } from '@/actions/user/bookings'
 import { Button, Modal, Badge } from '@/components/ui'
 import { ChevronLeft, User, Mail, Phone, FileText } from 'lucide-react'
 import {
@@ -28,7 +28,7 @@ type Booking = {
   clientName: string
   clientEmail: string
   clientPhone: string | null
-  notes: string | null
+  clientNotes: string | null
   service: {
     name: string
     duration: string | null
@@ -246,10 +246,10 @@ export default function CalendarView() {
               <h4 className="text-foreground font-semibold">Servicio</h4>
               <div className="bg-muted/50 rounded-lg p-3 text-sm">
                 <p className="text-foreground font-medium">{selectedBooking.service.name}</p>
-                {selectedBooking.notes && (
+                {selectedBooking.clientNotes && (
                   <div className="border-border mt-2 flex gap-2 border-t pt-2">
                     <FileText size={16} className="text-muted-foreground/60 shrink-0" />
-                    <p className="text-muted-foreground italic">{selectedBooking.notes}</p>
+                    <p className="text-muted-foreground italic">{selectedBooking.clientNotes}</p>
                   </div>
                 )}
               </div>

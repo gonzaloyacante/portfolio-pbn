@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, ChangeEvent, DragEvent } from 'react'
+import { useState, useCallback, ChangeEvent, DragEvent, useEffect } from 'react'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
 
@@ -49,6 +49,17 @@ export default function ImageUpload({
   const [images, setImages] = useState<UploadedImage[]>(initialImages)
   const [isDragging, setIsDragging] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
+
+  // Sync state with props
+  useEffect(() => {
+    const newImages =
+      value.length > 0
+        ? value.map((url) => ({ url, publicId: '' }))
+        : currentImage
+          ? [{ url: currentImage, publicId: '' }]
+          : []
+    setImages(newImages)
+  }, [value, currentImage])
 
   const uploadFile = useCallback(
     async (file: File): Promise<UploadedImage> => {

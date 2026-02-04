@@ -300,6 +300,12 @@ model SiteSettings {
   // Features
   maintenanceMode   Boolean @default(false)
   maintenanceMessage String? @db.Text
+  // Page Visibility
+  showAboutPage     Boolean @default(true)
+  showProjectsPage  Boolean @default(true)
+  showServicesPage  Boolean @default(false)
+  showContactPage   Boolean @default(true)
+
   allowIndexing     Boolean @default(true) // SEO robots
   
   // Meta

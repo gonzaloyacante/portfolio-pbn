@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import { Check, ChevronsUpDown, Search, Loader2, AlertCircle, Type, X } from 'lucide-react'
+import { Check, ChevronsUpDown, Search, Loader2, AlertCircle, Type } from 'lucide-react'
 import {
   fetchGoogleFonts,
   getFontsByCategory,

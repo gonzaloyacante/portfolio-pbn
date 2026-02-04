@@ -3,7 +3,7 @@
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { resetPassword } from '@/actions/auth.actions'
+import { resetPassword } from '@/actions/user/auth'
 import { FadeIn } from '@/components/ui'
 
 import PasswordStrengthMeter from '@/components/ui/forms/PasswordStrengthMeter'

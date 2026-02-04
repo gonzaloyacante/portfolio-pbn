@@ -1,29 +1,28 @@
 'use client'
 
 import { Card, Input, GoogleFontPicker } from '@/components/ui'
-import type { HomeSettingsData } from '@/actions/theme.actions'
+import type { HomeSettingsData } from '@/actions/settings/home'
 import type { EditableElement } from './types'
 import { Info } from 'lucide-react'
-import { SizeSlider } from './inputs/SizeSlider'
-import { ButtonVariantPicker } from './inputs/ButtonVariantPicker'
-import { DualColorPicker } from './inputs/DualColorPicker'
-import { ImageStylePicker } from './inputs/ImageStylePicker'
 
-// Temporary Alert component (inline for now)
-const Alert = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-  <div
-    className={`rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-950 ${className}`}
-  >
-    {children}
-  </div>
-)
-const AlertDescription = ({
-  children,
-  className = '',
-}: {
-  children: React.ReactNode
-  className?: string
-}) => <div className={`text-sm text-blue-800 dark:text-blue-200 ${className}`}>{children}</div>
+// Import encapsulated controls
+import { EditorSliderControl } from './components/EditorSliderControl'
+import { EditorDualColorControl } from './components/EditorColorControl'
+import { EditorZIndexControl } from './components/EditorZIndexControl'
+import { EditorVariantControl } from './components/EditorVariantControl'
+import { EditorSelectControl } from './components/EditorSelectControl'
+import { EditorImageUpload } from './components/EditorImageUpload'
+import { EditorPositionControl } from './components/EditorPositionControl'
+
+// Image Styles Options
+const IMAGE_STYLES = [
+  { value: 'original', label: 'Original' },
+  { value: 'square', label: 'Cuadrado' },
+  { value: 'circle', label: 'Círculo' },
+  { value: 'landscape', label: 'Paisaje (16:9)' },
+  { value: 'portrait', label: 'Retrato (3:4)' },
+  { value: 'star', label: 'Estrella' },
+]
 
 interface PropertyPanelProps {
   selectedElement: EditableElement
@@ -32,7 +31,8 @@ interface PropertyPanelProps {
 }
 
 /**
- * Panel dinámico que muestra las propiedades editables del elemento seleccionado
+ * Property Panel
+ * Composed of Reusable Editor Components with Single Responsibility
  */
 export function PropertyPanel({ selectedElement, settings, onUpdate }: PropertyPanelProps) {
   if (!selectedElement) {
@@ -70,7 +70,6 @@ function renderPropertiesFor(
             value={settings.heroTitle1Text || ''}
             onChange={(e) => onUpdate('heroTitle1Text', e.target.value)}
           />
-
           <GoogleFontPicker
             value={settings.heroTitle1Font || ''}
             onValueChange={(font, url) => {
@@ -79,21 +78,29 @@ function renderPropertiesFor(
             }}
             label="Tipografía"
           />
-
-          <SizeSlider
-            label="Tamaño de Fuente"
+          <EditorSliderControl
+            label="Tamaño"
             value={settings.heroTitle1FontSize || 112}
             onChange={(val) => onUpdate('heroTitle1FontSize', val)}
             min={20}
-            max={200}
+            max={300}
           />
-
-          <DualColorPicker
-            label="Color Personalizado"
+          <EditorDualColorControl
+            label="Color"
             lightColor={settings.heroTitle1Color || ''}
             darkColor={settings.heroTitle1ColorDark || ''}
             onChangeLight={(val) => onUpdate('heroTitle1Color', val)}
             onChangeDark={(val) => onUpdate('heroTitle1ColorDark', val)}
+          />
+          <EditorZIndexControl
+            value={settings.heroTitle1ZIndex || 20}
+            onChange={(val) => onUpdate('heroTitle1ZIndex', val)}
+          />
+          <EditorPositionControl
+            offsetX={settings.heroTitle1OffsetX || 0}
+            offsetY={settings.heroTitle1OffsetY || 0}
+            onChangeX={(val) => onUpdate('heroTitle1OffsetX', val)}
+            onChangeY={(val) => onUpdate('heroTitle1OffsetY', val)}
           />
         </div>
       )
@@ -106,7 +113,6 @@ function renderPropertiesFor(
             value={settings.heroTitle2Text || ''}
             onChange={(e) => onUpdate('heroTitle2Text', e.target.value)}
           />
-
           <GoogleFontPicker
             value={settings.heroTitle2Font || ''}
             onValueChange={(font, url) => {
@@ -115,21 +121,29 @@ function renderPropertiesFor(
             }}
             label="Tipografía"
           />
-
-          <SizeSlider
-            label="Tamaño de Fuente"
+          <EditorSliderControl
+            label="Tamaño"
             value={settings.heroTitle2FontSize || 96}
             onChange={(val) => onUpdate('heroTitle2FontSize', val)}
             min={20}
-            max={200}
+            max={300}
           />
-
-          <DualColorPicker
-            label="Color Personalizado"
+          <EditorDualColorControl
+            label="Color"
             lightColor={settings.heroTitle2Color || ''}
             darkColor={settings.heroTitle2ColorDark || ''}
             onChangeLight={(val) => onUpdate('heroTitle2Color', val)}
             onChangeDark={(val) => onUpdate('heroTitle2ColorDark', val)}
+          />
+          <EditorZIndexControl
+            value={settings.heroTitle2ZIndex || 10}
+            onChange={(val) => onUpdate('heroTitle2ZIndex', val)}
+          />
+          <EditorPositionControl
+            offsetX={settings.heroTitle2OffsetX || 0}
+            offsetY={settings.heroTitle2OffsetY || 0}
+            onChangeX={(val) => onUpdate('heroTitle2OffsetX', val)}
+            onChangeY={(val) => onUpdate('heroTitle2OffsetY', val)}
           />
         </div>
       )
@@ -142,7 +156,6 @@ function renderPropertiesFor(
             value={settings.ownerNameText || ''}
             onChange={(e) => onUpdate('ownerNameText', e.target.value)}
           />
-
           <GoogleFontPicker
             value={settings.ownerNameFont || ''}
             onValueChange={(font, url) => {
@@ -151,21 +164,67 @@ function renderPropertiesFor(
             }}
             label="Tipografía"
           />
-
-          <SizeSlider
-            label="Tamaño de Fuente"
+          <EditorSliderControl
+            label="Tamaño"
             value={settings.ownerNameFontSize || 36}
             onChange={(val) => onUpdate('ownerNameFontSize', val)}
             min={12}
             max={100}
           />
-
-          <DualColorPicker
-            label="Color Personalizado"
+          <EditorDualColorControl
+            label="Color"
             lightColor={settings.ownerNameColor || ''}
             darkColor={settings.ownerNameColorDark || ''}
             onChangeLight={(val) => onUpdate('ownerNameColor', val)}
             onChangeDark={(val) => onUpdate('ownerNameColorDark', val)}
+          />
+          <EditorZIndexControl
+            value={settings.ownerNameZIndex || 15}
+            onChange={(val) => onUpdate('ownerNameZIndex', val)}
+          />
+          <EditorPositionControl
+            offsetX={settings.ownerNameOffsetX || 0}
+            offsetY={settings.ownerNameOffsetY || 0}
+            onChangeX={(val) => onUpdate('ownerNameOffsetX', val)}
+            onChangeY={(val) => onUpdate('ownerNameOffsetY', val)}
+          />
+        </div>
+      )
+
+    case 'illustration':
+      return (
+        <div className="space-y-6">
+          <EditorImageUpload
+            label="Subir Ilustración"
+            value={settings.illustrationUrl}
+            onChange={(val) => onUpdate('illustrationUrl', val)}
+          />
+          <EditorSliderControl
+            label="Tamaño"
+            value={settings.illustrationSize || 100}
+            onChange={(val) => onUpdate('illustrationSize', val)}
+            min={10}
+            max={500}
+          />
+          <EditorSliderControl
+            label="Opacidad (%)"
+            value={settings.illustrationOpacity ?? 100}
+            onChange={(val) => onUpdate('illustrationOpacity', val)}
+            min={0}
+            max={100}
+            suffix="%"
+          />
+          <EditorZIndexControl
+            value={settings.illustrationZIndex || 10}
+            onChange={(val) => onUpdate('illustrationZIndex', val)}
+          />
+          <EditorPositionControl
+            offsetX={settings.illustrationOffsetX || 0}
+            offsetY={settings.illustrationOffsetY || 0}
+            onChangeX={(val) => onUpdate('illustrationOffsetX', val)}
+            onChangeY={(val) => onUpdate('illustrationOffsetY', val)}
+            rotation={settings.illustrationRotation || 0}
+            onChangeRotation={(val) => onUpdate('illustrationRotation', val)}
           />
         </div>
       )
@@ -185,8 +244,8 @@ function renderPropertiesFor(
           />
 
           <div className="my-4 border-t pt-4">
-            <ButtonVariantPicker
-              value={settings.ctaVariant || 'default'}
+            <EditorVariantControl
+              value={settings.ctaVariant || 'primary'}
               onChange={(val) => onUpdate('ctaVariant', val)}
             />
           </div>
@@ -200,12 +259,18 @@ function renderPropertiesFor(
               }}
               label="Tipografía"
             />
-            <SizeSlider
-              label="Tamaño de Fuente"
+            <EditorSliderControl
+              label="Tamaño de Texto"
               value={settings.ctaFontSize || 16}
               onChange={(val) => onUpdate('ctaFontSize', val)}
               min={10}
               max={32}
+            />
+            <EditorPositionControl
+              offsetX={settings.ctaOffsetX || 0}
+              offsetY={settings.ctaOffsetY || 0}
+              onChangeX={(val) => onUpdate('ctaOffsetX', val)}
+              onChangeY={(val) => onUpdate('ctaOffsetY', val)}
             />
           </div>
         </div>
@@ -214,9 +279,26 @@ function renderPropertiesFor(
     case 'heroMainImage':
       return (
         <div className="space-y-6">
-          <ImageStylePicker
+          <EditorImageUpload
+            label="Imagen Principal"
+            value={settings.heroMainImageUrl}
+            onChange={(val) => onUpdate('heroMainImageUrl', val)}
+          />
+          <EditorSelectControl
+            label="Estilo de Imagen"
             value={settings.heroImageStyle || 'original'}
+            options={IMAGE_STYLES}
             onChange={(val) => onUpdate('heroImageStyle', val)}
+          />
+          <EditorZIndexControl
+            value={settings.heroMainImageZIndex || 5}
+            onChange={(val) => onUpdate('heroMainImageZIndex', val)}
+          />
+          <EditorPositionControl
+            offsetX={settings.heroMainImageOffsetX || 0}
+            offsetY={settings.heroMainImageOffsetY || 0}
+            onChangeX={(val) => onUpdate('heroMainImageOffsetX', val)}
+            onChangeY={(val) => onUpdate('heroMainImageOffsetY', val)}
           />
         </div>
       )

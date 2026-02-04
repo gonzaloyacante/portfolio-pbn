@@ -1,11 +1,11 @@
 'use client'
 
-import { HomeSettingsData, updateHomeSettings } from '@/actions/theme.actions'
+import { HomeSettingsData, updateHomeSettings } from '@/actions/settings/home'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useToast, Button } from '@/components/ui'
 import { VisualEditorLayout } from '../visual-editor/VisualEditorLayout'
-import { HeroPreview } from '../visual-editor/HeroPreview'
+import { HeroPreview } from './HeroPreview'
 import { PropertyPanel } from '../visual-editor/PropertyPanel'
 import type { EditableElement } from '../visual-editor/types'
 import { Save } from 'lucide-react'
@@ -22,8 +22,10 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const [isSaving, setIsSaving] = useState(false)
 
   const handleUpdate = (field: string, value: unknown) => {
-    if (!settings) return
-    setSettings({ ...settings, [field]: value })
+    setSettings((prev) => {
+      if (!prev) return null
+      return { ...prev, [field]: value }
+    })
   }
 
   const handleSave = async () => {

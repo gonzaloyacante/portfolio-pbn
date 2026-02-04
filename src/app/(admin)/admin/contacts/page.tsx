@@ -1,4 +1,4 @@
-import { getContacts } from '@/actions/contact.actions'
+import { getContacts } from '@/actions/user/contact'
 import ContactList from '@/components/features/contact/ContactList'
 import Link from 'next/link'
 

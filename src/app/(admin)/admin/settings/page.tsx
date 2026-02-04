@@ -1,4 +1,5 @@
-import { getContactSettings, getSocialLinks } from '@/actions/theme.actions'
+import { getContactSettings } from '@/actions/settings/contact'
+import { getSocialLinks } from '@/actions/settings/social'
 import { ContactEditor } from '@/components/features/contact/ContactEditor'
 import { PageHeader } from '@/components/layout'
 

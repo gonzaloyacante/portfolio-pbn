@@ -40,7 +40,7 @@ export async function createBooking(formData: FormData) {
         clientEmail: data.clientEmail,
         clientPhone: data.clientPhone,
         serviceId: data.serviceId,
-        notes: data.notes,
+        clientNotes: data.notes,
         status: 'PENDING',
       },
     })

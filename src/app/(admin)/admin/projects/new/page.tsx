@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import { uploadImageAndCreateProject } from '@/actions/content.actions'
+import { uploadImageAndCreateProject } from '@/actions/cms/content'
 import { Button, SmartField as FormField, ImageUpload } from '@/components/ui'
 import { PageHeader, Section } from '@/components/layout'
 

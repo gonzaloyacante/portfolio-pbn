@@ -1,12 +1,7 @@
 'use client'
 
-import {
-  ContactSettingsData,
-  SocialLinkData,
-  updateContactSettings,
-  upsertSocialLink,
-  deleteSocialLink,
-} from '@/actions/theme.actions'
+import { ContactSettingsData, updateContactSettings } from '@/actions/settings/contact'
+import { SocialLinkData, upsertSocialLink, deleteSocialLink } from '@/actions/settings/social'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {

@@ -19,7 +19,7 @@ async function main() {
   })
 
   // 2. Settings (Theme & Pages)
-  console.log('⚙️  Seeding Settings...')
+  console.log('⚙️ Seeding Settings...')
   await prisma.themeSettings.upsert({
     where: { id: themeSettings.id },
     update: themeSettings,
@@ -87,7 +87,8 @@ async function main() {
   // 5. Projects
   console.log('🎨 Seeding Projects...')
   for (const project of projects) {
-    const { categorySlug, images, ...projectData } = project
+    const { images, ...projectData } = project
+    const categorySlug = project.categorySlug
 
     // Find category ID
     const category = await prisma.category.findUnique({

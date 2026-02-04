@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Service } from '@prisma/client'
 import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
-import { toggleService, deleteService } from '@/actions/services.actions'
+import { toggleService, deleteService } from '@/actions/cms/services'
 import ServiceForm from './ServiceForm'
 import { Edit, Trash2, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'

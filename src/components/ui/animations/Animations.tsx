@@ -7,17 +7,25 @@ import { ReactNode } from 'react'
  * FadeIn Component
  * Simple fade-in animation for elements when they enter the viewport
  */
+/**
+ * FadeIn Component
+ * Simple fade-in animation for elements when they enter the viewport
+ */
 export function FadeIn({
   children,
   className,
   delay = 0,
   duration = 0.5,
+  disabled = false,
 }: {
   children: ReactNode
   className?: string
   delay?: number
   duration?: number
+  disabled?: boolean
 }) {
+  if (disabled) return <div className={className}>{children}</div>
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -41,13 +49,17 @@ export function SlideIn({
   direction = 'left',
   delay = 0,
   duration = 0.5,
+  disabled = false,
 }: {
   children: ReactNode
   className?: string
   direction?: 'left' | 'right' | 'up' | 'down'
   delay?: number
   duration?: number
+  disabled?: boolean
 }) {
+  if (disabled) return <div className={className}>{children}</div>
+
   const directions = {
     left: { x: -50, y: 0 },
     right: { x: 50, y: 0 },
@@ -77,12 +89,16 @@ export function ScaleIn({
   delay = 0,
   duration = 0.3,
   className,
+  disabled = false,
 }: {
   children: ReactNode
   delay?: number
   duration?: number
   className?: string
+  disabled?: boolean
 }) {
+  if (disabled) return <div className={className}>{children}</div>
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}

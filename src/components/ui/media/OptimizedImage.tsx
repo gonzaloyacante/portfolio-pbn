@@ -48,7 +48,7 @@ export function OptimizedImage({
   onError,
   fill = false,
   variant,
-  transparentBackground = false,
+  transparentBackground = true,
 }: OptimizedImageProps) {
   const [imageError, setImageError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -118,6 +118,10 @@ export function OptimizedImage({
     return () => observer.disconnect()
   }, [lazy, priority, setIsInView])
 
+  // Note: State resets automatically when src changes via React's reconciliation
+  // The loadState will be reset when image component is re-mounted or src changes
+  // If needed, parent can use key={src} to force full remount
+
   const handleLoad = () => {
     setIsLoaded(true)
     onLoad?.()
@@ -166,7 +170,7 @@ export function OptimizedImage({
       {(isInView || priority) && (
         <>
           {/* Background Blurred Placeholder (Always visible until load) */}
-          {(computedBlurDataURL || placeholder === 'blur') && (
+          {!transparentBackground && (computedBlurDataURL || placeholder === 'blur') && (
             <Image
               src={computedBlurDataURL || defaultBlurDataURL}
               alt={alt}

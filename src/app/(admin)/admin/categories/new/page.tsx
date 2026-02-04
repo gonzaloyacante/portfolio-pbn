@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createCategory } from '@/actions/content.actions'
+import { createCategory } from '@/actions/cms/content'
 import { Button, Input, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
 import Link from 'next/link'

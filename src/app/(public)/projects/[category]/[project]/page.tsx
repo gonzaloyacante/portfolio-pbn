@@ -21,11 +21,15 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${project.title} | Portfolio PBN`,
-    description: project.description.substring(0, 160),
+    title: project.metaTitle || `${project.title} | Portfolio PBN`,
+    description: project.metaDescription || project.description.substring(0, 160),
+    keywords: project.metaKeywords,
+    alternates: {
+      canonical: project.canonicalUrl || undefined,
+    },
     openGraph: {
-      title: project.title,
-      description: project.description.substring(0, 160),
+      title: project.metaTitle || project.title,
+      description: project.metaDescription || project.description.substring(0, 160),
       images: project.thumbnailUrl ? [project.thumbnailUrl] : [],
       type: 'article',
       publishedTime: project.date.toISOString(),
@@ -38,7 +42,7 @@ export async function generateMetadata({
  * Project Detail Page
  * Layout: Title/Description on top, Masonry Grid of images below
  */
-import { getAdjacentProjects } from '@/actions/projects.actions'
+import { getAdjacentProjects } from '@/actions/cms/projects'
 import ProjectNavigation from '@/components/features/projects/ProjectNavigation'
 
 export default async function ProjectDetailPage({
@@ -79,13 +83,6 @@ export default async function ProjectDetailPage({
     notFound()
   }
 
-  // Combine thumbnail and additional images for the gallery
-  // If thumbnail is not in images list (usually it is separate), render it first
-  // But standard practice: show all images. Let's assume images relation contains all gallery images.
-  // If thumbnail is just a string URL and not in images table, we might want to include it.
-  // Usually `images` are the gallery. `thumbnailUrl` is for the card.
-  // Let's check if we want to show thumbnail as the "Hero" image.
-
   const formattedDate = new Date(project.date).toLocaleDateString('es-ES', {
     year: 'numeric',
     month: 'long',
@@ -120,23 +117,78 @@ export default async function ProjectDetailPage({
           </Link>
         </div>
 
+        {/* Video Embed (if exists) */}
+        {project.videoUrl && (
+          <FadeIn className="relative mb-8 aspect-video overflow-hidden rounded-2xl bg-black">
+            <iframe
+              width="100%"
+              height="100%"
+              src={project.videoUrl.replace('watch?v=', 'embed/')}
+              title={project.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0"
+            />
+          </FadeIn>
+        )}
+
         {/* Header Content */}
         <FadeIn className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
           {/* Title & Date */}
-          <div className="lg:col-span-1">
+          <div className="border-border border-b pb-6 lg:col-span-1 lg:border-r lg:border-b-0 lg:pr-6 lg:pb-0">
             <h1 className="mb-4 font-[family-name:var(--font-heading)] text-4xl leading-tight font-bold text-[var(--foreground)] uppercase sm:text-5xl">
               {project.title}
             </h1>
-            <div className="flex items-center gap-2 text-[var(--text-body)] opacity-70">
-              <Calendar size={18} />
-              <span className="text-sm font-medium capitalize">{formattedDate}</span>
+
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-[var(--text-body)] opacity-70">
+                <Calendar size={18} />
+                <span className="text-sm font-medium capitalize">{formattedDate}</span>
+              </div>
+              {project.client && (
+                <div className="flex items-start gap-2 text-[var(--text-body)] opacity-80">
+                  <span className="text-sm font-bold">Cliente:</span>
+                  <span className="text-sm">{project.client}</span>
+                </div>
+              )}
+              {project.location && (
+                <div className="flex items-start gap-2 text-[var(--text-body)] opacity-80">
+                  <span className="text-sm font-bold">Ubicación:</span>
+                  <span className="text-sm">{project.location}</span>
+                </div>
+              )}
+              {project.duration && (
+                <div className="flex items-start gap-2 text-[var(--text-body)] opacity-80">
+                  <span className="text-sm font-bold">Duración:</span>
+                  <span className="text-sm">{project.duration}</span>
+                </div>
+              )}
             </div>
+
+            {project.tags && project.tags.length > 0 && (
+              <div className="mt-6 flex flex-wrap gap-2">
+                {project.tags.map((tag, i) => (
+                  <span
+                    key={i}
+                    className="bg-muted/50 text-muted-foreground rounded px-2 py-1 text-xs tracking-wide uppercase"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Description */}
           <div className="lg:col-span-2">
+            {project.excerpt && (
+              <p className="text-foreground mb-6 text-xl leading-relaxed font-medium">
+                {project.excerpt}
+              </p>
+            )}
             <div className="prose prose-lg dark:prose-invert max-w-none font-[family-name:var(--font-body)] text-[var(--text-body)]">
-              <p>{project.description}</p>
+              <p>{project.description?.replace(project.excerpt || '', '')}</p>
             </div>
           </div>
         </FadeIn>

@@ -5,7 +5,7 @@ import {
   getLoginAlertEmail,
   getTestimonialAlertEmail,
 } from './email-templates'
-import { getContactSettings } from '@/actions/theme.actions'
+import { getContactSettings } from '@/actions/settings/contact'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

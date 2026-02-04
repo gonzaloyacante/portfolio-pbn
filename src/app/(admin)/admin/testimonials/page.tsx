@@ -1,12 +1,9 @@
 import { prisma } from '@/lib/db'
-import {
-  createTestimonial,
-  deleteTestimonial,
-  toggleTestimonial,
-} from '@/actions/testimonials.actions'
+import { createTestimonial, deleteTestimonial, toggleTestimonial } from '@/actions/cms/testimonials'
 import { Button, Card, Badge } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { Section } from '@/components/layout'
+import Link from 'next/link'
 
 export default async function TestimonialsPage() {
   const testimonials = await prisma.testimonial.findMany({
@@ -88,6 +85,13 @@ export default async function TestimonialsPage() {
                 </div>
 
                 <div className="flex items-center gap-2 self-end md:self-start">
+                  {/* Edit */}
+                  <Link href={`/admin/testimonials/${t.id}/edit`}>
+                    <Button variant="outline" size="sm" className="px-3">
+                      ✏️
+                    </Button>
+                  </Link>
+
                   {/* Toggle Active/Inactive */}
                   <form
                     action={async () => {

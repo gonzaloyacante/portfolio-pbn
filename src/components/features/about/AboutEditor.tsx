@@ -1,9 +1,9 @@
 'use client'
 
-import { AboutSettingsData, updateAboutSettings } from '@/actions/theme.actions'
+import { AboutSettingsData, updateAboutSettings } from '@/actions/settings/about'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@/components/ui'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
 import { useToast } from '@/components/ui'

@@ -18,29 +18,55 @@ const ServiceSchema = z.object({
     .min(1, 'El slug es obligatorio')
     .regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
   description: z.string().optional(),
-  price: z.coerce.number().positive().optional().nullable(),
-  priceLabel: z.enum(['desde', 'fijo', 'consultar']).default('desde'),
+  shortDesc: z.string().optional(),
+
+  // Pricing
+  price: z.coerce.number().optional().nullable(),
+  priceLabel: z.enum(['desde', 'fijo', 'consultar', 'gratis']).default('desde'),
+  currency: z.string().default('ARS'),
+  pricingTiers: z.string().optional(), // Receive as JSON string
+
+  // Time & Availability
   duration: z.string().optional(),
+  durationMinutes: z.coerce.number().optional().nullable(),
+  isAvailable: z.boolean().default(true),
+  maxBookingsPerDay: z.coerce.number().int().default(3),
+  advanceNoticeDays: z.coerce.number().int().default(2),
+
+  // Media
   imageUrl: z.string().url().optional().or(z.literal('')),
+  galleryUrls: z.string().optional(), // Comma separated URLs
+  videoUrl: z.string().url().optional().or(z.literal('')),
   iconName: z.string().optional(),
+  color: z.string().optional(), // Brand color
+
+  // Display
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
   sortOrder: z.coerce.number().int().default(0),
+
+  // SEO
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.string().optional(),
+
+  // Experience
+  requirements: z.string().optional(),
+  cancellationPolicy: z.string().optional(),
 })
 
 // ============================================
-// PUBLIC ACTIONS
+// PUBLIC GETTERS
 // ============================================
 
 /**
- * Get active services for public display
+ * Get all active services for public view
  */
-export async function getActiveServices(limit?: number) {
+export async function getActiveServices() {
   try {
     const services = await prisma.service.findMany({
       where: { isActive: true },
       orderBy: { sortOrder: 'asc' },
-      take: limit,
     })
     return services
   } catch (error) {
@@ -50,53 +76,38 @@ export async function getActiveServices(limit?: number) {
 }
 
 /**
- * Get featured services for homepage
- */
-export async function getFeaturedServices(limit = 3) {
-  try {
-    const services = await prisma.service.findMany({
-      where: { isActive: true, isFeatured: true },
-      orderBy: { sortOrder: 'asc' },
-      take: limit,
-    })
-    return services
-  } catch (error) {
-    logger.error('Error fetching featured services:', { error })
-    return []
-  }
-}
-
-/**
- * Get service by slug for detail page
+ * Get a service by slug for public view
  */
 export async function getServiceBySlug(slug: string) {
   try {
-    return await prisma.service.findUnique({
+    const service = await prisma.service.findUnique({
       where: { slug },
     })
+    return service
   } catch (error) {
     logger.error('Error fetching service by slug:', { error })
     return null
   }
 }
 
-// ============================================
-// ADMIN ACTIONS
-// ============================================
-
 /**
- * Get all services for admin
+ * Get all services for admin view
  */
-export async function getAllServices() {
+export async function getServices() {
   try {
-    return await prisma.service.findMany({
+    const services = await prisma.service.findMany({
       orderBy: { sortOrder: 'asc' },
     })
+    return services
   } catch (error) {
-    logger.error('Error fetching all services:', { error })
+    logger.error('Error fetching services:', { error })
     return []
   }
 }
+
+// ============================================
+// ADMIN ACTIONS
+// ============================================
 
 /**
  * Create a new service
@@ -106,14 +117,35 @@ export async function createService(formData: FormData) {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
+    shortDesc: formData.get('shortDesc'),
+    // Pricing
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
+    currency: formData.get('currency') || 'ARS',
+    pricingTiers: formData.get('pricingTiers'),
+    // Time
     duration: formData.get('duration'),
+    durationMinutes: formData.get('durationMinutes') || null,
+    isAvailable: formData.get('isAvailable') === 'true' || formData.get('isAvailable') === 'on',
+    maxBookingsPerDay: formData.get('maxBookingsPerDay'),
+    advanceNoticeDays: formData.get('advanceNoticeDays'),
+    // Media
     imageUrl: formData.get('imageUrl'),
+    galleryUrls: formData.get('galleryUrls'),
+    videoUrl: formData.get('videoUrl'),
     iconName: formData.get('iconName'),
-    isActive: formData.get('isActive') === 'true',
-    isFeatured: formData.get('isFeatured') === 'true',
+    color: formData.get('color'),
+    // Display
+    isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
+    isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
     sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
+    // SEO
+    metaTitle: formData.get('metaTitle'),
+    metaDescription: formData.get('metaDescription'),
+    metaKeywords: formData.get('metaKeywords'),
+    // Experience
+    requirements: formData.get('requirements'),
+    cancellationPolicy: formData.get('cancellationPolicy'),
   }
 
   const validation = ServiceSchema.safeParse(rawData)
@@ -130,19 +162,53 @@ export async function createService(formData: FormData) {
       return { success: false, error: 'Ya existe un servicio con ese slug' }
     }
 
+    // Process specialized fields
+    let tiersJson = undefined
+    try {
+      if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
+    } catch {}
+
+    const galleryList = data.galleryUrls
+      ? data.galleryUrls
+          .split(',')
+          .map((u) => u.trim())
+          .filter(Boolean)
+      : []
+    const keywordList = data.metaKeywords
+      ? data.metaKeywords
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : []
+
     await prisma.service.create({
       data: {
         name: data.name,
         slug: data.slug,
         description: data.description || null,
+        shortDesc: data.shortDesc,
         price: data.price ? data.price : null,
         priceLabel: data.priceLabel,
+        currency: data.currency,
+        pricingTiers: tiersJson || undefined,
         duration: data.duration || null,
+        durationMinutes: data.durationMinutes || null,
+        isAvailable: data.isAvailable,
+        maxBookingsPerDay: data.maxBookingsPerDay,
+        advanceNoticeDays: data.advanceNoticeDays,
         imageUrl: data.imageUrl || null,
+        galleryUrls: galleryList,
+        videoUrl: data.videoUrl || null,
         iconName: data.iconName || null,
+        color: data.color || null,
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        metaKeywords: keywordList,
+        requirements: data.requirements,
+        cancellationPolicy: data.cancellationPolicy,
       },
     })
 
@@ -164,14 +230,35 @@ export async function updateService(id: string, formData: FormData) {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
+    shortDesc: formData.get('shortDesc'),
+    // Pricing
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
+    currency: formData.get('currency') || 'ARS',
+    pricingTiers: formData.get('pricingTiers'),
+    // Time
     duration: formData.get('duration'),
+    durationMinutes: formData.get('durationMinutes') || null,
+    isAvailable: formData.get('isAvailable') === 'true' || formData.get('isAvailable') === 'on',
+    maxBookingsPerDay: formData.get('maxBookingsPerDay'),
+    advanceNoticeDays: formData.get('advanceNoticeDays'),
+    // Media
     imageUrl: formData.get('imageUrl'),
+    galleryUrls: formData.get('galleryUrls'),
+    videoUrl: formData.get('videoUrl'),
     iconName: formData.get('iconName'),
-    isActive: formData.get('isActive') === 'true',
-    isFeatured: formData.get('isFeatured') === 'true',
+    color: formData.get('color'),
+    // Display
+    isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
+    isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
     sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
+    // SEO
+    metaTitle: formData.get('metaTitle'),
+    metaDescription: formData.get('metaDescription'),
+    metaKeywords: formData.get('metaKeywords'),
+    // Experience
+    requirements: formData.get('requirements'),
+    cancellationPolicy: formData.get('cancellationPolicy'),
   }
 
   const validation = ServiceSchema.safeParse(rawData)
@@ -190,20 +277,54 @@ export async function updateService(id: string, formData: FormData) {
       return { success: false, error: 'Ya existe otro servicio con ese slug' }
     }
 
+    // Process specialized fields
+    let tiersJson = undefined
+    try {
+      if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
+    } catch {}
+
+    const galleryList = data.galleryUrls
+      ? data.galleryUrls
+          .split(',')
+          .map((u) => u.trim())
+          .filter(Boolean)
+      : []
+    const keywordList = data.metaKeywords
+      ? data.metaKeywords
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : []
+
     await prisma.service.update({
       where: { id },
       data: {
         name: data.name,
         slug: data.slug,
         description: data.description || null,
+        shortDesc: data.shortDesc,
         price: data.price ? data.price : null,
         priceLabel: data.priceLabel,
+        currency: data.currency,
+        pricingTiers: tiersJson || undefined,
         duration: data.duration || null,
+        durationMinutes: data.durationMinutes || null,
+        isAvailable: data.isAvailable,
+        maxBookingsPerDay: data.maxBookingsPerDay,
+        advanceNoticeDays: data.advanceNoticeDays,
         imageUrl: data.imageUrl || null,
+        galleryUrls: galleryList,
+        videoUrl: data.videoUrl || null,
         iconName: data.iconName || null,
+        color: data.color || null,
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        metaKeywords: keywordList,
+        requirements: data.requirements,
+        cancellationPolicy: data.cancellationPolicy,
       },
     })
 

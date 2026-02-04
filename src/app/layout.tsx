@@ -8,7 +8,7 @@ import { NavigationProgress } from '@/components/layout'
 import { ErrorBoundary } from '@/components/ui'
 import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
-import { getThemeValues, getThemeSettings } from '@/actions/theme.actions'
+import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
 import FontLoader from '@/components/layout/FontLoader'
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'

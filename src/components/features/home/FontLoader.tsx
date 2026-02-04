@@ -2,32 +2,41 @@
 
 import { useEffect } from 'react'
 
-interface FontConfig {
-  name?: string | null
-  url?: string | null
-}
-
 interface FontLoaderProps {
-  fonts: FontConfig[]
+  fonts: (string | null | undefined)[]
 }
 
 /**
- * Loads fonts dynamically into the document head
+ * Loads Google Fonts dynamically based on proper names string.
+ * This is crucial for the editor to show changes instantly.
  */
 export function FontLoader({ fonts }: FontLoaderProps) {
   useEffect(() => {
-    fonts.forEach((font) => {
-      if (!font.name || !font.url) return
+    // Filter valid font names
+    const fontNames = fonts
+      .filter((f): f is string => !!f && f !== 'inherit')
+      // Deduplicate
+      .filter((value, index, self) => self.indexOf(value) === index)
 
-      // Check if font is already loaded to avoid duplicates
-      if (document.querySelector(`link[data-font="${font.name}"]`)) return
+    if (fontNames.length === 0) return
 
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = font.url
-      link.setAttribute('data-font', font.name)
-      document.head.appendChild(link)
-    })
+    // Create URL
+    const families = fontNames.map((f) => f.replace(/ /g, '+')).join('&family=')
+    // Use &display=swap for better loading
+    const url = `https://fonts.googleapis.com/css2?family=${families}&display=swap`
+
+    // Check if already exists
+    const existingLink = document.querySelector(`link[href="${url}"]`)
+    if (existingLink) return
+
+    // Inject
+    const link = document.createElement('link')
+    link.href = url
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+
+    // Optional: Cleanup not really needed as we want fonts to persist usually,
+    // but in editor it might pile up. For now let's keep it simple.
   }, [fonts])
 
   return null

@@ -1,13 +1,24 @@
-import { getContactSettings, getSocialLinks } from '@/actions/theme.actions'
+import { getContactSettings } from '@/actions/settings/contact'
+import { getSocialLinks } from '@/actions/settings/social'
 import ContactForm from '@/components/features/contact/ContactForm'
-import { Instagram, Music2, MessageCircle, Youtube, Linkedin, Facebook } from 'lucide-react'
+import {
+  Instagram,
+  Music2,
+  MessageCircle,
+  Youtube,
+  Linkedin,
+  Facebook,
+  MapPin,
+  Phone,
+  Mail,
+} from 'lucide-react'
 import { OptimizedImage, FadeIn } from '@/components/ui'
 import { Suspense } from 'react'
 
 /**
- * Contact Page - Canva Design
- * Left: Large illustration + Owner name + Social links
- * Right: Contact form with response preference
+ * Contact Page
+ * Mobile: Compact Layout (Title -> Info Row -> Form -> Social)
+ * Desktop: Split Layout (Illustration/Info Left | Form Right)
  */
 export default async function ContactPage() {
   const [contactSettings, socialLinks] = await Promise.all([getContactSettings(), getSocialLinks()])
@@ -22,15 +33,57 @@ export default async function ContactPage() {
     facebook: <Facebook className="h-6 w-6" />,
   }
 
+  const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
+
   return (
     <section className="w-full bg-[var(--background)] transition-colors duration-500">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-6 py-12 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
-        {/* ========== LEFT COLUMN: Illustration + Name + Social ========== */}
-        <div className="order-2 flex flex-col items-center lg:order-1 lg:items-start">
+      {/* 
+        MOBILE HEADER (Only visible on < lg) 
+        Title + Compact Info Row
+      */}
+      <div className="flex flex-col items-center px-6 pt-8 pb-0 text-center lg:hidden">
+        <h1 className="mb-4 font-[family-name:var(--font-script)] text-4xl text-[var(--foreground)]">
+          {contactSettings?.pageTitle || 'Contacto'}
+        </h1>
+
+        {/* Compact Info Grid */}
+        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-[var(--text-body)]">
+          {contactSettings?.email && (
+            <a
+              href={`mailto:${contactSettings.email}`}
+              className="flex items-center gap-2 hover:text-[var(--primary)]"
+            >
+              <Mail className="h-4 w-4" />
+              <span>{contactSettings.email}</span>
+            </a>
+          )}
+          {contactSettings?.phone && (
+            <a
+              href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
+              className="flex items-center gap-2 hover:text-[var(--primary)]"
+            >
+              <Phone className="h-4 w-4" />
+              <span>{contactSettings.phone}</span>
+            </a>
+          )}
+        </div>
+        {contactSettings?.location && (
+          <div className="mt-2 flex items-center gap-2 text-sm text-[var(--text-body)]">
+            <MapPin className="h-4 w-4" />
+            <span>{contactSettings.location}</span>
+          </div>
+        )}
+      </div>
+
+      {/* MAIN GRID */}
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-6 text-[var(--foreground)] lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+        {/* ========== LEFT COLUMN (DESKTOP) ========== */}
+        {/* Hidden on mobile, block on Desktop */}
+        <div className="hidden flex-col items-start pt-10 lg:flex">
           {/* Large Illustration */}
           <FadeIn className="mb-8">
             {contactSettings?.illustrationUrl ? (
-              <div className="relative h-48 w-48 sm:h-64 sm:w-64 lg:h-80 lg:w-80">
+              <div className="relative h-80 w-80">
                 <OptimizedImage
                   src={contactSettings.illustrationUrl}
                   alt={contactSettings.illustrationAlt || 'Ilustración contacto'}
@@ -39,47 +92,45 @@ export default async function ContactPage() {
                   sizes="320px"
                 />
               </div>
-            ) : (
-              <span className="text-[10rem] sm:text-[12rem] lg:text-[14rem]">💄</span>
-            )}
+            ) : null}
           </FadeIn>
 
           {/* Owner Name */}
-          <h1 className="mb-8 text-center font-[family-name:var(--font-script)] text-3xl text-[var(--foreground)] sm:text-4xl lg:text-left lg:text-5xl">
-            {contactSettings?.ownerName || 'Paola Bolívar Nievas'}
+          <h1 className="mb-8 font-[family-name:var(--font-script)] text-5xl text-[var(--foreground)]">
+            {ownerName}
           </h1>
 
-          {/* Contact Info */}
-          <div className="mb-8 space-y-4 text-center lg:text-left">
+          {/* Contact Info Desktop */}
+          <div className="mb-8 space-y-4 text-left font-sans text-lg">
             {contactSettings?.email && (
               <a
                 href={`mailto:${contactSettings.email} `}
-                className="flex items-center justify-center gap-3 text-[var(--text-body)] transition-colors hover:text-[var(--primary)] lg:justify-start"
+                className="flex items-center justify-start gap-3 transition-colors hover:text-[var(--primary)]"
               >
-                <span className="text-xl">📧</span>
+                <Mail className="h-6 w-6" />
                 <span>{contactSettings.email}</span>
               </a>
             )}
             {contactSettings?.phone && (
               <a
                 href={`tel:${contactSettings.phone.replace(/\s+/g, '')} `}
-                className="flex items-center justify-center gap-3 text-[var(--text-body)] transition-colors hover:text-[var(--primary)] lg:justify-start"
+                className="flex items-center justify-start gap-3 transition-colors hover:text-[var(--primary)]"
               >
-                <span className="text-xl">📱</span>
+                <Phone className="h-6 w-6" />
                 <span>{contactSettings.phone}</span>
               </a>
             )}
             {contactSettings?.location && (
-              <div className="flex items-center justify-center gap-3 text-[var(--text-body)] lg:justify-start">
-                <span className="text-xl">📍</span>
+              <div className="flex items-center justify-start gap-3">
+                <MapPin className="h-6 w-6" />
                 <span>{contactSettings.location}</span>
               </div>
             )}
           </div>
 
-          {/* Social Links */}
+          {/* Social Links Desktop */}
           {contactSettings?.showSocialLinks && socialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
+            <div className="flex flex-wrap justify-start gap-4">
               {socialLinks.map((link) => (
                 <a
                   key={link.id}
@@ -97,7 +148,7 @@ export default async function ContactPage() {
         </div>
 
         {/* ========== RIGHT COLUMN: Contact Form ========== */}
-        <div className="order-1 lg:order-2">
+        <div className="w-full">
           <Suspense
             fallback={<div className="h-96 w-full animate-pulse rounded-[2.5rem] bg-gray-100" />}
           >
@@ -114,6 +165,22 @@ export default async function ContactPage() {
               sendAnotherLabel={contactSettings?.sendAnotherLabel}
             />
           </Suspense>
+
+          {/* MOBILE SOCIAL LINKS (Shown below form on mobile only) */}
+          <div className="mt-8 flex justify-center gap-4 lg:hidden">
+            {contactSettings?.showSocialLinks &&
+              socialLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--card-bg)] text-[var(--foreground)] transition-all hover:scale-110 hover:bg-[var(--primary)] hover:text-[var(--background)]"
+                >
+                  {iconMap[link.platform] || <span className="text-lg">🔗</span>}
+                </a>
+              ))}
+          </div>
         </div>
       </div>
     </section>

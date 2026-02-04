@@ -6,26 +6,57 @@ import { headers } from 'next/headers'
 export async function recordAnalyticEvent(
   eventType: string,
   entityId?: string,
-  entityType?: string
+  entityType?: string,
+  additionalData?: {
+    stm?: {
+      source?: string
+      medium?: string
+      campaign?: string
+      term?: string
+      content?: string
+    }
+    performance?: {
+      loadTime?: number
+    }
+    metadata?: Record<string, unknown>
+  }
 ) {
   try {
     const headersList = await headers()
     const ipAddress = headersList.get('x-forwarded-for') || 'unknown'
     const userAgent = headersList.get('user-agent') || 'unknown'
+    const referer = headersList.get('referer') || null
+
+    // Parse IP if multiple
+    const distinctIp = Array.isArray(ipAddress) ? ipAddress[0] : ipAddress.split(',')[0].trim()
 
     await prisma.analyticLog.create({
       data: {
         eventType,
         entityId,
         entityType,
-        ipAddress: Array.isArray(ipAddress) ? ipAddress[0] : ipAddress.split(',')[0], // Handle multiple IPs
+        // Request Metadata
+        ipAddress: distinctIp,
         userAgent,
+        referrer: referer,
+        // UTM / Marketing
+        utmSource: additionalData?.stm?.source,
+        utmMedium: additionalData?.stm?.medium,
+        utmCampaign: additionalData?.stm?.campaign,
+        utmTerm: additionalData?.stm?.term,
+        utmContent: additionalData?.stm?.content,
+        // Performance
+        loadTime: additionalData?.performance?.loadTime,
+        // JSON Metadata
+        eventData: additionalData?.metadata
+          ? JSON.parse(JSON.stringify(additionalData.metadata))
+          : undefined,
       },
     })
     return { success: true }
   } catch (error) {
     console.error('Error recording analytic event:', error)
-    // Don't fail the request if analytics fails
+    // Silently fail to not disrupt user experience
     return { success: false }
   }
 }

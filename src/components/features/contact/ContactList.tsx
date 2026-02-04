@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { markContactAsRead, markContactAsReplied, deleteContact } from '@/actions/contact.actions'
+import { markContactAsRead, markContactAsReplied, deleteContact } from '@/actions/user/contact'
 import { useConfirmDialog } from '@/components/ui'
 
 interface Contact {

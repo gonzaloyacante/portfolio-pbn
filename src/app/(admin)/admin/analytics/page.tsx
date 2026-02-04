@@ -1,4 +1,4 @@
-import { getAnalyticsDashboardData } from '@/actions/analytics.actions'
+import { getAnalyticsDashboardData } from '@/actions/analytics'
 import { StatCard } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import { EmptyState } from '@/components/ui'

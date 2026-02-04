@@ -16,6 +16,22 @@ const ProjectSchema = z.object({
   description: z.string().optional(),
   categoryId: z.string().min(1, 'La categoría es requerida'),
   date: z.string().optional(),
+  // New Fields
+  excerpt: z.string().optional(),
+  videoUrl: z.string().optional(),
+  duration: z.string().optional(),
+  client: z.string().optional(),
+  location: z.string().optional(),
+  tags: z.string().optional(),
+  // SEO
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.string().optional(),
+  canonicalUrl: z.string().optional(),
+  // Display
+  layout: z.string().optional(),
+  isFeatured: z.string().optional(), // Receive as string 'true'/'on'
+  isPinned: z.string().optional(),
 })
 
 const CategorySchema = z.object({
@@ -32,6 +48,19 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     description: formData.get('description'),
     categoryId: formData.get('categoryId'),
     date: formData.get('date'),
+    excerpt: formData.get('excerpt'),
+    videoUrl: formData.get('videoUrl'),
+    duration: formData.get('duration'),
+    client: formData.get('client'),
+    location: formData.get('location'),
+    tags: formData.get('tags'),
+    metaTitle: formData.get('metaTitle'),
+    metaDescription: formData.get('metaDescription'),
+    metaKeywords: formData.get('metaKeywords'),
+    canonicalUrl: formData.get('canonicalUrl'),
+    layout: formData.get('layout'),
+    isFeatured: formData.get('isFeatured'),
+    isPinned: formData.get('isPinned'),
   }
 
   const validation = ProjectSchema.safeParse(rawData)
@@ -39,7 +68,8 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
 
-  const { title, description, categoryId, date } = validation.data
+  const data = validation.data
+  const { title, description, categoryId, date } = data
   const files = formData.getAll('images') as File[]
 
   if (files.length === 0) {
@@ -55,6 +85,20 @@ export async function uploadImageAndCreateProject(formData: FormData) {
       })
     )
 
+    // Parse tags and keywords
+    const tagList = data.tags
+      ? data.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : []
+    const keywordList = data.metaKeywords
+      ? data.metaKeywords
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : []
+
     // 2. Create Project in DB
     await prisma.project.create({
       data: {
@@ -67,6 +111,20 @@ export async function uploadImageAndCreateProject(formData: FormData) {
         date: date ? new Date(date) : new Date(),
         thumbnailUrl: uploadedImages[0]?.url || '',
         categoryId,
+        // New fields
+        excerpt: data.excerpt,
+        videoUrl: data.videoUrl,
+        duration: data.duration,
+        client: data.client,
+        location: data.location,
+        tags: tagList,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        metaKeywords: keywordList,
+        canonicalUrl: data.canonicalUrl,
+        layout: data.layout || 'grid',
+        isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
+        isPinned: data.isPinned === 'true' || data.isPinned === 'on',
         images: {
           create: uploadedImages.map((img) => ({
             url: img.url,
@@ -130,7 +188,7 @@ export async function restoreProject(id: string) {
   }
 }
 
-export async function permanentDeleteProject(id: string) {
+export async function permanentlyDeleteProject(id: string) {
   try {
     const project = await prisma.project.findUnique({
       where: { id },
@@ -161,6 +219,19 @@ export async function updateProject(id: string, formData: FormData) {
     description: formData.get('description'),
     categoryId: formData.get('categoryId'),
     date: formData.get('date'),
+    excerpt: formData.get('excerpt'),
+    videoUrl: formData.get('videoUrl'),
+    duration: formData.get('duration'),
+    client: formData.get('client'),
+    location: formData.get('location'),
+    tags: formData.get('tags'),
+    metaTitle: formData.get('metaTitle'),
+    metaDescription: formData.get('metaDescription'),
+    metaKeywords: formData.get('metaKeywords'),
+    canonicalUrl: formData.get('canonicalUrl'),
+    layout: formData.get('layout'),
+    isFeatured: formData.get('isFeatured'),
+    isPinned: formData.get('isPinned'),
   }
 
   const validation = ProjectSchema.safeParse(rawData)
@@ -168,10 +239,25 @@ export async function updateProject(id: string, formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
 
-  const { title, description, categoryId, date } = validation.data
+  const data = validation.data
+  const { title, description, categoryId, date } = data
   const newFiles = formData.getAll('newImages') as File[]
 
   try {
+    // Parse tags and keywords
+    const tagList = data.tags
+      ? data.tags
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+      : []
+    const keywordList = data.metaKeywords
+      ? data.metaKeywords
+          .split(',')
+          .map((k) => k.trim())
+          .filter(Boolean)
+      : []
+
     // 1. Update basic info
     await prisma.project.update({
       where: { id },
@@ -180,6 +266,20 @@ export async function updateProject(id: string, formData: FormData) {
         description: description || '',
         date: date ? new Date(date) : undefined,
         categoryId,
+        // New fields
+        excerpt: data.excerpt,
+        videoUrl: data.videoUrl,
+        duration: data.duration,
+        client: data.client,
+        location: data.location,
+        tags: tagList,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        metaKeywords: keywordList,
+        canonicalUrl: data.canonicalUrl,
+        layout: data.layout,
+        isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
+        isPinned: data.isPinned === 'true' || data.isPinned === 'on',
       },
     })
 

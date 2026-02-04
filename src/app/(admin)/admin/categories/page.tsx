@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db'
-import { getCategorySettings, updateCategorySettings } from '@/actions/category-settings.actions'
+import { getCategorySettings, updateCategorySettings } from '@/actions/settings/categories'
 import { Button } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
 import VisualConfigModal from '@/components/features/projects/VisualConfigModal'

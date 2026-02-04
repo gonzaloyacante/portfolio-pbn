@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { recordAnalyticEvent } from '@/actions/analytics.actions'
+import { recordAnalyticEvent } from '@/actions/analytics'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { contactFormSchema } from '@/lib/validations'
@@ -69,8 +69,11 @@ export async function sendContactEmail(formData: FormData) {
       responsePreference: validatedData.responsePreference,
     }
 
-    // 🔐 OBTENER IP
+    // 🔐 OBTENER METADATA
+    const headersList = await headers()
     const ipAddress = await getClientIp()
+    const userAgent = headersList.get('user-agent') || 'unknown'
+    const referrer = headersList.get('referer') || null
 
     // 🔐 RATE LIMITING
     const rateLimitResult = await contactLimiter.check(ipAddress)
@@ -89,15 +92,23 @@ export async function sendContactEmail(formData: FormData) {
     })
 
     // 💾 GUARDAR EN BD
-    await prisma.contact.create({
+    const newContact = await prisma.contact.create({
       data: {
         ...sanitizedData,
         ipAddress,
+        userAgent,
+        referrer,
+        // Default status is NEW, priority MEDIUM
       },
     })
 
     // 📊 ANALÍTICA
-    await recordAnalyticEvent('CONTACT_SUBMIT')
+    await recordAnalyticEvent('CONTACT_SUBMIT', newContact.id, 'Contact', {
+      metadata: {
+        email: sanitizedData.email, // Safe metadata
+        referrer,
+      },
+    })
 
     // 📧 ENVIAR NOTIFICACIÓN AL ADMIN
     try {

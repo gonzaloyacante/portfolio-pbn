@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
-import { getCategorySettings } from '@/actions/category-settings.actions'
+import { getCategorySettings } from '@/actions/settings/categories'
 
 export const metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',

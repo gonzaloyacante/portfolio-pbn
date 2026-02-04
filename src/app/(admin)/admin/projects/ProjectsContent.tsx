@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Pencil, Trash2, Eye } from 'lucide-react'
 
 import { Button, Card, Badge, useToast, useConfirmDialog } from '@/components/ui'
-import { deleteProjectAction, reorderProjects } from '@/actions/project.actions'
+import { deleteProjectAction, reorderProjects } from '@/actions/cms/project'
 import FilterBar from '@/components/ui/data-display/FilterBar'
 import SortableGrid from '@/components/layout/SortableGrid'
 import ViewToggle from '@/components/layout/ViewToggle'

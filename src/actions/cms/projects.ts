@@ -171,8 +171,22 @@ export async function getProjectBySlug(slug: string) {
             title: true,
             slug: true,
             description: true,
+            excerpt: true,
             thumbnailUrl: true,
+            videoUrl: true,
             date: true,
+            duration: true,
+            client: true,
+            location: true,
+            tags: true,
+            // SEO
+            metaTitle: true,
+            metaDescription: true,
+            metaKeywords: true,
+            ogImage: true,
+            canonicalUrl: true,
+            // Header
+            layout: true,
             category: {
               select: {
                 id: true,
@@ -250,39 +264,6 @@ export async function revalidateProjects() {
   revalidatePath(ROUTES.home, 'layout')
   revalidateTag(CACHE_TAGS.projects, 'max')
   revalidateTag(CACHE_TAGS.featuredProjects, 'max')
-}
-
-/**
- * Restaurar proyecto eliminado
- */
-export async function restoreProject(id: string) {
-  try {
-    await prisma.project.update({
-      where: { id },
-      data: { isDeleted: false, deletedAt: null },
-    })
-    revalidatePath(ROUTES.admin.trash)
-    revalidatePath(ROUTES.admin.projects)
-    return { success: true }
-  } catch (error) {
-    console.error('Error restaurando proyecto:', error)
-    return { success: false, error: 'Error al restaurar proyecto' }
-  }
-}
-
-/**
- * Eliminar proyecto permanentemente
- */
-export async function permanentlyDeleteProject(id: string) {
-  try {
-    // Las imágenes se eliminan automáticamente con onDelete: Cascade
-    await prisma.project.delete({ where: { id } })
-    revalidatePath(ROUTES.admin.trash)
-    return { success: true }
-  } catch (error) {
-    console.error('Error eliminando proyecto permanentemente:', error)
-    return { success: false, error: 'Error al eliminar proyecto' }
-  }
 }
 
 /**

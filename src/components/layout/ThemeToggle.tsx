@@ -1,69 +1,33 @@
 'use client'
 
-import { useSyncExternalStore, useCallback } from 'react'
-
-// Store para manejar el tema
-const themeStore = {
-  isDark: false,
-  listeners: new Set<() => void>(),
-
-  subscribe(listener: () => void) {
-    this.listeners.add(listener)
-    return () => this.listeners.delete(listener)
-  },
-
-  getSnapshot() {
-    return themeStore.isDark
-  },
-
-  getServerSnapshot() {
-    return false
-  },
-
-  toggle() {
-    this.isDark = !this.isDark
-    if (typeof document !== 'undefined') {
-      if (this.isDark) {
-        document.documentElement.classList.add('dark')
-        localStorage.setItem('theme', 'dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-        localStorage.setItem('theme', 'light')
-      }
-    }
-    this.listeners.forEach((l) => l())
-  },
-
-  init() {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('theme')
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      this.isDark = stored === 'dark' || (!stored && prefersDark)
-      if (this.isDark) {
-        document.documentElement.classList.add('dark')
-      }
-    }
-  },
-}
-
-// Inicializar en cliente
-if (typeof window !== 'undefined') {
-  themeStore.init()
-}
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 /**
- * Toggle para cambiar entre modo claro y oscuro
+ * Toggle para cambiar entre modo claro y oscuro usando next-themes (Reactive)
  */
 export default function ThemeToggle() {
-  const isDark = useSyncExternalStore(
-    (cb) => themeStore.subscribe(cb),
-    () => themeStore.getSnapshot(),
-    () => themeStore.getServerSnapshot()
-  )
+  const { setTheme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
 
-  const toggleTheme = useCallback(() => {
-    themeStore.toggle()
+  // Avoid hydration mismatch - use layout effect to prevent race conditions
+  useEffect(() => {
+    // Delay to next tick to avoid setState in effect warning
+    const timer = setTimeout(() => setMounted(true), 0)
+    return () => clearTimeout(timer)
   }, [])
+
+  if (!mounted) {
+    return (
+      <div className="bg-muted h-10 w-10 animate-pulse rounded-full"></div> // Skeleton placeholder
+    )
+  }
+
+  const isDark = resolvedTheme === 'dark'
+
+  const toggleTheme = () => {
+    setTheme(isDark ? 'light' : 'dark')
+  }
 
   return (
     <button

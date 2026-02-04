@@ -1,6 +1,6 @@
-import { getAboutSettings } from '@/actions/theme.actions'
-import { getActiveTestimonials } from '@/actions/testimonials.actions'
-import { getTestimonialSettings } from '@/actions/testimonial-settings.actions'
+import { getAboutSettings } from '@/actions/settings/about'
+import { getActiveTestimonials } from '@/actions/cms/testimonials'
+import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import JsonLd from '@/components/seo/JsonLd'
@@ -48,7 +48,7 @@ export default async function AboutPage() {
         }}
       />
       {/* Main Content Grid */}
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-6 py-12 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-8 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         {/* ========== LEFT COLUMN: Text Content ========== */}
         <div className="order-2 lg:order-1">
           {/* Signature in script font */}

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { requestPasswordReset } from '@/actions/auth.actions'
+import { requestPasswordReset } from '@/actions/user/auth'
 import { FadeIn, Button, Input } from '@/components/ui'
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
 

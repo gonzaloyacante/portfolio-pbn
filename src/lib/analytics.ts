@@ -1,4 +1,4 @@
-import { recordAnalyticEvent } from '@/actions/analytics.actions'
+import { recordAnalyticEvent } from '@/actions/analytics'
 
 /**
  * Client-side Analytics Manager

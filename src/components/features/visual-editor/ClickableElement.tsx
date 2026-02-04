@@ -1,15 +1,15 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ReactNode } from 'react'
+import { ReactNode, HTMLAttributes } from 'react'
 import type { EditableElement } from './types'
 
-interface ClickableElementProps {
+// Omit 'id' from HTMLAttributes to avoid conflict with EditableElement
+interface ClickableElementProps extends Omit<HTMLAttributes<HTMLDivElement>, 'id'> {
   id: EditableElement
   isSelected: boolean
   onClick: () => void
   children: ReactNode
-  className?: string
 }
 
 /**
@@ -21,9 +21,11 @@ export function ClickableElement({
   onClick,
   children,
   className,
+  ...props
 }: ClickableElementProps) {
   return (
     <div
+      data-element-id={id}
       onClick={(e) => {
         e.stopPropagation()
         onClick()
@@ -33,6 +35,7 @@ export function ClickableElement({
         isSelected && 'ring-primary ring-offset-background ring-2 ring-offset-2',
         className
       )}
+      {...props}
     >
       {children}
       {isSelected && (

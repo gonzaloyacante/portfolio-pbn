@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation'
 import { prisma } from '@/lib/db'
-import { updateCategory } from '@/actions/content.actions'
+import { updateCategory } from '@/actions/cms/content'
 import { Button, Input, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
 import Link from 'next/link'

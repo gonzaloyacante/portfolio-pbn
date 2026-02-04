@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { Button, EmptyState } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import Image from 'next/image'
-import { restoreProject, permanentlyDeleteProject } from '@/actions/projects.actions'
+import { restoreProject, permanentlyDeleteProject } from '@/actions/cms/content'
 
 export default async function PapeleraPage() {
   const deletedProjects = await prisma.project.findMany({
