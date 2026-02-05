@@ -2,7 +2,14 @@
 
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
+import { Prisma } from '@prisma/client'
+
 import { ROUTES } from '@/config/routes'
+import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
+import { requireAdmin } from '@/lib/security-server'
+import { validateAndSanitize } from '@/lib/security-client'
+import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
+import { logger } from '@/lib/logger'
 
 export interface AboutSettingsData {
   id: string
@@ -39,28 +46,48 @@ export async function getAboutSettings(): Promise<AboutSettingsData | null> {
  */
 export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 'id'>>) {
   try {
+    // 1. 🔒 Security
+    const user = await requireAdmin()
+
+    // 2. 🚦 Rate Limiting
+    await checkSettingsRateLimit(user.id as string)
+
+    // 3. 🛡️ Validation
+    const validated = validateAndSanitize(aboutSettingsSchema.partial(), data)
+    if (!validated.success) {
+      return { success: false, error: validated.error }
+    }
+
+    // 3. 🧹 Clean Data: Strictly Typed for Prisma
+    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    const cleanData = Object.fromEntries(cleanEntries) as Prisma.AboutSettingsUpdateInput
+
     let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
 
     if (!settings) {
+      // Manual mapping for strict Type Safety during Creation
+      const createData: Prisma.AboutSettingsCreateInput = {
+        illustrationUrl: (cleanData.illustrationUrl as string) ?? undefined,
+        illustrationAlt: (cleanData.illustrationAlt as string) || 'Ilustración sobre mí',
+        bioTitle: (cleanData.bioTitle as string) || 'Hola, soy Paola.',
+        bioIntro: (cleanData.bioIntro as string) ?? undefined,
+        bioDescription: (cleanData.bioDescription as string) ?? undefined,
+        profileImageUrl: (cleanData.profileImageUrl as string) ?? undefined,
+        profileImageAlt: (cleanData.profileImageAlt as string) || 'Paola Bolívar Nievas',
+        skills: (cleanData.skills as string[]) || [],
+        yearsExperience: (cleanData.yearsExperience as number) ?? undefined,
+        certifications: (cleanData.certifications as string[]) || [],
+        isActive: true,
+      }
+
       settings = await prisma.aboutSettings.create({
-        data: {
-          illustrationUrl: data.illustrationUrl,
-          illustrationAlt: data.illustrationAlt || 'Ilustración sobre mí',
-          bioTitle: data.bioTitle || 'Hola, soy Paola.',
-          bioIntro: data.bioIntro,
-          bioDescription: data.bioDescription,
-          profileImageUrl: data.profileImageUrl,
-          profileImageAlt: data.profileImageAlt || 'Paola Bolívar Nievas',
-          skills: data.skills || [],
-          yearsExperience: data.yearsExperience,
-          certifications: data.certifications || [],
-          isActive: true,
-        },
+        data: createData,
       })
     } else {
+      // cleanData is already strictly typed as UpdateInput
       settings = await prisma.aboutSettings.update({
         where: { id: settings.id },
-        data,
+        data: cleanData,
       })
     }
 
@@ -72,7 +99,10 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
       message: 'Configuración de "Sobre Mí" actualizada',
     }
   } catch (error) {
-    console.error('Error updating about settings:', error)
+    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+      return { success: false, error: error.message }
+    }
+    logger.error('Error updating about settings:', { error })
     return {
       success: false,
       error: 'Error al actualizar configuración',

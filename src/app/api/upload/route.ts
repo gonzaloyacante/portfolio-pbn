@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { uploadImage, deleteImage } from '@/lib/cloudinary'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
@@ -10,6 +11,10 @@ import { getToken } from 'next-auth/jwt'
  */
 export async function POST(req: NextRequest) {
   try {
+    // 0. 🚦 Rate Limiting (IP based)
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
+    await checkApiRateLimit(ip)
+
     // 1. Intentar obtener sesión completa (Server-side)
     const session = await getServerSession(authOptions)
     let isAuthenticated = !!session
@@ -60,6 +65,9 @@ export async function POST(req: NextRequest) {
       publicId: result.publicId,
     })
   } catch (error) {
+    if (error instanceof Error && error.message.includes('solicitudes')) {
+      return NextResponse.json({ error: error.message }, { status: 429 })
+    }
     console.error('Error uploading image:', error)
     return NextResponse.json(
       { error: 'Error al subir la imagen', details: String(error) },

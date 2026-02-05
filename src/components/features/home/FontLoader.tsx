@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { buildSafeFontUrl } from '@/lib/security-client'
 
 interface FontLoaderProps {
   fonts: (string | null | undefined)[]
@@ -20,23 +21,24 @@ export function FontLoader({ fonts }: FontLoaderProps) {
 
     if (fontNames.length === 0) return
 
-    // Create URL
-    const families = fontNames.map((f) => f.replace(/ /g, '+')).join('&family=')
-    // Use &display=swap for better loading
-    const url = `https://fonts.googleapis.com/css2?family=${families}&display=swap`
+    // ✅ USAR HELPER SEGURO PARA CADA FUENTE
+    fontNames.forEach((fontName) => {
+      const url = buildSafeFontUrl(fontName)
+      if (!url) return
 
-    // Check if already exists
-    const existingLink = document.querySelector(`link[href="${url}"]`)
-    if (existingLink) return
+      // Check if already exists
+      const existingLink = document.querySelector(`link[href="${url}"]`)
+      if (existingLink) return
 
-    // Inject
-    const link = document.createElement('link')
-    link.href = url
-    link.rel = 'stylesheet'
-    document.head.appendChild(link)
+      // Inject
+      const link = document.createElement('link')
+      link.href = url
+      link.rel = 'stylesheet'
+      link.crossOrigin = 'anonymous' // Security best practice
+      document.head.appendChild(link)
+    })
 
-    // Optional: Cleanup not really needed as we want fonts to persist usually,
-    // but in editor it might pile up. For now let's keep it simple.
+    // Cleanup logic not strictly needed for this version
   }, [fonts])
 
   return null

@@ -21,7 +21,8 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const [settings, setSettings] = useState<HomeSettingsData | null>(initialSettings)
   const [isSaving, setIsSaving] = useState(false)
 
-  const handleUpdate = (field: string, value: unknown) => {
+  // ✅ TYPE-SAFE UPDATE con generics
+  const handleUpdate = <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => {
     setSettings((prev) => {
       if (!prev) return null
       return { ...prev, [field]: value }
