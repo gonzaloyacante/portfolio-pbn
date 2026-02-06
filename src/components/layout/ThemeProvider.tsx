@@ -17,12 +17,6 @@ export default function ThemeProvider({ children, themeValues }: ThemeProviderPr
     const root = document.documentElement
     const isDark = resolvedTheme === 'dark'
 
-    // Debug: Log theme application
-    console.log('[ThemeProvider] Applying theme:', {
-      mode: isDark ? 'dark' : 'light',
-      themeValues,
-    })
-
     // Helper to set variable with priority (important)
     const setVar = (key: string, value: string) => {
       root.style.setProperty(key, value, 'important')

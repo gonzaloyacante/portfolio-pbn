@@ -18,12 +18,10 @@ export async function POST(req: NextRequest) {
       if (token?.email) {
         isAuthenticated = true
         userEmail = token.email
-        console.log('API ChangePassword - Auth via JWT Token')
       }
     }
 
     if (!isAuthenticated || !userEmail) {
-      console.error('API ChangePassword - 401 Unauthorized')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 

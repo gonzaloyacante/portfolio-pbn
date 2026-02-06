@@ -24,17 +24,14 @@ export async function POST(req: NextRequest) {
       const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
       if (token) {
         isAuthenticated = true
-        console.log('API Upload - Auth via JWT Token (getServerSession failed)')
+        // console.log('API Upload - Auth via JWT Token (getServerSession failed)')
       }
     }
 
     if (!isAuthenticated) {
       console.error('API Upload - 401 Unauthorized - No session or token found')
       // Debug: Log cookie names only
-      console.log(
-        'Cookies received:',
-        req.cookies.getAll().map((c) => c.name)
-      )
+      // Log Cookies removed for production
       return NextResponse.json({ error: 'No autorizado - Sesión no encontrada' }, { status: 401 })
     }
 

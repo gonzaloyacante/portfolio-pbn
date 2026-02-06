@@ -1,11 +1,11 @@
 import React from 'react'
-import { Control, Controller } from 'react-hook-form'
+import { Control, Controller, Path } from 'react-hook-form'
 import { FormLabel, FormMessage, ColorPicker } from '@/components/ui'
+import { ThemeEditorData } from '@/lib/validations'
 
 interface ThemeColorSectionProps {
   mode: 'light' | 'dark'
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: Control<any>
+  control: Control<ThemeEditorData>
 }
 
 // Configuration for fields to reduce duplication
@@ -65,11 +65,11 @@ export const ThemeColorSection: React.FC<ThemeColorSectionProps> = ({ mode, cont
               </div>
               <Controller
                 control={control}
-                name={fieldKey}
+                name={fieldKey as Path<ThemeEditorData>}
                 render={({ field: { value, onChange } }) => (
                   <div>
                     <ColorPicker
-                      color={value || '#000000'} // Fallback
+                      color={(value as string) || '#000000'} // Fallback
                       onChange={onChange}
                     />
                     <FormMessage />

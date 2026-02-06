@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm, DefaultValues, Path, PathValue } from 'react-hook-form'
+import { useForm, DefaultValues, Path, PathValue, FieldValues } from 'react-hook-form'
 import { Button, Modal, Switch } from '@/components/ui'
 import toast from 'react-hot-toast'
 import PreviewCard from '@/components/ui/data-display/PreviewCard'
 
-export interface ConfigField {
-  key: string
+export interface ConfigField<T extends FieldValues> {
+  key: Path<T>
   label: string
   description?: string
   type?: 'boolean' | 'number'
@@ -16,17 +16,17 @@ export interface ConfigField {
   max?: number
 }
 
-interface VisualConfigModalProps<T extends object> {
+interface VisualConfigModalProps<T extends FieldValues> {
   triggerLabel?: string
   title?: string
   description?: string
   initialSettings: T | null
-  fields: ConfigField[]
+  fields: ConfigField<T>[]
   previewVariant: 'project' | 'category'
   onSave: (data: T) => Promise<{ success: boolean; error?: string }>
 }
 
-export default function VisualConfigModal<T extends object>({
+export default function VisualConfigModal<T extends FieldValues>({
   triggerLabel = 'Config. Visual',
   title = 'Configuración de Visualización',
   description,
@@ -44,9 +44,6 @@ export default function VisualConfigModal<T extends object>({
   const { setValue, watch, handleSubmit } = useForm<T>({
     defaultValues: (initialSettings || {}) as DefaultValues<T>,
   })
-
-  // Watch all fields to update preview
-  const values = watch()
 
   async function onSubmit(data: T) {
     setIsSaving(true)
@@ -66,10 +63,9 @@ export default function VisualConfigModal<T extends object>({
     }
   }
 
-  // Helper to get watched value safely
-  const getValue = (key: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (values as any)?.[key]
+  // Type-safe value helper
+  const getValue = (key: Path<T>) => {
+    return watch(key)
   }
 
   return (
@@ -104,12 +100,9 @@ export default function VisualConfigModal<T extends object>({
                       type="number"
                       min={field.min ?? 1}
                       max={field.max ?? 10}
-                      value={getValue(field.key) ?? field.min ?? 1}
+                      value={(getValue(field.key) as number) ?? field.min ?? 1}
                       onChange={(e) =>
-                        setValue(
-                          field.key as Path<T>,
-                          parseInt(e.target.value) as PathValue<T, Path<T>>
-                        )
+                        setValue(field.key, parseInt(e.target.value) as PathValue<T, Path<T>>)
                       }
                       className="border-border bg-background text-foreground w-20 rounded-md border px-3 py-1.5 text-sm"
                     />
@@ -117,7 +110,7 @@ export default function VisualConfigModal<T extends object>({
                     <Switch
                       checked={!!getValue(field.key)}
                       onCheckedChange={(checked) =>
-                        setValue(field.key as Path<T>, checked as PathValue<T, Path<T>>)
+                        setValue(field.key, checked as PathValue<T, Path<T>>)
                       }
                     />
                   )}
@@ -140,13 +133,14 @@ export default function VisualConfigModal<T extends object>({
                   // Projects: showCardTitles, showCardCategory
                   // Categories: showDescription, showProjectCount ??
                   showTitle={
-                    previewVariant === 'project' ? (getValue('showCardTitles') ?? true) : true // Category always shows name? Or maybe we map 'showDescription' to something else?
-                    // Actually Category Card (public) always shows Name.
+                    previewVariant === 'project'
+                      ? (getValue('showCardTitles' as Path<T>) ?? true)
+                      : true
                   }
                   showSubtitle={
                     previewVariant === 'project'
-                      ? (getValue('showCardCategory') ?? true)
-                      : (getValue('showProjectCount') ?? true)
+                      ? (getValue('showCardCategory' as Path<T>) ?? true)
+                      : (getValue('showProjectCount' as Path<T>) ?? true)
                   }
                 />
               </div>
