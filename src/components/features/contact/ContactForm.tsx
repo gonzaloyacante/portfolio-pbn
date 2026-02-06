@@ -90,6 +90,7 @@ export default function ContactForm({
     }
   }, [serviceName, setValue])
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const responsePreference = watch('responsePreference')
 
   const onSubmit = async (data: ContactFormData) => {

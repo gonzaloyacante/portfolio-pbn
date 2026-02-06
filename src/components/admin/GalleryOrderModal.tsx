@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Modal, Button, LoadingOverlay } from '@/components/ui'
 import DraggableMasonryGallery from './DraggableMasonryGallery'
 import { updateCategoryGalleryOrder, resetCategoryGalleryOrder } from '@/actions/gallery-ordering'
-import { useToast } from '@/components/ui'
+import { useToast, useConfirmDialog as useConfirm } from '@/components/ui'
 import { Save, RotateCcw } from 'lucide-react'
 
 interface GalleryImage {
@@ -35,6 +35,8 @@ export default function GalleryOrderModal({
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const { show } = useToast()
+
+  const { confirm, Dialog } = useConfirm()
 
   // Reset on open
   useEffect(() => {
@@ -91,13 +93,16 @@ export default function GalleryOrderModal({
   }
 
   const handleReset = async () => {
-    if (
-      !confirm(
-        '¿Estás seguro de que quieres restablecer el orden a la configuración predeterminada?'
-      )
-    ) {
-      return
-    }
+    const isConfirmed = await confirm({
+      title: '¿Restablecer orden?',
+      message:
+        '¿Estás seguro de que quieres restablecer el orden a la configuración predeterminada? Esto deshará cualquier orden manual y usará el orden del proyecto.',
+      confirmText: 'Sí, restablecer',
+      cancelText: 'Cancelar',
+      variant: 'danger',
+    })
+
+    if (!isConfirmed) return
 
     setIsSaving(true)
 
@@ -174,6 +179,9 @@ export default function GalleryOrderModal({
 
         {/* Loading Overlay */}
         {isSaving && <LoadingOverlay show={isSaving} message="Guardando orden..." />}
+
+        {/* Confirmation Dialog */}
+        <Dialog />
       </div>
     </Modal>
   )

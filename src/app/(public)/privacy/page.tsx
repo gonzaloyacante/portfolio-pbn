@@ -6,7 +6,18 @@ export const metadata: Metadata = {
     'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
 }
 
-export default function PrivacyPage() {
+import { getContactSettings } from '@/actions/settings/contact'
+
+export default async function PrivacyPage() {
+  // Fetch dynamic contact info
+  const contactSettings = await getContactSettings()
+  const { email, location, ownerName, phone } = contactSettings ?? {
+    email: 'admin@paolabolivar.com',
+    location: 'Granada, España',
+    ownerName: 'Paola Bolívar Nievas',
+    phone: '',
+  }
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
       <h1 className="font-primary text-foreground mb-8 text-4xl font-bold">
@@ -26,11 +37,11 @@ export default function PrivacyPage() {
           </p>
           <div className="bg-muted/50 mt-4 rounded-2xl p-4">
             <p className="text-sm">
-              <strong>Responsable del tratamiento:</strong> Paola Bolívar Nievas
+              <strong>Responsable del tratamiento:</strong> {ownerName}
               <br />
-              <strong>Domicilio:</strong> Paraguay 142, Ayacucho, Buenos Aires, Argentina
+              <strong>Domicilio:</strong> {location}
               <br />
-              <strong>Email de contacto:</strong> admin@paolabolivar.com
+              <strong>Email de contacto:</strong> {email}
             </p>
           </div>
         </section>
@@ -180,11 +191,8 @@ export default function PrivacyPage() {
           <div className="bg-muted/50 mt-4 rounded-2xl p-4">
             <p className="text-sm">
               Para ejercer sus derechos, envíe un email a{' '}
-              <a
-                href="mailto:admin@paolabolivar.com"
-                className="text-primary underline hover:no-underline"
-              >
-                admin@paolabolivar.com
+              <a href={`mailto:${email}`} className="text-primary underline hover:no-underline">
+                {email}
               </a>{' '}
               indicando claramente el derecho que desea ejercer y adjuntando copia de su DNI u otro
               documento identificativo.
@@ -270,16 +278,18 @@ export default function PrivacyPage() {
           <div className="mt-4 space-y-2">
             <p>
               <strong>Email:</strong>{' '}
-              <a
-                href="mailto:admin@paolabolivar.com"
-                className="text-primary underline hover:no-underline"
-              >
-                admin@paolabolivar.com
+              <a href={`mailto:${email}`} className="text-primary underline hover:no-underline">
+                {email}
               </a>
             </p>
             <p>
-              <strong>Dirección:</strong> Paraguay 142, Ayacucho, Buenos Aires, Argentina
+              <strong>Dirección:</strong> {location}
             </p>
+            {phone && (
+              <p>
+                <strong>Teléfono:</strong> {phone}
+              </p>
+            )}
           </div>
         </section>
       </div>

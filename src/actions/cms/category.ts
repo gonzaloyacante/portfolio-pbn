@@ -56,7 +56,7 @@ export async function getCategoryImages(categoryId: string) {
     )
 
     return { success: true, data: images }
-  } catch (error) {
-    return { success: false, error: 'Error al obtener imágenes de la categoría' }
+  } catch {
+    return { success: false, error: 'Database error' }
   }
 }

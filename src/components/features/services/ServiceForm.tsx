@@ -159,7 +159,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
             defaultValue={service?.price?.toString()}
             placeholder="0"
           />
-          <FormField label="Moneda" name="currency" defaultValue={service?.currency || 'ARS'} />
+          <FormField label="Moneda" name="currency" defaultValue={service?.currency || 'EUR'} />
           <FormField
             label="Etiqueta"
             name="priceLabel"

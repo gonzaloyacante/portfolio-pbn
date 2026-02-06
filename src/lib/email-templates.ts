@@ -301,7 +301,7 @@ export const getBookingAlertEmail = (params: {
   const dateString = params.date.toLocaleString('es-ES', {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: 'America/Argentina/Buenos_Aires',
+    timeZone: 'Europe/Madrid',
   })
 
   return generateEmailHtml({
@@ -362,7 +362,7 @@ export const getBookingConfirmationEmail = (params: { clientName: string; date: 
   const dateString = params.date.toLocaleString('es-ES', {
     dateStyle: 'full',
     timeStyle: 'short',
-    timeZone: 'America/Argentina/Buenos_Aires',
+    timeZone: 'Europe/Madrid',
   })
 
   return generateEmailHtml({

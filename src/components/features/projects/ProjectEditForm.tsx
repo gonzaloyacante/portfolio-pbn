@@ -177,7 +177,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             label="Ubicación"
             name="location"
             defaultValue={project.location || ''}
-            placeholder="Ej: Buenos Aires"
+            placeholder="Ej: Madrid"
           />
           <Input
             label="Duración"

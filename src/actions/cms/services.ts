@@ -23,7 +23,7 @@ const ServiceSchema = z.object({
   // Pricing
   price: z.coerce.number().optional().nullable(),
   priceLabel: z.enum(['desde', 'fijo', 'consultar', 'gratis']).default('desde'),
-  currency: z.string().default('ARS'),
+  currency: z.string().default('EUR'),
   pricingTiers: z.string().optional(), // Receive as JSON string
 
   // Time & Availability
@@ -121,7 +121,7 @@ export async function createService(formData: FormData) {
     // Pricing
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
-    currency: formData.get('currency') || 'ARS',
+    currency: formData.get('currency') || 'EUR',
     pricingTiers: formData.get('pricingTiers'),
     // Time
     duration: formData.get('duration'),
@@ -234,7 +234,7 @@ export async function updateService(id: string, formData: FormData) {
     // Pricing
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
-    currency: formData.get('currency') || 'ARS',
+    currency: formData.get('currency') || 'EUR',
     pricingTiers: formData.get('pricingTiers'),
     // Time
     duration: formData.get('duration'),

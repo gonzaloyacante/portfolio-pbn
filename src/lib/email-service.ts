@@ -128,7 +128,7 @@ export const emailService = {
       to: params.email,
       subject: '🛡️ Seguridad: Nuevo Inicio de Sesión Detectado',
       html: getLoginAlertEmail({
-        date: new Date().toLocaleString('es-ES', { timeZone: 'America/Argentina/Buenos_Aires' }),
+        date: new Date().toLocaleString('es-ES', { timeZone: 'Europe/Madrid' }),
         ipAddress: params.ipAddress,
         userAgent: params.userAgent,
         location: params.location,

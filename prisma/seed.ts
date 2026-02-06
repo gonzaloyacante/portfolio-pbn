@@ -184,12 +184,14 @@ async function main() {
   console.log(`   ✅ ${imageCount} images`)
 
   console.log('\n🎉 Seeding Completed Successfully!')
-  console.log('   📁 Categories: 4 (Maquillaje, FX, Teatro, Posticería)')
-  console.log('   🔗 Social links: 4')
-  console.log('   💼 Services: 4')
-  console.log('   💬 Testimonials: 3')
+  console.log(
+    `   📁 Categories: ${categories.length} (${categories.map((c) => c.name).join(', ')})`
+  )
+  console.log(`   🔗 Social links: ${socialLinks.length}`)
+  console.log(`   💼 Services: ${services.length}`)
+  console.log(`   💬 Testimonials: ${testimonials.length}`)
   console.log(`   🎨 Projects: ${projectCount}`)
-  console.log(`   🖼️  Images: ${imageCount}`)
+  console.log(`   🖼️ Images: ${imageCount}`)
 }
 
 main()
