@@ -44,7 +44,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Generate Prisma Client
         run: pnpm prisma generate
@@ -61,15 +61,40 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          # Required build-time env vars
+          # Database
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+          # Cloudinary
+          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
           CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
           CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
           CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+
+          # App Config
+          NODE_ENV: production
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_APP_NAME: ${{ secrets.NEXT_PUBLIC_APP_NAME }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+
+          # Auth
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          JWT_REFRESH_EXPIRES_IN: ${{ secrets.JWT_REFRESH_EXPIRES_IN }}
+
+          # Email
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
+
+          # Sentry
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+          # Fonts
+          GOOGLE_FONTS_API_KEY: ${{ secrets.GOOGLE_FONTS_API_KEY }}
 
   # E2E tests - DISABLED by default to save minutes
   # Enable manually via workflow_dispatch when needed
@@ -95,7 +120,7 @@ jobs:
   #         cache: 'pnpm'
   #
   #     - name: Install dependencies
-  #       run: pnpm install --frozen-lockfile
+  #       run: pnpm install
   #
   #     - name: Install Playwright browsers
   #       run: pnpm playwright install --with-deps chromium

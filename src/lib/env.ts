@@ -28,7 +28,6 @@ const envSchema = z.object({
 
   // Sentry (Optional in dev)
   SENTRY_DSN: z.string().url('SENTRY_DSN must be a valid URL').optional(),
-  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
 
   // Analytics (Optional)
   NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
