@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Testimonial } from '@prisma/client'
+import Image from 'next/image'
 
 interface TestimonialSliderProps {
   testimonials: Testimonial[]
@@ -42,9 +43,11 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
 
       <div className="flex flex-col items-center gap-3">
         {currentTestimonial.avatarUrl ? (
-          <img
+          <Image
             src={currentTestimonial.avatarUrl}
             alt={currentTestimonial.name}
+            width={48}
+            height={48}
             className="h-12 w-12 rounded-full border-2 border-[var(--primary)] object-cover"
           />
         ) : (

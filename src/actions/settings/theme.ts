@@ -168,7 +168,7 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
     }
 
     // 3. 🧹 Clean Data strictly typed
-    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.ThemeSettingsUpdateInput
 
     // 3. 🎨 Specific Validations (Colors & Fonts)

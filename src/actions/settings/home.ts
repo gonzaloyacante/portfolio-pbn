@@ -119,7 +119,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
     }
 
     // 3. 🧹 Clean Data: Remove undefined values strictly
-    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.HomeSettingsUpdateInput
 
     // 3. 🎨 Specific Validations (Colors & Fonts)

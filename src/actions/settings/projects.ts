@@ -35,7 +35,7 @@ export async function updateProjectSettings(data: ProjectSettingsFormData) {
     }
 
     // 3. 🧹 Clean Data strictly typed
-    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.ProjectSettingsUpdateInput
 
     // Check if settings exist

@@ -35,7 +35,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
     }
 
     // 3. 🧹 Clean Data: Strictly Typed
-    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.CategorySettingsUpdateInput
 
     const existing = await prisma.categorySettings.findFirst()

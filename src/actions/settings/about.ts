@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
-import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
+import { aboutSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
@@ -59,7 +59,8 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
     }
 
     // 3. 🧹 Clean Data: Strictly Typed for Prisma
-    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    // Fix: Unused variable '_' removed by using empty destructuring
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.AboutSettingsUpdateInput
 
     let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })

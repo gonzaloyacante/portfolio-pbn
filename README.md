@@ -2,7 +2,7 @@
 
 **Portfolio profesional para Paola Bolívar Nievas** - Maquilladora especializada en audiovisuales, FX, teatro y caracterización.
 
-![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?logo=tailwindcss)
 ![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?logo=prisma)
@@ -50,7 +50,7 @@
 
 | Categoría         | Tecnología                            |
 | ----------------- | ------------------------------------- |
-| **Frontend**      | Next.js 15, React 19, TypeScript      |
+| **Frontend**      | Next.js 16, React 19, TypeScript      |
 | **Estilos**       | Tailwind CSS, CSS Variables dinámicas |
 | **Base de datos** | PostgreSQL + Prisma ORM               |
 | **Autenticación** | NextAuth.js                           |
@@ -58,32 +58,6 @@
 | **Imágenes**      | Cloudinary                            |
 | **Deploy**        | Vercel                                |
 | **Testing**       | Playwright (E2E)                      |
-
----
-
-## 🚀 Instalación
-
-```bash
-# Clonar repositorio
-git clone https://github.com/gonzaloyacante/portfolio-pbn.git
-cd portfolio-pbn
-
-# Instalar dependencias
-pnpm install
-
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus credenciales
-
-# Ejecutar migraciones
-pnpm prisma migrate dev
-
-# Poblar datos iniciales
-pnpm prisma db seed
-
-# Iniciar servidor de desarrollo
-pnpm dev
-```
 
 ---
 

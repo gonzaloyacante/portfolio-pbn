@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
-import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
+import { contactSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
@@ -68,7 +68,7 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
     }
 
     // 3. 🧹 Clean Data strictly typed
-    const cleanEntries = Object.entries(validated.data || {}).filter(([_, v]) => v !== undefined)
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.ContactSettingsUpdateInput
 
     let settings = await prisma.contactSettings.findFirst({ where: { isActive: true } })
