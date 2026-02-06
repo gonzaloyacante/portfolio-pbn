@@ -56,6 +56,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "6.19.0",
     "@sentry/nextjs": "^10.38.0",
+    "@tailwindcss/postcss": "^4.1.18",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
@@ -82,7 +83,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",
-    "@tailwindcss/postcss": "^4.1.18",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^25.0.10",
     "@types/nprogress": "^0.2.3",
