@@ -21,8 +21,16 @@ interface SendEmailParams {
  */
 async function getAdminEmail() {
   const settings = await getContactSettings()
-  // Use settings email, or fallback to Env var, or default hardcoded
-  return settings?.email || process.env.ADMIN_EMAIL || 'bolivarpaola@gmail.com'
+  // Use settings email, or fallback to Env var.
+  // CRITICAL: Do not hardcode personal emails here.
+  const email = settings?.email || process.env.ADMIN_EMAIL
+
+  if (!email) {
+    console.warn('⚠️ No Admin Email configured in Settings or .env!')
+    return 'admin@example.com' // Safe placeholder instead of personal email
+  }
+
+  return email
 }
 
 /**

@@ -1,6 +1,15 @@
+const email = process.env.ADMIN_EMAIL
+const passwordHash = process.env.ADMIN_PASSWORD_HASH
+
+if (!email || !passwordHash) {
+  throw new Error(
+    '❌ ADMIN_EMAIL or ADMIN_PASSWORD_HASH missing in .env. Please configure them to run seeds.'
+  )
+}
+
 export const adminUser = {
-  email: 'paobn205@gmail.com',
+  email,
   name: 'Paola Bolívar Nievas',
-  password: '$2a$10$N9qo8uLOickgx2ZMRZoMye', // Admin123!
+  password: passwordHash,
   role: 'ADMIN',
 }
