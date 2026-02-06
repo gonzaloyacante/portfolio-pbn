@@ -7,6 +7,7 @@ import { headers } from 'next/headers'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
 import { ROUTES } from '@/config/routes'
+import { auth } from '@/lib/auth'
 
 // Rate limiting cache (simple in-memory, for production use Redis)
 const recentSubmissions = new Map<string, number>()
@@ -160,6 +161,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
   const data = validation.data
+  const session = await auth()
 
   try {
     await prisma.testimonial.update({
@@ -178,7 +180,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
         status: data.status,
         moderationNote: data.moderationNote,
         moderatedAt: new Date(),
-        // moderatedBy: currentUserId // TODO: Get from auth
+        moderatedBy: session?.user?.id || 'system',
       },
     })
 

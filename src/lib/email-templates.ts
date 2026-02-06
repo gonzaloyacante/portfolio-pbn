@@ -244,6 +244,9 @@ export const getLoginAlertEmail = (params: {
 /**
  * 4. New Testimonial Alert (Admin)
  */
+/**
+ * 4. New Testimonial Alert (Admin)
+ */
 export const getTestimonialAlertEmail = (params: {
   name: string
   rating: number
@@ -280,6 +283,118 @@ export const getTestimonialAlertEmail = (params: {
           Moderar Testimonio
         </a>
       </div>
+    `,
+  })
+}
+
+/**
+ * 5. New Booking Alert (Admin)
+ */
+export const getBookingAlertEmail = (params: {
+  date: Date
+  clientName: string
+  clientEmail: string
+  clientPhone?: string
+  serviceId: string // Ideally service name, but ID for now or resolved before passing
+  notes?: string
+}) => {
+  const dateString = params.date.toLocaleString('es-ES', {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+
+  return generateEmailHtml({
+    title: '📅 Nueva Reserva Recibida',
+    children: `
+      <p style="${EMAIL_STYLES.text}">
+        Tienes una nueva solicitud de reserva pendiente de confirmación.
+      </p>
+
+      <div style="${EMAIL_STYLES.box}">
+        <div style="margin-bottom: 16px;">
+          <span style="${EMAIL_STYLES.label}">Cliente</span>
+          <p style="${EMAIL_STYLES.value}">${params.clientName}</p>
+          <p style="${EMAIL_STYLES.value}; font-size: 14px; font-weight: normal;">
+            <a href="mailto:${params.clientEmail}" style="color: inherit;">${params.clientEmail}</a>
+          </p>
+          ${
+            params.clientPhone
+              ? `<p style="${EMAIL_STYLES.value}; font-size: 14px; font-weight: normal;">${params.clientPhone}</p>`
+              : ''
+          }
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <span style="${EMAIL_STYLES.label}">Fecha y Hora Solicitada</span>
+          <p style="${EMAIL_STYLES.value}">${dateString}</p>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+           <span style="${EMAIL_STYLES.label}">Servicio (ID)</span>
+           <p style="${EMAIL_STYLES.value}">${params.serviceId}</p>
+        </div>
+
+        ${
+          params.notes
+            ? `
+        <div>
+           <span style="${EMAIL_STYLES.label}">Notas Adicionales</span>
+           <p style="${EMAIL_STYLES.value}; font-style: italic;">"${params.notes}"</p>
+        </div>`
+            : ''
+        }
+      </div>
+
+       <div style="${EMAIL_STYLES.buttonContainer}">
+         <a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin/calendar" style="${EMAIL_STYLES.button(COLORS.primary)}">
+          Gestionar Reserva
+        </a>
+      </div>
+    `,
+  })
+}
+
+/**
+ * 6. Booking Confirmation (Client)
+ */
+export const getBookingConfirmationEmail = (params: { clientName: string; date: Date }) => {
+  const dateString = params.date.toLocaleString('es-ES', {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: 'America/Argentina/Buenos_Aires',
+  })
+
+  return generateEmailHtml({
+    title: 'Reserva Recibida',
+    children: `
+      <p style="${EMAIL_STYLES.text}">
+        Hola ${params.clientName},
+      </p>
+      <p style="${EMAIL_STYLES.text}">
+        Hemos recibido tu solicitud de reserva correctamente.
+      </p>
+
+      <div style="${EMAIL_STYLES.box}">
+        <div style="margin-bottom: 16px;">
+          <span style="${EMAIL_STYLES.label}">Fecha Solicitada</span>
+          <p style="${EMAIL_STYLES.value}">${dateString}</p>
+        </div>
+        <div>
+           <p style="${EMAIL_STYLES.value}; font-size: 14px; font-weight: normal;">
+             Estado: <strong>Pendiente de Confirmación</strong>
+           </p>
+        </div>
+      </div>
+
+      <p style="${EMAIL_STYLES.text}">
+        Analizaremos tu solicitud y te contactaremos a la brevedad para confirmarla.
+        Si necesitas hacer cambios, por favor contáctanos respondiendo a este correo.
+      </p>
+
+      <p style="${EMAIL_STYLES.text}">
+        ¡Gracias por elegirnos!
+      </p>
     `,
   })
 }

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { logger } from '@/lib/logger'
+import { emailService } from '@/lib/email-service'
 
 const BookingSchema = z.object({
   date: z.string().transform((str) => new Date(str)), // Input as ISO string
@@ -45,7 +46,25 @@ export async function createBooking(formData: FormData) {
       },
     })
 
-    // TODO: Send Email Notification to Admin & Client
+    // Send Email Notification to Admin & Client
+    await Promise.all([
+      emailService.notifyNewBooking({
+        date: data.date,
+        clientName: data.clientName,
+        clientEmail: data.clientEmail,
+        clientPhone: data.clientPhone,
+        serviceId: data.serviceId,
+        notes: data.notes,
+      }),
+      emailService.notifyClientBookingReceived({
+        clientEmail: data.clientEmail,
+        clientName: data.clientName,
+        date: data.date,
+      }),
+    ]).catch((err) => {
+      logger.error('Failed to send booking emails', { error: err })
+      // Don't fail the written booking, just log error
+    })
 
     revalidatePath('/admin/calendar')
     return { success: true }

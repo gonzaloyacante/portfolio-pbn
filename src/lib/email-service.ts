@@ -4,6 +4,8 @@ import {
   getPasswordResetEmail,
   getLoginAlertEmail,
   getTestimonialAlertEmail,
+  getBookingAlertEmail,
+  getBookingConfirmationEmail,
 } from './email-templates'
 import { getContactSettings } from '@/actions/settings/contact'
 
@@ -144,6 +146,41 @@ export const emailService = {
       to: adminEmail,
       subject: `🌟 Nuevo Testimonio de ${data.name}`,
       html: getTestimonialAlertEmail(data),
+    })
+  },
+
+  /**
+   * Notify Admin about a new Booking
+   */
+  async notifyNewBooking(data: {
+    date: Date
+    clientName: string
+    clientEmail: string
+    clientPhone?: string
+    serviceId: string
+    notes?: string
+  }) {
+    const adminEmail = await getAdminEmail()
+
+    return sendEmail({
+      to: adminEmail,
+      subject: `📅 Nueva Reserva: ${data.clientName}`,
+      html: getBookingAlertEmail(data),
+      replyTo: data.clientEmail,
+    })
+  },
+
+  /**
+   * Notify Client that booking is received (Pending)
+   */
+  async notifyClientBookingReceived(data: { clientEmail: string; clientName: string; date: Date }) {
+    return sendEmail({
+      to: data.clientEmail,
+      subject: '📅 Reserva Recibida - Pendiente de Confirmación',
+      html: getBookingConfirmationEmail({
+        clientName: data.clientName,
+        date: data.date,
+      }),
     })
   },
 }
