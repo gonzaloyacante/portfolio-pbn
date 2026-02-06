@@ -47,6 +47,7 @@ model Category {
   ogImage         String?
   // Display
   thumbnailUrl    String?
+  coverImageUrl   String?   // [NEW] Custom selected cover image
   iconName        String?   // lucide-react icon
   color           String?   // Brand color for category
   sortOrder       Int       @default(0)

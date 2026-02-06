@@ -26,8 +26,8 @@ Sentry.init({
     }),
   ],
 
-  // Don't send errors in development
-  enabled: process.env.NODE_ENV === 'production',
+  // Don't send errors in development - OVERRIDDEN FOR VERIFICATION
+  enabled: true, // process.env.NODE_ENV === 'production',
 
   // Ignore certain errors
   ignoreErrors: [
@@ -44,10 +44,10 @@ Sentry.init({
 
   // Filter out certain transactions
   beforeSend(event) {
-    // Don't send errors from localhost
-    if (event.request?.url?.includes('localhost')) {
-      return null
-    }
+    // Don't send errors from localhost - DISABLED FOR VERIFICATION
+    // if (event.request?.url?.includes('localhost')) {
+    //   return null
+    // }
 
     return event
   },

@@ -66,7 +66,8 @@ export default async function ProjectsPage() {
             className={`grid gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-1 sm:grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : ''} `}
           >
             {categories.map((category) => {
-              const thumbnailUrl = category.projects[0]?.thumbnailUrl
+              // Priority: Custom Cover > First Project Thumbnail
+              const thumbnailUrl = category.coverImageUrl || category.projects[0]?.thumbnailUrl
 
               return (
                 <FadeIn key={category.id}>

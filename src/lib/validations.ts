@@ -256,7 +256,22 @@ export const projectFormSchema = z.object({
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string(), // date input returns string
   thumbnailUrl: z.string().optional(),
-  isFeatured: z.boolean().optional(),
+  // Extended fields
+  excerpt: z.string().optional(),
+  videoUrl: z.string().optional(),
+  duration: z.string().optional(),
+  client: z.string().optional(),
+  location: z.string().optional(),
+  tags: z.string().optional(), // Comma separated string from form
+  // SEO
+  metaTitle: z.string().optional(),
+  metaDescription: z.string().optional(),
+  metaKeywords: z.string().optional(), // Comma separated string
+  canonicalUrl: z.string().optional(),
+  // Settings
+  layout: z.string().optional(),
+  isFeatured: z.union([z.boolean(), z.string()]).optional(), // Handle boolean or string 'on'/'true'
+  isPinned: z.union([z.boolean(), z.string()]).optional(),
 })
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>
@@ -270,6 +285,7 @@ export const categorySchema = z.object({
     .max(100)
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   description: z.string().optional(),
+  coverImageUrl: z.string().optional(),
   sortOrder: z.number().optional(),
 })
 

@@ -14,16 +14,11 @@ Sentry.init({
   // Release tracking
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
 
-  // Don't send errors in development
-  enabled: process.env.NODE_ENV === 'production',
+  // Reporting enabled
+  enabled: true,
 
   // Server-side specific settings
   beforeSend(event) {
-    // Don't send database connection errors in dev
-    if (process.env.NODE_ENV !== 'production') {
-      return null
-    }
-
     return event
   },
 

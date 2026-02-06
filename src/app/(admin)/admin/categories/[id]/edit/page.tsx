@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { updateCategory } from '@/actions/cms/content'
 import { Button, Input, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
+import CategoryCoverSelector from '@/components/features/categories/CategoryCoverSelector'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
@@ -98,6 +99,16 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
               placeholder="Describe esta categoría..."
               rows={4}
               className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+            />
+          </div>
+
+          {/* Cover Image Selector */}
+          <div className="space-y-2">
+            <label className="text-foreground text-sm font-medium">Imagen de Portada</label>
+            <CategoryCoverSelector
+              categoryId={category.id}
+              currentCoverUrl={category.coverImageUrl}
+              onSelect={() => {}} // Controlled by internal hidden input
             />
           </div>
 

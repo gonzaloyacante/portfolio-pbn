@@ -5,44 +5,16 @@ import { uploadImage, deleteImage } from '@/lib/cloudinary'
 import { revalidatePath } from 'next/cache'
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
-
-// --- Projects ---
-
-import { z } from 'zod'
-
-// Schemas
-const ProjectSchema = z.object({
-  title: z.string().min(1, 'El título es requerido'),
-  description: z.string().optional(),
-  categoryId: z.string().min(1, 'La categoría es requerida'),
-  date: z.string().optional(),
-  // New Fields
-  excerpt: z.string().optional(),
-  videoUrl: z.string().optional(),
-  duration: z.string().optional(),
-  client: z.string().optional(),
-  location: z.string().optional(),
-  tags: z.string().optional(),
-  // SEO
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-  canonicalUrl: z.string().optional(),
-  // Display
-  layout: z.string().optional(),
-  isFeatured: z.string().optional(), // Receive as string 'true'/'on'
-  isPinned: z.string().optional(),
-})
-
-const CategorySchema = z.object({
-  name: z.string().min(1, 'El nombre es requerido'),
-  slug: z.string().min(1, 'El slug es requerido'),
-  description: z.string().optional(),
-})
+import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { projectFormSchema, categorySchema } from '@/lib/validations'
 
 // --- Projects ---
 
 export async function uploadImageAndCreateProject(formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     title: formData.get('title'),
     description: formData.get('description'),
@@ -63,7 +35,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     isPinned: formData.get('isPinned'),
   }
 
-  const validation = ProjectSchema.safeParse(rawData)
+  const validation = projectFormSchema.safeParse(rawData)
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
@@ -146,6 +118,9 @@ export async function uploadImageAndCreateProject(formData: FormData) {
 }
 
 export async function deleteProject(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     // Soft delete - mark as deleted instead of removing
     await prisma.project.update({
@@ -168,6 +143,9 @@ export async function deleteProject(id: string) {
 }
 
 export async function restoreProject(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.project.update({
       where: { id },
@@ -189,6 +167,9 @@ export async function restoreProject(id: string) {
 }
 
 export async function permanentlyDeleteProject(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     const project = await prisma.project.findUnique({
       where: { id },
@@ -214,6 +195,9 @@ export async function permanentlyDeleteProject(id: string) {
 }
 
 export async function updateProject(id: string, formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     title: formData.get('title'),
     description: formData.get('description'),
@@ -234,7 +218,7 @@ export async function updateProject(id: string, formData: FormData) {
     isPinned: formData.get('isPinned'),
   }
 
-  const validation = ProjectSchema.safeParse(rawData)
+  const validation = projectFormSchema.safeParse(rawData)
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
@@ -319,6 +303,9 @@ export async function reorderProjectImages(
   projectId: string,
   items: { id: string; order: number }[]
 ) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.$transaction(
       items.map((item) =>
@@ -340,6 +327,9 @@ export async function reorderProjectImages(
 }
 
 export async function deleteProjectImage(imageId: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     const image = await prisma.projectImage.findUnique({ where: { id: imageId } })
     if (!image) throw new Error('Image not found')
@@ -359,13 +349,16 @@ export async function deleteProjectImage(imageId: string) {
 // --- Categories ---
 
 export async function createCategory(formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
   }
 
-  const validation = CategorySchema.safeParse(rawData)
+  const validation = categorySchema.safeParse(rawData)
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
@@ -386,22 +379,26 @@ export async function createCategory(formData: FormData) {
 }
 
 export async function updateCategory(id: string, formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
+    coverImageUrl: formData.get('coverImageUrl'),
   }
 
-  const validation = CategorySchema.safeParse(rawData)
+  const validation = categorySchema.safeParse(rawData)
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
-  const { name, slug, description } = validation.data
+  const { name, slug, description, coverImageUrl } = validation.data
 
   try {
     await prisma.category.update({
       where: { id },
-      data: { name, slug, description },
+      data: { name, slug, description, coverImageUrl },
     })
     revalidatePath(ROUTES.public.projects)
     revalidatePath(ROUTES.admin.projects)
@@ -414,6 +411,9 @@ export async function updateCategory(id: string, formData: FormData) {
 }
 
 export async function deleteCategory(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.category.delete({ where: { id } })
     revalidatePath(ROUTES.public.projects)
