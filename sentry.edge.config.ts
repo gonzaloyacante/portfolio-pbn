@@ -14,6 +14,6 @@ Sentry.init({
   // Release tracking
   release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
 
-  // Reporting enabled
-  enabled: true,
+  // Don't send errors in development - OVERRIDDEN FOR VERIFICATION
+  enabled: true, // process.env.NODE_ENV === 'production',
 })
