@@ -20,7 +20,7 @@ model User {
   lockedUntil      DateTime?
   // Preferences
   locale           String    @default("es")
-  timezone         String    @default("America/Argentina/Buenos_Aires")
+  timezone         String    @default("Europe/Madrid")
   notifications    Boolean   @default(true)
   // Audit
   isActive         Boolean   @default(true)

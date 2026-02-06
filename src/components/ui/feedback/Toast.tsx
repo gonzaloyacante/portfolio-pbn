@@ -79,10 +79,10 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 }
 
 const icons: Record<ToastType, React.ReactNode> = {
-  success: <CheckCircle className="h-5 w-5 text-emerald-500" />,
-  error: <XCircle className="h-5 w-5 text-red-500" />,
-  warning: <AlertTriangle className="h-5 w-5 text-amber-500" />,
-  info: <Info className="h-5 w-5 text-blue-500" />,
+  success: <CheckCircle className="text-success h-5 w-5" />,
+  error: <XCircle className="text-destructive h-5 w-5" />,
+  warning: <AlertTriangle className="text-warning h-5 w-5" />,
+  info: <Info className="text-info h-5 w-5" />,
 }
 
 const borderColors: Record<ToastType, string> = {

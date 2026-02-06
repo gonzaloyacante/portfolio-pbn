@@ -21,6 +21,12 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
 
 
 
@@ -69,6 +75,16 @@
 
     /* Radius */
     --radius: 0.5rem;
+
+    /* Semantic Status Colors */
+    --success: #10b981; /* Emerald-500 */
+    --success-foreground: #ffffff;
+    
+    --warning: #f59e0b; /* Amber-500 */
+    --warning-foreground: #ffffff;
+    
+    --info: #3b82f6; /* Blue-500 */
+    --info-foreground: #ffffff;
   }
 
   .dark {
@@ -104,6 +120,16 @@
     --border: #2a1015;
     --input: #2a1015;
     --ring: #fb7185;
+
+    /* Semantic Status Colors (Dark) */
+    --success: #34d399; /* Emerald-400 */
+    --success-foreground: #000000;
+    
+    --warning: #fbbf24; /* Amber-400 */
+    --warning-foreground: #000000;
+    
+    --info: #60a5fa; /* Blue-400 */
+    --info-foreground: #000000;
   }
 
   * {

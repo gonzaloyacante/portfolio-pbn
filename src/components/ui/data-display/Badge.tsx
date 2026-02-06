@@ -18,13 +18,16 @@ export default function Badge({
   ...props
 }: BadgeProps) {
   const variants = {
-    default: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-    success: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200',
-    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-200',
-    danger: 'bg-destructive/10 text-destructive dark:bg-destructive/20',
-    destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-    info: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200',
-    outline: 'text-foreground border border-border',
+    default: 'bg-primary/10 text-primary border-primary/20',
+    secondary: 'bg-secondary text-secondary-foreground border-secondary/50',
+    destructive: 'bg-destructive/10 text-destructive border-destructive/20',
+    danger: 'bg-destructive/10 text-destructive border-destructive/20',
+    outline: 'text-foreground border-border',
+    success: 'bg-success/15 text-success dark:text-success border-success/20',
+    warning: 'bg-warning/15 text-warning dark:text-warning border-warning/20',
+    purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200', // Kept for legacy compatibility if needed
+    pink: 'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-200',
+    info: 'bg-info/15 text-info dark:text-info border-info/20',
   }
 
   const sizes = {

@@ -135,7 +135,7 @@ export default function DatePicker({
       {label && (
         <label className="text-foreground mb-2 block text-sm font-medium">
           {label}
-          {required && <span className="ml-1 text-red-500">*</span>}
+          {required && <span className="text-destructive ml-1">*</span>}
         </label>
       )}
 

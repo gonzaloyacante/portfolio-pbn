@@ -162,7 +162,7 @@ export const Select = ({
         </ul>
       )}
       {error && typeof error === 'string' && (
-        <p className="mt-1 text-xs font-medium text-red-500">{error}</p>
+        <p className="text-destructive mt-1 text-xs font-medium">{error}</p>
       )}
     </div>
   )

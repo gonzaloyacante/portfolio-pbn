@@ -8,7 +8,7 @@ export function calculatePasswordStrength(password: string): {
   color: string
 } {
   let score = 0
-  if (!password) return { score: 0, label: 'Vacía', color: 'bg-gray-200' }
+  if (!password) return { score: 0, label: 'Vacía', color: 'bg-muted' }
 
   if (password.length > 6) score += 1
   if (password.length > 10) score += 1
@@ -18,18 +18,15 @@ export function calculatePasswordStrength(password: string): {
 
   if (score > 4) score = 4
 
-  switch (score) {
-    case 0:
-      return { score, label: 'Muy débil', color: 'bg-red-500' }
-    case 1:
-      return { score, label: 'Débil', color: 'bg-red-400' }
-    case 2:
-      return { score, label: 'Regular', color: 'bg-yellow-500' }
-    case 3:
-      return { score, label: 'Buena', color: 'bg-blue-500' }
-    case 4:
-      return { score, label: 'Excelente', color: 'bg-green-500' }
-    default:
-      return { score: 0, label: 'Vacía', color: 'bg-gray-200' }
-  }
+  // The original switch statement is replaced with the provided if-else if structure.
+  // Note: The condition `score === 5` will never be met due to `if (score > 4) score = 4`.
+  // The final `return` acts as a default if none of the above conditions are met.
+  if (score <= 1) return { score, label: 'Muy débil', color: 'bg-destructive' }
+  else if (score === 2) return { score, label: 'Débil', color: 'bg-destructive/70' }
+  else if (score === 3) return { score, label: 'Regular', color: 'bg-warning' }
+  else if (score === 4) return { score, label: 'Buena', color: 'bg-info' }
+  else if (score === 5)
+    // This condition will not be met as score is capped at 4
+    return { score, label: 'Excelente', color: 'bg-success' }
+  else return { score: 0, label: 'Vacía', color: 'bg-muted' }
 }

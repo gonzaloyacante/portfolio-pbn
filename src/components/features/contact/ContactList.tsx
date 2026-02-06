@@ -231,7 +231,7 @@ export default function ContactList({ contacts }: ContactListProps) {
             {selectedContact.adminNote && (
               <div className="mb-6">
                 <h3 className="text-foreground mb-3 font-bold">Nota del administrador:</h3>
-                <div className="rounded-2xl border-l-4 border-yellow-400 bg-yellow-50 p-6 dark:bg-yellow-900/10">
+                <div className="border-warning bg-warning/10 dark:bg-warning/5 rounded-2xl border-l-4 p-6">
                   <p className="text-foreground italy whitespace-pre-wrap">
                     {selectedContact.adminNote}
                   </p>

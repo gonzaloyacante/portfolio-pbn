@@ -31,7 +31,7 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
     <div className="bg-card border-border/50 mx-auto max-w-3xl rounded-xl border p-8 shadow-lg">
       <div className="mb-4 flex justify-center">
         {Array.from({ length: currentTestimonial.rating }).map((_, i) => (
-          <span key={i} className="text-xl text-yellow-400 drop-shadow-sm">
+          <span key={i} className="text-warning text-xl drop-shadow-sm">
             ⭐
           </span>
         ))}
@@ -60,7 +60,7 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
           <div className="flex items-center justify-center gap-2">
             <p className="text-foreground text-lg font-semibold">{currentTestimonial.name}</p>
             {currentTestimonial.verified && (
-              <span title="Cliente Verificado" className="text-blue-500">
+              <span title="Cliente Verificado" className="text-info">
                 <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>

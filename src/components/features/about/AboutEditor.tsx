@@ -78,7 +78,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             <textarea
               {...register('bioIntro')}
               rows={3}
-              className="w-full rounded border p-2 text-sm dark:bg-gray-900"
+              className="dark:bg-muted w-full rounded border p-2 text-sm"
               placeholder="Breve introducción..."
             />
           </div>
@@ -88,7 +88,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             <textarea
               {...register('bioDescription')}
               rows={8}
-              className="w-full rounded border p-2 text-sm dark:bg-gray-900"
+              className="dark:bg-muted w-full rounded border p-2 text-sm"
               placeholder="Historia completa..."
             />
           </div>
@@ -132,7 +132,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
                     .filter(Boolean)
                 )
               }
-              className="w-full rounded border p-2 text-sm dark:bg-gray-900"
+              className="dark:bg-muted w-full rounded border p-2 text-sm"
               rows={4}
             />
             <p className="text-xs text-gray-500">Ej: Maquillaje social, FX, Caracterización</p>
@@ -151,7 +151,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
                     .filter(Boolean)
                 )
               }
-              className="w-full rounded border p-2 text-sm dark:bg-gray-900"
+              className="dark:bg-muted w-full rounded border p-2 text-sm"
               rows={4}
             />
             <p className="text-xs text-gray-500">

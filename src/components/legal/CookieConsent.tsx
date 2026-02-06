@@ -92,7 +92,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                     >
                       <div className="mt-4 space-y-3 rounded-2xl bg-gray-50 p-4 text-sm dark:bg-gray-800/50">
                         <div className="flex items-start gap-3">
-                          <div className="mt-0.5 h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                          <div className="bg-success mt-0.5 h-2 w-2 rounded-full shadow-sm" />
                           <div>
                             <strong className="block font-semibold text-gray-900 dark:text-white">
                               Esenciales (Necesarias)
@@ -105,7 +105,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                         </div>
 
                         <div className="flex items-start gap-3">
-                          <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                          <div className="bg-info mt-0.5 h-2 w-2 rounded-full shadow-sm" />
                           <div>
                             <strong className="block font-semibold text-gray-900 dark:text-white">
                               Analíticas (Opcionales)

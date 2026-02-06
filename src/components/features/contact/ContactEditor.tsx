@@ -295,11 +295,11 @@ function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean
             onClick={handleSave}
             disabled={loading}
           >
-            {isNew ? <Plus size={16} /> : <Save size={16} className="text-blue-600" />}
+            {isNew ? <Plus size={16} /> : <Save size={16} className="text-primary" />}
           </Button>
           {!isNew && (
             <Button size="sm" variant="ghost" onClick={handleDelete} disabled={loading}>
-              <Trash2 size={16} className="text-red-500" />
+              <Trash2 size={16} className="text-destructive" />
             </Button>
           )}
         </div>

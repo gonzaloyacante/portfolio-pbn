@@ -42,7 +42,7 @@ export default async function AnalyticsPage() {
       />
 
       {/* Aviso sobre Google Analytics */}
-      <Section className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+      <Section className="from-muted/50 to-background dark:from-muted/20 dark:to-background bg-gradient-to-r">
         <div className="flex items-start gap-4">
           <span className="text-4xl">📈</span>
           <div className="flex-1">
@@ -58,7 +58,7 @@ export default async function AnalyticsPage() {
                 href="https://analytics.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                className="bg-muted/50 dark:bg-muted/20 flex items-center justify-between rounded-lg px-4 py-3"
               >
                 <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
@@ -107,14 +107,14 @@ export default async function AnalyticsPage() {
             const height = (day.count / max) * 100
             return (
               <div key={day.date} className="group flex flex-1 flex-col items-center">
-                <div className="relative flex h-full w-full items-end justify-center overflow-hidden rounded-t-lg bg-gray-100 dark:bg-gray-700">
+                <div className="bg-muted dark:bg-muted/20 relative flex h-full w-full items-end justify-center overflow-hidden rounded-t-lg">
                   <div
                     style={{ height: `${Math.max(height, 5)}%` }}
                     className="bg-primary/80 group-hover:bg-primary w-full rounded-t-lg transition-all duration-500"
                   />
-                  <div className="pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 rounded-lg bg-gray-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                  <div className="bg-popover text-popover-foreground pointer-events-none absolute -top-10 left-1/2 z-10 -translate-x-1/2 rounded-lg px-2 py-1 text-xs font-medium opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
                     {day.count} visitas
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+                    <div className="border-t-popover absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" />
                   </div>
                 </div>
                 <p className="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -137,7 +137,7 @@ export default async function AnalyticsPage() {
               {topProjects.filter(Boolean).map((project, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center justify-between rounded-lg bg-gray-50 p-4 transition-colors hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="bg-muted/30 hover:bg-muted/50 dark:bg-muted/10 dark:hover:bg-muted/20 flex items-center justify-between rounded-lg p-4 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <span className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full text-lg">
@@ -177,7 +177,7 @@ export default async function AnalyticsPage() {
                 <div className="text-sm text-gray-500 dark:text-gray-400">📱 Móvil</div>
                 <div className="mt-1 text-xs font-medium text-gray-400">{mobilePercent}%</div>
               </div>
-              <div className="h-16 w-px bg-gray-200 dark:bg-gray-700" />
+              <div className="bg-border dark:bg-border h-16 w-px" />
               <div className="text-center">
                 <div className="text-3xl font-bold text-gray-900 dark:text-white">
                   {deviceUsage.desktop}
@@ -186,7 +186,7 @@ export default async function AnalyticsPage() {
                 <div className="mt-1 text-xs font-medium text-gray-400">{desktopPercent}%</div>
               </div>
             </div>
-            <div className="flex h-3 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+            <div className="bg-muted dark:bg-muted/20 flex h-3 overflow-hidden rounded-full">
               <div
                 style={{ width: `${mobilePercent}%` }}
                 className="bg-primary h-2 w-2 rounded-full"
@@ -208,12 +208,12 @@ export default async function AnalyticsPage() {
                 {topLocations.map((loc, idx) => (
                   <li
                     key={idx}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 px-4 py-3 dark:bg-gray-700"
+                    className="bg-muted/30 dark:bg-muted/10 flex items-center justify-between rounded-lg px-4 py-3"
                   >
-                    <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
+                    <span className="text-muted-foreground dark:text-muted-foreground font-mono text-sm">
                       {loc.ip}
                     </span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    <span className="text-foreground dark:text-foreground text-sm font-medium">
                       {loc.count} visitas
                     </span>
                   </li>

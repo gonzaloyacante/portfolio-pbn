@@ -36,7 +36,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           )}
           {...props}
         />
-        {error && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        {error && <p className="text-destructive mt-1 text-sm">{error}</p>}
         {helperText && !error && <p className="text-muted-foreground mt-1 text-sm">{helperText}</p>}
       </div>
     )
