@@ -1,5 +1,6 @@
 // ============================================
 // SETTINGS SEED DATA - Based on Prisma Schema
+// Updated with real Paola data
 // ============================================
 
 export const homeSettings = {
@@ -38,18 +39,17 @@ export const homeSettings = {
   ownerNameOffsetX: 0,
   ownerNameOffsetY: 0,
 
-  // Hero Main Image
-  heroMainImageUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/smile.jpg',
+  // Hero Main Image (to be set via admin)
+  heroMainImageUrl: null,
   heroMainImageAlt: 'Trabajo destacado',
-  heroMainImageCaption: 'Editorial 2024',
+  heroMainImageCaption: null,
   heroImageStyle: 'original',
   heroMainImageZIndex: 5,
   heroMainImageOffsetX: 0,
   heroMainImageOffsetY: 0,
 
-  // Illustration
-  illustrationUrl:
-    'https://res.cloudinary.com/demo/image/upload/v1/samples/woman-on-a-football-field.jpg',
+  // Illustration (to be set via admin)
+  illustrationUrl: null,
   illustrationAlt: 'Ilustración maquilladora',
   illustrationZIndex: 10,
   illustrationOpacity: 100,
@@ -85,11 +85,11 @@ export const homeSettings = {
 export const aboutSettings = {
   id: 'default-about',
 
-  // Illustration
-  illustrationUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/bicycle.jpg',
+  // Illustration (to be set via admin)
+  illustrationUrl: null,
   illustrationAlt: 'Ilustración sobre mí',
 
-  // Bio
+  // Bio - Real Paola content
   bioTitle: 'Hola, soy Paola.',
   bioIntro:
     'Maquilladora especializada en audiovisuales, llevo formándome desde 2021 adquiriendo títulos como técnica en estética y belleza, y técnica en caracterización y maquillaje profesional.',
@@ -99,23 +99,23 @@ Mi meta es establecerme como maquilladora y caracterizadora profesional en la in
 
 En este portfolio, encontrarás mis trabajos y proyectos, cada uno fruto de dedicación, creatividad y amor por mi profesión.`,
 
-  // Profile Image
-  profileImageUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/smiling-man.jpg',
+  // Profile Image (to be set via admin)
+  profileImageUrl: null,
   profileImageAlt: 'Paola Bolívar Nievas',
 
-  // Skills
+  // Skills - Real skills
   skills: [
     'Caracterización',
     'Efectos Especiales',
     'Maquillaje Social',
-    'Maquillaje Nupcial',
+    'Maquillaje Editorial',
     'Bodypainting',
-    'Aerografía',
+    'Posticería',
     'Peluquería de plató',
   ],
   yearsExperience: 4,
 
-  // Certifications
+  // Certifications - Real certifications
   certifications: [
     'Técnica en Estética y Belleza',
     'Técnica en Caracterización y Maquillaje Profesional',
@@ -130,17 +130,17 @@ export const contactSettings = {
   // Page Title
   pageTitle: 'Contacto',
 
-  // Illustration
-  illustrationUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/cat.jpg',
+  // Illustration (to be set via admin)
+  illustrationUrl: null,
   illustrationAlt: 'Ilustración contacto',
 
-  // Owner Info
+  // Owner Info - Real data
   ownerName: 'Paola Bolívar Nievas',
 
-  // Contact Info
-  email: 'contacto@paolabolivar.com',
-  phone: '+34 600 000 000',
-  whatsapp: '+34600000000',
+  // Contact Info - Real data (update with actual values in .env)
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'paolabolivarnievas@gmail.com',
+  phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || '+34 600 000 000',
+  whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || '+34600000000',
   location: 'Málaga, España',
 
   // Form Configuration
@@ -149,7 +149,7 @@ export const contactSettings = {
   emailLabel: 'Tu email',
   phoneLabel: 'Tu teléfono (opcional)',
   messageLabel: 'Mensaje',
-  preferenceLabel: '¿Cómo preferís que te contacte?',
+  preferenceLabel: '¿Cómo prefieres que te contacte?',
   submitLabel: 'Enviar mensaje',
 
   // Success Messages

@@ -1,785 +1,671 @@
+// ============================================
+// REAL PROJECTS DATA - Paola Bolívar Nievas
+// Migrated from populate-real-data.ts
+// ============================================
+
 export const projects = [
-  // --- CARACTERIZACIÓN (5 proyectos) ---
   {
-    title: 'Zombie Apocalypse FX',
-    slug: 'zombie-apocalypse-fx',
-    description: `Proyecto de caracterización completa para cortometraje de terror independiente. 
-    
-El objetivo era crear tres etapas diferentes de infección zombie:
-1. Etapa inicial: Piel pálida, venas marcadas y ojos inyectados.
-2. Etapa media: Heridas abiertas, necrosis parcial y pérdida de cabello.
-3. Etapa avanzada: Deformación facial severa, exposición ósea y descomposición total.
-
-Se utilizaron prótesis de silicona encapsulada, prótesis dentales a medida y lentes de contacto esclerales. El rodaje duró 3 días consecutivos con sesiones de maquillaje de 4 horas por actor.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/reindeer.jpg',
-    date: new Date('2023-10-31'),
+    id: '00Dc5xhhFiX0e6IJN8Yi',
+    title: 'Cortes',
+    slug: 'cortes',
+    description: 'Cortes creados en maniquí y maquillados con maquillaje al alcohol.',
     categorySlug: 'fx',
-    isFeatured: true,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/reindeer.jpg',
-        alt: 'Zombie Etapa Media - Vista frontal',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/nature.jpg',
-        alt: 'Detalle de heridas y necrosis',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/boy-snow-hoodie.jpg',
-        alt: 'Proceso de aplicación de prótesis',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/pot-mussels.jpg',
-        alt: 'Etapa avanzada - Perfil',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/beach-boat.jpg',
-        alt: 'Behind the scenes - Set',
-        order: 5,
-      },
-    ],
-  },
-  {
-    title: 'Criatura Alienígena',
-    slug: 'criatura-alienigena-serie-sci-fi',
-    description: `Diseño y ejecución de maquillaje prosthetics para criatura alienígena en serie de ciencia ficción.
-
-Desarrollo de 12 piezas diferentes de prótesis faciales y corporales. Aplicación diaria de 6 horas. Sistema de pintado multicapa para simular piel translúcida con venas bioluminiscentes.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/sheep.jpg',
-    date: new Date('2024-02-14'),
-    categorySlug: 'fx',
-    isFeatured: true,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/sheep.jpg',
-        alt: 'Criatura completa - Vista frontal',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/analog-classic.jpg',
-        alt: 'Detalle de textura facial',
-        order: 2,
-      },
-    ],
-  },
-  {
-    title: 'Vampiro Clásico',
-    slug: 'vampiro-clasico-teatro',
-    description: `Caracterización para obra de teatro «Drácula». Estética gótica victoriana con énfasis en palidez extrema y venas marcadas.
-
-Técnicas: Contouring extremo, lentes de contacto personalizadas, colmillos dentales, pintura corporal para venas.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/dessert-on-a-plate.jpg',
-    date: new Date('2023-09-05'),
-    categorySlug: 'fx',
-    isFeatured: false,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/dessert-on-a-plate.jpg',
-        alt: 'Vampiro - Retrato dramático',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/fish-vegetables.jpg',
-        alt: 'Detalle de colmillos',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/dessert.jpg',
-        alt: 'Venas y palidez',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/spices.jpg',
-        alt: 'Proceso de aplicación',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/architecture-signs.jpg',
-        alt: 'Escena en teatro',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cloudinary-group.jpg',
-        alt: 'Preparación de materiales',
-        order: 6,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/coffee.jpg',
-        alt: 'Prueba de iluminación',
-        order: 7,
-      },
-    ],
-  },
-  {
-    title: 'Envejecimiento Dramático',
-    slug: 'envejecimiento-dramatico-actor',
-    description: `Maquillaje de envejecimiento para actor que interpreta al mismo personaje en tres épocas diferentes: 25, 50 y 80 años.
-
-Uso de látex líquido, stippling, pinturas cremosas y técnicas de sombreado avanzado. Estudio previo de fotografías reales del actor envejecido para mayor realismo.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/balloons.jpg',
-    date: new Date('2023-07-22'),
-    categorySlug: 'fx',
-    isFeatured: false,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/balloons.jpg',
-        alt: '25 años - Actor joven',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cup-on-a-table.jpg',
-        alt: '50 años - Edad media',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/bike.jpg',
-        alt: '80 años - Anciano',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cld-sample-2.jpg',
-        alt: 'Comparativa de las tres etapas',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cld-sample-3.jpg',
-        alt: 'Aplicación de látex',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cld-sample.jpg',
-        alt: 'Proceso de stippling',
-        order: 6,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/imagecon-group.jpg',
-        alt: 'Pintando arrugas',
-        order: 7,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/outdoor-woman.jpg',
-        alt: 'Detalle de manos envejecidas',
-        order: 8,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/smiling-man.jpg',
-        alt: 'Actor satisfecho',
-        order: 9,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/smile.jpg',
-        alt: 'Resultado final',
-        order: 10,
-      },
-    ],
-  },
-  {
-    title: 'Herida de Bala Realista',
-    slug: 'herida-bala-fx-entrada-salida',
-    description: `Creación de efectos de entrada y salida de bala para escena de acción.
-
-Uso de gelatina balística, sangre artificial de tres viscosidades diferentes, fibra óptica para simular profundidad. Aplicación con sistema de activación por control remoto para sincronizar con la acción.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/upscale-face-ai.jpg',
-    date: new Date('2024-01-18'),
-    categorySlug: 'fx',
-    isFeatured: false,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/upscale-face-ai.jpg',
-        alt: 'Herida de entrada - Vista cercana',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cloudinary-icon.jpg',
-        alt: 'Herida de salida - Espalda',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/kitchen-bar.jpg',
-        alt: 'Preparación de gelatina',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/nature-mountains.jpg',
-        alt: 'Set de rodaje',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/accessories-bag.jpg',
-        alt: 'Kit de herramientas',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/leather-bag-gray.jpg',
-        alt: 'Diferentes viscosidades de sangre',
-        order: 6,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/shoes.jpg',
-        alt: 'Prueba de activación',
-        order: 7,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/ecommerce/car-interior-design.jpg',
-        alt: 'Vista de la escena grabada',
-        order: 8,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/look-up.jpg',
-        alt: 'Actor en posición',
-        order: 9,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/man-portrait.jpg',
-        alt: 'Resultado final en cámara',
-        order: 10,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/woman-on-a-football-field.jpg',
-        alt: 'Making of',
-        order: 11,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/jazz.jpg',
-        alt: 'Equipo completo',
-        order: 12,
-      },
-    ],
-  },
-
-  // --- FANTASÍA (3 proyectos) ---
-  {
-    title: 'Elfa del Bosque',
-    slug: 'elfa-bosque-fantasia',
-    description: `Caracterización de fantasía para sesión editorial «Mitos y Leyendas».
-    
-Se aplicaron prótesis de orejas de látex, se trabajó la piel con aerógrafo para lograr un tono etéreo y se añadieron elementos orgánicos (hojas, ramas pequeñas) integrados en el maquillaje y peinado.
-
-Técnicas utilizadas:
-- Aplicación de prótesis
-- Maquillaje con aerógrafo
-- Posticería facial (cejas)
-- Integración de elementos 3D`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/cat.jpg',
-    date: new Date('2023-05-15'),
-    categorySlug: 'maquillaje-fantasia',
-    isFeatured: false,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/cat.jpg',
-        alt: 'Retrato Elfa - Frontal',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/chair.jpg',
-        alt: 'Detalle de orejas protésicas',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/kitten-playing.gif',
-        alt: 'Integración de elementos naturales',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/two-ladies.jpg',
-        alt: 'Proceso de aerografía',
-        order: 4,
-      },
-    ],
-  },
-  {
-    title: 'Sirena Mitológica',
-    slug: 'sirena-mitologica-body-paint',
-    description: `Body painting completo para personaje de sirena en producción teatral.
-
-Uso de pinturas corporales iridiscentes, escamas aplicadas una a una, técnica de degradado acuático en torso y brazos. 8 horas de aplicación total.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/breakfast.jpg',
-    date: new Date('2023-12-10'),
-    categorySlug: 'maquillaje-fantasia',
-    isFeatured: true,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/breakfast.jpg',
-        alt: 'Sirena - Torso completo',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/girl-urban-view.jpg',
-        alt: 'Detalle de escamas',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/bicycle.jpg',
-        alt: 'Aplicación de pinturas',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cloudinary-logo-vector.svg',
-        alt: 'Degradado acuático',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/soccer.jpg',
-        alt: 'Resultado final en escena',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/landscape-panorama.jpg',
-        alt: 'Panorámica del escenario',
-        order: 6,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/curry.jpg',
-        alt: 'Primer plano rostro',
-        order: 7,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/drinks.jpg',
-        alt: 'Paleta de colores utilizada',
-        order: 8,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/fries.jpg',
-        alt: 'Prueba de iluminación',
-        order: 9,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/food/fruit.jpg',
-        alt: 'Vista lateral completa',
-        order: 10,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/gesees.jpg',
-        alt: 'Actriz feliz con resultado',
-        order: 11,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/logo/cloudinary.jpg',
-        alt: 'Behind the scenes',
-        order: 12,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/sea-turtle.jpg',
-        alt: 'Inspiración marina',
-        order: 13,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/beach-clouds.jpg',
-        alt: 'Fotografía promocional',
-        order: 14,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/hills.jpg',
-        alt: 'Detalle de manos',
-        order: 15,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/smiling-man.jpg',
-        alt: 'Equipo de producción',
-        order: 16,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/ski-jump.jpg',
-        alt: 'Momento de aplicación',
-        order: 17,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/sail.jpg',
-        alt: 'Vista de perfil',
-        order: 18,
-      },
-    ],
-  },
-  {
-    title: 'Hada Steampunk',
-    slug: 'hada-steampunk-editorial',
-    description: `Fusión de fantasía victoriana y elementos mecánicos para sesión editorial.
-
-Maquillaje metálico con engranajes aplicados, alas con estructura de alambre integradas al peinado, y prótesis de orejas puntiagudas con detalles de cobre.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/three-dogs.jpg',
-    date: new Date('2024-03-25'),
-    categorySlug: 'maquillaje-fantasia',
-    isFeatured: false,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/three-dogs.jpg',
-        alt: 'Hada Steampunk - Retrato',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/access-control.jpg',
-        alt: 'Detalle de engranajes',
-        order: 2,
-      },
-    ],
-  },
-
-  // --- NOVIAS (4 proyectos) ---
-  {
-    title: 'Boda Civil en la Playa',
-    slug: 'boda-civil-playa',
-    description: `Maquillaje para novia en boda de día en la playa.
-    
-Buscábamos un look "glowy" y muy natural que resistiera la humedad y el calor. Se preparó la piel con hidratación profunda y se utilizaron productos waterproof de larga duración.
-
-Tonos utilizados: Melocotón, dorado suave y bronce.
-Foco: Piel luminosa y pestañas definidas.`,
     thumbnailUrl:
-      'https://res.cloudinary.com/demo/image/upload/v1/samples/woman-on-a-football-field.jpg',
-    date: new Date('2024-06-20'),
-    categorySlug: 'novias',
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0021_blzvja.jpg',
+    date: new Date('2025-01-24'),
     isFeatured: true,
     images: [
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/woman-on-a-football-field.jpg',
-        alt: 'Novia sonriendo',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0021_blzvja.jpg',
+        alt: 'Corte en maniquí - Vista frontal',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0027_cnegzo.jpg',
+        alt: 'Detalle del corte maquillado',
         order: 1,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/kitchen-bar.jpg',
-        alt: 'Detalle ojos',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0025_ptbbhh.jpg',
+        alt: 'Corte lateral',
         order: 2,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/dance.jpg',
-        alt: 'Piel luminosa',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0058_vfhafw.jpg',
+        alt: 'Proceso de maquillado',
         order: 3,
       },
     ],
   },
   {
-    title: 'Novia Glamurosa Noche',
-    slug: 'novia-glamurosa-noche',
-    description: `Maquillaje de novia para ceremonia nocturna en salón de eventos.
-
-Look dramático con smokey eye en tonos champagne y negro, labios nude glossy, contorno marcado. Énfasis en duración (16 horas sin retoques).`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/peak.jpg',
+    id: '0uXu2UU0iAE62YM83VBy',
+    title: 'Sesión inspirada en la infancia',
+    slug: 'sesion-inspirada-infancia',
+    description: 'Maquillaje para sesión de fotos de moda con temática infantil.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750203132/1000108253_z6pmsq.png',
+    date: new Date('2024-06-17'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750203132/1000108253_z6pmsq.png',
+        alt: 'Retrato principal',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750203147/1000108248_ttlkgx.png',
+        alt: 'Look completo',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750203147/1000108246_nylhrv.png',
+        alt: 'Detalle de maquillaje',
+        order: 2,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750203164/1000107115_gcueqz.jpg',
+        alt: 'Vista lateral',
+        order: 3,
+      },
+    ],
+  },
+  {
+    id: 'AnniPhKTq4nH8Pas2ZZW',
+    title: 'Maquillaje fantasía',
+    slug: 'maquillaje-fantasia-calota',
+    description: 'Maquillaje fantasía con calota de látex.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1759100196/Picsart_25-09-24_20-21-26-533_smm6sh.jpg',
+    date: new Date('2024-09-24'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1759100196/Picsart_25-09-24_20-21-26-533_smm6sh.jpg',
+        alt: 'Maquillaje fantasía con calota',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1759100196/Picsart_25-09-17_01-34-29-498_lweqvf.jpg',
+        alt: 'Vista frontal completa',
+        order: 1,
+      },
+    ],
+  },
+  {
+    id: 'BO9EsyxTUU7Xk2vE7xNm',
+    title: 'Caracterización caperucita roja',
+    slug: 'caracterizacion-caperucita-roja',
+    description: 'Maquillaje inspirado en Caperucita roja.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737395505/IMG_20231105_220404_209_qbyvuj.webp',
     date: new Date('2023-11-05'),
-    categorySlug: 'novias',
-    isFeatured: true,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/peak.jpg',
-        alt: 'Novia - Look completo',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/portrait.jpg',
-        alt: 'Smokey eye detallado',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/logo/cloudinary.png',
-        alt: 'Contorno facial',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/urban-vintage.jpg',
-        alt: 'Resultado final noche',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/old-radio.jpg',
-        alt: 'Labios nude',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/music-festival.jpg',
-        alt: 'Durante la fiesta',
-        order: 6,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/sports/action.jpg',
-        alt: 'Primer baile',
-        order: 7,
-      },
-    ],
-  },
-  {
-    title: 'Novia Boho Romántica',
-    slug: 'novia-boho-romantica',
-    description: `Maquillaje natural con toques rosados para boda en jardín.
-
-Técnica de piel fresca, rubor natural, iluminador estratégico. Cejas suaves, labios rosados satinados.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/outdoor.jpg',
-    date: new Date('2024-04-12'),
-    categorySlug: 'novias',
     isFeatured: false,
     images: [
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/outdoor.jpg',
-        alt: 'Novia en jardín',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737395505/IMG_20231105_220404_209_qbyvuj.webp',
+        alt: 'Caperucita roja',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737395523/IMG_20231105_220403_977_pjmaxk.webp',
+        alt: 'Detalle del maquillaje',
         order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/models-in-film.jpg',
-        alt: 'Rostro completo',
-        order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/waterfall.jpg',
-        alt: 'Detalle de rubor',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/landscapes-01.jpg',
-        alt: 'Piel fresca',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/light-sky.jpg',
-        alt: 'Con bouquet',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/beach.jpg',
-        alt: 'Preparativos',
-        order: 6,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/landscapes/beaty-mountains.jpg',
-        alt: 'Ceremonia',
-        order: 7,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/bike.jpg',
-        alt: 'Sonrisa radiante',
-        order: 8,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/house.jpg',
-        alt: 'Making of',
-        order: 9,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/umbrella.jpg',
-        alt: 'Atardecer',
-        order: 10,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/magazine.jpg',
-        alt: 'Resultado editorial',
-        order: 11,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/night-parrot.jpg',
-        alt: 'Detalle de ojos',
-        order: 12,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/couple.jpg',
-        alt: 'Con novio',
-        order: 13,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/butterfly.jpg',
-        alt: 'Flores en cabello',
-        order: 14,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/chickens.jpg',
-        alt: 'Paleta de productos',
-        order: 15,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/crab.jpg',
-        alt: 'Brochas utilizadas',
-        order: 16,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/doe-sunset.jpg',
-        alt: 'Golden hour',
-        order: 17,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/duck.jpg',
-        alt: 'Selfie de novia',
-        order: 18,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/duck-sunset.jpg',
-        alt: 'Vista panorámica',
-        order: 19,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/fox.jpg',
-        alt: 'Salida de ceremonia',
-        order: 20,
       },
     ],
   },
   {
-    title: 'Novia Vintage Años 50',
-    slug: 'novia-vintage-anos-50',
-    description: `Recreación de estética nupcial de los años 50.
-
-Cat eye clásico, labio rojo intenso, piel mate impecable. Peinado victory rolls. Inspiración: Grace Kelly.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/hare.jpg',
-    date: new Date('2023-08-18'),
-    categorySlug: 'novias',
-    isFeatured: false,
-    images: [
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/hare.jpg',
-        alt: 'Novia vintage',
-        order: 1,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/iguana.jpg',
-        alt: 'Cat eye perfecto',
-        order: 2,
-      },
-    ],
-  },
-
-  // --- AUDIOVISUAL / RODAJES (3 proyectos) ---
-  {
-    title: 'Cortometraje "El Último Suspiro"',
-    slug: 'corto-ultimo-suspiro',
-    description: `Jefa de maquillaje para cortometraje dramático ambientado en los años 40.
-    
-El reto principal fue recrear la estética de la época con fidelidad histórica, adaptándola a la iluminación cinematográfica moderna. Se realizó un estudio previo de peinados y maquillaje de la década.
-
-También se realizaron efectos de envejecimiento sutil para los flashbacks del protagonista.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/jazz.jpg',
-    date: new Date('2023-11-15'),
-    categorySlug: 'rodajes',
+    id: 'ByQcGfn2hCddt1gip3gN',
+    title: 'Mangata cuerpos a punto de explotar',
+    slug: 'mangata-cuerpos-punto-explotar',
+    description:
+      'Maquilladora en la obra de teatro "Mangata cuerpos a punto de explotar" estrenada en el teatro Alhambra.',
+    categorySlug: 'teatro',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750201758/Screenshot_20250618-004339_ripuyf.png',
+    date: new Date('2024-06-18'),
     isFeatured: true,
     images: [
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/jazz.jpg',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201758/Screenshot_20250618-004339_ripuyf.png',
+        alt: 'Escena de la obra',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201758/Screenshot_20250618-003803_wchxex.png',
+        alt: 'Personaje caracterizado',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201758/Screenshot_20250618-003602_lkvhnp.png',
+        alt: 'Maquillaje de personaje',
+        order: 2,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201786/IMG-20250608-WA0011_f5majp.jpg',
+        alt: 'Detalles del maquillaje',
+        order: 3,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201825/IMG_20250530_193449701_gxx7mm.jpg',
+        alt: 'Preparación en camerino',
+        order: 4,
+      },
+    ],
+  },
+  {
+    id: 'FrRTmntdG9VtpSWAvPWo',
+    title: 'Bigote de pelo natural',
+    slug: 'bigote-pelo-natural',
+    description: 'Bigote de pelo natural picado a mano pelo a pelo en tul HD.',
+    categorySlug: 'posticeria',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_102147_cjxiqs.jpg',
+    date: new Date('2024-02-16'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_102147_cjxiqs.jpg',
+        alt: 'Bigote terminado',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_081630_cupj71.jpg',
+        alt: 'Detalle del picado',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1738275262/20240216_082348_wkxim1.jpg',
+        alt: 'Proceso de elaboración',
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: 'HTE0JEAyE4qlD8EiVeIG',
+    title: 'Flequillo de kanekalon picado',
+    slug: 'flequillo-kanekalon-picado',
+    description: 'Flequillo picado pelo a pelo con kanekalon',
+    categorySlug: 'posticeria',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737406924/IMG-20231204-WA0002_jluup9.jpg',
+    date: new Date('2023-12-04'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406924/IMG-20231204-WA0002_jluup9.jpg',
+        alt: 'Flequillo aplicado',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406925/IMG-20231204-WA0003_s1agpf.jpg',
+        alt: 'Vista lateral',
+        order: 1,
+      },
+    ],
+  },
+  {
+    id: 'Mtl8gIUxupQQLOOm0mIV',
+    title: 'Personaje hecho con prótesis de silicona',
+    slug: 'personaje-protesis-silicona',
+    description: 'Personaje creado con prótesis de silicona.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737405433/IMG-20241029-WA0019_gi6x97.jpg',
+    date: new Date('2024-10-29'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405433/IMG-20241029-WA0019_gi6x97.jpg',
+        alt: 'Personaje completo',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405434/IMG-20241029-WA0036_djns8n.jpg',
+        alt: 'Detalle de prótesis',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405555/IMG-20241029-WA0021_gxnvzw.jpg',
+        alt: 'Vista lateral',
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: 'PwTFMCuL4RkkqBkqu1gv',
+    title: 'Maquillaje fantasía piedra',
+    slug: 'maquillaje-fantasia-piedra',
+    description: 'Maquillaje fantasía inspirado en una estatua de piedra.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750199159/IMG-20250424-WA0004_fraxev.jpg',
+    date: new Date('2024-04-24'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199159/IMG-20250424-WA0004_fraxev.jpg',
+        alt: 'Maquillaje piedra',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199159/IMG-20250424-WA0000_2_yoa80n.jpg',
+        alt: 'Vista frontal',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199159/IMG-20250424-WA0007_2_khj9z7.jpg',
+        alt: 'Detalle de textura',
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: 'QfsNDzLXX2c2W0OqiCPb',
+    title: 'Heridas',
+    slug: 'heridas',
+    description: 'Heridas hechas con componente silicona y maquilladas con maquillaje al alcohol.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737406365/IMG_20250107_140202278_2_j8qvfr.jpg',
+    date: new Date('2025-01-07'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406365/IMG_20250107_140202278_2_j8qvfr.jpg',
+        alt: 'Herida realista',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406473/IMG_20250107_140511657_HDR_wsto3v.jpg',
+        alt: 'Detalle de la herida',
+        order: 1,
+      },
+    ],
+  },
+  {
+    id: 'S3VNWWqe1ku9ShsYoL6C',
+    title: 'Maquillaje avatar',
+    slug: 'maquillaje-avatar',
+    description: 'Maquillaje para desfile de avatar realizado con cremacolores.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737395118/DSC07020_tmkape.jpg',
+    date: new Date('2023-10-15'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737395118/DSC07020_tmkape.jpg',
+        alt: 'Maquillaje avatar',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737395118/DSC07019_mglepy.jpg',
+        alt: 'Vista frontal',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737395119/DSC07022_gung3n.jpg',
+        alt: 'Detalle del diseño',
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: 'SL6NjXfIb7ZiZlRag27d',
+    title: 'Colección de joyas de María Francés',
+    slug: 'coleccion-joyas-maria-frances',
+    description: 'Sesión de fotos para la colección vintage de joyas de María Francés',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1759100083/2025-07-31_Maria_Frances-248_ocrjaj.jpg',
+    date: new Date('2024-07-31'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1759100083/2025-07-31_Maria_Frances-248_ocrjaj.jpg',
+        alt: 'Sesión María Francés',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1759100083/2025-07-31_Maria_Frances-138_nwlh4c.jpg',
+        alt: 'Look vintage',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1759100084/2025-07-31_Maria_Frances-269_llvq4c.jpg',
+        alt: 'Detalle de joyas',
+        order: 2,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1759100085/2025-07-31_Maria_Frances-36_mzi0by.jpg',
+        alt: 'Retrato completo',
+        order: 3,
+      },
+    ],
+  },
+  {
+    id: 'TTTapL6lJP3V5Ff2XRh7',
+    title: 'Quemadura',
+    slug: 'quemadura',
+    description: 'Quemadura hecha con látex.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737405843/IMG_20240924_135414698_q4o9hx.jpg',
+    date: new Date('2024-09-24'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405843/IMG_20240924_135414698_q4o9hx.jpg',
+        alt: 'Quemadura con látex',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405843/IMG_20240924_133803471_HDR_zxpczt.jpg',
+        alt: 'Detalle de la quemadura',
+        order: 1,
+      },
+    ],
+  },
+  {
+    id: 'YEiDNWOeWxsBAEymHMBQ',
+    title: 'Maquillaje artístico',
+    slug: 'maquillaje-artistico-siglo-xviii',
+    description: 'Maquillaje artístico inspirado en el siglo XVIII.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737404755/IMG_20240510_180647_461_uz07hb.jpg',
+    date: new Date('2024-05-10'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737404755/IMG_20240510_180647_461_uz07hb.jpg',
+        alt: 'Maquillaje siglo XVIII',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737404757/Picsart_24-05-10_15-24-50-419_z4igph.jpg',
+        alt: 'Look completo',
+        order: 1,
+      },
+    ],
+  },
+  {
+    id: 'aMmPWwBlIJPG1HpEGcS3',
+    title: 'Bigote postizo para teatro',
+    slug: 'bigote-postizo-teatro',
+    description:
+      'Maquillaje y caracterización para la obra de teatro El hombre que soñaba con árboles, en el teatro Alhambra.',
+    categorySlug: 'posticeria',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750191744/IMG_20250613_220823440_2_w36pbp.jpg',
+    date: new Date('2024-06-13'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750191744/IMG_20250613_220823440_2_w36pbp.jpg',
+        alt: 'Bigote aplicado',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750191744/IMG_20250613_220820698_2_bzecze.jpg',
+        alt: 'Vista del personaje',
+        order: 1,
+      },
+    ],
+  },
+  {
+    id: 'ibpepbwJZ5jcT5hyAv2C',
+    title: 'Maquillaje piel congelada',
+    slug: 'maquillaje-piel-congelada',
+    description: 'Maquillaje de piel congelada.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737406826/IMG_20241119_131301337_fk8jdo.jpg',
+    date: new Date('2024-11-19'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406826/IMG_20241119_131301337_fk8jdo.jpg',
+        alt: 'Piel congelada',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406828/IMG_20241119_131728169_dc0jra.jpg',
+        alt: 'Detalle del efecto',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406830/IMG_20241119_131320720_jwx6qw.jpg',
+        alt: 'Vista lateral',
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: 'icgkO7Lk7uZBdJzAMwpr',
+    title: 'Ciberpunk',
+    slug: 'ciberpunk',
+    description:
+      'Proyecto inspirado en la estética cyberpunk que nos muestra una feminidad cruda, sin filtros.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1755371182/4A3A9546_ethfnc.jpg',
+    date: new Date('2024-06-15'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1755371182/4A3A9546_ethfnc.jpg',
+        alt: 'Cyberpunk principal',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1755371184/4A3A9504_kv91uk.jpg',
+        alt: 'Look futurista',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1755371184/4A3A9749_htwsgb.jpg',
+        alt: 'Estética urbana',
+        order: 2,
+      },
+    ],
+  },
+  {
+    id: 'll2PUP9pFY0OKINGfeEc',
+    title: 'Maquilladora para "El hombre que soñaba con árboles"',
+    slug: 'maquilladora-hombre-sonaba-arboles',
+    description:
+      'Maquilladora y caracterizadora en la obra de teatro "El hombre que soñaba con árboles" de Anna Sovak.',
+    categorySlug: 'teatro',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750201559/Screenshot_20250618-010026_unswsb.png',
+    date: new Date('2024-06-18'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201559/Screenshot_20250618-010026_unswsb.png',
+        alt: 'Escena de la obra',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201559/Screenshot_20250618-004824_duq4qp.png',
+        alt: 'Personaje principal',
+        order: 1,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201559/Screenshot_20250618-005642_r9hzu3.png',
+        alt: 'Caracterización completa',
+        order: 2,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201560/Screenshot_20250618-005546_2_kxticn.png',
+        alt: 'Maquillaje de personaje',
+        order: 3,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750201560/Screenshot_20250618-005452_2_hebh46.png',
+        alt: 'Detalle de caracterización',
+        order: 4,
+      },
+    ],
+  },
+  {
+    id: 'nWN7r1F2JatZ8XhfXQyo',
+    title: 'Cortometraje de edificio23',
+    slug: 'cortometraje-edificio23',
+    description:
+      'Colaboración para el cortometraje "el cómplice", episodio 4 de la serie edificio 23 de Miguel García Bernal.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1742672514/IMG-20250319-WA0033_f044we.jpg',
+    date: new Date('2025-03-19'),
+    isFeatured: true,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1742672514/IMG-20250319-WA0033_f044we.jpg',
         alt: 'Escena principal',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1742672514/IMG-20250319-WA0027_ehv9qy.jpg',
+        alt: 'Efecto especial',
         order: 1,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/architecture.jpg',
-        alt: 'Retoque en set',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1742672514/IMG-20250319-WA0032_nymhx7.jpg',
+        alt: 'Maquillaje de personaje',
         order: 2,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/chair.jpg',
-        alt: 'Actor caracterizado',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1742672514/IMG-20250319-WA0028_jtx376.jpg',
+        alt: 'Detalle del trabajo',
         order: 3,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/boy-snow-hoodie.jpg',
-        alt: 'Escena flashback',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1742672536/IMG-20250319-WA0022_yxxlw6.jpg',
+        alt: 'Behind the scenes',
         order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/jaguar.jpg',
-        alt: 'Detalle envejecimiento',
-        order: 5,
       },
     ],
   },
   {
-    title: 'Videoclip "Neon Nights"',
-    slug: 'videoclip-neon-nights',
-    description: `Maquillaje artístico para videoclip musical de estilo Synthwave.
-    
-Uso intensivo de pigmentos neón reactivos a la luz UV, purpurina y delineados gráficos geométricos. El maquillaje debía destacar bajo luces negras y estroboscópicas.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/bicycle.jpg',
-    date: new Date('2024-01-10'),
-    categorySlug: 'rodajes',
+    id: 'p17i3D47MiqRpXuabTyq',
+    title: 'Sesión de fotos boxeo',
+    slug: 'sesion-fotos-boxeo',
+    description:
+      'Sesión de fotos inspirada en el boxeo callejero. Una visión romantizada de las peleas callejeras.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1757979322/2025-09-02_David-152_tkyjvg.jpg',
+    date: new Date('2024-09-02'),
     isFeatured: false,
     images: [
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/people/bicycle.jpg',
-        alt: 'Cantante principal',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1757979322/2025-09-02_David-152_tkyjvg.jpg',
+        alt: 'Sesión boxeo principal',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1757979323/2025-09-02_David-104_pibczv.jpg',
+        alt: 'Retrato intenso',
         order: 1,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/koala.jpg',
-        alt: 'Efecto bajo luz UV',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1757979323/2025-09-02_David-35_hpikdh.jpg',
+        alt: 'Look agresivo',
         order: 2,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/kitten.jpg',
-        alt: 'Purpurina y neón',
-        order: 3,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/kitten-cat.jpg',
-        alt: 'Making of set',
-        order: 4,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/lion.jpg',
-        alt: 'Delineados gráficos',
-        order: 5,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/manatee.jpg',
-        alt: 'Artista satisfecha',
-        order: 6,
       },
     ],
   },
   {
-    title: 'Serie "Época Victoriana"',
-    slug: 'serie-epoca-victoriana',
-    description: `Departamento de maquillaje para serie de época de 8 episodios.
-
-30 actores principales, 100+ extras. Investigación histórica exhaustiva. Paletas de colores de época, técnicas de maquillaje del siglo XIX adaptadas.`,
-    thumbnailUrl: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/parrot.jpg',
-    date: new Date('2023-06-01'),
-    categorySlug: 'rodajes',
-    isFeatured: true,
+    id: 'rN4reorFZuPdrjfs4sjp',
+    title: 'Maquillaje fantasía navidad',
+    slug: 'maquillaje-fantasia-navidad',
+    description: 'Maquillaje de pascuero para navidad.',
+    categorySlug: 'maquillaje',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737406737/Picsart_25-01-13_23-17-34-549_kpbkay.jpg',
+    date: new Date('2025-01-13'),
+    isFeatured: false,
     images: [
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/parrot.jpg',
-        alt: 'Protagonista femenina',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406737/Picsart_25-01-13_23-17-34-549_kpbkay.jpg',
+        alt: 'Maquillaje navideño',
+        order: 0,
+      },
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406738/Picsart_25-01-13_23-18-44-647_fdbusr.jpg',
+        alt: 'Look festivo',
         order: 1,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/reindeer.jpg',
-        alt: 'Protagonista masculino',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406753/IMG_20250113_121336_768_2_bhnk3o.jpg',
+        alt: 'Detalles navideños',
         order: 2,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/shark.jpg',
-        alt: 'Extras en set',
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737406754/IMG_20250113_121341_900_2_ntvxon.jpg',
+        alt: 'Vista completa',
         order: 3,
       },
+    ],
+  },
+  {
+    id: 'xkwFYhKUVYIFUZFJGd2E',
+    title: 'Zombie',
+    slug: 'zombie',
+    description: 'Zombie realizado en la feria fórmate de Andalucía.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750199272/IMG-20250213-WA0094_n8mvcx.jpg',
+    date: new Date('2024-02-13'),
+    isFeatured: false,
+    images: [
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/snake.jpg',
-        alt: 'Paleta de productos',
-        order: 4,
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199272/IMG-20250213-WA0094_n8mvcx.jpg',
+        alt: 'Zombie completo',
+        order: 0,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/turtle.jpg',
-        alt: 'Escena de baile',
-        order: 5,
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199272/IMG-20250213-WA0038_oenu3r.jpg',
+        alt: 'Detalle del maquillaje zombie',
+        order: 1,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cloudinary-icon.jpg',
-        alt: 'Equipo de maquillaje',
-        order: 6,
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199272/IMG-20250213-WA0100_smnudf.jpg',
+        alt: 'Heridas y efectos',
+        order: 2,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/cloudinary-logo-vector.jpg',
-        alt: 'Diseño de personaje',
-        order: 7,
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1750199273/IMG-20250213-WA0077_zorcxa.jpg',
+        alt: 'Vista lateral zombie',
+        order: 3,
+      },
+    ],
+  },
+  {
+    id: 'zK01MqbbuR7FzvgAkE23',
+    title: 'Bruja Blancanieves',
+    slug: 'bruja-blancanieves',
+    description: 'Caracterización de bruja de Blancanieves con prótesis de silicona para la nariz.',
+    categorySlug: 'fx',
+    thumbnailUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737405901/IMG_20241025_224737921_2_pewdss.jpg',
+    date: new Date('2024-10-25'),
+    isFeatured: false,
+    images: [
+      {
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405901/IMG_20241025_224737921_2_pewdss.jpg',
+        alt: 'Bruja completa',
+        order: 0,
       },
       {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/sneakers.jpg',
-        alt: 'Continuidad de maquillaje',
-        order: 8,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/basketball.jpg',
-        alt: 'Preparación matutina',
-        order: 9,
-      },
-      {
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/samples/animals/pigeon.jpg',
-        alt: 'Vestuario integrado',
-        order: 10,
+        url: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405901/IMG_20241025_224109806_2_dmojld.jpg',
+        alt: 'Detalle de prótesis nasal',
+        order: 1,
       },
     ],
   },
