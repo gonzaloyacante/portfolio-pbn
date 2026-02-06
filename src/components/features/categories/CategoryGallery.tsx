@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react'
 import { OptimizedImage } from '@/components/ui'
-import { staggerItem, StaggerChildren } from '@/components/ui/animations/Animations'
+import { cn } from '@/lib/utils'
 
 interface GalleryImage {
   id: string
@@ -12,19 +12,71 @@ interface GalleryImage {
   alt: string
   title: string // Project title for context
   projectSlug: string
+  width?: number | null
+  height?: number | null
 }
 
 export default function CategoryGallery({
-  images,
-  categoryName,
+  images: initialImages,
   showTitles = true,
 }: {
   images: GalleryImage[]
-  categoryName: string
   showTitles?: boolean
 }) {
+  // Use images directly - ordering is already handled by DB query
+  const images = initialImages
+
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [isZoomed, setIsZoomed] = useState(false)
+
+  // Clean Masonry Logic V1
+  const [columns, setColumns] = useState(1)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1280)
+        setColumns(4) // xl
+      else if (window.innerWidth >= 1024)
+        setColumns(3) // lg
+      else if (window.innerWidth >= 768)
+        setColumns(2) // md
+      else setColumns(1) // mobile
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Shortest Column Distribution (V2)
+  const columnsData = Array.from({ length: columns }, () => ({
+    images: [] as (GalleryImage & { originalIndex: number })[],
+    height: 0,
+  }))
+
+  const imagesWithIndex = images.map((img, idx) => ({ ...img, originalIndex: idx }))
+
+  imagesWithIndex.forEach((img) => {
+    // Calculate aspect ratio from real dimensions if available
+    // Default to 1.5 (portrait) if missing
+    const aspectRatio = img.height && img.width ? img.height / img.width : 1.5
+
+    // Find shortest
+    let minColIndex = 0
+    let minHeight = columnsData[0].height
+    columnsData.forEach((col, idx) => {
+      if (col.height < minHeight) {
+        minHeight = col.height
+        minColIndex = idx
+      }
+    })
+
+    columnsData[minColIndex].images.push(img)
+    columnsData[minColIndex].height += aspectRatio
+  })
+
+  // To match the previous map structure for rendering:
+  const distributedImages = columnsData.map((c) => c.images)
+  // -------------------------
 
   const handlePrev = useCallback(
     (e: React.MouseEvent) => {
@@ -69,36 +121,59 @@ export default function CategoryGallery({
   return (
     <>
       {/* Grid */}
-      <StaggerChildren className="columns-2 gap-4 space-y-4 md:columns-3 lg:columns-4">
-        {images.map((img, index) => (
-          <motion.div key={img.id} variants={staggerItem} className="break-inside-avoid">
-            <div
-              onClick={() => {
-                setSelectedIndex(index)
-                setIsZoomed(false)
-              }}
-              className="group relative cursor-pointer overflow-hidden rounded-xl bg-[var(--card-bg)] shadow-sm transition-all hover:shadow-lg"
-            >
-              <OptimizedImage
-                src={img.url}
-                alt={img.alt}
-                width={500}
-                height={500}
-                className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                variant="card"
-              />
-              <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
-              {showTitles && (
-                <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
-                  <p className="truncate text-xs font-bold text-white drop-shadow-md">
-                    {img.title}
-                  </p>
+      {/* Horizontal Masonry Grid V1 (Round Robin) */}
+      <div
+        className={cn(
+          'grid gap-4',
+          columns === 1
+            ? 'grid-cols-1'
+            : columns === 2
+              ? 'grid-cols-2'
+              : columns === 3
+                ? 'grid-cols-3'
+                : 'grid-cols-4'
+        )}
+      >
+        {distributedImages.map((columnImages, colIndex) => (
+          <div key={colIndex} className="flex flex-col gap-4">
+            {columnImages.map((img) => (
+              <motion.div
+                key={img.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: img.originalIndex * 0.15, duration: 0.5 }}
+              >
+                <div
+                  onClick={() => {
+                    // Find original index for lightbox
+                    const originalIndex = images.findIndex((i) => i.id === img.id)
+                    setSelectedIndex(originalIndex)
+                    setIsZoomed(false)
+                  }}
+                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-[var(--card-bg)] shadow-sm transition-all hover:shadow-lg"
+                >
+                  <OptimizedImage
+                    src={img.url}
+                    alt={img.alt}
+                    width={500}
+                    height={500}
+                    className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    variant="card"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                  {showTitles && (
+                    <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
+                      <p className="truncate text-xs font-bold text-white drop-shadow-md">
+                        {img.title}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </motion.div>
+              </motion.div>
+            ))}
+          </div>
         ))}
-      </StaggerChildren>
+      </div>
 
       {/* Lightbox */}
       <AnimatePresence>
@@ -132,9 +207,6 @@ export default function CategoryGallery({
             {/* Info */}
             <div className="absolute top-4 left-4 z-40">
               <div className="flex flex-col">
-                <span className="text-xs font-medium tracking-wider text-[var(--primary)] uppercase">
-                  {categoryName}
-                </span>
                 <h3 className="text-xl font-bold text-white">{images[selectedIndex].title}</h3>
               </div>
               <p className="text-sm text-white/60">

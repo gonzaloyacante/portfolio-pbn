@@ -4,6 +4,7 @@ import { updateCategory } from '@/actions/cms/content'
 import { Button, Input, Card } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
 import CategoryCoverSelector from '@/components/features/categories/CategoryCoverSelector'
+import GalleryOrderButton from '@/components/admin/GalleryOrderButton'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
@@ -38,17 +39,22 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
-      <div className="flex items-center gap-4">
-        <Link href={ROUTES.admin.categories}>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft size={16} />
-            Volver
-          </Button>
-        </Link>
-        <PageHeader
-          title={`✏️ Editar: ${category.name}`}
-          description={`${category._count.projects} proyecto${category._count.projects !== 1 ? 's' : ''} en esta categoría`}
-        />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link href={ROUTES.admin.categories}>
+            <Button variant="ghost" size="sm" className="gap-2">
+              <ArrowLeft size={16} />
+              Volver
+            </Button>
+          </Link>
+          <PageHeader
+            title={`✏️ Editar: ${category.name}`}
+            description={`${category._count.projects} proyecto${category._count.projects !== 1 ? 's' : ''} en esta categoría`}
+          />
+        </div>
+
+        {/* Gallery Order Button */}
+        <GalleryOrderButton categoryId={category.id} categoryName={category.name} />
       </div>
 
       <Card className="p-8">

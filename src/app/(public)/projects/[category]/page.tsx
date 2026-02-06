@@ -52,7 +52,10 @@ export default async function CategoryProjectsPage({
           orderBy: { date: 'desc' },
           include: {
             images: {
-              orderBy: { order: 'asc' },
+              orderBy: [
+                { categoryGalleryOrder: 'asc' }, // Primary: manual gallery order
+                { order: 'asc' }, // Fallback: original project order
+              ],
             },
           },
         },
@@ -75,6 +78,8 @@ export default async function CategoryProjectsPage({
       alt: img.alt || project.title,
       title: project.title,
       projectSlug: project.slug,
+      width: img.width,
+      height: img.height,
     }))
   )
 
@@ -116,11 +121,7 @@ export default async function CategoryProjectsPage({
 
         {/* Gallery */}
         {allImages.length > 0 ? (
-          <CategoryGallery
-            images={allImages}
-            categoryName={category.name}
-            showTitles={showTitles}
-          />
+          <CategoryGallery images={allImages} showTitles={showTitles} />
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
             <span className="mb-4 text-4xl">📷</span>

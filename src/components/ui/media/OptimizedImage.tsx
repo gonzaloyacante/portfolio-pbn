@@ -143,8 +143,8 @@ export function OptimizedImage({
     return (
       <div
         ref={imgRef}
-        className={`border-border flex items-center justify-center border ${transparentBackground ? 'bg-transparent' : 'bg-muted'} ${className} ${fill ? 'absolute inset-0' : ''}`}
-        style={fill ? undefined : { width, height }}
+        className={`border-border flex items-center justify-center border ${transparentBackground ? 'bg-transparent' : 'bg-muted'} ${className} ${fill ? 'absolute inset-0' : 'h-64 w-full'} rounded-lg`} // Fixed height for errors
+        style={fill ? undefined : undefined} // Remove inline width/height to let CSS control error size
       >
         <div className="p-4 text-center">
           <div className="text-muted-foreground mx-auto mb-2 h-8 w-8">

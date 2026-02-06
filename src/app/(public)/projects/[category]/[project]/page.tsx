@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
-import { FadeIn, StaggerChildren, ScrollProgress } from '@/components/ui'
+import { FadeIn, ScrollProgress } from '@/components/ui'
 import { ArrowLeft, Calendar } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
@@ -44,6 +44,7 @@ export async function generateMetadata({
  */
 import { getAdjacentProjects } from '@/actions/cms/projects'
 import ProjectNavigation from '@/components/features/projects/ProjectNavigation'
+import MasonryGallery from '@/components/features/projects/MasonryGallery'
 
 export default async function ProjectDetailPage({
   params,
@@ -193,31 +194,26 @@ export default async function ProjectDetailPage({
           </div>
         </FadeIn>
 
-        {/* Gallery Grid */}
-        <StaggerChildren className="columns-1 gap-4 space-y-4 sm:columns-2 lg:columns-3 xl:columns-3">
-          {/* Show specific images only - excluding thumbnail if needed, or just all images */}
-          {project.images.map((image) => (
-            <FadeIn key={image.id} className="break-inside-avoid">
-              <div className="relative mb-4 overflow-hidden rounded-2xl bg-[var(--card-bg)] shadow-md transition-all hover:shadow-xl">
-                <Image
-                  src={image.url}
-                  alt={`${project.title} - ${image.order}`}
-                  width={800}
-                  height={1000} // Approximate aspect ratio, standard styling handles it
-                  className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  priority={image.order === 0}
-                />
-              </div>
-            </FadeIn>
-          ))}
-
-          {/* If no images, show placeholder or thumbnail larger */}
-          {project.images.length === 0 && (
-            <FadeIn className="break-inside-avoid">
+        {/* Gallery Grid (Horizontal Flow Masonry V1) */}
+        <div className="mb-12">
+          {project.images.length > 0 ? (
+            <MasonryGallery
+              images={project.images.map((img, idx) => ({
+                id: img.id,
+                url: img.url,
+                order: img.order,
+                title: project.title,
+                width: img.width,
+                height: img.height,
+                originalIndex: idx, // Explicitly pass index
+              }))}
+              titlePrefix={project.title}
+            />
+          ) : (
+            <FadeIn>
               <div className="relative mb-4 overflow-hidden rounded-2xl bg-[var(--card-bg)] shadow-md">
                 <Image
-                  src={project.thumbnailUrl}
+                  src={project.thumbnailUrl || ''}
                   alt={project.title}
                   width={1200}
                   height={800}
@@ -227,7 +223,7 @@ export default async function ProjectDetailPage({
               </div>
             </FadeIn>
           )}
-        </StaggerChildren>
+        </div>
       </div>
 
       {/* Circular Navigation */}

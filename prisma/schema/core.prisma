@@ -150,6 +150,8 @@ model ProjectImage {
   // Display
   isCover   Boolean  @default(false) // Main image for project
   isHero    Boolean  @default(false) // Use in hero/banner
+  // Gallery Ordering
+  categoryGalleryOrder Int? // Manual order in category gallery (cross-project)
   // Analytics
   viewCount Int      @default(0)
   // Audit
@@ -162,5 +164,6 @@ model ProjectImage {
   @@index([projectId, order])
   @@index([isCover])
   @@index([isHero])
+  @@index([categoryGalleryOrder])
   @@map("project_images")
 }
