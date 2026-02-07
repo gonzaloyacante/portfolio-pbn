@@ -29,7 +29,7 @@
     "pre-commit": "npx tsx scripts/pre-commit-checks.ts",
     "stress:seed": "npx tsx scripts/seed-stress-test.ts",
     "stress:clean": "npx tsx scripts/delete-test-data.ts",
-    "db:reset": "prisma migrate reset --force",
+    "db:reset": "prisma db push --force-reset",
     "db:seed": "prisma db seed",
     "db:seed:admin:dev": "npx tsx scripts/seed-admin-dev.ts",
     "db:seed:admin:prod": "npx tsx scripts/seed-admin-prod.ts",

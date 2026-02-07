@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Category, Project, ProjectImage } from '@prisma/client'
 import { updateProject, deleteProjectImage, reorderProjectImages } from '@/actions/cms/content'
 import { setProjectThumbnail } from '@/actions/cms/project'
-import { Button, Input, TextArea } from '@/components/ui'
+import { Button, SmartField, ImageUpload } from '@/components/ui'
 import { useToast } from '@/components/ui'
 import SortableImageGrid from '@/components/ui/media/SortableImageGrid'
 
@@ -23,32 +24,93 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
   const router = useRouter()
   const { show } = useToast()
 
-  // State
-  const [activeTab, setActiveTab] = useState('general')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // 1. Setup React Hook Form
+  type ProjectFormData = {
+    title: string
+    categoryId: string
+    description: string
+    date: string
+    newImages: never[]
+  }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<ProjectFormData>({
+    defaultValues: {
+      title: project.title,
+      categoryId: project.categoryId,
+      description: project.description || '',
+      date: project.date ? new Date(project.date).toISOString().split('T')[0] : '',
+      newImages: [],
+    },
+  })
+
+  // 2. Track images for preview (Existing + New)
   const [currentThumbnail, setCurrentThumbnail] = useState(project.thumbnailUrl)
+  const [existingImages, setExistingImages] = useState(project.images)
+
+  // Track new uploads (URLs from Cloudinary via ImageUpload)
+  const [previewImages, setPreviewImages] = useState<ProjectImage[]>([])
+  const [uploadValue, setUploadValue] = useState<string[]>([])
+
+  const allImages = [...existingImages, ...previewImages]
+
+  console.log('[ProjectEditForm] RENDER:', {
+    existingCount: existingImages.length,
+    previewCount: previewImages.length,
+    totalCount: allImages.length,
+    previewImages: previewImages.map((img) => ({ id: img.id, url: img.url.substring(0, 50) })),
+  })
 
   // Actions
-  async function handleSubmit(formData: FormData) {
-    setIsSubmitting(true)
+  const onSubmit = async (data: ProjectFormData) => {
+    const formData = new FormData()
+    // Append basic fields
+    formData.append('title', data.title)
+    formData.append('categoryId', data.categoryId)
+    formData.append('description', data.description)
+    formData.append('date', data.date)
+
+    // Append new images (URLs + PublicIDs from ImageUpload)
+    // We do NOT send files because ImageUpload already handled it.
+    previewImages.forEach((img) => {
+      formData.append('images', img.url)
+      formData.append('images_public_id', img.publicId)
+    })
+
     try {
-      // Append checkboxes manual handling if needed, but 'on' is standard
       const result = await updateProject(project.id, formData)
       if (result.success) {
         show({ type: 'success', message: 'Proyecto actualizado correctamente' })
         router.refresh()
+        // Clear previews on success?
+        setPreviewImages([])
       } else {
         show({ type: 'error', message: result.error || 'Error al actualizar' })
       }
     } catch {
       show({ type: 'error', message: 'Error inesperado' })
-    } finally {
-      setIsSubmitting(false)
     }
   }
 
   const handleReorderImages = async (imageIds: string[]) => {
-    const reorderedItems = imageIds.map((id, index) => ({ id, order: index }))
+    // Only reorder existing images for now
+    const reorderedIds = imageIds.filter((id) => !id.startsWith('new-'))
+    const reorderedItems = reorderedIds.map((id, index) => ({ id, order: index }))
+
+    // Optimistic update locally
+    const newOrderMap = new Map(reorderedIds.map((id, index) => [id, index]))
+    setExistingImages((prev) => {
+      const sorted = [...prev].sort((a, b) => {
+        const indexA = newOrderMap.get(a.id) ?? 999
+        const indexB = newOrderMap.get(b.id) ?? 999
+        return indexA - indexB
+      })
+      return sorted
+    })
+
     try {
       await reorderProjectImages(project.id, reorderedItems)
       show({ type: 'success', message: 'Orden de imágenes actualizado' })
@@ -58,9 +120,18 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
   }
 
   const handleDeleteImage = async (imageId: string) => {
+    if (imageId.startsWith('new-')) {
+      // Remove from previewImages
+      setPreviewImages((prev) => prev.filter((img) => img.id !== imageId))
+      // Ideally we should also delete from Cloudinary here to avoid orphans,
+      // but per user instruction we touch nothing else.
+      return
+    }
+
     try {
       const result = await deleteProjectImage(imageId)
       if (result.success) {
+        setExistingImages((prev) => prev.filter((img) => img.id !== imageId))
         show({ type: 'success', message: 'Imagen eliminada correctly' })
         router.refresh()
       } else {
@@ -74,7 +145,6 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
   const handleSetThumbnail = async (imageUrl: string) => {
     const prevThumbnail = currentThumbnail
     setCurrentThumbnail(imageUrl)
-
     try {
       const result = await setProjectThumbnail(project.id, imageUrl)
       if (result.success) {
@@ -90,47 +160,21 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     }
   }
 
-  const tabs = [
-    { id: 'general', label: 'General' },
-    { id: 'details', label: 'Detalles' },
-    { id: 'seo', label: 'SEO' },
-    { id: 'config', label: 'Config' },
-    { id: 'media', label: 'Galería' },
-  ]
-
   return (
-    <form action={handleSubmit} className="space-y-8">
-      {/* Tabs Navigation */}
-      <div className="overflow-x-auto border-b border-[var(--border)]">
-        <div className="flex min-w-max gap-4 px-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'border-[var(--primary)] text-[var(--foreground)]'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* --- TAB: GENERAL --- */}
-      <div className={activeTab === 'general' ? 'block space-y-6' : 'hidden'}>
+    <form onSubmit={handleSubmit(onSubmit)} className="mx-auto max-w-4xl space-y-8">
+      {/* 1. Detalles Principales */}
+      <div className="space-y-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Input label="Título" name="title" defaultValue={project.title} required />
+          {/* Manual integration of SmartField with React Hook Form */}
+          <div>
+            <SmartField label="Título" {...register('title')} required />
+          </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">
               Categoría
             </label>
             <select
-              name="categoryId"
-              defaultValue={project.categoryId}
+              {...register('categoryId')}
               className="w-full rounded-lg border bg-[var(--background)] px-4 py-3 text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
               required
             >
@@ -142,164 +186,96 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             </select>
           </div>
         </div>
-        <TextArea
+        <SmartField
           label="Descripción"
-          name="description"
-          defaultValue={project.description || ''}
+          {...register('description')}
+          type="textarea"
           rows={4}
           placeholder="Descripción completa del proyecto..."
         />
-        <Input
-          label="Fecha"
-          name="date"
-          type="date"
-          defaultValue={project.date ? new Date(project.date).toISOString().split('T')[0] : ''}
-        />
+        <SmartField label="Fecha" {...register('date')} type="date" />
       </div>
 
-      {/* --- TAB: DETAILS (New Fields) --- */}
-      <div className={activeTab === 'details' ? 'block space-y-6' : 'hidden'}>
-        <TextArea
-          label="Extracto (Resumen corto)"
-          name="excerpt"
-          defaultValue={project.excerpt || ''}
-          rows={2}
-          placeholder="Breve resumen para tarjetas..."
-        />
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Input
-            label="Cliente"
-            name="client"
-            defaultValue={project.client || ''}
-            placeholder="Nombre del cliente"
-          />
-          <Input
-            label="Ubicación"
-            name="location"
-            defaultValue={project.location || ''}
-            placeholder="Ej: Madrid"
-          />
-          <Input
-            label="Duración"
-            name="duration"
-            defaultValue={project.duration || ''}
-            placeholder="Ej: 2 semanas"
-          />
-          <Input
-            label="Video URL (YouTube/Vimeo)"
-            name="videoUrl"
-            defaultValue={project.videoUrl || ''}
-            placeholder="https://..."
-          />
-        </div>
-        <Input
-          label="Etiquetas (separadas por coma)"
-          name="tags"
-          defaultValue={project.tags?.join(', ') || ''}
-          placeholder="boda, exterior, editorial..."
-        />
-      </div>
-
-      {/* --- TAB: SEO (New Fields) --- */}
-      <div className={activeTab === 'seo' ? 'block space-y-6' : 'hidden'}>
-        <Input
-          label="Meta Title (SEO)"
-          name="metaTitle"
-          defaultValue={project.metaTitle || ''}
-          placeholder="Título optimizado para Google"
-        />
-        <TextArea
-          label="Meta Description"
-          name="metaDescription"
-          defaultValue={project.description || ''}
-          rows={3}
-          placeholder="Descripción para resultados de búsqueda (160 caracteres recommended)"
-        />
-        <Input
-          label="Meta Keywords"
-          name="metaKeywords"
-          defaultValue={project.metaKeywords?.join(', ') || ''}
-          placeholder="maquillaje, novia, profesional..."
-        />
-        <Input
-          label="Canonical URL"
-          name="canonicalUrl"
-          defaultValue={project.canonicalUrl || ''}
-          placeholder="https://tudominio.com/proyectos/este-proyecto"
-        />
-      </div>
-
-      {/* --- TAB: CONFIG (New Fields) --- */}
-      <div className={activeTab === 'config' ? 'block space-y-6' : 'hidden'}>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">
-              Layout de Galería
-            </label>
-            <select
-              name="layout"
-              defaultValue={project.layout || 'grid'}
-              className="w-full rounded-lg border bg-[var(--background)] px-4 py-3 text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
-            >
-              <option value="grid">Grid (Cuadrícula)</option>
-              <option value="masonry">Masonry (Mosaico)</option>
-              <option value="carousel">Carrusel</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="border-border space-y-4 border-t pt-4">
-          <h4 className="text-foreground font-medium">Visibilidad</h4>
-          <div className="flex gap-8">
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                name="isFeatured"
-                defaultChecked={project.isFeatured}
-                className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-              />
-              <span className="text-sm">Destacado (Home)</span>
-            </label>
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                name="isPinned"
-                defaultChecked={project.isPinned}
-                className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-              />
-              <span className="text-sm">Fijado (Arriba)</span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      {/* --- TAB: MEDIA --- */}
-      <div className={activeTab === 'media' ? 'block space-y-6' : 'hidden'}>
+      {/* 2. Galería */}
+      <div className="space-y-6">
+        <h3 className="text-lg font-semibold">Galería de Imágenes</h3>
         <SortableImageGrid
-          images={project.images}
+          images={allImages}
           currentThumbnail={currentThumbnail}
           onReorder={handleReorderImages}
           onDelete={handleDeleteImage}
           onSetThumbnail={handleSetThumbnail}
         />
 
-        <div className="hover:bg-muted/50 rounded-xl border border-dashed border-[var(--primary)] p-6 transition-colors">
-          <label className="text-foreground mb-2 block text-sm font-medium">
-            📷 Agregar más fotos
-          </label>
-          <input
-            type="file"
+        <div className="rounded-xl border border-dashed border-[var(--border)] p-6">
+          <ImageUpload
+            value={uploadValue}
             name="newImages"
+            label="Agregar más fotos"
             multiple
-            accept="image/*"
-            className="w-full text-sm text-[var(--foreground)] file:mr-4 file:cursor-pointer file:rounded-full file:border-0 file:bg-[var(--primary)] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-[var(--primary-foreground)] file:transition-opacity hover:file:opacity-90"
+            onChange={(urls, publicIds) => {
+              console.log('[ProjectEditForm] ImageUpload onChange fired!')
+              console.log('  URLs:', urls)
+              console.log('  PublicIDs:', publicIds)
+              console.log('  Current previewImages count:', previewImages.length)
+
+              if (urls.length > 0) {
+                // ImageUpload sends ALL images in its state, not just new ones
+                setPreviewImages((prev) => {
+                  const existingUrls = new Set(prev.map((img) => img.url))
+                  const existingPublicIds = new Set(prev.map((img) => img.publicId))
+                  const newUrls: string[] = []
+                  const newPublicIds: string[] = []
+
+                  urls.forEach((url, i) => {
+                    const publicId = publicIds[i]
+                    // Check against the FRESH 'prev' state
+                    if (!existingUrls.has(url) && !existingPublicIds.has(publicId)) {
+                      newUrls.push(url)
+                      newPublicIds.push(publicId)
+                    }
+                  })
+
+                  if (newUrls.length === 0) {
+                    return prev
+                  }
+
+                  const newImages: ProjectImage[] = newUrls.map((url, i) => ({
+                    id: newPublicIds[i] || `new-${Date.now()}-${i}`,
+                    url,
+                    publicId: newPublicIds[i],
+                    order: allImages.length + prev.length + i,
+                    title: null,
+                    alt: null,
+                    caption: null,
+                    seoAlt: '',
+                    width: 0,
+                    height: 0,
+                    format: 'jpg',
+                    bytes: 0,
+                    isCover: false,
+                    isHero: false,
+                    categoryGalleryOrder: 0,
+                    viewCount: 0,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    projectId: project.id,
+                  }))
+
+                  return [...prev, ...newImages]
+                })
+
+                // Reset ImageUpload value
+                setUploadValue([])
+              } else {
+                console.log('  All URLs already exist, skipping')
+              }
+            }}
           />
-          <p className="text-muted-foreground mt-2 text-xs">
-            Selecciona múltiples archivos para agregar a la galería.
-          </p>
         </div>
       </div>
 
+      {/* Footer Actions */}
       <div className="border-border bg-background/80 sticky bottom-0 z-10 flex justify-end gap-4 border-t p-4 pt-6 backdrop-blur-sm">
         <Button type="button" variant="secondary" onClick={() => router.back()}>
           Cancelar

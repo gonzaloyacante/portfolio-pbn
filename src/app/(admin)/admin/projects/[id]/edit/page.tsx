@@ -40,7 +40,11 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
       />
 
       <Section title="Detalles del Proyecto">
-        <ProjectEditForm project={project} categories={categories} />
+        <ProjectEditForm
+          key={project.updatedAt.toISOString()} // Force re-mount on update to sync state
+          project={project}
+          categories={categories}
+        />
       </Section>
     </div>
   )

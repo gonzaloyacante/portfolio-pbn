@@ -58,7 +58,14 @@ export default function ImageUpload({
         : currentImage
           ? [{ url: currentImage, publicId: '' }]
           : []
-    setImages(newImages)
+
+    setImages((prev) => {
+      // Prevent infinite loop by checking if URLs are actually different
+      const prevUrls = prev.map((img) => img.url).join(',')
+      const newUrls = newImages.map((img) => img.url).join(',')
+
+      return prevUrls === newUrls ? prev : newImages
+    })
   }, [value, currentImage])
 
   const uploadFile = useCallback(
@@ -155,10 +162,12 @@ export default function ImageUpload({
 
         // Notificar cambios
         const successfulUploads = updated.filter((img) => img.publicId && !img.error)
-        onChange?.(
-          successfulUploads.map((img) => img.url),
-          successfulUploads.map((img) => img.publicId)
-        )
+        setTimeout(() => {
+          onChange?.(
+            successfulUploads.map((img) => img.url),
+            successfulUploads.map((img) => img.publicId)
+          )
+        }, 0)
 
         return updated
       })
@@ -232,10 +241,12 @@ export default function ImageUpload({
 
     const newImages = images.filter((_, i) => i !== index)
     setImages(newImages)
-    onChange?.(
-      newImages.map((img) => img.url),
-      newImages.map((img) => img.publicId)
-    )
+    setTimeout(() => {
+      onChange?.(
+        newImages.map((img) => img.url),
+        newImages.map((img) => img.publicId)
+      )
+    }, 0)
   }
 
   // Single image mode: show image inside dropzone with overlay buttons

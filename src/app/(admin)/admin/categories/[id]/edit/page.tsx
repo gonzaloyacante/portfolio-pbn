@@ -114,7 +114,7 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
             <CategoryCoverSelector
               categoryId={category.id}
               currentCoverUrl={category.coverImageUrl}
-              onSelect={() => {}} // Controlled by internal hidden input
+              onSelect={undefined} // Controlled by internal hidden input
             />
           </div>
 

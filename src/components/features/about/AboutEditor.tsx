@@ -39,6 +39,10 @@ export function AboutEditor({ settings }: AboutEditorProps) {
     },
   })
 
+  // Watch image fields for real-time updates and persistence
+  const profileImageUrl = watch('profileImageUrl')
+  const illustrationUrl = watch('illustrationUrl')
+
   // Helper for array fields (comma separated)
   const skillsString = watch('skills')?.join(', ') || ''
   const certificationsString = watch('certifications')?.join(', ') || ''
@@ -99,8 +103,10 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             <label className="text-sm font-medium">Foto de Perfil (Oval)</label>
             <ImageUpload
               name="profileImageUrl"
-              currentImage={settings?.profileImageUrl}
-              onChange={(urls: string[]) => setValue('profileImageUrl', urls[0])}
+              value={profileImageUrl ? [profileImageUrl] : []}
+              onChange={(urls: string[]) =>
+                setValue('profileImageUrl', urls[0], { shouldDirty: true })
+              }
             />
           </div>
 
@@ -108,8 +114,8 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             <label className="text-sm font-medium">Ilustración Decorativa</label>
             <ImageUpload
               name="illustrationUrl"
-              currentImage={settings?.illustrationUrl}
-              onChange={(urls) => setValue('illustrationUrl', urls[0])}
+              value={illustrationUrl ? [illustrationUrl] : []}
+              onChange={(urls) => setValue('illustrationUrl', urls[0], { shouldDirty: true })}
             />
           </div>
         </div>

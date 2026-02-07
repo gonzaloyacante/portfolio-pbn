@@ -63,6 +63,11 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
     const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.AboutSettingsUpdateInput
 
+    console.log('--- UPDATE ABOUT SETTINGS DEBUG ---')
+    console.log('User:', user.email)
+    console.log('Received Data:', data)
+    console.log('Clean Data for Prisma:', cleanData)
+
     let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
 
     if (!settings) {
@@ -90,9 +95,16 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
         where: { id: settings.id },
         data: cleanData,
       })
+      console.log('Updated Settings ID:', settings.id)
+      console.log('Updated ProfileImage:', settings.profileImageUrl)
     }
 
-    revalidatePath(ROUTES.public.about)
+    // Revalidate Public Pages (both rewritten and canonical)
+    revalidatePath(ROUTES.public.about) // /sobre-mi
+    revalidatePath('/about') // Canonical Next.js route
+
+    // Revalidate Admin Page
+    revalidatePath(ROUTES.admin.about)
 
     return {
       success: true,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useId, useEffect } from 'react'
 import Image from 'next/image'
 import {
   DndContext,
@@ -46,6 +46,12 @@ export default function SortableImageGrid({
   onSetThumbnail,
 }: Omit<SortableImageGridProps, 'projectId'>) {
   const [localImages, setLocalImages] = useState(images)
+  const dndContextId = useId()
+
+  // Sync local state with prop when parent updates (e.g. new uploads)
+  useEffect(() => {
+    setLocalImages(images)
+  }, [images])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -79,7 +85,12 @@ export default function SortableImageGrid({
     <div className="space-y-4">
       <h3 className="text-foreground text-lg font-medium">Imágenes del Proyecto</h3>
 
-      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        id={dndContextId}
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
         <SortableContext items={localImages.map((img) => img.id)} strategy={rectSortingStrategy}>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {localImages.map((img) => (
@@ -159,7 +170,7 @@ function SortableImage({ image, isThumbnail, onDelete, onSetThumbnail }: Sortabl
         <button
           {...attributes}
           {...listeners}
-          className="text-foreground absolute top-2 left-2 flex h-8 w-8 cursor-grab items-center justify-center rounded-md bg-white/90 hover:bg-white active:cursor-grabbing"
+          className="text-foreground bg-background/80 hover:bg-background absolute top-2 left-2 flex h-8 w-8 cursor-grab items-center justify-center rounded-md backdrop-blur-sm active:cursor-grabbing"
           title="Arrastrar para reordenar"
         >
           <GripVertical size={16} />
@@ -171,7 +182,7 @@ function SortableImage({ image, isThumbnail, onDelete, onSetThumbnail }: Sortabl
           className={`absolute top-2 right-2 flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
             isThumbnail
               ? 'bg-primary text-primary-foreground'
-              : 'text-foreground bg-white/90 hover:bg-white'
+              : 'text-foreground bg-background/80 hover:bg-background backdrop-blur-sm'
           }`}
           title={isThumbnail ? 'Portada actual' : 'Usar como portada'}
         >

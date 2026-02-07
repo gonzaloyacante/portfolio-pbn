@@ -265,26 +265,26 @@ export type CategorySettingsFormData = z.infer<typeof categorySettingsSchema>
 // Project
 export const projectFormSchema = z.object({
   title: z.string().min(3).max(200),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string(), // date input returns string
-  thumbnailUrl: z.string().optional(),
+  thumbnailUrl: z.string().optional().nullable(),
   // Extended fields
-  excerpt: z.string().optional(),
-  videoUrl: z.string().optional(),
-  duration: z.string().optional(),
-  client: z.string().optional(),
-  location: z.string().optional(),
-  tags: z.string().optional(), // Comma separated string from form
+  excerpt: z.string().optional().nullable(),
+  videoUrl: z.string().optional().nullable(),
+  duration: z.string().optional().nullable(),
+  client: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  tags: z.string().optional().nullable(), // Comma separated string from form
   // SEO
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(), // Comma separated string
-  canonicalUrl: z.string().optional(),
+  metaTitle: z.string().optional().nullable(),
+  metaDescription: z.string().optional().nullable(),
+  metaKeywords: z.string().optional().nullable(), // Comma separated string
+  canonicalUrl: z.string().optional().nullable(),
   // Settings
-  layout: z.string().optional(),
-  isFeatured: z.union([z.boolean(), z.string()]).optional(), // Handle boolean or string 'on'/'true'
-  isPinned: z.union([z.boolean(), z.string()]).optional(),
+  layout: z.string().optional().nullable(),
+  isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(), // Handle boolean or string 'on'/'true'
+  isPinned: z.union([z.boolean(), z.string()]).optional().nullable(),
 })
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>

@@ -292,18 +292,44 @@ export async function updateProject(id: string, formData: FormData) {
     })
 
     // 2. Upload new images if any
-    if (newFiles.length > 0 && newFiles[0].size > 0) {
+
+    // Process pre-uploaded images (Strings)
+    const imageInputs = formData.getAll('images')
+    const publicIdInputs = formData.getAll('images_public_id')
+
+    const validImages: { url: string; publicId: string; order: number }[] = []
+
+    const urlInputs = imageInputs.filter(
+      (item): item is string => typeof item === 'string' && item !== ''
+    )
+
+    if (urlInputs.length > 0) {
       const currentImagesCount = await prisma.projectImage.count({ where: { projectId: id } })
 
-      const uploadedImages = await Promise.all(
+      urlInputs.forEach((url, index) => {
+        const publicId = (publicIdInputs[index] as string) || ''
+        validImages.push({ url, publicId, order: currentImagesCount + index })
+      })
+    }
+
+    // Process raw files (if any - fallback)
+    if (newFiles.length > 0 && newFiles[0].size > 0) {
+      const currentImagesCount = await prisma.projectImage.count({ where: { projectId: id } })
+      // Adjust index to account for urlInputs
+      const startIndex = currentImagesCount + validImages.length
+
+      const uploaded = await Promise.all(
         newFiles.map(async (file, index) => {
           const { url, publicId } = await uploadImage(file)
-          return { url, publicId, order: currentImagesCount + index }
+          return { url, publicId, order: startIndex + index }
         })
       )
+      validImages.push(...uploaded)
+    }
 
+    if (validImages.length > 0) {
       await prisma.projectImage.createMany({
-        data: uploadedImages.map((img) => ({
+        data: validImages.map((img) => ({
           url: img.url,
           publicId: img.publicId,
           order: img.order,

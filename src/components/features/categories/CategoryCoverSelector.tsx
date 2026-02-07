@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 interface CategoryCoverSelectorProps {
   categoryId: string
   currentCoverUrl?: string | null
-  onSelect: (url: string) => void
+  onSelect?: (url: string) => void
 }
 
 interface GalleryImage {
@@ -45,7 +45,7 @@ export default function CategoryCoverSelector({
 
   const handleSelect = (url: string) => {
     setSelectedUrl(url)
-    onSelect(url)
+    onSelect?.(url)
   }
 
   return (
