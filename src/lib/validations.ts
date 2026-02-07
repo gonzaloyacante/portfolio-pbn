@@ -100,6 +100,8 @@ export const homeSettingsSchema = z.object({
     .optional()
     .nullable(),
   heroTitle1ZIndex: z.number().int().optional(),
+  heroTitle1OffsetX: z.number().optional(),
+  heroTitle1OffsetY: z.number().optional(),
 
   // Título 2
   heroTitle2Text: z.string().optional(),
@@ -117,6 +119,8 @@ export const homeSettingsSchema = z.object({
     .optional()
     .nullable(),
   heroTitle2ZIndex: z.number().int().optional(),
+  heroTitle2OffsetX: z.number().optional(),
+  heroTitle2OffsetY: z.number().optional(),
 
   // Nombre propietario
   ownerNameText: z.string().optional(),
@@ -134,6 +138,8 @@ export const homeSettingsSchema = z.object({
     .optional()
     .nullable(),
   ownerNameZIndex: z.number().int().optional(),
+  ownerNameOffsetX: z.number().optional(),
+  ownerNameOffsetY: z.number().optional(),
 
   // Imágenes
   heroMainImageUrl: z.string().optional().nullable(),
@@ -141,11 +147,16 @@ export const homeSettingsSchema = z.object({
   heroMainImageCaption: z.string().optional().nullable(),
   heroImageStyle: z.string().optional().nullable(),
   heroMainImageZIndex: z.number().int().optional(),
+  heroMainImageOffsetX: z.number().optional(),
+  heroMainImageOffsetY: z.number().optional(),
   illustrationUrl: z.string().optional().nullable(),
   illustrationAlt: z.string().optional().nullable(),
   illustrationZIndex: z.number().int().optional(),
   illustrationOpacity: z.number().min(0).max(100).optional(),
   illustrationSize: z.number().min(10).max(200).optional(),
+  illustrationOffsetX: z.number().optional(),
+  illustrationOffsetY: z.number().optional(),
+  illustrationRotation: z.number().optional(),
 
   // Botón CTA
   ctaText: z.string().optional().nullable(),
@@ -155,6 +166,8 @@ export const homeSettingsSchema = z.object({
   ctaFontSize: z.number().min(10).max(32).optional(),
   ctaVariant: z.string().optional().nullable(),
   ctaSize: z.string().optional().nullable(),
+  ctaOffsetX: z.number().optional(),
+  ctaOffsetY: z.number().optional(),
 
   // Sección destacados
   showFeaturedProjects: z.boolean(),
