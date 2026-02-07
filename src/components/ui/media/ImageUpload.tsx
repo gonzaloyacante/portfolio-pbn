@@ -478,6 +478,18 @@ export default function ImageUpload({
           {images.length} de {maxFiles} imágenes
         </p>
       )}
+      {/* Hidden inputs for form submission */}
+      {images.map(
+        (img, index) =>
+          img.url &&
+          !img.isUploading &&
+          !img.error && (
+            <div key={`hidden-${index}`}>
+              <input type="hidden" name={name} value={img.url} />
+              <input type="hidden" name={`${name}_public_id`} value={img.publicId} />
+            </div>
+          )
+      )}
     </div>
   )
 }

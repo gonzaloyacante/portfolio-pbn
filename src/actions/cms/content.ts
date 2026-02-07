@@ -42,21 +42,45 @@ export async function uploadImageAndCreateProject(formData: FormData) {
 
   const data = validation.data
   const { title, description, categoryId, date } = data
-  const files = formData.getAll('images') as File[]
 
-  if (files.length === 0) {
+  // Handle images: could be Files (unused input) or Strings (hidden input URLs)
+  const imageInputs = formData.getAll('images')
+  const publicIdInputs = formData.getAll('images_public_id')
+
+  const validImages: { url: string; publicId: string; order: number }[] = []
+
+  // 1. Process pre-uploaded images (Strings)
+  const urlInputs = imageInputs.filter(
+    (item): item is string => typeof item === 'string' && item !== ''
+  )
+
+  if (urlInputs.length > 0) {
+    urlInputs.forEach((url, index) => {
+      const publicId = (publicIdInputs[index] as string) || ''
+      validImages.push({ url, publicId, order: index })
+    })
+  }
+
+  // 2. Process raw files (if any - fallback)
+  const fileInputs = imageInputs.filter(
+    (item): item is File => item instanceof File && item.size > 0
+  )
+
+  if (fileInputs.length > 0) {
+    const uploaded = await Promise.all(
+      fileInputs.map(async (file, index) => {
+        const { url, publicId } = await uploadImage(file)
+        return { url, publicId, order: validImages.length + index }
+      })
+    )
+    validImages.push(...uploaded)
+  }
+
+  if (validImages.length === 0) {
     return { success: false, error: 'Se requieren imágenes' }
   }
 
   try {
-    // 1. Upload images to Cloudinary
-    const uploadedImages = await Promise.all(
-      files.map(async (file, index) => {
-        const { url, publicId } = await uploadImage(file)
-        return { url, publicId, order: index }
-      })
-    )
-
     // Parse tags and keywords
     const tagList = data.tags
       ? data.tags
@@ -81,7 +105,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
           .replace(/(^-|-$)/g, ''),
         description: description || '',
         date: date ? new Date(date) : new Date(),
-        thumbnailUrl: uploadedImages[0]?.url || '',
+        thumbnailUrl: validImages[0]?.url || '',
         categoryId,
         // New fields
         excerpt: data.excerpt,
@@ -98,7 +122,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
         isPinned: data.isPinned === 'true' || data.isPinned === 'on',
         images: {
-          create: uploadedImages.map((img) => ({
+          create: validImages.map((img) => ({
             url: img.url,
             publicId: img.publicId,
             order: img.order,
@@ -356,21 +380,36 @@ export async function createCategory(formData: FormData) {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
+    coverImageUrl: formData.get('coverImageUrl'),
+    thumbnailUrl: formData.get('thumbnailUrl'),
   }
 
   const validation = categorySchema.safeParse(rawData)
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
-  const { name, slug, description } = validation.data
+
+  const data = validation.data
 
   try {
+    const existing = await prisma.category.findUnique({ where: { slug: data.slug } })
+    if (existing) {
+      return { success: false, error: 'Ya existe una categoría con ese slug' }
+    }
+
     await prisma.category.create({
-      data: { name, slug, description },
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        coverImageUrl: data.coverImageUrl || null,
+        thumbnailUrl: data.thumbnailUrl || null,
+      },
     })
+
     revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.projects)
-    logger.info(`Category created: ${name}`)
+    revalidatePath(ROUTES.admin.categories)
+    logger.info(`Category created: ${data.name}`)
     return { success: true }
   } catch (error) {
     logger.error('Error creating category:', { error })

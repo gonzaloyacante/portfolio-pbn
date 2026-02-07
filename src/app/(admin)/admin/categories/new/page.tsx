@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createCategory } from '@/actions/cms/content'
-import { Button, Input, Card } from '@/components/ui'
+import { Button, Input, Card, ImageUpload } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -80,6 +80,15 @@ export default function NewCategoryPage() {
               placeholder="Describe esta categoría..."
               rows={4}
               className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
+            />
+          </div>
+
+          {/* Cover Image */}
+          <div className="space-y-2">
+            <ImageUpload
+              name="coverImageUrl"
+              label="Imagen de Portada (Opcional)"
+              folder="categories"
             />
           </div>
 

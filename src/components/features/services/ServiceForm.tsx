@@ -1,27 +1,22 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ROUTES } from '@/config/routes'
 import { createService, updateService } from '@/actions/cms/services'
-import { Button } from '@/components/ui'
+import { Button, ImageUpload } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import toast from 'react-hot-toast'
 import { Service } from '@prisma/client'
 
 interface ServiceFormProps {
   service?: Service | null
-  onSuccess: () => void
-  onCancel: () => void
-}
-
-// ... imports
-
-interface ServiceFormProps {
-  service?: Service | null
-  onSuccess: () => void
-  onCancel: () => void
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
 export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFormProps) {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('general')
   const isEditing = !!service
@@ -39,7 +34,12 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       }
 
       toast.success(isEditing ? 'Servicio actualizado' : 'Servicio creado')
-      onSuccess()
+      if (onSuccess) {
+        onSuccess()
+      } else {
+        router.push(ROUTES.admin.services)
+        router.refresh()
+      }
     } catch {
       toast.error('Ocurrió un error inesperado')
     } finally {
@@ -111,12 +111,15 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
           rows={4}
         />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
-            label="URL de Imagen Principal"
-            name="imageUrl"
-            defaultValue={service?.imageUrl || ''}
-            placeholder="https://..."
-          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Imagen Principal</label>
+            <ImageUpload
+              name="imageUrl"
+              label="Subir Imagen"
+              folder="services"
+              value={service?.imageUrl ? [service.imageUrl] : []}
+            />
+          </div>
           <FormField
             label="Icono (Lucide name)"
             name="iconName"
@@ -281,7 +284,15 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       </div>
 
       <div className="bg-background/80 sticky bottom-0 z-10 flex justify-end gap-3 border-t border-[var(--border)] p-4 pt-6 backdrop-blur-sm">
-        <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => {
+            if (onCancel) onCancel()
+            else router.back()
+          }}
+          disabled={isLoading}
+        >
           Cancelar
         </Button>
         <Button type="submit" loading={isLoading}>

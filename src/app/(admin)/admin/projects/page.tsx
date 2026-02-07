@@ -53,7 +53,7 @@ export default async function ProjectsManagementPage() {
           ]}
         />
 
-        <Link href="/admin/proyectos/new">
+        <Link href="/admin/projects/new">
           <Button size="lg" className="shadow-lg transition-transform hover:scale-105">
             ✨ Crear Nuevo Proyecto
           </Button>

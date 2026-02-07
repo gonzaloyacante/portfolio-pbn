@@ -291,14 +291,14 @@ export type ProjectFormData = z.infer<typeof projectFormSchema>
 
 // Category
 export const categorySchema = z.object({
-  name: z.string().min(2).max(100),
+  name: z.string().min(1, 'El nombre es obligatorio'),
   slug: z
     .string()
-    .min(2)
-    .max(100)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+    .min(1, 'El slug es obligatorio')
+    .regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
   description: z.string().optional(),
-  coverImageUrl: z.string().optional(),
+  coverImageUrl: z.string().optional().nullable(),
+  thumbnailUrl: z.string().optional().nullable(),
   sortOrder: z.number().optional(),
 })
 
