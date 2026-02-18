@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { Category, Project, ProjectImage } from '@prisma/client'
 import { updateProject, deleteProjectImage, reorderProjectImages } from '@/actions/cms/content'
 import { setProjectThumbnail } from '@/actions/cms/project'
 import { Button, SmartField, ImageUpload } from '@/components/ui'
-import { useToast } from '@/components/ui'
+import { showToast } from '@/lib/toast'
 import SortableImageGrid from '@/components/ui/media/SortableImageGrid'
 
 type ProjectWithRelations = Project & {
@@ -22,7 +22,6 @@ interface ProjectEditFormProps {
 
 export default function ProjectEditForm({ project, categories }: ProjectEditFormProps) {
   const router = useRouter()
-  const { show } = useToast()
 
   // 1. Setup React Hook Form
   type ProjectFormData = {
@@ -57,13 +56,6 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
 
   const allImages = [...existingImages, ...previewImages]
 
-  console.log('[ProjectEditForm] RENDER:', {
-    existingCount: existingImages.length,
-    previewCount: previewImages.length,
-    totalCount: allImages.length,
-    previewImages: previewImages.map((img) => ({ id: img.id, url: img.url.substring(0, 50) })),
-  })
-
   // Actions
   const onSubmit = async (data: ProjectFormData) => {
     const formData = new FormData()
@@ -83,15 +75,15 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     try {
       const result = await updateProject(project.id, formData)
       if (result.success) {
-        show({ type: 'success', message: 'Proyecto actualizado correctamente' })
+        showToast.success('Proyecto actualizado correctamente')
         router.refresh()
         // Clear previews on success?
         setPreviewImages([])
       } else {
-        show({ type: 'error', message: result.error || 'Error al actualizar' })
+        showToast.error(result.error || 'Error al actualizar')
       }
     } catch {
-      show({ type: 'error', message: 'Error inesperado' })
+      showToast.error('Error inesperado')
     }
   }
 
@@ -113,9 +105,9 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
 
     try {
       await reorderProjectImages(project.id, reorderedItems)
-      show({ type: 'success', message: 'Orden de imágenes actualizado' })
+      showToast.success('Orden de imágenes actualizado')
     } catch {
-      show({ type: 'error', message: 'Error al reordenar imágenes' })
+      showToast.error('Error al reordenar imágenes')
     }
   }
 
@@ -132,13 +124,13 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
       const result = await deleteProjectImage(imageId)
       if (result.success) {
         setExistingImages((prev) => prev.filter((img) => img.id !== imageId))
-        show({ type: 'success', message: 'Imagen eliminada correctly' })
+        showToast.success('Imagen eliminada correctly')
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error al eliminar imagen' })
+        showToast.error(result.error || 'Error al eliminar imagen')
       }
     } catch {
-      show({ type: 'error', message: 'Error al eliminar imagen' })
+      showToast.error('Error al eliminar imagen')
     }
   }
 
@@ -148,15 +140,15 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     try {
       const result = await setProjectThumbnail(project.id, imageUrl)
       if (result.success) {
-        show({ type: 'success', message: 'Portada actualizada' })
+        showToast.success('Portada actualizada')
         router.refresh()
       } else {
         setCurrentThumbnail(prevThumbnail)
-        show({ type: 'error', message: result.error || 'Error al cambiar portada' })
+        showToast.error(result.error || 'Error al cambiar portada')
       }
     } catch {
       setCurrentThumbnail(prevThumbnail)
-      show({ type: 'error', message: 'Error al cambiar portada' })
+      showToast.error('Error al cambiar portada')
     }
   }
 
@@ -214,11 +206,6 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             label="Agregar más fotos"
             multiple
             onChange={(urls, publicIds) => {
-              console.log('[ProjectEditForm] ImageUpload onChange fired!')
-              console.log('  URLs:', urls)
-              console.log('  PublicIDs:', publicIds)
-              console.log('  Current previewImages count:', previewImages.length)
-
               if (urls.length > 0) {
                 // ImageUpload sends ALL images in its state, not just new ones
                 setPreviewImages((prev) => {
@@ -267,8 +254,6 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
 
                 // Reset ImageUpload value
                 setUploadValue([])
-              } else {
-                console.log('  All URLs already exist, skipping')
               }
             }}
           />

@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { z } from 'zod'
 
 import { logger } from '@/lib/logger'
@@ -62,48 +63,60 @@ const ServiceSchema = z.object({
 /**
  * Get all active services for public view
  */
-export async function getActiveServices() {
-  try {
-    const services = await prisma.service.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: 'asc' },
-    })
-    return services
-  } catch (error) {
-    logger.error('Error fetching active services:', { error })
-    return []
-  }
-}
+export const getActiveServices = unstable_cache(
+  async () => {
+    try {
+      const services = await prisma.service.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: 'asc' },
+      })
+      return services
+    } catch (error) {
+      logger.error('Error fetching active services:', { error })
+      return []
+    }
+  },
+  [CACHE_TAGS.services],
+  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
+)
 
 /**
  * Get a service by slug for public view
  */
-export async function getServiceBySlug(slug: string) {
-  try {
-    const service = await prisma.service.findUnique({
-      where: { slug },
-    })
-    return service
-  } catch (error) {
-    logger.error('Error fetching service by slug:', { error })
-    return null
-  }
-}
+export const getServiceBySlug = unstable_cache(
+  async (slug: string) => {
+    try {
+      const service = await prisma.service.findUnique({
+        where: { slug },
+      })
+      return service
+    } catch (error) {
+      logger.error('Error fetching service by slug:', { error })
+      return null
+    }
+  },
+  [CACHE_TAGS.services],
+  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
+)
 
 /**
  * Get all services for admin view
  */
-export async function getServices() {
-  try {
-    const services = await prisma.service.findMany({
-      orderBy: { sortOrder: 'asc' },
-    })
-    return services
-  } catch (error) {
-    logger.error('Error fetching services:', { error })
-    return []
-  }
-}
+export const getServices = unstable_cache(
+  async () => {
+    try {
+      const services = await prisma.service.findMany({
+        orderBy: { sortOrder: 'asc' },
+      })
+      return services
+    } catch (error) {
+      logger.error('Error fetching services:', { error })
+      return []
+    }
+  },
+  [CACHE_TAGS.services],
+  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
+)
 
 // ============================================
 // ADMIN ACTIONS
@@ -214,6 +227,7 @@ export async function createService(formData: FormData) {
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service created: ${data.name}`)
     return { success: true }
   } catch (error) {
@@ -330,6 +344,7 @@ export async function updateService(id: string, formData: FormData) {
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service updated: ${id}`)
     return { success: true }
   } catch (error) {
@@ -347,6 +362,7 @@ export async function deleteService(id: string) {
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service deleted: ${id}`)
     return { success: true }
   } catch (error) {
@@ -372,6 +388,7 @@ export async function toggleService(id: string) {
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service toggled: ${id} -> ${!service.isActive}`)
     return { success: true, isActive: !service.isActive }
   } catch (error) {
@@ -396,6 +413,7 @@ export async function reorderServices(orderedIds: string[]) {
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
     logger.info('Services reordered')
     return { success: true }
   } catch (error) {

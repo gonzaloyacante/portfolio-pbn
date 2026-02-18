@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
@@ -34,18 +35,22 @@ export interface SocialLinkData {
 /**
  * Get all active social links
  */
-export async function getSocialLinks(): Promise<SocialLinkData[]> {
-  try {
-    const links = await prisma.socialLink.findMany({
-      where: { isActive: true },
-      orderBy: { sortOrder: 'asc' },
-    })
-    return links
-  } catch (error) {
-    console.error('Error getting social links:', error)
-    return []
-  }
-}
+export const getSocialLinks = unstable_cache(
+  async (): Promise<SocialLinkData[]> => {
+    try {
+      const links = await prisma.socialLink.findMany({
+        where: { isActive: true },
+        orderBy: { sortOrder: 'asc' },
+      })
+      return links
+    } catch (error) {
+      console.error('Error getting social links:', error)
+      return []
+    }
+  },
+  [CACHE_TAGS.socialLinks],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.socialLinks] }
+)
 
 /**
  * Update or create a social link
@@ -98,6 +103,7 @@ export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?:
     })
 
     revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.socialLinks, 'max')
 
     return {
       success: true,
@@ -129,6 +135,7 @@ export async function deleteSocialLink(id: string) {
 
     await prisma.socialLink.delete({ where: { id } })
     revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.socialLinks, 'max')
     return { success: true, message: 'Enlace social eliminado' }
   } catch (error) {
     if (error instanceof Error && error.message.includes('Acceso denegado')) {

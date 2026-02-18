@@ -1,88 +1,83 @@
-// import { describe, it, expect, vi, beforeEach } from 'vitest'
-// import { requestPasswordReset, resetPassword } from '@/actions/auth.actions'
-// import { prisma } from '@/lib/db'
-// import { Resend } from 'resend'
-// import bcrypt from 'bcryptjs'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { requestPasswordReset, resetPassword } from '@/actions/user/auth'
 
-// // Mock de dependencias
-// vi.mock('@/lib/db', () => ({
-//     prisma: {
-//         user: {
-//             findUnique: vi.fn(),
-//             update: vi.fn(),
-//         },
-//         passwordResetToken: {
-//             create: vi.fn(),
-//             findUnique: vi.fn(),
-//             delete: vi.fn(),
-//         },
-//     },
-// }))
+// Mock Prisma
+vi.mock('@/lib/db', () => ({
+  prisma: {
+    user: { findUnique: vi.fn(), update: vi.fn() },
+    passwordResetToken: { create: vi.fn(), findUnique: vi.fn(), delete: vi.fn() },
+  },
+}))
 
-// vi.mock('resend', () => ({
-//     Resend: vi.fn().mockImplementation(() => ({
-//         emails: {
-//             send: vi.fn().mockResolvedValue({ id: 'email_id' }),
-//         },
-//     })),
-// }))
+// Mock email service
+vi.mock('@/lib/email-service', () => ({
+  emailService: { sendPasswordReset: vi.fn(() => Promise.resolve({ success: true })) },
+}))
 
-// vi.mock('bcryptjs', () => ({
-//     default: {
-//         hash: vi.fn().mockResolvedValue('hashed_password'),
-//     },
-// }))
+// Mock bcryptjs
+vi.mock('bcryptjs', () => ({
+  default: {
+    hash: vi.fn(() => Promise.resolve('hashed_password')),
+    compare: vi.fn(() => Promise.resolve(true)),
+  },
+}))
 
-// describe('Auth Actions', () => {
-//     beforeEach(() => {
-//         vi.clearAllMocks()
-//         process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000'
-//     })
+vi.mock('next/navigation', () => ({ redirect: vi.fn() }))
+vi.mock('@/lib/auth', () => ({ authOptions: {} }))
+vi.mock('next-auth', () => ({ getServerSession: vi.fn(() => Promise.resolve(null)) }))
 
-//     describe('requestPasswordReset', () => {
-//         it('should send an email if user exists', async () => {
-//             // Setup
-//             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//             vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: '1', email: 'test@example.com' } as unknown as any)
+describe('Auth Actions', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'http://localhost:3000')
+  })
 
-//             const res = await requestPasswordReset('test@example.com')
+  describe('requestPasswordReset', () => {
+    it('should return ambiguous success when user does not exist', async () => {
+      const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
-//             expect(prisma.user.findUnique).toHaveBeenCalledWith({ where: { email: 'test@example.com' } })
-//             expect(prisma.passwordResetToken.create).toHaveBeenCalled()
-//             expect(Resend).toHaveBeenCalled()
-//             expect(res.message).toContain('Si tu email está registrado')
-//         })
+      const result = await requestPasswordReset('nonexistent@example.com')
 
-//         it('should return ambiguous message if user does not exist', async () => {
-//             vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
+      expect(result.success).toBe(true)
+      expect(result.message).toContain('enlace de recuperación')
+      expect(prisma.passwordResetToken.create).not.toHaveBeenCalled()
+    })
 
-//             const res = await requestPasswordReset('nonexistent@example.com')
+    it('should reject invalid email format', async () => {
+      const result = await requestPasswordReset('not-an-email')
+      expect(result.success).toBe(false)
+    })
+  })
 
-//             expect(prisma.passwordResetToken.create).not.toHaveBeenCalled()
-//             expect(res.message).toContain('enlace de recuperación')
-//         })
-//     })
+  describe('resetPassword', () => {
+    it('should reject expired token', async () => {
+      const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.passwordResetToken.findUnique).mockResolvedValue({
+        id: 'token-1',
+        email: 'test@example.com',
+        token: 'expired',
+        expiresAt: new Date(Date.now() - 10000),
+        createdAt: new Date(),
+      })
 
-//     describe('resetPassword', () => {
-//         it('should reset password with valid token', async () => {
-//             const validToken = {
-//                 id: 'token_id',
-//                 email: 'test@example.com',
-//                 token: 'valid_token',
-//                 expiresAt: new Date(Date.now() + 10000),
-//             }
-//             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//             vi.mocked(prisma.passwordResetToken.findUnique).mockResolvedValue(validToken as unknown as any)
+      const result = await resetPassword('expired', 'newPassword123')
 
-//             const res = await resetPassword('valid_token', 'newPassword123')
+      expect(result.success).toBe(false)
+      expect(result.message).toContain('inválido o expirado')
+    })
 
-//             expect(bcrypt.hash).toHaveBeenCalledWith('newPassword123', 10)
-//             expect(prisma.user.update).toHaveBeenCalledWith({
-//                 where: { email: 'test@example.com' },
-//                 data: { password: 'hashed_password' },
-//             })
-//             expect(prisma.passwordResetToken.delete).toHaveBeenCalledWith({ where: { id: 'token_id' } })
-//             expect(res.message).toContain('Contraseña actualizada')
-//         })
-//     })
-// })
+    it('should reject non-existent token', async () => {
+      const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.passwordResetToken.findUnique).mockResolvedValue(null)
+
+      const result = await resetPassword('nonexistent', 'newPassword123')
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject passwords shorter than 6 characters', async () => {
+      const result = await resetPassword('token', 'abc')
+      expect(result.success).toBe(false)
+    })
+  })
+})

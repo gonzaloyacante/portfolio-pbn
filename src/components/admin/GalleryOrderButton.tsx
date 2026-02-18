@@ -1,9 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui'
 import { GripVertical } from 'lucide-react'
-import GalleryOrderModal from '@/components/admin/GalleryOrderModal'
+
+const GalleryOrderModal = dynamic(() => import('@/components/admin/GalleryOrderModal'), {
+  ssr: false,
+  loading: () => null,
+})
 
 interface GalleryImage {
   id: string

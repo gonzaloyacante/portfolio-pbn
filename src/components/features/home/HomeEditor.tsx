@@ -3,7 +3,8 @@
 import { HomeSettingsData, updateHomeSettings } from '@/actions/settings/home'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useToast, Button } from '@/components/ui'
+import { Button } from '@/components/ui'
+import { showToast } from '@/lib/toast'
 import { VisualEditorLayout } from '../visual-editor/VisualEditorLayout'
 import { HeroPreview } from './HeroPreview'
 import { PropertyPanel } from '../visual-editor/PropertyPanel'
@@ -16,7 +17,6 @@ interface HomeEditorProps {
 
 export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const router = useRouter()
-  const { show } = useToast()
   const [selectedElement, setSelectedElement] = useState<EditableElement>(null)
   const [settings, setSettings] = useState<HomeSettingsData | null>(initialSettings)
   const [isSaving, setIsSaving] = useState(false)
@@ -36,13 +36,13 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
     try {
       const result = await updateHomeSettings(settings)
       if (result.success) {
-        show({ type: 'success', message: 'Cambios guardados correctamente' })
+        showToast.success('Cambios guardados correctamente')
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error al guardar' })
+        showToast.error(result.error || 'Error al guardar')
       }
     } catch {
-      show({ type: 'error', message: 'Error inesperado' })
+      showToast.error('Error inesperado')
     } finally {
       setIsSaving(false)
     }

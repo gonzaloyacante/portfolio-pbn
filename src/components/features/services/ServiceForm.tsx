@@ -6,7 +6,7 @@ import { ROUTES } from '@/config/routes'
 import { createService, updateService } from '@/actions/cms/services'
 import { Button, ImageUpload } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 import { Service } from '@prisma/client'
 
 interface ServiceFormProps {
@@ -29,11 +29,11 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
         : await createService(formData)
 
       if (!result.success) {
-        toast.error(result.error || 'Error al guardar servicio')
+        showToast.error(result.error || 'Error al guardar servicio')
         return
       }
 
-      toast.success(isEditing ? 'Servicio actualizado' : 'Servicio creado')
+      showToast.success(isEditing ? 'Servicio actualizado' : 'Servicio creado')
       if (onSuccess) {
         onSuccess()
       } else {
@@ -41,7 +41,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
         router.refresh()
       }
     } catch {
-      toast.error('Ocurrió un error inesperado')
+      showToast.error('Ocurrió un error inesperado')
     } finally {
       setIsLoading(false)
     }
@@ -237,6 +237,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
           label="Color de Marca (Hex)"
           name="color"
           defaultValue={service?.color || ''}
+          // eslint-disable-next-line no-restricted-syntax -- placeholder is descriptive text for user, not a system color
           placeholder="#ff00ff"
         />
         <FormField

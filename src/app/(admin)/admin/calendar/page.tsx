@@ -1,4 +1,4 @@
-import CalendarView from '@/components/features/contact/bookings/CalendarView'
+import CalendarViewClient from '@/components/features/contact/bookings/CalendarViewClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,7 +10,7 @@ export default function CalendarPage() {
         <p className="text-muted-foreground">Gestiona tus citas y disponibilidad</p>
       </div>
 
-      <CalendarView />
+      <CalendarViewClient />
     </div>
   )
 }

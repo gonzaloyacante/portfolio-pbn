@@ -2,7 +2,75 @@ import type { NextConfig } from 'next'
 import withPWA from '@ducanh2912/next-pwa'
 import { withSentryConfig } from '@sentry/nextjs'
 
+/**
+ * Security Headers
+ * CSP configured for: Cloudinary, Google Fonts, Sentry tunnel, Next.js
+ */
+const securityHeaders = [
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on',
+  },
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload',
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY',
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: [
+      "default-src 'self'",
+      // Scripts: Next.js (unsafe-inline para hydration), Sentry
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com",
+      // Styles: inline (Next.js/Tailwind) + Google Fonts
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs
+      "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co",
+      // Fonts: self, data URIs, Google Fonts CDN
+      "font-src 'self' data: https://fonts.gstatic.com",
+      // Connect: API calls, Cloudinary uploads, Sentry DSN, Google Fonts API
+      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com",
+      // Media: Cloudinary (videos)
+      "media-src 'self' https://res.cloudinary.com",
+      // Objects: none (no Flash/plugins)
+      "object-src 'none'",
+      // Base URI: only self
+      "base-uri 'self'",
+      // Form actions: only self (Server Actions)
+      "form-action 'self'",
+      // Frame ancestors: none (prevents clickjacking, redundant with X-Frame-Options)
+      "frame-ancestors 'none'",
+    ].join('; '),
+  },
+]
+
 const nextConfig: NextConfig = {
+  // Security headers
+  async headers() {
+    return [
+      {
+        // Apply to all routes
+        source: '/(.*)',
+        headers: securityHeaders,
+      },
+    ]
+  },
+
   // Optimizaciones de imagen, seguridad, etc.
   images: {
     formats: ['image/webp', 'image/avif'],

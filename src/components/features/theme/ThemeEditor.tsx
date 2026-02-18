@@ -5,10 +5,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
 import { type ThemeSettingsData } from '@/actions/settings/theme'
-import { useToast, useConfirmDialog } from '@/components/ui'
+import { useConfirmDialog } from '@/components/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { updateThemeSettings, resetThemeToDefaults } from '@/actions/settings/theme'
+import { RESET_THEME_DEFAULTS } from '@/lib/design-tokens'
+import { showToast } from '@/lib/toast'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Save, RotateCcw, Palette, Type, LayoutTemplate } from 'lucide-react'
 import ThemeColorSection from './ThemeColorSection'
@@ -21,7 +23,6 @@ interface ThemeEditorProps {
 
 export function ThemeEditor({ initialData }: ThemeEditorProps) {
   const router = useRouter()
-  const { show } = useToast()
   const [isResetting, setIsResetting] = useState(false)
 
   // Initialize form
@@ -29,19 +30,21 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
     resolver: zodResolver(themeEditorSchema),
     defaultValues: {
       // Light
-      primaryColor: initialData?.primaryColor || '#6c0a0a',
-      secondaryColor: initialData?.secondaryColor || '#ffaadd',
-      accentColor: initialData?.accentColor || '#fff1f9',
-      backgroundColor: initialData?.backgroundColor || '#fff8fc',
-      textColor: initialData?.textColor || '#000000',
-      cardBgColor: initialData?.cardBgColor || '#ffffff',
+      primaryColor: initialData?.primaryColor || RESET_THEME_DEFAULTS.primaryColor,
+      secondaryColor: initialData?.secondaryColor || RESET_THEME_DEFAULTS.secondaryColor,
+      accentColor: initialData?.accentColor || RESET_THEME_DEFAULTS.accentColor,
+      backgroundColor: initialData?.backgroundColor || RESET_THEME_DEFAULTS.backgroundColor,
+      textColor: initialData?.textColor || RESET_THEME_DEFAULTS.textColor,
+      cardBgColor: initialData?.cardBgColor || RESET_THEME_DEFAULTS.cardBgColor,
       // Dark
-      darkPrimaryColor: initialData?.darkPrimaryColor || '#fb7185',
-      darkSecondaryColor: initialData?.darkSecondaryColor || '#881337',
-      darkAccentColor: initialData?.darkAccentColor || '#2a1015',
-      darkBackgroundColor: initialData?.darkBackgroundColor || '#0f0505',
-      darkTextColor: initialData?.darkTextColor || '#fafafa',
-      darkCardBgColor: initialData?.darkCardBgColor || '#1c0a0f',
+      darkPrimaryColor: initialData?.darkPrimaryColor || RESET_THEME_DEFAULTS.darkPrimaryColor,
+      darkSecondaryColor:
+        initialData?.darkSecondaryColor || RESET_THEME_DEFAULTS.darkSecondaryColor,
+      darkAccentColor: initialData?.darkAccentColor || RESET_THEME_DEFAULTS.darkAccentColor,
+      darkBackgroundColor:
+        initialData?.darkBackgroundColor || RESET_THEME_DEFAULTS.darkBackgroundColor,
+      darkTextColor: initialData?.darkTextColor || RESET_THEME_DEFAULTS.darkTextColor,
+      darkCardBgColor: initialData?.darkCardBgColor || RESET_THEME_DEFAULTS.darkCardBgColor,
       // Typography
       headingFont: initialData?.headingFont || 'Poppins',
       headingFontUrl: initialData?.headingFontUrl || undefined,
@@ -112,13 +115,13 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
     try {
       const result = await updateThemeSettings(data)
       if (result.success) {
-        show({ type: 'success', message: 'Tema actualizado correctamente' })
+        showToast.success('Tema actualizado correctamente')
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error al guardar' })
+        showToast.error(result.error || 'Error al guardar')
       }
     } catch {
-      show({ type: 'error', message: 'Error inesperado' })
+      showToast.error('Error inesperado')
     }
   }
 
@@ -140,14 +143,14 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
     try {
       const result = await resetThemeToDefaults()
       if (result.success) {
-        show({ type: 'success', message: 'Tema reseteado' })
+        showToast.success('Tema reseteado')
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error al resetear' })
+        showToast.error(result.error || 'Error al resetear')
       }
     } catch (err) {
       console.error(err)
-      show({ type: 'error', message: 'Error al resetear' })
+      showToast.error('Error al resetear')
     } finally {
       setIsResetting(false)
     }

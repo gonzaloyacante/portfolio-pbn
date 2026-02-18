@@ -51,10 +51,12 @@ Para evitar duplicidad y mantener consistencia, los componentes atómicos deben 
 ### Organización de Carpetas
 
 - **`forms/`**: Inputs, Buttons, Selects, Switches, DatePickers (Todo lo que sea entrada de datos).
-- **`layout/`**: Card, Badge, Modal, Tabs, PageHeader.
+- **`data-display/`**: Card, Badge, ProjectCard, CategoryCard (Visualización de datos).
 - **`feedback/`**: Toast, EmptyState, ErrorState, LoadingState, Skeleton.
 - **`animations/`**: FadeIn, SlideIn, StaggerChildren (Framer Motion wrappers).
 - **`media/`**: OptimizedImage, VideoPlayer.
+- **`navigation/`**: Tabs, Breadcrumb, Pagination.
+- **`overlay/`**: Modal, Dropdown, Popover.
 
 ### Reglas de Oro para Componentes
 
@@ -85,11 +87,11 @@ Para evitar duplicidad y mantener consistencia, los componentes atómicos deben 
 
 | Token          | Light     | Dark      |
 | -------------- | --------- | --------- |
-| `--background` | `#fff1f9` | `#6c0a0a` |
-| `--foreground` | `#6c0a0a` | `#ffaadd` |
-| `--primary`    | `#6c0a0a` | `#ffaadd` |
-| `--accent`     | `#ffaadd` | `#000000` |
-| `--card-bg`    | `#ffaadd` | `#ffaadd` |
+| `--background` | `#fff8fc` | `#0f0505` |
+| `--foreground` | `#1a050a` | `#fafafa` |
+| `--primary`    | `#6c0a0a` | `#fb7185` |
+| `--secondary`  | `#fce7f3` | `#881337` |
+| `--card`       | `#ffffff` | `#1c0a0f` |
 
 ### Tipografía (Google Fonts)
 

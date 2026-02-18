@@ -6,7 +6,7 @@ import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/cms/services'
 import ServiceForm from './ServiceForm'
 import { Edit, Trash2, Plus } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 import React from 'react'
 
 interface ServiceManagerProps {
@@ -45,7 +45,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
 
     if (isConfirmed) {
       await deleteService(id)
-      toast.success('Servicio eliminado')
+      showToast.success('Servicio eliminado')
     }
   }
 
@@ -115,7 +115,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
                   <form
                     action={async () => {
                       await toggleService(s.id)
-                      toast.success('Estado actualizado')
+                      showToast.success('Estado actualizado')
                     }}
                   >
                     <Button type="submit" variant={s.isActive ? 'secondary' : 'ghost'} size="sm">
@@ -128,6 +128,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
                     size="sm"
                     className="px-3"
                     onClick={() => handleDeleteService(s.id)}
+                    aria-label={`Eliminar servicio ${s.name}`}
                   >
                     <Trash2 size={14} />
                   </Button>

@@ -4,8 +4,26 @@ import FeaturedProjects from '@/components/features/home/FeaturedProjects'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Inicio',
-  description: 'Portfolio profesional de maquillaje y caracterización.',
+  title: 'Paola Bolívar Nievas | Maquilladora Profesional en Málaga',
+  description:
+    'Portfolio profesional de Paola Bolívar Nievas, maquilladora y caracterizadora en Málaga, España. Especialista en bodas, editoriales, cine, teatro y eventos.',
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Paola Bolívar Nievas | Maquilladora Profesional en Málaga',
+    description:
+      'Maquilladora y caracterizadora profesional en Málaga. Bodas, editoriales, cine y teatro. Descubre mi portfolio.',
+    type: 'website',
+    locale: 'es_ES',
+    siteName: 'Paola Bolívar Nievas',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Paola Bolívar Nievas | Maquilladora Profesional en Málaga',
+    description:
+      'Maquilladora y caracterizadora profesional en Málaga. Bodas, editoriales, cine y teatro.',
+  },
 }
 
 /**

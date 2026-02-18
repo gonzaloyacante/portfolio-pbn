@@ -6,7 +6,7 @@ import { Testimonial } from '@prisma/client'
 import { updateTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 
 interface TestimonialEditFormProps {
   testimonial: Testimonial
@@ -23,14 +23,14 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
       const result = await updateTestimonial(testimonial.id, formData)
 
       if (result.success) {
-        toast.success('Testimonio actualizado')
+        showToast.success('Testimonio actualizado')
         router.push('/admin/testimonios')
         router.refresh()
       } else {
-        toast.error(result.error || 'Error al actualizar')
+        showToast.error(result.error || 'Error al actualizar')
       }
     } catch {
-      toast.error('Error inesperado')
+      showToast.error('Error inesperado')
     } finally {
       setIsSubmitting(false)
     }

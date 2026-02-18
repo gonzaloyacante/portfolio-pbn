@@ -30,10 +30,19 @@ export async function generateMetadata({
     openGraph: {
       title: project.metaTitle || project.title,
       description: project.metaDescription || project.description.substring(0, 160),
-      images: project.thumbnailUrl ? [project.thumbnailUrl] : [],
+      images: project.thumbnailUrl
+        ? [{ url: project.thumbnailUrl, width: 1200, height: 630, alt: project.title }]
+        : [],
       type: 'article',
       publishedTime: project.date.toISOString(),
       authors: ['Paola Bolívar Nievas'],
+      locale: 'es_ES',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: project.metaTitle || project.title,
+      description: project.metaDescription || project.description.substring(0, 160),
+      images: project.thumbnailUrl ? [project.thumbnailUrl] : [],
     },
   }
 }

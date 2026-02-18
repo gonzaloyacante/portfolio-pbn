@@ -288,6 +288,7 @@ export default function IconPicker({ value, onChange, label, description }: Icon
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar o pegar emoji..."
+              aria-label="Buscar emoji"
               className="border-input bg-input text-foreground placeholder:text-muted-foreground focus:border-ring mb-3 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none"
             />
 
@@ -354,6 +355,7 @@ export default function IconPicker({ value, onChange, label, description }: Icon
                   value={value}
                   onChange={(e) => onChange(e.target.value)}
                   placeholder="🎨"
+                  aria-label="Pegar emoji personalizado"
                   className="border-input bg-input text-foreground placeholder:text-muted-foreground focus:border-ring flex-1 rounded-xl border px-3 py-2 text-center text-2xl focus:outline-none"
                 />
               </div>

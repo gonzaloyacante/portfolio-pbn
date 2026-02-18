@@ -1,6 +1,7 @@
 'use client'
 
 import { Toaster } from 'react-hot-toast'
+import { STATUS_COLORS } from '@/lib/design-tokens'
 
 export default function ToastProvider() {
   return (
@@ -21,7 +22,7 @@ export default function ToastProvider() {
         },
         error: {
           iconTheme: {
-            primary: '#ef4444',
+            primary: STATUS_COLORS.danger,
             secondary: '#fff',
           },
         },

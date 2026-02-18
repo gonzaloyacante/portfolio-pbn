@@ -8,13 +8,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/lib/validations'
 import { z } from 'zod'
-import { useToast } from '@/components/ui'
+import { showToast } from '@/lib/toast'
 import { Mail, Lock } from 'lucide-react'
 
 type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
-  const { show } = useToast()
   const router = useRouter()
 
   const {
@@ -50,10 +49,7 @@ export default function LoginPage() {
           return
         }
 
-        show({
-          type: 'error',
-          message: verifyData.error || 'Error de servidores',
-        })
+        showToast.error(verifyData.error || 'Error de servidores')
         return
       }
 
@@ -70,11 +66,11 @@ export default function LoginPage() {
           message: 'La contraseña es incorrecta',
         })
       } else {
-        show({ type: 'success', message: '¡Bienvenida de nuevo!' })
+        showToast.success('¡Bienvenida de nuevo!')
         router.push('/admin/dashboard')
       }
     } catch {
-      show({ type: 'error', message: 'Error de conexión' })
+      showToast.error('Error de conexión')
     }
   }
 

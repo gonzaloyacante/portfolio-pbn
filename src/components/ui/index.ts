@@ -16,6 +16,7 @@ export { default as ColorPicker, ColorPicker as ColorPickerComponent } from './f
 export { GoogleFontPicker } from './forms/GoogleFontPicker'
 export { default as IconPicker } from './forms/IconPicker'
 export { default as FontPicker } from './forms/FontPicker'
+export { default as PasswordStrengthMeter } from './forms/PasswordStrengthMeter'
 
 // Data Display
 export { default as Card } from './data-display/Card'
@@ -24,6 +25,8 @@ export { default as DataTable } from './data-display/DataTable'
 export { default as StatCard } from './data-display/StatCard'
 export { default as FilterBar } from './data-display/FilterBar'
 export { default as PreviewCard } from './data-display/PreviewCard'
+export { default as ProjectCard } from './data-display/ProjectCard'
+export { default as CategoryCard } from './data-display/CategoryCard'
 
 // Overlay
 export { default as Modal } from './overlay/Modal'
@@ -41,7 +44,7 @@ export { Tabs, TabsList, TabsTrigger, TabsContent } from './navigation/Tabs'
 // export { default as SortableGrid } from './layout/SortableGrid'
 
 // Feedback
-export { ToastProvider, useToast } from './feedback/Toast'
+// Feedback - Toast moved to src/lib/toast (showToast unified API)
 export { default as EmptyState } from './feedback/EmptyState'
 export { default as ErrorState } from './feedback/ErrorState'
 export { default as LoadingState } from './feedback/LoadingState'

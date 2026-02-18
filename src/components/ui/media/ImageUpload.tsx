@@ -2,7 +2,7 @@
 
 import { useState, useCallback, ChangeEvent, DragEvent, useEffect } from 'react'
 import Image from 'next/image'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 
 interface UploadedImage {
   url: string
@@ -101,12 +101,12 @@ export default function ImageUpload({
 
       // Validaciones
       if (!multiple && fileArray.length > 1) {
-        toast.error('Solo puedes subir una imagen')
+        showToast.error('Solo puedes subir una imagen')
         return
       }
 
       if (images.length + fileArray.length > maxFiles) {
-        toast.error(`Máximo ${maxFiles} imágenes permitidas`)
+        showToast.error(`Máximo ${maxFiles} imágenes permitidas`)
         return
       }
 
@@ -114,11 +114,11 @@ export default function ImageUpload({
       const validFiles: File[] = []
       for (const file of fileArray) {
         if (!file.type.startsWith('image/')) {
-          toast.error(`${file.name} no es una imagen válida`)
+          showToast.error(`${file.name} no es una imagen válida`)
           continue
         }
         if (file.size > maxSizeMB * 1024 * 1024) {
-          toast.error(`${file.name} supera el límite de ${maxSizeMB}MB`)
+          showToast.error(`${file.name} supera el límite de ${maxSizeMB}MB`)
           continue
         }
         validFiles.push(file)
@@ -176,12 +176,12 @@ export default function ImageUpload({
       const errorCount = results.filter((r) => r.error).length
 
       if (successCount > 0) {
-        toast.success(
+        showToast.success(
           `${successCount} imagen${successCount > 1 ? 'es' : ''} subida${successCount > 1 ? 's' : ''}`
         )
       }
       if (errorCount > 0) {
-        toast.error(
+        showToast.error(
           `${errorCount} imagen${errorCount > 1 ? 'es' : ''} fallida${errorCount > 1 ? 's' : ''}`
         )
       }

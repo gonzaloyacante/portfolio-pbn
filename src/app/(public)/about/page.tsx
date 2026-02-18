@@ -5,6 +5,29 @@ import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import JsonLd from '@/components/seo/JsonLd'
 import { FadeIn, SlideIn, OptimizedImage } from '@/components/ui'
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Sobre Mí',
+  description:
+    'Conoce a Paola Bolívar Nievas, maquilladora profesional y caracterizadora en Málaga. Más de 10 años de experiencia en bodas, editoriales y caracterización artística.',
+  alternates: {
+    canonical: '/sobre-mi',
+  },
+  openGraph: {
+    title: 'Sobre Mí | Paola Bolívar Nievas',
+    description:
+      'Conoce a Paola Bolívar Nievas, maquilladora profesional y caracterizadora en Málaga. Bodas, editoriales, cine y teatro.',
+    type: 'profile',
+    locale: 'es_ES',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sobre Mí | Paola Bolívar Nievas',
+    description:
+      'Maquilladora profesional y caracterizadora en Málaga. Bodas, editoriales, cine y teatro.',
+  },
+}
 
 /**
  * About Page - Canva Design

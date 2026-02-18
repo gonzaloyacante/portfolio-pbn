@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useToast } from '@/components/ui'
+import { showToast } from '@/lib/toast'
 
 interface UseOptimisticReorderOptions<T> {
   initialItems: T[]
@@ -42,7 +42,6 @@ export function useOptimisticReorder<T>({
   const [items, setItems] = useState<T[]>(initialItems)
   const [isReordering, setIsReordering] = useState(false)
   const router = useRouter()
-  const { show } = useToast()
 
   // Sync with initialItems when they change, but prevent infinite loops
   // by checking if the IDs actually changed (deep comparison via string)
@@ -64,10 +63,10 @@ export function useOptimisticReorder<T>({
     try {
       const ids = reorderedItems.map(getId)
       await reorderAction(ids)
-      show({ type: 'success', message: successMessage })
+      showToast.success(successMessage)
     } catch (err) {
       console.error('Reorder error:', err)
-      show({ type: 'error', message: errorMessage })
+      showToast.error(errorMessage)
       // Revert on error
       setItems(initialItems)
       router.refresh()

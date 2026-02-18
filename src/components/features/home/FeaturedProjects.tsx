@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db'
+import { getFeaturedProjects } from '@/actions/cms/projects'
 import Link from 'next/link'
 import { FadeIn, StaggerChildren, OptimizedImage } from '@/components/ui'
 import { ArrowRight } from 'lucide-react'
@@ -9,21 +9,7 @@ interface FeaturedProjectsProps {
 }
 
 export default async function FeaturedProjects({ title, count = 6 }: FeaturedProjectsProps) {
-  // Fetch latest active projects
-  const projects = await prisma.project.findMany({
-    where: {
-      isActive: true,
-      isDeleted: false,
-      // Optional: Add isFeatured field to Project model if strict control is needed
-      // For now, just show latest
-    },
-    take: count,
-    orderBy: { date: 'desc' },
-    include: {
-      category: true,
-    },
-    // Distinct by category? No, just latest.
-  })
+  const projects = await getFeaturedProjects(count)
 
   if (projects.length === 0) return null
 

@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { getProjectSettings, updateProjectSettings } from '@/actions/settings/projects'
 import { Button } from '@/components/ui'
 import { PageHeader, Section } from '@/components/layout'
-import VisualConfigModal from '@/components/features/projects/VisualConfigModal'
+import LazyVisualConfigModal from '@/components/features/projects/LazyVisualConfigModal'
 import Link from 'next/link'
 import ProjectsContent from './ProjectsContent'
 
@@ -32,7 +32,7 @@ export default async function ProjectsManagementPage() {
 
       {/* Acciones: Crear y Configura */}
       <div className="flex flex-wrap justify-end gap-4">
-        <VisualConfigModal
+        <LazyVisualConfigModal
           initialSettings={settings}
           onSave={updateProjectSettings}
           title="Configurar Tarjetas de Proyecto"

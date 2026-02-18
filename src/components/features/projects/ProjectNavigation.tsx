@@ -33,7 +33,10 @@ export default function ProjectNavigation({
   }
 
   return (
-    <nav className="grid grid-cols-1 border-t border-[var(--primary)]/10 md:grid-cols-2">
+    <nav
+      aria-label="Navegación entre proyectos"
+      className="grid grid-cols-1 border-t border-[var(--primary)]/10 md:grid-cols-2"
+    >
       {/* Previous */}
       <NavButton project={previous} direction="prev" categorySlug={categorySlug} />
 

@@ -14,6 +14,29 @@ import {
 } from 'lucide-react'
 import { OptimizedImage, FadeIn } from '@/components/ui'
 import { Suspense } from 'react'
+import { Metadata } from 'next'
+import JsonLd from '@/components/seo/JsonLd'
+
+export const metadata: Metadata = {
+  title: 'Contacto',
+  description:
+    'Reserva tu sesión de maquillaje con Paola Bolívar Nievas en Málaga. Presupuestos para bodas, editoriales, eventos y caracterización artística. ¡Contáctanos hoy!',
+  alternates: {
+    canonical: '/contacto',
+  },
+  openGraph: {
+    title: 'Contacto | Paola Bolívar Nievas',
+    description:
+      'Reserva tu sesión de maquillaje profesional en Málaga. Bodas, editoriales, eventos y caracterización artística.',
+    type: 'website',
+    locale: 'es_ES',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Contacto | Paola Bolívar Nievas',
+    description: 'Reserva tu sesión de maquillaje profesional en Málaga.',
+  },
+}
 
 /**
  * Contact Page
@@ -37,6 +60,17 @@ export default async function ContactPage() {
 
   return (
     <section className="w-full bg-[var(--background)] transition-colors duration-500">
+      <JsonLd
+        type="LocalBusiness"
+        data={{
+          name: ownerName,
+          description:
+            'Maquilladora profesional y caracterizadora en Málaga. Servicios para bodas, editoriales, eventos y caracterización artística.',
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/contacto`,
+          telephone: contactSettings?.phone ?? undefined,
+          email: contactSettings?.email ?? undefined,
+        }}
+      />
       {/* 
         MOBILE HEADER (Only visible on < lg) 
         Title + Compact Info Row

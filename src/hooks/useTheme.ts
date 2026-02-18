@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import { BRAND } from '@/lib/design-tokens'
 
 /**
  * Hook para acceder a los theme settings en componentes del cliente
@@ -48,9 +49,9 @@ const defaultTheme: ThemeValues = {
   colorBackground: 'var(--background)',
   colorPrimary: 'var(--primary)',
   colorTextPrimary: 'var(--foreground)',
-  colorAccent: '#7a2556',
-  colorSecondary: '#ffa1da',
-  colorDark: '#511a3a',
+  colorAccent: BRAND.accent,
+  colorSecondary: BRAND.secondary,
+  colorDark: BRAND.darkBackground,
 
   fontHeading: 'Aileron',
   fontBody: 'Open Sans',

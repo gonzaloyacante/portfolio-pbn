@@ -35,7 +35,10 @@ export default function Navbar({ brandName }: NavbarProps) {
   }
 
   return (
-    <nav className="bg-background/95 sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-500">
+    <nav
+      aria-label="Navegación principal"
+      className="bg-background/95 sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-500"
+    >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
         {/* Logo - visible en pantallas grandes */}
         <Link

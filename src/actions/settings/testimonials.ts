@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@prisma/client'
 
 import { testimonialSettingsSchema, type TestimonialSettingsFormData } from '@/lib/validations'
@@ -19,10 +20,14 @@ export interface TestimonialSettingsData {
 /**
  * Get testimonial display settings
  */
-export async function getTestimonialSettings(): Promise<TestimonialSettingsData | null> {
-  const settings = await prisma.testimonialSettings.findFirst()
-  return settings
-}
+export const getTestimonialSettings = unstable_cache(
+  async (): Promise<TestimonialSettingsData | null> => {
+    const settings = await prisma.testimonialSettings.findFirst()
+    return settings
+  },
+  [CACHE_TAGS.testimonialSettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.testimonialSettings] }
+)
 
 /**
  * Update testimonial display settings
@@ -68,6 +73,7 @@ export async function updateTestimonialSettings(data: TestimonialSettingsFormDat
     revalidatePath('/')
     revalidatePath('/about')
     revalidatePath('/admin/testimonials')
+    revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
 
     return { success: true }
   } catch (error) {

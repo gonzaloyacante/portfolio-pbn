@@ -42,7 +42,9 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
+    // eslint-disable-next-line no-restricted-syntax -- browser meta tag requires HEX directly
     { media: '(prefers-color-scheme: light)', color: '#fff1f9' },
+    // eslint-disable-next-line no-restricted-syntax -- browser meta tag requires HEX directly
     { media: '(prefers-color-scheme: dark)', color: '#6c0a0a' },
   ],
 }

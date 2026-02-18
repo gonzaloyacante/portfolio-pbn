@@ -69,11 +69,13 @@ export default function FilterBar({
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Buscar proyectos..."
+            aria-label="Buscar proyectos"
             className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border py-2 pr-4 pl-10 text-sm focus:ring-2 focus:outline-none"
           />
           {searchTerm && (
             <button
               onClick={() => onSearchChange('')}
+              aria-label="Limpiar búsqueda"
               className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
             >
               <X size={16} />

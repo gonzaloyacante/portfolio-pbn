@@ -1,186 +1,163 @@
 import { describe, it, expect } from 'vitest'
-import { generateMetaTags, generateOpenGraphTags, generateTwitterTags } from '@/lib/seo'
+import {
+  generateMetadata,
+  generateProjectMetadata,
+  generateProjectJsonLd,
+  generatePersonSchema,
+  seoConfig,
+} from '@/lib/seo'
 
 describe('SEO Helpers', () => {
-  describe('generateMetaTags', () => {
-    it('should generate basic meta tags', () => {
-      const tags = generateMetaTags({
+  describe('seoConfig', () => {
+    it('should have required config fields', () => {
+      expect(seoConfig.siteName).toBeDefined()
+      expect(seoConfig.siteUrl).toBeDefined()
+      expect(seoConfig.defaultTitle).toBeDefined()
+      expect(seoConfig.defaultDescription).toBeDefined()
+      expect(seoConfig.locale).toBe('es_ES')
+    })
+  })
+
+  describe('generateMetadata', () => {
+    it('should generate basic metadata with title and description', () => {
+      const meta = generateMetadata({
         title: 'Test Page',
         description: 'Test description',
       })
 
-      expect(tags.title).toBe('Test Page')
-      expect(tags.description).toBe('Test description')
+      expect(meta.title).toContain('Test Page')
+      expect(meta.description).toBe('Test description')
     })
 
-    it('should include keywords if provided', () => {
-      const tags = generateMetaTags({
-        title: 'Test',
-        description: 'Test',
-        keywords: ['makeup', 'artist', 'portfolio'],
-      })
-
-      expect(tags.keywords).toContain('makeup')
-      expect(tags.keywords).toContain('artist')
+    it('should append site name to title', () => {
+      const meta = generateMetadata({ title: 'Mi Página' })
+      expect(meta.title).toContain(seoConfig.siteName)
     })
 
-    it('should generate canonical URL', () => {
-      const tags = generateMetaTags({
-        title: 'Test',
-        description: 'Test',
-        path: '/projects/test-project',
-      })
-
-      expect(tags.canonical).toContain('/projects/test-project')
+    it('should use default title when none provided', () => {
+      const meta = generateMetadata({})
+      expect(meta.title).toBe(seoConfig.defaultTitle)
     })
 
-    it('should use default base URL if not provided', () => {
-      const tags = generateMetaTags({
-        title: 'Test',
-        description: 'Test',
-        path: '/about',
-      })
+    it('should set openGraph type to website by default', () => {
+      const meta = generateMetadata({ title: 'Test' })
+      expect(meta.openGraph?.type).toBe('website')
+    })
 
-      expect(tags.canonical).toMatch(/^https?:\/\/.*\/about$/)
+    it('should set twitter card to summary_large_image', () => {
+      const meta = generateMetadata({ title: 'Test' })
+      expect(meta.twitter?.card).toBe('summary_large_image')
+    })
+
+    it('should include canonical URL in alternates', () => {
+      const meta = generateMetadata({ title: 'Test', url: '/proyectos' })
+      expect(meta.alternates?.canonical).toContain('/proyectos')
+    })
+
+    it('should include keywords when provided', () => {
+      const meta = generateMetadata({
+        title: 'Test',
+        keywords: ['makeup', 'artist'],
+      })
+      expect(meta.keywords).toContain('makeup')
+    })
+
+    it('should set noindex robots for noIndex=true', () => {
+      const meta = generateMetadata({ title: 'Test', noIndex: true })
+      expect(meta.robots).toContain('noindex')
+    })
+
+    it('should use default robots when noIndex is false', () => {
+      const meta = generateMetadata({ title: 'Test', noIndex: false })
+      expect(meta.robots).toContain('index')
     })
   })
 
-  describe('generateOpenGraphTags', () => {
-    it('should generate Open Graph tags', () => {
-      const tags = generateOpenGraphTags({
-        title: 'Test Page',
-        description: 'Test description',
-        image: 'https://example.com/image.jpg',
-        url: 'https://example.com/page',
-      })
+  describe('generateProjectMetadata', () => {
+    const mockProject = {
+      title: 'Maquillaje Audiovisual Serie TV',
+      description: 'Maquillaje de caracterización para producción televisiva española',
+      slug: 'maquillaje-audiovisual-serie-tv',
+      images: [{ url: 'https://res.cloudinary.com/test/image/upload/v1/project.jpg' }],
+      category: { name: 'Audiovisual' },
+      date: new Date('2024-01-15'),
+    }
 
-      expect(tags['og:title']).toBe('Test Page')
-      expect(tags['og:description']).toBe('Test description')
-      expect(tags['og:image']).toBe('https://example.com/image.jpg')
-      expect(tags['og:url']).toBe('https://example.com/page')
+    it('should generate metadata from a project', () => {
+      const meta = generateProjectMetadata({ project: mockProject })
+      expect(meta.title).toContain(mockProject.title)
     })
 
-    it('should default to website type', () => {
-      const tags = generateOpenGraphTags({
-        title: 'Test',
-        description: 'Test',
-      })
-
-      expect(tags['og:type']).toBe('website')
+    it('should use project description', () => {
+      const meta = generateProjectMetadata({ project: mockProject })
+      expect(meta.description).toBe(mockProject.description)
     })
 
-    it('should allow custom type', () => {
-      const tags = generateOpenGraphTags({
-        title: 'Article Title',
-        description: 'Article description',
-        type: 'article',
-      })
-
-      expect(tags['og:type']).toBe('article')
+    it('should use category name in fallback description when no description', () => {
+      const projectWithoutDesc = { ...mockProject, description: null }
+      const meta = generateProjectMetadata({ project: projectWithoutDesc })
+      expect(meta.description).toContain(mockProject.category.name)
     })
 
-    it('should include locale', () => {
-      const tags = generateOpenGraphTags({
-        title: 'Test',
-        description: 'Test',
-        locale: 'es_ES',
-      })
-
-      expect(tags['og:locale']).toBe('es_ES')
-    })
-
-    it('should include image dimensions if provided', () => {
-      const tags = generateOpenGraphTags({
-        title: 'Test',
-        description: 'Test',
-        image: 'https://example.com/image.jpg',
-        imageWidth: 1200,
-        imageHeight: 630,
-      })
-
-      expect(tags['og:image:width']).toBe(1200)
-      expect(tags['og:image:height']).toBe(630)
+    it('should use first project image for OG image', () => {
+      const meta = generateProjectMetadata({ project: mockProject })
+      const ogImages = meta.openGraph?.images
+      expect(JSON.stringify(ogImages)).toContain(mockProject.images[0].url)
     })
   })
 
-  describe('generateTwitterTags', () => {
-    it('should generate Twitter Card tags', () => {
-      const tags = generateTwitterTags({
-        title: 'Test Page',
-        description: 'Test description',
-        image: 'https://example.com/image.jpg',
-      })
+  describe('generateProjectJsonLd', () => {
+    const mockProject = {
+      title: 'FX Makeup Film',
+      description: 'Special effects makeup for short film',
+      slug: 'fx-makeup-film',
+      images: [{ url: 'https://example.com/fx-makeup.jpg' }],
+      category: { name: 'Cine' },
+      date: new Date('2024-03-20'),
+    }
 
-      expect(tags['twitter:card']).toBe('summary_large_image')
-      expect(tags['twitter:title']).toBe('Test Page')
-      expect(tags['twitter:description']).toBe('Test description')
-      expect(tags['twitter:image']).toBe('https://example.com/image.jpg')
+    it('should generate JSON-LD with VisualArtwork type', () => {
+      const jsonLd = generateProjectJsonLd(mockProject)
+      expect(jsonLd['@type']).toBe('VisualArtwork')
     })
 
-    it('should allow custom card type', () => {
-      const tags = generateTwitterTags({
-        title: 'Test',
-        description: 'Test',
-        cardType: 'summary',
-      })
-
-      expect(tags['twitter:card']).toBe('summary')
+    it('should include project title and description', () => {
+      const jsonLd = generateProjectJsonLd(mockProject)
+      expect(jsonLd.name).toBe(mockProject.title)
+      expect(jsonLd.description).toBe(mockProject.description)
     })
 
-    it('should include creator handle if provided', () => {
-      const tags = generateTwitterTags({
-        title: 'Test',
-        description: 'Test',
-        creator: '@username',
-      })
-
-      expect(tags['twitter:creator']).toBe('@username')
+    it('should include correct @context', () => {
+      const jsonLd = generateProjectJsonLd(mockProject)
+      expect(jsonLd['@context']).toBe('https://schema.org')
     })
 
-    it('should include site handle if provided', () => {
-      const tags = generateTwitterTags({
-        title: 'Test',
-        description: 'Test',
-        site: '@sitehandle',
-      })
+    it('should include project images array', () => {
+      const jsonLd = generateProjectJsonLd(mockProject)
+      expect(jsonLd.image).toContain(mockProject.images[0].url)
+    })
 
-      expect(tags['twitter:site']).toBe('@sitehandle')
+    it('should include artist name', () => {
+      const jsonLd = generateProjectJsonLd(mockProject)
+      expect(jsonLd.artist.name).toBe('Paola Bolívar Nievas')
     })
   })
 
-  describe('Integration - Full SEO Tags', () => {
-    it('should generate complete SEO tags for a project page', () => {
-      const projectTitle = 'Character Makeup for Film XYZ'
-      const projectDescription =
-        'Professional character makeup and FX for independent film production'
+  describe('generatePersonSchema', () => {
+    it('should generate JSON-LD with Person type', () => {
+      const schema = generatePersonSchema()
+      expect(schema['@type']).toBe('Person')
+    })
 
-      const metaTags = generateMetaTags({
-        title: projectTitle,
-        description: projectDescription,
-        keywords: ['character makeup', 'film FX', 'special effects'],
-        path: '/projects/character-makeup-film-xyz',
-      })
+    it('should include person name and job title', () => {
+      const schema = generatePersonSchema()
+      expect(schema.name).toBe('Paola Bolívar Nievas')
+      expect(schema.jobTitle).toBe('Maquilladora Profesional')
+    })
 
-      const ogTags = generateOpenGraphTags({
-        title: projectTitle,
-        description: projectDescription,
-        image: 'https://example.com/project-thumb.jpg',
-        url: 'https://example.com/projects/character-makeup-film-xyz',
-        type: 'article',
-      })
-
-      const twitterTags = generateTwitterTags({
-        title: projectTitle,
-        description: projectDescription,
-        image: 'https://example.com/project-thumb.jpg',
-      })
-
-      expect(metaTags.title).toBe(projectTitle)
-      expect(ogTags['og:title']).toBe(projectTitle)
-      expect(twitterTags['twitter:title']).toBe(projectTitle)
-
-      expect(metaTags.canonical).toContain('/projects/character-makeup-film-xyz')
-      expect(ogTags['og:url']).toContain('/projects/character-makeup-film-xyz')
+    it('should include address for Spain/Málaga', () => {
+      const schema = generatePersonSchema()
+      expect(schema.address?.addressCountry).toBe('ES')
     })
   })
 })

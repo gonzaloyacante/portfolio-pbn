@@ -5,11 +5,28 @@ import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/u
 import Link from 'next/link'
 import { MessageCircle, type LucideIcon } from 'lucide-react'
 import * as icons from 'lucide-react'
+import JsonLd from '@/components/seo/JsonLd'
 
 export const metadata: Metadata = {
   title: 'Servicios',
   description:
-    'Descubre todos los servicios de maquillaje profesional: novias, editoriales, caracterización y más.',
+    'Descubre todos los servicios de maquillaje profesional de Paola Bolívar Nievas en Málaga: novias, editoriales, caracterización y más.',
+  alternates: {
+    canonical: '/servicios',
+  },
+  openGraph: {
+    title: 'Servicios de Maquillaje | Paola Bolívar Nievas',
+    description:
+      'Maquillaje profesional en Málaga: novias, editoriales, caracterización artística y eventos. Reserva tu cita.',
+    type: 'website',
+    locale: 'es_ES',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Servicios | Paola Bolívar Nievas',
+    description:
+      'Maquillaje profesional en Málaga: novias, editoriales, caracterización y eventos.',
+  },
 }
 
 // Type-safe icon lookup using LucideIcon type
@@ -41,6 +58,15 @@ export default async function ServicesPage() {
 
   return (
     <main className="py-8 md:py-12">
+      <JsonLd
+        type="ProfessionalService"
+        data={{
+          name: 'Paola Bolívar Nievas - Servicios de Maquillaje',
+          description:
+            'Servicios profesionales de maquillaje en Málaga: bodas, editoriales, caracterización artística y eventos.',
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios`,
+        }}
+      />
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <FadeIn className="mb-12 text-center">
@@ -65,7 +91,11 @@ export default async function ServicesPage() {
               return (
                 <ScaleIn key={service.id}>
                   <article className="border-border bg-card group relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                    <Link href={`/servicios/${service.slug}`} className="relative block">
+                    <Link
+                      href={`/servicios/${service.slug}`}
+                      className="relative block"
+                      aria-label={`Ver servicio: ${service.name}`}
+                    >
                       {/* Image or Icon Header */}
                       <div className="bg-muted/30 relative flex h-48 items-center justify-center overflow-hidden">
                         {service.imageUrl ? (

@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
@@ -38,17 +39,21 @@ export interface ContactSettingsData {
 /**
  * Get contact settings
  */
-export async function getContactSettings(): Promise<ContactSettingsData | null> {
-  try {
-    const settings = await prisma.contactSettings.findFirst({
-      where: { isActive: true },
-    })
-    return settings
-  } catch (error) {
-    console.error('Error getting contact settings:', error)
-    return null
-  }
-}
+export const getContactSettings = unstable_cache(
+  async (): Promise<ContactSettingsData | null> => {
+    try {
+      const settings = await prisma.contactSettings.findFirst({
+        where: { isActive: true },
+      })
+      return settings
+    } catch (error) {
+      console.error('Error getting contact settings:', error)
+      return null
+    }
+  },
+  [CACHE_TAGS.contactSettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.contactSettings] }
+)
 
 /**
  * Update contact settings
@@ -114,6 +119,7 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
     }
 
     revalidatePath(ROUTES.public.contact)
+    revalidateTag(CACHE_TAGS.contactSettings, 'max')
 
     return {
       success: true,

@@ -23,8 +23,15 @@ export default async function PublicLayout({ children }: { children: React.React
       />
 
       <div className="bg-background flex min-h-screen flex-col transition-colors duration-300">
+        {/* Skip navigation link - accesibilidad para lectores de pantalla y teclado */}
+        <a
+          href="#main-content"
+          className="bg-primary text-background sr-only absolute top-4 left-4 z-[100] rounded px-4 py-2 text-sm font-semibold focus:not-sr-only focus:block"
+        >
+          Saltar al contenido principal
+        </a>
         <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} />
-        <main className="flex-1">
+        <main id="main-content" className="flex-1" tabIndex={-1}>
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

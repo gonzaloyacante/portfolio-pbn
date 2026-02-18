@@ -1,16 +1,111 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 /**
- * Middleware con autenticación y headers de seguridad
+ * Middleware con autenticación, rate limiting e CSRF
+ *
+ * Rate limiting: in-memory por IP (para escalar usar Upstash Redis)
+ * CSRF: validación de cookie vs header para mutaciones no-GET en /admin
  */
 
-// Wrapper para agregar security headers
-// Combinar auth middleware con security headers
+// ─── In-memory Rate Limiter ─────────────────────────────────────────────────
+
+interface RateLimitEntry {
+  count: number
+  resetAt: number
+}
+
+const rateLimitStore = new Map<string, RateLimitEntry>()
+
+const RATE_LIMIT_REQUESTS = 120 // peticiones permitidas
+const RATE_LIMIT_WINDOW_MS = 60_000 // por minuto
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const entry = rateLimitStore.get(ip)
+
+  // Ventana expirada o primera vez: reiniciar contador
+  if (!entry || entry.resetAt < now) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+    return true
+  }
+
+  // Límite alcanzado
+  if (entry.count >= RATE_LIMIT_REQUESTS) return false
+
+  entry.count++
+  return true
+}
+
+// Limpieza periódica (evita memory leaks en long-running instances)
+function cleanupRateLimitStore(): void {
+  const now = Date.now()
+  for (const [key, entry] of rateLimitStore.entries()) {
+    if (entry.resetAt < now) {
+      rateLimitStore.delete(key)
+    }
+  }
+}
+
+if (typeof window === 'undefined') {
+  setInterval(cleanupRateLimitStore, 5 * 60_000) // cada 5 minutos
+}
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ??
+    req.headers.get('x-real-ip') ??
+    '127.0.0.1'
+  )
+}
+
+// ─── Response Helpers ────────────────────────────────────────────────────────
+
+function rateLimitedResponse(): NextResponse {
+  return new NextResponse(
+    JSON.stringify({ error: 'Demasiadas peticiones. Intenta de nuevo en un minuto.' }),
+    {
+      status: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': '60' },
+    }
+  )
+}
+
+function csrfErrorResponse(): NextResponse {
+  return new NextResponse(JSON.stringify({ error: 'Token CSRF inválido o ausente.' }), {
+    status: 403,
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
+
+function isSafeMethod(method: string): boolean {
+  return ['GET', 'HEAD', 'OPTIONS'].includes(method)
+}
+
+function isValidCsrf(req: NextRequest): boolean {
+  const csrfCookie = req.cookies.get('csrf-token')?.value
+  const csrfHeader = req.headers.get('x-csrf-token')
+  return Boolean(csrfCookie && csrfHeader && csrfCookie === csrfHeader)
+}
+
+// ─── Middleware ──────────────────────────────────────────────────────────────
+
 export default withAuth(
-  function middleware() {
-    // La lógica de headers de seguridad se maneja en next.config.ts
-    // Aquí podemos agregar lógica específica de middleware si es necesario
+  function middleware(req: NextRequest) {
+    const ip = getClientIp(req)
+    const { pathname } = req.nextUrl
+
+    // ── 1. Rate limiting ──────────────────────────────────────────────────
+    if (!checkRateLimit(ip)) return rateLimitedResponse()
+
+    // ── 2. CSRF protection para mutaciones en rutas admin ─────────────────
+    if (pathname.startsWith('/admin') && !isSafeMethod(req.method) && !isValidCsrf(req)) {
+      return csrfErrorResponse()
+    }
+
     return NextResponse.next()
   },
   {
@@ -27,5 +122,5 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ['/admin/:path*', '/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/admin/:path*', '/((?!api|_next/static|_next/image|favicon.ico|monitoring).*)'],
 }

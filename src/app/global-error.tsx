@@ -19,7 +19,7 @@ export default function GlobalError({
       <body>
         <h2>Something went wrong!</h2>
         <p>An error has been reported and we&apos;re looking into it.</p>
-        <button onClick={() => reset()}>Try again</button>
+        <button onClick={() => reset()}>Reintentar</button>
       </body>
     </html>
   )

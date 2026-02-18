@@ -97,6 +97,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar fuente..."
+              aria-label="Buscar fuente"
               className="focus:border-primary focus:ring-primary/20 mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:outline-none dark:border-gray-600 dark:bg-gray-700"
             />
 

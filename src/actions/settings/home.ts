@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
@@ -10,6 +10,7 @@ import { homeSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize, validateFontUrl, validateColor } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 
 export interface HomeSettingsData {
   id: string
@@ -89,17 +90,21 @@ export interface HomeSettingsData {
 /**
  * Get home page settings
  */
-export async function getHomeSettings(): Promise<HomeSettingsData | null> {
-  try {
-    const settings = await prisma.homeSettings.findFirst({
-      where: { isActive: true },
-    })
-    return settings
-  } catch (error) {
-    console.error('Error getting home settings:', error)
-    return null
-  }
-}
+export const getHomeSettings = unstable_cache(
+  async (): Promise<HomeSettingsData | null> => {
+    try {
+      const settings = await prisma.homeSettings.findFirst({
+        where: { isActive: true },
+      })
+      return settings
+    } catch (error) {
+      console.error('Error getting home settings:', error)
+      return null
+    }
+  },
+  [CACHE_TAGS.homeSettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.homeSettings] }
+)
 
 /**
  * Update home page settings
@@ -250,6 +255,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
     }
 
     revalidatePath(ROUTES.home)
+    revalidateTag(CACHE_TAGS.homeSettings, 'max')
 
     return {
       success: true,

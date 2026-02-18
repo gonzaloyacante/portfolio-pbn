@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
@@ -29,17 +30,21 @@ export interface AboutSettingsData {
 /**
  * Get about page settings
  */
-export async function getAboutSettings(): Promise<AboutSettingsData | null> {
-  try {
-    const settings = await prisma.aboutSettings.findFirst({
-      where: { isActive: true },
-    })
-    return settings
-  } catch (error) {
-    console.error('Error getting about settings:', error)
-    return null
-  }
-}
+export const getAboutSettings = unstable_cache(
+  async (): Promise<AboutSettingsData | null> => {
+    try {
+      const settings = await prisma.aboutSettings.findFirst({
+        where: { isActive: true },
+      })
+      return settings
+    } catch (error) {
+      console.error('Error getting about settings:', error)
+      return null
+    }
+  },
+  [CACHE_TAGS.aboutSettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.aboutSettings] }
+)
 
 /**
  * Update about page settings
@@ -63,10 +68,7 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
     const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.AboutSettingsUpdateInput
 
-    console.log('--- UPDATE ABOUT SETTINGS DEBUG ---')
-    console.log('User:', user.email)
-    console.log('Received Data:', data)
-    console.log('Clean Data for Prisma:', cleanData)
+    logger.debug('Updating about settings', { userId: user.id })
 
     let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
 
@@ -95,8 +97,6 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
         where: { id: settings.id },
         data: cleanData,
       })
-      console.log('Updated Settings ID:', settings.id)
-      console.log('Updated ProfileImage:', settings.profileImageUrl)
     }
 
     // Revalidate Public Pages (both rewritten and canonical)
@@ -105,6 +105,7 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
 
     // Revalidate Admin Page
     revalidatePath(ROUTES.admin.about)
+    revalidateTag(CACHE_TAGS.aboutSettings, 'max')
 
     return {
       success: true,

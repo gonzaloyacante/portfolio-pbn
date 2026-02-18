@@ -84,7 +84,12 @@ export default function CategoriesContent({
 
             {/* Actions */}
             <div className="border-border mt-auto flex gap-2 border-t pt-4">
-              <Link href={`/proyectos/${category.slug}`} target="_blank" className="flex-1">
+              <Link
+                href={`/proyectos/${category.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1"
+              >
                 <Button variant="outline" size="sm" className="w-full gap-2">
                   <ExternalLink size={14} />
                   Ver
@@ -97,7 +102,11 @@ export default function CategoriesContent({
                 </Button>
               </Link>
               <form action={deleteCategoryAction.bind(null, category.id)}>
-                <Button variant="destructive" size="sm">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  aria-label={`Eliminar categoría ${category.name}`}
+                >
                   <Trash2 size={14} />
                 </Button>
               </form>
@@ -150,18 +159,27 @@ export default function CategoriesContent({
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          <Link href={`/proyectos/${category.slug}`} target="_blank">
-            <Button variant="ghost" size="sm">
+          <Link href={`/proyectos/${category.slug}`} target="_blank" rel="noopener noreferrer">
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label={`Ver categoría ${category.name} en público`}
+            >
               <ExternalLink size={16} />
             </Button>
           </Link>
           <Link href={`${ROUTES.admin.categories}/${category.id}/edit`}>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" aria-label={`Editar categoría ${category.name}`}>
               <Pencil size={16} />
             </Button>
           </Link>
           <form action={deleteCategoryAction.bind(null, category.id)}>
-            <Button variant="ghost" size="sm" className="text-destructive">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-destructive"
+              aria-label={`Eliminar categoría ${category.name}`}
+            >
               <Trash2 size={16} />
             </Button>
           </form>

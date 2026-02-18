@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 import {
   Button,
   Input,
-  useToast,
   Tabs,
   TabsContent,
   TabsList,
@@ -19,6 +18,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
 import { Plus, Trash2, Save } from 'lucide-react'
+import { showToast } from '@/lib/toast'
 
 interface ContactEditorProps {
   settings: ContactSettingsData | null
@@ -27,7 +27,6 @@ interface ContactEditorProps {
 
 export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
   const router = useRouter()
-  const { show } = useToast()
 
   // Contact Settings Form
   const {
@@ -66,13 +65,13 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     try {
       const result = await updateContactSettings(data)
       if (result.success) {
-        show({ type: 'success', message: 'Configuración guardada' })
+        showToast.success('Configuración guardada')
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error al guardar' })
+        showToast.error(result.error || 'Error al guardar')
       }
     } catch {
-      show({ type: 'error', message: 'Error inesperado' })
+      showToast.error('Error inesperado')
     }
   }
 
@@ -202,7 +201,6 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
 
 function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean }) {
   const router = useRouter()
-  const { show } = useToast()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState({
     platform: link?.platform || '',
@@ -217,21 +215,23 @@ function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean
 
   // Simple save handler per row
   const handleSave = async () => {
-    if (!data.platform || !data.url)
-      return show({ type: 'error', message: 'Plataforma y URL requeridos' })
+    if (!data.platform || !data.url) {
+      showToast.error('Plataforma y URL requeridos')
+      return
+    }
 
     setLoading(true)
     try {
       const result = await upsertSocialLink({ ...data, icon: null, id: link?.id })
       if (result.success) {
-        show({ type: 'success', message: isNew ? 'Link creado' : 'Link actualizado' })
+        showToast.success(isNew ? 'Link creado' : 'Link actualizado')
         if (isNew) setData({ platform: '', url: '', username: '', isActive: true, sortOrder: 0 })
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error desconocido' })
+        showToast.error(result.error || 'Error desconocido')
       }
     } catch {
-      show({ type: 'error', message: 'Error de conexión' })
+      showToast.error('Error de conexión')
     } finally {
       setLoading(false)
     }

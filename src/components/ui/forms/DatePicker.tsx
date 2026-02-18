@@ -151,6 +151,9 @@ export default function DatePicker({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={selectedDate ? `Fecha seleccionada: ${formatDate(selectedDate)}` : placeholder}
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
         className="border-input hover:border-ring focus:border-ring focus:ring-ring/20 bg-background flex w-full cursor-pointer items-center justify-between rounded-lg border px-4 py-3 text-left transition-all focus:ring-2 focus:outline-none"
       >
         <span className={selectedDate ? 'text-foreground' : 'text-muted-foreground'}>
@@ -174,6 +177,7 @@ export default function DatePicker({
             <button
               type="button"
               onClick={handlePrevMonth}
+              aria-label="Mes anterior"
               className="text-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-lg p-2 transition-colors"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,6 +197,7 @@ export default function DatePicker({
             <button
               type="button"
               onClick={handleNextMonth}
+              aria-label="Mes siguiente"
               className="text-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer rounded-lg p-2 transition-colors"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

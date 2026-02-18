@@ -2,12 +2,11 @@
 
 import { AboutSettingsData, updateAboutSettings } from '@/actions/settings/about'
 import { useRouter } from 'next/navigation'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, ImageUpload } from '@/components/ui'
+import { showToast } from '@/lib/toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
-import { useToast } from '@/components/ui'
-import { ImageUpload } from '@/components/ui'
 
 interface AboutEditorProps {
   settings: AboutSettingsData | null
@@ -15,7 +14,6 @@ interface AboutEditorProps {
 
 export function AboutEditor({ settings }: AboutEditorProps) {
   const router = useRouter()
-  const { show } = useToast()
 
   const {
     register,
@@ -51,13 +49,13 @@ export function AboutEditor({ settings }: AboutEditorProps) {
     try {
       const result = await updateAboutSettings(data)
       if (result.success) {
-        show({ type: 'success', message: 'Página Sobre Mí actualizada' })
+        showToast.success('Página Sobre Mí actualizada')
         router.refresh()
       } else {
-        show({ type: 'error', message: result.error || 'Error al guardar' })
+        showToast.error(result.error || 'Error al guardar')
       }
     } catch {
-      show({ type: 'error', message: 'Error inesperado' })
+      showToast.error('Error inesperado')
     }
   }
 

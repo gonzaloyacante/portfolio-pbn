@@ -116,7 +116,7 @@ model Project {
   updatedAt    DateTime       @updatedAt
   updatedBy    String?        // User ID
   // Relations
-  category     Category       @relation(fields: [categoryId], references: [id], onUpdate: Cascade)
+  category     Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   images       ProjectImage[]
 
   @@index([categoryId, date(sort: Desc)])

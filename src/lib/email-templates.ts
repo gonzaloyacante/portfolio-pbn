@@ -1,37 +1,32 @@
+import { EMAIL_BRAND_COLORS, EMAIL_NEUTRAL_COLORS } from '@/lib/design-tokens'
+
 export const EMAIL_STYLES = {
   fontFamily: "font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;",
-  body: 'margin: 0; padding: 0; background-color: #f9fafb; width: 100%;',
-  container:
-    'max-width: 600px; margin: 40px auto; background-color: #ffffff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid #e5e7eb;',
-  header:
-    'text-align: center; padding-bottom: 32px; border-bottom: 1px solid #e5e7eb; margin-bottom: 32px;',
-  logo: 'color: #111827; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;',
-  subhead:
-    'color: #6b7280; margin: 8px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;',
+  body: `margin: 0; padding: 0; background-color: ${EMAIL_NEUTRAL_COLORS.bodyBg}; width: 100%;`,
+  container: `max-width: 600px; margin: 40px auto; background-color: ${EMAIL_NEUTRAL_COLORS.containerBg}; padding: 40px; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid ${EMAIL_NEUTRAL_COLORS.border};`,
+  header: `text-align: center; padding-bottom: 32px; border-bottom: 1px solid ${EMAIL_NEUTRAL_COLORS.border}; margin-bottom: 32px;`,
+  logo: `color: ${EMAIL_NEUTRAL_COLORS.headingText}; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;`,
+  subhead: `color: ${EMAIL_NEUTRAL_COLORS.subheadText}; margin: 8px 0 0 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;`,
   content: 'text-align: left;',
-  heading:
-    'margin: 0 0 24px 0; color: #111827; font-size: 20px; font-weight: 700; line-height: 1.25;',
-  text: 'font-size: 16px; color: #374151; line-height: 1.625; margin-bottom: 24px;',
-  box: 'background-color: #f3f4f6; padding: 24px; border-radius: 12px; margin: 24px 0; border: 1px solid #e5e7eb;',
-  label:
-    'font-size: 12px; font-weight: 600; text-transform: uppercase; color: #6b7280; margin-bottom: 4px; display: block;',
-  value: 'font-size: 16px; color: #111827; font-weight: 500; margin: 0;',
+  heading: `margin: 0 0 24px 0; color: ${EMAIL_NEUTRAL_COLORS.headingText}; font-size: 20px; font-weight: 700; line-height: 1.25;`,
+  text: `font-size: 16px; color: ${EMAIL_NEUTRAL_COLORS.bodyText}; line-height: 1.625; margin-bottom: 24px;`,
+  box: `background-color: ${EMAIL_NEUTRAL_COLORS.boxBg}; padding: 24px; border-radius: 12px; margin: 24px 0; border: 1px solid ${EMAIL_NEUTRAL_COLORS.border};`,
+  label: `font-size: 12px; font-weight: 600; text-transform: uppercase; color: ${EMAIL_NEUTRAL_COLORS.subheadText}; margin-bottom: 4px; display: block;`,
+  value: `font-size: 16px; color: ${EMAIL_NEUTRAL_COLORS.headingText}; font-weight: 500; margin: 0;`,
   buttonContainer: 'text-align: center; margin: 40px 0;',
   button: (color: string) =>
-    `display: inline-block; background-color: ${color}; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 9999px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px ${color}40; transition: all 0.2s;`,
-  footer:
-    'text-align: center; padding-top: 32px; border-top: 1px solid #e5e7eb; color: #9ca3af; font-size: 12px; margin-top: 32px;',
-  link: 'color: #4b5563; text-decoration: underline;',
-  warningBox:
-    'background-color: #fef2f2; color: #991b1b; padding: 16px; border-radius: 8px; font-size: 14px; margin-top: 24px; border: 1px solid #fee2e2;',
+    `display: inline-block; background-color: ${color}; color: ${EMAIL_NEUTRAL_COLORS.buttonText}; padding: 14px 28px; text-decoration: none; border-radius: 9999px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px -1px ${color}40; transition: all 0.2s;`,
+  footer: `text-align: center; padding-top: 32px; border-top: 1px solid ${EMAIL_NEUTRAL_COLORS.border}; color: ${EMAIL_NEUTRAL_COLORS.footerText}; font-size: 12px; margin-top: 32px;`,
+  link: `color: ${EMAIL_NEUTRAL_COLORS.linkText}; text-decoration: underline;`,
+  warningBox: `background-color: ${EMAIL_NEUTRAL_COLORS.warningBg}; color: ${EMAIL_NEUTRAL_COLORS.warningText}; padding: 16px; border-radius: 8px; font-size: 14px; margin-top: 24px; border: 1px solid ${EMAIL_NEUTRAL_COLORS.warningBorder};`,
 }
 
 export const COLORS = {
-  primary: '#6c0a0a', // Brand Wine
-  secondary: '#000000',
-  success: '#059669',
-  warning: '#d97706',
-  danger: '#dc2626',
+  primary: EMAIL_BRAND_COLORS.primary,
+  secondary: EMAIL_BRAND_COLORS.secondary,
+  success: EMAIL_BRAND_COLORS.success,
+  warning: EMAIL_BRAND_COLORS.warning,
+  danger: EMAIL_BRAND_COLORS.danger,
 }
 
 interface BaseTemplateProps {
@@ -162,14 +157,14 @@ export const getPasswordResetEmail = (params: {
         </a>
       </div>
 
-      <p style="${EMAIL_STYLES.text}; font-size: 14px; color: #6b7280; text-align: center;">
+      <p style="${EMAIL_STYLES.text}; font-size: 14px; color: ${EMAIL_NEUTRAL_COLORS.subheadText}; text-align: center;">
         Este enlace expirará en 1 hora por seguridad.
       </p>
 
       ${
         params.ipAddress
           ? `
-      <div style="text-align: center; margin-top: 32px; font-size: 12px; color: #9ca3af;">
+      <div style="text-align: center; margin-top: 32px; font-size: 12px; color: ${EMAIL_NEUTRAL_COLORS.footerText};">
         Solicitado desde IP: ${params.ipAddress}
       </div>`
           : ''

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button, SmartField as FormField } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 import { calculatePasswordStrength } from '@/lib/password'
 
 export default function MiCuentaPage() {
@@ -23,17 +23,17 @@ export default function MiCuentaPage() {
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error('Todos los campos son obligatorios')
+      showToast.error('Todos los campos son obligatorios')
       return
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Las contraseñas nuevas no coinciden')
+      showToast.error('Las contraseñas nuevas no coinciden')
       return
     }
 
     if (newPassword.length < 8) {
-      toast.error('La contraseña debe tener al menos 8 caracteres')
+      showToast.error('La contraseña debe tener al menos 8 caracteres')
       return
     }
 
@@ -51,12 +51,12 @@ export default function MiCuentaPage() {
         throw new Error(data.error || 'Error al cambiar contraseña')
       }
 
-      toast.success('Contraseña actualizada correctamente')
+      showToast.success('Contraseña actualizada correctamente')
       // Reset form
       const form = document.getElementById('password-form') as HTMLFormElement
       form?.reset()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Error al cambiar contraseña')
+      showToast.error(error instanceof Error ? error.message : 'Error al cambiar contraseña')
     } finally {
       setIsLoading(false)
     }

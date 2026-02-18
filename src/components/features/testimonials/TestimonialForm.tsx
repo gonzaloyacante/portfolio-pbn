@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 
 /**
  * TestimonialForm - Refactored to use UI components
@@ -22,13 +22,13 @@ export default function TestimonialForm() {
       const result = await submitPublicTestimonial(formData)
 
       if (result.success) {
-        toast.success(result.message || '¡Gracias por tu testimonio!')
+        showToast.success(result.message || '¡Gracias por tu testimonio!')
         setIsSubmitted(true)
       } else {
-        toast.error(result.error || 'Error al enviar')
+        showToast.error(result.error || 'Error al enviar')
       }
     } catch {
-      toast.error('Error al enviar el testimonio')
+      showToast.error('Error al enviar el testimonio')
     } finally {
       setIsSubmitting(false)
     }

@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { getCategorySettings, updateCategorySettings } from '@/actions/settings/categories'
 import { Button } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
-import VisualConfigModal from '@/components/features/projects/VisualConfigModal'
+import LazyVisualConfigModal from '@/components/features/projects/LazyVisualConfigModal'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { Plus } from 'lucide-react'
@@ -38,7 +38,7 @@ export default async function CategoriesPage() {
           description="Administra las categorías de tus proyectos"
         />
         <div className="flex gap-3">
-          <VisualConfigModal
+          <LazyVisualConfigModal
             initialSettings={settings}
             onSave={updateCategorySettings}
             title="Configurar Tarjetas de Categoría"

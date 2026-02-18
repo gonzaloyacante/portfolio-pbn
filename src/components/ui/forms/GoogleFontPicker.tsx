@@ -179,6 +179,7 @@ export function GoogleFontPicker({
                   value={search}
                   autoFocus
                   onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Buscar familia de fuente"
                   className="bg-background border-input focus-visible:ring-primary h-10 w-full rounded-md border pr-4 pl-10 text-sm focus-visible:ring-2 focus-visible:outline-none"
                 />
               </div>
@@ -190,6 +191,7 @@ export function GoogleFontPicker({
                   placeholder="Escribe tu texto de prueba..."
                   value={previewText}
                   onChange={(e) => setPreviewText(e.target.value)}
+                  aria-label="Texto de prueba para la fuente"
                   className="bg-accent/30 border-input focus-visible:ring-primary h-10 w-full rounded-md border pr-4 pl-10 text-sm focus-visible:ring-2 focus-visible:outline-none"
                 />
               </div>

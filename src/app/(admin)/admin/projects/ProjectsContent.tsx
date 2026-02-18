@@ -8,7 +8,7 @@ import { Category, Project, ProjectImage } from '@prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pencil, Trash2, Eye } from 'lucide-react'
 
-import { Button, Card, Badge, useToast, useConfirmDialog } from '@/components/ui'
+import { Button, Card, Badge, useConfirmDialog } from '@/components/ui'
 import { deleteProjectAction, reorderProjects } from '@/actions/cms/project'
 import FilterBar from '@/components/ui/data-display/FilterBar'
 import SortableGrid from '@/components/layout/SortableGrid'
@@ -17,6 +17,7 @@ import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
 import { useFilteredItems } from '@/hooks/useFilteredItems'
 import { TOAST_MESSAGES } from '@/lib/toast-messages'
 import { ADMIN_GRID_COLUMNS } from '@/lib/admin-constants'
+import { showToast } from '@/lib/toast'
 
 type ProjectWithRelations = Project & {
   category: Category
@@ -30,7 +31,6 @@ interface ProjectsContentProps {
 
 export default function ProjectsContent({ projects, categories }: ProjectsContentProps) {
   const router = useRouter()
-  const { show } = useToast()
 
   // State
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -80,10 +80,10 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
 
     try {
       await deleteProjectAction(projectId)
-      show({ type: 'success', message: TOAST_MESSAGES.projects.delete.success })
+      showToast.success(TOAST_MESSAGES.projects.delete.success)
       router.refresh()
     } catch {
-      show({ type: 'error', message: TOAST_MESSAGES.projects.delete.error })
+      showToast.error(TOAST_MESSAGES.projects.delete.error)
     }
   }
 
@@ -138,12 +138,25 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
                   <Pencil size={14} className="mr-1.5" /> Editar
                 </Button>
               </Link>
-              <Link href={`/proyectos/${project.category.slug}/${project.slug}`} target="_blank">
-                <Button size="sm" variant="ghost">
+              <Link
+                href={`/proyectos/${project.category.slug}/${project.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  aria-label={`Ver proyecto ${project.title} en público`}
+                >
                   <Eye size={14} />
                 </Button>
               </Link>
-              <Button size="sm" variant="destructive" onClick={() => handleDelete(project.id)}>
+              <Button
+                size="sm"
+                variant="destructive"
+                aria-label={`Eliminar proyecto ${project.title}`}
+                onClick={() => handleDelete(project.id)}
+              >
                 <Trash2 size={14} />
               </Button>
             </div>
@@ -197,12 +210,26 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
         {/* Actions */}
         <div className="flex items-center gap-2">
           <Link href={`/admin/proyectos/${project.id}/editar`}>
-            <Button size="sm" variant="ghost" title="Editar">
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-label={`Editar proyecto ${project.title}`}
+              title="Editar"
+            >
               <Pencil size={16} />
             </Button>
           </Link>
-          <Link href={`/proyectos/${project.category.slug}/${project.slug}`} target="_blank">
-            <Button size="sm" variant="ghost" title="Ver público">
+          <Link
+            href={`/proyectos/${project.category.slug}/${project.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-label={`Ver proyecto ${project.title} en público`}
+              title="Ver público"
+            >
               <Eye size={16} />
             </Button>
           </Link>
@@ -211,6 +238,7 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
             variant="ghost"
             className="text-destructive hover:text-destructive"
             onClick={() => handleDelete(project.id)}
+            aria-label={`Eliminar proyecto ${project.title}`}
             title="Eliminar"
           >
             <Trash2 size={16} />

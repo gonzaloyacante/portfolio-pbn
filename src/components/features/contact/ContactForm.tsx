@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { sendContactEmail } from '@/actions/user/contact'
 import { Button } from '@/components/ui'
-import { useToast } from '@/components/ui'
+import { showToast } from '@/lib/toast'
 import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -56,7 +56,6 @@ export default function ContactForm({
   successMessage,
   sendAnotherLabel,
 }: ContactFormProps) {
-  const { show } = useToast()
   const [submitted, setSubmitted] = useState(false)
   const searchParams = useSearchParams()
   const serviceName = searchParams.get('service')
@@ -100,7 +99,7 @@ export default function ContactForm({
         (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
         !data.phone?.trim()
       ) {
-        show({ type: 'error', message: 'Por favor, ingresa tu teléfono para poder contactarte' })
+        showToast.error('Por favor, ingresa tu teléfono para poder contactarte')
         return
       }
 
@@ -118,10 +117,10 @@ export default function ContactForm({
         setSubmitted(true)
         reset()
       } else {
-        show({ type: 'error', message: result.message || 'Error al enviar mensaje' })
+        showToast.error(result.message || 'Error al enviar mensaje')
       }
     } catch {
-      show({ type: 'error', message: 'Error inesperado. Intenta de nuevo.' })
+      showToast.error('Error inesperado. Intenta de nuevo.')
     }
   }
 

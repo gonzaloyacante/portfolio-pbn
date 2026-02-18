@@ -87,7 +87,12 @@ export default async function TestimonialsPage() {
                 <div className="flex items-center gap-2 self-end md:self-start">
                   {/* Edit */}
                   <Link href={`/admin/testimonials/${t.id}/edit`}>
-                    <Button variant="outline" size="sm" className="px-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="px-3"
+                      aria-label={`Editar testimonio de ${t.name}`}
+                    >
                       ✏️
                     </Button>
                   </Link>
@@ -115,7 +120,13 @@ export default async function TestimonialsPage() {
                       await deleteTestimonial(t.id)
                     }}
                   >
-                    <Button type="submit" variant="destructive" size="sm" className="px-3">
+                    <Button
+                      type="submit"
+                      variant="destructive"
+                      size="sm"
+                      className="px-3"
+                      aria-label={`Eliminar testimonio de ${t.name}`}
+                    >
                       🗑️
                     </Button>
                   </form>

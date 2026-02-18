@@ -46,21 +46,21 @@ test.describe('Admin Panel - Authenticated', () => {
   })
 
   test('should navigate to projects management', async ({ page }) => {
-    await page.getByRole('link', { name: /🎨 proyectos/i }).click()
-    await expect(page).toHaveURL(/\/admin\/gestion\/projects/)
-    await expect(page.getByRole('heading', { name: /gestión de proyectos/i })).toBeVisible()
+    await page.getByRole('link', { name: /proyectos/i }).click()
+    await expect(page).toHaveURL(/\/admin\/projects/)
+    await expect(page.getByRole('heading', { name: /proyectos/i })).toBeVisible()
   })
 
   test('should navigate to categories management', async ({ page }) => {
-    await page.getByRole('link', { name: /📁 categorías/i }).click()
-    await expect(page).toHaveURL(/\/admin\/gestion\/categories/)
-    await expect(page.getByRole('heading', { name: /gestión de categorías/i })).toBeVisible()
+    await page.getByRole('link', { name: /categorías/i }).click()
+    await expect(page).toHaveURL(/\/admin\/categories/)
+    await expect(page.getByRole('heading', { name: /categor/i })).toBeVisible()
   })
 
   test('should navigate to testimonials management', async ({ page }) => {
-    await page.getByRole('link', { name: /💬 testimonios/i }).click()
-    await expect(page).toHaveURL(/\/admin\/testimonios/)
-    await expect(page.getByRole('heading', { name: /gestión de testimonios/i })).toBeVisible()
+    await page.getByRole('link', { name: /testimonios/i }).click()
+    await expect(page).toHaveURL(/\/admin\/testimonials/)
+    await expect(page.getByRole('heading', { name: /testimon/i })).toBeVisible()
   })
 })
 

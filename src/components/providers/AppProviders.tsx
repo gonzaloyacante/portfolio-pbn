@@ -1,7 +1,7 @@
 'use client'
 
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
-import { ToastProvider } from '@/components/ui'
+import LayoutToastProvider from '@/components/layout/ToastProvider'
 import { SessionProvider } from 'next-auth/react'
 import { SWRConfig } from 'swr'
 import { AnalyticsProvider } from '@/components/providers/AnalyticsProvider'
@@ -23,11 +23,12 @@ export default function AppProviders({ children, themeValues }: AppProvidersProp
     <SessionProvider>
       <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
         <SWRConfig value={swrConfig}>
-          <ToastProvider>
-            <AnalyticsProvider>
-              <CustomThemeProvider themeValues={themeValues}>{children}</CustomThemeProvider>
-            </AnalyticsProvider>
-          </ToastProvider>
+          <AnalyticsProvider>
+            <CustomThemeProvider themeValues={themeValues}>
+              {children}
+              <LayoutToastProvider />
+            </CustomThemeProvider>
+          </AnalyticsProvider>
         </SWRConfig>
       </NextThemesProvider>
     </SessionProvider>

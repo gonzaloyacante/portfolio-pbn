@@ -18,7 +18,7 @@ import {
   isToday,
 } from 'date-fns'
 import { es } from 'date-fns/locale'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 
 // Types (Mirrors Prisma Model for client usage)
 type Booking = {
@@ -60,7 +60,7 @@ export default function CalendarView() {
         const data = await getBookingsByRange(startDate, endDate)
         setBookings(data as Booking[])
       } catch {
-        toast.error('Error al cargar reservas')
+        showToast.error('Error al cargar reservas')
       }
     }
     fetchBookings()
@@ -81,17 +81,17 @@ export default function CalendarView() {
     try {
       const res = await updateBookingStatus(selectedBooking.id, newStatus)
       if (res.success) {
-        toast.success('Estado actualizado')
+        showToast.success('Estado actualizado')
         // Update local state
         setBookings((prev) =>
           prev.map((b) => (b.id === selectedBooking.id ? { ...b, status: newStatus } : b))
         )
         setSelectedBooking((prev) => (prev ? { ...prev, status: newStatus } : null))
       } else {
-        toast.error(res.error || 'Error')
+        showToast.error(res.error || 'Error')
       }
     } catch {
-      toast.error('Error de conexión')
+      showToast.error('Error de conexión')
     }
   }
 
@@ -134,7 +134,7 @@ export default function CalendarView() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => toast('Próximamente: Bloqueo de fechas', { icon: '🔒' })}
+              onClick={() => showToast.info('Próximamente: Bloqueo de fechas')}
             >
               Bloquear
             </Button>

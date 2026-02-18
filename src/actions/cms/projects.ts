@@ -83,6 +83,34 @@ export const getPaginatedProjects = unstable_cache(
 )
 
 /**
+ * Obtener proyectos destacados para la home (cached)
+ */
+export const getFeaturedProjects = unstable_cache(
+  async (count: number = 6) => {
+    try {
+      return await prisma.project.findMany({
+        where: {
+          isActive: true,
+          isDeleted: false,
+        },
+        take: count,
+        orderBy: { date: 'desc' },
+        include: {
+          category: true,
+        },
+      })
+    } catch {
+      return []
+    }
+  },
+  [CACHE_TAGS.featuredProjects],
+  {
+    revalidate: CACHE_DURATIONS.MEDIUM,
+    tags: [CACHE_TAGS.featuredProjects, CACHE_TAGS.projects],
+  }
+)
+
+/**
  * Obtener proyectos por categoría con paginación
  */
 export async function getProjectsByCategory(

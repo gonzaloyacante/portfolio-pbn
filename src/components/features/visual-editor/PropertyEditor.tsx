@@ -1,7 +1,14 @@
 'use client'
 
-import { Input, GoogleFontPicker } from '@/components/ui'
+import dynamic from 'next/dynamic'
+import { Input } from '@/components/ui'
 import type { HomeSettingsData } from '@/actions/settings/home'
+
+const GoogleFontPicker = dynamic(
+  () =>
+    import('@/components/ui/forms/GoogleFontPicker').then((m) => ({ default: m.GoogleFontPicker })),
+  { ssr: false, loading: () => <div className="bg-muted h-14 w-full animate-pulse rounded-md" /> }
+)
 import { EditorDualColorControl } from './components/EditorColorControl'
 import { EditorSliderControl } from './components/EditorSliderControl'
 import { EditorZIndexControl } from './components/EditorZIndexControl'

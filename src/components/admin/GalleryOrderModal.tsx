@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react'
 import { Modal, Button, LoadingOverlay } from '@/components/ui'
 import DraggableMasonryGallery from './DraggableMasonryGallery'
 import { updateCategoryGalleryOrder, resetCategoryGalleryOrder } from '@/actions/gallery-ordering'
-import { useToast, useConfirmDialog as useConfirm } from '@/components/ui'
+import { useConfirmDialog as useConfirm } from '@/components/ui'
 import { Save, RotateCcw } from 'lucide-react'
+import { showToast } from '@/lib/toast'
 
 interface GalleryImage {
   id: string
@@ -34,7 +35,6 @@ export default function GalleryOrderModal({
   const [images, setImages] = useState(initialImages)
   const [hasChanges, setHasChanges] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const { show } = useToast()
 
   const { confirm, Dialog } = useConfirm()
 
@@ -66,27 +66,18 @@ export default function GalleryOrderModal({
       })
 
       if (result.success) {
-        show({
-          type: 'success',
-          title: '✅ Orden guardado',
-          message: `El orden de la galería de "${categoryName}" ha sido actualizado.`,
-        })
+        showToast.success(
+          `El orden de la galería de "${categoryName}" ha sido actualizado.`,
+          '✅ Orden guardado'
+        )
         setHasChanges(false)
         onClose()
       } else {
-        show({
-          type: 'error',
-          title: '❌ Error',
-          message: result.error || 'No se pudo guardar el orden',
-        })
+        showToast.error(result.error || 'No se pudo guardar el orden', '❌ Error')
       }
     } catch (error) {
       console.error('[GalleryOrderModal] Save error:', error)
-      show({
-        type: 'error',
-        title: '❌ Error',
-        message: 'Ocurrió un error al guardar',
-      })
+      showToast.error('Ocurrió un error al guardar', '❌ Error')
     } finally {
       setIsSaving(false)
     }
@@ -110,27 +101,15 @@ export default function GalleryOrderModal({
       const result = await resetCategoryGalleryOrder(categoryId)
 
       if (result.success) {
-        show({
-          type: 'success',
-          title: '🔄 Orden restablecido',
-          message: 'La galería ha vuelto al orden predeterminado',
-        })
+        showToast.success('La galería ha vuelto al orden predeterminado', '🔄 Orden restablecido')
         // Reload images from server to get default order
         window.location.reload()
       } else {
-        show({
-          type: 'error',
-          title: '❌ Error',
-          message: result.error || 'No se pudo restablecer',
-        })
+        showToast.error(result.error || 'No se pudo restablecer', '❌ Error')
       }
     } catch (error) {
       console.error('[GalleryOrderModal] Reset error:', error)
-      show({
-        type: 'error',
-        title: '❌ Error',
-        message: 'Ocurrió un error al restablecer',
-      })
+      showToast.error('Ocurrió un error al restablecer', '❌ Error')
     } finally {
       setIsSaving(false)
     }

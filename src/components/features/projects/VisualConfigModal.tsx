@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm, DefaultValues, Path, PathValue, FieldValues } from 'react-hook-form'
 import { Button, Modal, Switch } from '@/components/ui'
-import toast from 'react-hot-toast'
+import { showToast } from '@/lib/toast'
 import PreviewCard from '@/components/ui/data-display/PreviewCard'
 
 export interface ConfigField<T extends FieldValues> {
@@ -16,7 +16,7 @@ export interface ConfigField<T extends FieldValues> {
   max?: number
 }
 
-interface VisualConfigModalProps<T extends FieldValues> {
+export interface VisualConfigModalProps<T extends FieldValues> {
   triggerLabel?: string
   title?: string
   description?: string
@@ -50,14 +50,14 @@ export default function VisualConfigModal<T extends FieldValues>({
     try {
       const result = await onSave(data)
       if (result.success) {
-        toast.success('Configuración actualizada')
+        showToast.success('Configuración actualizada')
         setIsOpen(false)
         router.refresh()
       } else {
-        toast.error(result.error || 'Error al guardar')
+        showToast.error(result.error || 'Error al guardar')
       }
     } catch {
-      toast.error('Error de conexión')
+      showToast.error('Error de conexión')
     } finally {
       setIsSaving(false)
     }
@@ -112,6 +112,7 @@ export default function VisualConfigModal<T extends FieldValues>({
                       onCheckedChange={(checked) =>
                         setValue(field.key, checked as PathValue<T, Path<T>>)
                       }
+                      aria-label={field.label}
                     />
                   )}
                 </div>

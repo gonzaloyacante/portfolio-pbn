@@ -1,9 +1,15 @@
 'use client'
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { UseFormRegister, UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form'
 import { ThemeEditorData } from '@/lib/validations'
-import { GoogleFontPicker } from '@/components/ui'
+
+const GoogleFontPicker = dynamic(
+  () =>
+    import('@/components/ui/forms/GoogleFontPicker').then((m) => ({ default: m.GoogleFontPicker })),
+  { ssr: false, loading: () => <div className="bg-muted h-14 w-full animate-pulse rounded-md" /> }
+)
 
 interface FontFieldProps {
   label: string

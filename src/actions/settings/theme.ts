@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@prisma/client'
 
 import { ROUTES } from '@/config/routes'
@@ -10,6 +11,12 @@ import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize, validateFontUrl, validateColor } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
+import {
+  DEFAULT_CSS_VARIABLES,
+  BRAND,
+  TYPOGRAPHY_DEFAULTS,
+  RESET_THEME_DEFAULTS,
+} from '@/lib/design-tokens'
 
 export interface ThemeSettingsData {
   id: string
@@ -58,17 +65,21 @@ export interface ThemeSettingsData {
 /**
  * Get theme settings
  */
-export async function getThemeSettings(): Promise<ThemeSettingsData | null> {
-  try {
-    const settings = await prisma.themeSettings.findFirst({
-      where: { isActive: true },
-    })
-    return settings
-  } catch (error) {
-    console.error('Error getting theme settings:', error)
-    return null
-  }
-}
+export const getThemeSettings = unstable_cache(
+  async (): Promise<ThemeSettingsData | null> => {
+    try {
+      const settings = await prisma.themeSettings.findFirst({
+        where: { isActive: true },
+      })
+      return settings
+    } catch (error) {
+      console.error('Error getting theme settings:', error)
+      return null
+    }
+  },
+  [CACHE_TAGS.themeSettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.themeSettings] }
+)
 
 /**
  * Get theme values as CSS variable object
@@ -77,30 +88,7 @@ export async function getThemeValues(): Promise<Record<string, string>> {
   try {
     const settings = await getThemeSettings()
     if (!settings) {
-      return {
-        '--primary': '#6c0a0a',
-        '--secondary': '#ffaadd',
-        '--accent': '#fff1f9',
-        '--background': '#fff1f9',
-        '--foreground': '#000000',
-        '--card-bg': '#ffaadd',
-
-        '--dark-primary': '#fb7185',
-        '--dark-secondary': '#881337',
-        '--dark-accent': '#2a1015',
-        '--dark-background': '#0f0505',
-        '--dark-foreground': '#fafafa',
-        '--dark-card-bg': '#1c0a0f',
-
-        '--font-heading': '"Poppins", sans-serif',
-        '--font-heading-size': '32px',
-        '--font-script': '"Great Vibes", cursive',
-        '--font-script-size': '24px',
-        '--font-body': '"Open Sans", sans-serif',
-        '--font-body-size': '16px',
-
-        '--radius': '0.5rem',
-      }
+      return DEFAULT_CSS_VARIABLES
     }
 
     return {
@@ -217,33 +205,36 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
     if (!settings) {
       const createData: Prisma.ThemeSettingsCreateInput = {
         // Light Mode
-        primaryColor: (cleanData.primaryColor as string) || '#000000',
-        secondaryColor: (cleanData.secondaryColor as string) || '#ffffff',
-        accentColor: (cleanData.accentColor as string) || '#cccccc',
-        backgroundColor: (cleanData.backgroundColor as string) || '#ffffff',
-        textColor: (cleanData.textColor as string) || '#000000',
-        cardBgColor: (cleanData.cardBgColor as string) || '#ffffff',
+        primaryColor: (cleanData.primaryColor as string) || BRAND.fallbackLight.primary,
+        secondaryColor: (cleanData.secondaryColor as string) || BRAND.fallbackLight.secondary,
+        accentColor: (cleanData.accentColor as string) || BRAND.fallbackLight.accent,
+        backgroundColor: (cleanData.backgroundColor as string) || BRAND.fallbackLight.background,
+        textColor: (cleanData.textColor as string) || BRAND.fallbackLight.foreground,
+        cardBgColor: (cleanData.cardBgColor as string) || BRAND.fallbackLight.card,
 
         // Dark Mode
-        darkPrimaryColor: (cleanData.darkPrimaryColor as string) || '#ffffff',
-        darkSecondaryColor: (cleanData.darkSecondaryColor as string) || '#000000',
-        darkAccentColor: (cleanData.darkAccentColor as string) || '#333333',
-        darkBackgroundColor: (cleanData.darkBackgroundColor as string) || '#000000',
-        darkTextColor: (cleanData.darkTextColor as string) || '#ffffff',
-        darkCardBgColor: (cleanData.darkCardBgColor as string) || '#000000',
+        darkPrimaryColor: (cleanData.darkPrimaryColor as string) || BRAND.fallbackDark.primary,
+        darkSecondaryColor:
+          (cleanData.darkSecondaryColor as string) || BRAND.fallbackDark.secondary,
+        darkAccentColor: (cleanData.darkAccentColor as string) || BRAND.fallbackDark.accent,
+        darkBackgroundColor:
+          (cleanData.darkBackgroundColor as string) || BRAND.fallbackDark.background,
+        darkTextColor: (cleanData.darkTextColor as string) || BRAND.fallbackDark.foreground,
+        darkCardBgColor: (cleanData.darkCardBgColor as string) || BRAND.fallbackDark.card,
 
         // Typography - Defaults required for create
-        headingFont: (cleanData.headingFont as string) || 'Inter',
+        headingFont: (cleanData.headingFont as string) || TYPOGRAPHY_DEFAULTS.headingFont,
         headingFontUrl: (cleanData.headingFontUrl as string) ?? undefined,
-        headingFontSize: (cleanData.headingFontSize as number) ?? 16,
+        headingFontSize:
+          (cleanData.headingFontSize as number) ?? TYPOGRAPHY_DEFAULTS.headingFontSize,
 
-        scriptFont: (cleanData.scriptFont as string) || 'Inter',
+        scriptFont: (cleanData.scriptFont as string) || TYPOGRAPHY_DEFAULTS.scriptFont,
         scriptFontUrl: (cleanData.scriptFontUrl as string) ?? undefined,
-        scriptFontSize: (cleanData.scriptFontSize as number) ?? 16,
+        scriptFontSize: (cleanData.scriptFontSize as number) ?? TYPOGRAPHY_DEFAULTS.scriptFontSize,
 
-        bodyFont: (cleanData.bodyFont as string) || 'Inter',
+        bodyFont: (cleanData.bodyFont as string) || TYPOGRAPHY_DEFAULTS.bodyFont,
         bodyFontUrl: (cleanData.bodyFontUrl as string) ?? undefined,
-        bodyFontSize: (cleanData.bodyFontSize as number) ?? 14,
+        bodyFontSize: (cleanData.bodyFontSize as number) ?? TYPOGRAPHY_DEFAULTS.bodyFontSize,
 
         brandFont: (cleanData.brandFont as string) ?? undefined,
         brandFontUrl: (cleanData.brandFontUrl as string) ?? undefined,
@@ -273,6 +264,7 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
     }
 
     revalidatePath(ROUTES.home)
+    revalidateTag(CACHE_TAGS.themeSettings, 'max')
 
     return {
       success: true,
@@ -299,36 +291,16 @@ export async function resetThemeToDefaults() {
     // Delete existing standard theme settings
     await prisma.themeSettings.deleteMany({ where: { isActive: true } })
 
-    // Create new default
+    // Create new default using RESET_THEME_DEFAULTS (single source of truth)
     await prisma.themeSettings.create({
       data: {
         isActive: true,
-        // Light Defaults
-        primaryColor: '#6c0a0a',
-        secondaryColor: '#fce7f3',
-        accentColor: '#fff1f9',
-        backgroundColor: '#fff8fc',
-        textColor: '#1a050a',
-        cardBgColor: '#ffffff',
-        // Dark Defaults
-        darkPrimaryColor: '#fb7185',
-        darkSecondaryColor: '#881337',
-        darkAccentColor: '#2a1015',
-        darkBackgroundColor: '#0f0505',
-        darkTextColor: '#fafafa',
-        darkCardBgColor: '#1c0a0f',
-        // Typography Defaults
-        headingFont: 'Poppins',
-        headingFontSize: 32,
-        scriptFont: 'Great Vibes',
-        scriptFontSize: 24,
-        bodyFont: 'Open Sans',
-        bodyFontSize: 16,
-        borderRadius: 8,
+        ...RESET_THEME_DEFAULTS,
       },
     })
 
     revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.themeSettings, 'max')
 
     return { success: true, message: 'Tema reseteado a valores por defecto' }
   } catch (error) {

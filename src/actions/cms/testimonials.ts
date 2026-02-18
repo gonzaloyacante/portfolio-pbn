@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { headers } from 'next/headers'
 
 import { logger } from '@/lib/logger'
@@ -56,6 +57,7 @@ export async function createTestimonial(formData: FormData) {
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial created: ${name}`)
     return { success: true }
   } catch (error) {
@@ -129,6 +131,7 @@ export async function submitPublicTestimonial(formData: FormData) {
     }
 
     revalidatePath(ROUTES.admin.testimonials)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Public testimonial submitted: ${name}`)
     return {
       success: true,
@@ -187,6 +190,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about)
     revalidatePath(ROUTES.admin.testimonials)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial updated: ${id}`)
     return { success: true }
   } catch (error) {
@@ -201,6 +205,7 @@ export async function deleteTestimonial(id: string) {
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial deleted: ${id}`)
     return { success: true }
   } catch (error) {
@@ -224,6 +229,7 @@ export async function toggleTestimonial(id: string) {
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about)
     revalidatePath(ROUTES.admin.testimonials)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial toggled: ${id} -> ${!testimonial.isActive}`)
     return { success: true, isActive: !testimonial.isActive }
   } catch (error) {
@@ -235,16 +241,20 @@ export async function toggleTestimonial(id: string) {
 /**
  * Get active testimonials for public display
  */
-export async function getActiveTestimonials(limit = 6) {
-  try {
-    const testimonials = await prisma.testimonial.findMany({
-      where: { isActive: true },
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    })
-    return testimonials
-  } catch (error) {
-    logger.error('Error fetching testimonials:', { error })
-    return []
-  }
-}
+export const getActiveTestimonials = unstable_cache(
+  async (limit = 6) => {
+    try {
+      const testimonials = await prisma.testimonial.findMany({
+        where: { isActive: true },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+      })
+      return testimonials
+    } catch (error) {
+      logger.error('Error fetching testimonials:', { error })
+      return []
+    }
+  },
+  [CACHE_TAGS.testimonials],
+  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.testimonials] }
+)

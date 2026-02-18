@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui'
 import { Check, Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
+import JsonLd from '@/components/seo/JsonLd'
 
 interface PricingTier {
   name: string
@@ -28,10 +29,31 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     }
   }
 
+  const description =
+    service.metaDescription || service.shortDesc || service.description?.slice(0, 160) || ''
+
   return {
     title: service.metaTitle || `${service.name} - Servicios`,
-    description: service.metaDescription || service.shortDesc || service.description?.slice(0, 160),
+    description,
     keywords: service.metaKeywords,
+    alternates: {
+      canonical: `/servicios/${slug}`,
+    },
+    openGraph: {
+      title: service.metaTitle || service.name,
+      description,
+      type: 'website',
+      locale: 'es_ES',
+      images: service.imageUrl
+        ? [{ url: service.imageUrl, width: 1200, height: 630, alt: service.name }]
+        : [],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: service.metaTitle || service.name,
+      description,
+      images: service.imageUrl ? [service.imageUrl] : [],
+    },
   }
 }
 
@@ -57,6 +79,16 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
   return (
     <main className="pb-20">
+      <JsonLd
+        type="Service"
+        data={{
+          name: service.name,
+          description: service.shortDesc || service.description?.slice(0, 160) || service.name,
+          url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios/${slug}`,
+          image: service.imageUrl ?? undefined,
+          priceRange: tiers.length > 0 ? `${tiers[0].price}€` : undefined,
+        }}
+      />
       {/* Hero Section */}
       <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
         {service.imageUrl ? (
@@ -195,6 +227,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               <Link
                 href={`https://wa.me/YOUR_NUMBER?text=Hola, info sobre ${service.name}`}
                 target="_blank"
+                rel="noopener noreferrer"
               >
                 <Button variant="outline" size="lg" className="w-full">
                   Consultar por WhatsApp
