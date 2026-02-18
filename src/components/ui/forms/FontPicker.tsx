@@ -61,12 +61,8 @@ export default function FontPicker({ value, onChange, label, description }: Font
 
   return (
     <div className="space-y-2" ref={pickerRef}>
-      {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          {label}
-        </label>
-      )}
-      {description && <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>}
+      {label && <label className="text-foreground block text-sm font-medium">{label}</label>}
+      {description && <p className="text-muted-foreground text-xs">{description}</p>}
 
       {/* Input principal */}
       <div className="relative">
@@ -79,7 +75,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
             {value}
           </span>
           <svg
-            className={`h-5 w-5 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            className={`text-muted-foreground h-5 w-5 transition-transform ${isOpen ? 'rotate-180' : ''}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -98,7 +94,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar fuente..."
               aria-label="Buscar fuente"
-              className="focus:border-primary focus:ring-primary/20 mb-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:outline-none dark:border-gray-600 dark:bg-gray-700"
+              className="focus:border-primary focus:ring-primary/20 border-border bg-background mb-3 w-full rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
 
             {/* Categorías */}
@@ -111,7 +107,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
                   className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
                     category === cat
                       ? 'bg-primary text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   {cat === 'All' ? 'Todas' : cat}
@@ -130,25 +126,25 @@ export default function FontPicker({ value, onChange, label, description }: Font
                     setIsOpen(false)
                   }}
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${
-                    value === font.name
-                      ? 'bg-primary/10 text-primary'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                    value === font.name ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
                   }`}
                 >
                   <span className="text-lg" style={{ fontFamily: font.name }}>
                     {font.name}
                   </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">{font.category}</span>
+                  <span className="text-muted-foreground text-xs">{font.category}</span>
                 </button>
               ))}
               {filteredFonts.length === 0 && (
-                <p className="py-4 text-center text-sm text-gray-500">No se encontraron fuentes</p>
+                <p className="text-muted-foreground py-4 text-center text-sm">
+                  No se encontraron fuentes
+                </p>
               )}
             </div>
 
             {/* Preview actual */}
-            <div className="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-700">
-              <p className="mb-1 text-xs text-gray-500 dark:text-gray-400">Vista previa:</p>
+            <div className="bg-muted/50 mt-4 rounded-lg p-4">
+              <p className="text-muted-foreground mb-1 text-xs">Vista previa:</p>
               <p className="text-2xl" style={{ fontFamily: value }}>
                 Paola Bolívar Nievas
               </p>
@@ -161,7 +157,7 @@ export default function FontPicker({ value, onChange, label, description }: Font
       </div>
 
       {/* Preview inline */}
-      <p className="text-sm text-gray-500 dark:text-gray-400" style={{ fontFamily: value }}>
+      <p className="text-muted-foreground text-sm" style={{ fontFamily: value }}>
         Texto de ejemplo con {value}
       </p>
     </div>

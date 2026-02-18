@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/lib/validations'
 import { z } from 'zod'
+import { ROUTES } from '@/config/routes'
 import { showToast } from '@/lib/toast'
 import { Mail, Lock } from 'lucide-react'
 
@@ -67,7 +68,7 @@ export default function LoginPage() {
         })
       } else {
         showToast.success('¡Bienvenida de nuevo!')
-        router.push('/admin/dashboard')
+        router.push(ROUTES.admin.dashboard)
       }
     } catch {
       showToast.error('Error de conexión')

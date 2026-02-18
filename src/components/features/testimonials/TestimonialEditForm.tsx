@@ -7,6 +7,7 @@ import { updateTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
+import { ROUTES } from '@/config/routes'
 
 interface TestimonialEditFormProps {
   testimonial: Testimonial
@@ -24,7 +25,7 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
 
       if (result.success) {
         showToast.success('Testimonio actualizado')
-        router.push('/admin/testimonios')
+        router.push(ROUTES.admin.testimonials)
         router.refresh()
       } else {
         showToast.error(result.error || 'Error al actualizar')

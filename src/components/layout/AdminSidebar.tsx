@@ -7,6 +7,7 @@ import { showToast } from '@/lib/toast'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 
 import { menuItems } from '@/config/admin-sidebar'
+import { ROUTES } from '@/config/routes'
 
 export default function AdminSidebar() {
   const pathname = usePathname()
@@ -25,7 +26,7 @@ export default function AdminSidebar() {
       {/* Header */}
       <div className="border-border flex items-center justify-between border-b p-6">
         <Link
-          href="/admin/dashboard"
+          href={ROUTES.admin.dashboard}
           className="block cursor-pointer transition-all duration-200 hover:scale-105"
         >
           <h1 className="font-script text-primary text-2xl">Admin Panel</h1>
