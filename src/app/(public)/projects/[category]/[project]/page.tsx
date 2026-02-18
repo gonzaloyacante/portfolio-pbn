@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -8,13 +9,32 @@ import { ArrowLeft, Calendar } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 
+export async function generateStaticParams() {
+  const projects = await prisma.project.findMany({
+    where: { isActive: true, isDeleted: false },
+    select: { slug: true, category: { select: { slug: true } } },
+  })
+  return projects.map((p) => ({ category: p.category?.slug ?? '', project: p.slug }))
+}
+
+// React.cache deduplica la consulta entre generateMetadata y el componente de página
+const getProject = cache((slug: string) =>
+  prisma.project.findFirst({
+    where: { slug, isActive: true, isDeleted: false },
+    include: {
+      category: true,
+      images: { orderBy: { order: 'asc' } },
+    },
+  })
+)
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ category: string; project: string }>
 }): Promise<Metadata> {
   const { project: projectSlug } = await params
-  const project = await prisma.project.findUnique({ where: { slug: projectSlug } })
+  const project = await getProject(projectSlug)
 
   if (!project) {
     return { title: 'Proyecto no encontrado' }
@@ -62,21 +82,8 @@ export default async function ProjectDetailPage({
 }) {
   const { category: categorySlug, project: projectSlug } = await params
 
-  // 1. Fetch project with all images
-  const project = await prisma.project.findFirst({
-    where: {
-      slug: projectSlug,
-      category: { slug: categorySlug }, // Ensure it belongs to this category
-      isActive: true,
-      isDeleted: false,
-    },
-    include: {
-      category: true,
-      images: {
-        orderBy: { order: 'asc' },
-      },
-    },
-  })
+  // 1. Fetch project with all images (deduplicated by React.cache with generateMetadata)
+  const project = await getProject(projectSlug)
 
   // 2. Fetch adjacent projects for navigation
   // We need project.id to find adjacents and category.id

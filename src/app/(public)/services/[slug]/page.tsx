@@ -1,4 +1,4 @@
-import { getServiceBySlug } from '@/actions/cms/services'
+import { getServiceBySlug, getServices } from '@/actions/cms/services'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -6,6 +6,11 @@ import { Button } from '@/components/ui'
 import { Check, Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
+
+export async function generateStaticParams() {
+  const services = await getServices()
+  return services.map((s: { slug: string }) => ({ slug: s.slug }))
+}
 
 interface PricingTier {
   name: string

@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -7,15 +8,38 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 
+export async function generateStaticParams() {
+  const categories = await prisma.category.findMany({
+    where: { isActive: true, deletedAt: null },
+    select: { slug: true },
+  })
+  return categories.map((c) => ({ category: c.slug }))
+}
+
+const getCategory = cache((slug: string) =>
+  prisma.category.findFirst({
+    where: { slug, isActive: true, deletedAt: null },
+    include: {
+      projects: {
+        where: { isDeleted: false, isActive: true },
+        orderBy: { date: 'desc' },
+        include: {
+          images: {
+            orderBy: [{ categoryGalleryOrder: 'asc' }, { order: 'asc' }],
+          },
+        },
+      },
+    },
+  })
+)
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ category: string }>
 }): Promise<Metadata> {
   const { category: categorySlug } = await params
-  const category = await prisma.category.findUnique({
-    where: { slug: categorySlug },
-  })
+  const category = await getCategory(categorySlug)
 
   if (!category) {
     return { title: 'Categoría no encontrada' }
@@ -42,27 +66,8 @@ export default async function CategoryProjectsPage({
 }) {
   const { category: categorySlug } = await params
 
-  // Fetch category and settings
-  const [category, settings] = await Promise.all([
-    prisma.category.findUnique({
-      where: { slug: categorySlug },
-      include: {
-        projects: {
-          where: { isDeleted: false, isActive: true },
-          orderBy: { date: 'desc' },
-          include: {
-            images: {
-              orderBy: [
-                { categoryGalleryOrder: 'asc' }, // Primary: manual gallery order
-                { order: 'asc' }, // Fallback: original project order
-              ],
-            },
-          },
-        },
-      },
-    }),
-    getProjectSettings(),
-  ])
+  // Fetch category (deduplicated by React.cache with generateMetadata) + settings
+  const [category, settings] = await Promise.all([getCategory(categorySlug), getProjectSettings()])
 
   if (!category) {
     notFound()

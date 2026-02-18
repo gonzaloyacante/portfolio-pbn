@@ -124,20 +124,23 @@ export async function getAnalyticsDashboardData() {
       take: 5,
     })
 
-    // Fetch project titles
-    const topProjects = await Promise.all(
-      topProjectsRaw.map(async (item) => {
-        if (!item.entityId) return null
-        const project = await prisma.project.findUnique({
-          where: { id: item.entityId },
-          select: { title: true },
+    // Fetch project titles — single query instead of N individual findUnique calls
+    const projectIds = topProjectsRaw.map((item) => item.entityId).filter(Boolean) as string[]
+    const projectsMap = new Map(
+      (
+        await prisma.project.findMany({
+          where: { id: { in: projectIds } },
+          select: { id: true, title: true },
         })
-        return {
-          title: project?.title || 'Unknown Project',
-          count: item._count.entityId,
-        }
-      })
+      ).map((p) => [p.id, p.title])
     )
+    const topProjects = topProjectsRaw.map((item) => {
+      if (!item.entityId) return null
+      return {
+        title: projectsMap.get(item.entityId) ?? 'Unknown Project',
+        count: item._count.entityId,
+      }
+    })
 
     // 4. Device Usage
     const deviceLogs = await prisma.analyticLog.findMany({
