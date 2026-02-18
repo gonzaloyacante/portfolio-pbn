@@ -18,6 +18,7 @@ export const ROUTES = {
     settings: '/admin/configuracion',
     theme: '/admin/tema',
     analytics: '/admin/analitica',
+    calendar: '/admin/calendario',
     account: '/admin/mi-cuenta',
     help: '/admin/ayuda',
     trash: '/admin/papelera',

@@ -42,7 +42,7 @@ export default async function AnalyticsPage() {
       />
 
       {/* Aviso sobre Google Analytics */}
-      <Section className="from-muted/50 to-background dark:from-muted/20 dark:to-background bg-gradient-to-r">
+      <Section className="from-muted/50 to-background dark:from-muted/20 dark:to-background bg-linear-to-r">
         <div className="flex items-start gap-4">
           <span className="text-4xl">📈</span>
           <div className="flex-1">

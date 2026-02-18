@@ -26,9 +26,7 @@ export default function FormField({
 
   return (
     <div className={className}>
-      <label className="block text-sm font-medium text-[var(--foreground)] opacity-90">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-(--foreground) opacity-90">{label}</label>
 
       {type === 'textarea' ? (
         <textarea

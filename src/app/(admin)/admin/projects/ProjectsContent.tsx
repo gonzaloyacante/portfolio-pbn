@@ -174,7 +174,7 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
         <div className="w-6" />
 
         {/* Thumbnail */}
-        <div className="bg-muted relative h-16 w-16 flex-shrink-0 overflow-hidden rounded">
+        <div className="bg-muted relative h-16 w-16 shrink-0 overflow-hidden rounded">
           {project.thumbnailUrl ? (
             <Image
               src={project.thumbnailUrl}

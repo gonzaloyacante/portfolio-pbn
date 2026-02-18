@@ -54,76 +54,22 @@ export async function sendContactEmail(formData: FormData) {
     phone: formData.get('phone') as string,
     message: formData.get('message') as string,
     responsePreference: formData.get('responsePreference') as 'EMAIL' | 'PHONE' | 'WHATSAPP',
-    privacy: formData.get('privacy') === 'on', // Checkbox sends 'on'
+    privacy: formData.get('privacy') === 'on',
   }
 
   try {
-    // 🔐 VALIDACIÓN CON ZOD
     const validatedData = contactFormSchema.parse(rawData)
+    const sanitized = buildSanitizedData(validatedData)
+    const meta = await extractRequestMeta()
 
-    // 🛡️ SANITIZACIÓN
-    const sanitizedData = {
-      name: sanitizeText(validatedData.name),
-      email: validatedData.email.toLowerCase().trim(),
-      phone: validatedData.phone ? sanitizeText(validatedData.phone) : undefined,
-      message: sanitizeText(validatedData.message),
-      responsePreference: validatedData.responsePreference,
-    }
-
-    // 🔐 OBTENER METADATA
-    const headersList = await headers()
-    const ipAddress = await getClientIp()
-    const userAgent = headersList.get('user-agent') || 'unknown'
-    const referrer = headersList.get('referer') || null
-
-    // 🔐 RATE LIMITING
-    const rateLimitResult = await contactLimiter.check(ipAddress)
-
+    const rateLimitResult = await checkContactRateLimit(sanitized, meta.ipAddress)
     if (!rateLimitResult.allowed) {
-      return {
-        success: false,
-        message: RATE_LIMITS.CONTACT.errorMessage,
-      }
+      return { success: false, message: RATE_LIMITS.CONTACT.errorMessage }
     }
 
-    // Registrar intento
-    await contactLimiter.record(ipAddress, {
-      email: sanitizedData.email,
-      name: sanitizedData.name,
-    })
-
-    // 💾 GUARDAR EN BD
-    const newContact = await prisma.contact.create({
-      data: {
-        ...sanitizedData,
-        ipAddress,
-        userAgent,
-        referrer,
-        // Default status is NEW, priority MEDIUM
-      },
-    })
-
-    // 📊 ANALÍTICA
-    await recordAnalyticEvent('CONTACT_SUBMIT', newContact.id, 'Contact', {
-      metadata: {
-        email: sanitizedData.email, // Safe metadata
-        referrer,
-      },
-    })
-
-    // 📧 ENVIAR NOTIFICACIÓN AL ADMIN
-    try {
-      await emailService.notifyNewContact({
-        name: sanitizedData.name,
-        email: sanitizedData.email,
-        phone: sanitizedData.phone,
-        message: sanitizedData.message,
-        preference: sanitizedData.responsePreference,
-      })
-    } catch (emailError) {
-      logger.error('Error enviando notificación de email:', { error: emailError })
-      // No fallamos la request si el email falla, pero lo logueamos
-    }
+    const newContact = await persistContact(sanitized, meta)
+    await trackContactAnalytics(newContact.id, sanitized, meta.referrer)
+    await notifyAdminOfContact(sanitized)
 
     return { success: true, message: '¡Mensaje enviado! Te responderemos pronto.' }
   } catch (error) {
@@ -131,9 +77,77 @@ export async function sendContactEmail(formData: FormData) {
       const firstError = error.issues[0]
       return { success: false, message: firstError?.message || 'Datos inválidos' }
     }
-
-    logger.error('Error al guardar contacto:', { error: error })
+    logger.error('Error al guardar contacto:', { error })
     return { success: false, message: 'Error al enviar el mensaje. Intenta de nuevo.' }
+  }
+}
+
+type ValidatedContactData = z.infer<typeof contactFormSchema>
+
+function buildSanitizedData(data: ValidatedContactData) {
+  return {
+    name: sanitizeText(data.name),
+    email: data.email.toLowerCase().trim(),
+    phone: data.phone ? sanitizeText(data.phone) : undefined,
+    message: sanitizeText(data.message),
+    responsePreference: data.responsePreference,
+  }
+}
+
+type SanitizedData = ReturnType<typeof buildSanitizedData>
+
+async function extractRequestMeta() {
+  const headersList = await headers()
+  return {
+    ipAddress: await getClientIp(),
+    userAgent: headersList.get('user-agent') || 'unknown',
+    referrer: headersList.get('referer') || null,
+  }
+}
+
+async function checkContactRateLimit(sanitized: SanitizedData, ipAddress: string) {
+  const result = await contactLimiter.check(ipAddress)
+  if (result.allowed) {
+    await contactLimiter.record(ipAddress, { email: sanitized.email, name: sanitized.name })
+  }
+  return result
+}
+
+async function persistContact(
+  sanitized: SanitizedData,
+  meta: Awaited<ReturnType<typeof extractRequestMeta>>
+) {
+  return prisma.contact.create({
+    data: {
+      ...sanitized,
+      ipAddress: meta.ipAddress,
+      userAgent: meta.userAgent,
+      referrer: meta.referrer,
+    },
+  })
+}
+
+async function trackContactAnalytics(
+  contactId: string,
+  sanitized: SanitizedData,
+  referrer: string | null
+) {
+  await recordAnalyticEvent('CONTACT_SUBMIT', contactId, 'Contact', {
+    metadata: { email: sanitized.email, referrer },
+  })
+}
+
+async function notifyAdminOfContact(sanitized: SanitizedData) {
+  try {
+    await emailService.notifyNewContact({
+      name: sanitized.name,
+      email: sanitized.email,
+      phone: sanitized.phone,
+      message: sanitized.message,
+      preference: sanitized.responsePreference,
+    })
+  } catch (emailError) {
+    logger.error('Error enviando notificación de email:', { error: emailError })
   }
 }
 

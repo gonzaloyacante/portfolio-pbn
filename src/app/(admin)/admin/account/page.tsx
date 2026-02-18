@@ -89,7 +89,7 @@ export default function MiCuentaPage() {
             {password && (
               <div className="mt-2 space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="font-medium text-[var(--foreground)]">
+                  <span className="font-medium text-(--foreground)">
                     Fortaleza: {strength.label}
                   </span>
                 </div>

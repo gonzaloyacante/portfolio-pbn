@@ -58,7 +58,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
   return (
     <form action={handleSubmit} className="space-y-6">
       {/* Tabs Nav */}
-      <div className="overflow-x-auto border-b border-[var(--border)]">
+      <div className="overflow-x-auto border-b border-(--border)">
         <div className="flex min-w-max gap-4 px-1">
           {tabs.map((tab) => (
             <button
@@ -67,8 +67,8 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
               onClick={() => setActiveTab(tab.id)}
               className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'border-[var(--primary)] text-[var(--foreground)]'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+                  ? 'border-(--primary) text-(--foreground)'
+                  : 'border-transparent text-(--muted-foreground) hover:text-(--foreground)'
               }`}
             >
               {tab.label}
@@ -284,7 +284,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
         />
       </div>
 
-      <div className="bg-background/80 sticky bottom-0 z-10 flex justify-end gap-3 border-t border-[var(--border)] p-4 pt-6 backdrop-blur-sm">
+      <div className="bg-background/80 sticky bottom-0 z-10 flex justify-end gap-3 border-t border-(--border) p-4 pt-6 backdrop-blur-sm">
         <Button
           type="button"
           variant="outline"

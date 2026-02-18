@@ -162,12 +162,10 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             <SmartField label="Título" {...register('title')} required />
           </div>
           <div>
-            <label className="mb-2 block text-sm font-medium text-[var(--foreground)]">
-              Categoría
-            </label>
+            <label className="mb-2 block text-sm font-medium text-(--foreground)">Categoría</label>
             <select
               {...register('categoryId')}
-              className="w-full rounded-lg border bg-[var(--background)] px-4 py-3 text-[var(--foreground)] focus:ring-2 focus:ring-[var(--primary)]"
+              className="w-full rounded-lg border bg-(--background) px-4 py-3 text-(--foreground) focus:ring-2 focus:ring-(--primary)"
               required
             >
               {categories.map((c) => (
@@ -199,7 +197,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
           onSetThumbnail={handleSetThumbnail}
         />
 
-        <div className="rounded-xl border border-dashed border-[var(--border)] p-6">
+        <div className="rounded-xl border border-dashed border-(--border) p-6">
           <ImageUpload
             value={uploadValue}
             name="newImages"

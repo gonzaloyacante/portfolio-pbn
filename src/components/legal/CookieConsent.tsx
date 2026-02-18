@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ROUTES } from '@/config/routes'
 
 interface CookieConsentProps {
   onAcceptAll?: () => void
@@ -120,7 +121,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                         <p className="border-border text-muted-foreground mt-4 border-t pt-3 text-xs">
                           Para más información, consulta nuestra{' '}
                           <a
-                            href="/privacidad"
+                            href={ROUTES.public.privacy}
                             className="text-primary font-medium hover:underline"
                           >
                             Política de Privacidad
@@ -134,7 +135,7 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
               </div>
 
               {/* Botones */}
-              <div className="flex flex-col gap-3 sm:flex-row md:min-w-[300px] md:flex-col lg:flex-row">
+              <div className="flex flex-col gap-3 sm:flex-row md:min-w-75 md:flex-col lg:flex-row">
                 <button
                   onClick={handleAcceptNecessary}
                   className="group border-border text-foreground hover:border-border/80 hover:bg-muted relative overflow-hidden rounded-xl border-2 bg-transparent px-6 py-3 text-sm font-bold transition-all"

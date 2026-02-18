@@ -115,7 +115,7 @@ export default async function CategoryProjectsPage({
               </div>
             </Link>
 
-            <h1 className="text-foreground font-[family-name:var(--font-heading)] text-3xl font-bold sm:text-4xl">
+            <h1 className="text-foreground font-heading text-3xl font-bold sm:text-4xl">
               {category.name}
             </h1>
           </div>

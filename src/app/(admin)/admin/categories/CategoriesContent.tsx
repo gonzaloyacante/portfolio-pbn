@@ -73,7 +73,7 @@ export default function CategoriesContent({
             </div>
 
             {category.description && (
-              <p className="text-muted-foreground line-clamp-2 min-h-[40px] text-sm">
+              <p className="text-muted-foreground line-clamp-2 min-h-10 text-sm">
                 {category.description}
               </p>
             )}
@@ -85,7 +85,7 @@ export default function CategoriesContent({
             {/* Actions */}
             <div className="border-border mt-auto flex gap-2 border-t pt-4">
               <Link
-                href={`/proyectos/${category.slug}`}
+                href={`${ROUTES.public.projects}/${category.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1"
@@ -127,7 +127,7 @@ export default function CategoriesContent({
         <div className="w-6" />
 
         {/* Thumbnail */}
-        <div className="bg-muted relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-md">
+        <div className="bg-muted relative h-16 w-24 shrink-0 overflow-hidden rounded-md">
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
@@ -159,7 +159,11 @@ export default function CategoriesContent({
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          <Link href={`/proyectos/${category.slug}`} target="_blank" rel="noopener noreferrer">
+          <Link
+            href={`${ROUTES.public.projects}/${category.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button
               variant="ghost"
               size="sm"

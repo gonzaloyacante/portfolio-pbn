@@ -169,7 +169,7 @@ export function GoogleFontPicker({
       <Modal isOpen={open} onClose={() => setOpen(false)} title="Galería de Fuentes" size="xl">
         <div className="flex h-[70vh] flex-col space-y-6">
           {/* Header Controls */}
-          <div className="flex-shrink-0 space-y-4">
+          <div className="shrink-0 space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
               {/* Search */}
               <div className="relative">
@@ -282,7 +282,7 @@ export function GoogleFontPicker({
           </div>
 
           {/* Footer */}
-          <div className="text-muted-foreground flex-shrink-0 border-t pt-4 text-center text-xs">
+          <div className="text-muted-foreground shrink-0 border-t pt-4 text-center text-xs">
             Mostrando {Math.min(visibleCount, filteredFonts.length)} de {filteredFonts.length}{' '}
             fuentes disponibles
           </div>

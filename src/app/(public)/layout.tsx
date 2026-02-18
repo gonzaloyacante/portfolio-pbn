@@ -26,7 +26,7 @@ export default async function PublicLayout({ children }: { children: React.React
         {/* Skip navigation link - accesibilidad para lectores de pantalla y teclado */}
         <a
           href="#main-content"
-          className="bg-primary text-background sr-only absolute top-4 left-4 z-[100] rounded px-4 py-2 text-sm font-semibold focus:not-sr-only focus:block"
+          className="bg-primary text-background sr-only absolute top-4 left-4 z-100 rounded px-4 py-2 text-sm font-semibold focus:not-sr-only focus:block"
         >
           Saltar al contenido principal
         </a>

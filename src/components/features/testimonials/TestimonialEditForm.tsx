@@ -46,7 +46,7 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
   return (
     <form action={handleSubmit} className="space-y-6">
       {/* Tabs Nav */}
-      <div className="overflow-x-auto border-b border-[var(--border)]">
+      <div className="overflow-x-auto border-b border-(--border)">
         <div className="flex min-w-max gap-4 px-1">
           {tabs.map((tab) => (
             <button
@@ -55,8 +55,8 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
               onClick={() => setActiveTab(tab.id)}
               className={`border-b-2 px-2 pb-3 text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'border-[var(--primary)] text-[var(--foreground)]'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]'
+                  ? 'border-(--primary) text-(--foreground)'
+                  : 'border-transparent text-(--muted-foreground) hover:text-(--foreground)'
               }`}
             >
               {tab.label}
@@ -193,7 +193,7 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
         )}
       </div>
 
-      <div className="flex justify-end gap-3 border-t border-[var(--border)] pt-6">
+      <div className="flex justify-end gap-3 border-t border-(--border) pt-6">
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancelar
         </Button>

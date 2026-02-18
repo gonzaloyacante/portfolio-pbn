@@ -83,7 +83,7 @@ export default function MasonryGallery({
         <div key={colIndex} className="flex flex-col gap-4">
           {col.images.map((image) => (
             <FadeIn key={image.id} delay={image.originalIndex * 0.15} duration={0.5}>
-              <div className="group relative overflow-hidden rounded-xl bg-[var(--card-bg)] shadow-md transition-all hover:shadow-xl">
+              <div className="group relative overflow-hidden rounded-xl bg-(--card-bg) shadow-md transition-all hover:shadow-xl">
                 <OptimizedImage
                   src={image.url}
                   alt={image.title || `${titlePrefix} ${image.order}`}

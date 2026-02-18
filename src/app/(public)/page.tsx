@@ -36,7 +36,7 @@ export default async function Home() {
   const homeSettings = await getHomeSettings()
 
   return (
-    <main className="flex w-full flex-1 flex-col items-center justify-between bg-[var(--background)] transition-colors duration-500">
+    <main className="flex w-full flex-1 flex-col items-center justify-between bg-(--background) transition-colors duration-500">
       {/* Hero Section */}
       <HeroSection settings={homeSettings} />
 

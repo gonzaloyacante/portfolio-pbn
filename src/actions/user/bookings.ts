@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
+import { ROUTES } from '@/config/routes'
 
 const BookingSchema = z.object({
   date: z.string().transform((str) => new Date(str)), // Input as ISO string
@@ -66,7 +67,7 @@ export async function createBooking(formData: FormData) {
       // Don't fail the written booking, just log error
     })
 
-    revalidatePath('/admin/calendar')
+    revalidatePath(ROUTES.admin.calendar)
     return { success: true }
   } catch (error) {
     logger.error('Error creating booking:', { error })
@@ -105,7 +106,7 @@ export async function updateBookingStatus(
       where: { id },
       data: { status },
     })
-    revalidatePath('/admin/calendar')
+    revalidatePath(ROUTES.admin.calendar)
     return { success: true }
   } catch (error) {
     logger.error('Error updates booking status:', { error })

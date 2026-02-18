@@ -93,7 +93,7 @@ export function HeroContent({
   const fontsToLoad = useMemo(() => fontsHash.split('|'), [fontsHash])
 
   return (
-    <section className="relative flex min-h-[calc(100vh-80px)] w-full flex-col justify-center overflow-x-hidden bg-[var(--background)] px-4 transition-colors duration-500 sm:px-8 lg:px-16">
+    <section className="relative flex min-h-[calc(100vh-80px)] w-full flex-col justify-center overflow-x-hidden bg-(--background) px-4 transition-colors duration-500 sm:px-8 lg:px-16">
       <FontLoader fonts={fontsToLoad} />
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80vh] lg:grid-cols-12 lg:gap-12 lg:py-0">
@@ -147,7 +147,7 @@ export function HeroContent({
                 }}
               >
                 <h2
-                  className="text-shadow text-5xl leading-[0.9] font-bold tracking-tighter text-[var(--accent)] sm:text-8xl lg:text-[6rem] xl:text-[7rem]"
+                  className="text-shadow text-5xl leading-[0.9] font-bold tracking-tighter text-(--accent) sm:text-8xl lg:text-[6rem] xl:text-[7rem]"
                   style={{
                     fontFamily: s.heroTitle2FontUrl
                       ? s.heroTitle2Font!
@@ -221,7 +221,7 @@ export function HeroContent({
                     }}
                   >
                     <p
-                      className="text-sm font-bold tracking-widest text-[var(--foreground)]"
+                      className="text-sm font-bold tracking-widest text-(--foreground)"
                       style={{
                         fontFamily: s.ownerNameFontUrl
                           ? s.ownerNameFont!
@@ -353,7 +353,7 @@ export function HeroContent({
           </div>
 
           {/* Decorative Background Elements (Absolute to Right Col) */}
-          <div className="pointer-events-none absolute bottom-0 -left-10 z-0 h-32 w-32 rounded-full bg-[var(--secondary)] opacity-20 blur-2xl"></div>
+          <div className="pointer-events-none absolute bottom-0 -left-10 z-0 h-32 w-32 rounded-full bg-(--secondary) opacity-20 blur-2xl"></div>
         </div>
       </div>
     </section>

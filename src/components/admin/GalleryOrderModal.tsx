@@ -126,8 +126,8 @@ export default function GalleryOrderModal({
     >
       <div className="space-y-6">
         {/* Instructions */}
-        <div className="rounded-lg bg-[var(--accent)]/10 p-4">
-          <p className="text-sm text-[var(--foreground)]/80">
+        <div className="rounded-lg bg-(--accent)/10 p-4">
+          <p className="text-sm text-(--foreground)/80">
             <strong>Instrucciones:</strong> Arrastra y suelta las imágenes para cambiar su orden en
             la galería pública. Los números indican la posición actual. Los cambios se guardarán al
             hacer clic en Guardar Orden.
@@ -135,12 +135,12 @@ export default function GalleryOrderModal({
         </div>
 
         {/* Gallery */}
-        <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-[var(--foreground)]/10 p-4">
+        <div className="max-h-[60vh] overflow-y-auto rounded-lg border border-(--foreground)/10 p-4">
           <DraggableMasonryGallery images={images} onReorder={handleReorder} />
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-between gap-4 border-t border-[var(--foreground)]/10 pt-4">
+        <div className="flex items-center justify-between gap-4 border-t border-(--foreground)/10 pt-4">
           <Button variant="outline" onClick={handleReset} disabled={isSaving}>
             <RotateCcw className="mr-2 h-4 w-4" />
             Restablecer

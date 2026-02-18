@@ -10,6 +10,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
+import { ROUTES } from '@/config/routes'
 
 export interface TestimonialSettingsData {
   showOnAbout: boolean
@@ -71,8 +72,9 @@ export async function updateTestimonialSettings(data: TestimonialSettingsFormDat
     }
 
     revalidatePath('/')
-    revalidatePath('/about')
-    revalidatePath('/admin/testimonials')
+    revalidatePath(ROUTES.public.about) // /sobre-mi (rewrite source)
+    revalidatePath('/about') // Canonical Next.js route
+    revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
 
     return { success: true }

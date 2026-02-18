@@ -139,7 +139,7 @@ export default function ContactForm({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-[2.5rem] bg-[var(--card-bg)] p-8 text-center shadow-lg"
+        className="rounded-[2.5rem] bg-(--card-bg) p-8 text-center shadow-lg"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -147,12 +147,12 @@ export default function ContactForm({
           transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
           className="mb-6 flex justify-center"
         >
-          <CheckCircle2 size={64} className="text-[var(--primary)]" />
+          <CheckCircle2 size={64} className="text-(--primary)" />
         </motion.div>
-        <h3 className="mb-3 font-[family-name:var(--font-heading)] text-2xl font-bold text-[var(--foreground)]">
+        <h3 className="font-heading mb-3 text-2xl font-bold text-(--foreground)">
           {successTitle || '¡Mensaje enviado!'}
         </h3>
-        <p className="mb-6 text-[var(--text-body)]">
+        <p className="mb-6 text-(--text-body)">
           {successMessage || 'Gracias por contactarme. Te responderé lo antes posible.'}
         </p>
         <Button onClick={handleSendAnother} variant="outline" className="rounded-xl">
@@ -167,9 +167,9 @@ export default function ContactForm({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-[2.5rem] bg-[var(--card-bg)] p-8 shadow-lg"
+      className="rounded-[2.5rem] bg-(--card-bg) p-8 shadow-lg"
     >
-      <h2 className="mb-6 font-[family-name:var(--font-heading)] text-2xl font-bold text-[var(--foreground)]">
+      <h2 className="font-heading mb-6 text-2xl font-bold text-(--foreground)">
         {formTitle || 'Envíame un mensaje'}
       </h2>
 
@@ -177,16 +177,13 @@ export default function ContactForm({
         {/* Name & Email Row */}
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div>
-            <label
-              htmlFor="name"
-              className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
-            >
+            <label htmlFor="name" className="mb-2 block text-sm font-semibold text-(--foreground)">
               {nameLabel || 'Tu nombre'} *
             </label>
             <input
               {...register('name')}
               id="name"
-              className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
+              className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
               placeholder="Tu nombre completo"
               autoComplete="name"
             />
@@ -194,17 +191,14 @@ export default function ContactForm({
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
-            >
+            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-(--foreground)">
               {emailLabel || 'Tu email'} *
             </label>
             <input
               {...register('email')}
               type="email"
               id="email"
-              className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
+              className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
               placeholder="tu@email.com"
               autoComplete="email"
             />
@@ -214,10 +208,7 @@ export default function ContactForm({
 
         {/* Phone */}
         <div>
-          <label
-            htmlFor="phone"
-            className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
-          >
+          <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-(--foreground)">
             {phoneLabel || 'Tu teléfono'}
             {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') && ' *'}
           </label>
@@ -225,7 +216,7 @@ export default function ContactForm({
             {...register('phone')}
             type="tel"
             id="phone"
-            className="w-full rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
+            className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
             placeholder="+34 600 000 000"
             autoComplete="tel"
           />
@@ -233,7 +224,7 @@ export default function ContactForm({
 
         {/* Response Preference Selector */}
         <div>
-          <label className="mb-3 block text-sm font-semibold text-[var(--foreground)]">
+          <label className="mb-3 block text-sm font-semibold text-(--foreground)">
             {preferenceLabel || '¿Cómo preferís que te contacte?'} *
           </label>
           <div className="grid grid-cols-3 gap-3">
@@ -274,17 +265,14 @@ export default function ContactForm({
 
         {/* Message */}
         <div>
-          <label
-            htmlFor="message"
-            className="mb-2 block text-sm font-semibold text-[var(--foreground)]"
-          >
+          <label htmlFor="message" className="mb-2 block text-sm font-semibold text-(--foreground)">
             {messageLabel || 'Mensaje'} *
           </label>
           <textarea
             {...register('message')}
             id="message"
             rows={5}
-            className="w-full resize-none rounded-xl border-2 border-[var(--primary)]/20 bg-[var(--background)] px-4 py-3 text-[var(--text-body)] transition-all placeholder:text-[var(--text-body)]/50 focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 focus:outline-none"
+            className="w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
           />
@@ -297,15 +285,15 @@ export default function ContactForm({
             {...register('privacy')}
             type="checkbox"
             id="privacy"
-            className="mt-1 h-4 w-4 rounded border-2 border-[var(--primary)]/30 text-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20"
+            className="mt-1 h-4 w-4 rounded border-2 border-(--primary)/30 text-(--primary) focus:ring-2 focus:ring-(--primary)/20"
           />
-          <label htmlFor="privacy" className="text-sm text-[var(--text-body)]/80">
+          <label htmlFor="privacy" className="text-sm text-(--text-body)/80">
             He leído y acepto la{' '}
             <Link
               href={ROUTES.public.privacy}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[var(--primary)] underline hover:no-underline"
+              className="text-(--primary) underline hover:no-underline"
             >
               Política de Privacidad
             </Link>
@@ -318,7 +306,7 @@ export default function ContactForm({
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-xl bg-[var(--primary)] py-4 text-[var(--background)] transition-all hover:opacity-90"
+          className="w-full rounded-xl bg-(--primary) py-4 text-(--background) transition-all hover:opacity-90"
           size="lg"
         >
           {isSubmitting ? (
@@ -334,7 +322,7 @@ export default function ContactForm({
           )}
         </Button>
 
-        <p className="text-center text-xs text-[var(--text-body)]/60">* Campos obligatorios</p>
+        <p className="text-center text-xs text-(--text-body)/60">* Campos obligatorios</p>
       </form>
     </motion.div>
   )
@@ -358,8 +346,8 @@ function PreferenceButton({
       onClick={onClick}
       className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${
         active
-          ? 'border-[var(--primary)] bg-[var(--primary)]/10 text-[var(--primary)]'
-          : 'border-[var(--primary)]/20 bg-[var(--background)] text-[var(--text-body)] hover:border-[var(--primary)]/50'
+          ? 'border-(--primary) bg-(--primary)/10 text-(--primary)'
+          : 'border-(--primary)/20 bg-(--background) text-(--text-body) hover:border-(--primary)/50'
       }`}
     >
       {icon}

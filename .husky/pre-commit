@@ -53,9 +53,10 @@ echo ""
 # STEP 4: PRISMA VALIDATION (schema correcto)
 # ═══════════════════════════════════════════════════════════════════
 echo "🗄️  [4/5] Prisma: Validando schema..."
-if [ -f "prisma/schema.prisma" ]; then
+# Soporte multi-file schema (prisma/schema/) y schema único (prisma/schema.prisma)
+if [ -d "prisma/schema" ] || [ -f "prisma/schema.prisma" ] || [ -f "prisma.config.ts" ]; then
   if ! npx prisma validate; then
-    echo "❌ Error en Prisma schema. Revisa prisma/schema.prisma."
+    echo "❌ Error en Prisma schema. Revisa los archivos en prisma/schema/."
     exit 1
   fi
   echo "✅ Prisma schema válido"

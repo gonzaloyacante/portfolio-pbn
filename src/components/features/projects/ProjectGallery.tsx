@@ -271,7 +271,7 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
                       e.stopPropagation()
                       setCurrentImageIndex(index)
                     }}
-                    className={`relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md transition-all ${
+                    className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-md transition-all ${
                       index === currentImageIndex
                         ? 'ring-2 ring-white'
                         : 'opacity-60 hover:opacity-100'

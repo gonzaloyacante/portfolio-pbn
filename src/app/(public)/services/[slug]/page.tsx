@@ -25,34 +25,37 @@ interface ServicePageProps {
   }
 }
 
-export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const { slug } = await params
-  const service = await getServiceBySlug(slug)
+// ── Metadata Helpers ───────────────────────────────────────────────────────
 
-  if (!service) {
-    return {
-      title: 'Servicio no encontrado',
-    }
-  }
+type ServiceForMetadata = {
+  name: string
+  metaTitle?: string | null
+  metaDescription?: string | null
+  metaKeywords?: string[] | null
+  shortDesc?: string | null
+  description?: string | null
+  imageUrl?: string | null
+}
 
+function buildServiceMetadata(service: ServiceForMetadata, slug: string): Metadata {
   const description =
     service.metaDescription || service.shortDesc || service.description?.slice(0, 160) || ''
+  const title = service.metaTitle || `${service.name} - Servicios`
+  const images = service.imageUrl
+    ? [{ url: service.imageUrl, width: 1200, height: 630, alt: service.name }]
+    : []
 
   return {
-    title: service.metaTitle || `${service.name} - Servicios`,
+    title,
     description,
     keywords: service.metaKeywords,
-    alternates: {
-      canonical: `/servicios/${slug}`,
-    },
+    alternates: { canonical: `/servicios/${slug}` },
     openGraph: {
       title: service.metaTitle || service.name,
       description,
       type: 'website',
       locale: 'es_ES',
-      images: service.imageUrl
-        ? [{ url: service.imageUrl, width: 1200, height: 630, alt: service.name }]
-        : [],
+      images,
     },
     twitter: {
       card: 'summary_large_image',
@@ -61,6 +64,15 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
       images: service.imageUrl ? [service.imageUrl] : [],
     },
   }
+}
+
+export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
+  const { slug } = await params
+  const service = await getServiceBySlug(slug)
+
+  if (!service) return { title: 'Servicio no encontrado' }
+
+  return buildServiceMetadata(service, slug)
 }
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
@@ -99,7 +111,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         }}
       />
       {/* Hero Section */}
-      <div className="relative h-[60vh] min-h-[500px] w-full overflow-hidden">
+      <div className="relative h-[60vh] min-h-125 w-full overflow-hidden">
         {service.imageUrl ? (
           <Image src={service.imageUrl} alt={service.name} fill className="object-cover" priority />
         ) : (

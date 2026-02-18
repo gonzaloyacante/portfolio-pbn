@@ -35,7 +35,7 @@ export default function ProjectNavigation({
   return (
     <nav
       aria-label="Navegación entre proyectos"
-      className="grid grid-cols-1 border-t border-[var(--primary)]/10 md:grid-cols-2"
+      className="grid grid-cols-1 border-t border-(--primary)/10 md:grid-cols-2"
     >
       {/* Previous */}
       <NavButton project={previous} direction="prev" categorySlug={categorySlug} />
@@ -66,9 +66,9 @@ function NavButton({
     <Link
       href={`/proyectos/${categorySlug}/${project.slug}`}
       className={cn(
-        'group relative flex min-h-[150px] flex-col justify-center overflow-hidden bg-[var(--background)] px-8 py-12 transition-colors hover:text-white md:min-h-[200px]',
+        'group relative flex min-h-[150px] flex-col justify-center overflow-hidden bg-(--background) px-8 py-12 transition-colors hover:text-white md:min-h-[200px]',
         isPrev
-          ? 'items-start border-b border-[var(--primary)]/10 md:border-r md:border-b-0'
+          ? 'items-start border-b border-(--primary)/10 md:border-r md:border-b-0'
           : 'items-end'
       )}
       onMouseEnter={() => setIsHovered(true)}
@@ -100,7 +100,7 @@ function NavButton({
       <div className="relative z-10 flex flex-col gap-2 transition-transform duration-300 group-hover:scale-105">
         <span
           className={cn(
-            'flex items-center gap-2 text-xs font-bold tracking-widest text-[var(--primary)] uppercase group-hover:text-white/90',
+            'flex items-center gap-2 text-xs font-bold tracking-widest text-(--primary) uppercase group-hover:text-white/90',
             !isPrev && 'flex-row-reverse'
           )}
         >
@@ -109,7 +109,7 @@ function NavButton({
         </span>
         <h3
           className={cn(
-            'max-w-[15ch] font-[family-name:var(--font-heading)] text-2xl leading-tight font-bold text-[var(--foreground)] group-hover:text-white sm:text-3xl md:text-3xl',
+            'font-heading max-w-[15ch] text-2xl leading-tight font-bold text-(--foreground) group-hover:text-white sm:text-3xl md:text-3xl',
             isPrev ? 'text-left' : 'text-right'
           )}
         >

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { requireAdmin } from '@/lib/security-server'
+import { ROUTES } from '@/config/routes'
 
 // Validation Schema
 const imageOrderSchema = z.object({
@@ -49,8 +50,8 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
     )
 
     // Revalidate category page
-    revalidatePath(`/proyectos/${category.slug}`)
-    revalidatePath(`/cms/categorias/${categoryId}`)
+    revalidatePath(`${ROUTES.public.projects}/${category.slug}`)
+    revalidatePath(ROUTES.admin.categories)
 
     return { success: true }
   } catch (error) {
@@ -100,8 +101,8 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
     })
 
     // Revalidate
-    revalidatePath(`/proyectos/${category.slug}`)
-    revalidatePath(`/cms/categorias/${categoryId}`)
+    revalidatePath(`${ROUTES.public.projects}/${category.slug}`)
+    revalidatePath(ROUTES.admin.categories)
 
     return { success: true }
   } catch (error) {

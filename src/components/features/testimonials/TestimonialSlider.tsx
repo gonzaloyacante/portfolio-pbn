@@ -48,10 +48,10 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
             alt={currentTestimonial.name}
             width={48}
             height={48}
-            className="h-12 w-12 rounded-full border-2 border-[var(--primary)] object-cover"
+            className="h-12 w-12 rounded-full border-2 border-(--primary) object-cover"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--primary)]/10 text-lg font-bold text-[var(--primary)]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--primary)/10 text-lg font-bold text-(--primary)">
             {currentTestimonial.name.charAt(0)}
           </div>
         )}

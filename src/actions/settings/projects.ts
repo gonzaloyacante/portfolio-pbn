@@ -9,6 +9,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
+import { ROUTES } from '@/config/routes'
 
 export async function getProjectSettings() {
   try {
@@ -60,8 +61,8 @@ export async function updateProjectSettings(data: ProjectSettingsFormData) {
     }
 
     revalidatePath('/')
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/projects/settings')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
     revalidatePath('/', 'layout')
 
     return { success: true }

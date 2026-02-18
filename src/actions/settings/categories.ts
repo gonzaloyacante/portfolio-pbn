@@ -9,6 +9,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
+import { ROUTES } from '@/config/routes'
 
 export async function getCategorySettings() {
   try {
@@ -58,8 +59,8 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
       })
     }
 
-    revalidatePath('/proyectos')
-    revalidatePath('/admin/categories')
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.categories)
     return { success: true }
   } catch (error) {
     if (error instanceof Error && error.message.includes('Acceso denegado')) {

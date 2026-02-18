@@ -181,7 +181,7 @@ export default function CategoryGallery({
                       setIsZoomed(false)
                     }
                   }}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-[var(--card-bg)] shadow-sm transition-all hover:shadow-lg"
+                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-(--card-bg) shadow-sm transition-all hover:shadow-lg"
                 >
                   <OptimizedImage
                     src={img.url}

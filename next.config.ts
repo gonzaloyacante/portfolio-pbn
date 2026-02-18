@@ -163,6 +163,9 @@ const nextConfig: NextConfig = {
 
       // Papelera
       { source: '/admin/papelera', destination: '/admin/trash' },
+
+      // Calendario (reservas)
+      { source: '/admin/calendario', destination: '/admin/calendar' },
     ]
   },
 }

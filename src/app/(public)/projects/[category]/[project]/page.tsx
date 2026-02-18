@@ -154,7 +154,7 @@ export default async function ProjectDetailPage({
         <FadeIn className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
           {/* Title & Date */}
           <div className="border-border border-b pb-6 lg:col-span-1 lg:border-r lg:border-b-0 lg:pr-6 lg:pb-0">
-            <h1 className="text-foreground mb-4 font-[family-name:var(--font-heading)] text-4xl leading-tight font-bold uppercase sm:text-5xl">
+            <h1 className="text-foreground font-heading mb-4 text-4xl leading-tight font-bold uppercase sm:text-5xl">
               {project.title}
             </h1>
 
@@ -204,7 +204,7 @@ export default async function ProjectDetailPage({
                 {project.excerpt}
               </p>
             )}
-            <div className="prose prose-lg dark:prose-invert text-muted-foreground max-w-none font-[family-name:var(--font-body)]">
+            <div className="prose prose-lg dark:prose-invert text-muted-foreground font-body max-w-none">
               <p>{project.description?.replace(project.excerpt || '', '')}</p>
             </div>
           </div>

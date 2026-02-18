@@ -22,7 +22,7 @@ export default function PasswordStrengthMeter({
   return (
     <div className={`space-y-1 ${className}`}>
       <div className="flex justify-between text-xs">
-        <span className="font-medium text-[var(--foreground)]">Fortaleza: {strength.label}</span>
+        <span className="font-medium text-(--foreground)">Fortaleza: {strength.label}</span>
       </div>
       <div className="bg-muted flex h-1.5 w-full gap-1 overflow-hidden rounded-full">
         {[...Array(4)].map((_, i) => (

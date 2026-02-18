@@ -205,7 +205,7 @@ function ImageCard({ image, index, isDragging = false, dragHandleProps }: ImageC
   return (
     <div
       className={cn(
-        'group relative overflow-hidden rounded-xl bg-[var(--card-bg)] shadow-md transition-all',
+        'group relative overflow-hidden rounded-xl bg-(--card-bg) shadow-md transition-all',
         isDragging ? 'scale-105 opacity-50 shadow-2xl' : 'hover:shadow-xl'
       )}
     >
@@ -225,12 +225,12 @@ function ImageCard({ image, index, isDragging = false, dragHandleProps }: ImageC
           className="absolute top-3 left-3 flex h-10 w-10 cursor-grab items-center justify-center rounded-lg bg-white/95 shadow-lg backdrop-blur-sm transition-all hover:scale-110 hover:bg-white active:scale-95 active:cursor-grabbing"
           title="Arrastrar para reordenar"
         >
-          <GripVertical className="h-5 w-5 text-[var(--primary)]" />
+          <GripVertical className="h-5 w-5 text-(--primary)" />
         </button>
       )}
 
       {/* Order Badge - Prominent & Beautiful */}
-      <div className="absolute top-3 right-3 flex h-10 min-w-[2.5rem] items-center justify-center rounded-lg bg-[var(--primary)] px-3 font-bold text-white shadow-lg">
+      <div className="absolute top-3 right-3 flex h-10 min-w-[2.5rem] items-center justify-center rounded-lg bg-(--primary) px-3 font-bold text-white shadow-lg">
         #{index + 1}
       </div>
 

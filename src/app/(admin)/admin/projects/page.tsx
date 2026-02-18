@@ -5,6 +5,7 @@ import { PageHeader, Section } from '@/components/layout'
 import LazyVisualConfigModal from '@/components/features/projects/LazyVisualConfigModal'
 import Link from 'next/link'
 import ProjectsContent from './ProjectsContent'
+import { ROUTES } from '@/config/routes'
 
 export default async function ProjectsManagementPage() {
   const [projects, categories, settings] = await Promise.all([
@@ -53,7 +54,7 @@ export default async function ProjectsManagementPage() {
           ]}
         />
 
-        <Link href="/admin/projects/new">
+        <Link href={`${ROUTES.admin.projects}/nuevo`}>
           <Button size="lg" className="shadow-lg transition-transform hover:scale-105">
             ✨ Crear Nuevo Proyecto
           </Button>

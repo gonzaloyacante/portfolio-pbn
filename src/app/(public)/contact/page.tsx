@@ -76,7 +76,7 @@ export default async function ContactPage() {
         Title + Compact Info Row
       */}
       <div className="flex flex-col items-center px-6 pt-8 pb-0 text-center lg:hidden">
-        <h1 className="text-foreground mb-4 font-[family-name:var(--font-script)] text-4xl">
+        <h1 className="text-foreground font-script mb-4 text-4xl">
           {contactSettings?.pageTitle || 'Contacto'}
         </h1>
 
@@ -130,9 +130,7 @@ export default async function ContactPage() {
           </FadeIn>
 
           {/* Owner Name */}
-          <h1 className="text-foreground mb-8 font-[family-name:var(--font-script)] text-5xl">
-            {ownerName}
-          </h1>
+          <h1 className="text-foreground font-script mb-8 text-5xl">{ownerName}</h1>
 
           {/* Contact Info Desktop */}
           <div className="mb-8 space-y-4 text-left font-sans text-lg">
