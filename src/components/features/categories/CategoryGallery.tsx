@@ -216,20 +216,26 @@ export default function CategoryGallery({
 
             {/* Main Image */}
             <div
-              className={`relative flex h-full w-full items-center justify-center p-4 transition-transform duration-300 ${isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
+              className="relative flex h-full w-full cursor-zoom-in items-center justify-center overflow-hidden p-4"
               onClick={(e) => {
                 e.stopPropagation()
                 setIsZoomed(!isZoomed)
               }}
             >
-              <OptimizedImage
-                src={images[selectedIndex].url}
-                alt={images[selectedIndex].alt}
-                fill
-                className="object-contain"
-                priority
-                variant="full"
-              />
+              <div
+                className={`relative transition-transform duration-300 ${isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
+                style={{ maxHeight: '85vh', maxWidth: '90vw' }}
+              >
+                <OptimizedImage
+                  src={images[selectedIndex].url}
+                  alt={images[selectedIndex].alt}
+                  width={1200}
+                  height={800}
+                  className="max-h-[85vh] w-auto rounded-lg object-contain shadow-2xl"
+                  priority
+                  variant="full"
+                />
+              </div>
             </div>
 
             {/* Hint */}

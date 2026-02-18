@@ -188,28 +188,30 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
             {/* Main Image Container */}
             <motion.div
               key={currentImageIndex}
-              className={`relative flex items-center justify-center overflow-hidden transition-all duration-300 ${isZoomed ? 'cursor-grab active:cursor-grabbing' : ''}`}
+              className={`relative flex items-center justify-center overflow-hidden transition-all duration-300 ${isZoomed ? 'cursor-grab active:cursor-grabbing' : 'cursor-zoom-in'}`}
               onClick={(e) => {
                 e.stopPropagation()
                 setIsZoomed(!isZoomed)
                 setScale(isZoomed ? 1 : 2)
               }}
               style={{
-                maxHeight: isZoomed ? '100vh' : '85vh',
+                maxHeight: isZoomed ? '100vh' : '90vh',
                 maxWidth: isZoomed ? '100vw' : '90vw',
-                height: isZoomed ? '100vh' : 'auto',
-                width: isZoomed ? '100vw' : 'auto',
               }}
               drag={isZoomed}
               dragConstraints={{ left: -400, right: 400, top: -300, bottom: 300 }}
               dragElastic={0.2}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: scale }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
             >
               {selectedProject.images[currentImageIndex] && (
-                <div className="relative flex h-full w-full items-center justify-center">
+                <motion.div
+                  className="relative flex items-center justify-center"
+                  animate={{ scale: scale }}
+                  transition={{ duration: 0.3 }}
+                >
                   <OptimizedImage
                     src={selectedProject.images[currentImageIndex].url}
                     alt={`${selectedProject.title} - Imagen ${currentImageIndex + 1}`}
@@ -222,11 +224,11 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
 
                   {/* Zoom Hint Indicator */}
                   {!isZoomed && (
-                    <div className="pointer-events-none absolute right-4 bottom-4 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="pointer-events-none absolute right-4 bottom-4 rounded-full bg-black/50 p-2 text-white opacity-60">
                       <ZoomIn className="h-5 w-5" />
                     </div>
                   )}
-                </div>
+                </motion.div>
               )}
             </motion.div>
 
