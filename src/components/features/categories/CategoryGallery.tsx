@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ZoomIn, ChevronLeft, ChevronRight } from 'lucide-react'
 import { OptimizedImage } from '@/components/ui'
@@ -28,6 +28,24 @@ export default function CategoryGallery({
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [isZoomed, setIsZoomed] = useState(false)
+
+  // Refs for focus management
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const triggerRef = useRef<HTMLDivElement | null>(null)
+
+  const closeLightbox = useCallback(() => {
+    setSelectedIndex(null)
+    setIsZoomed(false)
+    triggerRef.current?.focus()
+  }, [])
+
+  // Focus close button when lightbox opens
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      const t = setTimeout(() => closeButtonRef.current?.focus(), 50)
+      return () => clearTimeout(t)
+    }
+  }, [selectedIndex])
 
   // Clean Masonry Logic V1
   const [columns, setColumns] = useState(1)
@@ -111,12 +129,12 @@ export default function CategoryGallery({
         setSelectedIndex(selectedIndex === images.length - 1 ? 0 : selectedIndex + 1)
         setIsZoomed(false)
       } else if (e.key === 'Escape') {
-        setSelectedIndex(null)
+        closeLightbox()
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedIndex, images.length])
+  }, [selectedIndex, images.length, closeLightbox])
 
   return (
     <>
@@ -144,11 +162,24 @@ export default function CategoryGallery({
                 transition={{ delay: img.originalIndex * 0.15, duration: 0.5 }}
               >
                 <div
-                  onClick={() => {
+                  role="button"
+                  tabIndex={0}
+                  onClick={(e) => {
+                    // Store trigger for focus restoration on close
+                    triggerRef.current = e.currentTarget as HTMLDivElement
                     // Find original index for lightbox
                     const originalIndex = images.findIndex((i) => i.id === img.id)
                     setSelectedIndex(originalIndex)
                     setIsZoomed(false)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      triggerRef.current = e.currentTarget as HTMLDivElement
+                      const originalIndex = images.findIndex((i) => i.id === img.id)
+                      setSelectedIndex(originalIndex)
+                      setIsZoomed(false)
+                    }
                   }}
                   className="group relative cursor-pointer overflow-hidden rounded-xl bg-[var(--card-bg)] shadow-sm transition-all hover:shadow-lg"
                 >
@@ -182,16 +213,25 @@ export default function CategoryGallery({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Imagen: ${images[selectedIndex].title}`}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
-            onClick={() => setSelectedIndex(null)}
+            onClick={closeLightbox}
           >
             {/* Controls */}
-            <button className="absolute top-4 right-4 z-50 rounded-full bg-white/10 p-3 text-white backdrop-blur-md hover:bg-white/20">
+            <button
+              ref={closeButtonRef}
+              aria-label="Cerrar imagen"
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 z-50 rounded-full bg-white/10 p-3 text-white backdrop-blur-md hover:bg-white/20"
+            >
               <X size={24} />
             </button>
 
             <button
               onClick={handlePrev}
+              aria-label="Imagen anterior"
               className="absolute left-4 z-50 hidden rounded-full bg-white/10 p-4 text-white hover:bg-white/20 md:block"
             >
               <ChevronLeft size={32} />
@@ -199,6 +239,7 @@ export default function CategoryGallery({
 
             <button
               onClick={handleNext}
+              aria-label="Imagen siguiente"
               className="absolute right-4 z-50 hidden rounded-full bg-white/10 p-4 text-white hover:bg-white/20 md:block"
             >
               <ChevronRight size={32} />

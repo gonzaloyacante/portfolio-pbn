@@ -23,6 +23,10 @@ type FieldConfig = {
   variant?: keyof HomeSettingsData
   imageUrl?: keyof HomeSettingsData
   imageStyle?: keyof HomeSettingsData
+  // Extended fields
+  alt?: keyof HomeSettingsData
+  showFeatured?: keyof HomeSettingsData
+  featuredCount?: keyof HomeSettingsData
 }
 
 type ControlConfig = {
@@ -134,6 +138,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
     fields: {
       imageUrl: 'heroMainImageUrl',
       imageStyle: 'heroImageStyle',
+      alt: 'heroMainImageAlt',
       zIndex: 'heroMainImageZIndex',
       offsetX: 'heroMainImageOffsetX',
       offsetY: 'heroMainImageOffsetY',
@@ -151,6 +156,8 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       fontSize: 'featuredTitleFontSize',
       color: 'featuredTitleColor',
       colorDark: 'featuredTitleColorDark',
+      showFeatured: 'showFeaturedProjects',
+      featuredCount: 'featuredCount',
     },
     defaults: {
       fontSize: 24,

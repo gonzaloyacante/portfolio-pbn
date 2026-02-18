@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Project, ProjectImage } from '@prisma/client'
 import { recordAnalyticEvent } from '@/actions/analytics'
@@ -37,7 +37,8 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
   const [isZoomed, setIsZoomed] = useState(false)
   const [scale, setScale] = useState(1)
 
-  const handleProjectClick = (project: ProjectWithImages) => {
+  const handleProjectClick = (project: ProjectWithImages, el: HTMLDivElement) => {
+    triggerRef.current = el
     setSelectedProject(project)
     setCurrentImageIndex(0)
     setIsZoomed(false)
@@ -45,12 +46,18 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
     recordAnalyticEvent('PROJECT_DETAIL_OPEN', project.id, 'Project')
   }
 
-  const closeLightbox = useCallback(() => {
+  // Refs for focus management (declared before callbacks that use them)
+  const triggerRef = useRef<HTMLDivElement | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+
+  const closeLightbox = () => {
     setSelectedProject(null)
     setCurrentImageIndex(0)
     setIsZoomed(false)
     setScale(1)
-  }, [])
+    // Restore focus to the element that triggered the lightbox
+    triggerRef.current?.focus()
+  }
 
   const goToPrevious = useCallback(() => {
     if (!selectedProject) return
@@ -66,18 +73,33 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
     setCurrentImageIndex((prev) => (prev === selectedProject.images.length - 1 ? 0 : prev + 1))
   }, [selectedProject])
 
+  // Focus close button when lightbox opens
+  useEffect(() => {
+    if (selectedProject) {
+      // Small timeout to let AnimatePresence mount the element
+      const t = setTimeout(() => closeButtonRef.current?.focus(), 50)
+      return () => clearTimeout(t)
+    }
+  }, [selectedProject])
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!selectedProject) return
-      if (e.key === 'Escape') closeLightbox()
+      if (e.key === 'Escape') {
+        setSelectedProject(null)
+        setCurrentImageIndex(0)
+        setIsZoomed(false)
+        setScale(1)
+        triggerRef.current?.focus()
+      }
       if (e.key === 'ArrowLeft') goToPrevious()
       if (e.key === 'ArrowRight') goToNext()
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedProject, closeLightbox, goToPrevious, goToNext])
+  }, [selectedProject, goToPrevious, goToNext])
 
   // Prevent body scroll when lightbox is open
   useEffect(() => {
@@ -103,7 +125,7 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
           <motion.div
             key={project.id}
             className="group cursor-pointer"
-            onClick={() => handleProjectClick(project)}
+            onClick={(e) => handleProjectClick(project, e.currentTarget as HTMLDivElement)}
             variants={itemVariants}
             whileHover={{ y: -8 }}
             transition={{ duration: 0.3 }}
@@ -137,6 +159,9 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
       <AnimatePresence>
         {selectedProject && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Galería: ${selectedProject.title}`}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-sm"
             onClick={closeLightbox}
             initial={{ opacity: 0 }}
@@ -145,6 +170,8 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
           >
             {/* Close Button */}
             <button
+              ref={closeButtonRef}
+              aria-label="Cerrar galería"
               className="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
               onClick={closeLightbox}
             >
@@ -165,6 +192,7 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
             {selectedProject.images.length > 1 && (
               <>
                 <button
+                  aria-label="Imagen anterior"
                   className="absolute left-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
                   onClick={(e) => {
                     e.stopPropagation()
@@ -174,6 +202,7 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
                   <ChevronLeft className="h-8 w-8" />
                 </button>
                 <button
+                  aria-label="Imagen siguiente"
                   className="absolute right-4 z-10 rounded-full bg-white/10 p-3 text-white transition-colors hover:bg-white/20"
                   onClick={(e) => {
                     e.stopPropagation()

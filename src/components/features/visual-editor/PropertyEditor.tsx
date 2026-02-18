@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { Input } from '@/components/ui'
+import { Input, Switch } from '@/components/ui'
 import type { HomeSettingsData } from '@/actions/settings/home'
 
 const GoogleFontPicker = dynamic(
@@ -179,6 +179,45 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
               ? (val: number) => onUpdate(fields.rotation as keyof HomeSettingsData, val)
               : undefined
           }
+        />
+      )}
+
+      {/* Alt Text (accessibility) */}
+      {fields.alt && (
+        <Input
+          label="Texto alternativo (alt)"
+          value={(settings[fields.alt] as string) || ''}
+          onChange={(e) => onUpdate(fields.alt as keyof HomeSettingsData, e.target.value)}
+          placeholder="Describe la imagen para accesibilidad"
+        />
+      )}
+
+      {/* Show Featured Projects Toggle */}
+      {fields.showFeatured && (
+        <div className="flex items-center justify-between rounded-lg border p-3">
+          <div>
+            <p className="text-sm font-medium">Mostrar proyectos destacados</p>
+            <p className="text-muted-foreground text-xs">
+              Muestra la sección de proyectos bajo el hero
+            </p>
+          </div>
+          <Switch
+            checked={(settings[fields.showFeatured] as boolean) ?? true}
+            onCheckedChange={(val: boolean) =>
+              onUpdate(fields.showFeatured as keyof HomeSettingsData, val)
+            }
+          />
+        </div>
+      )}
+
+      {/* Featured Count */}
+      {fields.featuredCount && (
+        <EditorSliderControl
+          label="Número de proyectos destacados"
+          value={(settings[fields.featuredCount] as number) || 6}
+          onChange={(val: number) => onUpdate(fields.featuredCount as keyof HomeSettingsData, val)}
+          min={1}
+          max={20}
         />
       )}
     </div>
