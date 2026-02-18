@@ -2,6 +2,7 @@
 
 import { Component, ErrorInfo, ReactNode } from 'react'
 import Button from '../forms/Button'
+import { logger } from '@/lib/logger'
 
 interface Props {
   children: ReactNode
@@ -24,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error caught by boundary', error, errorInfo)
+    logger.error('Error caught by boundary', { error, errorInfo })
   }
 
   handleReset = () => {

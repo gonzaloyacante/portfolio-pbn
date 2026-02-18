@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { logger } from '@/lib/logger'
 
 export default function Error({
   error,
@@ -10,35 +11,24 @@ export default function Error({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Application Error:', error)
+    logger.error('Application Error', { error })
   }, [error])
 
   const isDev = process.env.NODE_ENV === 'development'
 
   return (
-    <div
-      className="flex min-h-[70vh] flex-col items-center justify-center gap-8 px-4 text-center"
-      style={{ backgroundColor: 'var(--color-background)' }}
-    >
+    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-8 px-4 text-center">
       {/* Emoji decorativo */}
       <div className="text-8xl">😟</div>
 
       <div className="space-y-4">
-        <h1 className="font-script text-6xl md:text-7xl" style={{ color: 'var(--color-text)' }}>
-          ¡Oops!
-        </h1>
+        <h1 className="font-script text-foreground text-6xl md:text-7xl">¡Oops!</h1>
 
-        <h2
-          className="font-primary text-2xl font-bold md:text-3xl"
-          style={{ color: 'var(--color-text)' }}
-        >
+        <h2 className="font-primary text-foreground text-2xl font-bold md:text-3xl">
           Algo salió mal
         </h2>
 
-        <p
-          className="mx-auto max-w-lg text-lg"
-          style={{ color: 'var(--color-text)', opacity: 0.7 }}
-        >
+        <p className="text-foreground/70 mx-auto max-w-lg text-lg">
           No te preocupes, ya estamos trabajando para arreglarlo. Mientras tanto, puedes intentar de
           nuevo o volver al inicio.
         </p>
@@ -63,11 +53,7 @@ export default function Error({
       <div className="flex flex-col gap-4 sm:flex-row">
         <button
           onClick={reset}
-          className="group cursor-pointer overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all duration-200 hover:scale-105 hover:shadow-2xl active:scale-95"
-          style={{
-            backgroundColor: 'var(--color-btn-bg)',
-            color: 'var(--color-btn-text)',
-          }}
+          className="bg-primary text-primary-foreground group cursor-pointer overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all duration-200 hover:scale-105 hover:shadow-2xl active:scale-95"
         >
           <span className="relative z-10 flex items-center gap-2">
             <svg
@@ -90,11 +76,7 @@ export default function Error({
 
         <button
           onClick={() => (window.location.href = '/')}
-          className="cursor-pointer rounded-3xl border-2 px-8 py-4 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-          style={{
-            borderColor: 'var(--color-primary)',
-            color: 'var(--color-text)',
-          }}
+          className="border-primary text-foreground cursor-pointer rounded-3xl border-2 px-8 py-4 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
         >
           <span className="flex items-center gap-2">
             <svg

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { requestPasswordReset } from '@/actions/user/auth'
 import { FadeIn, Button, Input } from '@/components/ui'
+import { ROUTES } from '@/config/routes'
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
@@ -59,7 +60,7 @@ export default function ForgotPasswordPage() {
                   <p className="text-muted-foreground mt-2 text-sm">{message}</p>
                 </div>
                 <Button asChild variant="primary" className="rounded-xl">
-                  <Link href="/auth/login">Volver a Iniciar Sesión</Link>
+                  <Link href={ROUTES.auth.login}>Volver a Iniciar Sesión</Link>
                 </Button>
               </div>
             ) : (
@@ -97,7 +98,7 @@ export default function ForgotPasswordPage() {
             {status !== 'success' && (
               <div className="mt-6 text-center">
                 <Link
-                  href="/auth/login"
+                  href={ROUTES.auth.login}
                   className="inline-flex items-center gap-2 text-sm text-[var(--primary)] transition-colors hover:underline"
                 >
                   <ArrowLeft className="h-4 w-4" /> Volver a Iniciar Sesión

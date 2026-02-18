@@ -2,6 +2,7 @@ import { getFeaturedProjects } from '@/actions/cms/projects'
 import Link from 'next/link'
 import { FadeIn, StaggerChildren, OptimizedImage } from '@/components/ui'
 import { ArrowRight } from 'lucide-react'
+import { ROUTES } from '@/config/routes'
 
 interface FeaturedProjectsProps {
   title?: string | null
@@ -24,7 +25,7 @@ export default async function FeaturedProjects({ title, count = 6 }: FeaturedPro
             </h2>
           </div>
           <Link
-            href="/proyectos"
+            href={ROUTES.public.projects}
             className="group flex items-center gap-2 text-[var(--primary)] transition-colors hover:text-[var(--accent)]"
           >
             <span className="font-medium">Ver todo el portfolio</span>

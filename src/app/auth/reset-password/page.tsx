@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { resetPassword } from '@/actions/user/auth'
+import { ROUTES } from '@/config/routes'
 import { FadeIn } from '@/components/ui'
 
 import PasswordStrengthMeter from '@/components/ui/forms/PasswordStrengthMeter'
@@ -101,7 +102,7 @@ function ResetPasswordForm() {
                   <p className="text-muted-foreground mt-2 text-sm">{message}</p>
                 </div>
                 <Link
-                  href="/auth/login"
+                  href={ROUTES.auth.login}
                   className="inline-block cursor-pointer rounded-lg bg-[var(--foreground)] px-6 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:opacity-90"
                 >
                   Iniciar Sesión
@@ -203,7 +204,7 @@ function ResetPasswordForm() {
             {status !== 'success' && (
               <div className="mt-6 text-center">
                 <Link
-                  href="/auth/login"
+                  href={ROUTES.auth.login}
                   className="text-sm text-[var(--primary)] transition-colors hover:underline"
                 >
                   ← Volver a Iniciar Sesión

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Página 404 para el panel de administración
@@ -19,7 +20,7 @@ export default function AdminNotFound() {
 
       <div className="flex gap-4">
         <Link
-          href="/admin/dashboard"
+          href={ROUTES.admin.dashboard}
           className="bg-primary text-primary-foreground flex items-center gap-2 rounded-xl px-6 py-3 font-bold shadow-lg transition-all hover:scale-105 active:scale-95"
         >
           <svg

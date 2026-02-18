@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 export default function NotFound() {
   return (
@@ -24,7 +25,7 @@ export default function NotFound() {
 
       {/* Botón estilizado */}
       <Link
-        href="/"
+        href={ROUTES.home}
         className="group bg-primary text-primary-foreground relative overflow-hidden rounded-3xl px-8 py-4 font-semibold shadow-xl transition-all hover:scale-105 hover:shadow-2xl"
       >
         <span className="relative z-10 flex items-center gap-2">

@@ -4,11 +4,11 @@ import { signIn } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FadeIn, Button, Input } from '@/components/ui'
+import { ROUTES } from '@/config/routes'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema } from '@/lib/validations'
 import { z } from 'zod'
-import { ROUTES } from '@/config/routes'
 import { showToast } from '@/lib/toast'
 import { Mail, Lock } from 'lucide-react'
 
@@ -110,7 +110,7 @@ export default function LoginPage() {
 
               <div className="mt-2 text-right">
                 <Link
-                  href="/auth/forgot-password"
+                  href={ROUTES.auth.forgotPassword}
                   className="text-sm text-[var(--primary)] transition-colors hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
@@ -132,7 +132,7 @@ export default function LoginPage() {
           {/* Link volver */}
           <div className="text-center">
             <Link
-              href="/"
+              href={ROUTES.home}
               className="text-muted-foreground hover:text-foreground text-sm transition-colors"
             >
               ← Volver al sitio público

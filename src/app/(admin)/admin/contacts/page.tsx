@@ -1,6 +1,7 @@
 import { getContacts } from '@/actions/user/contact'
 import ContactList from '@/components/features/contact/ContactList'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 export default async function AdminContactsPage() {
   const contacts = await getContacts()
@@ -17,7 +18,7 @@ export default async function AdminContactsPage() {
 
         <div className="flex items-center gap-4">
           <Link
-            href="/admin/contacts/settings"
+            href={ROUTES.admin.contactSettings}
             className="border-input hover:bg-accent rounded-lg border px-4 py-2 text-sm font-medium"
           >
             Configurar

@@ -3,6 +3,7 @@
 import { useState, useCallback, ChangeEvent, DragEvent, useEffect } from 'react'
 import Image from 'next/image'
 import { showToast } from '@/lib/toast'
+import { logger } from '@/lib/logger'
 
 interface UploadedImage {
   url: string
@@ -230,7 +231,7 @@ export default function ImageUpload({
           body: JSON.stringify({ publicId: imageToRemove.publicId }),
         })
       } catch (error) {
-        console.error('Error deleting image:', error)
+        logger.error('Error deleting image', { error })
       }
     }
 

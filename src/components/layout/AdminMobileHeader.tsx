@@ -133,7 +133,7 @@ export default function AdminMobileHeader() {
         {/* Footer del drawer */}
         <div className="border-border mt-auto border-t p-4">
           <Link
-            href="/"
+            href={ROUTES.home}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}

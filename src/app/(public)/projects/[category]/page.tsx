@@ -6,6 +6,7 @@ import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
 import { ArrowLeft } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
+import { ROUTES } from '@/config/routes'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 
 export async function generateStaticParams() {
@@ -106,7 +107,7 @@ export default async function CategoryProjectsPage({
         <div className="mb-10 flex flex-col items-start gap-6 sm:mb-12 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
             <Link
-              href="/proyectos"
+              href={ROUTES.public.projects}
               className="group flex items-center gap-2 text-[var(--primary)] transition-colors hover:opacity-70"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--primary)] transition-all group-hover:-translate-x-1 group-hover:bg-[var(--primary)] group-hover:text-white">

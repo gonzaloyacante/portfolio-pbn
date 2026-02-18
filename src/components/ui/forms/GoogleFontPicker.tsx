@@ -12,6 +12,7 @@ import { Button } from '@/components/ui'
 import { Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import Badge from '@/components/ui/data-display/Badge'
+import { logger } from '@/lib/logger'
 
 interface GoogleFontPickerProps {
   value: string // Font name
@@ -51,7 +52,7 @@ export function GoogleFontPicker({
         }
         setFonts(fetchedFonts)
       } catch (err) {
-        console.error('Failed to load fonts:', err)
+        logger.error('Failed to load fonts', { error: err })
         setError('Error loading fonts.')
       } finally {
         setLoading(false)

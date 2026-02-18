@@ -1,9 +1,15 @@
 export const ROUTES = {
   home: '/',
+  auth: {
+    login: '/auth/login',
+    forgotPassword: '/auth/forgot-password',
+    resetPassword: '/auth/reset-password',
+  },
   admin: {
     dashboard: '/admin/panel',
     home: '/admin/inicio',
     contacts: '/admin/contactos',
+    contactSettings: '/admin/contactos/configuracion',
     projects: '/admin/proyectos',
     categories: '/admin/categorias',
     services: '/admin/servicios',

@@ -62,7 +62,7 @@ export default function AdminSidebar() {
       {/* Footer - Sticky */}
       <div className="border-border mt-auto border-t p-4">
         <Link
-          href="/"
+          href={ROUTES.home}
           target="_blank"
           rel="noopener noreferrer"
           className="text-muted-foreground hover:bg-accent hover:text-accent-foreground mb-2 flex w-full cursor-pointer items-center gap-3 rounded-lg px-4 py-2 text-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
