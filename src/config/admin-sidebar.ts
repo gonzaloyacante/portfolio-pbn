@@ -1,62 +1,64 @@
+import { ROUTES } from '@/config/routes'
+
 export const menuItems = [
   {
-    href: '/admin/dashboard',
+    href: ROUTES.admin.dashboard,
     label: 'Dashboard',
     icon: '📊',
   },
   {
-    href: '/admin/home',
+    href: ROUTES.admin.home,
     label: 'Inicio',
     icon: '🏠',
   },
   {
-    href: '/admin/projects',
+    href: ROUTES.admin.projects,
     label: 'Proyectos',
     icon: '🎨',
   },
   {
-    href: '/admin/categories',
+    href: ROUTES.admin.categories,
     label: 'Categorías',
     icon: '📁',
   },
   {
-    href: '/admin/services',
+    href: ROUTES.admin.services,
     label: 'Servicios',
     icon: '💅',
   },
   {
-    href: '/admin/testimonials',
+    href: ROUTES.admin.testimonials,
     label: 'Testimonios',
     icon: '💬',
   },
   {
-    href: '/admin/contacts', // View messages
+    href: ROUTES.admin.contacts,
     label: 'Mensajes',
     icon: '📬',
   },
   {
-    href: '/admin/about',
+    href: ROUTES.admin.about,
     label: 'Sobre Mí',
     icon: '👤',
   },
   {
-    href: '/admin/settings', // Contact & General Config
+    href: ROUTES.admin.settings,
     label: 'Contacto y Redes',
     icon: '⚙️',
   },
   {
-    href: '/admin/theme',
+    href: ROUTES.admin.theme,
     label: 'Tema',
     icon: '🖌️',
   },
   {
-    href: '/admin/analytics',
+    href: ROUTES.admin.analytics,
     label: 'Analítica',
     icon: '📈',
   },
   // Trash can be useful
   {
-    href: '/admin/trash',
+    href: ROUTES.admin.trash,
     label: 'Papelera',
     icon: '🗑️',
   },

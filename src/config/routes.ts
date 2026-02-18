@@ -2,6 +2,7 @@ export const ROUTES = {
   home: '/',
   admin: {
     dashboard: '/admin/panel',
+    home: '/admin/inicio',
     contacts: '/admin/contactos',
     projects: '/admin/proyectos',
     categories: '/admin/categorias',

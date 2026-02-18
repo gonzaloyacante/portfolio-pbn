@@ -148,6 +148,10 @@ const nextConfig: NextConfig = {
       { source: '/admin/mi-cuenta', destination: '/admin/account' },
       { source: '/admin/perfil', destination: '/admin/profile' }, // Si usas profile.tsx
 
+      // Servicios
+      { source: '/admin/servicios', destination: '/admin/services' },
+      { source: '/admin/servicios/nuevo', destination: '/admin/services/new' },
+
       // Ayuda
       { source: '/admin/ayuda', destination: '/admin/help' },
 
