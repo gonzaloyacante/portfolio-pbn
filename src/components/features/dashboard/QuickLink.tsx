@@ -16,7 +16,7 @@ export default function QuickLink({ href, icon, label, external }: QuickLinkProp
   return (
     <Link
       href={href}
-      className="text-primary block rounded-md px-4 py-2 transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
+      className="text-primary hover:bg-muted block rounded-md px-4 py-2 transition-colors"
       {...props}
     >
       {icon} {label}

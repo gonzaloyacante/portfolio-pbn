@@ -260,9 +260,7 @@ export default function ImageUpload({
 
   return (
     <div className="w-full">
-      <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
-        {label}
-      </label>
+      <label className="text-foreground mb-2 block text-sm font-medium">{label}</label>
 
       {/* Single Image Mode: Image inside dropzone */}
       {hasSingleImage ? (
@@ -286,7 +284,7 @@ export default function ImageUpload({
             <button
               type="button"
               onClick={handleEditClick}
-              className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-gray-700 shadow-lg transition-transform hover:scale-110 hover:bg-white"
+              className="text-foreground flex h-12 w-12 items-center justify-center rounded-full bg-white/90 shadow-lg transition-transform hover:scale-110 hover:bg-white"
               title="Cambiar imagen"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -414,11 +412,7 @@ export default function ImageUpload({
             <div
               key={`${img.publicId || index}-${img.url}`}
               className={`group relative aspect-square overflow-hidden rounded-lg border-2 ${
-                img.error
-                  ? 'border-red-500'
-                  : img.isUploading
-                    ? 'border-primary'
-                    : 'border-gray-200 dark:border-gray-700'
+                img.error ? 'border-red-500' : img.isUploading ? 'border-primary' : 'border-border'
               }`}
             >
               <Image
@@ -485,7 +479,7 @@ export default function ImageUpload({
 
       {/* Contador */}
       {multiple && (
-        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-muted-foreground mt-2 text-sm">
           {images.length} de {maxFiles} imágenes
         </p>
       )}

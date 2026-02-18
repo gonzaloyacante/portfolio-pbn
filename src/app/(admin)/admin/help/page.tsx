@@ -257,7 +257,7 @@ export default function AyudaPage() {
       {/* Header */}
       <div className="border-border bg-card rounded-3xl border p-8">
         <h1 className="text-foreground mb-4 text-4xl font-bold">📘 Centro de Ayuda</h1>
-        <p className="text-lg text-gray-700 dark:text-gray-300">
+        <p className="text-foreground text-lg">
           Bienvenida al manual de usuario de tu portfolio. Aquí encontrarás guías paso a paso para
           gestionar todos los aspectos de tu sitio web profesional.
         </p>
@@ -276,7 +276,7 @@ export default function AyudaPage() {
                 <span className="text-4xl">{tutorial.icon}</span>
                 <div>
                   <h3 className="text-foreground text-xl font-bold">{tutorial.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{tutorial.description}</p>
+                  <p className="text-muted-foreground text-sm">{tutorial.description}</p>
                 </div>
               </div>
 
@@ -285,7 +285,7 @@ export default function AyudaPage() {
                 <h4 className="text-foreground mb-2 text-sm font-semibold tracking-wide uppercase">
                   Pasos a seguir
                 </h4>
-                <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <ol className="text-foreground space-y-2 text-sm">
                   {tutorial.steps.map((step, index) => (
                     <li key={index} className="flex gap-2">
                       <span className="text-foreground font-bold">{index + 1}.</span>
@@ -301,7 +301,7 @@ export default function AyudaPage() {
                   <h4 className="text-primary mb-2 flex items-center gap-2 text-sm font-semibold">
                     💡 Tips Profesionales
                   </h4>
-                  <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
+                  <ul className="text-foreground space-y-1.5 text-xs">
                     {tutorial.tips.map((tip, index) => (
                       <li key={index} className="flex gap-2">
                         <span className="text-primary">•</span>
@@ -322,12 +322,9 @@ export default function AyudaPage() {
         <div className="border-border bg-card rounded-3xl border p-6">
           <dl className="space-y-4">
             {glossary.map((entry, index) => (
-              <div
-                key={index}
-                className="border-b border-gray-200 pb-4 last:border-0 dark:border-gray-700"
-              >
+              <div key={index} className="border-border border-b pb-4 last:border-0">
                 <dt className="text-foreground mb-1 font-semibold">{entry.term}</dt>
-                <dd className="text-sm text-gray-700 dark:text-gray-300">{entry.definition}</dd>
+                <dd className="text-foreground text-sm">{entry.definition}</dd>
               </div>
             ))}
           </dl>
@@ -342,7 +339,7 @@ export default function AyudaPage() {
             <summary className="text-foreground cursor-pointer font-semibold">
               ¿Puedo recuperar un proyecto eliminado?
             </summary>
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="text-foreground mt-2 text-sm">
               Sí, los proyectos eliminados usan <strong>soft delete</strong> (eliminación suave).
               Permanecen en la base de datos durante 30 días y pueden ser restaurados desde la
               sección de &quot;Papelera&quot;.
@@ -353,7 +350,7 @@ export default function AyudaPage() {
             <summary className="text-foreground cursor-pointer font-semibold">
               ¿Cuántas imágenes puedo subir por proyecto?
             </summary>
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="text-foreground mt-2 text-sm">
               Puedes subir hasta <strong>10 imágenes</strong> por proyecto. Si necesitas más,
               considera dividir el trabajo en múltiples proyectos relacionados.
             </p>
@@ -363,7 +360,7 @@ export default function AyudaPage() {
             <summary className="text-foreground cursor-pointer font-semibold">
               ¿Qué tamaño de imagen es el ideal?
             </summary>
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="text-foreground mt-2 text-sm">
               Lo ideal es <strong>1200x800px a 2400x1600px</strong>. Cloudinary optimizará
               automáticamente las imágenes para que carguen rápido sin perder calidad visual.
             </p>
@@ -373,7 +370,7 @@ export default function AyudaPage() {
             <summary className="text-foreground cursor-pointer font-semibold">
               ¿Cómo instalo la app en mi celular?
             </summary>
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="text-foreground mt-2 text-sm">
               Desde tu navegador móvil (Chrome/Safari), abre el sitio y toca el menú (⋮ o
               compartir). Selecciona
               <strong> &quot;Agregar a pantalla de inicio&quot;</strong>. La app se instalará como
@@ -385,7 +382,7 @@ export default function AyudaPage() {
             <summary className="text-foreground cursor-pointer font-semibold">
               ¿Por qué no puedo eliminar una categoría?
             </summary>
-            <p className="mt-2 text-sm text-gray-700 dark:text-gray-300">
+            <p className="text-foreground mt-2 text-sm">
               No puedes eliminar una categoría si tiene proyectos asignados. Primero reasigna esos
               proyectos a otra categoría o elimínalos.
             </p>
@@ -396,7 +393,7 @@ export default function AyudaPage() {
       {/* Contacto de soporte */}
       <div className="bg-muted/50 rounded-3xl p-6">
         <h3 className="text-foreground mb-3 text-xl font-bold">🆘 ¿Necesitas ayuda adicional?</h3>
-        <p className="mb-4 text-gray-700 dark:text-gray-300">
+        <p className="text-foreground mb-4">
           Si tienes alguna pregunta técnica que no esté cubierta en este manual, no dudes en
           contactarnos:
         </p>

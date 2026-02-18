@@ -184,7 +184,7 @@ export default async function ContactPage() {
         {/* ========== RIGHT COLUMN: Contact Form ========== */}
         <div className="w-full">
           <Suspense
-            fallback={<div className="h-96 w-full animate-pulse rounded-[2.5rem] bg-gray-100" />}
+            fallback={<div className="bg-muted h-96 w-full animate-pulse rounded-[2.5rem]" />}
           >
             <ContactForm
               formTitle={contactSettings?.formTitle}

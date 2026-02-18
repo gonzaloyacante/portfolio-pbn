@@ -22,7 +22,7 @@ export default function FormField({
   ...props
 }: FormFieldProps) {
   const baseClasses =
-    'mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-primary focus:ring-primary sm:text-sm dark:border-gray-600 dark:bg-gray-700'
+    'mt-1 block w-full rounded-md border border-input p-2 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-background text-foreground'
 
   return (
     <div className={className}>

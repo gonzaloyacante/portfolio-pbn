@@ -258,7 +258,7 @@ function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean
   return (
     <>
       <div
-        className={`grid grid-cols-12 items-center gap-2 rounded border p-3 ${isNew ? 'border-dashed border-gray-300 bg-gray-50' : 'border-gray-100'}`}
+        className={`grid grid-cols-12 items-center gap-2 rounded border p-3 ${isNew ? 'border-border bg-muted/50 border-dashed' : 'border-border'}`}
       >
         <div className="col-span-2">
           {isNew ? (

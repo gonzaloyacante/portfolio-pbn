@@ -24,7 +24,7 @@ export default async function PrivacyPage() {
         Política de Privacidad
       </h1>
 
-      <div className="space-y-8 text-gray-700 dark:text-gray-300">
+      <div className="text-foreground space-y-8">
         {/* Introducción */}
         <section>
           <h2 className="text-foreground mb-4 text-2xl font-semibold">1. Información General</h2>
@@ -263,7 +263,7 @@ export default async function PrivacyPage() {
             recomendamos revisar periódicamente esta política para estar informado de cómo
             protegemos sus datos.
           </p>
-          <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-muted-foreground mt-4 text-sm">
             <strong>Última actualización:</strong> {new Date().toLocaleDateString('es-ES')}
           </p>
         </section>

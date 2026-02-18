@@ -46,10 +46,10 @@ export default async function AnalyticsPage() {
         <div className="flex items-start gap-4">
           <span className="text-4xl">📈</span>
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-foreground text-lg font-semibold">
               Métricas avanzadas con Google Analytics
             </h3>
-            <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-muted-foreground mt-1 text-sm">
               Para métricas detalladas como fuentes de tráfico, comportamiento de usuarios,
               conversiones y mucho más, accede a tu panel de Google Analytics.
             </p>
@@ -97,7 +97,7 @@ export default async function AnalyticsPage() {
       <Section>
         <h3 className="text-foreground mb-6 flex items-center gap-2 text-lg font-semibold">
           📈 Tendencia de Visitas
-          <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-normal text-gray-500 dark:bg-gray-700 dark:text-gray-400">
+          <span className="bg-muted text-muted-foreground rounded-full px-2 py-1 text-xs font-normal">
             Última semana
           </span>
         </h3>
@@ -117,7 +117,7 @@ export default async function AnalyticsPage() {
                     <div className="border-t-popover absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent" />
                   </div>
                 </div>
-                <p className="mt-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+                <p className="text-muted-foreground mt-2 text-xs font-medium">
                   {new Date(day.date).toLocaleDateString('es', { weekday: 'short' })}
                 </p>
               </div>
@@ -143,9 +143,7 @@ export default async function AnalyticsPage() {
                     <span className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full text-lg">
                       {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '📸'}
                     </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {project!.title}
-                    </span>
+                    <span className="text-foreground font-medium">{project!.title}</span>
                   </div>
                   <span className="bg-primary/10 text-primary rounded-full px-3 py-1 text-sm font-semibold">
                     {project!.count} vistas
@@ -171,19 +169,19 @@ export default async function AnalyticsPage() {
             </h3>
             <div className="flex items-center justify-around py-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {deviceUsage.mobile}
+                <div className="text-foreground text-3xl font-bold">{deviceUsage.mobile}</div>
+                <div className="text-muted-foreground text-sm">📱 Móvil</div>
+                <div className="text-muted-foreground mt-1 text-xs font-medium">
+                  {mobilePercent}%
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">📱 Móvil</div>
-                <div className="mt-1 text-xs font-medium text-gray-400">{mobilePercent}%</div>
               </div>
               <div className="bg-border dark:bg-border h-16 w-px" />
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {deviceUsage.desktop}
+                <div className="text-foreground text-3xl font-bold">{deviceUsage.desktop}</div>
+                <div className="text-muted-foreground text-sm">💻 Escritorio</div>
+                <div className="text-muted-foreground mt-1 text-xs font-medium">
+                  {desktopPercent}%
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">💻 Escritorio</div>
-                <div className="mt-1 text-xs font-medium text-gray-400">{desktopPercent}%</div>
               </div>
             </div>
             <div className="bg-muted dark:bg-muted/20 flex h-3 overflow-hidden rounded-full">
@@ -220,7 +218,7 @@ export default async function AnalyticsPage() {
                 ))}
               </ul>
             ) : (
-              <p className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-muted-foreground py-4 text-center text-sm">
                 Sin datos de ubicación aún
               </p>
             )}

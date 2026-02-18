@@ -106,7 +106,7 @@ export default function CalendarView() {
       case 'COMPLETED':
         return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200'
       default:
-        return 'bg-gray-100 text-gray-700'
+        return 'bg-muted text-muted-foreground'
     }
   }
 
