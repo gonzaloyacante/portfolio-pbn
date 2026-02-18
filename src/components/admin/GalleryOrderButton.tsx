@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { Button } from '@/components/ui'
+import { logger } from '@/lib/logger'
 import { GripVertical } from 'lucide-react'
 
 const GalleryOrderModal = dynamic(() => import('@/components/admin/GalleryOrderModal'), {
@@ -42,7 +43,7 @@ export default function GalleryOrderButton({ categoryId, categoryName }: Gallery
         setShowModal(true)
       }
     } catch (error) {
-      console.error('[GalleryOrderButton] Error loading images:', error)
+      logger.error('[GalleryOrderButton] Error loading images', { error })
     } finally {
       setIsLoading(false)
     }

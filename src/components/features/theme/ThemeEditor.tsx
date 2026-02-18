@@ -11,6 +11,7 @@ import { Button } from '@/components/ui'
 import { updateThemeSettings, resetThemeToDefaults } from '@/actions/settings/theme'
 import { RESET_THEME_DEFAULTS } from '@/lib/design-tokens'
 import { showToast } from '@/lib/toast'
+import { logger } from '@/lib/logger'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Save, RotateCcw, Palette, Type, LayoutTemplate } from 'lucide-react'
 import ThemeColorSection from './ThemeColorSection'
@@ -149,7 +150,7 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
         showToast.error(result.error || 'Error al resetear')
       }
     } catch (err) {
-      console.error(err)
+      logger.error('ThemeEditor reset error', { error: err })
       showToast.error('Error al resetear')
     } finally {
       setIsResetting(false)

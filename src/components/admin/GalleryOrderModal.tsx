@@ -7,6 +7,7 @@ import { updateCategoryGalleryOrder, resetCategoryGalleryOrder } from '@/actions
 import { useConfirmDialog as useConfirm } from '@/components/ui'
 import { Save, RotateCcw } from 'lucide-react'
 import { showToast } from '@/lib/toast'
+import { logger } from '@/lib/logger'
 
 interface GalleryImage {
   id: string
@@ -76,7 +77,7 @@ export default function GalleryOrderModal({
         showToast.error(result.error || 'No se pudo guardar el orden', '❌ Error')
       }
     } catch (error) {
-      console.error('[GalleryOrderModal] Save error:', error)
+      logger.error('[GalleryOrderModal] Save error', { error })
       showToast.error('Ocurrió un error al guardar', '❌ Error')
     } finally {
       setIsSaving(false)
@@ -108,7 +109,7 @@ export default function GalleryOrderModal({
         showToast.error(result.error || 'No se pudo restablecer', '❌ Error')
       }
     } catch (error) {
-      console.error('[GalleryOrderModal] Reset error:', error)
+      logger.error('[GalleryOrderModal] Reset error', { error })
       showToast.error('Ocurrió un error al restablecer', '❌ Error')
     } finally {
       setIsSaving(false)

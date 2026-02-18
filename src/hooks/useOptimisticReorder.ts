@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/toast'
+import { logger } from '@/lib/logger'
 
 interface UseOptimisticReorderOptions<T> {
   initialItems: T[]
@@ -65,7 +66,7 @@ export function useOptimisticReorder<T>({
       await reorderAction(ids)
       showToast.success(successMessage)
     } catch (err) {
-      console.error('Reorder error:', err)
+      logger.error('Reorder error', { error: err })
       showToast.error(errorMessage)
       // Revert on error
       setItems(initialItems)

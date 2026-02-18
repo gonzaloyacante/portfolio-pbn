@@ -4,7 +4,7 @@ import { AboutSettingsData, updateAboutSettings } from '@/actions/settings/about
 import { useRouter } from 'next/navigation'
 import { Button, Input, ImageUpload } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
 
@@ -19,7 +19,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<AboutSettingsFormData>({
     resolver: zodResolver(aboutSettingsSchema),
@@ -38,12 +38,14 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   })
 
   // Watch image fields for real-time updates and persistence
-  const profileImageUrl = watch('profileImageUrl')
-  const illustrationUrl = watch('illustrationUrl')
+  const profileImageUrl = useWatch({ control, name: 'profileImageUrl' })
+  const illustrationUrl = useWatch({ control, name: 'illustrationUrl' })
+  const skillsRaw = useWatch({ control, name: 'skills' })
+  const certificationsRaw = useWatch({ control, name: 'certifications' })
 
   // Helper for array fields (comma separated)
-  const skillsString = watch('skills')?.join(', ') || ''
-  const certificationsString = watch('certifications')?.join(', ') || ''
+  const skillsString = skillsRaw?.join(', ') || ''
+  const certificationsString = certificationsRaw?.join(', ') || ''
 
   const onSubmit = async (data: AboutSettingsFormData) => {
     try {
