@@ -36,20 +36,18 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] p-4">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
       <FadeIn duration={0.5}>
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="text-center">
             <span className="text-6xl">🔐</span>
-            <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">
-              Recuperar Contraseña
-            </h1>
+            <h1 className="font-script text-foreground mt-4 text-4xl">Recuperar Contraseña</h1>
             <p className="text-muted-foreground mt-2">Te enviaremos un enlace a tu email</p>
           </div>
 
           {/* Card */}
-          <div className="rounded-[2.5rem] bg-[var(--card)] p-8 shadow-lg">
+          <div className="bg-card rounded-[2.5rem] p-8 shadow-lg">
             {status === 'success' ? (
               <div className="space-y-6 text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
@@ -99,7 +97,7 @@ export default function ForgotPasswordPage() {
               <div className="mt-6 text-center">
                 <Link
                   href={ROUTES.auth.login}
-                  className="inline-flex items-center gap-2 text-sm text-[var(--primary)] transition-colors hover:underline"
+                  className="text-primary inline-flex items-center gap-2 text-sm transition-colors hover:underline"
                 >
                   <ArrowLeft className="h-4 w-4" /> Volver a Iniciar Sesión
                 </Link>

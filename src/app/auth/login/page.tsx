@@ -76,18 +76,18 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] p-4">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
       <FadeIn duration={0.5}>
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="text-center">
             <span className="text-6xl">💄</span>
-            <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">Panel Admin</h1>
+            <h1 className="font-script text-foreground mt-4 text-4xl">Panel Admin</h1>
             <p className="text-muted-foreground mt-2">Ingresa tus credenciales</p>
           </div>
 
           {/* Card - Matcha ContactForm style strict */}
-          <div className="rounded-[2.5rem] bg-[var(--card)] p-8 shadow-lg">
+          <div className="bg-card rounded-[2.5rem] p-8 shadow-lg">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Input
                 label="Email"
@@ -111,7 +111,7 @@ export default function LoginPage() {
               <div className="mt-2 text-right">
                 <Link
                   href={ROUTES.auth.forgotPassword}
-                  className="text-sm text-[var(--primary)] transition-colors hover:underline"
+                  className="text-primary text-sm transition-colors hover:underline"
                 >
                   ¿Olvidaste tu contraseña?
                 </Link>

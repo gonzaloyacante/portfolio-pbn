@@ -264,8 +264,7 @@ export default function CategoryGallery({
               }}
             >
               <div
-                className={`relative transition-transform duration-300 ${isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
-                style={{ maxHeight: '85vh', maxWidth: '90vw' }}
+                className={`relative max-h-[85vh] max-w-[90vw] transition-transform duration-300 ${isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'}`}
               >
                 <OptimizedImage
                   src={images[selectedIndex].url}

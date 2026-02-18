@@ -106,7 +106,7 @@ export default async function ProjectDetailPage({
   })
 
   return (
-    <section className="w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="bg-background w-full transition-colors duration-500">
       <ScrollProgress />
       <AnalyticsTracker eventType="PROJECT_VIEW" entityId={project.id} entityType="Project" />
       <JsonLd
@@ -125,9 +125,9 @@ export default async function ProjectDetailPage({
         <div className="mb-8">
           <Link
             href={`/proyectos/${categorySlug}`}
-            className="group inline-flex items-center gap-2 text-[var(--primary)] transition-colors hover:opacity-80"
+            className="group text-primary inline-flex items-center gap-2 transition-colors hover:opacity-80"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--primary)] transition-all group-hover:-translate-x-1 group-hover:bg-[var(--primary)] group-hover:text-white">
+            <div className="border-primary group-hover:bg-primary flex h-8 w-8 items-center justify-center rounded-full border transition-all group-hover:-translate-x-1 group-hover:text-white">
               <ArrowLeft size={16} />
             </div>
             <span className="font-medium">Volver a {project.category.name}</span>
@@ -154,29 +154,29 @@ export default async function ProjectDetailPage({
         <FadeIn className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-12">
           {/* Title & Date */}
           <div className="border-border border-b pb-6 lg:col-span-1 lg:border-r lg:border-b-0 lg:pr-6 lg:pb-0">
-            <h1 className="mb-4 font-[family-name:var(--font-heading)] text-4xl leading-tight font-bold text-[var(--foreground)] uppercase sm:text-5xl">
+            <h1 className="text-foreground mb-4 font-[family-name:var(--font-heading)] text-4xl leading-tight font-bold uppercase sm:text-5xl">
               {project.title}
             </h1>
 
             <div className="space-y-3">
-              <div className="flex items-center gap-2 text-[var(--text-body)] opacity-70">
+              <div className="text-muted-foreground flex items-center gap-2 opacity-70">
                 <Calendar size={18} />
                 <span className="text-sm font-medium capitalize">{formattedDate}</span>
               </div>
               {project.client && (
-                <div className="flex items-start gap-2 text-[var(--text-body)] opacity-80">
+                <div className="text-muted-foreground flex items-start gap-2 opacity-80">
                   <span className="text-sm font-bold">Cliente:</span>
                   <span className="text-sm">{project.client}</span>
                 </div>
               )}
               {project.location && (
-                <div className="flex items-start gap-2 text-[var(--text-body)] opacity-80">
+                <div className="text-muted-foreground flex items-start gap-2 opacity-80">
                   <span className="text-sm font-bold">Ubicación:</span>
                   <span className="text-sm">{project.location}</span>
                 </div>
               )}
               {project.duration && (
-                <div className="flex items-start gap-2 text-[var(--text-body)] opacity-80">
+                <div className="text-muted-foreground flex items-start gap-2 opacity-80">
                   <span className="text-sm font-bold">Duración:</span>
                   <span className="text-sm">{project.duration}</span>
                 </div>
@@ -204,7 +204,7 @@ export default async function ProjectDetailPage({
                 {project.excerpt}
               </p>
             )}
-            <div className="prose prose-lg dark:prose-invert max-w-none font-[family-name:var(--font-body)] text-[var(--text-body)]">
+            <div className="prose prose-lg dark:prose-invert text-muted-foreground max-w-none font-[family-name:var(--font-body)]">
               <p>{project.description?.replace(project.excerpt || '', '')}</p>
             </div>
           </div>
@@ -227,7 +227,7 @@ export default async function ProjectDetailPage({
             />
           ) : (
             <FadeIn>
-              <div className="relative mb-4 overflow-hidden rounded-2xl bg-[var(--card-bg)] shadow-md">
+              <div className="bg-card relative mb-4 overflow-hidden rounded-2xl shadow-md">
                 <Image
                   src={project.thumbnailUrl || ''}
                   alt={project.title}

@@ -66,13 +66,13 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--background)] p-4">
+    <div className="bg-background flex min-h-screen items-center justify-center p-4">
       <FadeIn duration={0.5}>
         <div className="w-full max-w-md space-y-8">
           {/* Header */}
           <div className="text-center">
             <span className="text-6xl">🔑</span>
-            <h1 className="font-script mt-4 text-4xl text-[var(--foreground)]">Nueva Contraseña</h1>
+            <h1 className="font-script text-foreground mt-4 text-4xl">Nueva Contraseña</h1>
             <p className="text-muted-foreground mt-2">Ingresa tu nueva contraseña</p>
           </div>
 
@@ -103,7 +103,7 @@ function ResetPasswordForm() {
                 </div>
                 <Link
                   href={ROUTES.auth.login}
-                  className="inline-block cursor-pointer rounded-lg bg-[var(--foreground)] px-6 py-2 text-sm font-medium text-[var(--background)] transition-colors hover:opacity-90"
+                  className="bg-foreground text-background inline-block cursor-pointer rounded-lg px-6 py-2 text-sm font-medium transition-colors hover:opacity-90"
                 >
                   Iniciar Sesión
                 </Link>
@@ -172,7 +172,7 @@ function ResetPasswordForm() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full cursor-pointer rounded-lg bg-[var(--foreground)] py-3 font-semibold text-[var(--background)] transition-all hover:scale-[1.02] disabled:scale-100 disabled:opacity-50"
+                  className="bg-foreground text-background w-full cursor-pointer rounded-lg py-3 font-semibold transition-all hover:scale-[1.02] disabled:scale-100 disabled:opacity-50"
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -205,7 +205,7 @@ function ResetPasswordForm() {
               <div className="mt-6 text-center">
                 <Link
                   href={ROUTES.auth.login}
-                  className="text-sm text-[var(--primary)] transition-colors hover:underline"
+                  className="text-primary text-sm transition-colors hover:underline"
                 >
                   ← Volver a Iniciar Sesión
                 </Link>
@@ -222,7 +222,7 @@ export default function ResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+        <div className="bg-background flex min-h-screen items-center justify-center">
           <span className="text-foreground">Cargando...</span>
         </div>
       }

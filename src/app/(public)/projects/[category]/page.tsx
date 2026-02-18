@@ -90,7 +90,7 @@ export default async function CategoryProjectsPage({
   )
 
   return (
-    <section className="w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="bg-background w-full transition-colors duration-500">
       <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
       <JsonLd
         type="CollectionPage"
@@ -108,19 +108,19 @@ export default async function CategoryProjectsPage({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
             <Link
               href={ROUTES.public.projects}
-              className="group flex items-center gap-2 text-[var(--primary)] transition-colors hover:opacity-70"
+              className="group text-primary flex items-center gap-2 transition-colors hover:opacity-70"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--primary)] transition-all group-hover:-translate-x-1 group-hover:bg-[var(--primary)] group-hover:text-white">
+              <div className="border-primary group-hover:bg-primary flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:-translate-x-1 group-hover:text-white">
                 <ArrowLeft size={20} />
               </div>
             </Link>
 
-            <h1 className="font-[family-name:var(--font-heading)] text-3xl font-bold text-[var(--foreground)] sm:text-4xl">
+            <h1 className="text-foreground font-[family-name:var(--font-heading)] text-3xl font-bold sm:text-4xl">
               {category.name}
             </h1>
           </div>
 
-          <p className="max-w-md text-sm text-[var(--text-body)] opacity-80 sm:text-right">
+          <p className="text-muted-foreground max-w-md text-sm opacity-80 sm:text-right">
             {category.description}
           </p>
         </div>
@@ -131,7 +131,7 @@ export default async function CategoryProjectsPage({
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
             <span className="mb-4 text-4xl">📷</span>
-            <p className="text-lg text-[var(--text-body)]">
+            <p className="text-muted-foreground text-lg">
               No hay imágenes disponibles en esta categoría.
             </p>
           </div>

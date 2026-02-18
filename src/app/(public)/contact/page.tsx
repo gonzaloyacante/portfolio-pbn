@@ -59,7 +59,7 @@ export default async function ContactPage() {
   const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
 
   return (
-    <section className="w-full bg-[var(--background)] transition-colors duration-500">
+    <section className="bg-background w-full transition-colors duration-500">
       <JsonLd
         type="LocalBusiness"
         data={{
@@ -76,16 +76,16 @@ export default async function ContactPage() {
         Title + Compact Info Row
       */}
       <div className="flex flex-col items-center px-6 pt-8 pb-0 text-center lg:hidden">
-        <h1 className="mb-4 font-[family-name:var(--font-script)] text-4xl text-[var(--foreground)]">
+        <h1 className="text-foreground mb-4 font-[family-name:var(--font-script)] text-4xl">
           {contactSettings?.pageTitle || 'Contacto'}
         </h1>
 
         {/* Compact Info Grid */}
-        <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-[var(--text-body)]">
+        <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-4 text-sm">
           {contactSettings?.email && (
             <a
               href={`mailto:${contactSettings.email}`}
-              className="flex items-center gap-2 hover:text-[var(--primary)]"
+              className="hover:text-primary flex items-center gap-2"
             >
               <Mail className="h-4 w-4" />
               <span>{contactSettings.email}</span>
@@ -94,7 +94,7 @@ export default async function ContactPage() {
           {contactSettings?.phone && (
             <a
               href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
-              className="flex items-center gap-2 hover:text-[var(--primary)]"
+              className="hover:text-primary flex items-center gap-2"
             >
               <Phone className="h-4 w-4" />
               <span>{contactSettings.phone}</span>
@@ -102,7 +102,7 @@ export default async function ContactPage() {
           )}
         </div>
         {contactSettings?.location && (
-          <div className="mt-2 flex items-center gap-2 text-sm text-[var(--text-body)]">
+          <div className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
             <MapPin className="h-4 w-4" />
             <span>{contactSettings.location}</span>
           </div>
@@ -110,7 +110,7 @@ export default async function ContactPage() {
       </div>
 
       {/* MAIN GRID */}
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-6 text-[var(--foreground)] lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+      <div className="text-foreground mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         {/* ========== LEFT COLUMN (DESKTOP) ========== */}
         {/* Hidden on mobile, block on Desktop */}
         <div className="hidden flex-col items-start pt-10 lg:flex">
@@ -130,7 +130,7 @@ export default async function ContactPage() {
           </FadeIn>
 
           {/* Owner Name */}
-          <h1 className="mb-8 font-[family-name:var(--font-script)] text-5xl text-[var(--foreground)]">
+          <h1 className="text-foreground mb-8 font-[family-name:var(--font-script)] text-5xl">
             {ownerName}
           </h1>
 
@@ -139,7 +139,7 @@ export default async function ContactPage() {
             {contactSettings?.email && (
               <a
                 href={`mailto:${contactSettings.email} `}
-                className="flex items-center justify-start gap-3 transition-colors hover:text-[var(--primary)]"
+                className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
               >
                 <Mail className="h-6 w-6" />
                 <span>{contactSettings.email}</span>
@@ -148,7 +148,7 @@ export default async function ContactPage() {
             {contactSettings?.phone && (
               <a
                 href={`tel:${contactSettings.phone.replace(/\s+/g, '')} `}
-                className="flex items-center justify-start gap-3 transition-colors hover:text-[var(--primary)]"
+                className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
               >
                 <Phone className="h-6 w-6" />
                 <span>{contactSettings.phone}</span>
@@ -171,7 +171,7 @@ export default async function ContactPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--card-bg)] text-[var(--foreground)] transition-all hover:scale-110 hover:bg-[var(--primary)] hover:text-[var(--background)]"
+                  className="bg-card text-foreground hover:bg-primary hover:text-background flex h-12 w-12 items-center justify-center rounded-full transition-all hover:scale-110"
                   aria-label={link.platform}
                 >
                   {iconMap[link.platform] || <span className="text-lg">🔗</span>}
@@ -209,7 +209,7 @@ export default async function ContactPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--card-bg)] text-[var(--foreground)] transition-all hover:scale-110 hover:bg-[var(--primary)] hover:text-[var(--background)]"
+                  className="bg-card text-foreground hover:bg-primary hover:text-background flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110"
                 >
                   {iconMap[link.platform] || <span className="text-lg">🔗</span>}
                 </a>
