@@ -139,7 +139,9 @@ export function AboutEditor({ settings }: AboutEditorProps) {
               className="dark:bg-muted w-full rounded border p-2 text-sm"
               rows={4}
             />
-            <p className="text-xs text-gray-500">Ej: Maquillaje social, FX, Caracterización</p>
+            <p className="text-muted-foreground text-xs">
+              Ej: Maquillaje social, FX, Caracterización
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -158,7 +160,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
               className="dark:bg-muted w-full rounded border p-2 text-sm"
               rows={4}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-muted-foreground text-xs">
               Ej: Master en Maquillaje 2023, Curso FX Avanzado
             </p>
           </div>

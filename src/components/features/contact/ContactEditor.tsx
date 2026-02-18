@@ -181,7 +181,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Redes Sociales</h2>
               {/* Add new link form is separate or modal - for simplicity, just a list here */}
-              <span className="text-xs text-gray-500">Edita directamente abajo</span>
+              <span className="text-muted-foreground text-xs">Edita directamente abajo</span>
             </div>
 
             <div className="space-y-4">
