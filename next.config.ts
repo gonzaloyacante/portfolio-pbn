@@ -1,6 +1,12 @@
 import type { NextConfig } from 'next'
 import withPWA from '@ducanh2912/next-pwa'
 import { withSentryConfig } from '@sentry/nextjs'
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+  openAnalyzer: true,
+})
 
 /**
  * Security Headers
@@ -203,7 +209,7 @@ const pwaConfig = withPWA({
       },
     ],
   },
-})(nextConfig)
+})(withBundleAnalyzer(nextConfig))
 
 // Wrap with Sentry
 export default withSentryConfig(pwaConfig, {

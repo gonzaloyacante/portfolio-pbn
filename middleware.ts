@@ -1,12 +1,14 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { logger, getRequestId } from '@/lib/logger'
 
 /**
- * Middleware con autenticación, rate limiting e CSRF
+ * Middleware con autenticación, rate limiting, CSRF y request logging.
  *
  * Rate limiting: in-memory por IP (para escalar usar Upstash Redis)
  * CSRF: validación de cookie vs header para mutaciones no-GET en /admin
+ * Logger: compatible con Edge runtime (usa console.* internamente, sin imports Node.js)
  */
 
 // ─── In-memory Rate Limiter ─────────────────────────────────────────────────
@@ -64,7 +66,8 @@ function getClientIp(req: NextRequest): string {
 
 // ─── Response Helpers ────────────────────────────────────────────────────────
 
-function rateLimitedResponse(): NextResponse {
+function rateLimitedResponse(ip: string, pathname: string): NextResponse {
+  logger.warn('[middleware] rate_limit_exceeded', { ip, pathname })
   return new NextResponse(
     JSON.stringify({ error: 'Demasiadas peticiones. Intenta de nuevo en un minuto.' }),
     {
@@ -74,7 +77,8 @@ function rateLimitedResponse(): NextResponse {
   )
 }
 
-function csrfErrorResponse(): NextResponse {
+function csrfErrorResponse(ip: string, pathname: string): NextResponse {
+  logger.warn('[middleware] csrf_invalid', { ip, pathname })
   return new NextResponse(JSON.stringify({ error: 'Token CSRF inválido o ausente.' }), {
     status: 403,
     headers: { 'Content-Type': 'application/json' },
@@ -97,16 +101,37 @@ export default withAuth(
   function middleware(req: NextRequest) {
     const ip = getClientIp(req)
     const { pathname } = req.nextUrl
+    const { method } = req
+    const requestId = getRequestId(req.headers)
+    const startedAt = Date.now()
 
     // ── 1. Rate limiting ──────────────────────────────────────────────────
-    if (!checkRateLimit(ip)) return rateLimitedResponse()
+    if (!checkRateLimit(ip)) return rateLimitedResponse(ip, pathname)
 
     // ── 2. CSRF protection para mutaciones en rutas admin ─────────────────
     if (pathname.startsWith('/admin') && !isSafeMethod(req.method) && !isValidCsrf(req)) {
-      return csrfErrorResponse()
+      return csrfErrorResponse(ip, pathname)
     }
 
-    return NextResponse.next()
+    // ── 3. Request logging ────────────────────────────────────────────────
+    const isAsset =
+      pathname.startsWith('/_next') ||
+      pathname.startsWith('/favicon') ||
+      pathname.match(/\.(ico|png|jpg|jpeg|svg|webp|avif|woff2?|css|js)$/) !== null
+
+    if (!isAsset) {
+      logger.info('[middleware] request', {
+        requestId,
+        method,
+        pathname,
+        ip,
+        duration: Date.now() - startedAt,
+      })
+    }
+
+    const response = NextResponse.next()
+    response.headers.set('x-request-id', requestId)
+    return response
   },
   {
     callbacks: {
