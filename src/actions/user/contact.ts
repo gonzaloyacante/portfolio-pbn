@@ -1,5 +1,6 @@
 'use server'
 
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { recordAnalyticEvent } from '@/actions/analytics'
 import { revalidatePath } from 'next/cache'
@@ -120,7 +121,7 @@ export async function sendContactEmail(formData: FormData) {
         preference: sanitizedData.responsePreference,
       })
     } catch (emailError) {
-      console.error('Error enviando notificación de email:', emailError)
+      logger.error('Error enviando notificación de email:', { error: emailError })
       // No fallamos la request si el email falla, pero lo logueamos
     }
 
@@ -131,7 +132,7 @@ export async function sendContactEmail(formData: FormData) {
       return { success: false, message: firstError?.message || 'Datos inválidos' }
     }
 
-    console.error('Error al guardar contacto:', error)
+    logger.error('Error al guardar contacto:', { error: error })
     return { success: false, message: 'Error al enviar el mensaje. Intenta de nuevo.' }
   }
 }

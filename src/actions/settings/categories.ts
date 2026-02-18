@@ -15,7 +15,7 @@ export async function getCategorySettings() {
     const settings = await prisma.categorySettings.findFirst()
     return settings
   } catch (error) {
-    console.error('Error fetching category settings:', error)
+    logger.error('Error fetching category settings:', { error: error })
     return null
   }
 }

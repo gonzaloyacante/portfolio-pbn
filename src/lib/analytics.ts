@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { recordAnalyticEvent } from '@/actions/analytics'
 
 /**
@@ -13,7 +14,7 @@ class AnalyticsManager {
       // Fire and forget - do not await to avoid blocking UI
       recordAnalyticEvent(eventType, entityId, entityType).catch((err) => {
         if (process.env.NODE_ENV === 'development') {
-          console.warn('Analytics Error:', err)
+          logger.warn('Analytics Error:', err)
         }
       })
     } catch {

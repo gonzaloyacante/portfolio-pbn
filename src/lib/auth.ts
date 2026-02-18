@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextAuthOptions, getServerSession } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/db'
@@ -66,7 +67,7 @@ export const authOptions: NextAuthOptions = {
           userAgent: userAgent,
         })
       } catch (error) {
-        console.error('Error sending login alert:', error)
+        logger.error('Error sending login alert:', { error: error })
       }
     },
   },

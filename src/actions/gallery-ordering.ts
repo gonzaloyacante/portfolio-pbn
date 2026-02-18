@@ -1,5 +1,6 @@
 'use server'
 
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
@@ -53,7 +54,7 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
 
     return { success: true }
   } catch (error) {
-    console.error('[updateCategoryGalleryOrder] Error:', error)
+    logger.error('[updateCategoryGalleryOrder] Error:', { error: error })
 
     if (error instanceof z.ZodError) {
       return { success: false, error: 'Datos inválidos' }
@@ -104,7 +105,7 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
 
     return { success: true }
   } catch (error) {
-    console.error('[resetCategoryGalleryOrder] Error:', error)
+    logger.error('[resetCategoryGalleryOrder] Error:', { error: error })
     return { success: false, error: 'Error al restablecer el orden de la galería' }
   }
 }

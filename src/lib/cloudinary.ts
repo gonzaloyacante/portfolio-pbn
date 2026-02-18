@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config({
@@ -53,7 +54,7 @@ export const deleteImage = async (publicId: string) => {
     const result = await cloudinary.uploader.destroy(publicId)
     return result
   } catch (error) {
-    console.error('Error deleting image from Cloudinary:', error)
+    logger.error('Error deleting image from Cloudinary:', { error: error })
     throw error
   }
 }
@@ -69,7 +70,7 @@ export const deleteMultipleImages = async (publicIds: string[]) => {
     const result = await cloudinary.api.delete_resources(publicIds)
     return result
   } catch (error) {
-    console.error('Error deleting multiple images from Cloudinary:', error)
+    logger.error('Error deleting multiple images from Cloudinary:', { error: error })
     throw error
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * Generic Rate Limiter
  * In-memory rate limiting for various use cases
@@ -81,7 +82,7 @@ export function createRateLimiter(config: RateLimitConfig) {
         },
       })
     } catch (error) {
-      console.error(`Error logging rate limit attempt for ${config.id}:`, error)
+      logger.error(`Error logging rate limit attempt for ${config.id}`, { error })
     }
   }
 

@@ -98,7 +98,7 @@ export const getHomeSettings = unstable_cache(
       })
       return settings
     } catch (error) {
-      console.error('Error getting home settings:', error)
+      logger.error('Error getting home settings:', { error: error })
       return null
     }
   },

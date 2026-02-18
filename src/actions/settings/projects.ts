@@ -15,7 +15,7 @@ export async function getProjectSettings() {
     const settings = await prisma.projectSettings.findFirst()
     return settings
   } catch (error) {
-    console.error('Error fetching project settings:', error)
+    logger.error('Error fetching project settings:', { error: error })
     return null
   }
 }

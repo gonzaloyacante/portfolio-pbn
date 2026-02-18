@@ -73,7 +73,7 @@ export const getThemeSettings = unstable_cache(
       })
       return settings
     } catch (error) {
-      console.error('Error getting theme settings:', error)
+      logger.error('Error getting theme settings:', { error: error })
       return null
     }
   },
@@ -133,7 +133,7 @@ export async function getThemeValues(): Promise<Record<string, string>> {
       '--radius': `${settings.borderRadius}px`,
     }
   } catch (error) {
-    console.error('Error getting theme values:', error)
+    logger.error('Error getting theme values:', { error: error })
     return {}
   }
 }

@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * Google Fonts types and utilities
  */
@@ -29,7 +30,7 @@ export async function fetchGoogleFonts(): Promise<GoogleFont[]> {
     const data = await response.json()
     return data.fonts || []
   } catch (error) {
-    console.error('Error fetching Google Fonts:', error)
+    logger.error('Error fetching Google Fonts:', { error: error })
     return []
   }
 }

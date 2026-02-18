@@ -44,7 +44,7 @@ export const getSocialLinks = unstable_cache(
       })
       return links
     } catch (error) {
-      console.error('Error getting social links:', error)
+      logger.error('Error getting social links:', { error: error })
       return []
     }
   },

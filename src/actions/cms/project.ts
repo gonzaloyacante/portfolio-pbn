@@ -1,5 +1,6 @@
 'use server'
 
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
 import { ROUTES } from '@/config/routes'
@@ -40,7 +41,7 @@ export async function setProjectThumbnail(
     revalidatePath(ROUTES.admin.projects)
     return { success: true }
   } catch (err) {
-    console.error('Error setting thumbnail:', err)
+    logger.error('Error setting thumbnail:', { error: err })
     return { success: false, error: 'Error al cambiar thumbnail' }
   }
 }

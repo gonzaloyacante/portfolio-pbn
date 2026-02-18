@@ -1,5 +1,6 @@
 'use server'
 
+import { logger } from '@/lib/logger'
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -44,7 +45,7 @@ export async function requestPasswordReset(email: string) {
     try {
       await emailService.sendPasswordReset(email, token)
     } catch (emailError) {
-      console.error('Error sending reset email:', emailError)
+      logger.error('Error sending reset email:', { error: emailError })
       // Continue to return success to avoid leaking user existence, but log error
     }
 
@@ -53,7 +54,7 @@ export async function requestPasswordReset(email: string) {
       message: 'Si tu email está registrado, recibirás un enlace de recuperación.',
     }
   } catch (error) {
-    console.error(error)
+    logger.error('Unexpected error', { error: error })
     return { success: false, message: 'Error al solicitar el reseteo de contraseña.' }
   }
 }
@@ -82,7 +83,7 @@ export async function resetPassword(token: string, password: string) {
 
     return { success: true, message: 'Contraseña actualizada correctamente.' }
   } catch (error) {
-    console.error(error)
+    logger.error('Unexpected error', { error: error })
     return { success: false, message: 'Error al resetear la contraseña.' }
   }
 }
@@ -105,7 +106,7 @@ export async function signInAction(prevState: SignInState | null, formData: Form
     // This is a placeholder - the actual login is handled by the login page client component
     return { success: true, email }
   } catch (error) {
-    console.error('Error en signInAction:', error)
+    logger.error('Error en signInAction:', { error: error })
     return { success: false, message: 'Error al iniciar sesión' }
   }
 }

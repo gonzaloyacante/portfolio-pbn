@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextResponse, NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error changing password:', error)
+    logger.error('Error changing password:', { error: error })
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }

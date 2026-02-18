@@ -1,5 +1,6 @@
 'use server'
 
+import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { headers } from 'next/headers'
 
@@ -55,7 +56,7 @@ export async function recordAnalyticEvent(
     })
     return { success: true }
   } catch (error) {
-    console.error('Error recording analytic event:', error)
+    logger.error('Error recording analytic event:', { error: error })
     // Silently fail to not disrupt user experience
     return { success: false }
   }
@@ -170,7 +171,7 @@ export async function getAnalyticsDashboardData() {
       topLocations,
     }
   } catch (error) {
-    console.error('Error fetching analytics data:', error)
+    logger.error('Error fetching analytics data:', { error: error })
     return null
   }
 }

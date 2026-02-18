@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requireAdmin } from '@/lib/security-server'
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ success: true, images })
   } catch (error) {
-    console.error('[API /categories/[id]/images] Error:', error)
+    logger.error('[API /categories/[id]/images] Error:', { error: error })
     return NextResponse.json({ success: false, error: 'Error al cargar imágenes' }, { status: 500 })
   }
 }

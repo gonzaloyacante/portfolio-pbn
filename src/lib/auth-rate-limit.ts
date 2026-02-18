@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 /**
  * Rate limiting para autenticación sin dependencias externas
  * Protección contra ataques de fuerza bruta
@@ -85,7 +86,7 @@ export async function recordFailedLoginAttempt(email: string, ipAddress: string)
       },
     })
   } catch (error) {
-    console.error('Error al registrar intento fallido:', error)
+    logger.error('Error al registrar intento fallido:', { error: error })
   }
 }
 

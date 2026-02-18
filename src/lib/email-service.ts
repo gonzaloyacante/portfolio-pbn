@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { Resend } from 'resend'
 import {
   getContactMessageEmail,
@@ -28,7 +29,7 @@ async function getAdminEmail() {
   const email = settings?.email || process.env.ADMIN_EMAIL
 
   if (!email) {
-    console.warn('⚠️ No Admin Email configured in Settings or .env!')
+    logger.warn('⚠️ No Admin Email configured in Settings or .env!')
     return 'admin@example.com' // Safe placeholder instead of personal email
   }
 
@@ -56,8 +57,8 @@ function getSender() {
 async function sendEmail({ to, subject, html, replyTo }: SendEmailParams) {
   try {
     if (!process.env.RESEND_API_KEY) {
-      console.warn('⚠️ RESEND_API_KEY missing. Logging email instead:')
-      console.log({ to, subject })
+      logger.warn('RESEND_API_KEY missing. Logging email instead:', { to, subject })
+      logger.info('Email skipped (no API key)', { to, subject })
       return { success: false, error: 'API Key missing' }
     }
 
@@ -70,13 +71,13 @@ async function sendEmail({ to, subject, html, replyTo }: SendEmailParams) {
     })
 
     if (data.error) {
-      console.error('Resend Error:', data.error)
+      logger.error('Resend Error:', data.error)
       return { success: false, error: data.error.message }
     }
 
     return { success: true, id: data.data?.id }
   } catch (error) {
-    console.error('Email Service Error:', error)
+    logger.error('Email Service Error:', { error: error })
     return { success: false, error: 'Internal error sending email' }
   }
 }

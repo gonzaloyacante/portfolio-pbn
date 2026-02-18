@@ -47,7 +47,7 @@ export const getContactSettings = unstable_cache(
       })
       return settings
     } catch (error) {
-      console.error('Error getting contact settings:', error)
+      logger.error('Error getting contact settings:', { error: error })
       return null
     }
   },

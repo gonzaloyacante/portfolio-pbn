@@ -1,9 +1,10 @@
+'use server'
+
+import { logger } from '@/lib/logger'
 /**
  * Server Actions optimizadas para proyectos
  * Con paginación, queries eficientes y caché
  */
-
-'use server'
 
 import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
@@ -62,7 +63,7 @@ export const getPaginatedProjects = unstable_cache(
         },
       }
     } catch (error) {
-      console.error('Error al obtener proyectos paginados:', error)
+      logger.error('Error al obtener proyectos paginados:', { error: error })
       return {
         projects: [],
         pagination: {
@@ -171,7 +172,7 @@ export async function getProjectsByCategory(
       },
     }
   } catch (error) {
-    console.error('Error al obtener proyectos por categoría:', error)
+    logger.error('Error al obtener proyectos por categoría:', { error: error })
     return {
       projects: [],
       pagination: {
@@ -236,7 +237,7 @@ export async function getProjectBySlug(slug: string) {
           },
         })
       } catch (error) {
-        console.error('Error al obtener proyecto:', error)
+        logger.error('Error al obtener proyecto:', { error: error })
         return null
       }
     },
@@ -279,7 +280,7 @@ export async function getRelatedProjects(projectId: string, categoryId: string, 
       take: limit,
     })
   } catch (error) {
-    console.error('Error al obtener proyectos relacionados:', error)
+    logger.error('Error al obtener proyectos relacionados:', { error: error })
     return []
   }
 }
@@ -350,7 +351,7 @@ export async function getAdjacentProjects(currentProjectId: string, categoryId: 
       next: next || first, // If no older (we are at end), wrap to newest (first)
     }
   } catch (error) {
-    console.error('Error fetching adjacent projects:', error)
+    logger.error('Error fetching adjacent projects:', { error: error })
     return { previous: null, next: null }
   }
 }

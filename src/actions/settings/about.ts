@@ -38,7 +38,7 @@ export const getAboutSettings = unstable_cache(
       })
       return settings
     } catch (error) {
-      console.error('Error getting about settings:', error)
+      logger.error('Error getting about settings:', { error: error })
       return null
     }
   },

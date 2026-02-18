@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { uploadImage, deleteImage } from '@/lib/cloudinary'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
@@ -24,12 +25,12 @@ export async function POST(req: NextRequest) {
       const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
       if (token) {
         isAuthenticated = true
-        // console.log('API Upload - Auth via JWT Token (getServerSession failed)')
+        // logger.info('API Upload - Auth via JWT Token (getServerSession failed)')
       }
     }
 
     if (!isAuthenticated) {
-      console.error('API Upload - 401 Unauthorized - No session or token found')
+      logger.error('API Upload - 401 Unauthorized - No session or token found')
       // Debug: Log cookie names only
       // Log Cookies removed for production
       return NextResponse.json({ error: 'No autorizado - Sesión no encontrada' }, { status: 401 })
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
     if (error instanceof Error && error.message.includes('solicitudes')) {
       return NextResponse.json({ error: error.message }, { status: 429 })
     }
-    console.error('Error uploading image:', error)
+    logger.error('Error uploading image:', { error: error })
     return NextResponse.json(
       { error: 'Error al subir la imagen', details: String(error) },
       { status: 500 }
@@ -89,7 +90,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     if (!isAuthenticated) {
-      console.error('API Delete - 401 Unauthorized - No session found')
+      logger.error('API Delete - 401 Unauthorized - No session found')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -103,7 +104,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error deleting image:', error)
+    logger.error('Error deleting image:', { error: error })
     return NextResponse.json({ error: 'Error al eliminar la imagen' }, { status: 500 })
   }
 }

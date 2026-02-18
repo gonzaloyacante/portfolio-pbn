@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
@@ -60,7 +61,7 @@ export async function GET() {
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error('Google Fonts API error:', response.status, errorText)
+      logger.error('Google Fonts API error', { status: response.status, details: errorText })
 
       return NextResponse.json(
         {
@@ -85,7 +86,7 @@ export async function GET() {
 
     return NextResponse.json({ fonts, count: fonts.length })
   } catch (error) {
-    console.error('Error fetching Google Fonts:', error)
+    logger.error('Error fetching Google Fonts:', { error: error })
     return NextResponse.json(
       {
         error: 'Failed to fetch Google Fonts',

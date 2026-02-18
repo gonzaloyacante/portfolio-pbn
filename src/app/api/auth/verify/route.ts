@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     // Si existe, retornamos éxito. La contraseña se verificará en el signIn de NextAuth.
     return NextResponse.json({ success: true, email: user.email })
   } catch (error) {
-    console.error('Error verifying credentials:', error)
+    logger.error('Error verifying credentials:', { error: error })
     return NextResponse.json({ error: 'Error del servidor', code: 'SERVER_ERROR' }, { status: 500 })
   }
 }
