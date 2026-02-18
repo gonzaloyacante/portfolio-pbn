@@ -266,8 +266,14 @@ export function HeroContent({
             >
               {mainImage ? (
                 <FadeIn delay={0.5} className="relative w-full" disabled={isEditor}>
-                  <div className="relative overflow-hidden transition-all duration-500">
-                    {/* REMOVED: shadow-2xl, rounded-*, shapes. Plain div. */}
+                  <div
+                    className={cn(
+                      'relative overflow-hidden transition-all duration-500',
+                      s.heroImageStyle === 'rounded' && 'rounded-3xl',
+                      s.heroImageStyle === 'circle' && 'rounded-full',
+                      s.heroImageStyle === 'portrait' && 'aspect-[3/4]'
+                    )}
+                  >
                     <OptimizedImage
                       src={mainImage}
                       alt={mainImageAlt}
@@ -275,7 +281,13 @@ export function HeroContent({
                       height={800}
                       priority
                       variant="hero"
-                      className="h-auto w-full object-contain"
+                      className={cn(
+                        'h-auto w-full',
+                        s.heroImageStyle === 'circle'
+                          ? 'aspect-square object-cover'
+                          : 'object-contain',
+                        s.heroImageStyle === 'portrait' && 'h-full object-cover'
+                      )}
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
 
