@@ -8,15 +8,17 @@ interface TestimonialCardProps {
 
 function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
-    <div className="bg-card border-border/50 rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg">
+    <div className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg">
       <div className="mb-3 text-yellow-400">{'⭐'.repeat(testimonial.rating)}</div>
-      <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
+      <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed">
         &quot;{testimonial.text}&quot;
       </p>
-      <p className="text-card-foreground font-semibold">— {testimonial.name}</p>
-      {testimonial.position && (
-        <p className="text-muted-foreground text-xs">{testimonial.position}</p>
-      )}
+      <div className="mt-auto">
+        <p className="text-card-foreground font-semibold">— {testimonial.name}</p>
+        {testimonial.position && (
+          <p className="text-muted-foreground text-xs">{testimonial.position}</p>
+        )}
+      </div>
     </div>
   )
 }

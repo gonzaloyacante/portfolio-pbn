@@ -219,6 +219,7 @@ export const aboutSettingsSchema = z.object({
   bioDescription: z.string().optional(),
   profileImageUrl: z.string().optional(),
   profileImageAlt: z.string().optional(),
+  profileImageShape: z.enum(['ellipse', 'circle', 'rounded', 'none']).optional(),
   skills: z.array(z.string()).optional(),
   yearsExperience: z.number().optional(),
   certifications: z.array(z.string()).optional(),

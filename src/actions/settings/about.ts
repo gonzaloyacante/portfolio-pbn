@@ -21,6 +21,7 @@ export interface AboutSettingsData {
   bioDescription: string | null
   profileImageUrl: string | null
   profileImageAlt: string | null
+  profileImageShape: string | null
   skills: string[]
   yearsExperience: number | null
   certifications: string[]

@@ -125,8 +125,9 @@ model AboutSettings {
   bioIntro         String?  @db.Text
   bioDescription   String?  @db.Text
   // Profile Image (oval)
-  profileImageUrl  String?
-  profileImageAlt  String?  @default("Paola Bolívar Nievas")
+  profileImageUrl   String?
+  profileImageAlt   String?  @default("Paola Bolívar Nievas")
+  profileImageShape String?  @default("ellipse") // ellipse | rounded | circle | none
   // Skills
   skills           String[] @default([])
   yearsExperience  Int?

@@ -69,6 +69,7 @@ export default async function AboutPage() {
         <AboutProfileImage
           profileImageUrl={aboutSettings?.profileImageUrl}
           profileImageAlt={aboutSettings?.profileImageAlt || 'Paola Bolívar Nievas'}
+          shape={aboutSettings?.profileImageShape ?? 'ellipse'}
         />
       </div>
 

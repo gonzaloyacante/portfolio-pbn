@@ -36,7 +36,7 @@ function SkillTags({ skills }: { skills: string[] }) {
         {skills.map((skill, index) => (
           <span
             key={index}
-            className="rounded-full bg-(--card-bg) px-4 py-2 text-sm font-medium text-(--foreground)"
+            className="rounded-full border border-(--primary)/20 bg-(--primary)/10 px-4 py-2 text-sm font-medium text-(--primary) transition-colors duration-200 hover:bg-(--primary)/20"
           >
             {skill}
           </span>
@@ -108,15 +108,27 @@ export function AboutBioColumn({
 interface AboutProfileImageProps {
   profileImageUrl?: string | null
   profileImageAlt: string
+  shape?: string | null
 }
 
-export function AboutProfileImage({ profileImageUrl, profileImageAlt }: AboutProfileImageProps) {
+const IMAGE_SHAPES: Record<string, string | undefined> = {
+  ellipse: 'ellipse(50% 45% at 50% 50%)',
+  circle: 'circle(48% at 50% 50%)',
+  rounded: undefined,
+  none: undefined,
+}
+
+export function AboutProfileImage({ profileImageUrl, profileImageAlt, shape }: AboutProfileImageProps) {
+  const shapeKey = shape ?? 'ellipse'
+  const clipPath = IMAGE_SHAPES[shapeKey]
+  const borderRadius = shapeKey === 'rounded' ? '2.5rem' : shapeKey === 'none' ? '0' : undefined
+
   return (
     <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
       <SlideIn direction="right" className="flex w-full justify-center lg:justify-end">
         <div
           className="relative aspect-3/4 w-full max-w-xs overflow-hidden shadow-2xl sm:max-w-sm lg:max-w-md"
-          style={{ clipPath: 'ellipse(50% 45% at 50% 50%)' }}
+          style={{ clipPath, borderRadius }}
         >
           {profileImageUrl ? (
             <OptimizedImage
