@@ -40,18 +40,8 @@ function checkRateLimit(ip: string): boolean {
   return true
 }
 
-// Limpieza periódica (evita memory leaks en long-running instances)
-function cleanupRateLimitStore(): void {
-  const now = Date.now()
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (entry.resetAt < now) {
-      rateLimitStore.delete(key)
-    }
-  }
-}
-
-// Nota: La limpieza del rateLimitStore se realiza vía cron externo.
-// setInterval es poco fiable en entornos serverless/Edge (Vercel).
+// Nota: la limpieza del rateLimitStore (memory leak en long-running instances) debe realizarse
+// vía cron externo. setInterval es poco fiable en entornos serverless/Edge (Vercel).
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
