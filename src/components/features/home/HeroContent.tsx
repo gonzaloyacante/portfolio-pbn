@@ -152,7 +152,7 @@ export function HeroContent({
   const fontsToLoad = useMemo(() => fontsHash.split('|'), [fontsHash])
 
   return (
-    <section className="relative flex min-h-[calc(100vh-80px)] w-full flex-col justify-center overflow-x-hidden bg-(--background) px-4 transition-colors duration-500 sm:px-8 lg:px-16">
+    <section className="relative flex min-h-[calc(100dvh-80px)] w-full flex-col justify-center overflow-x-hidden bg-(--background) px-4 transition-colors duration-500 sm:px-8 lg:px-16">
       <FontLoader fonts={fontsToLoad} />
 
       <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80vh] lg:grid-cols-12 lg:gap-12 lg:py-0">

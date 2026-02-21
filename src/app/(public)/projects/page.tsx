@@ -49,9 +49,9 @@ export default async function ProjectsPage() {
 
   return (
     <section className="w-full bg-(--background) transition-colors duration-500">
-      <div className="mx-auto max-w-7xl px-6 py-12 md:px-12 lg:px-16 lg:py-20">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12 lg:px-16 lg:py-12">
         {/* Header */}
-        <div className="mb-12 text-center lg:text-left">
+        <div className="mb-6 text-center sm:mb-8 lg:mb-10 lg:text-left">
           <h1 className="font-heading mb-4 text-4xl font-bold tracking-tight text-(--foreground) uppercase sm:text-5xl lg:text-6xl">
             Portfolio
           </h1>
