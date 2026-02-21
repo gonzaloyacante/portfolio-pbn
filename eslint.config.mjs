@@ -13,6 +13,54 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // ─── Node.js Environment (scripts, seed, tests, prisma, config) ────────────
+  // Archivos que corren en Node.js y necesitan process, Buffer, __dirname, etc.
+  {
+    files: [
+      "scripts/**/*.{ts,js,mjs}",
+      "prisma/**/*.{ts,js}",
+      "tests/**/*.{ts,tsx}",
+      "vitest.config.ts",
+      "playwright.config.ts",
+      "next.config.ts",
+      "postcss.config.mjs",
+      "tailwind.config.ts",
+      "prisma.config.ts",
+    ],
+    languageOptions: {
+      globals: {
+        process: "readonly",
+        Buffer: "readonly",
+        __dirname: "readonly",
+        __filename: "readonly",
+        global: "readonly",
+        console: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        URL: "readonly",
+        URLSearchParams: "readonly",
+      },
+    },
+  },
+  // ─── Vitest Globals (test files only) ──────────────────────────────────────
+  {
+    files: ["tests/**/*.{ts,tsx}"],
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        vi: "readonly",
+      },
+    },
+  },
   // ─── Design Token Enforcement ──────────────────────────────────────────────
   // Prohíbe colores HEX hardcodeados fuera del archivo de tokens.
   // Excepciones: design-tokens.ts (fuente de verdad), ColorPicker.tsx (paleta UI),
