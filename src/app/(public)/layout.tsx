@@ -1,11 +1,17 @@
 import Navbar from '@/components/layout/Navbar'
+import Footer from '@/components/layout/Footer'
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransition from '@/components/layout/PageTransition'
 import { getThemeSettings } from '@/actions/settings/theme'
 import { getContactSettings } from '@/actions/settings/contact'
+import { getPageVisibility } from '@/actions/settings/site'
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [, contactSettings] = await Promise.all([getThemeSettings(), getContactSettings()])
+  const [, contactSettings, visibility] = await Promise.all([
+    getThemeSettings(),
+    getContactSettings(),
+    getPageVisibility(),
+  ])
 
   return (
     <>
@@ -30,10 +36,11 @@ export default async function PublicLayout({ children }: { children: React.React
         >
           Saltar al contenido principal
         </a>
-        <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} />
+        <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} visibility={visibility} />
         <main id="main-content" className="flex-1" tabIndex={-1}>
           <PageTransition>{children}</PageTransition>
         </main>
+        <Footer ownerName={contactSettings?.ownerName} />
       </div>
     </>
   )

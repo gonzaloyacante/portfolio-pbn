@@ -16,6 +16,7 @@ export const CACHE_TAGS = {
   category: (id: string) => `category-${id}`,
 
   // Settings
+  siteSettings: 'site-settings',
   homeSettings: 'home-settings',
   aboutSettings: 'about-settings',
   contactSettings: 'contact-settings',

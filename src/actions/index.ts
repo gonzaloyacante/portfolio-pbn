@@ -20,6 +20,7 @@ export * from './user/contact'
 export * from './analytics'
 
 // Settings
+export * from './settings/site'
 export * from './settings/theme'
 export * from './settings/home'
 export * from './settings/about'
