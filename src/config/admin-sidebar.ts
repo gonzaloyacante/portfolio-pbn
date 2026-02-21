@@ -10,7 +10,6 @@ import {
   User,
   Settings,
   Palette,
-  BarChart2,
   Trash2,
   type LucideIcon,
 } from 'lucide-react'
@@ -71,11 +70,6 @@ export const menuItems: SidebarItem[] = [
     href: ROUTES.admin.theme,
     label: 'Tema',
     icon: Palette,
-  },
-  {
-    href: ROUTES.admin.analytics,
-    label: 'Analítica',
-    icon: BarChart2,
   },
   {
     href: ROUTES.admin.trash,
