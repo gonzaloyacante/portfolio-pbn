@@ -1,5 +1,6 @@
 import { logger } from '@/lib/logger'
 import { recordAnalyticEvent } from '@/actions/analytics'
+import { ROUTES } from '@/config/routes'
 
 /**
  * Client-side Analytics Manager
@@ -28,11 +29,11 @@ class AnalyticsManager {
   static async trackPageView(url: string) {
     // Determine page type based on URL
     let eventType = 'PAGE_VIEW'
-    if (url === '/') eventType = 'HOME_VIEW'
-    else if (url.startsWith('/proyectos')) eventType = 'PROJECTS_VIEW'
-    else if (url.startsWith('/sobre-mi')) eventType = 'ABOUT_VIEW'
-    else if (url.startsWith('/contacto')) eventType = 'CONTACT_VIEW'
-    else if (url.startsWith('/proyecto/')) eventType = 'PROJECT_DETAIL_VIEW'
+    if (url === ROUTES.home) eventType = 'HOME_VIEW'
+    else if (url.startsWith(ROUTES.public.projects)) eventType = 'PROJECTS_VIEW'
+    else if (url.startsWith(ROUTES.public.about)) eventType = 'ABOUT_VIEW'
+    else if (url.startsWith(ROUTES.public.contact)) eventType = 'CONTACT_VIEW'
+    else if (url.startsWith(ROUTES.public.projects + '/')) eventType = 'PROJECT_DETAIL_VIEW'
 
     await this.trackEvent(eventType, url, 'Page')
   }

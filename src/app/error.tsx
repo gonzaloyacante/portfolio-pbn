@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { logger } from '@/lib/logger'
+import { ROUTES } from '@/config/routes'
 
 export default function Error({
   error,
@@ -75,7 +76,7 @@ export default function Error({
         </button>
 
         <button
-          onClick={() => (window.location.href = '/')}
+          onClick={() => (window.location.href = ROUTES.home)}
           className="border-primary text-foreground cursor-pointer rounded-3xl border-2 px-8 py-4 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
         >
           <span className="flex items-center gap-2">

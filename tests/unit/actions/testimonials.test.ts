@@ -44,7 +44,9 @@ vi.mock('@/lib/cache-tags', () => ({
 
 vi.mock('@/config/routes', () => ({
   ROUTES: {
-    admin: { testimonials: '/admin/testimonials' },
+    home: '/',
+    auth: { login: '/auth/login' },
+    admin: { testimonials: '/admin/testimonialis' },
     public: { about: '/sobre-mi' },
   },
 }))
@@ -56,6 +58,13 @@ vi.mock('@/lib/logger', () => ({
     warn: vi.fn(),
     debug: vi.fn(),
   },
+}))
+
+vi.mock('@/lib/auth', () => ({
+  auth: vi.fn(() =>
+    Promise.resolve({ user: { id: 'admin-1', role: 'ADMIN', email: 'admin@test.com' } })
+  ),
+  authOptions: {},
 }))
 
 vi.mock('@/lib/rate-limit-guards', () => ({
@@ -86,24 +95,19 @@ const makeTestimonial = (overrides: Partial<Testimonial> = {}): Testimonial => (
   website: null,
   avatarUrl: null,
   rating: 5,
+  verified: false,
+  featured: false,
   isActive: true,
-  isFeatured: false,
   sortOrder: 0,
-  source: 'DIRECT',
-  sourceId: null,
-  sourceUrl: null,
-  mediaProvider: null,
-  mediaType: 'TEXT',
-  mediaUrl: null,
-  mediaEmbed: null,
+  source: null,
   projectId: null,
-  serviceId: null,
-  tags: [],
-  ipAddress: null,
+  status: 'PENDING',
+  moderatedBy: null,
+  moderatedAt: null,
+  moderationNote: null,
+  viewCount: 0,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
-  approvedAt: new Date('2024-01-01'),
-  approvedBy: null,
   deletedAt: null,
   ...overrides,
 })

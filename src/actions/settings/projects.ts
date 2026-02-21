@@ -60,10 +60,10 @@ export async function updateProjectSettings(data: ProjectSettingsFormData) {
       })
     }
 
-    revalidatePath('/')
+    revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.projects)
     revalidatePath(ROUTES.admin.projects)
-    revalidatePath('/', 'layout')
+    revalidatePath(ROUTES.home, 'layout')
 
     return { success: true }
   } catch (error) {

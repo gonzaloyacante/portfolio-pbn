@@ -56,7 +56,26 @@ vi.mock('@/actions/analytics', () => ({
 
 // Mock routes config
 vi.mock('@/config/routes', () => ({
-  ROUTES: { admin: { contacts: '/admin/contacts' } },
+  ROUTES: {
+    home: '/',
+    auth: { login: '/auth/login' },
+    admin: { contacts: '/admin/contacts' },
+  },
+}))
+
+// Mock security
+vi.mock('@/lib/security-server', () => ({
+  requireAdmin: vi.fn(() => Promise.resolve({ id: 'admin-1', role: 'ADMIN' })),
+}))
+
+// Mock rate-limit-guards
+vi.mock('@/lib/rate-limit-guards', () => ({
+  checkApiRateLimit: vi.fn(() => Promise.resolve()),
+}))
+
+// Mock logger
+vi.mock('@/lib/logger', () => ({
+  logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }))
 
 // Minimal Contact mock that satisfies the full Prisma schema

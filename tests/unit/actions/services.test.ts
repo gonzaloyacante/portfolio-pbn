@@ -12,12 +12,18 @@ vi.mock('@/lib/db', () => ({
       delete: vi.fn(),
       findMany: vi.fn(),
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
     },
   },
 }))
 
 vi.mock('@/lib/security-server', () => ({
   requireAdmin: vi.fn(() => Promise.resolve({ id: 'admin-1', role: 'ADMIN' })),
+}))
+
+vi.mock('@/lib/rate-limit-guards', () => ({
+  checkApiRateLimit: vi.fn(() => Promise.resolve()),
+  checkSettingsRateLimit: vi.fn(() => Promise.resolve()),
 }))
 
 vi.mock('next/cache', () => ({
@@ -59,7 +65,7 @@ const makeService = (overrides: Partial<Service> = {}): Service => ({
   slug: 'maquillaje-nupcial',
   description: 'Maquillaje profesional para novias',
   shortDesc: 'Para tu gran día',
-  price: 25000,
+  price: null,
   priceLabel: 'desde',
   currency: 'ARS',
   pricingTiers: null,
@@ -78,9 +84,11 @@ const makeService = (overrides: Partial<Service> = {}): Service => ({
   color: null,
   metaTitle: null,
   metaDescription: null,
-  metaKeywords: null,
+  metaKeywords: [],
   requirements: null,
   cancellationPolicy: null,
+  bookingCount: 0,
+  viewCount: 0,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
   ...overrides,

@@ -50,9 +50,8 @@ function cleanupRateLimitStore(): void {
   }
 }
 
-if (typeof window === 'undefined') {
-  setInterval(cleanupRateLimitStore, 5 * 60_000) // cada 5 minutos
-}
+// Nota: La limpieza del rateLimitStore se realiza vía cron externo.
+// setInterval es poco fiable en entornos serverless/Edge (Vercel).
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

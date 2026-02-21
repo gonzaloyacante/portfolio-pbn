@@ -14,7 +14,7 @@ export default function AdminSidebar() {
 
   const handleSignOut = async () => {
     try {
-      await signOut({ callbackUrl: '/auth/login' })
+      await signOut({ callbackUrl: ROUTES.auth.login })
       showToast.success('Sesión cerrada exitosamente')
     } catch {
       showToast.error('Error al cerrar sesión')

@@ -1,4 +1,5 @@
 import { EMAIL_BRAND_COLORS, EMAIL_NEUTRAL_COLORS } from '@/lib/design-tokens'
+import { ROUTES } from '@/config/routes'
 
 export const EMAIL_STYLES = {
   fontFamily: "font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;",
@@ -228,7 +229,7 @@ export const getLoginAlertEmail = (params: {
       </div>
 
       <div style="${EMAIL_STYLES.buttonContainer}">
-         <a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin/profile" style="${EMAIL_STYLES.button(COLORS.danger)}">
+         <a href="${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.admin.account}" style="${EMAIL_STYLES.button(COLORS.danger)}">
           Revisar Seguridad
         </a>
       </div>
@@ -274,7 +275,7 @@ export const getTestimonialAlertEmail = (params: {
       </div>
 
        <div style="${EMAIL_STYLES.buttonContainer}">
-         <a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin/testimonios" style="${EMAIL_STYLES.button(COLORS.success)}">
+         <a href="${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.admin.testimonials}" style="${EMAIL_STYLES.button(COLORS.success)}">
           Moderar Testimonio
         </a>
       </div>
@@ -342,7 +343,7 @@ export const getBookingAlertEmail = (params: {
       </div>
 
        <div style="${EMAIL_STYLES.buttonContainer}">
-         <a href="${process.env.NEXT_PUBLIC_BASE_URL}/admin/calendar" style="${EMAIL_STYLES.button(COLORS.primary)}">
+         <a href="${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.admin.calendar}" style="${EMAIL_STYLES.button(COLORS.primary)}">
           Gestionar Reserva
         </a>
       </div>
