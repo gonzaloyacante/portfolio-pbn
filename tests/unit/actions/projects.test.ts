@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { updateProject, deleteProject, restoreProject } from '@/actions/cms/content'
-import type { Project } from '@prisma/client'
+import type { Project } from '@/generated/prisma/client'
 
 // Mock Prisma
 vi.mock('@/lib/db', () => ({

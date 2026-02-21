@@ -1,4 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
+import { PrismaClient } from '@/generated/prisma'
 import bcrypt from 'bcryptjs'
 import { adminUser } from './seeds/users'
 import { themeSettings } from './seeds/theme'
@@ -13,7 +14,8 @@ import {
 import { categories, services, testimonials, socialLinks } from './seeds/content'
 import { projects } from './seeds/projects'
 
-const prisma = new PrismaClient()
+const _adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter: _adapter })
 
 async function main() {
   console.log('🌱 Starting Comprehensive Seed...\n')

@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { revalidatePath } from 'next/cache'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 
 import { ProjectSettingsFormData, projectSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'

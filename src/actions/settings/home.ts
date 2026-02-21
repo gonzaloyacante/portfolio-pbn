@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 
 import { ROUTES } from '@/config/routes'
 import { logger } from '@/lib/logger'

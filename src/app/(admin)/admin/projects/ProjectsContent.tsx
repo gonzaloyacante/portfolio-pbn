@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Category, Project, ProjectImage } from '@prisma/client'
+import { Category, Project, ProjectImage } from '@/generated/prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pencil, Trash2, Eye } from 'lucide-react'
 

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Testimonial } from '@prisma/client'
+import { Testimonial } from '@/generated/prisma/client'
 import { updateTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'

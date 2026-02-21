@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Project, ProjectImage } from '@prisma/client'
+import { Project, ProjectImage } from '@/generated/prisma/client'
 import { recordAnalyticEvent } from '@/actions/analytics'
 import { ChevronLeft, ChevronRight, X, ZoomIn, Maximize2 } from 'lucide-react'
 import { OptimizedImage } from '@/components/ui/media/OptimizedImage'

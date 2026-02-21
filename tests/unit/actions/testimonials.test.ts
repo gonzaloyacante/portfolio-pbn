@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { Testimonial } from '@prisma/client'
+import type { Testimonial } from '@/generated/prisma/client'
 
 // Mocks
 vi.mock('@/lib/db', () => ({

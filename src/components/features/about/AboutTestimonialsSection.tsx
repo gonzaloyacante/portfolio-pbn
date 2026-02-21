@@ -1,6 +1,6 @@
 import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
-import type { Testimonial } from '@prisma/client'
+import type { Testimonial } from '@/generated/prisma/client'
 
 interface TestimonialCardProps {
   testimonial: Testimonial

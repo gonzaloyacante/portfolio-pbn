@@ -7,7 +7,7 @@ import { createService, updateService } from '@/actions/cms/services'
 import { Button, ImageUpload } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { Service } from '@prisma/client'
+import { Service } from '@/generated/prisma/client'
 
 interface ServiceFormProps {
   service?: Service | null

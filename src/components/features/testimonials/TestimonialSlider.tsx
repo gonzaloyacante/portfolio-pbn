@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Testimonial } from '@prisma/client'
+import { Testimonial } from '@/generated/prisma/client'
 import Image from 'next/image'
 
 interface TestimonialSliderProps {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { sendContactEmail, getContacts, markContactAsRead } from '@/actions/user/contact'
-import type { Contact } from '@prisma/client'
+import type { Contact } from '@/generated/prisma/client'
 
 // Mock Prisma
 vi.mock('@/lib/db', () => ({

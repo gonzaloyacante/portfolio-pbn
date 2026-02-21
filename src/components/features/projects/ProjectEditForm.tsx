@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { Category, Project, ProjectImage } from '@prisma/client'
+import { Category, Project, ProjectImage } from '@/generated/prisma/client'
 import { updateProject, deleteProjectImage, reorderProjectImages } from '@/actions/cms/content'
 import { setProjectThumbnail } from '@/actions/cms/project'
 import { Button, SmartField, ImageUpload } from '@/components/ui'

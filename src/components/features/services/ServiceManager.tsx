@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Service } from '@prisma/client'
+import { Service } from '@/generated/prisma/client'
 import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/cms/services'
 import ServiceForm from './ServiceForm'
