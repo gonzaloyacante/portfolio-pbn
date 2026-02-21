@@ -30,7 +30,7 @@ export default function MasonryGallery({
         setColumns(3) // lg
       else if (window.innerWidth >= 640)
         setColumns(2) // sm
-      else setColumns(1) // default
+      else setColumns(2) // mobile
     }
 
     handleResize() // Initial check

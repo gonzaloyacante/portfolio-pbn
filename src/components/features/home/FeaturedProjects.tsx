@@ -34,12 +34,12 @@ export default async function FeaturedProjects({ title, count = 6 }: FeaturedPro
         </div>
 
         {/* Projects Grid */}
-        <StaggerChildren className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <StaggerChildren className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
           {projects.map((project) => (
             <FadeIn key={project.id}>
               <Link
                 href={`/proyectos/${project.category.slug}/${project.slug}`}
-                className="group relative block aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl"
+                className="group relative block aspect-4/5 overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl"
               >
                 {/* Image */}
                 {project.thumbnailUrl ? (
@@ -49,7 +49,7 @@ export default async function FeaturedProjects({ title, count = 6 }: FeaturedPro
                     fill
                     variant="card"
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                   />
                 ) : (
                   <div className="flex h-full items-center justify-center bg-(--card-bg)">
@@ -58,14 +58,14 @@ export default async function FeaturedProjects({ title, count = 6 }: FeaturedPro
                 )}
 
                 {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
 
                 {/* Content */}
-                <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                  <span className="mb-2 block text-xs font-bold tracking-wider text-white/80 uppercase">
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-6 lg:p-8">
+                  <span className="mb-1 block text-[10px] font-bold tracking-wider text-white/80 uppercase sm:mb-2 sm:text-xs">
                     {project.category.name}
                   </span>
-                  <h3 className="font-heading text-xl font-bold text-white sm:text-2xl">
+                  <h3 className="font-heading text-sm leading-tight font-bold text-white sm:text-xl lg:text-2xl">
                     {project.title}
                   </h3>
                 </div>

@@ -63,7 +63,7 @@ export default async function ProjectsPage() {
         {/* Categories Grid */}
         {categories.length > 0 ? (
           <StaggerChildren
-            className={`grid gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-1 sm:grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : ''} `}
+            className={`grid gap-3 sm:gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-2 lg:grid-cols-4' : ''} `}
           >
             {categories.map((category) => {
               // Priority: Custom Cover > First Project Thumbnail
@@ -83,7 +83,7 @@ export default async function ProjectsPage() {
                           alt={category.name}
                           fill
                           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
                           priority={category.sortOrder <= 4}
                         />
                         {/* Overlay Gradient */}
@@ -96,8 +96,8 @@ export default async function ProjectsPage() {
                     )}
 
                     {/* Content */}
-                    <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-                      <h2 className="font-heading translate-y-2 text-2xl font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-3xl">
+                    <div className="absolute inset-x-0 bottom-0 p-3 sm:p-6 lg:p-8">
+                      <h2 className="font-heading translate-y-2 text-base leading-tight font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-2xl lg:text-3xl">
                         {category.name}
                       </h2>
 

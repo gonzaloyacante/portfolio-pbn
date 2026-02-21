@@ -58,7 +58,7 @@ export default function CategoryGallery({
         setColumns(3) // lg
       else if (window.innerWidth >= 768)
         setColumns(2) // md
-      else setColumns(1) // mobile
+      else setColumns(2) // mobile
     }
     handleResize()
     window.addEventListener('resize', handleResize)
