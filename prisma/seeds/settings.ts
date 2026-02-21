@@ -10,18 +10,18 @@ export const homeSettings = {
   heroTitle1Text: 'Make-up',
   heroTitle1Font: null, // Inherits from theme
   heroTitle1FontUrl: null,
-  heroTitle1FontSize: 112,
+  heroTitle1FontSize: 90,
   heroTitle1Color: null, // Inherits --primary
   heroTitle1ColorDark: null,
   heroTitle1ZIndex: 20,
-  heroTitle1OffsetX: 0,
-  heroTitle1OffsetY: 0,
+  heroTitle1OffsetX: 33,
+  heroTitle1OffsetY: 40,
 
-  // Hero Title 2 ("Portfolio")
-  heroTitle2Text: 'Portfolio',
+  // Hero Title 2 ("portfolio")
+  heroTitle2Text: 'portfolio',
   heroTitle2Font: null,
   heroTitle2FontUrl: null,
-  heroTitle2FontSize: 96,
+  heroTitle2FontSize: 120,
   heroTitle2Color: null,
   heroTitle2ColorDark: null,
   heroTitle2ZIndex: 10,
@@ -30,32 +30,34 @@ export const homeSettings = {
 
   // Owner Name ("Paola Bolívar Nievas")
   ownerNameText: 'Paola Bolívar Nievas',
-  ownerNameFont: null,
-  ownerNameFontUrl: null,
-  ownerNameFontSize: 36,
+  ownerNameFont: 'Great Vibes',
+  ownerNameFontUrl: 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+  ownerNameFontSize: 50,
   ownerNameColor: null,
-  ownerNameColorDark: null,
+  ownerNameColorDark: '#dd4646',
   ownerNameZIndex: 15,
   ownerNameOffsetX: 0,
   ownerNameOffsetY: 0,
 
-  // Hero Main Image (to be set via admin)
-  heroMainImageUrl: null,
+  // Hero Main Image
+  heroMainImageUrl:
+    'https://res.cloudinary.com/djlknirsd/image/upload/v1771671802/pbn-prod/projects/h3n2gzerampfbbgrdgwj.jpg',
   heroMainImageAlt: 'Trabajo destacado',
   heroMainImageCaption: null,
   heroImageStyle: 'original',
   heroMainImageZIndex: 5,
   heroMainImageOffsetX: 0,
-  heroMainImageOffsetY: 0,
+  heroMainImageOffsetY: -46,
 
-  // Illustration (to be set via admin)
-  illustrationUrl: null,
+  // Illustration
+  illustrationUrl:
+    'https://res.cloudinary.com/djlknirsd/image/upload/v1771671681/pbn-prod/projects/j787hsm9buv1qcjx1jud.png',
   illustrationAlt: 'Ilustración maquilladora',
   illustrationZIndex: 10,
   illustrationOpacity: 100,
   illustrationSize: 100,
-  illustrationOffsetX: 0,
-  illustrationOffsetY: 0,
+  illustrationOffsetX: -230,
+  illustrationOffsetY: 45,
   illustrationRotation: 0,
 
   // CTA Button
@@ -63,11 +65,31 @@ export const homeSettings = {
   ctaLink: '/proyectos',
   ctaFont: null,
   ctaFontUrl: null,
-  ctaFontSize: 16,
-  ctaVariant: 'default',
+  ctaFontSize: 24,
+  ctaVariant: 'primary',
   ctaSize: 'default',
   ctaOffsetX: 0,
-  ctaOffsetY: 0,
+  ctaOffsetY: -55,
+
+  // Mobile overrides (responsive positioning)
+  heroTitle1MobileOffsetX: 0,
+  heroTitle1MobileOffsetY: 0,
+  heroTitle1MobileFontSize: 56,
+  heroTitle2MobileOffsetX: 0,
+  heroTitle2MobileOffsetY: 0,
+  heroTitle2MobileFontSize: 72,
+  ownerNameMobileOffsetX: 0,
+  ownerNameMobileOffsetY: 0,
+  ownerNameMobileFontSize: 28,
+  heroMainImageMobileOffsetX: 0,
+  heroMainImageMobileOffsetY: 0,
+  illustrationMobileOffsetX: 0,
+  illustrationMobileOffsetY: 0,
+  illustrationMobileSize: 60,
+  illustrationMobileRotation: 0,
+  ctaMobileOffsetX: 0,
+  ctaMobileOffsetY: 0,
+  ctaMobileFontSize: 18,
 
   // Featured Projects Section
   showFeaturedProjects: true,

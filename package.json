@@ -67,6 +67,8 @@
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
+    "d3-interpolate": "^3.0.1",
+    "d3-scale": "^4.0.2",
     "date-fns": "^4.1.0",
     "dompurify": "^3.3.1",
     "framer-motion": "^12.34.3",
@@ -82,11 +84,13 @@
     "react-dom": "19.2.4",
     "react-hook-form": "^7.71.2",
     "react-hot-toast": "^2.6.0",
+    "react-simple-maps": "^3.0.0",
     "resend": "^6.9.2",
     "swr": "^2.4.0",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",
+    "web-vitals": "^5.1.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -96,7 +100,10 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "@types/d3-interpolate": "^3.0.4",
+    "@types/d3-scale": "^4.0.9",
     "@types/pg": "^8.16.0",
+    "@types/react-simple-maps": "^3.0.6",
     "@vitejs/plugin-react": "^5.1.4",
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv": "^17.3.1",
@@ -111,6 +118,12 @@
     "vitest": "^4.0.18"
   },
   "pnpm": {
+    "overrides": {
+      "d3-color": "^3.1.0",
+      "hono": "^4.11.7",
+      "minimatch": "^10.2.1",
+      "lodash": "^4.17.21"
+    },
     "onlyBuiltDependencies": [
       "@prisma/client",
       "@prisma/engines",

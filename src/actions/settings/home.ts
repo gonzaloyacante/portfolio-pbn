@@ -75,6 +75,25 @@ export interface HomeSettingsData {
   ctaSize: string | null
   ctaOffsetX: number | null
   ctaOffsetY: number | null
+  // Mobile Overrides
+  heroTitle1MobileOffsetX: number | null
+  heroTitle1MobileOffsetY: number | null
+  heroTitle1MobileFontSize: number | null
+  heroTitle2MobileOffsetX: number | null
+  heroTitle2MobileOffsetY: number | null
+  heroTitle2MobileFontSize: number | null
+  ownerNameMobileOffsetX: number | null
+  ownerNameMobileOffsetY: number | null
+  ownerNameMobileFontSize: number | null
+  heroMainImageMobileOffsetX: number | null
+  heroMainImageMobileOffsetY: number | null
+  illustrationMobileOffsetX: number | null
+  illustrationMobileOffsetY: number | null
+  illustrationMobileSize: number | null
+  illustrationMobileRotation: number | null
+  ctaMobileOffsetX: number | null
+  ctaMobileOffsetY: number | null
+  ctaMobileFontSize: number | null
   // Sección destacados
   showFeaturedProjects: boolean
   featuredTitle: string | null
@@ -229,6 +248,26 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
         ctaSize: (cleanData.ctaSize as string) ?? undefined,
         ctaOffsetX: (cleanData.ctaOffsetX as number) ?? undefined,
         ctaOffsetY: (cleanData.ctaOffsetY as number) ?? undefined,
+
+        // Mobile Overrides
+        heroTitle1MobileOffsetX: (cleanData.heroTitle1MobileOffsetX as number) ?? 0,
+        heroTitle1MobileOffsetY: (cleanData.heroTitle1MobileOffsetY as number) ?? 0,
+        heroTitle1MobileFontSize: (cleanData.heroTitle1MobileFontSize as number) ?? 56,
+        heroTitle2MobileOffsetX: (cleanData.heroTitle2MobileOffsetX as number) ?? 0,
+        heroTitle2MobileOffsetY: (cleanData.heroTitle2MobileOffsetY as number) ?? 0,
+        heroTitle2MobileFontSize: (cleanData.heroTitle2MobileFontSize as number) ?? 72,
+        ownerNameMobileOffsetX: (cleanData.ownerNameMobileOffsetX as number) ?? 0,
+        ownerNameMobileOffsetY: (cleanData.ownerNameMobileOffsetY as number) ?? 0,
+        ownerNameMobileFontSize: (cleanData.ownerNameMobileFontSize as number) ?? 28,
+        heroMainImageMobileOffsetX: (cleanData.heroMainImageMobileOffsetX as number) ?? 0,
+        heroMainImageMobileOffsetY: (cleanData.heroMainImageMobileOffsetY as number) ?? 0,
+        illustrationMobileOffsetX: (cleanData.illustrationMobileOffsetX as number) ?? 0,
+        illustrationMobileOffsetY: (cleanData.illustrationMobileOffsetY as number) ?? 0,
+        illustrationMobileSize: (cleanData.illustrationMobileSize as number) ?? 60,
+        illustrationMobileRotation: (cleanData.illustrationMobileRotation as number) ?? 0,
+        ctaMobileOffsetX: (cleanData.ctaMobileOffsetX as number) ?? 0,
+        ctaMobileOffsetY: (cleanData.ctaMobileOffsetY as number) ?? 0,
+        ctaMobileFontSize: (cleanData.ctaMobileFontSize as number) ?? 16,
 
         // Sección destacados
         showFeaturedProjects: (cleanData.showFeaturedProjects as boolean) ?? false,

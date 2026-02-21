@@ -1,12 +1,16 @@
-import { getAnalyticsDashboardData } from '@/actions/analytics'
+import { getAnalyticsDashboardData, getExtendedAnalyticsData } from '@/actions/analytics'
 import { StatCard } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import { EmptyState } from '@/components/ui'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
+import WorldMapClient from '@/components/analytics/WorldMapClient'
 
 export default async function AnalyticsPage() {
-  const data = await getAnalyticsDashboardData()
+  const [data, extended] = await Promise.all([
+    getAnalyticsDashboardData(),
+    getExtendedAnalyticsData(30),
+  ])
 
   if (!data) {
     return (
@@ -30,9 +34,18 @@ export default async function AnalyticsPage() {
     topLocations,
   } = data
 
-  const totalDevices = deviceUsage.mobile + deviceUsage.desktop || 1
+  const totalDevices = deviceUsage.mobile + deviceUsage.tablet + deviceUsage.desktop || 1
   const mobilePercent = Math.round((deviceUsage.mobile / totalDevices) * 100)
-  const desktopPercent = 100 - mobilePercent
+  const tabletPercent = Math.round((deviceUsage.tablet / totalDevices) * 100)
+  const desktopPercent = 100 - mobilePercent - tabletPercent
+
+  // Prepare WorldMap data
+  const topCountries = extended
+    ? Object.entries(extended.countryCounts)
+        .map(([country, count]) => ({ country, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 50)
+    : []
 
   return (
     <div className="space-y-8">
@@ -167,7 +180,7 @@ export default async function AnalyticsPage() {
             <h3 className="text-foreground mb-4 flex items-center gap-2 text-lg font-semibold">
               📱 Dispositivos
             </h3>
-            <div className="flex items-center justify-around py-4">
+            <div className="grid grid-cols-3 gap-2 py-4">
               <div className="text-center">
                 <div className="text-foreground text-3xl font-bold">{deviceUsage.mobile}</div>
                 <div className="text-muted-foreground text-sm">📱 Móvil</div>
@@ -175,7 +188,13 @@ export default async function AnalyticsPage() {
                   {mobilePercent}%
                 </div>
               </div>
-              <div className="bg-border dark:bg-border h-16 w-px" />
+              <div className="text-center">
+                <div className="text-foreground text-3xl font-bold">{deviceUsage.tablet}</div>
+                <div className="text-muted-foreground text-sm">🖥 Tablet</div>
+                <div className="text-muted-foreground mt-1 text-xs font-medium">
+                  {tabletPercent}%
+                </div>
+              </div>
               <div className="text-center">
                 <div className="text-foreground text-3xl font-bold">{deviceUsage.desktop}</div>
                 <div className="text-muted-foreground text-sm">💻 Escritorio</div>
@@ -187,11 +206,15 @@ export default async function AnalyticsPage() {
             <div className="bg-muted dark:bg-muted/20 flex h-3 overflow-hidden rounded-full">
               <div
                 style={{ width: `${mobilePercent}%` }}
-                className="bg-primary h-2 w-2 rounded-full"
+                className="bg-primary h-full transition-all"
+              />
+              <div
+                style={{ width: `${tabletPercent}%` }}
+                className="bg-primary/50 h-full transition-all"
               />
               <div
                 style={{ width: `${desktopPercent}%` }}
-                className="bg-secondary h-2 w-2 rounded-full"
+                className="bg-secondary h-full transition-all"
               />
             </div>
           </Section>
@@ -199,7 +222,7 @@ export default async function AnalyticsPage() {
           {/* Ubicaciones */}
           <Section>
             <h3 className="text-foreground mb-4 flex items-center gap-2 text-lg font-semibold">
-              🌍 Top Visitantes
+              🌍 Top Ciudades
             </h3>
             {topLocations.length > 0 ? (
               <ul className="space-y-2">
@@ -208,12 +231,8 @@ export default async function AnalyticsPage() {
                     key={idx}
                     className="bg-muted/30 dark:bg-muted/10 flex items-center justify-between rounded-lg px-4 py-3"
                   >
-                    <span className="text-muted-foreground dark:text-muted-foreground font-mono text-sm">
-                      {loc.ip}
-                    </span>
-                    <span className="text-foreground dark:text-foreground text-sm font-medium">
-                      {loc.count} visitas
-                    </span>
+                    <span className="text-foreground text-sm font-medium">{loc.location}</span>
+                    <span className="text-muted-foreground text-sm">{loc.count} visitas</span>
                   </li>
                 ))}
               </ul>
@@ -225,6 +244,95 @@ export default async function AnalyticsPage() {
           </Section>
         </div>
       </div>
+
+      {/* World Map */}
+      {extended && topCountries.length > 0 && (
+        <Section>
+          <h3 className="text-foreground mb-4 flex items-center gap-2 text-lg font-semibold">
+            🗺 Mapa de Visitantes
+            <span className="bg-muted text-muted-foreground rounded-full px-2 py-1 text-xs font-normal">
+              Últimos 30 días
+            </span>
+          </h3>
+          <WorldMapClient
+            geoPoints={extended.geoPoints}
+            topCountries={topCountries}
+            className="w-full"
+          />
+        </Section>
+      )}
+
+      {/* Extended Metrics — Web Vitals + Engagement */}
+      {extended && (
+        <Section>
+          <h3 className="text-foreground mb-6 flex items-center gap-2 text-lg font-semibold">
+            ⚡ Métricas de Rendimiento y Engagement
+            <span className="bg-muted text-muted-foreground rounded-full px-2 py-1 text-xs font-normal">
+              Promedio 30 días
+            </span>
+          </h3>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            <MetricCard
+              label="LCP"
+              value={extended.avgVitalsLCP ? `${Math.round(extended.avgVitalsLCP)}ms` : '—'}
+              description="Largest Contentful Paint"
+              ok={!extended.avgVitalsLCP || extended.avgVitalsLCP < 2500}
+            />
+            <MetricCard
+              label="FCP"
+              value={extended.avgVitalsFCP ? `${Math.round(extended.avgVitalsFCP)}ms` : '—'}
+              description="First Contentful Paint"
+              ok={!extended.avgVitalsFCP || extended.avgVitalsFCP < 1800}
+            />
+            <MetricCard
+              label="INP"
+              value={extended.avgVitalsINP ? `${Math.round(extended.avgVitalsINP)}ms` : '—'}
+              description="Interaction to Next Paint"
+              ok={!extended.avgVitalsINP || extended.avgVitalsINP < 200}
+            />
+            <MetricCard
+              label="CLS"
+              value={extended.avgVitalsCLS ? extended.avgVitalsCLS.toFixed(3) : '—'}
+              description="Cumulative Layout Shift"
+              ok={!extended.avgVitalsCLS || extended.avgVitalsCLS < 0.1}
+            />
+            <MetricCard
+              label="Scroll"
+              value={extended.avgScrollDepth ? `${Math.round(extended.avgScrollDepth)}%` : '—'}
+              description="Profundidad de scroll"
+              ok
+            />
+            <MetricCard
+              label="Tiempo"
+              value={extended.avgTimeOnPage ? `${Math.round(extended.avgTimeOnPage)}s` : '—'}
+              description="Tiempo en página"
+              ok
+            />
+          </div>
+        </Section>
+      )}
+    </div>
+  )
+}
+
+function MetricCard({
+  label,
+  value,
+  description,
+  ok,
+}: {
+  label: string
+  value: string
+  description: string
+  ok: boolean
+}) {
+  return (
+    <div className="bg-card border-border rounded-2xl border p-4 text-center">
+      <div className={`text-2xl font-bold ${ok ? 'text-primary' : 'text-destructive'}`}>
+        {value}
+      </div>
+      <div className="text-foreground mt-1 text-sm font-semibold">{label}</div>
+      <div className="text-muted-foreground mt-0.5 text-xs">{description}</div>
     </div>
   )
 }

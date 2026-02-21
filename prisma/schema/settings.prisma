@@ -70,6 +70,32 @@ model HomeSettings {
   ctaOffsetX  Int?    @default(0)
   ctaOffsetY  Int?    @default(0)
 
+  // ===== MOBILE OVERRIDES (responsive) =====
+  // Título 1 mobile
+  heroTitle1MobileOffsetX   Int? @default(0)
+  heroTitle1MobileOffsetY   Int? @default(0)
+  heroTitle1MobileFontSize  Int? @default(56)
+  // Título 2 mobile
+  heroTitle2MobileOffsetX   Int? @default(0)
+  heroTitle2MobileOffsetY   Int? @default(0)
+  heroTitle2MobileFontSize  Int? @default(72)
+  // Owner name mobile
+  ownerNameMobileOffsetX    Int? @default(0)
+  ownerNameMobileOffsetY    Int? @default(0)
+  ownerNameMobileFontSize   Int? @default(28)
+  // Hero main image mobile
+  heroMainImageMobileOffsetX Int? @default(0)
+  heroMainImageMobileOffsetY Int? @default(0)
+  // Illustration mobile
+  illustrationMobileOffsetX  Int? @default(0)
+  illustrationMobileOffsetY  Int? @default(0)
+  illustrationMobileSize     Int? @default(60)
+  illustrationMobileRotation Int? @default(0)
+  // CTA mobile
+  ctaMobileOffsetX   Int? @default(0)
+  ctaMobileOffsetY   Int? @default(0)
+  ctaMobileFontSize  Int? @default(16)
+
   // ===== SECCIÓN PROYECTOS DESTACADOS =====
   showFeaturedProjects  Boolean @default(true)
   featuredTitle         String? @default("Proyectos Destacados")

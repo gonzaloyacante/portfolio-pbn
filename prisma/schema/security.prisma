@@ -16,7 +16,7 @@ model AnalyticLog {
   userId     String?  // If authenticated
   // Request metadata
   timestamp  DateTime @default(now())
-  ipAddress  String?
+  ipAddress  String?  // Anonymized (last octet zeroed, GDPR)
   userAgent  String?
   referrer   String?
   // UTM tracking
@@ -25,11 +25,29 @@ model AnalyticLog {
   utmCampaign  String?
   utmTerm      String?
   utmContent   String?
-  // Geographic (optional, can be enriched)
+  // Geographic (from Vercel edge headers)
   country    String?
   city       String?
+  region     String?
+  latitude   Float?
+  longitude  Float?
+  // Device
+  device     String?  // mobile, tablet, desktop
   // Performance
   loadTime   Int?     // Page load time in ms
+  // Extended engagement tracking
+  scrollDepth     Int?    // Max scroll depth percentage (0-100)
+  timeOnPage      Int?    // Time on page in seconds
+  sessionDuration Int?    // Total session duration in seconds
+  clickTarget     String? // CSS selector or label of clicked element
+  // Web Vitals
+  vitalsLCP  Float?  // Largest Contentful Paint (ms)
+  vitalsFCP  Float?  // First Contentful Paint (ms)
+  vitalsINP  Float?  // Interaction to Next Paint (ms)
+  vitalsCLS  Float?  // Cumulative Layout Shift (score)
+  // Quality flags
+  isDuplicate Boolean @default(false)
+  isBot       Boolean @default(false)
   // Metadata
   metadata   String?  @db.Text // Additional JSON data
 
@@ -38,6 +56,9 @@ model AnalyticLog {
   @@index([sessionId])
   @@index([userId])
   @@index([ipAddress])
+  @@index([country, city])
+  @@index([isDuplicate, eventType, timestamp])
+  @@index([timestamp])
   @@map("analytic_logs")
 }
 

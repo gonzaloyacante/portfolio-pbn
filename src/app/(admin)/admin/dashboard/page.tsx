@@ -45,10 +45,18 @@ export default async function DashboardPage() {
   ]
 
   const totalDevices =
-    (analyticsData?.deviceUsage?.mobile || 0) + (analyticsData?.deviceUsage?.desktop || 0)
+    (analyticsData?.deviceUsage?.mobile ?? 0) +
+    (analyticsData?.deviceUsage?.desktop ?? 0) +
+    (analyticsData?.deviceUsage?.tablet ?? 0)
   const mobilePercent =
-    totalDevices > 0 ? Math.round((analyticsData!.deviceUsage.mobile / totalDevices) * 100) : 0
-  const desktopPercent = 100 - mobilePercent
+    totalDevices > 0
+      ? Math.round(((analyticsData?.deviceUsage?.mobile ?? 0) / totalDevices) * 100)
+      : 0
+  const tabletPercent =
+    totalDevices > 0
+      ? Math.round(((analyticsData?.deviceUsage?.tablet ?? 0) / totalDevices) * 100)
+      : 0
+  const desktopPercent = 100 - mobilePercent - tabletPercent
 
   return (
     <div className="page-transition space-y-8">
@@ -186,43 +194,54 @@ export default async function DashboardPage() {
             {totalDevices > 0 ? (
               <div className="space-y-4">
                 {/* Barra de progreso visual */}
-                <div className="bg-muted h-6 overflow-hidden rounded-full">
-                  <div className="bg-primary flex h-full">
+                <div className="bg-muted flex h-6 overflow-hidden rounded-full">
+                  <div
+                    className="bg-secondary text-secondary-foreground flex h-full items-center justify-center text-xs font-bold transition-all"
+                    style={{ width: `${mobilePercent}%` }}
+                  >
+                    {mobilePercent > 12 && `${mobilePercent}%`}
+                  </div>
+                  {tabletPercent > 0 && (
                     <div
-                      className="bg-secondary text-secondary-foreground flex h-full items-center justify-center text-xs font-bold transition-all"
-                      style={{
-                        width: `${mobilePercent}%`,
-                      }}
+                      className="bg-primary/60 text-primary-foreground flex h-full items-center justify-center text-xs font-bold transition-all"
+                      style={{ width: `${tabletPercent}%` }}
                     >
-                      {mobilePercent > 15 && `${mobilePercent}%`}
+                      {tabletPercent > 12 && `${tabletPercent}%`}
                     </div>
-                    <div
-                      className="bg-primary text-primary-foreground flex h-full items-center justify-center text-xs font-bold transition-all"
-                      style={{
-                        width: `${desktopPercent}%`,
-                      }}
-                    >
-                      {desktopPercent > 15 && `${desktopPercent}%`}
-                    </div>
+                  )}
+                  <div
+                    className="bg-primary text-primary-foreground flex h-full items-center justify-center text-xs font-bold transition-all"
+                    style={{ width: `${desktopPercent}%` }}
+                  >
+                    {desktopPercent > 12 && `${desktopPercent}%`}
                   </div>
                 </div>
 
                 {/* Leyenda */}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   <div className="flex items-center gap-2">
                     <div className="bg-secondary h-4 w-4 rounded" />
                     <div>
                       <p className="text-foreground text-lg font-bold">
-                        {analyticsData?.deviceUsage.mobile || 0}
+                        {analyticsData?.deviceUsage?.mobile ?? 0}
                       </p>
                       <p className="text-muted-foreground text-xs">📱 Móvil</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="bg-primary/60 h-4 w-4 rounded" />
+                    <div>
+                      <p className="text-foreground text-lg font-bold">
+                        {analyticsData?.deviceUsage?.tablet ?? 0}
+                      </p>
+                      <p className="text-muted-foreground text-xs">📟 Tablet</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="bg-primary h-4 w-4 rounded" />
                     <div>
                       <p className="text-foreground text-lg font-bold">
-                        {analyticsData?.deviceUsage.desktop || 0}
+                        {analyticsData?.deviceUsage?.desktop ?? 0}
                       </p>
                       <p className="text-muted-foreground text-xs">💻 Escritorio</p>
                     </div>

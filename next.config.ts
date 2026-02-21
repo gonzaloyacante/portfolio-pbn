@@ -41,20 +41,24 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // Scripts: Next.js (unsafe-inline para hydration), Sentry
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com",
+      // Scripts: Next.js (unsafe-inline para hydration), Sentry, Google Analytics, Vercel Live
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live https://*.vercel.live",
       // Styles: inline (Next.js/Tailwind) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs
-      "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co",
+      // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel
+      "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com",
       // Fonts: self, data URIs, Google Fonts CDN
       "font-src 'self' data: https://fonts.gstatic.com",
-      // Connect: API calls, Cloudinary uploads, Sentry DSN, Google Fonts API
-      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com",
+      // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation
+      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io",
       // Media: Cloudinary (videos)
       "media-src 'self' https://res.cloudinary.com",
       // Objects: none (no Flash/plugins)
       "object-src 'none'",
+      // Workers: Next.js + PWA service worker
+      "worker-src 'self' blob:",
+      // Frames: Vercel Live (preview comments toolbar)
+      'frame-src https://vercel.live',
       // Base URI: only self
       "base-uri 'self'",
       // Form actions: only self (Server Actions)

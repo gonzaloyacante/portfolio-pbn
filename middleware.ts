@@ -98,7 +98,15 @@ export default withAuth(
     if (!checkRateLimit(ip)) return rateLimitedResponse(ip, pathname)
 
     // ── 2. CSRF protection para mutaciones en rutas admin ─────────────────
-    if (pathname.startsWith('/admin') && !isSafeMethod(req.method) && !isValidCsrf(req)) {
+    // Los Server Actions de Next.js usan POST con header 'next-action' — se excluyen del CSRF
+    // ya que Next.js gestiona su propia protección de origen para Server Actions
+    const isServerAction = req.headers.get('next-action') !== null
+    if (
+      pathname.startsWith('/admin') &&
+      !isSafeMethod(req.method) &&
+      !isServerAction &&
+      !isValidCsrf(req)
+    ) {
       return csrfErrorResponse(ip, pathname)
     }
 

@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { EditableElement } from '../visual-editor/types'
 import { ClickableElement } from '../visual-editor/ClickableElement'
+import { useIsMobile } from '@/hooks/useIsMobile'
 
 import { FontLoader } from './FontLoader'
 
@@ -66,6 +67,41 @@ interface HeroContentProps {
   onSelectElement?: (element: EditableElement) => void
 }
 
+// Pick mobile override when isMobile is true, fallback to desktop value
+const mob = <T,>(
+  isMobile: boolean,
+  mobileVal: T | null | undefined,
+  desktopVal: T | null | undefined,
+  fallback: T
+): T => {
+  if (isMobile && mobileVal != null) return mobileVal
+  return desktopVal ?? fallback
+}
+
+// Mobile-aware effective values helper
+function resolveEffectiveValues(s: Partial<HomeSettingsData>, isMobile: boolean) {
+  return {
+    title1OffsetX: mob(isMobile, s.heroTitle1MobileOffsetX, s.heroTitle1OffsetX, 0),
+    title1OffsetY: mob(isMobile, s.heroTitle1MobileOffsetY, s.heroTitle1OffsetY, 0),
+    title1FontSize: mob(isMobile, s.heroTitle1MobileFontSize, s.heroTitle1FontSize, null),
+    title2OffsetX: mob(isMobile, s.heroTitle2MobileOffsetX, s.heroTitle2OffsetX, 0),
+    title2OffsetY: mob(isMobile, s.heroTitle2MobileOffsetY, s.heroTitle2OffsetY, 0),
+    title2FontSize: mob(isMobile, s.heroTitle2MobileFontSize, s.heroTitle2FontSize, null),
+    ownerOffsetX: mob(isMobile, s.ownerNameMobileOffsetX, s.ownerNameOffsetX, 0),
+    ownerOffsetY: mob(isMobile, s.ownerNameMobileOffsetY, s.ownerNameOffsetY, 0),
+    ownerFontSize: mob(isMobile, s.ownerNameMobileFontSize, s.ownerNameFontSize, null),
+    imgOffsetX: mob(isMobile, s.heroMainImageMobileOffsetX, s.heroMainImageOffsetX, 0),
+    imgOffsetY: mob(isMobile, s.heroMainImageMobileOffsetY, s.heroMainImageOffsetY, 0),
+    illOffsetX: mob(isMobile, s.illustrationMobileOffsetX, s.illustrationOffsetX, 0),
+    illOffsetY: mob(isMobile, s.illustrationMobileOffsetY, s.illustrationOffsetY, 0),
+    illSize: mob(isMobile, s.illustrationMobileSize, s.illustrationSize, 100),
+    illRotation: mob(isMobile, s.illustrationMobileRotation, s.illustrationRotation, 0),
+    ctaOffsetX: mob(isMobile, s.ctaMobileOffsetX, s.ctaOffsetX, 0),
+    ctaOffsetY: mob(isMobile, s.ctaMobileOffsetY, s.ctaOffsetY, 0),
+    ctaFontSize: mob(isMobile, s.ctaMobileFontSize, s.ctaFontSize, null),
+  }
+}
+
 export function HeroContent({
   settings,
   isEditor = false,
@@ -73,6 +109,7 @@ export function HeroContent({
   onSelectElement,
 }: HeroContentProps) {
   const s = settings || ({} as Partial<HomeSettingsData>)
+  const isMobile = useIsMobile()
 
   // Props mapping
   const title1 = s.heroTitle1Text || 'Make-up'
@@ -80,11 +117,15 @@ export function HeroContent({
   const mainImage = s.heroMainImageUrl
   const illustration = s.illustrationUrl
   const ownerName = s.ownerNameText || 'Paola Bolívar Nievas'
+
   const ctaText = s.ctaText || 'Ver Portfolio'
   const ctaLink = s.ctaLink || '/proyectos'
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const mainImageAlt = s.heroMainImageAlt || 'Hero Image'
   const caption = s.heroMainImageCaption
+
+  // Mobile-aware effective values
+  const eff = resolveEffectiveValues(s, isMobile)
 
   const fontsHash = [s.heroTitle1Font, s.heroTitle2Font, s.ownerNameFont, s.ctaFont]
     .filter(Boolean)
@@ -109,7 +150,7 @@ export function HeroContent({
                 onSelectElement={onSelectElement}
                 style={{
                   zIndex: s.heroTitle1ZIndex ?? 20,
-                  transform: `translate(${s.heroTitle1OffsetX || 0}px, ${s.heroTitle1OffsetY || 0}px)`,
+                  transform: `translate(${eff.title1OffsetX}px, ${eff.title1OffsetY}px)`,
                 }}
               >
                 <h1
@@ -119,7 +160,7 @@ export function HeroContent({
                       ? s.heroTitle1Font!
                       : 'var(--font-brand, var(--font-script))',
                     color: s.heroTitle1Color || 'var(--primary)',
-                    fontSize: s.heroTitle1FontSize ? `${s.heroTitle1FontSize}px` : undefined,
+                    fontSize: eff.title1FontSize ? `${eff.title1FontSize}px` : undefined,
                   }}
                 >
                   <span className="dark:hidden" style={{ color: s.heroTitle1Color || 'inherit' }}>
@@ -143,7 +184,7 @@ export function HeroContent({
                 onSelectElement={onSelectElement}
                 style={{
                   zIndex: s.heroTitle2ZIndex ?? 10,
-                  transform: `translate(${s.heroTitle2OffsetX || 0}px, ${s.heroTitle2OffsetY || 0}px)`,
+                  transform: `translate(${eff.title2OffsetX}px, ${eff.title2OffsetY}px)`,
                 }}
               >
                 <h2
@@ -152,7 +193,7 @@ export function HeroContent({
                     fontFamily: s.heroTitle2FontUrl
                       ? s.heroTitle2Font!
                       : 'var(--font-portfolio, var(--font-heading))',
-                    fontSize: s.heroTitle2FontSize ? `${s.heroTitle2FontSize}px` : undefined,
+                    fontSize: eff.title2FontSize ? `${eff.title2FontSize}px` : undefined,
                   }}
                 >
                   <span className="dark:hidden" style={{ color: s.heroTitle2Color || 'inherit' }}>
@@ -187,7 +228,7 @@ export function HeroContent({
                   style={{
                     zIndex: s.illustrationZIndex ?? 0,
                     opacity: (s.illustrationOpacity ?? 80) / 100,
-                    transform: `translate(${s.illustrationOffsetX || 0}px, ${s.illustrationOffsetY || 0}px) rotate(${s.illustrationRotation || 0}deg) scale(${(s.illustrationSize ?? 100) / 100})`,
+                    transform: `translate(${eff.illOffsetX}px, ${eff.illOffsetY}px) rotate(${eff.illRotation}deg) scale(${eff.illSize / 100})`,
                   }}
                 >
                   <div className="relative h-full w-full">
@@ -217,7 +258,7 @@ export function HeroContent({
                     onSelectElement={onSelectElement}
                     style={{
                       zIndex: s.ownerNameZIndex ?? 15,
-                      transform: `translate(${s.ownerNameOffsetX || 0}px, ${s.ownerNameOffsetY || 0}px)`,
+                      transform: `translate(${eff.ownerOffsetX}px, ${eff.ownerOffsetY}px)`,
                     }}
                   >
                     <p
@@ -226,7 +267,7 @@ export function HeroContent({
                         fontFamily: s.ownerNameFontUrl
                           ? s.ownerNameFont!
                           : 'var(--font-signature, var(--font-heading))',
-                        fontSize: s.ownerNameFontSize ? `${s.ownerNameFontSize}px` : undefined,
+                        fontSize: eff.ownerFontSize ? `${eff.ownerFontSize}px` : undefined,
                       }}
                     >
                       <span
@@ -261,7 +302,7 @@ export function HeroContent({
               className="relative flex max-w-full items-center justify-center"
               style={{
                 zIndex: s.heroMainImageZIndex ?? 5,
-                transform: `translate(${s.heroMainImageOffsetX || 0}px, ${s.heroMainImageOffsetY || 0}px)`,
+                transform: `translate(${eff.imgOffsetX}px, ${eff.imgOffsetY}px)`,
               }}
             >
               {mainImage ? (
@@ -315,7 +356,7 @@ export function HeroContent({
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               style={{
-                transform: `translate(${s.ctaOffsetX || 0}px, ${s.ctaOffsetY || 0}px)`,
+                transform: `translate(${eff.ctaOffsetX}px, ${eff.ctaOffsetY}px)`,
               }}
             >
               {isEditor ? (
@@ -326,7 +367,7 @@ export function HeroContent({
                       variant="ghost"
                       style={{
                         fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
-                        fontSize: s.ctaFontSize ? `${s.ctaFontSize}px` : undefined,
+                        fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,
                       }}
                     >
                       {ctaText}
@@ -341,7 +382,7 @@ export function HeroContent({
                       variant="ghost"
                       style={{
                         fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
-                        fontSize: s.ctaFontSize ? `${s.ctaFontSize}px` : undefined,
+                        fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,
                       }}
                     >
                       {ctaText}

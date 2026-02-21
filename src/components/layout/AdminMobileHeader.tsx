@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Globe, LogOut } from 'lucide-react'
 import { showToast } from '@/lib/toast'
 import ThemeToggle from '@/components/layout/ThemeToggle'
-import { menuItems } from '@/config/admin-sidebar'
+import { menuItems, type SidebarItem } from '@/config/admin-sidebar'
 import { ROUTES } from '@/config/routes'
 
 export default function AdminMobileHeader() {
@@ -105,8 +105,9 @@ export default function AdminMobileHeader() {
         {/* Items de navegación */}
         <div className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-1" role="list">
-            {menuItems.map((item: { href: string; icon: string; label: string }) => {
+            {menuItems.map((item: SidebarItem) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+              const IconComponent = item.icon
               return (
                 <li key={item.href}>
                   <Link
@@ -118,7 +119,7 @@ export default function AdminMobileHeader() {
                         : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                     }`}
                   >
-                    <span className="text-xl">{item.icon}</span>
+                    <IconComponent size={18} strokeWidth={isActive ? 2.5 : 1.8} />
                     <span className="font-medium">{item.label}</span>
                     {isActive && (
                       <span className="ml-auto h-2 w-2 rounded-full bg-current opacity-50" />
@@ -139,14 +140,14 @@ export default function AdminMobileHeader() {
             onClick={() => setIsOpen(false)}
             className="text-muted-foreground hover:bg-accent hover:text-accent-foreground mb-2 flex w-full items-center gap-3 rounded-lg px-4 py-2 text-sm transition-all duration-200"
           >
-            <span>🌐</span>
+            <Globe size={16} />
             <span>Ver sitio público</span>
           </Link>
           <button
             onClick={handleSignOut}
             className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200"
           >
-            <span className="text-xl">🚪</span>
+            <LogOut size={18} />
             <span className="font-medium">Cerrar Sesión</span>
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { PrismaPg } from '@prisma/adapter-pg'
-import { PrismaClient } from '@/generated/prisma'
+import { PrismaClient } from '@/generated/prisma/client'
 import bcrypt from 'bcryptjs'
 import { adminUser } from './seeds/users'
 import { themeSettings } from './seeds/theme'

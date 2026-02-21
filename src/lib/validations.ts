@@ -169,6 +169,26 @@ export const homeSettingsSchema = z.object({
   ctaOffsetX: z.number().optional(),
   ctaOffsetY: z.number().optional(),
 
+  // ─── Mobile Overrides ────────────────────────────────────────────────────
+  heroTitle1MobileOffsetX: z.number().optional().nullable(),
+  heroTitle1MobileOffsetY: z.number().optional().nullable(),
+  heroTitle1MobileFontSize: z.number().min(10).max(300).optional().nullable(),
+  heroTitle2MobileOffsetX: z.number().optional().nullable(),
+  heroTitle2MobileOffsetY: z.number().optional().nullable(),
+  heroTitle2MobileFontSize: z.number().min(10).max(300).optional().nullable(),
+  ownerNameMobileOffsetX: z.number().optional().nullable(),
+  ownerNameMobileOffsetY: z.number().optional().nullable(),
+  ownerNameMobileFontSize: z.number().min(10).max(100).optional().nullable(),
+  heroMainImageMobileOffsetX: z.number().optional().nullable(),
+  heroMainImageMobileOffsetY: z.number().optional().nullable(),
+  illustrationMobileOffsetX: z.number().optional().nullable(),
+  illustrationMobileOffsetY: z.number().optional().nullable(),
+  illustrationMobileSize: z.number().min(10).max(200).optional().nullable(),
+  illustrationMobileRotation: z.number().optional().nullable(),
+  ctaMobileOffsetX: z.number().optional().nullable(),
+  ctaMobileOffsetY: z.number().optional().nullable(),
+  ctaMobileFontSize: z.number().min(10).max(32).optional().nullable(),
+
   // Sección destacados
   showFeaturedProjects: z.boolean(),
   featuredTitle: z.string().optional().nullable(),

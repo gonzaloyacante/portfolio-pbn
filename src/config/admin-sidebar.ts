@@ -1,65 +1,85 @@
 import { ROUTES } from '@/config/routes'
+import {
+  LayoutDashboard,
+  Home,
+  ImageIcon,
+  Folder,
+  Sparkles,
+  MessageSquare,
+  Mail,
+  User,
+  Settings,
+  Palette,
+  BarChart2,
+  Trash2,
+  type LucideIcon,
+} from 'lucide-react'
 
-export const menuItems = [
+export interface SidebarItem {
+  href: string
+  label: string
+  icon: LucideIcon
+}
+
+export const menuItems: SidebarItem[] = [
   {
     href: ROUTES.admin.dashboard,
     label: 'Dashboard',
-    icon: '📊',
+    icon: LayoutDashboard,
   },
   {
     href: ROUTES.admin.home,
     label: 'Inicio',
-    icon: '🏠',
+    icon: Home,
   },
   {
     href: ROUTES.admin.projects,
     label: 'Proyectos',
-    icon: '🎨',
+    icon: ImageIcon,
   },
   {
     href: ROUTES.admin.categories,
     label: 'Categorías',
-    icon: '📁',
+    icon: Folder,
   },
   {
     href: ROUTES.admin.services,
     label: 'Servicios',
-    icon: '💅',
+    icon: Sparkles,
   },
   {
     href: ROUTES.admin.testimonials,
     label: 'Testimonios',
-    icon: '💬',
+    icon: MessageSquare,
   },
   {
     href: ROUTES.admin.contacts,
     label: 'Mensajes',
-    icon: '📬',
+    icon: Mail,
   },
   {
     href: ROUTES.admin.about,
     label: 'Sobre Mí',
-    icon: '👤',
+    icon: User,
   },
   {
     href: ROUTES.admin.settings,
     label: 'Contacto y Redes',
-    icon: '⚙️',
+    icon: Settings,
   },
   {
     href: ROUTES.admin.theme,
     label: 'Tema',
-    icon: '🖌️',
+    icon: Palette,
   },
   {
     href: ROUTES.admin.analytics,
     label: 'Analítica',
-    icon: '📈',
+    icon: BarChart2,
   },
-  // Trash can be useful
   {
     href: ROUTES.admin.trash,
     label: 'Papelera',
-    icon: '🗑️',
+    icon: Trash2,
   },
 ]
