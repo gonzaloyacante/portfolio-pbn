@@ -22,6 +22,24 @@ function mapButtonSize(size: string | null | undefined): 'sm' | 'md' | 'lg' | 'x
   return 'lg'
 }
 
+function mapCtaVariant(
+  variant: string | null | undefined
+): 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' {
+  switch (variant) {
+    case 'primary':
+    case 'default':
+      return 'primary'
+    case 'secondary':
+      return 'secondary'
+    case 'outline':
+      return 'outline'
+    case 'ghost':
+      return 'ghost'
+    default:
+      return 'primary'
+  }
+}
+
 // Wrapper to simplify Editor vs Public logic
 function Wrapper({
   children,
@@ -364,7 +382,7 @@ export function HeroContent({
                   <MagneticButton>
                     <Button
                       size={mapButtonSize(s.ctaSize)}
-                      variant="ghost"
+                      variant={mapCtaVariant(s.ctaVariant)}
                       style={{
                         fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
                         fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,
@@ -379,7 +397,7 @@ export function HeroContent({
                   <Link href={ctaLink}>
                     <Button
                       size={mapButtonSize(s.ctaSize)}
-                      variant="ghost"
+                      variant={mapCtaVariant(s.ctaVariant)}
                       style={{
                         fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
                         fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,

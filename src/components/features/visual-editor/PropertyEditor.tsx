@@ -54,7 +54,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.text && (
         <Input
           label="Texto"
-          value={(settings[fields.text] as string) || ''}
+          value={(settings[fields.text] as string) ?? ''}
           onChange={(e) => onUpdate(fields.text as keyof HomeSettingsData, e.target.value)}
         />
       )}
@@ -63,7 +63,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.link && (
         <Input
           label="URL Destino"
-          value={(settings[fields.link] as string) || ''}
+          value={(settings[fields.link] as string) ?? ''}
           onChange={(e) => onUpdate(fields.link as keyof HomeSettingsData, e.target.value)}
         />
       )}
@@ -72,7 +72,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.variant && (
         <div className="my-4 border-t pt-4">
           <EditorVariantControl
-            value={(settings[fields.variant] as string) || 'primary'}
+            value={(settings[fields.variant] as string) ?? 'primary'}
             onChange={(val: string) => onUpdate(fields.variant as keyof HomeSettingsData, val)}
           />
         </div>
@@ -82,7 +82,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.imageUrl && (
         <EditorImageUpload
           label={element === 'illustration' ? 'Subir Ilustración' : 'Imagen Principal'}
-          value={(settings[fields.imageUrl] as string) || null}
+          value={(settings[fields.imageUrl] as string) ?? null}
           onChange={(val: string | null) =>
             onUpdate(fields.imageUrl as keyof HomeSettingsData, val)
           }
@@ -93,7 +93,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.imageStyle && (
         <EditorSelectControl
           label="Estilo de Imagen"
-          value={(settings[fields.imageStyle] as string) || 'original'}
+          value={(settings[fields.imageStyle] as string) ?? 'original'}
           options={IMAGE_STYLES}
           onChange={(val: string) => onUpdate(fields.imageStyle as keyof HomeSettingsData, val)}
         />
@@ -103,7 +103,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.font && fields.fontUrl && (
         <div className={fields.variant ? 'my-4 border-t pt-4' : ''}>
           <GoogleFontPicker
-            value={(settings[fields.font] as string) || ''}
+            value={(settings[fields.font] as string) ?? ''}
             onValueChange={(font, url) => {
               onUpdate(fields.font as keyof HomeSettingsData, font)
               onUpdate(fields.fontUrl as keyof HomeSettingsData, url)
@@ -117,7 +117,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.fontSize && (
         <EditorSliderControl
           label={element === 'ctaButton' ? 'Tamaño de Texto' : 'Tamaño'}
-          value={(settings[fields.fontSize] as number) || defaults.fontSize || 16}
+          value={(settings[fields.fontSize] as number) ?? defaults.fontSize ?? 16}
           onChange={(val: number) => onUpdate(fields.fontSize as keyof HomeSettingsData, val)}
           min={defaults.fontSizeMin || 10}
           max={defaults.fontSizeMax || 100}
@@ -128,7 +128,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.size && (
         <EditorSliderControl
           label="Tamaño"
-          value={(settings[fields.size] as number) || 100}
+          value={(settings[fields.size] as number) ?? 100}
           onChange={(val: number) => onUpdate(fields.size as keyof HomeSettingsData, val)}
           min={10}
           max={500}
@@ -151,8 +151,8 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.color && fields.colorDark && (
         <EditorDualColorControl
           label="Color"
-          lightColor={(settings[fields.color] as string) || ''}
-          darkColor={(settings[fields.colorDark] as string) || ''}
+          lightColor={(settings[fields.color] as string) ?? ''}
+          darkColor={(settings[fields.colorDark] as string) ?? ''}
           onChangeLight={(val: string) => onUpdate(fields.color as keyof HomeSettingsData, val)}
           onChangeDark={(val: string) => onUpdate(fields.colorDark as keyof HomeSettingsData, val)}
         />
@@ -161,7 +161,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {/* Z-Index */}
       {fields.zIndex && (
         <EditorZIndexControl
-          value={(settings[fields.zIndex] as number) || defaults.zIndex || 10}
+          value={(settings[fields.zIndex] as number) ?? defaults.zIndex ?? 10}
           onChange={(val: number) => onUpdate(fields.zIndex as keyof HomeSettingsData, val)}
         />
       )}
@@ -169,11 +169,11 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {/* Position Control */}
       {fields.offsetX && fields.offsetY && (
         <EditorPositionControl
-          offsetX={(settings[fields.offsetX] as number) || 0}
-          offsetY={(settings[fields.offsetY] as number) || 0}
+          offsetX={(settings[fields.offsetX] as number) ?? 0}
+          offsetY={(settings[fields.offsetY] as number) ?? 0}
           onChangeX={(val: number) => onUpdate(fields.offsetX as keyof HomeSettingsData, val)}
           onChangeY={(val: number) => onUpdate(fields.offsetY as keyof HomeSettingsData, val)}
-          rotation={fields.rotation ? (settings[fields.rotation] as number) || 0 : undefined}
+          rotation={fields.rotation ? ((settings[fields.rotation] as number) ?? 0) : undefined}
           onChangeRotation={
             fields.rotation
               ? (val: number) => onUpdate(fields.rotation as keyof HomeSettingsData, val)
@@ -186,7 +186,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.alt && (
         <Input
           label="Texto alternativo (alt)"
-          value={(settings[fields.alt] as string) || ''}
+          value={(settings[fields.alt] as string) ?? ''}
           onChange={(e) => onUpdate(fields.alt as keyof HomeSettingsData, e.target.value)}
           placeholder="Describe la imagen para accesibilidad"
         />
@@ -214,7 +214,7 @@ export function PropertyEditor({ element, settings, onUpdate }: PropertyEditorPr
       {fields.featuredCount && (
         <EditorSliderControl
           label="Número de proyectos destacados"
-          value={(settings[fields.featuredCount] as number) || 6}
+          value={(settings[fields.featuredCount] as number) ?? 6}
           onChange={(val: number) => onUpdate(fields.featuredCount as keyof HomeSettingsData, val)}
           min={1}
           max={20}

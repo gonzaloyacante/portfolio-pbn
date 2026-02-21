@@ -43,16 +43,16 @@ export default function VisitsChart({
           </div>
 
           {/* Gráfico de barras */}
-          <div className="flex h-40 items-end justify-around gap-2">
+          <div className="flex items-end justify-around gap-2">
             {trendData.map((day) => {
-              const height = Math.max((day.count / maxCount) * 100, 10)
+              const barHeight = day.count === 0 ? 4 : Math.max((day.count / maxCount) * 160, 8)
               const date = new Date(day.date)
               return (
-                <div key={day.date} className="flex flex-1 flex-col items-center gap-2">
+                <div key={day.date} className="flex flex-1 flex-col items-center gap-1">
                   <span className="text-primary text-sm font-bold">{day.count}</span>
                   <div
                     className="bg-primary w-full max-w-[50px] rounded-t-lg transition-all duration-300 hover:opacity-80"
-                    style={{ height: `${height}%`, minHeight: '20px' }}
+                    style={{ height: `${barHeight}px` }}
                   />
                   <span className="text-foreground text-xs font-bold">
                     {DAYS_ES[date.getDay()]}

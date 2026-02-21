@@ -27,6 +27,7 @@ export const ROUTES = {
     about: '/sobre-mi',
     projects: '/proyectos',
     services: '/servicios',
+    serviceDetail: (slug: string) => `/servicios/${slug}` as const,
     contact: '/contacto',
     privacy: '/privacidad',
   },
