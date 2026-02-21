@@ -31,6 +31,8 @@ export { default as CategoryCard } from './data-display/CategoryCard'
 // Overlay
 export { default as Modal } from './overlay/Modal'
 export { ConfirmDialog, useConfirmDialog } from './overlay/ConfirmDialog'
+export { Lightbox } from './overlay/Lightbox'
+export type { LightboxImage } from './overlay/Lightbox'
 
 // Navigation
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './navigation/Tabs'
