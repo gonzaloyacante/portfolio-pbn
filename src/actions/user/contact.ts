@@ -11,6 +11,8 @@ import { z } from 'zod'
 import { ROUTES } from '@/config/routes'
 import { createRateLimiter } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/lib/rate-limit-config'
+import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 /**
  * Acciones de contacto con validación robusta y rate limiting
@@ -153,18 +155,26 @@ async function notifyAdminOfContact(sanitized: SanitizedData) {
 
 // Admin actions
 export async function getContacts() {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   return await prisma.contact.findMany({
     orderBy: { createdAt: 'desc' },
   })
 }
 
 export async function getUnreadContactsCount() {
+  await requireAdmin()
+
   return await prisma.contact.count({
     where: { isRead: false },
   })
 }
 
 export async function markContactAsRead(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   await prisma.contact.update({
     where: { id },
     data: { isRead: true },
@@ -173,6 +183,9 @@ export async function markContactAsRead(id: string) {
 }
 
 export async function markContactAsReplied(id: string, adminNote?: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   await prisma.contact.update({
     where: { id },
     data: {
@@ -185,6 +198,9 @@ export async function markContactAsReplied(id: string, adminNote?: string) {
 }
 
 export async function deleteContact(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   await prisma.contact.delete({
     where: { id },
   })

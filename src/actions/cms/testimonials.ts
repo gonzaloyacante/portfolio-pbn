@@ -9,6 +9,8 @@ import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
 import { ROUTES } from '@/config/routes'
 import { auth } from '@/lib/auth'
+import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 // Rate limiting cache (simple in-memory, for production use Redis)
 const recentSubmissions = new Map<string, number>()
@@ -37,6 +39,9 @@ const TestimonialSchema = z.object({
 })
 
 export async function createTestimonial(formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     name: formData.get('name'),
     text: formData.get('text'),
@@ -144,6 +149,9 @@ export async function submitPublicTestimonial(formData: FormData) {
 }
 
 export async function updateTestimonial(id: string, formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     name: formData.get('name'),
     text: formData.get('text'),
@@ -200,6 +208,9 @@ export async function updateTestimonial(id: string, formData: FormData) {
 }
 
 export async function deleteTestimonial(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.testimonial.delete({ where: { id } })
 
@@ -215,6 +226,9 @@ export async function deleteTestimonial(id: string) {
 }
 
 export async function toggleTestimonial(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     const testimonial = await prisma.testimonial.findUnique({ where: { id } })
     if (!testimonial) {

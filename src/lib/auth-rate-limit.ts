@@ -116,8 +116,5 @@ export function cleanupOldAttempts(): void {
   }
 }
 
-// Limpiar cada 5 minutos
-if (typeof window === 'undefined') {
-  // Solo en servidor
-  setInterval(cleanupOldAttempts, 5 * 60 * 1000)
-}
+// Nota: La limpieza periódica se realiza mediante un cron job externo.
+// No usar setInterval — es poco confiable en entornos serverless/Edge.

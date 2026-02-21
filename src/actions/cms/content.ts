@@ -480,6 +480,17 @@ export async function deleteCategory(id: string) {
   await checkApiRateLimit()
 
   try {
+    // Verificar que no tenga proyectos antes de eliminar (evitar cascade destructivo)
+    const projectCount = await prisma.project.count({
+      where: { categoryId: id },
+    })
+    if (projectCount > 0) {
+      return {
+        success: false,
+        error: `No se puede eliminar la categoría porque contiene ${projectCount} proyecto${projectCount !== 1 ? 's' : ''}. Reasígnalos o elimínalos primero.`,
+      }
+    }
+
     await prisma.category.delete({ where: { id } })
     revalidatePath(ROUTES.public.projects)
     revalidatePath(ROUTES.admin.projects)

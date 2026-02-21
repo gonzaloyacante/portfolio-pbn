@@ -66,7 +66,7 @@ function NavButton({
     <Link
       href={`/proyectos/${categorySlug}/${project.slug}`}
       className={cn(
-        'group relative flex min-h-[150px] flex-col justify-center overflow-hidden bg-(--background) px-8 py-12 transition-colors hover:text-white md:min-h-[200px]',
+        'group relative flex min-h-37.5 flex-col justify-center overflow-hidden bg-(--background) px-8 py-12 transition-colors hover:text-white md:min-h-50',
         isPrev
           ? 'items-start border-b border-(--primary)/10 md:border-r md:border-b-0'
           : 'items-end'

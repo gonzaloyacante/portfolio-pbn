@@ -5,6 +5,12 @@ import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 import { emailService } from '@/lib/email-service'
 import { headers } from 'next/headers'
+import {
+  checkAuthRateLimit,
+  recordFailedLoginAttempt,
+  clearLoginAttempts,
+} from '@/lib/auth-rate-limit'
+import { ROUTES } from '@/config/routes'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,15 +23,46 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
+        // Obtener IP del request para rate limiting
+        const headersList = await headers()
+        const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown'
+
+        // Verificar rate limit ANTES de tocar la BD
+        const rateCheck = await checkAuthRateLimit(credentials.email, ip)
+        if (!rateCheck.allowed) {
+          throw new Error(
+            `Demasiados intentos fallidos. Inténtalo de nuevo en ${rateCheck.lockoutMinutes} minutos.`
+          )
+        }
+
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         })
 
-        if (!user) return null
+        if (!user) {
+          await recordFailedLoginAttempt(credentials.email, ip)
+          return null
+        }
+
+        // Verificar estado de la cuenta
+        if (!user.isActive || user.deletedAt !== null) {
+          return null
+        }
+
+        // Verificar bloqueo temporal por intentos fallidos
+        if (user.lockedUntil && user.lockedUntil > new Date()) {
+          throw new Error('Cuenta bloqueada temporalmente. Inténtalo más tarde.')
+        }
 
         const isValid = await bcrypt.compare(credentials.password, user.password)
 
-        if (!isValid) return null
+        if (!isValid) {
+          await recordFailedLoginAttempt(credentials.email, ip)
+          return null
+        }
+
+        // Login exitoso: limpiar intentos fallidos
+        await clearLoginAttempts(credentials.email, ip)
 
         return { id: user.id, email: user.email, name: user.name, role: user.role }
       },
@@ -33,7 +70,7 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -67,12 +104,12 @@ export const authOptions: NextAuthOptions = {
           userAgent: userAgent,
         })
       } catch (error) {
-        logger.error('Error sending login alert:', { error: error })
+        logger.error('Error sending login alert:', { error })
       }
     },
   },
   pages: {
-    signIn: '/auth/login',
+    signIn: ROUTES.auth.login,
   },
   secret: process.env.NEXTAUTH_SECRET,
 }

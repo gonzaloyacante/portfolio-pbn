@@ -28,7 +28,6 @@ model User {
   updatedAt        DateTime  @updatedAt
   deletedAt        DateTime? // Soft delete
 
-  @@index([email])
   @@index([isActive, deletedAt])
   @@index([lastLoginAt])
   @@map("users")
@@ -62,7 +61,6 @@ model Category {
   // Relations
   projects        Project[]
 
-  @@index([slug])
   @@index([sortOrder])
   @@index([isActive, deletedAt])
   @@index([viewCount])
@@ -121,7 +119,6 @@ model Project {
 
   @@index([categoryId, date(sort: Desc)])
   @@index([categoryId, sortOrder])
-  @@index([slug])
   @@index([isActive, isDeleted])
   @@index([isFeatured, isPinned])
   @@index([publishedAt])

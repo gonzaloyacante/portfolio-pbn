@@ -94,7 +94,6 @@ model Service {
 
   @@index([isActive, sortOrder])
   @@index([isFeatured])
-  @@index([slug])
   @@index([isAvailable])
   @@map("services")
 }

@@ -100,7 +100,7 @@ export function HeroContent({
         {/* === LEFT COLUMN GROUP (Titles + Signature) === */}
         <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
           {/* 1. TITLES (Order 1 on Mobile) */}
-          <div className="order-1 flex w-full flex-col items-center text-center lg:order-none lg:items-start lg:text-left">
+          <div className="order-1 flex w-full flex-col items-center text-center lg:order-0 lg:items-start lg:text-left">
             <FadeIn delay={0.2} className="relative z-20" disabled={isEditor}>
               <Wrapper
                 id="heroTitle1"
@@ -170,7 +170,7 @@ export function HeroContent({
           </div>
 
           {/* 4. SIGNATURE + ILLUSTRATION (Order 4 on Mobile) */}
-          <div className="order-4 mt-8 flex w-full items-center justify-center gap-4 lg:relative lg:order-none lg:mt-0 lg:justify-start lg:gap-0">
+          <div className="order-4 mt-8 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-0 lg:justify-start lg:gap-0">
             {/* Illustration & Signature Wrapper - FLEX with NEGATIVE MARGIN OVERLAP */}
             <div className="flex flex-row items-center justify-center lg:flex-col lg:items-end lg:justify-start">
               {/* Illustration: Horizontally aligned with signature on mobile */}
@@ -252,7 +252,7 @@ export function HeroContent({
         {/* === RIGHT COLUMN GROUP (Image + CTA) === */}
         <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
           {/* 2. IMAGE (Order 2 on Mobile) */}
-          <div className="order-2 flex w-full justify-center lg:order-none lg:flex-1 lg:items-center">
+          <div className="order-2 flex w-full justify-center lg:order-0 lg:flex-1 lg:items-center">
             <Wrapper
               id="heroMainImage"
               isEditor={isEditor}
@@ -271,7 +271,7 @@ export function HeroContent({
                       'relative overflow-hidden transition-all duration-500',
                       s.heroImageStyle === 'rounded' && 'rounded-3xl',
                       s.heroImageStyle === 'circle' && 'rounded-full',
-                      s.heroImageStyle === 'portrait' && 'aspect-[3/4]'
+                      s.heroImageStyle === 'portrait' && 'aspect-3/4'
                     )}
                   >
                     <OptimizedImage
@@ -308,7 +308,7 @@ export function HeroContent({
           </div>
 
           {/* 3. CTA BUTTON (Order 3 on Mobile) */}
-          <div className="order-3 mt-6 lg:order-none lg:mt-8">
+          <div className="order-3 mt-6 lg:order-0 lg:mt-8">
             <Wrapper
               id="ctaButton"
               isEditor={isEditor}

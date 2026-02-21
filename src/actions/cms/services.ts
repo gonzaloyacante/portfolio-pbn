@@ -7,6 +7,8 @@ import { z } from 'zod'
 
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
+import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 // ============================================
 // VALIDATION SCHEMA
@@ -126,6 +128,9 @@ export const getServices = unstable_cache(
  * Create a new service
  */
 export async function createService(formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
@@ -240,6 +245,9 @@ export async function createService(formData: FormData) {
  * Update an existing service
  */
 export async function updateService(id: string, formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
@@ -357,6 +365,9 @@ export async function updateService(id: string, formData: FormData) {
  * Delete a service
  */
 export async function deleteService(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.service.delete({ where: { id } })
 
@@ -375,6 +386,9 @@ export async function deleteService(id: string) {
  * Toggle service active state
  */
 export async function toggleService(id: string) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     const service = await prisma.service.findUnique({ where: { id } })
     if (!service) {
@@ -401,6 +415,9 @@ export async function toggleService(id: string) {
  * Reorder services
  */
 export async function reorderServices(orderedIds: string[]) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.$transaction(
       orderedIds.map((id, index) =>
