@@ -21,6 +21,7 @@ export const CACHE_TAGS = {
   aboutSettings: 'about-settings',
   contactSettings: 'contact-settings',
   projectSettings: 'project-settings',
+  categorySettings: 'category-settings',
   testimonialSettings: 'testimonial-settings',
   themeSettings: 'theme-settings',
 

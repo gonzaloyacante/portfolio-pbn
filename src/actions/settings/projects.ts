@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 
 import { ProjectSettingsFormData, projectSettingsSchema } from '@/lib/validations'
@@ -11,15 +12,19 @@ import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
 
-export async function getProjectSettings() {
-  try {
-    const settings = await prisma.projectSettings.findFirst()
-    return settings
-  } catch (error) {
-    logger.error('Error fetching project settings:', { error: error })
-    return null
-  }
-}
+export const getProjectSettings = unstable_cache(
+  async () => {
+    try {
+      const settings = await prisma.projectSettings.findFirst()
+      return settings
+    } catch (error) {
+      logger.error('Error fetching project settings:', { error: error })
+      return null
+    }
+  },
+  [CACHE_TAGS.projectSettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.projectSettings] }
+)
 
 export async function updateProjectSettings(data: ProjectSettingsFormData) {
   try {
@@ -64,6 +69,7 @@ export async function updateProjectSettings(data: ProjectSettingsFormData) {
     revalidatePath(ROUTES.public.projects)
     revalidatePath(ROUTES.admin.projects)
     revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.projectSettings, 'max')
 
     return { success: true }
   } catch (error) {

@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 
 import { categorySettingsSchema, type CategorySettingsFormData } from '@/lib/validations'
@@ -11,15 +12,19 @@ import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
 
-export async function getCategorySettings() {
-  try {
-    const settings = await prisma.categorySettings.findFirst()
-    return settings
-  } catch (error) {
-    logger.error('Error fetching category settings:', { error: error })
-    return null
-  }
-}
+export const getCategorySettings = unstable_cache(
+  async () => {
+    try {
+      const settings = await prisma.categorySettings.findFirst()
+      return settings
+    } catch (error) {
+      logger.error('Error fetching category settings:', { error: error })
+      return null
+    }
+  },
+  [CACHE_TAGS.categorySettings],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.categorySettings] }
+)
 
 export async function updateCategorySettings(data: CategorySettingsFormData) {
   try {
@@ -61,6 +66,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
 
     revalidatePath(ROUTES.public.projects)
     revalidatePath(ROUTES.admin.categories)
+    revalidateTag(CACHE_TAGS.categorySettings, 'max')
     return { success: true }
   } catch (error) {
     if (error instanceof Error && error.message.includes('Acceso denegado')) {
