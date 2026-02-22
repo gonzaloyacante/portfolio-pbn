@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
@@ -23,6 +27,7 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   final _bioDescCtrl = TextEditingController();
   final _yearsCtrl = TextEditingController();
   final _profileImageCtrl = TextEditingController();
+  File? _pendingProfileImage;
   final _skillsCtrl = TextEditingController(); // comma-separated
 
   @override
@@ -50,6 +55,15 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
+      // Subir imagen de perfil si se seleccionó una nueva.
+      if (_pendingProfileImage != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        _profileImageCtrl.text = await uploadSvc.uploadImage(
+          _pendingProfileImage!,
+          folder: 'portfolio/about',
+        );
+      }
+
       await ref.read(settingsRepositoryProvider).updateAbout({
         'bioTitle': _bioTitleCtrl.text.trim().isEmpty
             ? null
@@ -176,12 +190,22 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
           _FormCard(
             title: 'Perfil',
             children: [
-              TextFormField(
-                controller: _profileImageCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'URL imagen de perfil',
-                  prefixIcon: Icon(Icons.image_outlined),
-                ),
+              ImageUploadWidget(
+                label: 'Imagen de perfil',
+                currentImageUrl: _profileImageCtrl.text.isNotEmpty
+                    ? _profileImageCtrl.text
+                    : null,
+                hint: 'Foto de perfil para el é About',
+                onImageSelected: (file) {
+                  setState(() => _pendingProfileImage = file);
+                },
+                onImageRemoved: () {
+                  setState(() {
+                    _pendingProfileImage = null;
+                    _profileImageCtrl.clear();
+                  });
+                },
+                height: 180,
               ),
               const SizedBox(height: 12),
               TextFormField(
