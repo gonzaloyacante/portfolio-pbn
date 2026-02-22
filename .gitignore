@@ -11,6 +11,10 @@
 .pnpm-store
 .npm
 
+# monorepo / project subfolders
+/web/node_modules/
+/app/.pub-cache/
+
 # ===================================================
 # TESTING
 # ===================================================
@@ -27,9 +31,17 @@ test-results/
 # ===================================================
 # NEXT.JS & VERCEL
 # ===================================================
-/.next/
-/out/
-/build
+/web/.next/
+/web/out/
+/web/build
+/web/.vercel
+/web/*.tsbuildinfo
+/web/next-env.d.ts
+
+# Next cache / build artifacts at root (if someone ran build from root)
+.next/
+out/
+build
 .vercel
 *.tsbuildinfo
 next-env.d.ts
@@ -51,6 +63,12 @@ next-env.d.ts
 *.cert
 id_rsa
 id_rsa.pub
+
+# web and app envs
+/web/.env
+/web/.env*
+/app/.env
+/app/.env*
 
 # ===================================================
 # LOGS
@@ -92,7 +110,9 @@ Thumbs.db
 # ===================================================
 # PRISMA & DATABASE
 # ===================================================
-/src/generated/prisma
+# Keep generated prisma client and sqlite local DBs ignored for web
+/web/src/generated/prisma
+/web/prisma/migrations/
 *.sqlite
 *.sqlite-journal
 
@@ -108,13 +128,53 @@ Thumbs.db
 # ===================================================
 # PROJECT SPECIFIC / DOCUMENTATION / SCRIPTS
 # ===================================================
-/scripts/
+/web/scripts/
+/web/docs/
 /docs/
 Portfolio PBN - Desktop/
 Portfolio PBN - Movil/
 .github/instructions/codacy.instructions.md
 .cursor/rules/codacy.mdc
 .cursorrules
+
+# Flutter / app build artifacts
+/app/.dart_tool/
+/app/.gradle/
+/app/build/
+/app/ios/Pods/
+/app/.flutter-plugins
+/app/.flutter-plugins-dependencies
+/app/.packages
+
+# Additional Flutter/Dart ignores from app/.gitignore
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Miscellaneous from app/.gitignore
+*.class
+*.pyc
+*.swp
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ project files (some already listed, keep explicit)
+*.iml
+*.ipr
+*.iws
+
+# web test artifacts
+/web/playwright-report/
+/web/test-results/
 
 # ===================================================
 # MISC
@@ -125,3 +185,7 @@ Portfolio PBN - Movil/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# IDE configs (keep them ignored unless intentionally tracked)
+.idea/
+.vscode/
