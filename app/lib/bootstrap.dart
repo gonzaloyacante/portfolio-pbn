@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'app.dart';
 import 'core/config/env_config.dart';
+import 'core/notifications/push_service.dart';
 import 'core/utils/app_logger.dart';
 
 /// Inicializa todos los servicios necesarios antes de arrancar la UI.
@@ -25,6 +27,9 @@ Future<void> bootstrap() async {
   AppLogger.info('✓ dotenv cargado (entorno: ${EnvConfig.environment})');
 
   // 2. Firebase ─────────────────────────────────────────────────────────────
+  // El handler de background debe registrarse antes de initializeApp.
+  // Debe ser una función top-level marcada con @pragma('vm:entry-point').
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   // Las opciones de Firebase se leen de google-services.json / GoogleService-Info.plist.
   // Para configurar Firebase: https://firebase.google.com/docs/flutter/setup
   await Firebase.initializeApp();

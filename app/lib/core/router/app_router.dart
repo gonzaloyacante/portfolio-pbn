@@ -32,6 +32,11 @@ import 'route_names.dart';
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
+/// Clave global del NavigatorState raíz del router.
+/// Usada por [NotificationHandler] para navegar sin BuildContext.
+final GlobalKey<NavigatorState> routerNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'rootNavigator');
+
 /// Instancia global del router. GoRouter escucha [RouterNotifier] para
 /// reevaluar las redirecciones cada vez que cambia el estado de autenticación.
 final routerProvider = Provider<GoRouter>((ref) {
@@ -39,6 +44,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.onDispose(notifier.dispose);
 
   return GoRouter(
+    navigatorKey: routerNavigatorKey,
     initialLocation: RoutePaths.login,
     debugLogDiagnostics: false,
     refreshListenable: notifier,

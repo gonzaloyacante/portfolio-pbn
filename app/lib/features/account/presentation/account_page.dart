@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
+import '../../../core/notifications/push_provider.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../providers/account_provider.dart';
 
@@ -61,6 +62,10 @@ class _AccountPageState extends ConsumerState<AccountPage> {
   }
 
   Future<void> _logout() async {
+    // Desregistrar token FCM antes de invalidar la sesión.
+    await ref
+        .read(pushRegistrationNotifierProvider.notifier)
+        .unregister();
     await ref.read(authNotifierProvider.notifier).logout();
   }
 
