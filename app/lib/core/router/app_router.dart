@@ -13,6 +13,12 @@ import '../../features/calendar/presentation/booking_form_page.dart';
 import '../../features/calendar/presentation/calendar_page.dart';
 import '../../features/contacts/presentation/contact_detail_page.dart';
 import '../../features/contacts/presentation/contacts_list_page.dart';
+import '../../features/settings/presentation/settings_about_page.dart';
+import '../../features/settings/presentation/settings_contact_page.dart';
+import '../../features/settings/presentation/settings_page.dart';
+import '../../features/settings/presentation/settings_site_page.dart';
+import '../../features/settings/presentation/settings_social_page.dart';
+import '../../features/settings/presentation/settings_theme_page.dart';
 import '../../features/services/presentation/service_form_page.dart';
 import '../../features/services/presentation/services_list_page.dart';
 import '../../features/testimonials/presentation/testimonial_form_page.dart';
@@ -206,5 +212,36 @@ final List<RouteBase> _routes = [
     builder: (context, state) =>
         BookingDetailPage(bookingId: state.pathParameters['id']!),
   ),
-  // TODO (Fases 12–15): Agregar rutas de settings, papelera, cuenta, ayuda.
+  // ── Settings ──────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.settings,
+    name: RouteNames.settings,
+    builder: (context, state) => const SettingsPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsAbout,
+    name: RouteNames.settingsAbout,
+    builder: (context, state) => const SettingsAboutPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsContact,
+    name: RouteNames.settingsContact,
+    builder: (context, state) => const SettingsContactPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsTheme,
+    name: RouteNames.settingsTheme,
+    builder: (context, state) => const SettingsThemePage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsSite,
+    name: RouteNames.settingsSite,
+    builder: (context, state) => const SettingsSitePage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsSocial,
+    name: RouteNames.settingsSocial,
+    builder: (context, state) => const SettingsSocialPage(),
+  ),
+  // TODO (Fases 13–15): Agregar rutas de papelera, cuenta, ayuda.
 ];
