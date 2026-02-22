@@ -151,3 +151,43 @@ model BlockedIp {
   @@map("blocked_ips")
 }
 
+/// JWT refresh tokens para la API REST de la app Flutter.
+/// Access token: 15 min · Refresh token: 30 días · Rotación en cada refresh.
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique          // UUID v4 opaco (no es un JWT)
+  userId    String
+  // Lifecyle
+  expiresAt DateTime
+  revokedAt DateTime?                 // null = activo
+  replacedBy String?                  // ID del nuevo token tras rotación
+  // Request context
+  ipAddress String?
+  userAgent String?
+  device    String?   // "android", "ios"
+  // Audit
+  createdAt DateTime @default(now())
+  lastUsedAt DateTime?
+
+  @@index([userId, revokedAt])
+  @@index([token, expiresAt])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+/// FCM push notification tokens registrados por la app Flutter.
+model PushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique          // Token FCM
+  platform  String                    // "android" | "ios"
+  // Lifecycle
+  isActive  Boolean  @default(true)
+  lastSeen  DateTime @default(now())
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, isActive])
+  @@map("push_tokens")
+}

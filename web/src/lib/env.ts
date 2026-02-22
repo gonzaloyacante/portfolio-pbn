@@ -41,6 +41,12 @@ const envSchema = z.object({
 
   // Node Environment
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+
+  // Flutter Admin API — JWT custom (independiente de NextAuth)
+  ADMIN_JWT_SECRET: z
+    .string()
+    .min(32, 'ADMIN_JWT_SECRET must be at least 32 characters')
+    .describe('Generate with: openssl rand -base64 32'),
 })
 
 // Validate environment variables
