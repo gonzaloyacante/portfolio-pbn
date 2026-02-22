@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../api/api_client.dart';
 import '../network/connectivity_provider.dart';
 import '../utils/app_logger.dart';
+import 'sync_handlers.dart';
 import 'sync_queue.dart';
 
 part 'sync_manager.g.dart';
@@ -17,13 +19,14 @@ enum SyncStatus { idle, syncing, error }
 ///
 /// Se activa automáticamente al recuperar la conexión a internet.
 /// Procesa las operaciones en orden FIFO con reintento.
-///
-/// TODO (Fase de features): registrar los handlers por tipo de recurso
-///   (ProjectSyncHandler, ServiceSyncHandler, etc.) usando un Map.
 @riverpod
 class SyncManager extends _$SyncManager {
+  late final SyncHandlerRegistry _registry;
+
   @override
   SyncStatus build() {
+    _registry = SyncHandlerRegistry(ref.read(apiClientProvider));
+
     // Escuchar cambios de conectividad para disparar sync automático.
     ref.listen<bool>(isOnlineProvider, (previous, isOnline) {
       if (isOnline && previous == false) {
@@ -82,20 +85,31 @@ class SyncManager extends _$SyncManager {
     dynamic operation,
     SyncQueueRepository queue,
   ) async {
-    // TODO (Fase de features): implementar dispatch por operation.resource
-    // usando un registro de handlers.
-    //
-    // Ejemplo:
-    // final handler = _handlers[operation.resource];
-    // if (handler != null) {
-    //   await handler.execute(operation);
-    //   await queue.markCompleted(operation.id);
-    // }
-    AppLogger.debug(
-      'SyncManager: processing ${operation.operation} on '
-      '${operation.resource} [${operation.id}]',
-    );
-    await queue.markCompleted(operation.id as String);
+    final op = operation;
+    final handler = _registry.handlerFor(op.resource as String);
+
+    if (handler == null) {
+      AppLogger.warn(
+        'SyncManager: no handler for resource "${op.resource}" — skipping',
+      );
+      await queue.markCompleted(op.id as String);
+      return;
+    }
+
+    try {
+      await handler.execute(op);
+      await queue.markCompleted(op.id as String);
+      AppLogger.info(
+        'SyncManager: completed ${op.operation} on ${op.resource} [${op.id}]',
+      );
+    } catch (e) {
+      AppLogger.error(
+        'SyncManager: failed ${op.operation} on ${op.resource} [${op.id}]',
+        e,
+      );
+      await queue.incrementAttempts(op.id as String);
+      rethrow;
+    }
   }
 }
 
