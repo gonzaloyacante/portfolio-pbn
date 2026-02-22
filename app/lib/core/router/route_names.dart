@@ -35,6 +35,8 @@ class RouteNames {
 
   // ── Calendario / Reservas ─────────────────────────────────────────────────
   static const String calendar = 'calendar';
+  static const String bookingNew = 'booking-new';
+  static const String bookingDetail = 'booking-detail';
 
   // ── Settings ──────────────────────────────────────────────────────────────
   static const String settings = 'settings';
@@ -75,6 +77,8 @@ class RoutePaths {
   static const String contacts = '/contacts';
   static const String contactDetail = '/contacts/:id';
   static const String calendar = '/calendar';
+  static const String bookingNew = '/calendar/new';
+  static const String bookingDetail = '/calendar/:id';
   static const String settings = '/settings';
   static const String settingsHome = '/settings/home';
   static const String settingsAbout = '/settings/about';
