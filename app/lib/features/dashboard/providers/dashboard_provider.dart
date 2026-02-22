@@ -14,3 +14,11 @@ part 'dashboard_provider.g.dart';
 Future<DashboardStats> dashboardStats(Ref ref) {
   return ref.watch(dashboardRepositoryProvider).getOverview();
 }
+
+// ── dashboardChartsProvider ───────────────────────────────────────────────────
+
+/// Provee los datos de tendencias para los gráficos del dashboard.
+@riverpod
+Future<DashboardCharts> dashboardCharts(Ref ref) {
+  return ref.watch(dashboardRepositoryProvider).getCharts();
+}

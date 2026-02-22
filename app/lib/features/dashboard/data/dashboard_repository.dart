@@ -28,6 +28,34 @@ class DashboardStats with _$DashboardStats {
       _$DashboardStatsFromJson(json);
 }
 
+// ── ChartDataPoint ─────────────────────────────────────────────────────────────
+
+/// Punto de datos para un gráfico (etiqueta + valor).
+@freezed
+class ChartDataPoint with _$ChartDataPoint {
+  const factory ChartDataPoint({
+    required String label,
+    required int count,
+  }) = _ChartDataPoint;
+
+  factory ChartDataPoint.fromJson(Map<String, dynamic> json) =>
+      _$ChartDataPointFromJson(json);
+}
+
+// ── DashboardCharts ────────────────────────────────────────────────────────────
+
+/// Datos de tendencias para los gráficos del dashboard.
+@freezed
+class DashboardCharts with _$DashboardCharts {
+  const factory DashboardCharts({
+    @Default([]) List<ChartDataPoint> dailyPageViews,
+    @Default([]) List<ChartDataPoint> monthlyBookings,
+  }) = _DashboardCharts;
+
+  factory DashboardCharts.fromJson(Map<String, dynamic> json) =>
+      _$DashboardChartsFromJson(json);
+}
+
 // ── DashboardRepository ────────────────────────────────────────────────────────
 
 /// Accede a los endpoints de analytics del panel de administración.
@@ -45,6 +73,19 @@ class DashboardRepository {
     );
     if (!apiResponse.success || apiResponse.data == null) {
       throw Exception(apiResponse.error ?? 'Error al obtener métricas');
+    }
+    return apiResponse.data!;
+  }
+
+  /// Obtiene los datos de tendencias para los gráficos del dashboard.
+  Future<DashboardCharts> getCharts() async {
+    final resp = await _client.get(Endpoints.analyticsCharts);
+    final apiResponse = ApiResponse<DashboardCharts>.fromJson(
+      resp.data as Map<String, dynamic>,
+      (json) => DashboardCharts.fromJson(json as Map<String, dynamic>),
+    );
+    if (!apiResponse.success || apiResponse.data == null) {
+      throw Exception(apiResponse.error ?? 'Error al obtener gráficos');
     }
     return apiResponse.data!;
   }

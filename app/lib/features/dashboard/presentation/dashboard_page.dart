@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -127,6 +128,26 @@ class _DashboardContent extends StatelessWidget {
             ],
           ),
         ),
+        const SliverPadding(padding: EdgeInsets.only(bottom: 4)),
+
+        // ── Sección de tendencias ────────────────────────────────────────
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          sliver: SliverToBoxAdapter(
+            child: Text(
+              'Tendencias',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverToBoxAdapter(
+            child: _DashboardCharts(),
+          ),
+        ),
         const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
       ],
     );
@@ -167,6 +188,268 @@ class _DashboardSkeleton extends StatelessWidget {
             height: double.infinity,
             borderRadius: 16,
           ),
+        ),
+      ),
+    );
+  }
+}
+// ── _DashboardCharts ──────────────────────────────────────────────────────────
+
+/// Sección de gráficos de tendencias del dashboard.
+///
+/// Muestra:
+/// - Visitas diarias de los últimos 7 días (LineChart).
+/// - Reservas mensuales de los últimos 6 meses (BarChart).
+class _DashboardCharts extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final chartsAsync = ref.watch(dashboardChartsProvider);
+
+    return chartsAsync.when(
+      loading: () => _buildSkeleton(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (charts) => Column(
+        children: [
+          _PageViewsChart(data: charts.dailyPageViews),
+          const SizedBox(height: 16),
+          _BookingsBarChart(data: charts.monthlyBookings),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSkeleton() {
+    return Column(
+      children: [
+        ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
+        const SizedBox(height: 16),
+        ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
+      ],
+    );
+  }
+}
+
+// ── _PageViewsChart ────────────────────────────────────────────────────────────
+
+class _PageViewsChart extends StatelessWidget {
+  const _PageViewsChart({required this.data});
+
+  final List<ChartDataPoint> data;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: scheme.outline,
+      fontSize: 9,
+    );
+
+    final spots = data.asMap().entries.map((e) {
+      return FlSpot(e.key.toDouble(), e.value.count.toDouble());
+    }).toList();
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Visitas diarias (7 días)',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 120,
+              child: LineChart(
+                LineChartData(
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots.isEmpty
+                          ? [const FlSpot(0, 0)]
+                          : spots,
+                      isCurved: true,
+                      color: AppColors.lightPrimary,
+                      barWidth: 2,
+                      dotData: const FlDotData(show: false),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: AppColors.lightPrimary.withValues(alpha: 0.12),
+                      ),
+                    ),
+                  ],
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    horizontalInterval: 1,
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: scheme.outlineVariant.withValues(alpha: 0.3),
+                      strokeWidth: 1,
+                    ),
+                  ),
+                  borderData: FlBorderData(show: false),
+                  titlesData: _buildLineTitles(data, textStyle),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  FlTitlesData _buildLineTitles(
+    List<ChartDataPoint> data,
+    TextStyle? textStyle,
+  ) {
+    return FlTitlesData(
+      topTitles: const AxisTitles(
+        sideTitles: SideTitles(showTitles: false),
+      ),
+      rightTitles: const AxisTitles(
+        sideTitles: SideTitles(showTitles: false),
+      ),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 28,
+          getTitlesWidget: (value, _) => Text(
+            value.toInt().toString(),
+            style: textStyle,
+          ),
+        ),
+      ),
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          interval: 1,
+          reservedSize: 24,
+          getTitlesWidget: (value, _) {
+            final idx = value.toInt();
+            if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(data[idx].label, style: textStyle),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// ── _BookingsBarChart ──────────────────────────────────────────────────────────
+
+class _BookingsBarChart extends StatelessWidget {
+  const _BookingsBarChart({required this.data});
+
+  final List<ChartDataPoint> data;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
+      color: scheme.outline,
+      fontSize: 9,
+    );
+
+    final barGroups = data.asMap().entries.map((e) {
+      return BarChartGroupData(
+        x: e.key,
+        barRods: [
+          BarChartRodData(
+            toY: e.value.count.toDouble(),
+            color: AppColors.darkPrimary,
+            width: 16,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+          ),
+        ],
+      );
+    }).toList();
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reservas mensuales (6 meses)',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 120,
+              child: BarChart(
+                BarChartData(
+                  barGroups: barGroups,
+                  borderData: FlBorderData(show: false),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: scheme.outlineVariant.withValues(alpha: 0.3),
+                      strokeWidth: 1,
+                    ),
+                  ),
+                  titlesData: _buildBarTitles(data, textStyle),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  FlTitlesData _buildBarTitles(
+    List<ChartDataPoint> data,
+    TextStyle? textStyle,
+  ) {
+    return FlTitlesData(
+      topTitles: const AxisTitles(
+        sideTitles: SideTitles(showTitles: false),
+      ),
+      rightTitles: const AxisTitles(
+        sideTitles: SideTitles(showTitles: false),
+      ),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          reservedSize: 28,
+          getTitlesWidget: (value, _) => Text(
+            value.toInt().toString(),
+            style: textStyle,
+          ),
+        ),
+      ),
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          interval: 1,
+          reservedSize: 24,
+          getTitlesWidget: (value, _) {
+            final idx = value.toInt();
+            if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(data[idx].label, style: textStyle),
+            );
+          },
         ),
       ),
     );

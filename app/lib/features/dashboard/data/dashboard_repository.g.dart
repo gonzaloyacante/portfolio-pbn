@@ -29,6 +29,38 @@ Map<String, dynamic> _$$DashboardStatsImplToJson(
   'pageViews30d': instance.pageViews30d,
 };
 
+_$ChartDataPointImpl _$$ChartDataPointImplFromJson(Map<String, dynamic> json) =>
+    _$ChartDataPointImpl(
+      label: json['label'] as String,
+      count: (json['count'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$$ChartDataPointImplToJson(
+  _$ChartDataPointImpl instance,
+) => <String, dynamic>{'label': instance.label, 'count': instance.count};
+
+_$DashboardChartsImpl _$$DashboardChartsImplFromJson(
+  Map<String, dynamic> json,
+) => _$DashboardChartsImpl(
+  dailyPageViews:
+      (json['dailyPageViews'] as List<dynamic>?)
+          ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+  monthlyBookings:
+      (json['monthlyBookings'] as List<dynamic>?)
+          ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
+);
+
+Map<String, dynamic> _$$DashboardChartsImplToJson(
+  _$DashboardChartsImpl instance,
+) => <String, dynamic>{
+  'dailyPageViews': instance.dailyPageViews,
+  'monthlyBookings': instance.monthlyBookings,
+};
+
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
