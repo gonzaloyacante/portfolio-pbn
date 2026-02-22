@@ -31,16 +31,20 @@ class AppDateUtils {
     final diff = now.difference(date);
 
     if (diff.inSeconds < 60) return 'hace un momento';
-    if (diff.inMinutes < 60)
+    if (diff.inMinutes < 60) {
       return 'hace ${diff.inMinutes} minuto${diff.inMinutes == 1 ? '' : 's'}';
-    if (diff.inHours < 24)
+    }
+    if (diff.inHours < 24) {
       return 'hace ${diff.inHours} hora${diff.inHours == 1 ? '' : 's'}';
+    }
     if (diff.inDays == 1) return 'ayer';
     if (diff.inDays < 7) return 'hace ${diff.inDays} días';
-    if (diff.inDays < 30)
+    if (diff.inDays < 30) {
       return 'hace ${(diff.inDays / 7).floor()} semana${(diff.inDays / 7).floor() == 1 ? '' : 's'}';
-    if (diff.inDays < 365)
+    }
+    if (diff.inDays < 365) {
       return 'hace ${(diff.inDays / 30).floor()} mes${(diff.inDays / 30).floor() == 1 ? '' : 'es'}';
+    }
     return 'hace ${(diff.inDays / 365).floor()} año${(diff.inDays / 365).floor() == 1 ? '' : 's'}';
   }
 
