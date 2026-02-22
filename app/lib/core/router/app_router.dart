@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/projects/presentation/project_form_page.dart';
+import '../../features/projects/presentation/projects_list_page.dart';
 import '../auth/auth_provider.dart';
 import '../auth/auth_state.dart';
 import 'route_names.dart';
@@ -97,6 +99,22 @@ final List<RouteBase> _routes = [
     name: RouteNames.dashboard,
     builder: (context, state) => const DashboardPage(),
   ),
-  // TODO (Fases 5–10): Agregar rutas de proyectos, categorías, servicios,
+  GoRoute(
+    path: RoutePaths.projects,
+    name: RouteNames.projects,
+    builder: (context, state) => const ProjectsListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.projectNew,
+    name: RouteNames.projectNew,
+    builder: (context, state) => const ProjectFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.projectEdit,
+    name: RouteNames.projectEdit,
+    builder: (context, state) =>
+        ProjectFormPage(projectId: state.pathParameters['id']),
+  ),
+  // TODO (Fases 7–10): Agregar rutas de categorías, servicios,
   // testimonios, contactos, calendario, settings, papelera, cuenta, ayuda.
 ];
