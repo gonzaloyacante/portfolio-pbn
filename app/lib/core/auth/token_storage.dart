@@ -10,10 +10,11 @@ final tokenStorageProvider = Provider<TokenStorage>((ref) => TokenStorage());
 /// Wrapper tipado sobre flutter_secure_storage.
 /// TODOS los tokens se guardan aquí — NUNCA en SharedPreferences.
 class TokenStorage {
-  TokenStorage() : _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-  );
+  TokenStorage()
+    : _storage = const FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+        iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+      );
 
   final FlutterSecureStorage _storage;
 

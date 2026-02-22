@@ -36,7 +36,8 @@ class Endpoints {
 
   // ── Settings ──────────────────────────────────────────────────────────────
   static const String settings = '/api/admin/settings';
-  static String settingsSection(String section) => '/api/admin/settings/$section';
+  static String settingsSection(String section) =>
+      '/api/admin/settings/$section';
 
   // ── Analytics ────────────────────────────────────────────────────────────
   static const String analytics = '/api/admin/analytics';

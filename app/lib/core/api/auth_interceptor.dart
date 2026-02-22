@@ -125,9 +125,7 @@ class AuthInterceptor extends Interceptor {
     final refreshToken = await storage.getRefreshToken();
 
     if (refreshToken == null) {
-      throw const UnauthorizedException(
-        message: 'No refresh token available',
-      );
+      throw const UnauthorizedException(message: 'No refresh token available');
     }
 
     final response = await _refreshDio.post<Map<String, dynamic>>(
@@ -137,9 +135,7 @@ class AuthInterceptor extends Interceptor {
 
     final body = response.data;
     if (body == null) {
-      throw const UnauthorizedException(
-        message: 'Empty refresh response',
-      );
+      throw const UnauthorizedException(message: 'Empty refresh response');
     }
 
     final newAccess = body['accessToken'] as String?;

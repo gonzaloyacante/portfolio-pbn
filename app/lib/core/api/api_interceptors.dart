@@ -12,14 +12,15 @@ import 'api_exceptions.dart';
 class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    AppLogger.debug(
-      '[HTTP] → ${options.method} ${options.uri}',
-    );
+    AppLogger.debug('[HTTP] → ${options.method} ${options.uri}');
     return handler.next(options);
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     AppLogger.debug(
       '[HTTP] ← ${response.statusCode} ${response.requestOptions.uri}',
     );
@@ -56,9 +57,7 @@ class ConnectivityInterceptor extends Interceptor {
         DioException(
           requestOptions: options,
           type: DioExceptionType.connectionError,
-          error: const NetworkException(
-            message: 'No hay conexión a internet',
-          ),
+          error: const NetworkException(message: 'No hay conexión a internet'),
         ),
       );
     }

@@ -111,7 +111,9 @@ class AuthNotifier extends _$AuthNotifier {
         return const AuthState.unauthenticated();
       }
 
-      AppLogger.info('AuthNotifier: stored session found → validating with /me');
+      AppLogger.info(
+        'AuthNotifier: stored session found → validating with /me',
+      );
       final user = await repo.getMe();
       AppLogger.info('AuthNotifier: session restored for ${user.email}');
       return AuthState.authenticated(user: user);

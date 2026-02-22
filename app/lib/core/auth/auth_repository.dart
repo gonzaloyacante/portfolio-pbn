@@ -33,8 +33,8 @@ class AuthRepository {
   const AuthRepository({
     required ApiClient apiClient,
     required TokenStorage tokenStorage,
-  })  : _api = apiClient,
-        _storage = tokenStorage;
+  }) : _api = apiClient,
+       _storage = tokenStorage;
 
   final ApiClient _api;
   final TokenStorage _storage;
@@ -56,11 +56,7 @@ class AuthRepository {
 
     final data = await _api.post<Map<String, dynamic>>(
       Endpoints.authLogin,
-      data: {
-        'email': email,
-        'password': password,
-        'fcmToken': ?fcmToken,
-      },
+      data: {'email': email, 'password': password, 'fcmToken': ?fcmToken},
     );
 
     final accessToken = data['accessToken'] as String?;
@@ -68,9 +64,7 @@ class AuthRepository {
     final userData = data['user'] as Map<String, dynamic>?;
 
     if (accessToken == null || refreshToken == null || userData == null) {
-      throw const ServerException(
-        message: 'Respuesta de login inválida',
-      );
+      throw const ServerException(message: 'Respuesta de login inválida');
     }
 
     await Future.wait([
@@ -97,10 +91,7 @@ class AuthRepository {
       if (refreshToken != null) {
         await _api.post<void>(
           Endpoints.authLogout,
-          data: {
-            'refreshToken': refreshToken,
-            'everywhere': everywhere,
-          },
+          data: {'refreshToken': refreshToken, 'everywhere': everywhere},
         );
       }
     } catch (e) {
@@ -120,9 +111,7 @@ class AuthRepository {
     final userData = data['user'] as Map<String, dynamic>?;
 
     if (userData == null) {
-      throw const ServerException(
-        message: 'Respuesta de /me inválida',
-      );
+      throw const ServerException(message: 'Respuesta de /me inválida');
     }
 
     return UserProfile.fromJson(userData);

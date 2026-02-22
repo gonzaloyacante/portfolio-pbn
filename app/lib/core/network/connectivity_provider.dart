@@ -13,9 +13,9 @@ part 'connectivity_provider.g.dart';
 @riverpod
 Stream<ConnectivityResult> connectivity(Ref ref) {
   AppLogger.debug('ConnectivityProvider: listening to network changes');
-  return Connectivity()
-      .onConnectivityChanged
-      .map((results) => results.isNotEmpty ? results.first : ConnectivityResult.none);
+  return Connectivity().onConnectivityChanged.map(
+    (results) => results.isNotEmpty ? results.first : ConnectivityResult.none,
+  );
 }
 
 // ── isOnlineProvider ──────────────────────────────────────────────────────────

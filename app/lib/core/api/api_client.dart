@@ -82,11 +82,7 @@ class ApiClient {
     return _handleResponse<T>(response);
   }
 
-  Future<T> put<T>(
-    String path, {
-    dynamic data,
-    Options? options,
-  }) async {
+  Future<T> put<T>(String path, {dynamic data, Options? options}) async {
     final response = await _dio.put<dynamic>(
       path,
       data: data,
@@ -95,11 +91,7 @@ class ApiClient {
     return _handleResponse<T>(response);
   }
 
-  Future<T> patch<T>(
-    String path, {
-    dynamic data,
-    Options? options,
-  }) async {
+  Future<T> patch<T>(String path, {dynamic data, Options? options}) async {
     final response = await _dio.patch<dynamic>(
       path,
       data: data,
@@ -108,11 +100,7 @@ class ApiClient {
     return _handleResponse<T>(response);
   }
 
-  Future<T> delete<T>(
-    String path, {
-    dynamic data,
-    Options? options,
-  }) async {
+  Future<T> delete<T>(String path, {dynamic data, Options? options}) async {
     final response = await _dio.delete<dynamic>(
       path,
       data: data,
