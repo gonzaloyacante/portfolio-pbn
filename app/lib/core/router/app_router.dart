@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/account/presentation/account_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/categories/presentation/categories_list_page.dart';
 import '../../features/categories/presentation/category_form_page.dart';
@@ -243,5 +244,11 @@ final List<RouteBase> _routes = [
     name: RouteNames.settingsSocial,
     builder: (context, state) => const SettingsSocialPage(),
   ),
-  // TODO (Fases 13–15): Agregar rutas de papelera, cuenta, ayuda.
+  // ── Cuenta ────────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.account,
+    name: RouteNames.account,
+    builder: (_, _) => const AccountPage(),
+  ),
+  // TODO (Fases 14–15): Agregar rutas de papelera y ayuda.
 ];
