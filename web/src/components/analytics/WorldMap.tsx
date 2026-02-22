@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps'
 import { scaleLinear } from 'd3-scale'
 import { interpolateRgb } from 'd3-interpolate'
+import { BRAND } from '@/lib/design-tokens'
 import type { MouseEvent as ReactMouseEvent } from 'react'
 
 // Public domain topology from naturalearth
@@ -43,10 +44,10 @@ export default function WorldMap({
 
   const maxCount = useMemo(() => Math.max(...topCountries.map((c) => c.count), 1), [topCountries])
 
-  // Color scale: light pink → deep primary
+  // Color scale: light pink → deep primary (use design tokens)
   const colorScale = scaleLinear<string>()
     .domain([0, maxCount])
-    .range(['#fce7f3', '#6c0a0a'])
+    .range([BRAND.secondary, BRAND.primary])
     .interpolate(interpolateRgb)
 
   return (
@@ -99,7 +100,7 @@ export default function WorldMap({
                     style={{
                       default: { outline: 'none' },
                       hover: {
-                        fill: count > 0 ? '#881337' : 'var(--muted)',
+                        fill: count > 0 ? BRAND.darkSecondary : 'var(--muted)',
                         outline: 'none',
                         transition: 'all 0.2s',
                       },
@@ -141,7 +142,7 @@ export default function WorldMap({
           <div
             className="h-3 w-20 rounded-sm"
             style={{
-              background: `linear-gradient(to right, #fce7f3, #6c0a0a)`,
+              background: `linear-gradient(to right, ${BRAND.secondary}, ${BRAND.primary})`,
             }}
           />
           <span className="text-foreground text-[10px] font-medium opacity-90">
