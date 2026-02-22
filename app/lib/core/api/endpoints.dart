@@ -58,5 +58,6 @@ class Endpoints {
   static const String pushUnregister = '/api/admin/push/unregister';
 
   // ── Upload ────────────────────────────────────────────────────────────────
-  static const String upload = '/api/upload';
+  /// Endpoint autenticado con JWT Flutter para subir imágenes.
+  static const String adminUpload = '/api/admin/upload';
 }

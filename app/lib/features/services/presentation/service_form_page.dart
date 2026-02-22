@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/api/upload_service.dart';
+import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/service_model.dart';
 import '../data/services_repository.dart';
@@ -24,6 +28,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   final _priceCtrl = TextEditingController();
   final _durationCtrl = TextEditingController();
   final _imageCtrl = TextEditingController();
+  File? _pendingImage;
   final _iconCtrl = TextEditingController();
   final _colorCtrl = TextEditingController();
 
@@ -87,6 +92,15 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
     try {
+      // Subir imagen si se seleccionó una nueva.
+      if (_pendingImage != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        _imageCtrl.text = await uploadSvc.uploadImage(
+          _pendingImage!,
+          folder: 'portfolio/services',
+        );
+      }
+
       final repo = ref.read(servicesRepositoryProvider);
       final formData = ServiceFormData(
         name: _nameCtrl.text.trim(),
@@ -276,14 +290,22 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // URL imagen
-              TextFormField(
-                controller: _imageCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'URL de imagen',
-                  prefixIcon: Icon(Icons.image_outlined),
-                ),
-                keyboardType: TextInputType.url,
+              // Imagen del servicio
+              ImageUploadWidget(
+                label: 'Imagen del servicio',
+                currentImageUrl: _imageCtrl.text.isNotEmpty
+                    ? _imageCtrl.text
+                    : null,
+                onImageSelected: (file) {
+                  setState(() => _pendingImage = file);
+                },
+                onImageRemoved: () {
+                  setState(() {
+                    _pendingImage = null;
+                    _imageCtrl.clear();
+                  });
+                },
+                height: 160,
               ),
               const SizedBox(height: 16),
 

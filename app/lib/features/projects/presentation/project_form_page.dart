@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -32,6 +35,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   final _data = ProjectFormData();
   bool _isLoading = false;
   String? _errorMsg;
+  File? _pendingCoverImage;
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +95,15 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     });
 
     try {
+      // Subir imagen de portada si se seleccionó una nueva.
+      if (_pendingCoverImage != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        _data.thumbnailUrl = await uploadSvc.uploadImage(
+          _pendingCoverImage!,
+          folder: 'portfolio/projects',
+        );
+      }
+
       final repo = ref.read(projectsRepositoryProvider);
       if (widget.isEditing) {
         await repo.updateProject(widget.projectId!, _data.toJson());
@@ -139,8 +152,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
                   currentImageUrl: _data.thumbnailUrl.isNotEmpty
                       ? _data.thumbnailUrl
                       : null,
-                  onImageSelected: (_) {
-                    // TODO: upload via /api/upload → set _data.thumbnailUrl
+                  onImageSelected: (file) {
+                    setState(() => _pendingCoverImage = file);
                   },
                 ),
                 const SizedBox(height: 20),

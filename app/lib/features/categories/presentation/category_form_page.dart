@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/api/upload_service.dart';
+import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
@@ -21,6 +25,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   final _slugCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
   final _thumbnailCtrl = TextEditingController();
+  File? _pendingThumbnail;
   final _iconCtrl = TextEditingController();
   final _colorCtrl = TextEditingController();
 
@@ -73,6 +78,15 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
     try {
+      // Subir imagen si se seleccionó una nueva.
+      if (_pendingThumbnail != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        _thumbnailCtrl.text = await uploadSvc.uploadImage(
+          _pendingThumbnail!,
+          folder: 'portfolio/categories',
+        );
+      }
+
       final repo = ref.read(categoriesRepositoryProvider);
       final formData = CategoryFormData(
         name: _nameCtrl.text.trim(),
@@ -196,15 +210,22 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Thumbnail URL
-              TextFormField(
-                controller: _thumbnailCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'URL de imagen',
-                  hintText: 'https://...',
-                  prefixIcon: Icon(Icons.image_outlined),
-                ),
-                keyboardType: TextInputType.url,
+              // Thumbnail
+              ImageUploadWidget(
+                label: 'Imagen de portada',
+                currentImageUrl: _thumbnailCtrl.text.isNotEmpty
+                    ? _thumbnailCtrl.text
+                    : null,
+                onImageSelected: (file) {
+                  setState(() => _pendingThumbnail = file);
+                },
+                onImageRemoved: () {
+                  setState(() {
+                    _pendingThumbnail = null;
+                    _thumbnailCtrl.clear();
+                  });
+                },
+                height: 160,
               ),
               const SizedBox(height: 16),
 
