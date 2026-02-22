@@ -38,8 +38,7 @@
     "db:fresh": "pnpm db:reset && pnpm db:seed",
     "db:push": "prisma db push",
     "db:push:prod": "dotenv -e .env.production -- prisma db push",
-    "db:studio": "prisma studio",
-    "prepare": "husky || true"
+    "db:studio": "prisma studio"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
@@ -73,6 +72,7 @@
     "dompurify": "^3.3.1",
     "framer-motion": "^12.34.3",
     "isomorphic-dompurify": "^2.36.0",
+    "lodash": "4.17.23",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
     "next-auth": "^4.24.13",
@@ -100,6 +100,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "lint-staged": "^16.2.7",
     "@types/d3-interpolate": "^3.0.4",
     "@types/d3-scale": "^4.0.9",
     "@types/pg": "^8.16.0",
@@ -110,8 +111,6 @@
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.3",
     "eslint-config-next": "16.1.6",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tsx": "^4.21.0",
@@ -122,7 +121,7 @@
       "d3-color": "^3.1.0",
       "hono": "^4.11.7",
       "minimatch": "^10.2.1",
-      "lodash": "^4.17.21"
+      "lodash": "^4.17.23"
     },
     "onlyBuiltDependencies": [
       "@prisma/client",
