@@ -12,12 +12,22 @@ type SocialLinkBody = {
   sortOrder?: number
 }
 
+function buildSocialData(body: SocialLinkBody) {
+  return {
+    url: body.url,
+    username: body.username,
+    icon: body.icon,
+    isActive: body.isActive ?? true,
+    sortOrder: body.sortOrder ?? 0,
+  }
+}
+
 async function saveSocialLink(body: SocialLinkBody) {
-  const { platform, url, username, icon, isActive, sortOrder } = body
+  const data = buildSocialData(body)
   return prisma.socialLink.upsert({
-    where: { platform },
-    create: { platform, url, username, icon, isActive: isActive ?? true, sortOrder: sortOrder ?? 0 },
-    update: { url, username, icon, isActive: isActive ?? true, sortOrder: sortOrder ?? 0 },
+    where: { platform: body.platform },
+    create: { platform: body.platform, ...data },
+    update: data,
   })
 }
 
