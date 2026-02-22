@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/notifications/push_provider.dart';
+import '../../calendar/data/google_calendar_models.dart';
+import '../../calendar/providers/google_calendar_provider.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../providers/account_provider.dart';
 
@@ -156,6 +158,9 @@ class _AccountPageState extends ConsumerState<AccountPage> {
               ),
             ),
             const SizedBox(height: 24),
+            // ── Google Calendar ───────────────────────────────────────────
+            _GoogleCalendarCard(),
+            const SizedBox(height: 12),
             // ── Cerrar sesión ─────────────────────────────────────────────
             Card(
               shape: RoundedRectangleBorder(
@@ -270,6 +275,69 @@ class _PasswordField extends StatelessWidget {
         ),
       ),
       validator: validator,
+    );
+  }
+}
+
+// ── _GoogleCalendarCard ────────────────────────────────────────────────────────
+
+/// Tarjeta para conectar o desconectar la integración con Google Calendar.
+class _GoogleCalendarCard extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final gcAsync = ref.watch(googleCalendarNotifierProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return gcAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (gcState) {
+        final isConnected = gcState is GoogleAuthConnected;
+        final isConnecting = gcState is GoogleAuthConnecting;
+        final email = switch (gcState) {
+          GoogleAuthConnected(:final email) => email,
+          _ => null,
+        };
+
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: ListTile(
+            leading: const Icon(Icons.calendar_month_outlined),
+            title: Text(
+              isConnected
+                  ? 'Google Calendar conectado'
+                  : 'Conectar Google Calendar',
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: email != null ? Text(email) : null,
+            trailing: isConnecting
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : isConnected
+                ? TextButton(
+                    onPressed: () =>
+                        ref
+                            .read(googleCalendarNotifierProvider.notifier)
+                            .signOut(),
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorScheme.error,
+                    ),
+                    child: const Text('Desconectar'),
+                  )
+                : null,
+            onTap: isConnected || isConnecting
+                ? null
+                : () => ref
+                    .read(googleCalendarNotifierProvider.notifier)
+                    .signIn(),
+          ),
+        );
+      },
     );
   }
 }
