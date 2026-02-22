@@ -10,6 +10,8 @@ import '../../features/projects/presentation/project_form_page.dart';
 import '../../features/projects/presentation/projects_list_page.dart';
 import '../../features/services/presentation/service_form_page.dart';
 import '../../features/services/presentation/services_list_page.dart';
+import '../../features/testimonials/presentation/testimonial_form_page.dart';
+import '../../features/testimonials/presentation/testimonials_list_page.dart';
 import '../auth/auth_provider.dart';
 import '../auth/auth_state.dart';
 import 'route_names.dart';
@@ -153,6 +155,23 @@ final List<RouteBase> _routes = [
     builder: (context, state) =>
         ServiceFormPage(serviceId: state.pathParameters['id']),
   ),
-  // TODO (Fases 9–15): Agregar rutas de testimonios, contactos,
+  // ── Testimonios ───────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.testimonials,
+    name: RouteNames.testimonials,
+    builder: (context, state) => const TestimonialsListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.testimonialNew,
+    name: RouteNames.testimonialNew,
+    builder: (context, state) => const TestimonialFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.testimonialEdit,
+    name: RouteNames.testimonialEdit,
+    builder: (context, state) =>
+        TestimonialFormPage(testimonialId: state.pathParameters['id']),
+  ),
+  // TODO (Fases 10–15): Agregar rutas de contactos,
   // calendario, settings, papelera, cuenta, ayuda.
 ];
