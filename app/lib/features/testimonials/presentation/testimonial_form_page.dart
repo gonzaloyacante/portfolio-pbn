@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_cropper/image_cropper.dart';
 
+import '../../../core/api/upload_service.dart';
+import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
@@ -26,6 +31,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
   final _companyCtrl = TextEditingController();
   final _websiteCtrl = TextEditingController();
   final _avatarCtrl = TextEditingController();
+  File? _pendingAvatar;
   final _sourceCtrl = TextEditingController();
 
   int _rating = 5;
@@ -84,6 +90,15 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
     setState(() => _loading = true);
 
     try {
+      // Subir avatar si se seleccionó uno nuevo.
+      if (_pendingAvatar != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        _avatarCtrl.text = await uploadSvc.uploadImage(
+          _pendingAvatar!,
+          folder: 'portfolio/testimonials',
+        );
+      }
+
       final data = TestimonialFormData(
         name: _nameCtrl.text.trim(),
         text: _textCtrl.text.trim(),
@@ -200,12 +215,24 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
               ],
             ),
             const SizedBox(height: 12),
-            TextFormField(
-              controller: _avatarCtrl,
-              decoration: const InputDecoration(
-                labelText: 'URL del avatar',
-                hintText: 'https://...',
-              ),
+            // Avatar del cliente
+            ImageUploadWidget(
+              label: 'Foto del cliente (opcional)',
+              currentImageUrl: _avatarCtrl.text.isNotEmpty
+                  ? _avatarCtrl.text
+                  : null,
+              hint: 'Toca para seleccionar foto del cliente',
+              aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+              onImageSelected: (file) {
+                setState(() => _pendingAvatar = file);
+              },
+              onImageRemoved: () {
+                setState(() {
+                  _pendingAvatar = null;
+                  _avatarCtrl.clear();
+                });
+              },
+              height: 140,
             ),
             const SizedBox(height: 24),
 
