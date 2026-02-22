@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/categories/presentation/categories_list_page.dart';
+import '../../features/categories/presentation/category_form_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/projects/presentation/project_form_page.dart';
 import '../../features/projects/presentation/projects_list_page.dart';
@@ -115,6 +117,23 @@ final List<RouteBase> _routes = [
     builder: (context, state) =>
         ProjectFormPage(projectId: state.pathParameters['id']),
   ),
-  // TODO (Fases 7–10): Agregar rutas de categorías, servicios,
-  // testimonios, contactos, calendario, settings, papelera, cuenta, ayuda.
+  // ── Categorías ────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.categories,
+    name: RouteNames.categories,
+    builder: (context, state) => const CategoriesListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.categoryNew,
+    name: RouteNames.categoryNew,
+    builder: (context, state) => const CategoryFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.categoryEdit,
+    name: RouteNames.categoryEdit,
+    builder: (context, state) =>
+        CategoryFormPage(categoryId: state.pathParameters['id']),
+  ),
+  // TODO (Fases 8–15): Agregar rutas de servicios, testimonios, contactos,
+  // calendario, settings, papelera, cuenta, ayuda.
 ];

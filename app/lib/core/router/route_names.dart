@@ -16,12 +16,18 @@ class RouteNames {
 
   // ── Categorías ────────────────────────────────────────────────────────────
   static const String categories = 'categories';
+  static const String categoryNew = 'category-new';
+  static const String categoryEdit = 'category-edit';
 
   // ── Servicios ─────────────────────────────────────────────────────────────
   static const String services = 'services';
+  static const String serviceNew = 'service-new';
+  static const String serviceEdit = 'service-edit';
 
   // ── Testimonios ───────────────────────────────────────────────────────────
   static const String testimonials = 'testimonials';
+  static const String testimonialNew = 'testimonial-new';
+  static const String testimonialEdit = 'testimonial-edit';
 
   // ── Contacto ──────────────────────────────────────────────────────────────
   static const String contacts = 'contacts';
@@ -58,8 +64,14 @@ class RoutePaths {
   static const String projectNew = '/projects/new';
   static const String projectEdit = '/projects/:id/edit';
   static const String categories = '/categories';
+  static const String categoryNew = '/categories/new';
+  static const String categoryEdit = '/categories/:id/edit';
   static const String services = '/services';
+  static const String serviceNew = '/services/new';
+  static const String serviceEdit = '/services/:id/edit';
   static const String testimonials = '/testimonials';
+  static const String testimonialNew = '/testimonials/new';
+  static const String testimonialEdit = '/testimonials/:id/edit';
   static const String contacts = '/contacts';
   static const String contactDetail = '/contacts/:id';
   static const String calendar = '/calendar';
