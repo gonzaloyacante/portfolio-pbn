@@ -49,6 +49,8 @@ class Endpoints {
   // ── Papelera ─────────────────────────────────────────────────────────────
   static const String trash = '/api/admin/trash';
   static String trashItem(String id) => '/api/admin/trash/$id';
+  static String trashTypedItem(String type, String id) =>
+      '/api/admin/trash/$type/$id';
 
   // ── Push notifications ────────────────────────────────────────────────────
   static const String pushRegister = '/api/admin/push/register';

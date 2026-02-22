@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/account/presentation/account_page.dart';
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/trash/presentation/trash_page.dart';
 import '../../features/categories/presentation/categories_list_page.dart';
 import '../../features/categories/presentation/category_form_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
@@ -250,5 +251,11 @@ final List<RouteBase> _routes = [
     name: RouteNames.account,
     builder: (_, _) => const AccountPage(),
   ),
-  // TODO (Fases 14–15): Agregar rutas de papelera y ayuda.
+  // ── Papelera ──────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.trash,
+    name: RouteNames.trash,
+    builder: (_, _) => const TrashPage(),
+  ),
+  // TODO (Fase 15): Agregar ruta de ayuda.
 ];
