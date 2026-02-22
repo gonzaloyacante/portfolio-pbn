@@ -7,11 +7,10 @@ echo "╚═══════════════════════�
 echo ""
 
 # Ejecutar desde la raíz del repo (husky corre desde ahí)
-# Permitimos repos donde la parte web está en `web/` y no exista
-# un `package.json` en la raíz. Si no existe en ninguna de las dos
-# ubicaciones, fallamos explicitamente.
-if [ ! -f "package.json" ] && [ ! -f "web/package.json" ]; then
-  echo "❌ Error: package.json no encontrado en la raíz ni en web/. Ejecutar desde la raíz del proyecto o añade web/package.json."
+# La parte web vive en `web/`. No se hace referencia a un `package.json` en la raíz.
+# Si no existe `web/package.json` ni `app/pubspec.yaml` avisamos pero no fallamos.
+if [ ! -f "web/package.json" ] && [ ! -f "app/pubspec.yaml" ]; then
+  echo "❌ Error: no se encontró web/package.json ni app/pubspec.yaml. No hay checks aplicables."
   exit 1
 fi
 
@@ -24,10 +23,7 @@ else
   NPX_CMD="pnpm exec"
 fi
 
-# Permite saltar builds pesados durante commits rápidos
-# Exportar HUSKY_SKIP_WEB=1 para saltarlos
-SKIP_WEB=${HUSKY_SKIP_WEB:-0}
-SKIP_APP=${HUSKY_SKIP_APP:-0}
+# No se permiten bypass. Si falla un check, el hook debe fallar.
 
 echo "📋 [1/7] Lint-Staged: Formateando archivos modificados..."
 # Ejecutar solo si hay archivos staged relevantes
@@ -47,10 +43,8 @@ if printf "%s" "$STAGED_FILES" | grep -E '\.(ts|tsx|js|jsx|json|md)$' >/dev/null
       fi
     fi
   else
-    if ! $NPX_CMD lint-staged; then
-      echo "❌ Error en lint-staged. Revisa errores de formato/linting."
-      exit 1
-    fi
+    echo "❌ Error: hay archivos staged que requieren formateo/linting pero falta web/package.json."
+    exit 1
   fi
   echo "✅ Lint-staged completado"
 else
@@ -94,20 +88,15 @@ else
 fi
 echo ""
 
-echo "⚠️  Nota: Si quieres evitar el build completo en commits locales rápidos, exportá HUSKY_SKIP_WEB=1"
 echo "🏗️  [5/7] Next.js: Verificando build de producción en 'web' (puede ser pesado)..."
-if [ "${SKIP_WEB}" = "1" ]; then
-  echo "⚡ SKIP_WEB activo: saltando build de Next.js (web)"
-else
-  if [ -f "web/package.json" ]; then
-    if ! (cd web && $NPX_CMD next build); then
-      echo "❌ Error en build de Next.js (web). El código no compila correctamente."
-      exit 1
-    fi
-    echo "✅ Build de producción (web) exitoso"
-  else
-    echo "ℹ️  No se encontró web/package.json, saltando build de Next.js"
+if [ -f "web/package.json" ]; then
+  if ! (cd web && $NPX_CMD next build); then
+    echo "❌ Error en build de Next.js (web). El código no compila correctamente."
+    exit 1
   fi
+  echo "✅ Build de producción (web) exitoso"
+else
+  echo "ℹ️  No se encontró web/package.json — no se ejecutan checks de Next.js para web"
 fi
 echo ""
 
@@ -158,8 +147,8 @@ else
 fi
 echo ""
 
-echo "⚙️  [7/7] Verificando archivos de configuración principales (raíz + web)..."
-for config_file in "package.json" "web/package.json" "web/next.config.ts" "web/tsconfig.json" "web/tailwind.config.ts"; do
+echo "⚙️  [7/7] Verificando archivos de configuración principales (web)..."
+for config_file in "web/package.json" "web/next.config.ts" "web/tsconfig.json" "web/tailwind.config.ts"; do
   if [ -f "$config_file" ]; then
     echo "  ✓ $config_file"
   else

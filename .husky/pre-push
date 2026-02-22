@@ -6,8 +6,8 @@ echo "║         PORTFOLIO PBN PRE-PUSH VERIFICATION SUITE           ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
 
-if [ ! -f "package.json" ]; then
-  echo "❌ Error: package.json no encontrado. Ejecutar desde la raíz del proyecto."
+if [ ! -f "web/package.json" ] && [ ! -f "app/pubspec.yaml" ]; then
+  echo "❌ Error: no se encontró web/package.json ni app/pubspec.yaml. No hay checks aplicables."
   exit 1
 fi
 
@@ -25,9 +25,8 @@ SKIP_APP=${HUSKY_SKIP_APP:-0}
 
 echo "🔍 Ejecutando pre-push checks (SKIP_WEB=${SKIP_WEB}, SKIP_APP=${SKIP_APP})"
 
-if [ "${SKIP_WEB}" != "1" ]; then
-  echo "\n🏗️  Comprobaciones para 'web'..."
-  if [ -f "web/package.json" ]; then
+echo "\n🏗️  Comprobaciones para 'web'..."
+if [ -f "web/package.json" ]; then
     # Type check
     if [ -f "web/tsconfig.json" ]; then
       echo "🔸 TypeScript check (web)"
@@ -64,9 +63,7 @@ if [ "${SKIP_WEB}" != "1" ]; then
   else
     echo "ℹ️  No se encontró web/package.json — saltando checks web"
   fi
-else
-  echo "⚡ SKIP_WEB activo: saltando checks para web"
-fi
+ 
 
 if [ "${SKIP_APP}" != "1" ]; then
   echo "\n📱 Comprobaciones para 'app'..."
