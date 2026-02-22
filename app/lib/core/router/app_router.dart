@@ -8,6 +8,8 @@ import '../../features/categories/presentation/category_form_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/projects/presentation/project_form_page.dart';
 import '../../features/projects/presentation/projects_list_page.dart';
+import '../../features/contacts/presentation/contact_detail_page.dart';
+import '../../features/contacts/presentation/contacts_list_page.dart';
 import '../../features/services/presentation/service_form_page.dart';
 import '../../features/services/presentation/services_list_page.dart';
 import '../../features/testimonials/presentation/testimonial_form_page.dart';
@@ -172,6 +174,18 @@ final List<RouteBase> _routes = [
     builder: (context, state) =>
         TestimonialFormPage(testimonialId: state.pathParameters['id']),
   ),
-  // TODO (Fases 10–15): Agregar rutas de contactos,
-  // calendario, settings, papelera, cuenta, ayuda.
+  // ── Contactos ─────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.contacts,
+    name: RouteNames.contacts,
+    builder: (context, state) => const ContactsListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.contactDetail,
+    name: RouteNames.contactDetail,
+    builder: (context, state) =>
+        ContactDetailPage(contactId: state.pathParameters['id']!),
+  ),
+  // TODO (Fases 11–15): Agregar rutas de calendario,
+  // settings, papelera, cuenta, ayuda.
 ];
