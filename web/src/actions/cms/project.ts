@@ -65,3 +65,34 @@ export async function deleteProjectAction(projectId: string): Promise<void> {
   })
   revalidatePath(ROUTES.admin.projects)
 }
+
+/**
+ * Toggle project visibility (isActive)
+ */
+export async function toggleProjectActive(projectId: string): Promise<ActionResult> {
+  await requireAdmin()
+  await checkApiRateLimit()
+
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { isActive: true },
+    })
+
+    if (!project) {
+      return { success: false, error: 'Proyecto no encontrado' }
+    }
+
+    await prisma.project.update({
+      where: { id: projectId },
+      data: { isActive: !project.isActive },
+    })
+
+    revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.public.projects)
+    return { success: true }
+  } catch (err) {
+    logger.error('Error toggling project visibility:', { error: err })
+    return { success: false, error: 'Error al cambiar visibilidad' }
+  }
+}

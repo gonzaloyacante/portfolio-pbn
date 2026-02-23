@@ -13,6 +13,7 @@ const SETTINGS_MAP = {
   site: 'siteSettings',
   project: 'projectSettings',
   testimonial: 'testimonialSettings',
+  category: 'categorySettings',
 } as const
 
 type SettingsType = keyof typeof SETTINGS_MAP
