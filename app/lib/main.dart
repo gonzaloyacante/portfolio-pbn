@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'bootstrap.dart';
+import './bootstrap.dart';
 
 /// Entry point. Usa [runZonedGuarded] para capturar TODOS los errores
 /// no capturados (síncronos y asíncronos) dentro de la zona de ejecución.
