@@ -207,6 +207,11 @@ class _TabletScaffold extends StatelessWidget {
             child: Scaffold(
               appBar: title != null
                   ? AppBar(
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () => GoRouter.of(context).pop(),
+                        tooltip: 'Volver',
+                      ),
                       title: Text(title!),
                       actions: actions,
                       automaticallyImplyLeading: false,
@@ -250,7 +255,15 @@ class _MobileScaffold extends StatelessWidget {
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       floatingActionButton: floatingActionButton,
       appBar: title != null
-          ? AppBar(title: Text(title!), actions: actions)
+          ? AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => GoRouter.of(context).pop(),
+                tooltip: 'Volver',
+              ),
+              title: Text(title!),
+              actions: actions,
+            )
           : null,
       body: body,
       bottomNavigationBar: NavigationBar(

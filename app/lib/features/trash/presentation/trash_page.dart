@@ -20,7 +20,14 @@ class TrashPage extends ConsumerWidget {
     final trashAsync = ref.watch(trashItemsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Papelera')),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+          tooltip: 'Volver',
+        ),
+        title: const Text('Papelera'),
+      ),
       body: trashAsync.when(
         loading: () => const _TrashShimmer(),
         error: (e, _) => ErrorState(

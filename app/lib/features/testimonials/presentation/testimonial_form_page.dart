@@ -368,6 +368,11 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       isLoading: _loading,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Volver',
+          ),
           title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),
         ),
         body: body,

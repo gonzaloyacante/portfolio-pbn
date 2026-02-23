@@ -76,7 +76,14 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     return LoadingOverlay(
       isLoading: _loading,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Detalle del contacto')),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Volver',
+          ),
+          title: const Text('Detalle del contacto'),
+        ),
         body: async.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text('Error: $e')),

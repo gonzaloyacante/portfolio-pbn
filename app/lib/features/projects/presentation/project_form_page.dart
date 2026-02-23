@@ -44,6 +44,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       return detailAsync.when(
         loading: () => Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Volver',
+            ),
             title: Text(
               widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto',
             ),
@@ -51,7 +56,14 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           body: const SkeletonListView(itemCount: 6),
         ),
         error: (err, _) => Scaffold(
-          appBar: AppBar(title: const Text('Error')),
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Volver',
+            ),
+            title: const Text('Error'),
+          ),
           body: ErrorState(message: err.toString()),
         ),
         data: (project) {
@@ -125,6 +137,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       isLoading: _isLoading,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Volver',
+          ),
           title: Text(widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto'),
           actions: [
             TextButton.icon(

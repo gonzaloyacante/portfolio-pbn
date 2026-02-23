@@ -96,6 +96,11 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
       isLoading: _saving,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Volver',
+          ),
           title: const Text('Tema'),
           centerTitle: false,
           actions: [

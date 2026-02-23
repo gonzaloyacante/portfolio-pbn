@@ -79,7 +79,14 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     return LoadingOverlay(
       isLoading: _loading,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Mi cuenta')),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Volver',
+          ),
+          title: const Text('Mi cuenta'),
+        ),
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           children: [

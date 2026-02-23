@@ -157,6 +157,11 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       isLoading: _loading,
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.of(context).pop(),
+            tooltip: 'Volver',
+          ),
           title: Text(_isEdit ? 'Editar servicio' : 'Nuevo servicio'),
           actions: [
             TextButton(
