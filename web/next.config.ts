@@ -1,12 +1,24 @@
 import type { NextConfig } from 'next'
 import withPWA from '@ducanh2912/next-pwa'
 import { withSentryConfig } from '@sentry/nextjs'
-import bundleAnalyzer from '@next/bundle-analyzer'
 
-const withBundleAnalyzer = bundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
-  openAnalyzer: true,
-})
+// @next/bundle-analyzer is a devDependency — not available in production Vercel builds.
+// We guard the import with try/catch so the build doesn't fail when devDeps are skipped.
+type ConfigWrapper = (cfg: NextConfig) => NextConfig
+let withBundleAnalyzer: ConfigWrapper = (cfg) => cfg
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const bundleAnalyzer = require('@next/bundle-analyzer') as (opts: {
+    enabled: boolean
+    openAnalyzer: boolean
+  }) => ConfigWrapper
+  withBundleAnalyzer = bundleAnalyzer({
+    enabled: process.env.ANALYZE === 'true',
+    openAnalyzer: true,
+  })
+} catch {
+  // noop: in production, @next/bundle-analyzer is not installed (devDependency only)
+}
 
 /**
  * Security Headers
