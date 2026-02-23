@@ -11,6 +11,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { signAccessToken } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { checkAuthRateLimit, recordFailedLoginAttempt } from '@/lib/auth-rate-limit'
 
 // ── Schema de validación ──────────────────────────────────────────────────────
 
@@ -39,6 +40,16 @@ export async function POST(req: Request) {
     const ipAddress =
       req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip') ?? undefined
     const userAgent = req.headers.get('user-agent') ?? undefined
+
+    // Rate limiting por email + IP
+    const rateCheck = await checkAuthRateLimit(email.toLowerCase(), ipAddress ?? 'unknown')
+    if (!rateCheck.allowed) {
+      logger.warn(`[admin-login] Rate limit exceeded for ${email} from ${ipAddress}`)
+      return NextResponse.json(
+        { success: false, error: `Demasiados intentos. Espera ${rateCheck.lockoutMinutes} minutos.` },
+        { status: 429, headers: { 'Retry-After': String((rateCheck.lockoutMinutes ?? 15) * 60) } }
+      )
+    }
 
     // 1. Buscar usuario activo
     const user = await prisma.user.findFirst({
@@ -73,6 +84,9 @@ export async function POST(req: Request) {
     const isValid = await bcrypt.compare(password, user.password)
 
     if (!isValid) {
+      // Registrar intento fallido para rate limiting
+      await recordFailedLoginAttempt(email.toLowerCase(), ipAddress ?? 'unknown')
+
       // Incrementar contador de fallos (bloqueo tras 5 intentos)
       const newCount = user.failedLoginCount + 1
       await prisma.user.update({

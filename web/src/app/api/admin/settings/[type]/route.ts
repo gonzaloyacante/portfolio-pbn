@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
+import { logger } from '@/lib/logger'
 
 // ── Mapa de tipo → modelo Prisma ──────────────────────────────────────────────
 const SETTINGS_MAP = {
@@ -64,7 +65,7 @@ export async function GET(
     const settings = await fetchOrCreateSettings(type)
     return NextResponse.json({ success: true, data: settings })
   } catch (error) {
-    console.error(`[settings/${type}] GET error:`, error)
+    logger.error(`[settings/${type}] GET error`, { error })
     return NextResponse.json(
       { success: false, error: 'Error al obtener configuración' },
       { status: 500 }
@@ -92,7 +93,7 @@ export async function PATCH(
     const settings = await upsertSettings(type, body)
     return NextResponse.json({ success: true, data: settings })
   } catch (error) {
-    console.error(`[settings/${type}] PATCH error:`, error)
+    logger.error(`[settings/${type}] PATCH error`, { error })
     return NextResponse.json(
       { success: false, error: 'Error al guardar configuración' },
       { status: 500 }

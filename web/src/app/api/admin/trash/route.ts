@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
+import { logger } from '@/lib/logger'
 
 const TRASH_TYPES = [
   'project',
@@ -60,7 +61,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ success: true, data: grouped, total })
   } catch (error) {
-    console.error('[trash] GET error:', error)
+    logger.error('[trash] GET error', { error })
     return NextResponse.json(
       { success: false, error: 'Error al obtener papelera' },
       { status: 500 }

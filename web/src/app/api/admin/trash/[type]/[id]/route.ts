@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
+import { logger } from '@/lib/logger'
 
 const VALID_TYPES = ['project', 'category', 'service', 'testimonial', 'contact', 'booking'] as const
 type TrashType = (typeof VALID_TYPES)[number]
@@ -53,7 +54,7 @@ export async function PATCH(
     }
     return NextResponse.json({ success: true, data: item })
   } catch (error) {
-    console.error(`[trash] PATCH ${type}/${id} error:`, error)
+    logger.error(`[trash] PATCH ${type}/${id} error`, { error })
     return NextResponse.json({ success: false, error: 'Error al restaurar' }, { status: 500 })
   }
 }
@@ -81,7 +82,7 @@ export async function DELETE(
     }
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error(`[trash] DELETE ${type}/${id} error:`, error)
+    logger.error(`[trash] DELETE ${type}/${id} error`, { error })
     return NextResponse.json({ success: false, error: 'Error al eliminar' }, { status: 500 })
   }
 }

@@ -14,6 +14,12 @@
 
 import { SignJWT, jwtVerify, JWTPayload } from 'jose'
 import { env } from './env'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/rate-limit-config'
+import { logger } from '@/lib/logger'
+
+// ── Rate limiter para API admin (100 req/min por IP) ──────────────────────────
+const adminApiLimiter = createRateLimiter(RATE_LIMITS.API)
 
 // ── Tipos ─────────────────────────────────────────────────────────────────────
 
@@ -105,6 +111,31 @@ export async function withAdminJwt(
   | { ok: true; payload: AdminTokenPayload; response?: never }
   | { ok: false; payload?: never; response: Response }
 > {
+  // ── Rate limiting por IP ──────────────────────────────────────────────────
+  const forwardedFor = req.headers.get('x-forwarded-for')
+  const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown-ip'
+
+  const rateResult = await adminApiLimiter.check(clientIp)
+  if (!rateResult.allowed) {
+    logger.warn(`[withAdminJwt] Rate limit exceeded for IP: ${clientIp}`)
+    adminApiLimiter
+      .record(clientIp, { route: req.url })
+      .catch((err) => logger.error('[withAdminJwt] Error recording rate limit', { error: err }))
+
+    return {
+      ok: false,
+      response: new Response(
+        JSON.stringify({ success: false, error: `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s` }),
+        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(rateResult.resetIn ?? 60) } }
+      ),
+    }
+  }
+
+  adminApiLimiter
+    .record(clientIp, { route: req.url })
+    .catch((err) => logger.error('[withAdminJwt] Error recording rate limit', { error: err }))
+
+  // ── JWT verification ──────────────────────────────────────────────────────
   const authHeader = req.headers.get('Authorization')
 
   if (!authHeader?.startsWith('Bearer ')) {
