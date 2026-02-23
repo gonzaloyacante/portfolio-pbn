@@ -100,4 +100,3 @@ class SyncHandlerRegistry {
   /// Devuelve el handler para [resource], o null si no está registrado.
   SyncHandler? handlerFor(String resource) => _handlers[resource];
 }
-

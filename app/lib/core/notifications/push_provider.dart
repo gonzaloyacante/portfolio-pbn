@@ -72,10 +72,7 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
 
     try {
       final client = ref.read(apiClientProvider);
-      await client.post<void>(
-        Endpoints.pushUnregister,
-        data: {'token': token},
-      );
+      await client.post<void>(Endpoints.pushUnregister, data: {'token': token});
       state = null;
       AppLogger.info('PushRegistration: token desactivado en backend');
     } catch (e) {

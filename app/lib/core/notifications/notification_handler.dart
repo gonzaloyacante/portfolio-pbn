@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,34 +40,61 @@ class NotificationHandler {
   ///
   /// Llamar una sola vez tras montar el widget raíz de la app.
   void init() {
-    // 1. Mensajes recibidos en foreground → mostrar SnackBar
-    FirebaseMessaging.onMessage.listen((message) {
-      AppLogger.info(
-        'NotificationHandler[fg]: ${message.notification?.title}',
+    // Evitar acceder a FirebaseMessaging si Firebase no ha sido inicializado.
+    // En entornos de desarrollo puede no haber archivos de configuración
+    // (google-services.json / GoogleService-Info.plist) y la inicialización
+    // en bootstrap puede haber sido omitida. En ese caso saltamos la
+    // configuración de notificaciones para evitar excepciones.
+    if (Firebase.apps.isEmpty) {
+      AppLogger.warn(
+        'Firebase no inicializado — omitiendo NotificationHandler.init()',
       );
-      _showSnackBar(message);
-    });
+      return;
+    }
+    // 1. Mensajes recibidos en foreground → mostrar SnackBar
+    try {
+      FirebaseMessaging.onMessage.listen((message) {
+        AppLogger.info(
+          'NotificationHandler[fg]: ${message.notification?.title}',
+        );
+        _showSnackBar(message);
+      });
+    } catch (e, st) {
+      AppLogger.warn('Error al registrar listeners FCM: $e');
+      AppLogger.debug('FCM listeners stack: $st');
+      return;
+    }
 
     // 2. App abierta desde notificación (background → foreground)
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      AppLogger.info(
-        'NotificationHandler[tap]: ${message.notification?.title}',
-      );
-      _navigateFromMessage(message);
-    });
+    try {
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        AppLogger.info(
+          'NotificationHandler[tap]: ${message.notification?.title}',
+        );
+        _navigateFromMessage(message);
+      });
+    } catch (e, st) {
+      AppLogger.warn('Error al registrar onMessageOpenedApp: $e');
+      AppLogger.debug('onMessageOpenedApp stack: $st');
+    }
 
     // 3. App abierta desde estado terminado por notificación
-    FirebaseMessaging.instance.getInitialMessage().then((message) {
-      if (message != null) {
-        AppLogger.info(
-          'NotificationHandler[initial]: ${message.notification?.title}',
-        );
-        // Leve delay para que el router esté montado
-        Future.delayed(const Duration(milliseconds: 500), () {
-          _navigateFromMessage(message);
-        });
-      }
-    });
+    try {
+      FirebaseMessaging.instance.getInitialMessage().then((message) {
+        if (message != null) {
+          AppLogger.info(
+            'NotificationHandler[initial]: ${message.notification?.title}',
+          );
+          // Leve delay para que el router esté montado
+          Future.delayed(const Duration(milliseconds: 500), () {
+            _navigateFromMessage(message);
+          });
+        }
+      });
+    } catch (e, st) {
+      AppLogger.warn('Error al obtener initialMessage FCM: $e');
+      AppLogger.debug('getInitialMessage stack: $st');
+    }
   }
 
   // ── _showSnackBar ──────────────────────────────────────────────────────────
@@ -84,10 +112,7 @@ class NotificationHandler {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
             if (body != null && body.isNotEmpty)
               Text(body, style: const TextStyle(fontSize: 13)),
           ],

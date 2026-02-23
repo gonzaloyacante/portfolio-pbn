@@ -10,8 +10,7 @@ part 'google_calendar_provider.g.dart';
 // ── googleCalendarServiceProvider ─────────────────────────────────────────────
 
 @riverpod
-GoogleCalendarService googleCalendarService(Ref ref) =>
-    GoogleCalendarService();
+GoogleCalendarService googleCalendarService(Ref ref) => GoogleCalendarService();
 
 // ── GoogleCalendarNotifier ─────────────────────────────────────────────────────
 
@@ -93,9 +92,7 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
   Future<bool> createEvent(GoogleCalendarEvent event) async {
     final currentState = state.valueOrNull;
     if (currentState is! GoogleAuthConnected) {
-      AppLogger.warn(
-        'GoogleCalendarNotifier: createEvent sin sesión activa',
-      );
+      AppLogger.warn('GoogleCalendarNotifier: createEvent sin sesión activa');
       return false;
     }
 

@@ -509,7 +509,8 @@ class _GoogleCalendarSection extends ConsumerWidget {
     }
 
     // Crear evento en Google Calendar.
-    final endDate = bookingDetail.endDate ??
+    final endDate =
+        bookingDetail.endDate ??
         bookingDetail.date.add(const Duration(hours: 2));
 
     final parts = <String>[

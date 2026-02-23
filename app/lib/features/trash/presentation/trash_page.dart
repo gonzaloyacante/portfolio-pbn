@@ -68,9 +68,7 @@ class TrashPage extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              '${item.displayName} restaurado correctamente',
-            ),
+            content: Text('${item.displayName} restaurado correctamente'),
           ),
         );
       }
@@ -144,10 +142,9 @@ class _TrashSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
             trashTypeLabel(type),
-            style: Theme.of(context)
-                .textTheme
-                .titleSmall
-                ?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
         ...items.map(
@@ -194,10 +191,9 @@ class _TrashCard extends StatelessWidget {
                 children: [
                   Text(
                     item.displayName,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -209,10 +205,7 @@ class _TrashCard extends StatelessWidget {
                 ],
               ),
             ),
-            TextButton(
-              onPressed: onRestore,
-              child: const Text('Restaurar'),
-            ),
+            TextButton(onPressed: onRestore, child: const Text('Restaurar')),
             IconButton(
               icon: Icon(Icons.delete_forever, color: colorScheme.error),
               onPressed: onPurge,
@@ -240,7 +233,11 @@ class _TrashShimmer extends StatelessWidget {
           6,
           (_) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: ShimmerBox(width: double.infinity, height: 72, borderRadius: 16),
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 72,
+              borderRadius: 16,
+            ),
           ),
         ),
       ),

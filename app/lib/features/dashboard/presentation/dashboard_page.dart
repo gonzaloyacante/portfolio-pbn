@@ -144,9 +144,7 @@ class _DashboardContent extends StatelessWidget {
         ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          sliver: SliverToBoxAdapter(
-            child: _DashboardCharts(),
-          ),
+          sliver: SliverToBoxAdapter(child: _DashboardCharts()),
         ),
         const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
       ],
@@ -239,10 +237,9 @@ class _PageViewsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: scheme.outline,
-      fontSize: 9,
-    );
+    final textStyle = Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 9);
 
     final spots = data.asMap().entries.map((e) {
       return FlSpot(e.key.toDouble(), e.value.count.toDouble());
@@ -261,9 +258,9 @@ class _PageViewsChart extends StatelessWidget {
           children: [
             Text(
               'Visitas diarias (7 días)',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -272,9 +269,7 @@ class _PageViewsChart extends StatelessWidget {
                 LineChartData(
                   lineBarsData: [
                     LineChartBarData(
-                      spots: spots.isEmpty
-                          ? [const FlSpot(0, 0)]
-                          : spots,
+                      spots: spots.isEmpty ? [const FlSpot(0, 0)] : spots,
                       isCurved: true,
                       color: AppColors.lightPrimary,
                       barWidth: 2,
@@ -310,20 +305,14 @@ class _PageViewsChart extends StatelessWidget {
     TextStyle? textStyle,
   ) {
     return FlTitlesData(
-      topTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-      rightTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 28,
-          getTitlesWidget: (value, _) => Text(
-            value.toInt().toString(),
-            style: textStyle,
-          ),
+          getTitlesWidget: (value, _) =>
+              Text(value.toInt().toString(), style: textStyle),
         ),
       ),
       bottomTitles: AxisTitles(
@@ -355,10 +344,9 @@ class _BookingsBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: scheme.outline,
-      fontSize: 9,
-    );
+    final textStyle = Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 9);
 
     final barGroups = data.asMap().entries.map((e) {
       return BarChartGroupData(
@@ -387,9 +375,9 @@ class _BookingsBarChart extends StatelessWidget {
           children: [
             Text(
               'Reservas mensuales (6 meses)',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -421,20 +409,14 @@ class _BookingsBarChart extends StatelessWidget {
     TextStyle? textStyle,
   ) {
     return FlTitlesData(
-      topTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
-      rightTitles: const AxisTitles(
-        sideTitles: SideTitles(showTitles: false),
-      ),
+      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 28,
-          getTitlesWidget: (value, _) => Text(
-            value.toInt().toString(),
-            style: textStyle,
-          ),
+          getTitlesWidget: (value, _) =>
+              Text(value.toInt().toString(), style: textStyle),
         ),
       ),
       bottomTitles: AxisTitles(

@@ -37,9 +37,7 @@ class GoogleCalendarService {
         AppLogger.info('GoogleCalendarService: usuario canceló el login');
         return false;
       }
-      AppLogger.info(
-        'GoogleCalendarService: conectado como ${account.email}',
-      );
+      AppLogger.info('GoogleCalendarService: conectado como ${account.email}');
       return true;
     } catch (e, st) {
       AppLogger.error('GoogleCalendarService: error en signIn()', e, st);
@@ -118,10 +116,7 @@ class GoogleCalendarService {
         reminders: gcal.EventReminders(
           useDefault: false,
           overrides: [
-            gcal.EventReminder(
-              method: 'popup',
-              minutes: event.reminderMinutes,
-            ),
+            gcal.EventReminder(method: 'popup', minutes: event.reminderMinutes),
           ],
         ),
         attendees: event.attendeeEmail != null
@@ -130,9 +125,7 @@ class GoogleCalendarService {
       );
 
       await calendarApi.events.insert(gcalEvent, 'primary');
-      AppLogger.info(
-        'GoogleCalendarService: evento creado — "${event.title}"',
-      );
+      AppLogger.info('GoogleCalendarService: evento creado — "${event.title}"');
     } finally {
       authClient.close();
     }

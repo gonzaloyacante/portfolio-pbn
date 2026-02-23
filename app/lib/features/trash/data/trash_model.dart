@@ -12,7 +12,8 @@ class TrashItem with _$TrashItem {
   }) = _TrashItem;
 
   factory TrashItem.fromMap(String type, Map<String, dynamic> json) {
-    final displayName = json['title'] as String? ??
+    final displayName =
+        json['title'] as String? ??
         json['name'] as String? ??
         json['clientName'] as String? ??
         '(sin nombre)';

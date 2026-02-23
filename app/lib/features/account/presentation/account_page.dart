@@ -65,9 +65,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
   Future<void> _logout() async {
     // Desregistrar token FCM antes de invalidar la sesión.
-    await ref
-        .read(pushRegistrationNotifierProvider.notifier)
-        .unregister();
+    await ref.read(pushRegistrationNotifierProvider.notifier).unregister();
     await ref.read(authNotifierProvider.notifier).logout();
   }
 
@@ -320,10 +318,9 @@ class _GoogleCalendarCard extends ConsumerWidget {
                   )
                 : isConnected
                 ? TextButton(
-                    onPressed: () =>
-                        ref
-                            .read(googleCalendarNotifierProvider.notifier)
-                            .signOut(),
+                    onPressed: () => ref
+                        .read(googleCalendarNotifierProvider.notifier)
+                        .signOut(),
                     style: TextButton.styleFrom(
                       foregroundColor: colorScheme.error,
                     ),
@@ -333,8 +330,8 @@ class _GoogleCalendarCard extends ConsumerWidget {
             onTap: isConnected || isConnecting
                 ? null
                 : () => ref
-                    .read(googleCalendarNotifierProvider.notifier)
-                    .signIn(),
+                      .read(googleCalendarNotifierProvider.notifier)
+                      .signIn(),
           ),
         );
       },

@@ -33,14 +33,20 @@ Future<void> bootstrap() async {
   // Las opciones de Firebase se leen de google-services.json / GoogleService-Info.plist
   // o de DefaultFirebaseOptions si se generaron. Ver:
   // https://firebase.google.com/docs/flutter/setup
-  await Firebase.initializeApp();
-  // Registrar handler de background SOLO en Android (requerido por FCM Android).
-  // Evita llamadas a código de plataforma no inicializado en iOS/simulador.
-  if (Platform.isAndroid) {
-    // El handler debe ser una función top-level marcada con @pragma('vm:entry-point').
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  try {
+    await Firebase.initializeApp();
+    AppLogger.info('✓ Firebase inicializado');
+
+    // Registrar handler de background SOLO en Android (requerido por FCM Android).
+    // Evita llamadas a código de plataforma no inicializado en iOS/simulador.
+    if (Platform.isAndroid) {
+      // El handler debe ser una función top-level marcada con @pragma('vm:entry-point').
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    }
+  } catch (e, st) {
+    AppLogger.warn('Firebase no disponible, omitiendo inicialización FCM: $e');
+    AppLogger.debug('Firebase init stack: $st');
   }
-  AppLogger.info('✓ Firebase inicializado');
 
   // 3. Sentry + runApp ───────────────────────────────────────────────────────
   // SentryFlutter.init envuelve internamente runApp con captura de errores de

@@ -33,10 +33,8 @@ class DashboardStats with _$DashboardStats {
 /// Punto de datos para un gráfico (etiqueta + valor).
 @freezed
 class ChartDataPoint with _$ChartDataPoint {
-  const factory ChartDataPoint({
-    required String label,
-    required int count,
-  }) = _ChartDataPoint;
+  const factory ChartDataPoint({required String label, required int count}) =
+      _ChartDataPoint;
 
   factory ChartDataPoint.fromJson(Map<String, dynamic> json) =>
       _$ChartDataPointFromJson(json);

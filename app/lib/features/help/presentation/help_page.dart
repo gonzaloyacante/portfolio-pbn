@@ -16,14 +16,8 @@ class HelpPage extends StatelessWidget {
             icon: Icons.info_outline,
             title: 'Acerca de la app',
             children: [
-              _HelpItem(
-                label: 'Nombre',
-                value: 'Portfolio PBN — Admin',
-              ),
-              _HelpItem(
-                label: 'Versión',
-                value: '1.0.0',
-              ),
+              _HelpItem(label: 'Nombre', value: 'Portfolio PBN — Admin'),
+              _HelpItem(label: 'Versión', value: '1.0.0'),
               _HelpItem(
                 label: 'Descripción',
                 value:
@@ -61,8 +55,7 @@ class HelpPage extends StatelessWidget {
               ),
               _HelpItem(
                 label: 'Contactos',
-                value:
-                    'Mensajes recibidos desde el formulario de contacto.',
+                value: 'Mensajes recibidos desde el formulario de contacto.',
               ),
               _HelpItem(
                 label: 'Calendario',
@@ -75,7 +68,8 @@ class HelpPage extends StatelessWidget {
               ),
               _HelpItem(
                 label: 'Papelera',
-                value: 'Elementos eliminados. Se pueden restaurar o eliminar permanentemente.',
+                value:
+                    'Elementos eliminados. Se pueden restaurar o eliminar permanentemente.',
               ),
             ],
           ),
@@ -106,14 +100,8 @@ class HelpPage extends StatelessWidget {
             icon: Icons.support_agent_outlined,
             title: 'Soporte',
             children: [
-              _HelpItem(
-                label: 'Email',
-                value: 'hola@paolabolivar.es',
-              ),
-              _HelpItem(
-                label: 'Sitio web',
-                value: 'www.paolabolivar.es',
-              ),
+              _HelpItem(label: 'Email', value: 'hola@paolabolivar.es'),
+              _HelpItem(label: 'Sitio web', value: 'www.paolabolivar.es'),
             ],
           ),
         ],
@@ -151,8 +139,8 @@ class _SectionCard extends StatelessWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -180,10 +168,9 @@ class _HelpItem extends StatelessWidget {
         children: [
           Text(
             label,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 2),
           Text(value, style: Theme.of(context).textTheme.bodyMedium),
