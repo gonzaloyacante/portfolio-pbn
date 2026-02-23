@@ -1,0 +1,111 @@
+#!/usr/bin/env sh
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║         PORTFOLIO PBN PRE-PUSH VERIFICATION SUITE           ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+if [ ! -f "web/package.json" ] && [ ! -f "app/pubspec.yaml" ]; then
+  echo "❌ Error: no se encontró web/package.json ni app/pubspec.yaml. No hay checks aplicables."
+  exit 1
+fi
+
+START_TIME=$(date +%s)
+
+# Detectar npx o pnpm exec
+if command -v npx >/dev/null 2>&1; then
+  NPX_CMD="npx"
+else
+  NPX_CMD="pnpm exec"
+fi
+
+SKIP_WEB=${HUSKY_SKIP_WEB:-0}
+SKIP_APP=${HUSKY_SKIP_APP:-0}
+
+echo "🔍 Ejecutando pre-push checks (SKIP_WEB=${SKIP_WEB}, SKIP_APP=${SKIP_APP})"
+
+echo "\n🏗️  Comprobaciones para 'web'..."
+if [ -f "web/package.json" ]; then
+    # Type check
+    if [ -f "web/tsconfig.json" ]; then
+      echo "🔸 TypeScript check (web)"
+      if ! (cd web && $NPX_CMD tsc --noEmit); then
+        echo "❌ TypeScript errors in web/"
+        exit 1
+      fi
+    fi
+
+    # ESLint
+    if [ -d "web/src" ]; then
+      echo "🔸 ESLint (web)"
+      if ! (cd web && $NPX_CMD eslint "src/**/*.{ts,tsx,js,jsx}" --max-warnings=0); then
+        echo "❌ ESLint errors in web/"
+        exit 1
+      fi
+    fi
+
+    # Prisma validate
+    if [ -d "web/prisma" ] || [ -f "web/prisma/schema.prisma" ]; then
+      echo "🔸 Prisma validate (web)"
+      if ! (cd web && $NPX_CMD prisma validate); then
+        echo "❌ Prisma schema issues in web/"
+        exit 1
+      fi
+    fi
+
+    # Next build (production) - can be heavy
+    echo "🔸 Next.js build (web) — this may be slow"
+    if ! (cd web && $NPX_CMD next build); then
+      echo "❌ Next build failed for web/"
+      exit 1
+    fi
+  else
+    echo "ℹ️  No se encontró web/package.json — saltando checks web"
+  fi
+ 
+
+if [ "${SKIP_APP}" != "1" ]; then
+  echo "\n📱 Comprobaciones para 'app'..."
+  if [ -f "app/pubspec.yaml" ]; then
+    if command -v dart >/dev/null 2>&1; then
+      echo "🔸 Dart format + analyze (app)"
+      if ! (cd app && dart format --output=none --set-exit-if-changed .); then
+        echo "❌ Dart format changed files in app/ — run 'dart format .'"
+        exit 1
+      fi
+      if ! (cd app && dart analyze); then
+        echo "❌ Dart analyze found issues in app/"
+        exit 1
+      fi
+    elif command -v flutter >/dev/null 2>&1; then
+      echo "🔸 Flutter format + analyze (app)"
+      if ! (cd app && flutter format .); then
+        echo "❌ Flutter format failed in app/"
+        exit 1
+      fi
+      if ! (cd app && flutter analyze); then
+        echo "❌ Flutter analyze found issues in app/"
+        exit 1
+      fi
+    else
+      echo "ℹ️  No se encontró 'dart' ni 'flutter' en PATH — saltando checks app"
+    fi
+  else
+    echo "ℹ️  No se encontró app/pubspec.yaml — saltando checks app"
+  fi
+else
+  echo "⚡ SKIP_APP activo: saltando checks para app"
+fi
+
+END_TIME=$(date +%s)
+DURATION=$((END_TIME - START_TIME))
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════╗"
+echo "║     ✅ PRE-PUSH CHECKS COMPLETADOS                            ║"
+echo "║                   Tiempo total: ${DURATION}s                        ║"
+echo "╚══════════════════════════════════════════════════════════════╝"
+echo ""
+
+exit 0

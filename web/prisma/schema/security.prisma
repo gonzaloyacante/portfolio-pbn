@@ -1,0 +1,193 @@
+// ============================================
+// ANALYTICS & SECURITY - Enhanced
+// ============================================
+
+/// Analytics event tracking with aggregation support
+model AnalyticLog {
+  id         String   @id @default(uuid())
+  eventType  String   // page_view, project_view, contact_submit, download, etc
+  entityId   String?  // ID of related entity (project, category, etc)
+  entityType String?  // project, category, contact, booking
+  // Event data
+  eventData  Json?    // Flexible JSON for event-specific data
+  // Session tracking
+  sessionId  String?
+  // User tracking
+  userId     String?  // If authenticated
+  // Request metadata
+  timestamp  DateTime @default(now())
+  ipAddress  String?  // Anonymized (last octet zeroed, GDPR)
+  userAgent  String?
+  referrer   String?
+  // UTM tracking
+  utmSource    String?
+  utmMedium    String?
+  utmCampaign  String?
+  utmTerm      String?
+  utmContent   String?
+  // Geographic (from Vercel edge headers)
+  country    String?
+  city       String?
+  region     String?
+  latitude   Float?
+  longitude  Float?
+  // Device
+  device     String?  // mobile, tablet, desktop
+  // Performance
+  loadTime   Int?     // Page load time in ms
+  // Extended engagement tracking
+  scrollDepth     Int?    // Max scroll depth percentage (0-100)
+  timeOnPage      Int?    // Time on page in seconds
+  sessionDuration Int?    // Total session duration in seconds
+  clickTarget     String? // CSS selector or label of clicked element
+  // Web Vitals
+  vitalsLCP  Float?  // Largest Contentful Paint (ms)
+  vitalsFCP  Float?  // First Contentful Paint (ms)
+  vitalsINP  Float?  // Interaction to Next Paint (ms)
+  vitalsCLS  Float?  // Cumulative Layout Shift (score)
+  // Quality flags
+  isDuplicate Boolean @default(false)
+  isBot       Boolean @default(false)
+  // Metadata
+  metadata   String?  @db.Text // Additional JSON data
+
+  @@index([eventType, timestamp])
+  @@index([entityType, entityId])
+  @@index([sessionId])
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([country, city])
+  @@index([isDuplicate, eventType, timestamp])
+  @@index([timestamp])
+  @@map("analytic_logs")
+}
+
+/// Password reset tokens with enhanced security
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime
+  // Security
+  ipAddress String?
+  userAgent String?
+  used      Boolean  @default(false)
+  usedAt    DateTime?
+  // Audit
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([token, expiresAt])
+  @@map("password_reset_tokens")
+}
+
+/// User sessions for tracking and security
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique
+  // Session data
+  ipAddress    String?
+  userAgent    String?
+  device       String?  // mobile, desktop, tablet
+  browser      String?
+  os           String?
+  // Geographic
+  country      String?
+  city         String?
+  // Lifecycle
+  expiresAt    DateTime
+  lastActivity DateTime @default(now())
+  isActive     Boolean  @default(true)
+  // Audit
+  createdAt    DateTime @default(now())
+
+  @@index([userId, isActive])
+  @@index([sessionToken])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+/// Security events for monitoring and alerting
+model SecurityEvent {
+  id          String   @id @default(uuid())
+  eventType   String   // login_failed, suspicious_activity, password_reset, etc
+  severity    String   // low, medium, high, critical
+  userId      String?
+  email       String?
+  ipAddress   String?
+  userAgent   String?
+  details     Json?    // Event-specific details
+  resolved    Boolean  @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  createdAt   DateTime @default(now())
+
+  @@index([eventType, severity])
+  @@index([userId])
+  @@index([ipAddress])
+  @@index([resolved])
+  @@map("security_events")
+}
+
+/// IP blocking for security (rate limiting, ban, etc)
+model BlockedIp {
+  id         String   @id @default(cuid())
+  ipAddress  String   @unique
+  reason     String   // spam, brute_force, abuse
+  severity   String   @default("medium") // low, medium, high
+  blockedBy  String?  // User ID or "system"
+  expiresAt  DateTime? // null = permanent
+  isActive   Boolean  @default(true)
+  // Stats
+  hitCount   Int      @default(0)
+  lastHitAt  DateTime?
+  // Audit
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([ipAddress, isActive])
+  @@index([expiresAt])
+  @@map("blocked_ips")
+}
+
+/// JWT refresh tokens para la API REST de la app Flutter.
+/// Access token: 15 min · Refresh token: 30 días · Rotación en cada refresh.
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique          // UUID v4 opaco (no es un JWT)
+  userId    String
+  // Lifecyle
+  expiresAt DateTime
+  revokedAt DateTime?                 // null = activo
+  replacedBy String?                  // ID del nuevo token tras rotación
+  // Request context
+  ipAddress String?
+  userAgent String?
+  device    String?   // "android", "ios"
+  // Audit
+  createdAt DateTime @default(now())
+  lastUsedAt DateTime?
+
+  @@index([userId, revokedAt])
+  @@index([token, expiresAt])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+/// FCM push notification tokens registrados por la app Flutter.
+model PushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique          // Token FCM
+  platform  String                    // "android" | "ios"
+  // Lifecycle
+  isActive  Boolean  @default(true)
+  lastSeen  DateTime @default(now())
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, isActive])
+  @@map("push_tokens")
+}

@@ -1,0 +1,281 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../features/app_settings/presentation/app_settings_page.dart';
+import '../../features/account/presentation/account_page.dart';
+import '../../features/auth/presentation/login_page.dart';
+import '../../features/help/presentation/help_page.dart';
+import '../../features/trash/presentation/trash_page.dart';
+import '../../features/categories/presentation/categories_list_page.dart';
+import '../../features/categories/presentation/category_form_page.dart';
+import '../../features/dashboard/presentation/dashboard_page.dart';
+import '../../features/projects/presentation/project_form_page.dart';
+import '../../features/projects/presentation/projects_list_page.dart';
+import '../../features/calendar/presentation/booking_detail_page.dart';
+import '../../features/calendar/presentation/booking_form_page.dart';
+import '../../features/calendar/presentation/calendar_page.dart';
+import '../../features/contacts/presentation/contact_detail_page.dart';
+import '../../features/contacts/presentation/contacts_list_page.dart';
+import '../../features/settings/presentation/settings_about_page.dart';
+import '../../features/settings/presentation/settings_contact_page.dart';
+import '../../features/settings/presentation/settings_page.dart';
+import '../../features/settings/presentation/settings_site_page.dart';
+import '../../features/settings/presentation/settings_social_page.dart';
+import '../../features/settings/presentation/settings_theme_page.dart';
+import '../../features/services/presentation/service_form_page.dart';
+import '../../features/services/presentation/services_list_page.dart';
+import '../../features/testimonials/presentation/testimonial_form_page.dart';
+import '../../features/testimonials/presentation/testimonials_list_page.dart';
+import '../auth/auth_provider.dart';
+import '../auth/auth_state.dart';
+import 'route_names.dart';
+
+// ── Provider ──────────────────────────────────────────────────────────────────
+
+/// Clave global del NavigatorState raíz del router.
+/// Usada por [NotificationHandler] para navegar sin BuildContext.
+final GlobalKey<NavigatorState> routerNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'rootNavigator',
+);
+
+/// Instancia global del router. GoRouter escucha [RouterNotifier] para
+/// reevaluar las redirecciones cada vez que cambia el estado de autenticación.
+final routerProvider = Provider<GoRouter>((ref) {
+  final notifier = RouterNotifier(ref);
+  ref.onDispose(notifier.dispose);
+
+  return GoRouter(
+    navigatorKey: routerNavigatorKey,
+    initialLocation: RoutePaths.login,
+    debugLogDiagnostics: false,
+    refreshListenable: notifier,
+    redirect: notifier.redirect,
+    routes: _routes,
+  );
+});
+
+// ── RouterNotifier ───────────────────────────────────────────────────────────
+
+/// [ChangeNotifier] que conecta Riverpod con el `refreshListenable` de GoRouter.
+///
+/// Cuando el estado de auth cambia (login/logout), notifica a GoRouter para
+/// que reevalúe el guard de redirección.
+class RouterNotifier extends ChangeNotifier {
+  RouterNotifier(this._ref) {
+    // Escuchar al authNotifierProvider y notificar al router ante cualquier cambio.
+    _subscription = _ref.listen<AsyncValue<AuthState>>(
+      authNotifierProvider,
+      (_, _) => notifyListeners(),
+    );
+  }
+
+  final Ref _ref;
+  late final ProviderSubscription<AsyncValue<AuthState>> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.close();
+    super.dispose();
+  }
+
+  // ── Guard de autenticación ────────────────────────────────────────────────
+
+  /// Redirige según el estado de autenticación actual.
+  ///
+  /// - Mientras carga → null (sin redirigir, mostrar splash)
+  /// - Autenticado + en login → /dashboard
+  /// - No autenticado + fuera de login → /login
+  String? redirect(BuildContext context, GoRouterState state) {
+    final authAsync = _ref.read(authNotifierProvider);
+    final isLoginRoute = state.matchedLocation == RoutePaths.login;
+
+    // Mientras se restaura la sesión → no interrumpir.
+    if (authAsync.isLoading) return null;
+
+    final authState = authAsync.valueOrNull;
+
+    // Estado de error o no autenticado → ir al login si no está ya ahí.
+    if (authState == null ||
+        authState is Unauthenticated ||
+        authState is AuthError) {
+      return isLoginRoute ? null : RoutePaths.login;
+    }
+
+    // Autenticando → sin redirigir (mostrar estado transitorio en login).
+    if (authState is Authenticating) return null;
+
+    // Autenticado → si está en login, ir al dashboard.
+    if (authState is Authenticated) {
+      return isLoginRoute ? RoutePaths.dashboard : null;
+    }
+
+    return null;
+  }
+}
+
+// ── Rutas ─────────────────────────────────────────────────────────────────────
+
+final List<RouteBase> _routes = [
+  GoRoute(
+    path: RoutePaths.login,
+    name: RouteNames.login,
+    builder: (context, state) => const LoginPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.dashboard,
+    name: RouteNames.dashboard,
+    builder: (context, state) => const DashboardPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.projects,
+    name: RouteNames.projects,
+    builder: (context, state) => const ProjectsListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.projectNew,
+    name: RouteNames.projectNew,
+    builder: (context, state) => const ProjectFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.projectEdit,
+    name: RouteNames.projectEdit,
+    builder: (context, state) =>
+        ProjectFormPage(projectId: state.pathParameters['id']),
+  ),
+  // ── Categorías ────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.categories,
+    name: RouteNames.categories,
+    builder: (context, state) => const CategoriesListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.categoryNew,
+    name: RouteNames.categoryNew,
+    builder: (context, state) => const CategoryFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.categoryEdit,
+    name: RouteNames.categoryEdit,
+    builder: (context, state) =>
+        CategoryFormPage(categoryId: state.pathParameters['id']),
+  ),
+  // ── Servicios ────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.services,
+    name: RouteNames.services,
+    builder: (context, state) => const ServicesListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.serviceNew,
+    name: RouteNames.serviceNew,
+    builder: (context, state) => const ServiceFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.serviceEdit,
+    name: RouteNames.serviceEdit,
+    builder: (context, state) =>
+        ServiceFormPage(serviceId: state.pathParameters['id']),
+  ),
+  // ── Testimonios ───────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.testimonials,
+    name: RouteNames.testimonials,
+    builder: (context, state) => const TestimonialsListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.testimonialNew,
+    name: RouteNames.testimonialNew,
+    builder: (context, state) => const TestimonialFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.testimonialEdit,
+    name: RouteNames.testimonialEdit,
+    builder: (context, state) =>
+        TestimonialFormPage(testimonialId: state.pathParameters['id']),
+  ),
+  // ── Contactos ─────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.contacts,
+    name: RouteNames.contacts,
+    builder: (context, state) => const ContactsListPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.contactDetail,
+    name: RouteNames.contactDetail,
+    builder: (context, state) =>
+        ContactDetailPage(contactId: state.pathParameters['id']!),
+  ),
+  // ── Calendario / Reservas ─────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.calendar,
+    name: RouteNames.calendar,
+    builder: (context, state) => const CalendarPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.bookingNew,
+    name: RouteNames.bookingNew,
+    builder: (context, state) => const BookingFormPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.bookingDetail,
+    name: RouteNames.bookingDetail,
+    builder: (context, state) =>
+        BookingDetailPage(bookingId: state.pathParameters['id']!),
+  ),
+  // ── Settings ──────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.settings,
+    name: RouteNames.settings,
+    builder: (context, state) => const SettingsPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsAbout,
+    name: RouteNames.settingsAbout,
+    builder: (context, state) => const SettingsAboutPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsContact,
+    name: RouteNames.settingsContact,
+    builder: (context, state) => const SettingsContactPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsTheme,
+    name: RouteNames.settingsTheme,
+    builder: (context, state) => const SettingsThemePage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsSite,
+    name: RouteNames.settingsSite,
+    builder: (context, state) => const SettingsSitePage(),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsSocial,
+    name: RouteNames.settingsSocial,
+    builder: (context, state) => const SettingsSocialPage(),
+  ),
+  // ── Cuenta ────────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.account,
+    name: RouteNames.account,
+    builder: (_, _) => const AccountPage(),
+  ),
+  // ── Papelera ──────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.trash,
+    name: RouteNames.trash,
+    builder: (_, _) => const TrashPage(),
+  ),
+  // ── Ayuda ───────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.help,
+    name: RouteNames.help,
+    builder: (_, _) => const HelpPage(),
+  ),
+  // ── Preferencias de la App ───────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.appSettings,
+    name: RouteNames.appSettings,
+    builder: (_, _) => const AppSettingsPage(),
+  ),
+];

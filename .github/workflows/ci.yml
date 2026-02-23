@@ -30,81 +30,42 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
         with:
-          version: 10
+          version: 10.28.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 20.x
           cache: 'pnpm'
+          cache-dependency-path: web/pnpm-lock.yaml
 
       - name: Install dependencies
+        working-directory: web
         run: pnpm install
 
       - name: Generate Prisma Client
+        working-directory: web
         run: pnpm prisma generate
 
       - name: Type check
+        working-directory: web
         run: pnpm type-check
 
       - name: Lint
+        working-directory: web
         run: pnpm lint
 
       - name: Run unit tests
+        working-directory: web
         run: pnpm test:unit
 
-      - name: Simulate Vercel production build (strict check)
-        run: |
-          # Save current package.json
-          cp package.json package.json.backup
-          # Simulate production install (this will fail if build needs devDeps)
-          NODE_ENV=production pnpm install --prod=false
-          pnpm build
-          # Restore package.json
-          mv package.json.backup package.json
-        env:
-          NODE_ENV: production
-          # Database
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DIRECT_URL: ${{ secrets.DIRECT_URL }}
-
-          # Cloudinary
-          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
-          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
-
-          # App Config
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-          NEXT_PUBLIC_APP_NAME: ${{ secrets.NEXT_PUBLIC_APP_NAME }}
-          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
-
-          # Auth
-          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
-          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
-          JWT_REFRESH_EXPIRES_IN: ${{ secrets.JWT_REFRESH_EXPIRES_IN }}
-
-          # Email
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
-
-          # Sentry
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
-
-          # Fonts
-          GOOGLE_FONTS_API_KEY: ${{ secrets.GOOGLE_FONTS_API_KEY }}
-
       - name: Build
+        working-directory: web
         run: pnpm build
         env:
           # Database
@@ -138,6 +99,7 @@ jobs:
 
           # Sentry
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
 
           # Fonts
           GOOGLE_FONTS_API_KEY: ${{ secrets.GOOGLE_FONTS_API_KEY }}
@@ -152,26 +114,30 @@ jobs:
   #
   #   steps:
   #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
   #
   #     - name: Setup pnpm
-  #       uses: pnpm/action-setup@v4
+  #       uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
   #       with:
-  #         version: 9
+  #         version: 10.28.0
   #
   #     - name: Setup Node.js
-  #       uses: actions/setup-node@v4
+  #       uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
   #       with:
   #         node-version: 20.x
   #         cache: 'pnpm'
+  #         cache-dependency-path: web/pnpm-lock.yaml
   #
   #     - name: Install dependencies
+  #       working-directory: web
   #       run: pnpm install
   #
   #     - name: Install Playwright browsers
+  #       working-directory: web
   #       run: pnpm playwright install --with-deps chromium
   #
   #     - name: Run E2E tests
+  #       working-directory: web
   #       run: pnpm test
   #       env:
   #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -183,9 +149,9 @@ jobs:
   #         RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
   #
   #     - name: Upload test results
-  #       uses: actions/upload-artifact@v4
+  #       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
   #       if: failure()
   #       with:
   #         name: playwright-report
-  #         path: playwright-report
+  #         path: web/playwright-report
   #         retention-days: 1
