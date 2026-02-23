@@ -1,4 +1,4 @@
-package com.example.portfolio_pbn
+package es.paolabolivar.admin
 
 import io.flutter.embedding.android.FlutterActivity
 
