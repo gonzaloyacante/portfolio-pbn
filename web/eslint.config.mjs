@@ -44,7 +44,7 @@ const eslintConfig = defineConfig([
       },
     },
   },
-  // ─── Vitest Globals (test files only) ──────────────────────────────────────
+  // ─── Vitest Globals + Relaxed rules (test files only) ────────────────────
   {
     files: ["tests/**/*.{ts,tsx}"],
     languageOptions: {
@@ -59,6 +59,15 @@ const eslintConfig = defineConfig([
         afterEach: "readonly",
         vi: "readonly",
       },
+    },
+    rules: {
+      // Tests often need `any` for mocking and type assertions
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unsafe-function-type": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-require-imports": "off",
+      "react/display-name": "off",
+      "@next/next/no-img-element": "off",
     },
   },
   // ─── Design Token Enforcement ──────────────────────────────────────────────
