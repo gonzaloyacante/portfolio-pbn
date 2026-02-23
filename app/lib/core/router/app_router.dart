@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/app_settings/presentation/app_settings_page.dart';
 import '../../features/account/presentation/account_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/help/presentation/help_page.dart';
@@ -270,5 +271,11 @@ final List<RouteBase> _routes = [
     path: RoutePaths.help,
     name: RouteNames.help,
     builder: (_, _) => const HelpPage(),
+  ),
+  // ── Preferencias de la App ───────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.appSettings,
+    name: RouteNames.appSettings,
+    builder: (_, _) => const AppSettingsPage(),
   ),
 ];

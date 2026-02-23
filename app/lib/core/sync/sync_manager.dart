@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../api/api_client.dart';
+import '../database/app_database.dart';
 import '../network/connectivity_provider.dart';
 import '../utils/app_logger.dart';
 import 'sync_handlers.dart';
@@ -82,32 +83,31 @@ class SyncManager extends _$SyncManager {
   }
 
   Future<void> _processOperation(
-    dynamic operation,
+    SyncOperationsTableData operation,
     SyncQueueRepository queue,
   ) async {
-    final op = operation;
-    final handler = _registry.handlerFor(op.resource as String);
+    final handler = _registry.handlerFor(operation.resource);
 
     if (handler == null) {
       AppLogger.warn(
-        'SyncManager: no handler for resource "${op.resource}" — skipping',
+        'SyncManager: no handler for resource "${operation.resource}" — skipping',
       );
-      await queue.markCompleted(op.id as String);
+      await queue.markCompleted(operation.id);
       return;
     }
 
     try {
-      await handler.execute(op);
-      await queue.markCompleted(op.id as String);
+      await handler.execute(operation);
+      await queue.markCompleted(operation.id);
       AppLogger.info(
-        'SyncManager: completed ${op.operation} on ${op.resource} [${op.id}]',
+        'SyncManager: completed ${operation.operation} on ${operation.resource} [${operation.id}]',
       );
     } catch (e) {
       AppLogger.error(
-        'SyncManager: failed ${op.operation} on ${op.resource} [${op.id}]',
+        'SyncManager: failed ${operation.operation} on ${operation.resource} [${operation.id}]',
         e,
       );
-      await queue.incrementAttempts(op.id as String);
+      await queue.incrementAttempts(operation.id);
       rethrow;
     }
   }

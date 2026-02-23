@@ -24,9 +24,15 @@ mixin _$UserProfile {
   String get id => throw _privateConstructorUsedError;
   String get email => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get role => throw _privateConstructorUsedError;
+  @JsonKey(name: 'avatarUrl')
   String? get image => throw _privateConstructorUsedError;
-  DateTime get createdAt => throw _privateConstructorUsedError;
-  DateTime get updatedAt => throw _privateConstructorUsedError;
+  String? get bio => throw _privateConstructorUsedError;
+  String? get locale => throw _privateConstructorUsedError;
+  String? get timezone => throw _privateConstructorUsedError;
+  DateTime? get lastLoginAt => throw _privateConstructorUsedError;
+  DateTime? get createdAt => throw _privateConstructorUsedError;
+  DateTime? get updatedAt => throw _privateConstructorUsedError;
 
   /// Serializes this UserProfile to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,9 +55,14 @@ abstract class $UserProfileCopyWith<$Res> {
     String id,
     String email,
     String name,
-    String? image,
-    DateTime createdAt,
-    DateTime updatedAt,
+    String role,
+    @JsonKey(name: 'avatarUrl') String? image,
+    String? bio,
+    String? locale,
+    String? timezone,
+    DateTime? lastLoginAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   });
 }
 
@@ -73,9 +84,14 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
     Object? id = null,
     Object? email = null,
     Object? name = null,
+    Object? role = null,
     Object? image = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? bio = freezed,
+    Object? locale = freezed,
+    Object? timezone = freezed,
+    Object? lastLoginAt = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -91,18 +107,38 @@ class _$UserProfileCopyWithImpl<$Res, $Val extends UserProfile>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
+            role: null == role
+                ? _value.role
+                : role // ignore: cast_nullable_to_non_nullable
+                      as String,
             image: freezed == image
                 ? _value.image
                 : image // ignore: cast_nullable_to_non_nullable
                       as String?,
-            createdAt: null == createdAt
+            bio: freezed == bio
+                ? _value.bio
+                : bio // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            locale: freezed == locale
+                ? _value.locale
+                : locale // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            timezone: freezed == timezone
+                ? _value.timezone
+                : timezone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            lastLoginAt: freezed == lastLoginAt
+                ? _value.lastLoginAt
+                : lastLoginAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: freezed == createdAt
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            updatedAt: null == updatedAt
+                      as DateTime?,
+            updatedAt: freezed == updatedAt
                 ? _value.updatedAt
                 : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
+                      as DateTime?,
           )
           as $Val,
     );
@@ -122,9 +158,14 @@ abstract class _$$UserProfileImplCopyWith<$Res>
     String id,
     String email,
     String name,
-    String? image,
-    DateTime createdAt,
-    DateTime updatedAt,
+    String role,
+    @JsonKey(name: 'avatarUrl') String? image,
+    String? bio,
+    String? locale,
+    String? timezone,
+    DateTime? lastLoginAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   });
 }
 
@@ -145,9 +186,14 @@ class __$$UserProfileImplCopyWithImpl<$Res>
     Object? id = null,
     Object? email = null,
     Object? name = null,
+    Object? role = null,
     Object? image = freezed,
-    Object? createdAt = null,
-    Object? updatedAt = null,
+    Object? bio = freezed,
+    Object? locale = freezed,
+    Object? timezone = freezed,
+    Object? lastLoginAt = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
   }) {
     return _then(
       _$UserProfileImpl(
@@ -163,18 +209,38 @@ class __$$UserProfileImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
+        role: null == role
+            ? _value.role
+            : role // ignore: cast_nullable_to_non_nullable
+                  as String,
         image: freezed == image
             ? _value.image
             : image // ignore: cast_nullable_to_non_nullable
                   as String?,
-        createdAt: null == createdAt
+        bio: freezed == bio
+            ? _value.bio
+            : bio // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        locale: freezed == locale
+            ? _value.locale
+            : locale // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        timezone: freezed == timezone
+            ? _value.timezone
+            : timezone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        lastLoginAt: freezed == lastLoginAt
+            ? _value.lastLoginAt
+            : lastLoginAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: freezed == createdAt
             ? _value.createdAt
             : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        updatedAt: null == updatedAt
+                  as DateTime?,
+        updatedAt: freezed == updatedAt
             ? _value.updatedAt
             : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
+                  as DateTime?,
       ),
     );
   }
@@ -187,9 +253,14 @@ class _$UserProfileImpl implements _UserProfile {
     required this.id,
     required this.email,
     required this.name,
-    this.image,
-    required this.createdAt,
-    required this.updatedAt,
+    this.role = 'admin',
+    @JsonKey(name: 'avatarUrl') this.image,
+    this.bio,
+    this.locale,
+    this.timezone,
+    this.lastLoginAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory _$UserProfileImpl.fromJson(Map<String, dynamic> json) =>
@@ -202,15 +273,27 @@ class _$UserProfileImpl implements _UserProfile {
   @override
   final String name;
   @override
+  @JsonKey()
+  final String role;
+  @override
+  @JsonKey(name: 'avatarUrl')
   final String? image;
   @override
-  final DateTime createdAt;
+  final String? bio;
   @override
-  final DateTime updatedAt;
+  final String? locale;
+  @override
+  final String? timezone;
+  @override
+  final DateTime? lastLoginAt;
+  @override
+  final DateTime? createdAt;
+  @override
+  final DateTime? updatedAt;
 
   @override
   String toString() {
-    return 'UserProfile(id: $id, email: $email, name: $name, image: $image, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'UserProfile(id: $id, email: $email, name: $name, role: $role, image: $image, bio: $bio, locale: $locale, timezone: $timezone, lastLoginAt: $lastLoginAt, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -221,7 +304,14 @@ class _$UserProfileImpl implements _UserProfile {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.role, role) || other.role == role) &&
             (identical(other.image, image) || other.image == image) &&
+            (identical(other.bio, bio) || other.bio == bio) &&
+            (identical(other.locale, locale) || other.locale == locale) &&
+            (identical(other.timezone, timezone) ||
+                other.timezone == timezone) &&
+            (identical(other.lastLoginAt, lastLoginAt) ||
+                other.lastLoginAt == lastLoginAt) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -230,8 +320,20 @@ class _$UserProfileImpl implements _UserProfile {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, email, name, image, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    email,
+    name,
+    role,
+    image,
+    bio,
+    locale,
+    timezone,
+    lastLoginAt,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.
@@ -252,9 +354,14 @@ abstract class _UserProfile implements UserProfile {
     required final String id,
     required final String email,
     required final String name,
-    final String? image,
-    required final DateTime createdAt,
-    required final DateTime updatedAt,
+    final String role,
+    @JsonKey(name: 'avatarUrl') final String? image,
+    final String? bio,
+    final String? locale,
+    final String? timezone,
+    final DateTime? lastLoginAt,
+    final DateTime? createdAt,
+    final DateTime? updatedAt,
   }) = _$UserProfileImpl;
 
   factory _UserProfile.fromJson(Map<String, dynamic> json) =
@@ -267,11 +374,22 @@ abstract class _UserProfile implements UserProfile {
   @override
   String get name;
   @override
+  String get role;
+  @override
+  @JsonKey(name: 'avatarUrl')
   String? get image;
   @override
-  DateTime get createdAt;
+  String? get bio;
   @override
-  DateTime get updatedAt;
+  String? get locale;
+  @override
+  String? get timezone;
+  @override
+  DateTime? get lastLoginAt;
+  @override
+  DateTime? get createdAt;
+  @override
+  DateTime? get updatedAt;
 
   /// Create a copy of UserProfile
   /// with the given fields replaced by the non-null parameter values.

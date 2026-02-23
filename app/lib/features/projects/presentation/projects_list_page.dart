@@ -202,7 +202,7 @@ class _ProjectTile extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  item.thumbnailUrl,
+                  item.thumbnailUrl ?? '',
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,

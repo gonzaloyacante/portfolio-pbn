@@ -45,7 +45,7 @@ class Endpoints {
   static const String analyticsCharts = '/api/admin/analytics/charts';
 
   // ── Social Links ─────────────────────────────────────────────────────────
-  static const String socialLinks = '/api/admin/social-links';
+  static const String socialLinks = '/api/admin/settings/social';
 
   // ── Papelera ─────────────────────────────────────────────────────────────
   static const String trash = '/api/admin/trash';

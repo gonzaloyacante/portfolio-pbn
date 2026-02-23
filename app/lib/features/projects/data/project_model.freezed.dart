@@ -450,7 +450,7 @@ mixin _$ProjectListItem {
   String get title => throw _privateConstructorUsedError;
   String get slug => throw _privateConstructorUsedError;
   String? get excerpt => throw _privateConstructorUsedError;
-  String get thumbnailUrl => throw _privateConstructorUsedError;
+  String? get thumbnailUrl => throw _privateConstructorUsedError;
   String get date => throw _privateConstructorUsedError;
   int get sortOrder => throw _privateConstructorUsedError;
   bool get isFeatured => throw _privateConstructorUsedError;
@@ -483,7 +483,7 @@ abstract class $ProjectListItemCopyWith<$Res> {
     String title,
     String slug,
     String? excerpt,
-    String thumbnailUrl,
+    String? thumbnailUrl,
     String date,
     int sortOrder,
     bool isFeatured,
@@ -517,7 +517,7 @@ class _$ProjectListItemCopyWithImpl<$Res, $Val extends ProjectListItem>
     Object? title = null,
     Object? slug = null,
     Object? excerpt = freezed,
-    Object? thumbnailUrl = null,
+    Object? thumbnailUrl = freezed,
     Object? date = null,
     Object? sortOrder = null,
     Object? isFeatured = null,
@@ -546,10 +546,10 @@ class _$ProjectListItemCopyWithImpl<$Res, $Val extends ProjectListItem>
                 ? _value.excerpt
                 : excerpt // ignore: cast_nullable_to_non_nullable
                       as String?,
-            thumbnailUrl: null == thumbnailUrl
+            thumbnailUrl: freezed == thumbnailUrl
                 ? _value.thumbnailUrl
                 : thumbnailUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             date: null == date
                 ? _value.date
                 : date // ignore: cast_nullable_to_non_nullable
@@ -616,7 +616,7 @@ abstract class _$$ProjectListItemImplCopyWith<$Res>
     String title,
     String slug,
     String? excerpt,
-    String thumbnailUrl,
+    String? thumbnailUrl,
     String date,
     int sortOrder,
     bool isFeatured,
@@ -650,7 +650,7 @@ class __$$ProjectListItemImplCopyWithImpl<$Res>
     Object? title = null,
     Object? slug = null,
     Object? excerpt = freezed,
-    Object? thumbnailUrl = null,
+    Object? thumbnailUrl = freezed,
     Object? date = null,
     Object? sortOrder = null,
     Object? isFeatured = null,
@@ -679,10 +679,10 @@ class __$$ProjectListItemImplCopyWithImpl<$Res>
             ? _value.excerpt
             : excerpt // ignore: cast_nullable_to_non_nullable
                   as String?,
-        thumbnailUrl: null == thumbnailUrl
+        thumbnailUrl: freezed == thumbnailUrl
             ? _value.thumbnailUrl
             : thumbnailUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         date: null == date
             ? _value.date
             : date // ignore: cast_nullable_to_non_nullable
@@ -732,7 +732,7 @@ class _$ProjectListItemImpl implements _ProjectListItem {
     required this.title,
     required this.slug,
     this.excerpt,
-    required this.thumbnailUrl,
+    this.thumbnailUrl,
     required this.date,
     this.sortOrder = 0,
     this.isFeatured = false,
@@ -756,7 +756,7 @@ class _$ProjectListItemImpl implements _ProjectListItem {
   @override
   final String? excerpt;
   @override
-  final String thumbnailUrl;
+  final String? thumbnailUrl;
   @override
   final String date;
   @override
@@ -859,7 +859,7 @@ abstract class _ProjectListItem implements ProjectListItem {
     required final String title,
     required final String slug,
     final String? excerpt,
-    required final String thumbnailUrl,
+    final String? thumbnailUrl,
     required final String date,
     final int sortOrder,
     final bool isFeatured,
@@ -883,7 +883,7 @@ abstract class _ProjectListItem implements ProjectListItem {
   @override
   String? get excerpt;
   @override
-  String get thumbnailUrl;
+  String? get thumbnailUrl;
   @override
   String get date;
   @override
@@ -922,7 +922,7 @@ mixin _$ProjectDetail {
   String get slug => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   String? get excerpt => throw _privateConstructorUsedError;
-  String get thumbnailUrl => throw _privateConstructorUsedError;
+  String? get thumbnailUrl => throw _privateConstructorUsedError;
   String? get videoUrl => throw _privateConstructorUsedError;
   String get date => throw _privateConstructorUsedError;
   String? get duration => throw _privateConstructorUsedError;
@@ -969,7 +969,7 @@ abstract class $ProjectDetailCopyWith<$Res> {
     String slug,
     String description,
     String? excerpt,
-    String thumbnailUrl,
+    String? thumbnailUrl,
     String? videoUrl,
     String date,
     String? duration,
@@ -1017,7 +1017,7 @@ class _$ProjectDetailCopyWithImpl<$Res, $Val extends ProjectDetail>
     Object? slug = null,
     Object? description = null,
     Object? excerpt = freezed,
-    Object? thumbnailUrl = null,
+    Object? thumbnailUrl = freezed,
     Object? videoUrl = freezed,
     Object? date = null,
     Object? duration = freezed,
@@ -1063,10 +1063,10 @@ class _$ProjectDetailCopyWithImpl<$Res, $Val extends ProjectDetail>
                 ? _value.excerpt
                 : excerpt // ignore: cast_nullable_to_non_nullable
                       as String?,
-            thumbnailUrl: null == thumbnailUrl
+            thumbnailUrl: freezed == thumbnailUrl
                 ? _value.thumbnailUrl
                 : thumbnailUrl // ignore: cast_nullable_to_non_nullable
-                      as String,
+                      as String?,
             videoUrl: freezed == videoUrl
                 ? _value.videoUrl
                 : videoUrl // ignore: cast_nullable_to_non_nullable
@@ -1186,7 +1186,7 @@ abstract class _$$ProjectDetailImplCopyWith<$Res>
     String slug,
     String description,
     String? excerpt,
-    String thumbnailUrl,
+    String? thumbnailUrl,
     String? videoUrl,
     String date,
     String? duration,
@@ -1234,7 +1234,7 @@ class __$$ProjectDetailImplCopyWithImpl<$Res>
     Object? slug = null,
     Object? description = null,
     Object? excerpt = freezed,
-    Object? thumbnailUrl = null,
+    Object? thumbnailUrl = freezed,
     Object? videoUrl = freezed,
     Object? date = null,
     Object? duration = freezed,
@@ -1280,10 +1280,10 @@ class __$$ProjectDetailImplCopyWithImpl<$Res>
             ? _value.excerpt
             : excerpt // ignore: cast_nullable_to_non_nullable
                   as String?,
-        thumbnailUrl: null == thumbnailUrl
+        thumbnailUrl: freezed == thumbnailUrl
             ? _value.thumbnailUrl
             : thumbnailUrl // ignore: cast_nullable_to_non_nullable
-                  as String,
+                  as String?,
         videoUrl: freezed == videoUrl
             ? _value.videoUrl
             : videoUrl // ignore: cast_nullable_to_non_nullable
@@ -1386,7 +1386,7 @@ class _$ProjectDetailImpl implements _ProjectDetail {
     required this.slug,
     required this.description,
     this.excerpt,
-    required this.thumbnailUrl,
+    this.thumbnailUrl,
     this.videoUrl,
     required this.date,
     this.duration,
@@ -1427,7 +1427,7 @@ class _$ProjectDetailImpl implements _ProjectDetail {
   @override
   final String? excerpt;
   @override
-  final String thumbnailUrl;
+  final String? thumbnailUrl;
   @override
   final String? videoUrl;
   @override
@@ -1615,7 +1615,7 @@ abstract class _ProjectDetail implements ProjectDetail {
     required final String slug,
     required final String description,
     final String? excerpt,
-    required final String thumbnailUrl,
+    final String? thumbnailUrl,
     final String? videoUrl,
     required final String date,
     final String? duration,
@@ -1654,7 +1654,7 @@ abstract class _ProjectDetail implements ProjectDetail {
   @override
   String? get excerpt;
   @override
-  String get thumbnailUrl;
+  String? get thumbnailUrl;
   @override
   String? get videoUrl;
   @override

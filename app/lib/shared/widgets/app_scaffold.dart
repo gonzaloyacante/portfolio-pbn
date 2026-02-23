@@ -96,7 +96,13 @@ const List<_NavItem> _allNavItems = [
     routeName: RouteNames.settings,
     icon: Icons.settings_outlined,
     selectedIcon: Icons.settings,
-    label: 'Ajustes',
+    label: 'Ajustes del Sitio',
+  ),
+  _NavItem(
+    routeName: RouteNames.appSettings,
+    icon: Icons.tune_outlined,
+    selectedIcon: Icons.tune,
+    label: 'Preferencias',
   ),
   _NavItem(
     routeName: RouteNames.trash,

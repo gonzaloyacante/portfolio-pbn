@@ -23,7 +23,7 @@ class CategoriesRepository {
     String? search,
     bool? isActive,
   }) async {
-    final resp = await _client.get(
+    final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.categories,
       queryParams: {
         'page': page,
@@ -34,7 +34,7 @@ class CategoriesRepository {
     );
 
     final apiResponse = ApiResponse<PaginatedResponse<CategoryItem>>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => PaginatedResponse<CategoryItem>.fromJson(
         json as Map<String, dynamic>,
         (item) => CategoryItem.fromJson(item as Map<String, dynamic>),
@@ -50,10 +50,12 @@ class CategoriesRepository {
   // ── Detail ────────────────────────────────────────────────────────────────
 
   Future<CategoryDetail> getCategory(String id) async {
-    final resp = await _client.get(Endpoints.category(id));
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.category(id),
+    );
 
     final apiResponse = ApiResponse<CategoryDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
     );
 
@@ -66,10 +68,13 @@ class CategoriesRepository {
   // ── Create ────────────────────────────────────────────────────────────────
 
   Future<CategoryDetail> createCategory(CategoryFormData data) async {
-    final resp = await _client.post(Endpoints.categories, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.categories,
+      data: data.toJson(),
+    );
 
     final apiResponse = ApiResponse<CategoryDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
     );
 
@@ -85,10 +90,13 @@ class CategoriesRepository {
     String id,
     Map<String, dynamic> data,
   ) async {
-    final resp = await _client.patch(Endpoints.category(id), data: data);
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.category(id),
+      data: data,
+    );
 
     final apiResponse = ApiResponse<CategoryDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
     );
 
@@ -101,12 +109,11 @@ class CategoriesRepository {
   // ── Delete ────────────────────────────────────────────────────────────────
 
   Future<void> deleteCategory(String id) async {
-    final resp = await _client.delete(Endpoints.category(id));
-
-    final apiResponse = ApiResponse<void>.fromJson(
-      resp.data as Map<String, dynamic>,
-      (_) {},
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.category(id),
     );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
 
     if (!apiResponse.success) {
       throw Exception(apiResponse.error ?? 'Error al eliminar categoría');

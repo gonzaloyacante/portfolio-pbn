@@ -55,6 +55,9 @@ class RouteNames {
 
   // ── Ayuda ────────────────────────────────────────────────────────────────
   static const String help = 'help';
+
+  // ── Preferencias de la App ────────────────────────────────────────────────
+  static const String appSettings = 'app-settings';
 }
 
 /// Paths de ruta.
@@ -90,4 +93,5 @@ class RoutePaths {
   static const String trash = '/trash';
   static const String account = '/account';
   static const String help = '/help';
+  static const String appSettings = '/app-settings';
 }

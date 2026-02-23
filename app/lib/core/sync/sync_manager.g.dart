@@ -25,15 +25,12 @@ final syncStatusProvider = AutoDisposeProvider<SyncStatus>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SyncStatusRef = AutoDisposeProviderRef<SyncStatus>;
-String _$syncManagerHash() => r'7a1843c3e4f7761abf8d0a5105e01443698ac208';
+String _$syncManagerHash() => r'fe3a78cca852c5bc5beacaea87c324c7b463a434';
 
 /// Procesa la cola de operaciones pendientes cuando hay conectividad.
 ///
 /// Se activa automáticamente al recuperar la conexión a internet.
 /// Procesa las operaciones en orden FIFO con reintento.
-///
-/// TODO (Fase de features): registrar los handlers por tipo de recurso
-///   (ProjectSyncHandler, ServiceSyncHandler, etc.) usando un Map.
 ///
 /// Copied from [SyncManager].
 @ProviderFor(SyncManager)

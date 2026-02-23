@@ -22,7 +22,7 @@ class ServicesRepository {
     bool? isActive,
     bool? isFeatured,
   }) async {
-    final resp = await _client.get(
+    final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.services,
       queryParams: {
         'page': page,
@@ -34,7 +34,7 @@ class ServicesRepository {
     );
 
     final apiResponse = ApiResponse<PaginatedResponse<ServiceItem>>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => PaginatedResponse<ServiceItem>.fromJson(
         json as Map<String, dynamic>,
         (item) => ServiceItem.fromJson(item as Map<String, dynamic>),
@@ -48,10 +48,10 @@ class ServicesRepository {
   }
 
   Future<ServiceDetail> getService(String id) async {
-    final resp = await _client.get(Endpoints.service(id));
+    final resp = await _client.get<Map<String, dynamic>>(Endpoints.service(id));
 
     final apiResponse = ApiResponse<ServiceDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
     );
 
@@ -62,10 +62,13 @@ class ServicesRepository {
   }
 
   Future<ServiceDetail> createService(ServiceFormData data) async {
-    final resp = await _client.post(Endpoints.services, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.services,
+      data: data.toJson(),
+    );
 
     final apiResponse = ApiResponse<ServiceDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
     );
 
@@ -79,10 +82,13 @@ class ServicesRepository {
     String id,
     Map<String, dynamic> data,
   ) async {
-    final resp = await _client.patch(Endpoints.service(id), data: data);
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.service(id),
+      data: data,
+    );
 
     final apiResponse = ApiResponse<ServiceDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
     );
 
@@ -93,12 +99,11 @@ class ServicesRepository {
   }
 
   Future<void> deleteService(String id) async {
-    final resp = await _client.delete(Endpoints.service(id));
-
-    final apiResponse = ApiResponse<void>.fromJson(
-      resp.data as Map<String, dynamic>,
-      (_) {},
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.service(id),
     );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
 
     if (!apiResponse.success) {
       throw Exception(apiResponse.error ?? 'Error al eliminar servicio');

@@ -54,14 +54,23 @@ class AuthRepository {
   }) async {
     AppLogger.info('AuthRepository: login attempt for $email');
 
-    final data = await _api.post<Map<String, dynamic>>(
+    final payload = <String, dynamic>{'email': email, 'password': password};
+    if (fcmToken != null) payload['pushToken'] = fcmToken;
+
+    final raw = await _api.post<Map<String, dynamic>>(
       Endpoints.authLogin,
-      data: {'email': email, 'password': password, 'fcmToken': ?fcmToken},
+      data: payload,
     );
 
-    final accessToken = data['accessToken'] as String?;
-    final refreshToken = data['refreshToken'] as String?;
-    final userData = data['user'] as Map<String, dynamic>?;
+    // El backend devuelve { success: true, data: { accessToken, refreshToken, user } }
+    // pero mantenemos compatibilidad si la respuesta viene con los campos al tope.
+    final body = (raw['data'] is Map<String, dynamic>)
+        ? raw['data'] as Map<String, dynamic>
+        : raw;
+
+    final accessToken = body['accessToken'] as String?;
+    final refreshToken = body['refreshToken'] as String?;
+    final userData = body['user'] as Map<String, dynamic>?;
 
     if (accessToken == null || refreshToken == null || userData == null) {
       throw const ServerException(message: 'Respuesta de login inválida');
@@ -107,10 +116,19 @@ class AuthRepository {
   /// Obtiene el perfil del usuario actualmente autenticado.
   /// Útil para restaurar la sesión al arrancar la app.
   Future<UserProfile> getMe() async {
-    final data = await _api.get<Map<String, dynamic>>(Endpoints.authMe);
-    final userData = data['user'] as Map<String, dynamic>?;
+    final raw = await _api.get<Map<String, dynamic>>(Endpoints.authMe);
 
-    if (userData == null) {
+    // Backend returns { success: true, data: <user> }
+    final body = (raw['data'] is Map<String, dynamic>)
+        ? raw['data'] as Map<String, dynamic>
+        : raw;
+
+    // body may be either the user map directly or { user: { ... } }
+    final userData = (body['user'] is Map<String, dynamic>)
+        ? body['user'] as Map<String, dynamic>
+        : body;
+
+    if (userData.isEmpty) {
       throw const ServerException(message: 'Respuesta de /me inválida');
     }
 

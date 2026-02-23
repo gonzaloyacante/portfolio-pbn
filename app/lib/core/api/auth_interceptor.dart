@@ -138,8 +138,13 @@ class AuthInterceptor extends Interceptor {
       throw const UnauthorizedException(message: 'Empty refresh response');
     }
 
-    final newAccess = body['accessToken'] as String?;
-    final newRefresh = body['refreshToken'] as String?;
+    // Backend devuelve { success, data: { accessToken, refreshToken } }
+    final data = (body['data'] is Map<String, dynamic>)
+        ? body['data'] as Map<String, dynamic>
+        : body;
+
+    final newAccess = data['accessToken'] as String?;
+    final newRefresh = data['refreshToken'] as String?;
 
     if (newAccess == null || newRefresh == null) {
       throw const UnauthorizedException(

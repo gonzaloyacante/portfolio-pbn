@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_annotation_target
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'auth_state.freezed.dart';
@@ -12,9 +13,14 @@ class UserProfile with _$UserProfile {
     required String id,
     required String email,
     required String name,
-    String? image,
-    required DateTime createdAt,
-    required DateTime updatedAt,
+    @Default('admin') String role,
+    @JsonKey(name: 'avatarUrl') String? image,
+    String? bio,
+    String? locale,
+    String? timezone,
+    DateTime? lastLoginAt,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) = _UserProfile;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) =>

@@ -69,7 +69,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       _data.slug = project.slug;
       _data.description = project.description;
       _data.excerpt = project.excerpt;
-      _data.thumbnailUrl = project.thumbnailUrl;
+      _data.thumbnailUrl = project.thumbnailUrl ?? '';
       _data.videoUrl = project.videoUrl;
       _data.date = DateTime.tryParse(project.date);
       _data.duration = project.duration;

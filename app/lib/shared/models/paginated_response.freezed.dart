@@ -238,6 +238,8 @@ mixin _$PaginationMeta {
   int get limit => throw _privateConstructorUsedError;
   int get total => throw _privateConstructorUsedError;
   int get totalPages => throw _privateConstructorUsedError;
+  bool get hasNext => throw _privateConstructorUsedError;
+  bool get hasPrev => throw _privateConstructorUsedError;
 
   /// Serializes this PaginationMeta to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -256,7 +258,14 @@ abstract class $PaginationMetaCopyWith<$Res> {
     $Res Function(PaginationMeta) then,
   ) = _$PaginationMetaCopyWithImpl<$Res, PaginationMeta>;
   @useResult
-  $Res call({int page, int limit, int total, int totalPages});
+  $Res call({
+    int page,
+    int limit,
+    int total,
+    int totalPages,
+    bool hasNext,
+    bool hasPrev,
+  });
 }
 
 /// @nodoc
@@ -278,6 +287,8 @@ class _$PaginationMetaCopyWithImpl<$Res, $Val extends PaginationMeta>
     Object? limit = null,
     Object? total = null,
     Object? totalPages = null,
+    Object? hasNext = null,
+    Object? hasPrev = null,
   }) {
     return _then(
       _value.copyWith(
@@ -297,6 +308,14 @@ class _$PaginationMetaCopyWithImpl<$Res, $Val extends PaginationMeta>
                 ? _value.totalPages
                 : totalPages // ignore: cast_nullable_to_non_nullable
                       as int,
+            hasNext: null == hasNext
+                ? _value.hasNext
+                : hasNext // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            hasPrev: null == hasPrev
+                ? _value.hasPrev
+                : hasPrev // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -312,7 +331,14 @@ abstract class _$$PaginationMetaImplCopyWith<$Res>
   ) = __$$PaginationMetaImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int page, int limit, int total, int totalPages});
+  $Res call({
+    int page,
+    int limit,
+    int total,
+    int totalPages,
+    bool hasNext,
+    bool hasPrev,
+  });
 }
 
 /// @nodoc
@@ -333,6 +359,8 @@ class __$$PaginationMetaImplCopyWithImpl<$Res>
     Object? limit = null,
     Object? total = null,
     Object? totalPages = null,
+    Object? hasNext = null,
+    Object? hasPrev = null,
   }) {
     return _then(
       _$PaginationMetaImpl(
@@ -352,6 +380,14 @@ class __$$PaginationMetaImplCopyWithImpl<$Res>
             ? _value.totalPages
             : totalPages // ignore: cast_nullable_to_non_nullable
                   as int,
+        hasNext: null == hasNext
+            ? _value.hasNext
+            : hasNext // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        hasPrev: null == hasPrev
+            ? _value.hasPrev
+            : hasPrev // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -365,6 +401,8 @@ class _$PaginationMetaImpl implements _PaginationMeta {
     required this.limit,
     required this.total,
     required this.totalPages,
+    this.hasNext = false,
+    this.hasPrev = false,
   });
 
   factory _$PaginationMetaImpl.fromJson(Map<String, dynamic> json) =>
@@ -378,10 +416,16 @@ class _$PaginationMetaImpl implements _PaginationMeta {
   final int total;
   @override
   final int totalPages;
+  @override
+  @JsonKey()
+  final bool hasNext;
+  @override
+  @JsonKey()
+  final bool hasPrev;
 
   @override
   String toString() {
-    return 'PaginationMeta(page: $page, limit: $limit, total: $total, totalPages: $totalPages)';
+    return 'PaginationMeta(page: $page, limit: $limit, total: $total, totalPages: $totalPages, hasNext: $hasNext, hasPrev: $hasPrev)';
   }
 
   @override
@@ -393,12 +437,22 @@ class _$PaginationMetaImpl implements _PaginationMeta {
             (identical(other.limit, limit) || other.limit == limit) &&
             (identical(other.total, total) || other.total == total) &&
             (identical(other.totalPages, totalPages) ||
-                other.totalPages == totalPages));
+                other.totalPages == totalPages) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext) &&
+            (identical(other.hasPrev, hasPrev) || other.hasPrev == hasPrev));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, page, limit, total, totalPages);
+  int get hashCode => Object.hash(
+    runtimeType,
+    page,
+    limit,
+    total,
+    totalPages,
+    hasNext,
+    hasPrev,
+  );
 
   /// Create a copy of PaginationMeta
   /// with the given fields replaced by the non-null parameter values.
@@ -423,6 +477,8 @@ abstract class _PaginationMeta implements PaginationMeta {
     required final int limit,
     required final int total,
     required final int totalPages,
+    final bool hasNext,
+    final bool hasPrev,
   }) = _$PaginationMetaImpl;
 
   factory _PaginationMeta.fromJson(Map<String, dynamic> json) =
@@ -436,6 +492,10 @@ abstract class _PaginationMeta implements PaginationMeta {
   int get total;
   @override
   int get totalPages;
+  @override
+  bool get hasNext;
+  @override
+  bool get hasPrev;
 
   /// Create a copy of PaginationMeta
   /// with the given fields replaced by the non-null parameter values.

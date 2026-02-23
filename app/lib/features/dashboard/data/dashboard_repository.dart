@@ -64,9 +64,11 @@ class DashboardRepository {
 
   /// Obtiene el resumen de métricas del panel.
   Future<DashboardStats> getOverview() async {
-    final resp = await _client.get(Endpoints.analyticsOverview);
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.analyticsOverview,
+    );
     final apiResponse = ApiResponse<DashboardStats>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => DashboardStats.fromJson(json as Map<String, dynamic>),
     );
     if (!apiResponse.success || apiResponse.data == null) {
@@ -77,9 +79,11 @@ class DashboardRepository {
 
   /// Obtiene los datos de tendencias para los gráficos del dashboard.
   Future<DashboardCharts> getCharts() async {
-    final resp = await _client.get(Endpoints.analyticsCharts);
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.analyticsCharts,
+    );
     final apiResponse = ApiResponse<DashboardCharts>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => DashboardCharts.fromJson(json as Map<String, dynamic>),
     );
     if (!apiResponse.success || apiResponse.data == null) {

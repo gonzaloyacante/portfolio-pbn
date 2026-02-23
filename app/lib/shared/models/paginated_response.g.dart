@@ -30,6 +30,8 @@ _$PaginationMetaImpl _$$PaginationMetaImplFromJson(Map<String, dynamic> json) =>
       limit: (json['limit'] as num).toInt(),
       total: (json['total'] as num).toInt(),
       totalPages: (json['totalPages'] as num).toInt(),
+      hasNext: json['hasNext'] as bool? ?? false,
+      hasPrev: json['hasPrev'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$$PaginationMetaImplToJson(
@@ -39,4 +41,6 @@ Map<String, dynamic> _$$PaginationMetaImplToJson(
   'limit': instance.limit,
   'total': instance.total,
   'totalPages': instance.totalPages,
+  'hasNext': instance.hasNext,
+  'hasPrev': instance.hasPrev,
 };

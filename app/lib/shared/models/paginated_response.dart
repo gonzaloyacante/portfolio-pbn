@@ -36,6 +36,8 @@ class PaginationMeta with _$PaginationMeta {
     required int limit,
     required int total,
     required int totalPages,
+    @Default(false) bool hasNext,
+    @Default(false) bool hasPrev,
   }) = _PaginationMeta;
 
   factory PaginationMeta.fromJson(Map<String, dynamic> json) =>

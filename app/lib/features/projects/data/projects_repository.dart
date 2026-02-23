@@ -28,7 +28,7 @@ class ProjectsRepository {
     bool? isActive,
     bool? isFeatured,
   }) async {
-    final resp = await _client.get(
+    final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.projects,
       queryParams: {
         'page': page,
@@ -42,7 +42,7 @@ class ProjectsRepository {
 
     final apiResponse =
         ApiResponse<PaginatedResponse<ProjectListItem>>.fromJson(
-          resp.data as Map<String, dynamic>,
+          resp,
           (json) => PaginatedResponse<ProjectListItem>.fromJson(
             json as Map<String, dynamic>,
             (item) => ProjectListItem.fromJson(item as Map<String, dynamic>),
@@ -58,9 +58,9 @@ class ProjectsRepository {
   // ── Detail ──────────────────────────────────────────────────────────────────
 
   Future<ProjectDetail> getProject(String id) async {
-    final resp = await _client.get(Endpoints.project(id));
+    final resp = await _client.get<Map<String, dynamic>>(Endpoints.project(id));
     final apiResponse = ApiResponse<ProjectDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => ProjectDetail.fromJson(json as Map<String, dynamic>),
     );
     if (!apiResponse.success || apiResponse.data == null) {
@@ -72,9 +72,12 @@ class ProjectsRepository {
   // ── Create ──────────────────────────────────────────────────────────────────
 
   Future<ProjectListItem> createProject(ProjectFormData data) async {
-    final resp = await _client.post(Endpoints.projects, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.projects,
+      data: data.toJson(),
+    );
     final apiResponse = ApiResponse<ProjectListItem>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => ProjectListItem.fromJson(json as Map<String, dynamic>),
     );
     if (!apiResponse.success || apiResponse.data == null) {
@@ -89,9 +92,12 @@ class ProjectsRepository {
     String id,
     Map<String, dynamic> changes,
   ) async {
-    final resp = await _client.patch(Endpoints.project(id), data: changes);
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.project(id),
+      data: changes,
+    );
     final apiResponse = ApiResponse<ProjectDetail>.fromJson(
-      resp.data as Map<String, dynamic>,
+      resp,
       (json) => ProjectDetail.fromJson(json as Map<String, dynamic>),
     );
     if (!apiResponse.success || apiResponse.data == null) {
@@ -103,11 +109,10 @@ class ProjectsRepository {
   // ── Delete ──────────────────────────────────────────────────────────────────
 
   Future<void> deleteProject(String id) async {
-    final resp = await _client.delete(Endpoints.project(id));
-    final apiResponse = ApiResponse<void>.fromJson(
-      resp.data as Map<String, dynamic>,
-      (_) {},
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.project(id),
     );
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
     if (!apiResponse.success) {
       throw Exception(apiResponse.error ?? 'Error al eliminar proyecto');
     }
@@ -116,7 +121,7 @@ class ProjectsRepository {
   // ── Reorder ─────────────────────────────────────────────────────────────────
 
   Future<void> reorderProjects(List<({String id, int sortOrder})> items) async {
-    final resp = await _client.post(
+    final resp = await _client.post<Map<String, dynamic>>(
       Endpoints.projectsReorder,
       data: {
         'items': items
@@ -124,10 +129,7 @@ class ProjectsRepository {
             .toList(),
       },
     );
-    final apiResponse = ApiResponse<void>.fromJson(
-      resp.data as Map<String, dynamic>,
-      (_) {},
-    );
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
     if (!apiResponse.success) {
       throw Exception(apiResponse.error ?? 'Error al reordenar proyectos');
     }
