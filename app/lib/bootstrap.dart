@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +29,17 @@ Future<void> bootstrap() async {
   AppLogger.info('✓ dotenv cargado (entorno: ${EnvConfig.environment})');
 
   // 2. Firebase ─────────────────────────────────────────────────────────────
-  // El handler de background debe registrarse antes de initializeApp.
-  // Debe ser una función top-level marcada con @pragma('vm:entry-point').
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  // Las opciones de Firebase se leen de google-services.json / GoogleService-Info.plist.
-  // Para configurar Firebase: https://firebase.google.com/docs/flutter/setup
+  // Inicializar Firebase antes de registrar handlers o usar servicios.
+  // Las opciones de Firebase se leen de google-services.json / GoogleService-Info.plist
+  // o de DefaultFirebaseOptions si se generaron. Ver:
+  // https://firebase.google.com/docs/flutter/setup
   await Firebase.initializeApp();
+  // Registrar handler de background SOLO en Android (requerido por FCM Android).
+  // Evita llamadas a código de plataforma no inicializado en iOS/simulador.
+  if (Platform.isAndroid) {
+    // El handler debe ser una función top-level marcada con @pragma('vm:entry-point').
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  }
   AppLogger.info('✓ Firebase inicializado');
 
   // 3. Sentry + runApp ───────────────────────────────────────────────────────
