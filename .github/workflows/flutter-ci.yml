@@ -1,23 +1,35 @@
 # ============================================================
 # Flutter CI + Firebase App Distribution
 # ============================================================
-# Triggers:
-#   - Push a 'develop' o 'main' con cambios en app/**
-#   - PR hacia 'develop' o 'main' con cambios en app/**
 #
-# Jobs:
-#   1. analyze  → flutter analyze (0 warnings = pass)
-#   2. test     → flutter test
-#   3. build    → flutter build apk --release (solo en push, no en PR)
-#   4. distribute → Firebase App Distribution (solo push a develop/main)
+# ESTRATEGIA DE RAMAS:
 #
-# Secretos de GitHub requeridos (Settings → Secrets and variables → Actions):
+#   develop → Solo quality gates (analyze + test). SIN distribución.
+#             Permite iterar rápido y detectar errores antes de subir a main.
+#
+#   main    → Quality gates + build release + distribución automática a
+#             Firebase App Distribution (grupo 'admins').
+#             Solo se activa en push directo a main (no en PRs).
+#
+# SECRETOS REQUERIDOS  (Settings → Secrets and variables → Actions):
 #   FIREBASE_SERVICE_ACCOUNT_KEY  → JSON de cuenta de servicio de Firebase
-#   FIREBASE_APP_ID_ANDROID       → App ID de Android en Firebase (ej. 1:xxx:android:yyy)
-#   KEYSTORE_BASE64               → Keystore en Base64 (openssl base64 -in release.keystore)
+#                                    Firebase Console → Project Settings →
+#                                    Service Accounts → Generate new private key
+#   FIREBASE_APP_ID_ANDROID       → ID de la app Android en Firebase
+#                                    Firebase Console → Project Settings →
+#                                    General → tu app Android → App ID
+#                                    Formato: 1:XXXXXXXXXX:android:XXXXXXXX
+#   KEYSTORE_BASE64               → Keystore firmado codificado en base64
+#                                    openssl base64 -in release.keystore
 #   KEYSTORE_PASS                 → Contraseña del keystore
 #   KEY_ALIAS                     → Alias de la clave dentro del keystore
 #   KEY_PASS                      → Contraseña de la clave
+#   SENTRY_DSN_APP                → DSN de Sentry para la app Flutter
+#                                    sentry.io → tu proyecto → Settings → Keys
+#   FCM_VAPID_KEY                 → Clave pública VAPID para web push
+#                                    Firebase Console → Project Settings →
+#                                    Cloud Messaging → Configuración web →
+#                                    Certificados push web → Generar par de claves
 # ============================================================
 
 name: Flutter CI
@@ -91,12 +103,14 @@ jobs:
         run: flutter test --reporter=expanded
 
   # ── 3. Build & Distribute ─────────────────────────────────────────────────
-  # Solo se ejecuta en push directo (no en PRs) para ahorrar tiempo de CI.
+  # Solo se ejecuta cuando se hace push a 'main' (no en develop, no en PRs).
+  # Representa una release aprobada lista para distribuir a los verificadores.
   build-and-distribute:
-    name: 🚀 Build APK + Distribute
+    name: 🚀 Build APK + Firebase App Distribution
     runs-on: ubuntu-latest
     needs: [analyze, test]
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
     defaults:
       run:
         working-directory: app
@@ -120,21 +134,19 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Crea el archivo .env que la app espera encontrar
+      # Crea el archivo .env con la configuración de producción
       - name: Create .env file
         env:
-          API_BASE_URL: ${{ github.ref == 'refs/heads/main' && 'https://paolabolivar.es' || 'https://dev.paolabolivar.es' }}
-          ENVIRONMENT: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_APP }}
           FCM_VAPID_KEY: ${{ secrets.FCM_VAPID_KEY }}
         run: |
           cat > .env << EOF
-          API_BASE_URL=${API_BASE_URL}
-          ENVIRONMENT=${ENVIRONMENT}
+          API_BASE_URL=https://paolabolivar.es
+          ENVIRONMENT=production
           SENTRY_DSN=${SENTRY_DSN}
           FCM_VAPID_KEY=${FCM_VAPID_KEY}
           EOF
-          echo "✅ .env creado para entorno: ${ENVIRONMENT}"
+          echo "✅ .env creado para entorno: production"
 
       # Restaura el keystore desde el secreto Base64
       - name: Decode Keystore
@@ -170,22 +182,21 @@ jobs:
             --obfuscate
           echo "✅ APK construido en build/app/outputs/flutter-apk/"
 
-      # Determinar release notes según la rama
+      # Determinar release notes desde el último commit
       - name: Prepare release notes
         id: notes
         run: |
-          BRANCH="${{ github.ref_name }}"
           COMMIT="${{ github.sha }}"
           SHORT_SHA="${COMMIT:0:7}"
-          if [ "$BRANCH" = "main" ]; then
-            NOTES="🚀 Producción — ${SHORT_SHA}"
-          else
-            NOTES="🧪 Staging (develop) — ${SHORT_SHA}"
-          fi
+          MSG="${{ github.event.head_commit.message }}"
+          # Tomar solo la primera línea del mensaje de commit
+          FIRST_LINE=$(echo "$MSG" | head -1)
+          NOTES="🚀 ${FIRST_LINE} (${SHORT_SHA})"
           echo "notes=$NOTES" >> $GITHUB_OUTPUT
           echo "✅ Release notes: $NOTES"
 
       # Subir a Firebase App Distribution
+      # Más info: https://github.com/wzieba/Firebase-Distribution-Github-Action
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
@@ -199,6 +210,6 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: portfolio-pbn-${{ github.ref_name }}-${{ github.sha }}
+          name: portfolio-pbn-${{ github.sha }}
           path: app/build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30

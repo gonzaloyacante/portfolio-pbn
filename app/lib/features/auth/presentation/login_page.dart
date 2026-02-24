@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
-import '../../../core/notifications/push_service.dart';
+import '../../../core/notifications/push_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/app_logger.dart';
@@ -48,7 +48,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // Si falla (sin permisos, Firebase no disponible) simplemente continúa sin él.
     String? fcmToken;
     try {
-      final pushService = PushService();
+      // Usa el singleton de Riverpod — no crear instancias directas de PushService.
+      final pushService = ref.read(pushServiceProvider);
       await pushService.init();
       fcmToken = await pushService.getToken();
       if (fcmToken != null) {
