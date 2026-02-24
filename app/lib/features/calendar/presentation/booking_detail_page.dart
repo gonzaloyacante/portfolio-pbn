@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -88,7 +89,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           .read(bookingsRepositoryProvider)
           .deleteBooking(widget.bookingId);
       ref.invalidate(bookingsListProvider);
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(

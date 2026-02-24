@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/booking_model.dart';
@@ -95,7 +96,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
       );
       await repo.createBooking(data);
       ref.invalidate(bookingsListProvider);
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -120,7 +121,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: const Text('Nueva reserva'),

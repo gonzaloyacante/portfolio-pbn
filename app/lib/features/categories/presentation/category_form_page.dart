@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -31,9 +32,17 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
 
   bool _isActive = true;
   bool _loading = false;
-  bool _populated = false;
+  String? _populatedFor;
 
   bool get _isEdit => widget.categoryId != null;
+
+  @override
+  void didUpdateWidget(covariant CategoryFormPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.categoryId != widget.categoryId) {
+      _populatedFor = null;
+    }
+  }
 
   @override
   void dispose() {
@@ -47,8 +56,8 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   }
 
   void _populateForm(CategoryDetail detail) {
-    if (_populated) return;
-    _populated = true;
+    if (_populatedFor == widget.categoryId) return;
+    _populatedFor = widget.categoryId;
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;
     _descriptionCtrl.text = detail.description ?? '';
@@ -110,7 +119,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       }
 
       ref.invalidate(categoriesListProvider);
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -135,7 +144,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: Text(_isEdit ? 'Editar categoría' : 'Nueva categoría'),

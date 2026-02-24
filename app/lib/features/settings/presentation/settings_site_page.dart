@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -80,6 +81,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'allowIndexing': _allowIndexing,
       });
       ref.invalidate(siteSettingsProvider);
+      setState(() => _populated = false);
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -106,7 +108,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: const Text('Sitio Web'),

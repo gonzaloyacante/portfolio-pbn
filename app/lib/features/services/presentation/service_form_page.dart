@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -134,7 +135,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       }
 
       ref.invalidate(servicesListProvider);
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -159,7 +160,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: Text(_isEdit ? 'Editar servicio' : 'Nuevo servicio'),
