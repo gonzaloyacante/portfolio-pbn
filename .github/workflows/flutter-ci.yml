@@ -25,11 +25,9 @@
 name: Flutter CI
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'app/**'
-      - '.github/workflows/flutter-ci.yml'
+  # CI desactivado — usar script local: app/scripts/distribute.sh
+  # Ejecutar manualmente desde Actions si se necesita en el futuro.
+  workflow_dispatch:
 
 concurrency:
   group: flutter-${{ github.ref }}

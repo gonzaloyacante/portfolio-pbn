@@ -144,6 +144,8 @@ Thumbs.db
 /web/scripts/
 /web/docs/
 /docs/
+/app/scripts/
+/app/docs/
 Portfolio PBN - Desktop/
 Portfolio PBN - Movil/
 .github/instructions/codacy.instructions.md
