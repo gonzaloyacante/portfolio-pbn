@@ -2,132 +2,46 @@
 # Flutter CI + Firebase App Distribution
 # ============================================================
 #
-# ESTRATEGIA DE RAMAS:
+# ESTRATEGIA:
+#   Los quality gates (analyze + format + test) ya los cubren los
+#   hooks de pre-commit y pre-push locales. En CI solo ejecutamos
+#   lo que no se puede hacer localmente: build release + distribución.
 #
-#   develop → Solo quality gates (analyze + test). SIN distribución.
-#             Permite iterar rápido y detectar errores antes de subir a main.
+#   main → Build release APK firmado + distribución automática a
+#           Firebase App Distribution (grupo 'admins').
+#           Solo se activa en push directo a main (no en PRs).
 #
-#   main    → Quality gates + build release + distribución automática a
-#             Firebase App Distribution (grupo 'admins').
-#             Solo se activa en push directo a main (no en PRs).
-#
-# SECRETOS REQUERIDOS  (Settings → Secrets and variables → Actions):
+# SECRETOS REQUERIDOS  (Settings → Environments → production):
 #   FIREBASE_SERVICE_ACCOUNT_KEY  → JSON de cuenta de servicio de Firebase
-#                                    Firebase Console → Project Settings →
-#                                    Service Accounts → Generate new private key
 #   FIREBASE_APP_ID_ANDROID       → ID de la app Android en Firebase
-#                                    Firebase Console → Project Settings →
-#                                    General → tu app Android → App ID
-#                                    Formato: 1:XXXXXXXXXX:android:XXXXXXXX
 #   KEYSTORE_BASE64               → Keystore firmado codificado en base64
-#                                    openssl base64 -in release.keystore
 #   KEYSTORE_PASS                 → Contraseña del keystore
 #   KEY_ALIAS                     → Alias de la clave dentro del keystore
 #   KEY_PASS                      → Contraseña de la clave
 #   SENTRY_DSN_APP                → DSN de Sentry para la app Flutter
-#                                    sentry.io → tu proyecto → Settings → Keys
 #   FCM_VAPID_KEY                 → Clave pública VAPID para web push
-#                                    Firebase Console → Project Settings →
-#                                    Cloud Messaging → Configuración web →
-#                                    Certificados push web → Generar par de claves
 # ============================================================
 
 name: Flutter CI
 
 on:
   push:
-    branches: [develop, main]
+    branches: [main]
     paths:
       - 'app/**'
       - '.github/workflows/flutter-ci.yml'
-  pull_request:
-    branches: [develop, main]
-    paths:
-      - 'app/**'
 
 concurrency:
   group: flutter-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  # ── 1. Analyze ─────────────────────────────────────────────────────────────
-  analyze:
-    name: 🔍 Analyze & Format
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: app
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Create minimal .env for analyze
-        run: |
-          cat > .env << EOF
-          API_BASE_URL=http://localhost:3000
-          ENVIRONMENT=test
-          SENTRY_DSN=
-          FCM_VAPID_KEY=
-          EOF
-
-      - name: Verify formatting
-        run: dart format --set-exit-if-changed lib/ test/
-
-      - name: Analyze (0 issues)
-        run: flutter analyze --fatal-infos
-
-  # ── 2. Test ────────────────────────────────────────────────────────────────
-  test:
-    name: 🧪 Unit & Widget Tests
-    runs-on: ubuntu-latest
-    needs: analyze
-    defaults:
-      run:
-        working-directory: app
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Create minimal .env for tests
-        run: |
-          cat > .env << EOF
-          API_BASE_URL=http://localhost:3000
-          ENVIRONMENT=test
-          SENTRY_DSN=
-          FCM_VAPID_KEY=
-          EOF
-
-      - name: Run tests
-        run: flutter test --reporter=expanded
-
-  # ── 3. Build & Distribute ─────────────────────────────────────────────────
-  # Solo se ejecuta cuando se hace push a 'main' (no en develop, no en PRs).
-  # Representa una release aprobada lista para distribuir a los verificadores.
+  # ── Build & Distribute ────────────────────────────────────────────────────
+  # Build release APK firmado y distribución a Firebase App Distribution.
+  # Analyze + test ya se ejecutan en los hooks locales (pre-push).
   build-and-distribute:
     name: 🚀 Build APK + Firebase App Distribution
     runs-on: ubuntu-latest
-    needs: [analyze, test]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment: production
     defaults:
       run:
@@ -190,7 +104,7 @@ jobs:
           EOF
           echo "✅ key.properties creado"
 
-      # Build APK universal firmado
+      # Build APK release firmado
       - name: Build APK (release)
         run: |
           flutter build apk \
@@ -214,7 +128,6 @@ jobs:
           echo "✅ Release notes: $NOTES"
 
       # Subir a Firebase App Distribution
-      # Más info: https://github.com/wzieba/Firebase-Distribution-Github-Action
       - name: Upload to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:

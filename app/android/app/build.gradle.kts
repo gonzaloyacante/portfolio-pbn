@@ -43,11 +43,6 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // Metadatos para filtrado Play Store: solo ARM y x86_64 de 64 bits
-        ndk {
-            abiFilters += listOf("arm64-v8a", "x86_64")
-        }
-
         // Habilita MultiDex (requerido para apps grandes con >64K métodos)
         multiDexEnabled = true
     }

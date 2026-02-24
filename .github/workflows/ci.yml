@@ -1,22 +1,10 @@
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.vscode/**'
-      - '.idea/**'
-      - 'LICENSE'
-      - '.gitignore'
-  pull_request:
-    branches: [main, develop]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.vscode/**'
-      - '.idea/**'
+  # Solo disparo manual — los hooks de pre-push ya cubren type-check, lint y tests.
+  # El build de Next.js requiere secretos de DB/auth que no están disponibles en CI.
+  # Para ejecutar: Actions → CI → Run workflow.
+  workflow_dispatch:
 
 # Cancel in-progress runs when new commits are pushed
 concurrency:
