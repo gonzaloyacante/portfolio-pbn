@@ -71,6 +71,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create minimal .env for analyze
+        run: |
+          cat > .env << EOF
+          API_BASE_URL=http://localhost:3000
+          ENVIRONMENT=test
+          SENTRY_DSN=
+          FCM_VAPID_KEY=
+          EOF
+
       - name: Verify formatting
         run: dart format --set-exit-if-changed lib/ test/
 
