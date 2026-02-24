@@ -12,6 +12,17 @@ import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
+// Patrones de slug compilados una sola vez
+final _reAccentA = RegExp(r'[áàâä]');
+final _reAccentE = RegExp(r'[éèêë]');
+final _reAccentI = RegExp(r'[íìîï]');
+final _reAccentO = RegExp(r'[óòôö]');
+final _reAccentU = RegExp(r'[úùûü]');
+final _reNyeN = RegExp(r'[ñ]');
+final _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
+final _reWhitespace = RegExp(r'\s+');
+final _reSlugValid = RegExp(r'^[a-z0-9-]+$');
+
 class CategoryFormPage extends ConsumerStatefulWidget {
   const CategoryFormPage({super.key, this.categoryId});
 
@@ -72,15 +83,15 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     if (_isEdit) return;
     final slug = name
         .toLowerCase()
-        .replaceAll(RegExp(r'[áàâä]'), 'a')
-        .replaceAll(RegExp(r'[éèêë]'), 'e')
-        .replaceAll(RegExp(r'[íìîï]'), 'i')
-        .replaceAll(RegExp(r'[óòôö]'), 'o')
-        .replaceAll(RegExp(r'[úùûü]'), 'u')
-        .replaceAll(RegExp(r'[ñ]'), 'n')
-        .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
+        .replaceAll(_reAccentA, 'a')
+        .replaceAll(_reAccentE, 'e')
+        .replaceAll(_reAccentI, 'i')
+        .replaceAll(_reAccentO, 'o')
+        .replaceAll(_reAccentU, 'u')
+        .replaceAll(_reNyeN, 'n')
+        .replaceAll(_reNonSlugChars, '')
         .trim()
-        .replaceAll(RegExp(r'\s+'), '-');
+        .replaceAll(_reWhitespace, '-');
     _slugCtrl.text = slug;
   }
 
@@ -190,7 +201,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                 ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Slug requerido';
-                  if (!RegExp(r'^[a-z0-9-]+$').hasMatch(v.trim())) {
+                  if (!_reSlugValid.hasMatch(v.trim())) {
                     return 'Solo letras minúsculas, números y guiones';
                   }
                   return null;

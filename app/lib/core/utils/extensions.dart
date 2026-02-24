@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Patrón compilado una sola vez para toda la app
+// ignore: deprecated_member_use
+final _emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+
 /// Extensions de Dart/Flutter usadas en toda la app.
 extension StringExtensions on String {
   String get capitalize =>
@@ -7,7 +11,7 @@ extension StringExtensions on String {
 
   String get titleCase => split(' ').map((word) => word.capitalize).join(' ');
 
-  bool get isValidEmail => RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(this);
+  bool get isValidEmail => _emailRegex.hasMatch(this);
 
   /// Trunca con elipsis si supera [maxLength].
   String truncate(int maxLength) =>

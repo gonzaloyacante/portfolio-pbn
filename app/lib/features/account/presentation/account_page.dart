@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
+import '../../../core/debug/debug_provider.dart';
 import '../../../core/notifications/push_provider.dart';
 import '../../calendar/data/google_calendar_models.dart';
 import '../../calendar/providers/google_calendar_provider.dart';
@@ -189,24 +189,20 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             ),
             const SizedBox(height: 24),
             // ── Versión ───────────────────────────────────────────────────
-            FutureBuilder<PackageInfo>(
-              future: PackageInfo.fromPlatform(),
-              builder: (context, snapshot) {
-                final version = snapshot.data?.version ?? '—';
-                final build = snapshot.data?.buildNumber ?? '';
-                final label = build.isNotEmpty
-                    ? 'Versión $version ($build)'
-                    : 'Versión $version';
-                return Center(
-                  child: Text(
-                    label,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
+            ref
+                .watch(appBuildInfoProvider)
+                .when(
+                  data: (info) => Center(
+                    child: Text(
+                      'Versión ${info.fullVersion}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, _) => const SizedBox.shrink(),
+                ),
           ],
         ),
       ),

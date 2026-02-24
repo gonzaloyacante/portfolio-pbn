@@ -12,6 +12,11 @@ import '../data/service_model.dart';
 import '../data/services_repository.dart';
 import '../providers/services_provider.dart';
 
+// Patrones de slug compilados una sola vez
+final _reServiceWhitespace = RegExp(r'\s+');
+final _reServiceNonSlug = RegExp(r'[^a-z0-9-]');
+final _reServiceSlugValid = RegExp(r'^[a-z0-9-]+$');
+
 class ServiceFormPage extends ConsumerStatefulWidget {
   const ServiceFormPage({super.key, this.serviceId});
 
@@ -85,8 +90,8 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     if (_isEdit) return;
     final slug = name
         .toLowerCase()
-        .replaceAll(RegExp(r'\s+'), '-')
-        .replaceAll(RegExp(r'[^a-z0-9-]'), '');
+        .replaceAll(_reServiceWhitespace, '-')
+        .replaceAll(_reServiceNonSlug, '');
     _slugCtrl.text = slug;
   }
 
@@ -202,7 +207,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                 ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Slug requerido';
-                  if (!RegExp(r'^[a-z0-9-]+$').hasMatch(v.trim())) {
+                  if (!_reServiceSlugValid.hasMatch(v.trim())) {
                     return 'Solo minúsculas, números y guiones';
                   }
                   return null;

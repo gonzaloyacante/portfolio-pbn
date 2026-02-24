@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+
+import '../../../core/debug/debug_provider.dart';
 
 /// Pantalla de ayuda — información de la app y guía de uso básica.
-/// No requiere API ni estado externo.
-class HelpPage extends StatelessWidget {
+class HelpPage extends ConsumerWidget {
   const HelpPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final version = ref
+        .watch(appBuildInfoProvider)
+        .when(
+          data: (info) => '${info.version} (build ${info.buildNumber})',
+          loading: () => '…',
+          error: (_, _) => '—',
+        );
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -21,31 +29,20 @@ class HelpPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         children: [
-          FutureBuilder<PackageInfo>(
-            future: PackageInfo.fromPlatform(),
-            builder: (context, snap) {
-              final version = snap.data != null
-                  ? '${snap.data!.version} (build ${snap.data!.buildNumber})'
-                  : '…';
-              return _SectionCard(
-                icon: Icons.info_outline,
-                title: 'Acerca de la app',
-                children: [
-                  const _HelpItem(
-                    label: 'Nombre',
-                    value: 'Portfolio PBN — Admin',
-                  ),
-                  _HelpItem(label: 'Versión', value: version),
-                  const _HelpItem(
-                    label: 'Descripción',
-                    value:
-                        'Panel de administración de Paola Bolívar Nievas. '
-                        'Gestiona proyectos, servicios, testimonios, '
-                        'contactos, reservas y configuración del sitio.',
-                  ),
-                ],
-              );
-            },
+          _SectionCard(
+            icon: Icons.info_outline,
+            title: 'Acerca de la app',
+            children: [
+              const _HelpItem(label: 'Nombre', value: 'Portfolio PBN — Admin'),
+              _HelpItem(label: 'Versión', value: version),
+              const _HelpItem(
+                label: 'Descripción',
+                value:
+                    'Panel de administración de Paola Bolívar Nievas. '
+                    'Gestiona proyectos, servicios, testimonios, '
+                    'contactos, reservas y configuración del sitio.',
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           _SectionCard(
