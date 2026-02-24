@@ -87,8 +87,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const SizedBox(height: 16),
                       InlineError(message: errorMsg),
                     ],
-                    const SizedBox(height: 24),
-                    _GoogleSignInButton(onPressed: isLoading ? null : () {}),
                   ],
                 ),
               ),
@@ -235,33 +233,6 @@ class _LoginCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ── _GoogleSignInButton ───────────────────────────────────────────────────────
-
-class _GoogleSignInButton extends StatelessWidget {
-  const _GoogleSignInButton({this.onPressed});
-
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size.fromHeight(52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        side: BorderSide(color: scheme.outline.withValues(alpha: 0.3)),
-      ),
-      icon: const Icon(Icons.g_mobiledata_rounded, size: 24),
-      label: const Text(
-        'Continuar con Google',
-        style: TextStyle(fontWeight: FontWeight.w500),
       ),
     );
   }
