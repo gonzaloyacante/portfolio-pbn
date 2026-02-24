@@ -23,18 +23,18 @@ class LogEntry {
   final StackTrace? stackTrace;
 
   String get levelLabel => switch (level) {
-        LogLevel.debug => 'DEBUG',
-        LogLevel.info => 'INFO',
-        LogLevel.warn => 'WARN',
-        LogLevel.error => 'ERROR',
-      };
+    LogLevel.debug => 'DEBUG',
+    LogLevel.info => 'INFO',
+    LogLevel.warn => 'WARN',
+    LogLevel.error => 'ERROR',
+  };
 
   String get emoji => switch (level) {
-        LogLevel.debug => '🐛',
-        LogLevel.info => '✅',
-        LogLevel.warn => '⚠️',
-        LogLevel.error => '❌',
-      };
+    LogLevel.debug => '🐛',
+    LogLevel.info => '✅',
+    LogLevel.warn => '⚠️',
+    LogLevel.error => '❌',
+  };
 }
 
 // ── AppLogger ─────────────────────────────────────────────────────────────────

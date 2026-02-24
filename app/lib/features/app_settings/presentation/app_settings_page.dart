@@ -159,16 +159,19 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                 builder: (context, ref, child) {
                   final info = ref.watch(appBuildInfoProvider);
                   return info.when(
-                    data: (v) => Column(children: [
-                      _InfoTile(label: 'Versión', value: v.fullVersion),
-                      _InfoTile(
-                          label: 'Aplicación', value: 'Portfolio PBN Admin'),
-                      _InfoTile(label: 'Entorno', value: _environmentLabel),
-                    ]),
-                    loading: () => _InfoTile(
-                        label: 'Versión', value: '...'),
-                    error: (error, stackTrace) => _InfoTile(
-                        label: 'Versión', value: 'N/A'),
+                    data: (v) => Column(
+                      children: [
+                        _InfoTile(label: 'Versión', value: v.fullVersion),
+                        _InfoTile(
+                          label: 'Aplicación',
+                          value: 'Portfolio PBN Admin',
+                        ),
+                        _InfoTile(label: 'Entorno', value: _environmentLabel),
+                      ],
+                    ),
+                    loading: () => _InfoTile(label: 'Versión', value: '...'),
+                    error: (error, stackTrace) =>
+                        _InfoTile(label: 'Versión', value: 'N/A'),
                   );
                 },
               ),
@@ -188,8 +191,9 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                     color: colorScheme.primary,
                   ),
                   title: const Text('Developer Tools'),
-                  subtitle:
-                      const Text('Ver estado, logs y herramientas de debug'),
+                  subtitle: const Text(
+                    'Ver estado, logs y herramientas de debug',
+                  ),
                   trailing: Icon(
                     Icons.chevron_right,
                     color: colorScheme.onSurface.withValues(alpha: 0.4),

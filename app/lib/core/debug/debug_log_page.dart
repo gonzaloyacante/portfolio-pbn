@@ -47,11 +47,11 @@ class _DebugLogPageState extends State<DebugLogPage> {
       : _logs.where((e) => e.level == _filterLevel).toList();
 
   Color _levelColor(LogLevel level) => switch (level) {
-        LogLevel.debug => Colors.grey,
-        LogLevel.info => Colors.green,
-        LogLevel.warn => Colors.orange,
-        LogLevel.error => Colors.red,
-      };
+    LogLevel.debug => Colors.grey,
+    LogLevel.info => Colors.green,
+    LogLevel.warn => Colors.orange,
+    LogLevel.error => Colors.red,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,11 @@ class _DebugLogPageState extends State<DebugLogPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle_outline, size: 48, color: Colors.grey),
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 48,
+                    color: Colors.grey,
+                  ),
                   SizedBox(height: 8),
                   Text('Sin logs', style: TextStyle(color: Colors.grey)),
                 ],

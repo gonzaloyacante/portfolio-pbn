@@ -132,6 +132,7 @@ class _DebugEnvBadge extends StatelessWidget {
             ),
           ),
         ),
-      ),    );
+      ),
+    );
   }
 }

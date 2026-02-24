@@ -192,8 +192,8 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                   Text(
                     'Developer Tools',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const Spacer(),
                   // Badge de entorno
@@ -210,10 +210,8 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                 children: [
                   // ── Build Info ──────────────────────────────────────
                   buildInfoAsync.when(
-                    data: (info) => _BuildInfoCard(
-                      info: info,
-                      onCopy: _copyToClipboard,
-                    ),
+                    data: (info) =>
+                        _BuildInfoCard(info: info, onCopy: _copyToClipboard),
                     loading: () =>
                         const Center(child: CircularProgressIndicator()),
                     error: (e, _) => Text('Error cargando build info: $e'),
@@ -317,18 +315,18 @@ class _BuildInfoCard extends StatelessWidget {
           value: kDebugMode
               ? '🐛 Debug'
               : kProfileMode
-                  ? '📊 Profile'
-                  : '🚀 Release',
+              ? '📊 Profile'
+              : '🚀 Release',
         ),
       ],
     );
   }
 
   Color _envColor(String env, BuildContext context) => switch (env) {
-        'production' => Colors.red,
-        'staging' => Colors.orange,
-        _ => Colors.green,
-      };
+    'production' => Colors.red,
+    'staging' => Colors.orange,
+    _ => Colors.green,
+  };
 }
 
 // ── Tarjeta: Auth Info ────────────────────────────────────────────────────────
@@ -382,39 +380,37 @@ class _AuthStateContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (state) {
       Authenticated(:final user) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _InfoRow(
-              label: 'Estado',
-              value: '✅ Autenticado',
-              valueColor: Colors.green,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _InfoRow(
+            label: 'Estado',
+            value: '✅ Autenticado',
+            valueColor: Colors.green,
+          ),
+          _InfoRow(label: 'Usuario', value: user.email),
+          _InfoRow(label: 'Rol', value: user.role),
+          const Divider(height: 16),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.logout, size: 16),
+              label: const Text('Forzar Logout (limpiar tokens)'),
+              onPressed: onClearTokens,
+              style: OutlinedButton.styleFrom(foregroundColor: Colors.orange),
             ),
-            _InfoRow(label: 'Usuario', value: user.email),
-            _InfoRow(label: 'Rol', value: user.role),
-            const Divider(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                icon: const Icon(Icons.logout, size: 16),
-                label: const Text('Forzar Logout (limpiar tokens)'),
-                onPressed: onClearTokens,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.orange,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
+      ),
       Unauthenticated() => _InfoRow(
-          label: 'Estado',
-          value: '🔴 No autenticado',
-          valueColor: Colors.red,
-        ),
+        label: 'Estado',
+        value: '🔴 No autenticado',
+        valueColor: Colors.red,
+      ),
       AuthError(:final message) => _InfoRow(
-          label: 'Estado',
-          value: '❌ Error: $message',
-          valueColor: Colors.red,
-        ),
+        label: 'Estado',
+        value: '❌ Error: $message',
+        valueColor: Colors.red,
+      ),
       _ => _InfoRow(label: 'Estado', value: 'Cargando...'),
     };
   }
@@ -423,10 +419,7 @@ class _AuthStateContent extends StatelessWidget {
 // ── Tarjeta: Sync Info ────────────────────────────────────────────────────────
 
 class _SyncInfoCard extends StatelessWidget {
-  const _SyncInfoCard({
-    required this.pendingCount,
-    required this.onClearQueue,
-  });
+  const _SyncInfoCard({required this.pendingCount, required this.onClearQueue});
 
   final AsyncValue<int> pendingCount;
   final VoidCallback onClearQueue;
@@ -536,21 +529,12 @@ class _SystemInfoCard extends StatelessWidget {
           value: Platform.isAndroid
               ? '🤖 Android'
               : Platform.isIOS
-                  ? '🍎 iOS'
-                  : Platform.operatingSystem,
+              ? '🍎 iOS'
+              : Platform.operatingSystem,
         ),
-        _InfoRow(
-          label: 'OS Version',
-          value: Platform.operatingSystemVersion,
-        ),
-        _InfoRow(
-          label: 'Dart VM',
-          value: Platform.version.split(' ').first,
-        ),
-        _InfoRow(
-          label: 'Localización',
-          value: Platform.localeName,
-        ),
+        _InfoRow(label: 'OS Version', value: Platform.operatingSystemVersion),
+        _InfoRow(label: 'Dart VM', value: Platform.version.split(' ').first),
+        _InfoRow(label: 'Localización', value: Platform.localeName),
       ],
     );
   }
@@ -643,10 +627,7 @@ class _InfoRow extends StatelessWidget {
             width: 90,
             child: Text(
               label,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ),
           Expanded(
