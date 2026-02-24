@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -69,6 +70,7 @@ async function translateWithMyMemory(text: string, from: Language, to: Language)
 // ── Hook principal ────────────────────────────────────────────────────────────
 
 export function usePageTranslation() {
+  const pathname = usePathname()
   const [currentLang, setCurrentLang] = useState<Language>(() => {
     if (typeof window === 'undefined') return 'es'
     return (localStorage.getItem('pbn-lang') as Language) ?? 'es'
@@ -192,6 +194,39 @@ export function usePageTranslation() {
       setIsTranslating(false)
     }
   }, [currentLang, translateBatch])
+
+  /**
+   * Re-traduce automáticamente cuando el pathname cambia en Next.js App Router.
+   * El DOM de <main> se reemplaza en cada navegación: sin este efecto la página
+   * nueva quedaría en español aunque el usuario hubiera elegido inglés.
+   * Se espera 120ms para que Next.js hidrate el nuevo contenido antes de traducir.
+   */
+  useEffect(() => {
+    if (currentLang !== 'en') return
+
+    let cancelled = false
+    const timer = setTimeout(async () => {
+      if (cancelled) return
+      setIsTranslating(true)
+      try {
+        const mainEl =
+          document.querySelector('main') ??
+          document.querySelector('[data-translate]') ??
+          document.body
+        await translateDOMTree(mainEl, 'es', 'en', translateBatch)
+      } catch (err) {
+        console.error('[Translator] Error al re-traducir tras navegación:', err)
+      } finally {
+        if (!cancelled) setIsTranslating(false)
+      }
+    }, 120)
+
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
 
   return {
     currentLang,
