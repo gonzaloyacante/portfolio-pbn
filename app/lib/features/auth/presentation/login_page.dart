@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
+import '../../../core/notifications/push_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -42,11 +44,28 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     FocusScope.of(context).unfocus();
 
+    // Obtener token FCM antes de iniciar sesión para registrarlo en el backend.
+    // Si falla (sin permisos, Firebase no disponible) simplemente continúa sin él.
+    String? fcmToken;
+    try {
+      final pushService = PushService();
+      await pushService.init();
+      fcmToken = await pushService.getToken();
+      if (fcmToken != null) {
+        AppLogger.info(
+          'LoginPage: FCM token obtenido (${fcmToken.length} chars)',
+        );
+      }
+    } catch (e) {
+      AppLogger.warn('LoginPage: no se pudo obtener FCM token: $e');
+    }
+
     await ref
         .read(authNotifierProvider.notifier)
         .login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          fcmToken: fcmToken,
         );
   }
 

@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/app_constants.dart';
 import '../config/env_config.dart';
+import '../debug/server_url_provider.dart';
 import 'api_exceptions.dart';
 import 'api_interceptors.dart';
 import 'auth_interceptor.dart';
@@ -10,29 +12,39 @@ import 'auth_interceptor.dart';
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 /// Singleton global del cliente HTTP.
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient(ref));
+/// En modo debug, reconstruye el cliente cuando cambia [serverUrlProvider].
+/// En release, siempre usa [EnvConfig.apiBaseUrl].
+final apiClientProvider = Provider<ApiClient>((ref) {
+  final baseUrl = kDebugMode
+      ? ref.watch(serverUrlProvider).resolvedUrl
+      : EnvConfig.apiBaseUrl;
+  return ApiClient(ref, baseUrl: baseUrl);
+});
 
 // ── ApiClient ─────────────────────────────────────────────────────────────────
 
 /// Cliente HTTP centralizado basado en Dio.
 /// NUNCA instanciar Dio directamente fuera de esta clase.
 class ApiClient {
-  ApiClient(this._ref) {
+  ApiClient(this._ref, {String? baseUrl})
+    : _baseUrl = baseUrl ?? EnvConfig.apiBaseUrl {
     _dio = _buildDio();
     _addInterceptors();
   }
 
   final Ref _ref;
+  final String _baseUrl;
   late final Dio _dio;
 
   Dio get dio => _dio;
+  String get baseUrl => _baseUrl;
 
   // ── Construcción ─────────────────────────────────────────────────────────
 
   Dio _buildDio() {
     return Dio(
       BaseOptions(
-        baseUrl: EnvConfig.apiBaseUrl,
+        baseUrl: _baseUrl,
         connectTimeout: AppConstants.connectTimeout,
         receiveTimeout: AppConstants.receiveTimeout,
         sendTimeout: AppConstants.connectTimeout,
