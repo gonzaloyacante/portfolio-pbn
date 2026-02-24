@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -53,11 +55,16 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
           ctx,
         ).showSnackBar(const SnackBar(content: Text('Contacto eliminado')));
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     }
   }
@@ -107,11 +114,11 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                 SearchBar(
                   controller: _searchController,
                   hintText: 'Buscar por nombre, email…',
-                  leading: const Icon(Icons.search),
+                  leading: const Icon(Icons.search_rounded),
                   trailing: [
                     if (_search.isNotEmpty)
                       IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: const Icon(Icons.clear_rounded),
                         onPressed: () {
                           _searchController.clear();
                           _onSearch('');
@@ -119,6 +126,7 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                       ),
                   ],
                   onChanged: _onSearch,
+                  elevation: const WidgetStatePropertyAll(0),
                 ),
                 const SizedBox(height: 10),
                 SingleChildScrollView(
@@ -184,11 +192,16 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                         separatorBuilder: (_, _) => const SizedBox(height: 6),
                         itemBuilder: (ctx, i) {
                           final item = paginated.data[i];
-                          return _ContactTile(
-                            item: item,
-                            priorityColor: _priorityColor(ctx, item.priority),
-                            statusIcon: _statusIcon(item.status),
-                            onDelete: _delete,
+                          return FadeSlideIn(
+                            delay: Duration(
+                              milliseconds: (i * 40).clamp(0, 300),
+                            ),
+                            child: _ContactTile(
+                              item: item,
+                              priorityColor: _priorityColor(ctx, item.priority),
+                              statusIcon: _statusIcon(item.status),
+                              onDelete: _delete,
+                            ),
                           );
                         },
                       ),

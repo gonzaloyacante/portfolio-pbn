@@ -1,31 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../core/debug/debug_provider.dart';
 
 /// Pantalla de ayuda — información de la app y guía de uso básica.
-/// No requiere API ni estado externo.
-class HelpPage extends StatelessWidget {
+class HelpPage extends ConsumerWidget {
   const HelpPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final version = ref
+        .watch(appBuildInfoProvider)
+        .when(
+          data: (info) => '${info.version} (build ${info.buildNumber})',
+          loading: () => '…',
+          error: (_, _) => '—',
+        );
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
           tooltip: 'Volver',
         ),
         title: const Text('Ayuda'),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        children: const [
+        children: [
           _SectionCard(
             icon: Icons.info_outline,
             title: 'Acerca de la app',
             children: [
-              _HelpItem(label: 'Nombre', value: 'Portfolio PBN — Admin'),
-              _HelpItem(label: 'Versión', value: '1.0.0'),
-              _HelpItem(
+              const _HelpItem(label: 'Nombre', value: 'Portfolio PBN — Admin'),
+              _HelpItem(label: 'Versión', value: version),
+              const _HelpItem(
                 label: 'Descripción',
                 value:
                     'Panel de administración de Paola Bolívar Nievas. '
@@ -34,7 +44,7 @@ class HelpPage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _SectionCard(
             icon: Icons.dashboard_outlined,
             title: 'Secciones del panel',

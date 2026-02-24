@@ -2,12 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- ── Rendimiento ──────────────────────────────────────────────── -->
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+
+	<!-- ── Identificadores del bundle ──────────────────────────────── -->
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Portfolio Pbn</string>
+	<string>PBN Admin</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +18,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>portfolio_pbn</string>
+	<string>PBN Admin</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -24,8 +27,68 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+
+	<!-- ── Requerimientos del dispositivo ──────────────────────────── -->
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MinimumOSVersion</key>
+	<string>13.0</string>
+
+	<!-- ══════════════════════════════════════════════════════════════
+	     PERMISOS — iOS exige textos explicativos para cada permiso.
+	     Si no están, la app es rechazada por App Store Review.
+	     ══════════════════════════════════════════════════════════════ -->
+
+	<!-- Cámara: requerido por image_picker y image_cropper -->
+	<key>NSCameraUsageDescription</key>
+	<string>PBN Admin necesita acceso a la cámara para fotografiar proyectos y servicios directamente desde la app.</string>
+
+	<!-- Galería de fotos (lectura): requerido por image_picker -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>PBN Admin necesita acceso a tus fotos para seleccionar imágenes de proyectos, servicios y testimonios.</string>
+
+	<!-- Galería de fotos (escritura): guardar imágenes recortadas -->
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>PBN Admin puede guardar imágenes procesadas en tu galería de fotos.</string>
+
+	<!-- Google Sign-In: aparece en la hoja de autorización OAuth -->
+	<!-- No requiere clave especial en Info.plist excepto la URL de retorno -->
+
+	<!-- ── Notificaciones push (FCM/APNs) ──────────────────────────── -->
+	<!-- La descripción de notificaciones se pide en runtime con requestPermission(),
+	     no aquí. Pero sí necesita estar registrado el background mode. -->
+
+	<!-- ── Modos de ejecución en background ────────────────────────── -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<!-- Recibir notificaciones FCM cuando la app está en background -->
+		<string>remote-notification</string>
+		<!-- Procesamiento en segundo plano (sync offline) -->
+		<string>processing</string>
+		<!-- Fetch periódico de datos en segundo plano -->
+		<string>fetch</string>
+	</array>
+
+	<!-- ── URL Schemes para Google Sign-In ─────────────────────────── -->
+	<!-- IMPORTANTE: reemplaza GOOGLE_REVERSED_CLIENT_ID con el valor del
+	     GoogleService-Info.plist que generaste en Firebase Console.
+	     El formato es: com.googleusercontent.apps.TU_CLIENT_ID -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>google-sign-in</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Este valor viene del campo REVERSED_CLIENT_ID en GoogleService-Info.plist -->
+				<string>$(GOOGLE_REVERSED_CLIENT_ID)</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- ── Configuración de escena (multitarea) ─────────────────────── -->
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -47,18 +110,21 @@
 			</array>
 		</dict>
 	</dict>
+
+	<!-- ── Soporte de entrada y orientación ────────────────────────── -->
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+
+	<!-- Solo portrait en iPhone (es una app de administración) -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<!-- iPad: todas las orientaciones -->
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -66,5 +132,16 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+
+	<!-- ── App Transport Security ──────────────────────────────────── -->
+	<!-- Solo HTTPS en producción. Para desarrollo local con HTTP,
+	     crear un archivo Info.debug.plist o usar build configurations.
+	     (Por defecto iOS ya bloquea cleartext excepto localhost) -->
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+	</dict>
+
 </dict>
 </plist>

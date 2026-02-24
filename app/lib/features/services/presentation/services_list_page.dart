@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -50,11 +52,16 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
           ctx,
         ).showSnackBar(const SnackBar(content: Text('Servicio eliminado')));
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     }
   }
@@ -81,11 +88,11 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
             child: SearchBar(
               controller: _searchController,
               hintText: 'Buscar servicios…',
-              leading: const Icon(Icons.search),
+              leading: const Icon(Icons.search_rounded),
               trailing: [
                 if (_search.isNotEmpty)
                   IconButton(
-                    icon: const Icon(Icons.clear),
+                    icon: const Icon(Icons.clear_rounded),
                     onPressed: () {
                       _searchController.clear();
                       _onSearch('');
@@ -93,6 +100,7 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                   ),
               ],
               onChanged: _onSearch,
+              elevation: const WidgetStatePropertyAll(0),
             ),
           ),
           Expanded(
@@ -115,9 +123,12 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: paginated.data.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 8),
-                        itemBuilder: (ctx, i) => _ServiceTile(
-                          item: paginated.data[i],
-                          onDelete: _delete,
+                        itemBuilder: (ctx, i) => FadeSlideIn(
+                          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+                          child: _ServiceTile(
+                            item: paginated.data[i],
+                            onDelete: _delete,
+                          ),
                         ),
                       ),
                     ),
@@ -151,6 +162,8 @@ class _ServiceTile extends StatelessWidget {
         : 'Sin precio';
 
     return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.15),

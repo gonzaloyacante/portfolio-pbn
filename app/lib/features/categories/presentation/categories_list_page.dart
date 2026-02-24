@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -52,11 +54,16 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
           ctx,
         ).showSnackBar(const SnackBar(content: Text('Categoría eliminada')));
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     }
   }
@@ -117,9 +124,12 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: paginated.data.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 8),
-                        itemBuilder: (ctx, i) => _CategoryTile(
-                          item: paginated.data[i],
-                          onDelete: _delete,
+                        itemBuilder: (ctx, i) => FadeSlideIn(
+                          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+                          child: _CategoryTile(
+                            item: paginated.data[i],
+                            onDelete: _delete,
+                          ),
                         ),
                       ),
                     ),

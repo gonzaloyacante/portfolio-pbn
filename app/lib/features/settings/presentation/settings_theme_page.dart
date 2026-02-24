@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -77,11 +79,16 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
           context,
         ).showSnackBar(const SnackBar(content: Text('Tema guardado')));
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -98,7 +105,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: const Text('Tema'),

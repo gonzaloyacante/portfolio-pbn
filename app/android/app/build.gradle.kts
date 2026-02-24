@@ -1,18 +1,35 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Google Services plugin — necesario para Firebase (leer google-services.json)
+    id("com.google.gms.google-services")
+}
+
+// ── Carga de propiedades de firma ─────────────────────────────────────────────
+// El archivo key.properties debe existir en android/ y estar en .gitignore.
+// En CI/CD se genera a partir de secretos del repositorio.
+// Ver: app/keystore/README.md para instrucciones de creación.
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
     namespace = "es.paolabolivar.admin"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // Requerido por flutter_local_notifications (desugaring de java.time)
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -20,21 +37,85 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "es.paolabolivar.admin"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 23        // Android 6.0 – cubre el 97%+ de Android activo
+        targetSdk = 35     // Android 15 – requerido por Play Store a partir de 2025
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // Metadatos para filtrado Play Store: solo ARM y x86_64 de 64 bits
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
+
+        // Habilita MultiDex (requerido para apps grandes con >64K métodos)
+        multiDexEnabled = true
     }
 
+    // ── Configuración de firma ────────────────────────────────────────────
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                // Firma desde key.properties local (desarrollo) o CI (secretos)
+                keyAlias = keystoreProperties["keyAlias"] as String? ?: ""
+                keyPassword = keystoreProperties["keyPassword"] as String? ?: ""
+                storeFile = keystoreProperties["storeFile"]?.let { file(it as String) }
+                storePassword = keystoreProperties["storePassword"] as String? ?: ""
+            } else {
+                // Fallback: variables de entorno (para CI/CD sin archivo local)
+                keyAlias = System.getenv("KEY_ALIAS") ?: ""
+                keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+                val storeFilePath = System.getenv("STORE_FILE")
+                storeFile = if (storeFilePath != null) file(storeFilePath) else null
+                storePassword = System.getenv("STORE_PASSWORD") ?: ""
+            }
+        }
+    }
+
+    // ── Tipos de build ────────────────────────────────────────────────────
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            isDebuggable = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
+
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true        // R8 compila + ofusca
+            isShrinkResources = true      // Elimina recursos no usados
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
+    // ── Splits (APK por ABI para Play Store) ─────────────────────────────
+    // Esto reduce el tamaño del APK descargado por el usuario.
+    // Con App Bundle (aab) esto es automático, pero de todos modos se mantiene.
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "x86_64")
+            isUniversalApk = false
+        }
+    }
+
+    // ── Opciones de empaquetado ───────────────────────────────────────────
+    packaging {
+        resources {
+            excludes += listOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/*.kotlin_module",
+            )
         }
     }
 }
@@ -42,3 +123,11 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Core library desugaring: acceso a java.time en API < 26
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    // MultiDex para minSdk < 21 (aunque minSdk=23, es buena práctica)
+    implementation("androidx.multidex:multidex:2.0.1")
+}
+

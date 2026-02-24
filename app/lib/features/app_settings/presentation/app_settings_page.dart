@@ -1,9 +1,15 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../core/debug/debug_log_page.dart';
+import '../../../core/debug/debug_panel.dart';
+import '../../../core/debug/debug_provider.dart';
 import '../../../core/theme/theme_provider.dart';
 import '../../../core/utils/app_logger.dart';
 
@@ -49,7 +55,8 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       AppLogger.error('AppSettings: error clearing cache', e);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -72,7 +79,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
           tooltip: 'Volver',
         ),
         title: const Text('Preferencias'),
@@ -151,11 +158,71 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
             title: 'Información',
             icon: Icons.info_outlined,
             children: [
-              _InfoTile(label: 'Versión', value: '1.0.0 (build 1)'),
-              _InfoTile(label: 'Aplicación', value: 'Portfolio PBN Admin'),
-              _InfoTile(label: 'Entorno', value: _environmentLabel),
+              Consumer(
+                builder: (context, ref, child) {
+                  final info = ref.watch(appBuildInfoProvider);
+                  return info.when(
+                    data: (v) => Column(
+                      children: [
+                        _InfoTile(label: 'Versión', value: v.fullVersion),
+                        _InfoTile(
+                          label: 'Aplicación',
+                          value: 'Portfolio PBN Admin',
+                        ),
+                        _InfoTile(label: 'Entorno', value: _environmentLabel),
+                      ],
+                    ),
+                    loading: () => _InfoTile(label: 'Versión', value: '...'),
+                    error: (error, stackTrace) =>
+                        _InfoTile(label: 'Versión', value: 'N/A'),
+                  );
+                },
+              ),
             ],
           ),
+
+          // ── Sección Desarrollador (solo debug) ───────────────────────────────
+          if (kDebugMode) ...[
+            const SizedBox(height: 16),
+            _SectionCard(
+              title: 'Desarrollador',
+              icon: Icons.developer_mode,
+              children: [
+                ListTile(
+                  leading: Icon(
+                    Icons.bug_report_outlined,
+                    color: colorScheme.primary,
+                  ),
+                  title: const Text('Developer Tools'),
+                  subtitle: const Text(
+                    'Ver estado, logs y herramientas de debug',
+                  ),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  ),
+                  onTap: () => DebugPanel.show(context),
+                ),
+                ListTile(
+                  leading: Icon(
+                    Icons.article_outlined,
+                    color: colorScheme.primary,
+                  ),
+                  title: const Text('Ver logs'),
+                  subtitle: const Text('Historial de mensajes de la sesión'),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  ),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const DebugLogPage(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

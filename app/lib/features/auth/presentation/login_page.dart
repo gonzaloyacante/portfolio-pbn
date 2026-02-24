@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
+import '../../../core/notifications/push_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -42,11 +44,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     FocusScope.of(context).unfocus();
 
+    // Obtener token FCM antes de iniciar sesión para registrarlo en el backend.
+    // Si falla (sin permisos, Firebase no disponible) simplemente continúa sin él.
+    String? fcmToken;
+    try {
+      // Usa el singleton de Riverpod — no crear instancias directas de PushService.
+      final pushService = ref.read(pushServiceProvider);
+      await pushService.init();
+      fcmToken = await pushService.getToken();
+      if (fcmToken != null) {
+        AppLogger.info(
+          'LoginPage: FCM token obtenido (${fcmToken.length} chars)',
+        );
+      }
+    } catch (e) {
+      AppLogger.warn('LoginPage: no se pudo obtener FCM token: $e');
+    }
+
     await ref
         .read(authNotifierProvider.notifier)
         .login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
+          fcmToken: fcmToken,
         );
   }
 
@@ -87,8 +107,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       const SizedBox(height: 16),
                       InlineError(message: errorMsg),
                     ],
-                    const SizedBox(height: 24),
-                    _GoogleSignInButton(onPressed: isLoading ? null : () {}),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          size: 14,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.outline.withValues(alpha: 0.6),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Acceso exclusivo para administradores',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.outline.withValues(alpha: 0.6),
+                              ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -235,33 +276,6 @@ class _LoginCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ── _GoogleSignInButton ───────────────────────────────────────────────────────
-
-class _GoogleSignInButton extends StatelessWidget {
-  const _GoogleSignInButton({this.onPressed});
-
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        minimumSize: const Size.fromHeight(52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        side: BorderSide(color: scheme.outline.withValues(alpha: 0.3)),
-      ),
-      icon: const Icon(Icons.g_mobiledata_rounded, size: 24),
-      label: const Text(
-        'Continuar con Google',
-        style: TextStyle(fontWeight: FontWeight.w500),
       ),
     );
   }

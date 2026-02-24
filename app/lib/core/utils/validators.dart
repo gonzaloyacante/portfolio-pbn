@@ -3,6 +3,12 @@
 class AppValidators {
   AppValidators._();
 
+  // Patrones compilados una sola vez para rendimiento
+  // ignore: deprecated_member_use
+  static final _emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+  // ignore: deprecated_member_use
+  static final _whitespacePattern = RegExp(r'\s+');
+
   static String? required(Object? value) {
     if (value == null) return 'Campo requerido';
     if (value is String && value.trim().isEmpty) return 'Campo requerido';
@@ -11,8 +17,7 @@ class AppValidators {
 
   static String? email(String? value) {
     if (value == null || value.isEmpty) return 'Email requerido';
-    final regex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-    if (!regex.hasMatch(value)) return 'Email inválido';
+    if (!_emailPattern.hasMatch(value)) return 'Email inválido';
     return null;
   }
 
@@ -36,7 +41,7 @@ class AppValidators {
 
   static String? phone(String? value) {
     if (value == null || value.isEmpty) return null; // Opcional
-    final cleaned = value.replaceAll(RegExp(r'\s+'), '');
+    final cleaned = value.replaceAll(_whitespacePattern, '');
     if (cleaned.length < 9) return 'Teléfono inválido';
     return null;
   }

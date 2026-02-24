@@ -1,6 +1,8 @@
 // ignore_for_file: use_null_aware_elements
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/contact_model.dart';
@@ -57,11 +59,16 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
           context,
         ).showSnackBar(const SnackBar(content: Text('Cambios guardados')));
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudieron guardar los cambios. Inténtalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -79,7 +86,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: const Text('Detalle del contacto'),

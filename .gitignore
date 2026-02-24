@@ -53,6 +53,14 @@ next-env.d.ts
 .env
 .env*
 !.env.example
+
+# Firebase config files (SECRETS — never commit)
+google-services.json
+GoogleService-Info.plist
+key.properties
+# Firebase Admin SDK private key (usar solo como GitHub Secret, NUNCA en el repo)
+*adminsdk*.json
+*firebase-adminsdk*.json
 # Specific backups just in case
 .env.local
 .env.production
@@ -69,6 +77,11 @@ id_rsa.pub
 /web/.env*
 /app/.env
 /app/.env*
+
+# Keystore & signing (do NOT commit keystore or signing properties)
+app/keystore/*.jks
+app/keystore/*.keystore
+app/android/key.properties
 
 # ===================================================
 # LOGS

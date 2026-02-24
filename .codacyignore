@@ -1,0 +1,23 @@
+# Archivos de entorno - contienen secrets/URLs reales pero están en .gitignore
+web/.env
+web/.env.*
+web/.env.develop
+web/.env.production
+web/.env.local
+web/.env.staging
+
+# Dependencias
+web/node_modules/
+app/build/
+app/.dart_tool/
+
+# Archivos generados por Prisma
+web/src/generated/
+
+# Archivos de build/cache
+web/.next/
+web/playwright-report/
+
+# Docs con datos reales
+docs/*.har
+docs/*.resolved

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -143,13 +145,18 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(msg)));
-        Navigator.of(context).pop();
+        context.pop();
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -370,7 +377,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),

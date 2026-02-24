@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -9,6 +11,26 @@ import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
+
+// Patrones de slug compilados una sola vez
+// ignore: deprecated_member_use
+final _reAccentA = RegExp(r'[áàâä]');
+// ignore: deprecated_member_use
+final _reAccentE = RegExp(r'[éèêë]');
+// ignore: deprecated_member_use
+final _reAccentI = RegExp(r'[íìîï]');
+// ignore: deprecated_member_use
+final _reAccentO = RegExp(r'[óòôö]');
+// ignore: deprecated_member_use
+final _reAccentU = RegExp(r'[úùûü]');
+// ignore: deprecated_member_use
+final _reNyeN = RegExp(r'[ñ]');
+// ignore: deprecated_member_use
+final _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
+// ignore: deprecated_member_use
+final _reWhitespace = RegExp(r'\s+');
+// ignore: deprecated_member_use
+final _reSlugValid = RegExp(r'^[a-z0-9-]+$');
 
 class CategoryFormPage extends ConsumerStatefulWidget {
   const CategoryFormPage({super.key, this.categoryId});
@@ -31,9 +53,17 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
 
   bool _isActive = true;
   bool _loading = false;
-  bool _populated = false;
+  String? _populatedFor;
 
   bool get _isEdit => widget.categoryId != null;
+
+  @override
+  void didUpdateWidget(covariant CategoryFormPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.categoryId != widget.categoryId) {
+      _populatedFor = null;
+    }
+  }
 
   @override
   void dispose() {
@@ -47,8 +77,8 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   }
 
   void _populateForm(CategoryDetail detail) {
-    if (_populated) return;
-    _populated = true;
+    if (_populatedFor == widget.categoryId) return;
+    _populatedFor = widget.categoryId;
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;
     _descriptionCtrl.text = detail.description ?? '';
@@ -62,15 +92,15 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     if (_isEdit) return;
     final slug = name
         .toLowerCase()
-        .replaceAll(RegExp(r'[áàâä]'), 'a')
-        .replaceAll(RegExp(r'[éèêë]'), 'e')
-        .replaceAll(RegExp(r'[íìîï]'), 'i')
-        .replaceAll(RegExp(r'[óòôö]'), 'o')
-        .replaceAll(RegExp(r'[úùûü]'), 'u')
-        .replaceAll(RegExp(r'[ñ]'), 'n')
-        .replaceAll(RegExp(r'[^a-z0-9\s-]'), '')
+        .replaceAll(_reAccentA, 'a')
+        .replaceAll(_reAccentE, 'e')
+        .replaceAll(_reAccentI, 'i')
+        .replaceAll(_reAccentO, 'o')
+        .replaceAll(_reAccentU, 'u')
+        .replaceAll(_reNyeN, 'n')
+        .replaceAll(_reNonSlugChars, '')
         .trim()
-        .replaceAll(RegExp(r'\s+'), '-');
+        .replaceAll(_reWhitespace, '-');
     _slugCtrl.text = slug;
   }
 
@@ -110,12 +140,17 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       }
 
       ref.invalidate(categoriesListProvider);
-      if (mounted) Navigator.of(context).pop();
-    } catch (e) {
+      if (mounted) context.pop();
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudo guardar la categoría. Inténtalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -135,7 +170,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: Text(_isEdit ? 'Editar categoría' : 'Nueva categoría'),
@@ -175,7 +210,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                 ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Slug requerido';
-                  if (!RegExp(r'^[a-z0-9-]+$').hasMatch(v.trim())) {
+                  if (!_reSlugValid.hasMatch(v.trim())) {
                     return 'Solo letras minúsculas, números y guiones';
                   }
                   return null;

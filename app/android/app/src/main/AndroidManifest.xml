@@ -1,8 +1,60 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISOS DE RED
+         ═══════════════════════════════════════════════════════════════════ -->
+    <!-- CRÍTICO: sin este permiso la app no puede conectarse a internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Para connectivity_plus: detectar tipo de red (WiFi/datos) -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISOS DE NOTIFICACIONES
+         ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Android 13+ requiere permiso explícito para mostrar notificaciones -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Vibrar con notificaciones -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- FCM background / scheduled work -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Lanzar actividad desde el background (tap en notificación) -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISOS DE CÁMARA E IMÁGENES (image_picker / image_cropper)
+         ═══════════════════════════════════════════════════════════════════ -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Android 13+: acceso granular a imágenes (sin READ_EXTERNAL_STORAGE) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- Android ≤12: necesario para galería -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <!-- Para escribir en almacenamiento (crops, exports) en Android ≤9 -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         CARACTERÍSTICAS DEL HARDWARE (opcionales = no bloquean instalación)
+         ═══════════════════════════════════════════════════════════════════ -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+
     <application
-        android:label="portfolio_pbn"
+        android:label="PBN Admin"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="false"
+        android:allowBackup="false"
+        android:fullBackupContent="false">
+
+        <!-- ── Actividad principal ─────────────────────────────────────── -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -11,35 +63,87 @@
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustResize">
-            <!-- Specifies an Android theme to apply to this Activity as soon as
-                 the Android process has started. This theme is visible to the user
-                 while the Flutter UI initializes. After that, this theme continues
-                 to determine the Window background behind the Flutter UI. -->
+            android:windowSoftInputMode="adjustResize"
+            android:screenOrientation="portrait">
+            <!-- Tema mientras Flutter inicializa -->
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme"
-              />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
+            <!-- Intent principal: abre desde el launcher -->
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Don't delete the meta-data below.
-             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+
+        <!-- ── Flutter Embedding v2 ────────────────────────────────────── -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
-    <!-- Required to query activities that can process text, see:
-         https://developer.android.com/training/package-visibility and
-         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
 
-         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+        <!-- ── Firebase Cloud Messaging ───────────────────────────────── -->
+        <!--
+            FCMService se auto-registra con el plugin firebase_messaging.
+            El channel por defecto para notificaciones de alta importancia.
+        -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="pbn_admin_high" />
+        <!-- Icono y color de notificaciones FCM (usa el launcher icon por defecto) -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+
+        <!-- ── Proveedor de archivos para image_cropper ────────────────── -->
+        <!--
+            Requerido por image_cropper para compartir archivos entre procesos
+            en Android 7+. La authority debe coincidir con el applicationId.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.flutter.image_cropper.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/cropper_file_paths" />
+        </provider>
+
+    </application>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         QUERIES — actividades externas que esta app puede invocar
+         ═══════════════════════════════════════════════════════════════════ -->
     <queries>
+        <!-- Permite al engine procesar texto seleccionado -->
         <intent>
-            <action android:name="android.intent.action.PROCESS_TEXT"/>
-            <data android:mimeType="text/plain"/>
+            <action android:name="android.intent.action.PROCESS_TEXT" />
+            <data android:mimeType="text/plain" />
         </intent>
+        <!-- Permite abrir URLs en el browser (url_launcher) -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+        <!-- Permite abrir la apps de email -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+        <!-- Permite abrir el marcador de teléfono -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+        <!-- Google Sign-In: necesita resolver el paquete de Google Play Services -->
+        <package android:name="com.google.android.gms" />
     </queries>
+
 </manifest>

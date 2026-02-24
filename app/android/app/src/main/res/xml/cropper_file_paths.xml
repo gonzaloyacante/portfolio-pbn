@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Rutas de archivos para el FileProvider de image_cropper.
+
+  Permite compartir archivos de imagen recortada entre la app y el proceso
+  del cropper (UcropActivity) usando un URI de contenido seguro en lugar
+  de paths de archivo directos (requerido en Android 7+).
+
+  Estas rutas se corresponden con los directorios que image_cropper usa
+  internamente para guardar resultados temporales.
+-->
+<paths>
+    <!-- Directorio de caché de la app -->
+    <cache-path name="image_cropper_cache" path="." />
+    <!-- Directorio externo de caché -->
+    <external-cache-path name="image_cropper_ext_cache" path="." />
+    <!-- Directorio de archivos internos -->
+    <files-path name="image_cropper_files" path="." />
+    <!-- Directorio de archivos externos -->
+    <external-files-path name="image_cropper_ext_files" path="." />
+    <!-- Almacenamiento externo raíz (carpeta de imágenes) -->
+    <external-path name="image_cropper_external" path="." />
+</paths>

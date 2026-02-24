@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../api/api_exceptions.dart';
 import '../utils/app_logger.dart';
@@ -57,6 +58,12 @@ class AuthNotifier extends _$AuthNotifier {
       );
       AppLogger.info('AuthNotifier: login success → ${user.email}');
       state = AsyncData(AuthState.authenticated(user: user));
+      // Asociar usuario a eventos de Sentry.
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(id: user.id, email: user.email, name: user.name),
+        ),
+      );
     } on UnauthorizedException catch (e) {
       AppLogger.warn('AuthNotifier: login failed → ${e.message}');
       state = AsyncData(AuthState.error(message: e.message));
@@ -89,6 +96,8 @@ class AuthNotifier extends _$AuthNotifier {
       AppLogger.error('AuthNotifier: logout error (tokens cleared anyway)', e);
     } finally {
       state = const AsyncData(AuthState.unauthenticated());
+      // Limpiar usuario de Sentry al cerrar sesión.
+      Sentry.configureScope((scope) => scope.setUser(null));
     }
   }
 
@@ -116,6 +125,12 @@ class AuthNotifier extends _$AuthNotifier {
       );
       final user = await repo.getMe();
       AppLogger.info('AuthNotifier: session restored for ${user.email}');
+      // Re-asociar usuario a Sentry al restaurar sesión.
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(id: user.id, email: user.email, name: user.name),
+        ),
+      );
       return AuthState.authenticated(user: user);
     } on UnauthorizedException catch (_) {
       AppLogger.warn('AuthNotifier: stored session expired → unauthenticated');

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -46,7 +48,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
               tooltip: 'Volver',
             ),
             title: Text(
@@ -59,7 +61,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
               tooltip: 'Volver',
             ),
             title: const Text('Error'),
@@ -125,8 +127,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       }
       ref.invalidate(projectsListProvider);
       if (mounted) context.pop();
-    } catch (e) {
-      setState(() => _errorMsg = e.toString());
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      setState(
+        () => _errorMsg = 'No se pudo guardar el proyecto. Inténtalo de nuevo.',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -139,7 +144,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: Text(widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto'),
@@ -151,162 +156,216 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
             ),
           ],
         ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (_errorMsg != null) ...[
-                  InlineError(message: _errorMsg!),
-                  const SizedBox(height: 16),
-                ],
-
-                // Imagen de portada
-                ImageUploadWidget(
-                  label: 'Imagen de portada',
-                  currentImageUrl: _data.thumbnailUrl.isNotEmpty
-                      ? _data.thumbnailUrl
-                      : null,
-                  onImageSelected: (file) {
-                    setState(() => _pendingCoverImage = file);
-                  },
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final isTablet = constraints.maxWidth >= 700;
+            return Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
                 ),
-                const SizedBox(height: 20),
-
-                // Título
-                TextFormField(
-                  initialValue: _data.title,
-                  decoration: const InputDecoration(labelText: 'Título *'),
-                  textInputAction: TextInputAction.next,
-                  onSaved: (v) => _data.title = v?.trim() ?? '',
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'El título es requerido'
-                      : null,
-                ),
-                const SizedBox(height: 12),
-
-                // Slug
-                TextFormField(
-                  initialValue: _data.slug,
-                  decoration: const InputDecoration(
-                    labelText: 'Slug *',
-                    hintText: 'mi-proyecto',
-                    prefixText: '/',
-                  ),
-                  textInputAction: TextInputAction.next,
-                  onSaved: (v) => _data.slug = v?.trim() ?? '',
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'El slug es requerido'
-                      : null,
-                ),
-                const SizedBox(height: 12),
-
-                // Descripción
-                TextFormField(
-                  initialValue: _data.description,
-                  maxLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'Descripción *',
-                    alignLabelWithHint: true,
-                  ),
-                  onSaved: (v) => _data.description = v?.trim() ?? '',
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? 'La descripción es requerida'
-                      : null,
-                ),
-                const SizedBox(height: 12),
-
-                // Extracto
-                TextFormField(
-                  initialValue: _data.excerpt,
-                  maxLines: 2,
-                  decoration: const InputDecoration(
-                    labelText: 'Extracto (opcional)',
-                    alignLabelWithHint: true,
-                  ),
-                  onSaved: (v) => _data.excerpt = (v?.trim().isEmpty ?? true)
-                      ? null
-                      : v!.trim(),
-                ),
-                const SizedBox(height: 12),
-
-                // Cliente / Duración
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        initialValue: _data.client,
-                        decoration: const InputDecoration(labelText: 'Cliente'),
-                        textInputAction: TextInputAction.next,
-                        onSaved: (v) => _data.client =
-                            (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextFormField(
-                        initialValue: _data.duration,
-                        decoration: const InputDecoration(
-                          labelText: 'Duración',
-                          hintText: '2 semanas',
-                        ),
-                        textInputAction: TextInputAction.next,
-                        onSaved: (v) => _data.duration =
-                            (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Destacado / Fijado
-                Row(
-                  children: [
-                    Expanded(
-                      child: SwitchListTile(
-                        title: const Text('Destacado'),
-                        subtitle: const Text('Aparece en galería principal'),
-                        value: _data.isFeatured,
-                        onChanged: (v) => setState(() => _data.isFeatured = v),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                    Expanded(
-                      child: SwitchListTile(
-                        title: const Text('Fijado'),
-                        subtitle: const Text('Siempre al inicio'),
-                        value: _data.isPinned,
-                        onChanged: (v) => setState(() => _data.isPinned = v),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-
-                // Submit
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed: _isLoading ? null : _submit,
-                    icon: Icon(
-                      widget.isEditing ? Icons.save_rounded : Icons.add_rounded,
-                    ),
-                    label: Text(
-                      widget.isEditing ? 'Guardar cambios' : 'Crear proyecto',
-                    ),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size.fromHeight(52),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+                child: isTablet
+                    ? _buildTabletLayout(context)
+                    : _buildPhoneLayout(context),
+              ),
+            );
+          },
         ),
       ),
     );
   }
+
+  // ── Layouts ──────────────────────────────────────────────────────────────
+
+  /// Diseño de una columna para móvil.
+  Widget _buildPhoneLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_errorMsg != null) ...[
+          InlineError(message: _errorMsg!),
+          const SizedBox(height: 16),
+        ],
+        _imageField(),
+        const SizedBox(height: 20),
+        _titleField(),
+        const SizedBox(height: 12),
+        _slugField(),
+        const SizedBox(height: 12),
+        _descriptionField(),
+        const SizedBox(height: 12),
+        _excerptField(),
+        const SizedBox(height: 12),
+        _clientDurationRow(),
+        const SizedBox(height: 20),
+        _featuredPinnedRow(),
+        const SizedBox(height: 24),
+        _submitButton(),
+      ],
+    );
+  }
+
+  /// Diseño de dos columnas para tablet (≥ 700 px).
+  Widget _buildTabletLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (_errorMsg != null) ...[
+          InlineError(message: _errorMsg!),
+          const SizedBox(height: 16),
+        ],
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Columna izquierda: imagen + descripción + extracto
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _imageField(),
+                  const SizedBox(height: 16),
+                  _descriptionField(),
+                  const SizedBox(height: 12),
+                  _excerptField(),
+                ],
+              ),
+            ),
+            const SizedBox(width: 24),
+            // Columna derecha: título + slug + cliente + duración + toggles
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _titleField(),
+                  const SizedBox(height: 12),
+                  _slugField(),
+                  const SizedBox(height: 12),
+                  _clientDurationRow(),
+                  const SizedBox(height: 20),
+                  _featuredPinnedRow(),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        _submitButton(),
+      ],
+    );
+  }
+
+  // ── Campos individuales ───────────────────────────────────────────────────
+
+  Widget _imageField() => ImageUploadWidget(
+    label: 'Imagen de portada',
+    currentImageUrl: _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
+    onImageSelected: (file) => setState(() => _pendingCoverImage = file),
+  );
+
+  Widget _titleField() => TextFormField(
+    initialValue: _data.title,
+    decoration: const InputDecoration(labelText: 'Título *'),
+    textInputAction: TextInputAction.next,
+    onSaved: (v) => _data.title = v?.trim() ?? '',
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
+  );
+
+  Widget _slugField() => TextFormField(
+    initialValue: _data.slug,
+    decoration: const InputDecoration(
+      labelText: 'Slug *',
+      hintText: 'mi-proyecto',
+      prefixText: '/',
+    ),
+    textInputAction: TextInputAction.next,
+    onSaved: (v) => _data.slug = v?.trim() ?? '',
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'El slug es requerido' : null,
+  );
+
+  Widget _descriptionField() => TextFormField(
+    initialValue: _data.description,
+    maxLines: 5,
+    decoration: const InputDecoration(
+      labelText: 'Descripción *',
+      alignLabelWithHint: true,
+    ),
+    onSaved: (v) => _data.description = v?.trim() ?? '',
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'La descripción es requerida' : null,
+  );
+
+  Widget _excerptField() => TextFormField(
+    initialValue: _data.excerpt,
+    maxLines: 2,
+    decoration: const InputDecoration(
+      labelText: 'Extracto (opcional)',
+      alignLabelWithHint: true,
+    ),
+    onSaved: (v) =>
+        _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+  );
+
+  Widget _clientDurationRow() => Row(
+    children: [
+      Expanded(
+        child: TextFormField(
+          initialValue: _data.client,
+          decoration: const InputDecoration(labelText: 'Cliente'),
+          textInputAction: TextInputAction.next,
+          onSaved: (v) =>
+              _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+        ),
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: TextFormField(
+          initialValue: _data.duration,
+          decoration: const InputDecoration(
+            labelText: 'Duración',
+            hintText: '2 semanas',
+          ),
+          textInputAction: TextInputAction.next,
+          onSaved: (v) =>
+              _data.duration = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+        ),
+      ),
+    ],
+  );
+
+  Widget _featuredPinnedRow() => Row(
+    children: [
+      Expanded(
+        child: SwitchListTile(
+          title: const Text('Destacado'),
+          subtitle: const Text('Aparece en galería principal'),
+          value: _data.isFeatured,
+          onChanged: (v) => setState(() => _data.isFeatured = v),
+          contentPadding: EdgeInsets.zero,
+        ),
+      ),
+      Expanded(
+        child: SwitchListTile(
+          title: const Text('Fijado'),
+          subtitle: const Text('Siempre al inicio'),
+          value: _data.isPinned,
+          onChanged: (v) => setState(() => _data.isPinned = v),
+          contentPadding: EdgeInsets.zero,
+        ),
+      ),
+    ],
+  );
+
+  Widget _submitButton() => SizedBox(
+    width: double.infinity,
+    child: FilledButton.icon(
+      onPressed: _isLoading ? null : _submit,
+      icon: Icon(widget.isEditing ? Icons.save_rounded : Icons.add_rounded),
+      label: Text(widget.isEditing ? 'Guardar cambios' : 'Crear proyecto'),
+      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+    ),
+  );
 }

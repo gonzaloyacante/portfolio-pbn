@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
+import '../../../core/debug/debug_provider.dart';
 import '../../../core/notifications/push_provider.dart';
 import '../../calendar/data/google_calendar_models.dart';
 import '../../calendar/providers/google_calendar_provider.dart';
@@ -52,7 +55,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Contraseña actualizada correctamente')),
       );
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (!mounted) return;
       final msg = e.toString().contains('actual')
           ? 'Contraseña actual incorrecta'
@@ -82,7 +86,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: const Text('Mi cuenta'),
@@ -185,14 +189,20 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             ),
             const SizedBox(height: 24),
             // ── Versión ───────────────────────────────────────────────────
-            Center(
-              child: Text(
-                'Versión 1.0.0',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
+            ref
+                .watch(appBuildInfoProvider)
+                .when(
+                  data: (info) => Center(
+                    child: Text(
+                      'Versión ${info.fullVersion}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
+                  ),
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, _) => const SizedBox.shrink(),
                 ),
-              ),
-            ),
           ],
         ),
       ),

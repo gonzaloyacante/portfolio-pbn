@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url)
 try {
   // Intentamos cargar la configuración de dotenv si existe
   require('dotenv/config')
-} catch (err) {
+} catch {
   // noop: en CI/producción puede no existir dotenv y no debe romper el build
 }
 

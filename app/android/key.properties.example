@@ -1,0 +1,20 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# key.properties — Configuración de firma para builds release de Android
+# ─────────────────────────────────────────────────────────────────────────────
+# IMPORTANTE: Este archivo debe estar en .gitignore y NUNCA subirse al repo.
+# Copia este ejemplo a `key.properties` (sin .example) y rellena los valores.
+#
+# Para crear un keystore desde cero ver: app/keystore/README.md
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Ruta al archivo .jks del keystore (relativa al directorio android/)
+storeFile=../keystore/pbn-admin-release.jks
+
+# Contraseña del keystore (mínimo 6 caracteres)
+storePassword=TU_CONTRASEÑA_DEL_STORE
+
+# Alias de la clave dentro del keystore
+keyAlias=pbn-admin
+
+# Contraseña de la clave (puede ser igual a storePassword)
+keyPassword=TU_CONTRASEÑA_DE_LA_CLAVE

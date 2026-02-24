@@ -54,23 +54,29 @@ class StatCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
                       color: cardColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(icon, color: cardColor, size: 24),
+                    child: Icon(icon, color: cardColor, size: 22),
                   ),
                   const Spacer(),
                   if (trend != null)
                     _TrendBadge(
                       trend: trend!,
                       isPositive: trendPositive ?? true,
+                    )
+                  else if (onTap != null)
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 12,
+                      color: colorScheme.outline.withValues(alpha: 0.5),
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Text(
                 value,
                 style: textTheme.headlineSmall?.copyWith(

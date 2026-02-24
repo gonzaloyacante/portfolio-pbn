@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -57,7 +60,8 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
           context,
         ).showSnackBar(SnackBar(content: Text('"$title" eliminado')));
       }
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -167,7 +171,10 @@ class _ProjectsList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final item = items[index];
-        return _ProjectTile(item: item, onDelete: onDelete);
+        return FadeSlideIn(
+          delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
+          child: _ProjectTile(item: item, onDelete: onDelete),
+        );
       },
     );
   }
@@ -201,12 +208,24 @@ class _ProjectTile extends StatelessWidget {
               // Thumbnail
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  item.thumbnailUrl ?? '',
+                child: CachedNetworkImage(
+                  imageUrl: item.thumbnailUrl ?? '',
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
+                  placeholder: (_, _) => Container(
+                    width: 64,
+                    height: 64,
+                    color: scheme.surfaceContainerHighest,
+                    child: const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, _, _) => Container(
                     width: 64,
                     height: 64,
                     color: scheme.surfaceContainerHighest,

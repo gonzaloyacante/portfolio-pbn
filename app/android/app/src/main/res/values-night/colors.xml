@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Colores del sistema Android para PBN Admin — modo oscuro.
+  El primary color en dark mode es el acento rosa (#FB7185).
+-->
+<resources>
+    <!-- Color de las notificaciones FCM en dark mode (primary dark del design system) -->
+    <color name="notification_color">#FB7185</color>
+    <!-- Color de fondo del splash screen en dark mode -->
+    <color name="splash_background">#0F0505</color>
+</resources>

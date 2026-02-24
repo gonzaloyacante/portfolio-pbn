@@ -12,42 +12,19 @@ class _NavItem {
     required this.icon,
     required this.selectedIcon,
     required this.label,
+    this.isMainNav = false,
   });
 
   final String routeName;
   final IconData icon;
   final IconData selectedIcon;
   final String label;
+
+  /// Si `true`, aparece en la barra de navegación inferior (móvil).
+  final bool isMainNav;
 }
 
 // ── Navigation Items ──────────────────────────────────────────────────────────
-
-const List<_NavItem> _mainNavItems = [
-  _NavItem(
-    routeName: RouteNames.dashboard,
-    icon: Icons.dashboard_outlined,
-    selectedIcon: Icons.dashboard,
-    label: 'Dashboard',
-  ),
-  _NavItem(
-    routeName: RouteNames.projects,
-    icon: Icons.photo_library_outlined,
-    selectedIcon: Icons.photo_library,
-    label: 'Proyectos',
-  ),
-  _NavItem(
-    routeName: RouteNames.contacts,
-    icon: Icons.mail_outline,
-    selectedIcon: Icons.mail,
-    label: 'Contactos',
-  ),
-  _NavItem(
-    routeName: RouteNames.calendar,
-    icon: Icons.calendar_month_outlined,
-    selectedIcon: Icons.calendar_month,
-    label: 'Agenda',
-  ),
-];
 
 const List<_NavItem> _allNavItems = [
   _NavItem(
@@ -55,12 +32,14 @@ const List<_NavItem> _allNavItems = [
     icon: Icons.dashboard_outlined,
     selectedIcon: Icons.dashboard,
     label: 'Dashboard',
+    isMainNav: true,
   ),
   _NavItem(
     routeName: RouteNames.projects,
     icon: Icons.photo_library_outlined,
     selectedIcon: Icons.photo_library,
     label: 'Proyectos',
+    isMainNav: true,
   ),
   _NavItem(
     routeName: RouteNames.categories,
@@ -85,12 +64,14 @@ const List<_NavItem> _allNavItems = [
     icon: Icons.mail_outline,
     selectedIcon: Icons.mail,
     label: 'Contactos',
+    isMainNav: true,
   ),
   _NavItem(
     routeName: RouteNames.calendar,
     icon: Icons.calendar_month_outlined,
     selectedIcon: Icons.calendar_month,
     label: 'Agenda',
+    isMainNav: true,
   ),
   _NavItem(
     routeName: RouteNames.settings,
@@ -117,6 +98,10 @@ const List<_NavItem> _allNavItems = [
     label: 'Mi cuenta',
   ),
 ];
+
+/// Ítems que aparecen en la barra de navegación inferior (móvil).
+List<_NavItem> get _mainNavItems =>
+    _allNavItems.where((i) => i.isMainNav).toList();
 
 // ── AppScaffold ───────────────────────────────────────────────────────────────
 

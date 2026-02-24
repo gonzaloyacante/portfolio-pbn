@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Colores del sistema Android para PBN Admin.
+  El primary color coincide con el design system de la app (#6C0A0A).
+-->
+<resources>
+    <!-- Color de las notificaciones FCM en light mode (primary del design system) -->
+    <color name="notification_color">#6C0A0A</color>
+    <!-- Color de fondo del splash screen antes de que Flutter renderice -->
+    <color name="splash_background">#FFF8FC</color>
+</resources>

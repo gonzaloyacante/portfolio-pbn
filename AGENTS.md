@@ -334,9 +334,9 @@ Cards:         BorderRadius 40px (= rounded-[2.5rem])
 Transiciones:  500ms (= duration-500)
 ```
 
-### Google Calendar Integration (Reservas/Bookings)
+### Google Calendar Integration (Reservas/Bookings) — OBLIGATORIO
 
-La pantalla de Calendario tiene integración opcional con Google Calendar:
+La pantalla de Calendario tiene integración **obligatoria** con Google Calendar:
 
 **Flujo:**
 1. Usuario puede conectar su cuenta Google (OAuth2 con `google_sign_in`)
@@ -345,7 +345,7 @@ La pantalla de Calendario tiene integración opcional con Google Calendar:
 4. El evento incluye: título (nombre del cliente + servicio), descripción (notas, teléfono), fecha/hora de inicio y fin, recordatorio 1h antes
 5. Se puede desconectar la cuenta Google desde la pantalla de Account
 6. El token OAuth de Google se guarda en `flutter_secure_storage` (separado del JWT admin)
-7. **Retrocompatibilidad**: Si el usuario no tiene Google Calendar conectado, el botón muestra "Conectar Google Calendar"
+
 
 **Backend:** No requiere cambios en el backend. La integración es puramente client-side desde la app Flutter usando OAuth2 de Google directamente.
 
