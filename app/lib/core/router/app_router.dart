@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../features/app_settings/presentation/app_settings_page.dart';
 import '../../features/account/presentation/account_page.dart';
@@ -49,6 +50,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     navigatorKey: routerNavigatorKey,
     initialLocation: RoutePaths.login,
     debugLogDiagnostics: false,
+    observers: [SentryNavigatorObserver()],
     refreshListenable: notifier,
     redirect: notifier.redirect,
     routes: _routes,

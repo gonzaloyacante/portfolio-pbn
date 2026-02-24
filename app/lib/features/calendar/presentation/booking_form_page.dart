@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/booking_model.dart';
@@ -97,11 +98,14 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
       await repo.createBooking(data);
       ref.invalidate(bookingsListProvider);
       if (mounted) context.pop();
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo crear la reserva. Inténtalo de nuevo.'),
+          ),
+        );
         setState(() => _saving = false);
       }
     }

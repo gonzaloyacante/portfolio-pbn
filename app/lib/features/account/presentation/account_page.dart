@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/auth/auth_provider.dart';
@@ -54,7 +55,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Contraseña actualizada correctamente')),
       );
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       if (!mounted) return;
       final msg = e.toString().contains('actual')
           ? 'Contraseña actual incorrecta'

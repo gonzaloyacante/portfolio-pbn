@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:sentry_flutter/sentry_flutter.dart';
+
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -46,7 +48,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
               tooltip: 'Volver',
             ),
             title: Text(
@@ -59,7 +61,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => context.pop(),
               tooltip: 'Volver',
             ),
             title: const Text('Error'),
@@ -125,8 +127,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       }
       ref.invalidate(projectsListProvider);
       if (mounted) context.pop();
-    } catch (e) {
-      setState(() => _errorMsg = e.toString());
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      setState(
+        () => _errorMsg = 'No se pudo guardar el proyecto. Inténtalo de nuevo.',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -139,7 +144,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => context.pop(),
             tooltip: 'Volver',
           ),
           title: Text(widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto'),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../core/debug/debug_log_page.dart';
@@ -54,7 +55,8 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
           behavior: SnackBarBehavior.floating,
         ),
       );
-    } catch (e) {
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
       AppLogger.error('AppSettings: error clearing cache', e);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
