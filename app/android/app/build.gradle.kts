@@ -22,7 +22,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "es.paolabolivar.admin"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         applicationId = "es.paolabolivar.admin"
-        minSdk = 23        // Android 6.0 – cubre el 97%+ de Android activo
+        minSdk = flutter.minSdkVersion        // Android 6.0 – cubre el 97%+ de Android activo
         targetSdk = 35     // Android 15 – requerido por Play Store a partir de 2025
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -85,18 +85,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-    }
-
-    // ── Splits (APK por ABI para Play Store) ─────────────────────────────
-    // Esto reduce el tamaño del APK descargado por el usuario.
-    // Con App Bundle (aab) esto es automático, pero de todos modos se mantiene.
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("arm64-v8a", "x86_64")
-            isUniversalApk = false
         }
     }
 
