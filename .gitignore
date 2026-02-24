@@ -79,6 +79,7 @@ id_rsa.pub
 /app/.env*
 
 # Keystore & signing (do NOT commit keystore or signing properties)
+app/keystore/
 app/keystore/*.jks
 app/keystore/*.keystore
 app/android/key.properties
