@@ -13,14 +13,23 @@ import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
 // Patrones de slug compilados una sola vez
+// ignore: deprecated_member_use
 final _reAccentA = RegExp(r'[áàâä]');
+// ignore: deprecated_member_use
 final _reAccentE = RegExp(r'[éèêë]');
+// ignore: deprecated_member_use
 final _reAccentI = RegExp(r'[íìîï]');
+// ignore: deprecated_member_use
 final _reAccentO = RegExp(r'[óòôö]');
+// ignore: deprecated_member_use
 final _reAccentU = RegExp(r'[úùûü]');
+// ignore: deprecated_member_use
 final _reNyeN = RegExp(r'[ñ]');
+// ignore: deprecated_member_use
 final _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
+// ignore: deprecated_member_use
 final _reWhitespace = RegExp(r'\s+');
+// ignore: deprecated_member_use
 final _reSlugValid = RegExp(r'^[a-z0-9-]+$');
 
 class CategoryFormPage extends ConsumerStatefulWidget {

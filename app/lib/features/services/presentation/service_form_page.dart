@@ -13,8 +13,11 @@ import '../data/services_repository.dart';
 import '../providers/services_provider.dart';
 
 // Patrones de slug compilados una sola vez
+// ignore: deprecated_member_use
 final _reServiceWhitespace = RegExp(r'\s+');
+// ignore: deprecated_member_use
 final _reServiceNonSlug = RegExp(r'[^a-z0-9-]');
+// ignore: deprecated_member_use
 final _reServiceSlugValid = RegExp(r'^[a-z0-9-]+$');
 
 class ServiceFormPage extends ConsumerStatefulWidget {
