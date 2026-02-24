@@ -44,18 +44,18 @@ class _AppState extends ConsumerState<App> {
     final themeMode = ref.watch(themeModeProvider);
 
     // Escuchar cambios de auth para registrar/desregistrar token FCM.
-    ref.listen<AsyncValue<AuthState>>(authNotifierProvider, (previous, next) {
-      final prevState = previous?.valueOrNull;
-      final nextState = next.valueOrNull;
+    ref.listen<AsyncValue<AuthState>>(authProvider, (previous, next) {
+      final prevState = previous?.whenOrNull(data: (v) => v);
+      final nextState = next.whenOrNull(data: (v) => v);
 
       // Login exitoso → registrar token FCM
       if (nextState is Authenticated && prevState is! Authenticated) {
-        ref.read(pushRegistrationNotifierProvider.notifier).register();
+        ref.read(pushRegistrationProvider.notifier).register();
       }
 
       // Logout → desregistrar token FCM
       if (nextState is Unauthenticated && prevState is Authenticated) {
-        ref.read(pushRegistrationNotifierProvider.notifier).unregister();
+        ref.read(pushRegistrationProvider.notifier).unregister();
       }
     });
 

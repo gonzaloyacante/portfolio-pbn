@@ -26,7 +26,7 @@ Stream<ConnectivityResult> connectivity(Ref ref) {
 /// Esto evita bloquear la UI en el arranque por razones de red.
 @riverpod
 bool isOnline(Ref ref) {
-  final status = ref.watch(connectivityProvider).valueOrNull;
+  final status = ref.watch(connectivityProvider).whenOrNull(data: (v) => v);
   // Mientras no haya dato, asumir online (optimista).
   if (status == null) return true;
   return status != ConnectivityResult.none;

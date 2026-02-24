@@ -27,7 +27,7 @@ final googleCalendarServiceProvider =
 typedef GoogleCalendarServiceRef =
     AutoDisposeProviderRef<GoogleCalendarService>;
 String _$googleCalendarNotifierHash() =>
-    r'51a96bd078aa7cf057b377a2698675cfeb2d1b96';
+    r'89e0a67d051b74f6a3b29209f57e1647e86f6561';
 
 /// Gestiona el estado de autenticación de Google Calendar y la creación
 /// de eventos en el calendario del usuario.

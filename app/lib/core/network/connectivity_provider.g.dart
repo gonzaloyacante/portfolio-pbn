@@ -27,7 +27,7 @@ final connectivityProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ConnectivityRef = AutoDisposeStreamProviderRef<ConnectivityResult>;
-String _$isOnlineHash() => r'b8607c69802976aed57fbeb7cf1036fc2445e8c1';
+String _$isOnlineHash() => r'ea7a79482fd851aa1a2ae3d778d77068100ae4b3';
 
 /// `true` si el dispositivo tiene algún tipo de conexión activa.
 ///

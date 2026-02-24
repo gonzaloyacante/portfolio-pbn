@@ -99,3 +99,7 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
     }
   }
 }
+
+// Compat alias: previously the provider was exposed as `pushRegistrationProvider`.
+// Keep an alias for existing call sites.
+final pushRegistrationProvider = pushRegistrationNotifierProvider;

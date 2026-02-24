@@ -90,7 +90,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
   Future<void> _clearTokens() async {
     try {
       await ref.read(tokenStorageProvider).clearAll();
-      ref.invalidate(authNotifierProvider);
+      ref.invalidate(authProvider);
       AppLogger.warn('[Debug] Tokens eliminados — forzando logout');
       if (mounted) _showSnack('⚠️ Tokens eliminados. Se cerrará la sesión.');
     } catch (e) {
@@ -155,7 +155,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
   @override
   Widget build(BuildContext context) {
     final buildInfoAsync = ref.watch(appBuildInfoProvider);
-    final authAsync = ref.watch(authNotifierProvider);
+    final authAsync = ref.watch(authProvider);
     final pendingSync = ref.watch(pendingSyncCountProvider);
     final colorScheme = Theme.of(context).colorScheme;
 

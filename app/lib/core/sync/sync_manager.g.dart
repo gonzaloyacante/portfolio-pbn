@@ -25,7 +25,7 @@ final syncStatusProvider = AutoDisposeProvider<SyncStatus>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SyncStatusRef = AutoDisposeProviderRef<SyncStatus>;
-String _$syncManagerHash() => r'fe3a78cca852c5bc5beacaea87c324c7b463a434';
+String _$syncManagerHash() => r'09bafdd21baf3a766c4d3d44e4b5aaab30375899';
 
 /// Procesa la cola de operaciones pendientes cuando hay conectividad.
 ///

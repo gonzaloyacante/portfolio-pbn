@@ -69,14 +69,14 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
   Future<void> _logout() async {
     // Desregistrar token FCM antes de invalidar la sesión.
-    await ref.read(pushRegistrationNotifierProvider.notifier).unregister();
-    await ref.read(authNotifierProvider.notifier).logout();
+    await ref.read(pushRegistrationProvider.notifier).unregister();
+    await ref.read(authProvider.notifier).logout();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authAsync = ref.watch(authNotifierProvider);
-    final authState = authAsync.valueOrNull;
+    final authAsync = ref.watch(authProvider);
+    final authState = authAsync.whenOrNull(data: (v) => v);
     final user = authState is Authenticated ? authState.user : null;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -300,7 +300,7 @@ class _PasswordField extends StatelessWidget {
 class _GoogleCalendarCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gcAsync = ref.watch(googleCalendarNotifierProvider);
+    final gcAsync = ref.watch(googleCalendarProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return gcAsync.when(
@@ -335,9 +335,8 @@ class _GoogleCalendarCard extends ConsumerWidget {
                   )
                 : isConnected
                 ? TextButton(
-                    onPressed: () => ref
-                        .read(googleCalendarNotifierProvider.notifier)
-                        .signOut(),
+                    onPressed: () =>
+                        ref.read(googleCalendarProvider.notifier).signOut(),
                     style: TextButton.styleFrom(
                       foregroundColor: colorScheme.error,
                     ),
@@ -346,9 +345,7 @@ class _GoogleCalendarCard extends ConsumerWidget {
                 : null,
             onTap: isConnected || isConnecting
                 ? null
-                : () => ref
-                      .read(googleCalendarNotifierProvider.notifier)
-                      .signIn(),
+                : () => ref.read(googleCalendarProvider.notifier).signIn(),
           ),
         );
       },

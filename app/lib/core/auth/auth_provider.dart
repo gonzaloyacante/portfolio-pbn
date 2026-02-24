@@ -142,3 +142,7 @@ class AuthNotifier extends _$AuthNotifier {
     }
   }
 }
+
+// Compat alias (generado antes usaba el nombre `authProvider`).
+// Mantener para compatibilidad con código existente.
+final authProvider = authNotifierProvider;

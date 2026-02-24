@@ -62,7 +62,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
 
     await ref
-        .read(authNotifierProvider.notifier)
+        .read(authProvider.notifier)
         .login(
           email: _emailController.text.trim(),
           password: _passwordController.text,
@@ -74,9 +74,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    final authAsync = ref.watch(authNotifierProvider);
+    final authAsync = ref.watch(authProvider);
     final isLoading = authAsync.value == const AuthState.authenticating();
-    final errorMsg = authAsync.valueOrNull?.mapOrNull(error: (e) => e.message);
+    final errorMsg = authAsync
+        .whenOrNull(data: (v) => v)
+        ?.mapOrNull(error: (e) => e.message);
 
     return LoadingOverlay(
       isLoading: isLoading,

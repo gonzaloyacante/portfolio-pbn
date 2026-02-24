@@ -482,7 +482,7 @@ class _GoogleCalendarSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gcAsync = ref.watch(googleCalendarNotifierProvider);
+    final gcAsync = ref.watch(googleCalendarProvider);
 
     return gcAsync.when(
       loading: () => const SizedBox.shrink(),
@@ -519,9 +519,11 @@ class _GoogleCalendarSection extends ConsumerWidget {
   ) async {
     if (!isConnected) {
       // Conectar cuenta Google primero.
-      await ref.read(googleCalendarNotifierProvider.notifier).signIn();
+      await ref.read(googleCalendarProvider.notifier).signIn();
 
-      final newState = ref.read(googleCalendarNotifierProvider).valueOrNull;
+      final newState = ref
+          .read(googleCalendarProvider)
+          .whenOrNull(data: (v) => v);
       if (newState is! GoogleAuthConnected || !context.mounted) return;
     }
 
@@ -549,7 +551,7 @@ class _GoogleCalendarSection extends ConsumerWidget {
 
     try {
       final created = await ref
-          .read(googleCalendarNotifierProvider.notifier)
+          .read(googleCalendarProvider.notifier)
           .createEvent(event);
 
       if (!context.mounted) return;

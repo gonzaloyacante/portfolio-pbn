@@ -90,7 +90,7 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
   /// Retorna `true` si se creó correctamente, `false` si no hay sesión activa.
   /// Lanza [Exception] si la API devuelve error.
   Future<bool> createEvent(GoogleCalendarEvent event) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.whenOrNull(data: (v) => v);
     if (currentState is! GoogleAuthConnected) {
       AppLogger.warn('GoogleCalendarNotifier: createEvent sin sesión activa');
       return false;
@@ -101,3 +101,7 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
     return true;
   }
 }
+
+// Compat alias: older code expected `googleCalendarProvider`.
+final AutoDisposeAsyncNotifierProvider<GoogleCalendarNotifier, GoogleAuthState>
+googleCalendarProvider = googleCalendarNotifierProvider;

@@ -65,9 +65,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// que reevalúe el guard de redirección.
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
-    // Escuchar al authNotifierProvider y notificar al router ante cualquier cambio.
+    // Escuchar al authProvider y notificar al router ante cualquier cambio.
     _subscription = _ref.listen<AsyncValue<AuthState>>(
-      authNotifierProvider,
+      authProvider,
       (_, _) => notifyListeners(),
     );
   }
@@ -89,13 +89,13 @@ class RouterNotifier extends ChangeNotifier {
   /// - Autenticado + en login → /dashboard
   /// - No autenticado + fuera de login → /login
   String? redirect(BuildContext context, GoRouterState state) {
-    final authAsync = _ref.read(authNotifierProvider);
+    final authAsync = _ref.read(authProvider);
     final isLoginRoute = state.matchedLocation == RoutePaths.login;
 
     // Mientras se restaura la sesión → no interrumpir.
     if (authAsync.isLoading) return null;
 
-    final authState = authAsync.valueOrNull;
+    final authState = authAsync.whenOrNull(data: (v) => v);
 
     // Estado de error o no autenticado → ir al login si no está ya ahí.
     if (authState == null ||
