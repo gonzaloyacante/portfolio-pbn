@@ -1,7 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -82,24 +84,28 @@ class _DashboardContent extends StatelessWidget {
                 label: 'Proyectos',
                 value: stats.totalProjects.toString(),
                 color: AppColors.lightPrimary,
+                onTap: () => context.goNamed(RouteNames.projects),
               ),
               StatCard(
                 icon: Icons.category_outlined,
                 label: 'Categorías',
                 value: stats.totalCategories.toString(),
                 color: const Color(0xFF7C3AED),
+                onTap: () => context.goNamed(RouteNames.categories),
               ),
               StatCard(
                 icon: Icons.design_services_outlined,
                 label: 'Servicios',
                 value: stats.totalServices.toString(),
                 color: const Color(0xFF0891B2),
+                onTap: () => context.goNamed(RouteNames.services),
               ),
               StatCard(
                 icon: Icons.format_quote_outlined,
                 label: 'Testimonios',
                 value: stats.totalTestimonials.toString(),
                 color: AppColors.success,
+                onTap: () => context.goNamed(RouteNames.testimonials),
               ),
               StatCard(
                 icon: Icons.mail_outline_rounded,
@@ -108,6 +114,7 @@ class _DashboardContent extends StatelessWidget {
                 trend: stats.newContacts > 0 ? '+${stats.newContacts}' : null,
                 trendPositive: true,
                 color: AppColors.darkPrimary,
+                onTap: () => context.goNamed(RouteNames.contacts),
               ),
               StatCard(
                 icon: Icons.calendar_month_outlined,
@@ -118,6 +125,7 @@ class _DashboardContent extends StatelessWidget {
                     : null,
                 trendPositive: stats.pendingBookings == 0,
                 color: AppColors.warning,
+                onTap: () => context.goNamed(RouteNames.calendar),
               ),
               StatCard(
                 icon: Icons.remove_red_eye_outlined,
@@ -264,19 +272,54 @@ class _PageViewsChart extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 120,
+              height: 160,
               child: LineChart(
                 LineChartData(
+                  lineTouchData: LineTouchData(
+                    handleBuiltInTouches: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipColor: (_) =>
+                          scheme.inverseSurface.withValues(alpha: 0.9),
+                      getTooltipItems: (spots) => spots
+                          .map(
+                            (s) => LineTooltipItem(
+                              '${s.y.toInt()} visitas',
+                              TextStyle(
+                                color: scheme.onInverseSurface,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
                   lineBarsData: [
                     LineChartBarData(
                       spots: spots.isEmpty ? [const FlSpot(0, 0)] : spots,
                       isCurved: true,
+                      curveSmoothness: 0.35,
                       color: AppColors.lightPrimary,
-                      barWidth: 2,
-                      dotData: const FlDotData(show: false),
+                      barWidth: 2.5,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, _, _, _) => FlDotCirclePainter(
+                          radius: 3,
+                          color: AppColors.lightPrimary,
+                          strokeWidth: 1.5,
+                          strokeColor: Colors.white,
+                        ),
+                      ),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: AppColors.lightPrimary.withValues(alpha: 0.12),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColors.lightPrimary.withValues(alpha: 0.18),
+                            AppColors.lightPrimary.withValues(alpha: 0.0),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -381,9 +424,25 @@ class _BookingsBarChart extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             SizedBox(
-              height: 120,
+              height: 160,
               child: BarChart(
                 BarChartData(
+                  barTouchData: BarTouchData(
+                    handleBuiltInTouches: true,
+                    touchTooltipData: BarTouchTooltipData(
+                      getTooltipColor: (_) =>
+                          scheme.inverseSurface.withValues(alpha: 0.9),
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) =>
+                          BarTooltipItem(
+                            '${rod.toY.toInt()} reservas',
+                            TextStyle(
+                              color: scheme.onInverseSurface,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                    ),
+                  ),
                   barGroups: barGroups,
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(

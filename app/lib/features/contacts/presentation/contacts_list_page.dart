@@ -107,11 +107,11 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                 SearchBar(
                   controller: _searchController,
                   hintText: 'Buscar por nombre, email…',
-                  leading: const Icon(Icons.search),
+                  leading: const Icon(Icons.search_rounded),
                   trailing: [
                     if (_search.isNotEmpty)
                       IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: const Icon(Icons.clear_rounded),
                         onPressed: () {
                           _searchController.clear();
                           _onSearch('');
@@ -119,6 +119,7 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                       ),
                   ],
                   onChanged: _onSearch,
+                  elevation: const WidgetStatePropertyAll(0),
                 ),
                 const SizedBox(height: 10),
                 SingleChildScrollView(

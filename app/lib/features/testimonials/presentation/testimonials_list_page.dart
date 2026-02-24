@@ -122,11 +122,11 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                 SearchBar(
                   controller: _searchController,
                   hintText: 'Buscar testimonios…',
-                  leading: const Icon(Icons.search),
+                  leading: const Icon(Icons.search_rounded),
                   trailing: [
                     if (_search.isNotEmpty)
                       IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: const Icon(Icons.clear_rounded),
                         onPressed: () {
                           _searchController.clear();
                           _onSearch('');
@@ -134,6 +134,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                       ),
                   ],
                   onChanged: _onSearch,
+                  elevation: const WidgetStatePropertyAll(0),
                 ),
                 const SizedBox(height: 12),
                 SingleChildScrollView(

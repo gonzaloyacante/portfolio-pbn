@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
@@ -185,13 +186,23 @@ class _AccountPageState extends ConsumerState<AccountPage> {
             ),
             const SizedBox(height: 24),
             // ── Versión ───────────────────────────────────────────────────
-            Center(
-              child: Text(
-                'Versión 1.0.0',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-              ),
+            FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                final version = snapshot.data?.version ?? '—';
+                final build = snapshot.data?.buildNumber ?? '';
+                final label = build.isNotEmpty
+                    ? 'Versión $version ($build)'
+                    : 'Versión $version';
+                return Center(
+                  child: Text(
+                    label,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

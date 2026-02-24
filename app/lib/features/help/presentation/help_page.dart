@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// Pantalla de ayuda — información de la app y guía de uso básica.
 /// No requiere API ni estado externo.
@@ -18,23 +19,34 @@ class HelpPage extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        children: const [
-          _SectionCard(
-            icon: Icons.info_outline,
-            title: 'Acerca de la app',
-            children: [
-              _HelpItem(label: 'Nombre', value: 'Portfolio PBN — Admin'),
-              _HelpItem(label: 'Versión', value: '1.0.0'),
-              _HelpItem(
-                label: 'Descripción',
-                value:
-                    'Panel de administración de Paola Bolívar Nievas. '
-                    'Gestiona proyectos, servicios, testimonios, '
-                    'contactos, reservas y configuración del sitio.',
-              ),
-            ],
+        children: [
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snap) {
+              final version = snap.data != null
+                  ? '${snap.data!.version} (build ${snap.data!.buildNumber})'
+                  : '…';
+              return _SectionCard(
+                icon: Icons.info_outline,
+                title: 'Acerca de la app',
+                children: [
+                  const _HelpItem(
+                    label: 'Nombre',
+                    value: 'Portfolio PBN — Admin',
+                  ),
+                  _HelpItem(label: 'Versión', value: version),
+                  const _HelpItem(
+                    label: 'Descripción',
+                    value:
+                        'Panel de administración de Paola Bolívar Nievas. '
+                        'Gestiona proyectos, servicios, testimonios, '
+                        'contactos, reservas y configuración del sitio.',
+                  ),
+                ],
+              );
+            },
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           _SectionCard(
             icon: Icons.dashboard_outlined,
             title: 'Secciones del panel',

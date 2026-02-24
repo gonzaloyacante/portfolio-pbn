@@ -81,11 +81,11 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
             child: SearchBar(
               controller: _searchController,
               hintText: 'Buscar servicios…',
-              leading: const Icon(Icons.search),
+              leading: const Icon(Icons.search_rounded),
               trailing: [
                 if (_search.isNotEmpty)
                   IconButton(
-                    icon: const Icon(Icons.clear),
+                    icon: const Icon(Icons.clear_rounded),
                     onPressed: () {
                       _searchController.clear();
                       _onSearch('');
@@ -93,6 +93,7 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                   ),
               ],
               onChanged: _onSearch,
+              elevation: const WidgetStatePropertyAll(0),
             ),
           ),
           Expanded(
@@ -151,6 +152,8 @@ class _ServiceTile extends StatelessWidget {
         : 'Sin precio';
 
     return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.15),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -201,12 +202,24 @@ class _ProjectTile extends StatelessWidget {
               // Thumbnail
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  item.thumbnailUrl ?? '',
+                child: CachedNetworkImage(
+                  imageUrl: item.thumbnailUrl ?? '',
                   width: 64,
                   height: 64,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, _, _) => Container(
+                  placeholder: (_, _) => Container(
+                    width: 64,
+                    height: 64,
+                    color: scheme.surfaceContainerHighest,
+                    child: const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (_, _, _) => Container(
                     width: 64,
                     height: 64,
                     color: scheme.surfaceContainerHighest,
