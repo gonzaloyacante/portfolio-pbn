@@ -99,6 +99,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create minimal .env for tests
+        run: |
+          cat > .env << EOF
+          API_BASE_URL=http://localhost:3000
+          ENVIRONMENT=test
+          SENTRY_DSN=
+          FCM_VAPID_KEY=
+          EOF
+
       - name: Run tests
         run: flutter test --reporter=expanded
 
