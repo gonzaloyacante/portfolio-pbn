@@ -7,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -170,7 +171,10 @@ class _ProjectsList extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final item = items[index];
-        return _ProjectTile(item: item, onDelete: onDelete);
+        return FadeSlideIn(
+          delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
+          child: _ProjectTile(item: item, onDelete: onDelete),
+        );
       },
     );
   }

@@ -116,6 +116,20 @@ class RouterNotifier extends ChangeNotifier {
   }
 }
 
+// ── Helpers de transición ─────────────────────────────────────────────────────
+
+/// Página con transición de fade suave (200 ms) para formularios y detalles.
+CustomTransitionPage<void> _fadePage({
+  required GoRouterState state,
+  required Widget child,
+}) => CustomTransitionPage<void>(
+  key: state.pageKey,
+  child: child,
+  transitionDuration: const Duration(milliseconds: 200),
+  transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+      FadeTransition(opacity: animation, child: child),
+);
+
 // ── Rutas ─────────────────────────────────────────────────────────────────────
 
 final List<RouteBase> _routes = [
@@ -127,157 +141,191 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.dashboard,
     name: RouteNames.dashboard,
-    builder: (context, state) => const DashboardPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const DashboardPage()),
   ),
   GoRoute(
     path: RoutePaths.projects,
     name: RouteNames.projects,
-    builder: (context, state) => const ProjectsListPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ProjectsListPage()),
   ),
   GoRoute(
     path: RoutePaths.projectNew,
     name: RouteNames.projectNew,
-    builder: (context, state) => const ProjectFormPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ProjectFormPage()),
   ),
   GoRoute(
     path: RoutePaths.projectEdit,
     name: RouteNames.projectEdit,
-    builder: (context, state) =>
-        ProjectFormPage(projectId: state.pathParameters['id']),
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: ProjectFormPage(projectId: state.pathParameters['id']),
+    ),
   ),
   // ── Categorías ────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.categories,
     name: RouteNames.categories,
-    builder: (context, state) => const CategoriesListPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const CategoriesListPage()),
   ),
   GoRoute(
     path: RoutePaths.categoryNew,
     name: RouteNames.categoryNew,
-    builder: (context, state) => const CategoryFormPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const CategoryFormPage()),
   ),
   GoRoute(
     path: RoutePaths.categoryEdit,
     name: RouteNames.categoryEdit,
-    builder: (context, state) =>
-        CategoryFormPage(categoryId: state.pathParameters['id']),
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: CategoryFormPage(categoryId: state.pathParameters['id']),
+    ),
   ),
   // ── Servicios ────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.services,
     name: RouteNames.services,
-    builder: (context, state) => const ServicesListPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ServicesListPage()),
   ),
   GoRoute(
     path: RoutePaths.serviceNew,
     name: RouteNames.serviceNew,
-    builder: (context, state) => const ServiceFormPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ServiceFormPage()),
   ),
   GoRoute(
     path: RoutePaths.serviceEdit,
     name: RouteNames.serviceEdit,
-    builder: (context, state) =>
-        ServiceFormPage(serviceId: state.pathParameters['id']),
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: ServiceFormPage(serviceId: state.pathParameters['id']),
+    ),
   ),
   // ── Testimonios ───────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.testimonials,
     name: RouteNames.testimonials,
-    builder: (context, state) => const TestimonialsListPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const TestimonialsListPage()),
   ),
   GoRoute(
     path: RoutePaths.testimonialNew,
     name: RouteNames.testimonialNew,
-    builder: (context, state) => const TestimonialFormPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const TestimonialFormPage()),
   ),
   GoRoute(
     path: RoutePaths.testimonialEdit,
     name: RouteNames.testimonialEdit,
-    builder: (context, state) =>
-        TestimonialFormPage(testimonialId: state.pathParameters['id']),
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: TestimonialFormPage(testimonialId: state.pathParameters['id']),
+    ),
   ),
   // ── Contactos ─────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.contacts,
     name: RouteNames.contacts,
-    builder: (context, state) => const ContactsListPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ContactsListPage()),
   ),
   GoRoute(
     path: RoutePaths.contactDetail,
     name: RouteNames.contactDetail,
-    builder: (context, state) =>
-        ContactDetailPage(contactId: state.pathParameters['id']!),
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: ContactDetailPage(contactId: state.pathParameters['id']!),
+    ),
   ),
   // ── Calendario / Reservas ─────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.calendar,
     name: RouteNames.calendar,
-    builder: (context, state) => const CalendarPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const CalendarPage()),
   ),
   GoRoute(
     path: RoutePaths.bookingNew,
     name: RouteNames.bookingNew,
-    builder: (context, state) => const BookingFormPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const BookingFormPage()),
   ),
   GoRoute(
     path: RoutePaths.bookingDetail,
     name: RouteNames.bookingDetail,
-    builder: (context, state) =>
-        BookingDetailPage(bookingId: state.pathParameters['id']!),
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: BookingDetailPage(bookingId: state.pathParameters['id']!),
+    ),
   ),
   // ── Settings ──────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.settings,
     name: RouteNames.settings,
-    builder: (context, state) => const SettingsPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsPage()),
   ),
   GoRoute(
     path: RoutePaths.settingsAbout,
     name: RouteNames.settingsAbout,
-    builder: (context, state) => const SettingsAboutPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsAboutPage()),
   ),
   GoRoute(
     path: RoutePaths.settingsContact,
     name: RouteNames.settingsContact,
-    builder: (context, state) => const SettingsContactPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsContactPage()),
   ),
   GoRoute(
     path: RoutePaths.settingsTheme,
     name: RouteNames.settingsTheme,
-    builder: (context, state) => const SettingsThemePage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsThemePage()),
   ),
   GoRoute(
     path: RoutePaths.settingsSite,
     name: RouteNames.settingsSite,
-    builder: (context, state) => const SettingsSitePage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsSitePage()),
   ),
   GoRoute(
     path: RoutePaths.settingsSocial,
     name: RouteNames.settingsSocial,
-    builder: (context, state) => const SettingsSocialPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsSocialPage()),
   ),
   // ── Cuenta ────────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.account,
     name: RouteNames.account,
-    builder: (_, _) => const AccountPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const AccountPage()),
   ),
   // ── Papelera ──────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.trash,
     name: RouteNames.trash,
-    builder: (_, _) => const TrashPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const TrashPage()),
   ),
   // ── Ayuda ───────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.help,
     name: RouteNames.help,
-    builder: (_, _) => const HelpPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const HelpPage()),
   ),
   // ── Preferencias de la App ───────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.appSettings,
     name: RouteNames.appSettings,
-    builder: (_, _) => const AppSettingsPage(),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const AppSettingsPage()),
   ),
 ];

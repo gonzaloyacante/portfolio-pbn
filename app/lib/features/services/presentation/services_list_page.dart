@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -122,9 +123,12 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         itemCount: paginated.data.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 8),
-                        itemBuilder: (ctx, i) => _ServiceTile(
-                          item: paginated.data[i],
-                          onDelete: _delete,
+                        itemBuilder: (ctx, i) => FadeSlideIn(
+                          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+                          child: _ServiceTile(
+                            item: paginated.data[i],
+                            onDelete: _delete,
+                          ),
                         ),
                       ),
                     ),

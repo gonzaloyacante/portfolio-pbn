@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -191,11 +192,16 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                         separatorBuilder: (_, _) => const SizedBox(height: 6),
                         itemBuilder: (ctx, i) {
                           final item = paginated.data[i];
-                          return _ContactTile(
-                            item: item,
-                            priorityColor: _priorityColor(ctx, item.priority),
-                            statusIcon: _statusIcon(item.status),
-                            onDelete: _delete,
+                          return FadeSlideIn(
+                            delay: Duration(
+                              milliseconds: (i * 40).clamp(0, 300),
+                            ),
+                            child: _ContactTile(
+                              item: item,
+                              priorityColor: _priorityColor(ctx, item.priority),
+                              statusIcon: _statusIcon(item.status),
+                              onDelete: _delete,
+                            ),
                           );
                         },
                       ),
