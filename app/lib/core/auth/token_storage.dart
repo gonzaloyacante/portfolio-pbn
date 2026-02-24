@@ -12,7 +12,7 @@ final tokenStorageProvider = Provider<TokenStorage>((ref) => TokenStorage());
 class TokenStorage {
   TokenStorage()
     : _storage = const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
+        aOptions: AndroidOptions(),
         iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
       );
 
