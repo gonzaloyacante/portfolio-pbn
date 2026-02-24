@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/auth/auth_provider.dart';
 import 'core/auth/auth_state.dart';
+import 'core/debug/debug_panel.dart';
 import 'core/notifications/notification_handler.dart';
 import 'core/notifications/push_provider.dart';
 import 'core/router/app_router.dart';
@@ -68,6 +70,68 @@ class _AppState extends ConsumerState<App> {
 
       // ── Router ────────────────────────────────────────────────────────────
       routerConfig: router,
+      // ── Debug overlay (solo debug/profile) ───────────────────────────
+      builder: kReleaseMode
+          ? null
+          : (context, child) {
+              return Stack(
+                children: [
+                  child ?? const SizedBox.shrink(),
+                  // Badge flotante de entorno (esquina inferior derecha)
+                  const _DebugEnvBadge(),
+                ],
+              );
+            },
     );
+  }
+}
+
+// ── _DebugEnvBadge ───────────────────────────────────────────────────────────
+
+/// Badge flotante que indica el entorno (DEV/STAGING/PROD).
+/// Solo visible en debug/profile mode. Un tap abre el [DebugPanel].
+class _DebugEnvBadge extends StatelessWidget {
+  const _DebugEnvBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: MediaQuery.of(context).padding.bottom + 72,
+      right: 12,
+      child: SafeArea(
+        child: GestureDetector(
+          onTap: () => DebugPanel.show(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: Colors.green.shade800.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.25),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.developer_mode, size: 12, color: Colors.white),
+                SizedBox(width: 4),
+                Text(
+                  'DEV',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),    );
   }
 }

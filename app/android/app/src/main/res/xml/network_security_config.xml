@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Configuración de seguridad de red para la app PBN Admin.
+
+  En PRODUCCIÓN (release):
+    - Solo se permite HTTPS. HTTP está bloqueado.
+    - Certificados CA estándar del sistema.
+
+  En DEBUG:
+    - Se permite HTTP a cualquier host (útil con proxies como Charles/mitmproxy).
+    - El bloque <debug-overrides> se ignora en builds release.
+
+  Referencia: https://developer.android.com/training/articles/security-config
+-->
+<network-security-config>
+    <!-- Política base: solo HTTPS, sin cleartext -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <!-- Confiar en las CAs del sistema (Play Store / Android) -->
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+    <!-- Desarrollo: permitir HTTP y CAs de usuario (para mitmproxy) -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </debug-overrides>
+</network-security-config>
