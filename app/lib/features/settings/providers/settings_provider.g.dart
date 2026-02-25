@@ -6,111 +6,248 @@ part of 'settings_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(settingsRepository)
+final settingsRepositoryProvider = SettingsRepositoryProvider._();
+
+final class SettingsRepositoryProvider
+    extends
+        $FunctionalProvider<
+          SettingsRepository,
+          SettingsRepository,
+          SettingsRepository
+        >
+    with $Provider<SettingsRepository> {
+  SettingsRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'settingsRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$settingsRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<SettingsRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SettingsRepository create(Ref ref) {
+    return settingsRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SettingsRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SettingsRepository>(value),
+    );
+  }
+}
+
 String _$settingsRepositoryHash() =>
     r'4368f37c1789efa0923609e03cfeedc62a70af08';
 
-/// See also [settingsRepository].
-@ProviderFor(settingsRepository)
-final settingsRepositoryProvider =
-    AutoDisposeProvider<SettingsRepository>.internal(
-      settingsRepository,
-      name: r'settingsRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$settingsRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+@ProviderFor(aboutSettings)
+final aboutSettingsProvider = AboutSettingsProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef SettingsRepositoryRef = AutoDisposeProviderRef<SettingsRepository>;
+final class AboutSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<AboutSettings>,
+          AboutSettings,
+          FutureOr<AboutSettings>
+        >
+    with $FutureModifier<AboutSettings>, $FutureProvider<AboutSettings> {
+  AboutSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'aboutSettingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$aboutSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<AboutSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<AboutSettings> create(Ref ref) {
+    return aboutSettings(ref);
+  }
+}
+
 String _$aboutSettingsHash() => r'de3ee197d5af19c4df045e30f91cb37949c3e0fe';
 
-/// See also [aboutSettings].
-@ProviderFor(aboutSettings)
-final aboutSettingsProvider = AutoDisposeFutureProvider<AboutSettings>.internal(
-  aboutSettings,
-  name: r'aboutSettingsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$aboutSettingsHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(contactSettings)
+final contactSettingsProvider = ContactSettingsProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef AboutSettingsRef = AutoDisposeFutureProviderRef<AboutSettings>;
+final class ContactSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ContactSettings>,
+          ContactSettings,
+          FutureOr<ContactSettings>
+        >
+    with $FutureModifier<ContactSettings>, $FutureProvider<ContactSettings> {
+  ContactSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'contactSettingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$contactSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<ContactSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<ContactSettings> create(Ref ref) {
+    return contactSettings(ref);
+  }
+}
+
 String _$contactSettingsHash() => r'4daf67676a7b81940123d6bb338f7f9a8056af0a';
 
-/// See also [contactSettings].
-@ProviderFor(contactSettings)
-final contactSettingsProvider =
-    AutoDisposeFutureProvider<ContactSettings>.internal(
-      contactSettings,
-      name: r'contactSettingsProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$contactSettingsHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+@ProviderFor(themeSettings)
+final themeSettingsProvider = ThemeSettingsProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ContactSettingsRef = AutoDisposeFutureProviderRef<ContactSettings>;
+final class ThemeSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ThemeSettings>,
+          ThemeSettings,
+          FutureOr<ThemeSettings>
+        >
+    with $FutureModifier<ThemeSettings>, $FutureProvider<ThemeSettings> {
+  ThemeSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'themeSettingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$themeSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<ThemeSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<ThemeSettings> create(Ref ref) {
+    return themeSettings(ref);
+  }
+}
+
 String _$themeSettingsHash() => r'df135a4764cedc9d86cce1b380a428a54288b3a5';
 
-/// See also [themeSettings].
-@ProviderFor(themeSettings)
-final themeSettingsProvider = AutoDisposeFutureProvider<ThemeSettings>.internal(
-  themeSettings,
-  name: r'themeSettingsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$themeSettingsHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(siteSettings)
+final siteSettingsProvider = SiteSettingsProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ThemeSettingsRef = AutoDisposeFutureProviderRef<ThemeSettings>;
+final class SiteSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<SiteSettings>,
+          SiteSettings,
+          FutureOr<SiteSettings>
+        >
+    with $FutureModifier<SiteSettings>, $FutureProvider<SiteSettings> {
+  SiteSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'siteSettingsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$siteSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<SiteSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<SiteSettings> create(Ref ref) {
+    return siteSettings(ref);
+  }
+}
+
 String _$siteSettingsHash() => r'bb4101134e9e70a0ab23e66043d8337e77d6c75e';
 
-/// See also [siteSettings].
-@ProviderFor(siteSettings)
-final siteSettingsProvider = AutoDisposeFutureProvider<SiteSettings>.internal(
-  siteSettings,
-  name: r'siteSettingsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$siteSettingsHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef SiteSettingsRef = AutoDisposeFutureProviderRef<SiteSettings>;
-String _$socialLinksHash() => r'6ee25cebb0dac38a0fbaf01cd0b92bf289f38d2c';
-
-/// See also [socialLinks].
 @ProviderFor(socialLinks)
-final socialLinksProvider =
-    AutoDisposeFutureProvider<List<SocialLink>>.internal(
-      socialLinks,
-      name: r'socialLinksProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$socialLinksHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final socialLinksProvider = SocialLinksProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef SocialLinksRef = AutoDisposeFutureProviderRef<List<SocialLink>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class SocialLinksProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<SocialLink>>,
+          List<SocialLink>,
+          FutureOr<List<SocialLink>>
+        >
+    with $FutureModifier<List<SocialLink>>, $FutureProvider<List<SocialLink>> {
+  SocialLinksProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'socialLinksProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$socialLinksHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<SocialLink>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<SocialLink>> create(Ref ref) {
+    return socialLinks(ref);
+  }
+}
+
+String _$socialLinksHash() => r'6ee25cebb0dac38a0fbaf01cd0b92bf289f38d2c';

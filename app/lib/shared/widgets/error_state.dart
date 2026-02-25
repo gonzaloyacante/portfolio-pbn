@@ -33,36 +33,44 @@ class ErrorState extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: colorScheme.errorContainer.withValues(alpha: 0.3),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    colorScheme.error.withValues(alpha: 0.15),
+                    colorScheme.error.withValues(alpha: 0.05),
+                  ],
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 icon ?? Icons.error_outline_rounded,
                 size: 32,
-                color: colorScheme.error,
+                color: colorScheme.error.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'Algo salió mal',
+              'Algo salio mal',
               style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 color: colorScheme.error,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               message,
               style: textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
+                height: 1.4,
               ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 24),
-              OutlinedButton.icon(
+              FilledButton.tonalIcon(
                 onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
+                icon: const Icon(Icons.refresh_rounded, size: 18),
                 label: const Text('Intentar de nuevo'),
               ),
             ],

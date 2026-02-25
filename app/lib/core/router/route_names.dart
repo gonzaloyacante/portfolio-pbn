@@ -5,6 +5,7 @@ class RouteNames {
 
   // ── Auth ───────────────────────────────────────────────────────────────────
   static const String login = 'login';
+  static const String splash = 'splash';
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
   static const String dashboard = 'dashboard';
@@ -65,6 +66,7 @@ class RoutePaths {
   RoutePaths._();
 
   static const String login = '/login';
+  static const String splash = '/splash';
   static const String dashboard = '/dashboard';
   static const String projects = '/projects';
   static const String projectNew = '/projects/new';

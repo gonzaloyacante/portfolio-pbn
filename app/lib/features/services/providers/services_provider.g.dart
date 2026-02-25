@@ -6,330 +6,182 @@ part of 'services_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$servicesListHash() => r'2b4e00b4dde5960e6397cef5e8f2b5082f04fd02';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
+@ProviderFor(servicesList)
+final servicesListProvider = ServicesListFamily._();
 
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
+final class ServicesListProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaginatedResponse<ServiceItem>>,
+          PaginatedResponse<ServiceItem>,
+          FutureOr<PaginatedResponse<ServiceItem>>
+        >
+    with
+        $FutureModifier<PaginatedResponse<ServiceItem>>,
+        $FutureProvider<PaginatedResponse<ServiceItem>> {
+  ServicesListProvider._({
+    required ServicesListFamily super.from,
+    required ({int page, String? search, bool? isActive, bool? isFeatured})
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'servicesListProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$servicesListHash();
+
+  @override
+  String toString() {
+    return r'servicesListProvider'
+        ''
+        '$argument';
   }
 
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  @$internal
+  @override
+  $FutureProviderElement<PaginatedResponse<ServiceItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaginatedResponse<ServiceItem>> create(Ref ref) {
+    final argument =
+        this.argument
+            as ({int page, String? search, bool? isActive, bool? isFeatured});
+    return servicesList(
+      ref,
+      page: argument.page,
+      search: argument.search,
+      isActive: argument.isActive,
+      isFeatured: argument.isFeatured,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ServicesListProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
   }
 }
 
-/// See also [servicesList].
-@ProviderFor(servicesList)
-const servicesListProvider = ServicesListFamily();
+String _$servicesListHash() => r'2b4e00b4dde5960e6397cef5e8f2b5082f04fd02';
 
-/// See also [servicesList].
-class ServicesListFamily
-    extends Family<AsyncValue<PaginatedResponse<ServiceItem>>> {
-  /// See also [servicesList].
-  const ServicesListFamily();
+final class ServicesListFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<PaginatedResponse<ServiceItem>>,
+          ({int page, String? search, bool? isActive, bool? isFeatured})
+        > {
+  ServicesListFamily._()
+    : super(
+        retry: null,
+        name: r'servicesListProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// See also [servicesList].
   ServicesListProvider call({
     int page = 1,
     String? search,
     bool? isActive,
     bool? isFeatured,
-  }) {
-    return ServicesListProvider(
+  }) => ServicesListProvider._(
+    argument: (
       page: page,
       search: search,
       isActive: isActive,
       isFeatured: isFeatured,
-    );
-  }
+    ),
+    from: this,
+  );
 
   @override
-  ServicesListProvider getProviderOverride(
-    covariant ServicesListProvider provider,
-  ) {
-    return call(
-      page: provider.page,
-      search: provider.search,
-      isActive: provider.isActive,
-      isFeatured: provider.isFeatured,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'servicesListProvider';
+  String toString() => r'servicesListProvider';
 }
 
-/// See also [servicesList].
-class ServicesListProvider
-    extends AutoDisposeFutureProvider<PaginatedResponse<ServiceItem>> {
-  /// See also [servicesList].
-  ServicesListProvider({
-    int page = 1,
-    String? search,
-    bool? isActive,
-    bool? isFeatured,
-  }) : this._internal(
-         (ref) => servicesList(
-           ref as ServicesListRef,
-           page: page,
-           search: search,
-           isActive: isActive,
-           isFeatured: isFeatured,
-         ),
-         from: servicesListProvider,
-         name: r'servicesListProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$servicesListHash,
-         dependencies: ServicesListFamily._dependencies,
-         allTransitiveDependencies:
-             ServicesListFamily._allTransitiveDependencies,
-         page: page,
-         search: search,
-         isActive: isActive,
-         isFeatured: isFeatured,
+@ProviderFor(serviceDetail)
+final serviceDetailProvider = ServiceDetailFamily._();
+
+final class ServiceDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ServiceDetail>,
+          ServiceDetail,
+          FutureOr<ServiceDetail>
+        >
+    with $FutureModifier<ServiceDetail>, $FutureProvider<ServiceDetail> {
+  ServiceDetailProvider._({
+    required ServiceDetailFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'serviceDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  ServicesListProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.page,
-    required this.search,
-    required this.isActive,
-    required this.isFeatured,
-  }) : super.internal();
-
-  final int page;
-  final String? search;
-  final bool? isActive;
-  final bool? isFeatured;
+  @override
+  String debugGetCreateSourceHash() => _$serviceDetailHash();
 
   @override
-  Override overrideWith(
-    FutureOr<PaginatedResponse<ServiceItem>> Function(ServicesListRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ServicesListProvider._internal(
-        (ref) => create(ref as ServicesListRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        page: page,
-        search: search,
-        isActive: isActive,
-        isFeatured: isFeatured,
-      ),
-    );
+  String toString() {
+    return r'serviceDetailProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<PaginatedResponse<ServiceItem>>
-  createElement() {
-    return _ServicesListProviderElement(this);
+  $FutureProviderElement<ServiceDetail> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<ServiceDetail> create(Ref ref) {
+    final argument = this.argument as String;
+    return serviceDetail(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ServicesListProvider &&
-        other.page == page &&
-        other.search == search &&
-        other.isActive == isActive &&
-        other.isFeatured == isFeatured;
+    return other is ServiceDetailProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, search.hashCode);
-    hash = _SystemHash.combine(hash, isActive.hashCode);
-    hash = _SystemHash.combine(hash, isFeatured.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ServicesListRef
-    on AutoDisposeFutureProviderRef<PaginatedResponse<ServiceItem>> {
-  /// The parameter `page` of this provider.
-  int get page;
-
-  /// The parameter `search` of this provider.
-  String? get search;
-
-  /// The parameter `isActive` of this provider.
-  bool? get isActive;
-
-  /// The parameter `isFeatured` of this provider.
-  bool? get isFeatured;
-}
-
-class _ServicesListProviderElement
-    extends AutoDisposeFutureProviderElement<PaginatedResponse<ServiceItem>>
-    with ServicesListRef {
-  _ServicesListProviderElement(super.provider);
-
-  @override
-  int get page => (origin as ServicesListProvider).page;
-  @override
-  String? get search => (origin as ServicesListProvider).search;
-  @override
-  bool? get isActive => (origin as ServicesListProvider).isActive;
-  @override
-  bool? get isFeatured => (origin as ServicesListProvider).isFeatured;
 }
 
 String _$serviceDetailHash() => r'a03140d01f272a761fa0ea8736435948504f3180';
 
-/// See also [serviceDetail].
-@ProviderFor(serviceDetail)
-const serviceDetailProvider = ServiceDetailFamily();
-
-/// See also [serviceDetail].
-class ServiceDetailFamily extends Family<AsyncValue<ServiceDetail>> {
-  /// See also [serviceDetail].
-  const ServiceDetailFamily();
-
-  /// See also [serviceDetail].
-  ServiceDetailProvider call(String id) {
-    return ServiceDetailProvider(id);
-  }
-
-  @override
-  ServiceDetailProvider getProviderOverride(
-    covariant ServiceDetailProvider provider,
-  ) {
-    return call(provider.id);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'serviceDetailProvider';
-}
-
-/// See also [serviceDetail].
-class ServiceDetailProvider extends AutoDisposeFutureProvider<ServiceDetail> {
-  /// See also [serviceDetail].
-  ServiceDetailProvider(String id)
-    : this._internal(
-        (ref) => serviceDetail(ref as ServiceDetailRef, id),
-        from: serviceDetailProvider,
+final class ServiceDetailFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<ServiceDetail>, String> {
+  ServiceDetailFamily._()
+    : super(
+        retry: null,
         name: r'serviceDetailProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$serviceDetailHash,
-        dependencies: ServiceDetailFamily._dependencies,
-        allTransitiveDependencies:
-            ServiceDetailFamily._allTransitiveDependencies,
-        id: id,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  ServiceDetailProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.id,
-  }) : super.internal();
-
-  final String id;
+  ServiceDetailProvider call(String id) =>
+      ServiceDetailProvider._(argument: id, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<ServiceDetail> Function(ServiceDetailRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ServiceDetailProvider._internal(
-        (ref) => create(ref as ServiceDetailRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        id: id,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<ServiceDetail> createElement() {
-    return _ServiceDetailProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is ServiceDetailProvider && other.id == id;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, id.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'serviceDetailProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ServiceDetailRef on AutoDisposeFutureProviderRef<ServiceDetail> {
-  /// The parameter `id` of this provider.
-  String get id;
-}
-
-class _ServiceDetailProviderElement
-    extends AutoDisposeFutureProviderElement<ServiceDetail>
-    with ServiceDetailRef {
-  _ServiceDetailProviderElement(super.provider);
-
-  @override
-  String get id => (origin as ServiceDetailProvider).id;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

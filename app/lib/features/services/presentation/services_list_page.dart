@@ -150,65 +150,141 @@ class _ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final color = item.color != null
         ? Color(
             int.tryParse('0xFF${item.color!.replaceFirst('#', '')}') ??
                 0xFF6C0A0A,
           )
-        : Theme.of(context).colorScheme.primary;
+        : scheme.primary;
 
     final priceText = item.price != null
         ? '${item.priceLabel ?? 'desde'} \$${item.price} ${item.currency}'
         : 'Sin precio';
 
     return Card(
+      margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color.withValues(alpha: 0.15),
-          child: Icon(Icons.design_services, color: color),
-        ),
-        title: Text(
-          item.name,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(
-          '$priceText${item.duration != null ? ' · ${item.duration}' : ''}',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            StatusBadge(
-              status: item.isActive ? AppStatus.active : AppStatus.inactive,
-              compact: true,
-            ),
-            const SizedBox(width: 4),
-            PopupMenuButton<String>(
-              itemBuilder: (_) => [
-                const PopupMenuItem(value: 'edit', child: Text('Editar')),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Text('Eliminar', style: TextStyle(color: Colors.red)),
-                ),
-              ],
-              onSelected: (action) {
-                if (action == 'edit') {
-                  context.pushNamed(
-                    RouteNames.serviceEdit,
-                    pathParameters: {'id': item.id},
-                  );
-                } else if (action == 'delete') {
-                  onDelete(context, item);
-                }
-              },
-            ),
-          ],
-        ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
         onTap: () => context.pushNamed(
           RouteNames.serviceEdit,
           pathParameters: {'id': item.id},
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+          child: Row(
+            children: [
+              // Icon container
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(Icons.design_services, color: color, size: 22),
+              ),
+              const SizedBox(width: 12),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        StatusBadge(
+                          status: item.isActive
+                              ? AppStatus.active
+                              : AppStatus.inactive,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '$priceText${item.duration != null ? ' · ${item.duration}' : ''}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.outline,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (item.shortDesc != null &&
+                        item.shortDesc!.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        item.shortDesc!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Menu
+              PopupMenuButton<String>(
+                iconSize: 20,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 20,
+                  color: scheme.outline,
+                ),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit_outlined,
+                          size: 18,
+                          color: scheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text('Editar'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                        SizedBox(width: 10),
+                        Text('Eliminar', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                ],
+                onSelected: (action) {
+                  if (action == 'edit') {
+                    context.pushNamed(
+                      RouteNames.serviceEdit,
+                      pathParameters: {'id': item.id},
+                    );
+                  } else if (action == 'delete') {
+                    onDelete(context, item);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

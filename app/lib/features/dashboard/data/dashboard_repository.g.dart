@@ -6,8 +6,8 @@ part of 'dashboard_repository.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DashboardStatsImpl _$$DashboardStatsImplFromJson(Map<String, dynamic> json) =>
-    _$DashboardStatsImpl(
+_DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
+    _DashboardStats(
       totalProjects: (json['totalProjects'] as num?)?.toInt() ?? 0,
       totalCategories: (json['totalCategories'] as num?)?.toInt() ?? 0,
       totalServices: (json['totalServices'] as num?)?.toInt() ?? 0,
@@ -17,72 +17,97 @@ _$DashboardStatsImpl _$$DashboardStatsImplFromJson(Map<String, dynamic> json) =>
       pageViews30d: (json['pageViews30d'] as num?)?.toInt() ?? 0,
     );
 
-Map<String, dynamic> _$$DashboardStatsImplToJson(
-  _$DashboardStatsImpl instance,
-) => <String, dynamic>{
-  'totalProjects': instance.totalProjects,
-  'totalCategories': instance.totalCategories,
-  'totalServices': instance.totalServices,
-  'totalTestimonials': instance.totalTestimonials,
-  'newContacts': instance.newContacts,
-  'pendingBookings': instance.pendingBookings,
-  'pageViews30d': instance.pageViews30d,
-};
+Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
+    <String, dynamic>{
+      'totalProjects': instance.totalProjects,
+      'totalCategories': instance.totalCategories,
+      'totalServices': instance.totalServices,
+      'totalTestimonials': instance.totalTestimonials,
+      'newContacts': instance.newContacts,
+      'pendingBookings': instance.pendingBookings,
+      'pageViews30d': instance.pageViews30d,
+    };
 
-_$ChartDataPointImpl _$$ChartDataPointImplFromJson(Map<String, dynamic> json) =>
-    _$ChartDataPointImpl(
+_ChartDataPoint _$ChartDataPointFromJson(Map<String, dynamic> json) =>
+    _ChartDataPoint(
       label: json['label'] as String,
       count: (json['count'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$ChartDataPointImplToJson(
-  _$ChartDataPointImpl instance,
-) => <String, dynamic>{'label': instance.label, 'count': instance.count};
+Map<String, dynamic> _$ChartDataPointToJson(_ChartDataPoint instance) =>
+    <String, dynamic>{'label': instance.label, 'count': instance.count};
 
-_$DashboardChartsImpl _$$DashboardChartsImplFromJson(
-  Map<String, dynamic> json,
-) => _$DashboardChartsImpl(
-  dailyPageViews:
-      (json['dailyPageViews'] as List<dynamic>?)
-          ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
-  monthlyBookings:
-      (json['monthlyBookings'] as List<dynamic>?)
-          ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
-);
+_DashboardCharts _$DashboardChartsFromJson(Map<String, dynamic> json) =>
+    _DashboardCharts(
+      dailyPageViews:
+          (json['dailyPageViews'] as List<dynamic>?)
+              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      monthlyBookings:
+          (json['monthlyBookings'] as List<dynamic>?)
+              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+    );
 
-Map<String, dynamic> _$$DashboardChartsImplToJson(
-  _$DashboardChartsImpl instance,
-) => <String, dynamic>{
-  'dailyPageViews': instance.dailyPageViews,
-  'monthlyBookings': instance.monthlyBookings,
-};
+Map<String, dynamic> _$DashboardChartsToJson(_DashboardCharts instance) =>
+    <String, dynamic>{
+      'dailyPageViews': instance.dailyPageViews,
+      'monthlyBookings': instance.monthlyBookings,
+    };
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(dashboardRepository)
+final dashboardRepositoryProvider = DashboardRepositoryProvider._();
+
+final class DashboardRepositoryProvider
+    extends
+        $FunctionalProvider<
+          DashboardRepository,
+          DashboardRepository,
+          DashboardRepository
+        >
+    with $Provider<DashboardRepository> {
+  DashboardRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dashboardRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dashboardRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<DashboardRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  DashboardRepository create(Ref ref) {
+    return dashboardRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DashboardRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DashboardRepository>(value),
+    );
+  }
+}
+
 String _$dashboardRepositoryHash() =>
     r'e0df15f4cd6399523fffe13f61c0b993c564e4d9';
-
-/// See also [dashboardRepository].
-@ProviderFor(dashboardRepository)
-final dashboardRepositoryProvider =
-    AutoDisposeProvider<DashboardRepository>.internal(
-      dashboardRepository,
-      name: r'dashboardRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$dashboardRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DashboardRepositoryRef = AutoDisposeProviderRef<DashboardRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

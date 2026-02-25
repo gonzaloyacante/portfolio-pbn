@@ -7,7 +7,7 @@ part 'contact_model.g.dart';
 
 /// Modelo resumido para listas (campos principales del CRM)
 @freezed
-class ContactItem with _$ContactItem {
+abstract class ContactItem with _$ContactItem {
   const factory ContactItem({
     required String id,
     required String name,
@@ -33,7 +33,7 @@ class ContactItem with _$ContactItem {
 
 /// Modelo completo para detalle / gestión
 @freezed
-class ContactDetail with _$ContactDetail {
+abstract class ContactDetail with _$ContactDetail {
   const factory ContactDetail({
     required String id,
     required String name,

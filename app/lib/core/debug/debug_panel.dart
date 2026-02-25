@@ -302,8 +302,8 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
 
   @override
   Widget build(BuildContext context) {
-    final serverState = ref.watch(serverUrlProvider);
-    final notifier = ref.read(serverUrlProvider.notifier);
+    final serverState = ref.watch<ServerUrlState>(serverUrlProvider);
+    final notifier = ref.read<ServerUrlNotifier>(serverUrlProvider.notifier);
     final scheme = Theme.of(context).colorScheme;
 
     return _DebugCard(

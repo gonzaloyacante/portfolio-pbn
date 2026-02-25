@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
@@ -12,7 +14,11 @@ import 'api_exceptions.dart';
 class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    AppLogger.debug('[HTTP] → ${options.method} ${options.uri}');
+    // attach a lightweight requestId to correlate request/response logs
+    final requestId =
+        '${DateTime.now().microsecondsSinceEpoch}-${Random().nextInt(1 << 32)}';
+    options.extra['requestId'] = requestId;
+    AppLogger.debug('[HTTP] → $requestId ${options.method} ${options.uri}');
     return handler.next(options);
   }
 
@@ -21,16 +27,18 @@ class LoggingInterceptor extends Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
+    final rid = response.requestOptions.extra['requestId'] ?? '-';
     AppLogger.debug(
-      '[HTTP] ← ${response.statusCode} ${response.requestOptions.uri}',
+      '[HTTP] ← $rid ${response.statusCode} ${response.requestOptions.uri}',
     );
     return handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    final rid = err.requestOptions.extra['requestId'] ?? '-';
     AppLogger.error(
-      '[HTTP] ✗ ${err.response?.statusCode ?? "no-response"} '
+      '[HTTP] ✗ $rid ${err.response?.statusCode ?? "no-response"} '
       '${err.requestOptions.uri}: ${err.message}',
       err,
     );

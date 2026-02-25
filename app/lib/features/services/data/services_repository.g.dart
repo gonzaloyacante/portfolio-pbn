@@ -6,24 +6,53 @@ part of 'services_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(servicesRepository)
+final servicesRepositoryProvider = ServicesRepositoryProvider._();
+
+final class ServicesRepositoryProvider
+    extends
+        $FunctionalProvider<
+          ServicesRepository,
+          ServicesRepository,
+          ServicesRepository
+        >
+    with $Provider<ServicesRepository> {
+  ServicesRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'servicesRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$servicesRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<ServicesRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ServicesRepository create(Ref ref) {
+    return servicesRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ServicesRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ServicesRepository>(value),
+    );
+  }
+}
+
 String _$servicesRepositoryHash() =>
     r'ff50d289de93847acfa3d94183ebaf961d13908c';
-
-/// See also [servicesRepository].
-@ProviderFor(servicesRepository)
-final servicesRepositoryProvider =
-    AutoDisposeProvider<ServicesRepository>.internal(
-      servicesRepository,
-      name: r'servicesRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$servicesRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ServicesRepositoryRef = AutoDisposeProviderRef<ServicesRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

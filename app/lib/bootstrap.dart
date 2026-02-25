@@ -5,12 +5,15 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'app.dart';
 import 'core/config/env_config.dart';
 import 'core/notifications/push_service.dart';
 import 'core/utils/app_logger.dart';
+import 'firebase_options.dart';
 
 /// Inicializa todos los servicios necesarios antes de arrancar la UI.
 ///
@@ -22,6 +25,15 @@ import 'core/utils/app_logger.dart';
 /// NOTA: Requiere `android/app/google-services.json` e
 /// `ios/Runner/GoogleService-Info.plist` para Firebase (ficheros gitignored).
 Future<void> bootstrap() async {
+  // 0. Google Fonts — permitir descarga en runtime (solo en desarrollo) ──
+  // Habilita fetching de fuentes remotas para evitar excepciones si las
+  // fuentes no están empaquetadas en assets. No recomendado en producción.
+  GoogleFonts.config.allowRuntimeFetching = true;
+
+  // Inicializar datos de locale para español (table_calendar, intl, etc.)
+  await initializeDateFormatting('es_ES');
+  await initializeDateFormatting('es');
+
   // 1. Variables de entorno ─────────────────────────────────────────────────
   // Carga .env desde la raíz del proyecto Flutter.
   // En producción, las variables se inyectan vía CI/CD (no hay .env en prod).
@@ -34,13 +46,14 @@ Future<void> bootstrap() async {
   // o de DefaultFirebaseOptions si se generaron. Ver:
   // https://firebase.google.com/docs/flutter/setup
   try {
-    await Firebase.initializeApp();
-    AppLogger.info('✓ Firebase inicializado');
+    // Inicialización explícita usando opciones generadas a partir de los
+    // ficheros `google-services.json` / `GoogleService-Info.plist`.
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    AppLogger.info('✓ Firebase inicializado (con DefaultFirebaseOptions)');
 
-    // Registrar handler de background SOLO en Android (requerido por FCM Android).
-    // Evita llamadas a código de plataforma no inicializado en iOS/simulador.
     if (Platform.isAndroid) {
-      // El handler debe ser una función top-level marcada con @pragma('vm:entry-point').
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
     }
   } catch (e, st) {

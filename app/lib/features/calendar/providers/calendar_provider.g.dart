@@ -6,365 +6,251 @@ part of 'calendar_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$bookingsRepositoryHash() =>
-    r'99621fd214e4b8e635d313fc215878dd2048390a';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [bookingsRepository].
 @ProviderFor(bookingsRepository)
-final bookingsRepositoryProvider =
-    AutoDisposeProvider<BookingsRepository>.internal(
-      bookingsRepository,
-      name: r'bookingsRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$bookingsRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final bookingsRepositoryProvider = BookingsRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef BookingsRepositoryRef = AutoDisposeProviderRef<BookingsRepository>;
-String _$bookingsListHash() => r'987b8aeda9c525e0ccd09039f7510a372a3adcd3';
+final class BookingsRepositoryProvider
+    extends
+        $FunctionalProvider<
+          BookingsRepository,
+          BookingsRepository,
+          BookingsRepository
+        >
+    with $Provider<BookingsRepository> {
+  BookingsRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'bookingsRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
+  @override
+  String debugGetCreateSourceHash() => _$bookingsRepositoryHash();
 
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
+  @$internal
+  @override
+  $ProviderElement<BookingsRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  BookingsRepository create(Ref ref) {
+    return bookingsRepository(ref);
   }
 
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BookingsRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BookingsRepository>(value),
+    );
   }
 }
 
-/// See also [bookingsList].
+String _$bookingsRepositoryHash() =>
+    r'99621fd214e4b8e635d313fc215878dd2048390a';
+
 @ProviderFor(bookingsList)
-const bookingsListProvider = BookingsListFamily();
+final bookingsListProvider = BookingsListFamily._();
 
-/// See also [bookingsList].
-class BookingsListFamily
-    extends Family<AsyncValue<PaginatedResponse<BookingItem>>> {
-  /// See also [bookingsList].
-  const BookingsListFamily();
+final class BookingsListProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaginatedResponse<BookingItem>>,
+          PaginatedResponse<BookingItem>,
+          FutureOr<PaginatedResponse<BookingItem>>
+        >
+    with
+        $FutureModifier<PaginatedResponse<BookingItem>>,
+        $FutureProvider<PaginatedResponse<BookingItem>> {
+  BookingsListProvider._({
+    required BookingsListFamily super.from,
+    required ({
+      int page,
+      String? search,
+      String? status,
+      DateTime? dateFrom,
+      DateTime? dateTo,
+    })
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'bookingsListProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [bookingsList].
+  @override
+  String debugGetCreateSourceHash() => _$bookingsListHash();
+
+  @override
+  String toString() {
+    return r'bookingsListProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<PaginatedResponse<BookingItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaginatedResponse<BookingItem>> create(Ref ref) {
+    final argument =
+        this.argument
+            as ({
+              int page,
+              String? search,
+              String? status,
+              DateTime? dateFrom,
+              DateTime? dateTo,
+            });
+    return bookingsList(
+      ref,
+      page: argument.page,
+      search: argument.search,
+      status: argument.status,
+      dateFrom: argument.dateFrom,
+      dateTo: argument.dateTo,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is BookingsListProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$bookingsListHash() => r'987b8aeda9c525e0ccd09039f7510a372a3adcd3';
+
+final class BookingsListFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<PaginatedResponse<BookingItem>>,
+          ({
+            int page,
+            String? search,
+            String? status,
+            DateTime? dateFrom,
+            DateTime? dateTo,
+          })
+        > {
+  BookingsListFamily._()
+    : super(
+        retry: null,
+        name: r'bookingsListProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
   BookingsListProvider call({
     int page = 1,
     String? search,
     String? status,
     DateTime? dateFrom,
     DateTime? dateTo,
-  }) {
-    return BookingsListProvider(
+  }) => BookingsListProvider._(
+    argument: (
       page: page,
       search: search,
       status: status,
       dateFrom: dateFrom,
       dateTo: dateTo,
-    );
-  }
+    ),
+    from: this,
+  );
 
   @override
-  BookingsListProvider getProviderOverride(
-    covariant BookingsListProvider provider,
-  ) {
-    return call(
-      page: provider.page,
-      search: provider.search,
-      status: provider.status,
-      dateFrom: provider.dateFrom,
-      dateTo: provider.dateTo,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'bookingsListProvider';
+  String toString() => r'bookingsListProvider';
 }
 
-/// See also [bookingsList].
-class BookingsListProvider
-    extends AutoDisposeFutureProvider<PaginatedResponse<BookingItem>> {
-  /// See also [bookingsList].
-  BookingsListProvider({
-    int page = 1,
-    String? search,
-    String? status,
-    DateTime? dateFrom,
-    DateTime? dateTo,
-  }) : this._internal(
-         (ref) => bookingsList(
-           ref as BookingsListRef,
-           page: page,
-           search: search,
-           status: status,
-           dateFrom: dateFrom,
-           dateTo: dateTo,
-         ),
-         from: bookingsListProvider,
-         name: r'bookingsListProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$bookingsListHash,
-         dependencies: BookingsListFamily._dependencies,
-         allTransitiveDependencies:
-             BookingsListFamily._allTransitiveDependencies,
-         page: page,
-         search: search,
-         status: status,
-         dateFrom: dateFrom,
-         dateTo: dateTo,
+@ProviderFor(bookingDetail)
+final bookingDetailProvider = BookingDetailFamily._();
+
+final class BookingDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<BookingDetail>,
+          BookingDetail,
+          FutureOr<BookingDetail>
+        >
+    with $FutureModifier<BookingDetail>, $FutureProvider<BookingDetail> {
+  BookingDetailProvider._({
+    required BookingDetailFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'bookingDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  BookingsListProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.page,
-    required this.search,
-    required this.status,
-    required this.dateFrom,
-    required this.dateTo,
-  }) : super.internal();
-
-  final int page;
-  final String? search;
-  final String? status;
-  final DateTime? dateFrom;
-  final DateTime? dateTo;
+  @override
+  String debugGetCreateSourceHash() => _$bookingDetailHash();
 
   @override
-  Override overrideWith(
-    FutureOr<PaginatedResponse<BookingItem>> Function(BookingsListRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: BookingsListProvider._internal(
-        (ref) => create(ref as BookingsListRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        page: page,
-        search: search,
-        status: status,
-        dateFrom: dateFrom,
-        dateTo: dateTo,
-      ),
-    );
+  String toString() {
+    return r'bookingDetailProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<PaginatedResponse<BookingItem>>
-  createElement() {
-    return _BookingsListProviderElement(this);
+  $FutureProviderElement<BookingDetail> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<BookingDetail> create(Ref ref) {
+    final argument = this.argument as String;
+    return bookingDetail(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is BookingsListProvider &&
-        other.page == page &&
-        other.search == search &&
-        other.status == status &&
-        other.dateFrom == dateFrom &&
-        other.dateTo == dateTo;
+    return other is BookingDetailProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, search.hashCode);
-    hash = _SystemHash.combine(hash, status.hashCode);
-    hash = _SystemHash.combine(hash, dateFrom.hashCode);
-    hash = _SystemHash.combine(hash, dateTo.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin BookingsListRef
-    on AutoDisposeFutureProviderRef<PaginatedResponse<BookingItem>> {
-  /// The parameter `page` of this provider.
-  int get page;
-
-  /// The parameter `search` of this provider.
-  String? get search;
-
-  /// The parameter `status` of this provider.
-  String? get status;
-
-  /// The parameter `dateFrom` of this provider.
-  DateTime? get dateFrom;
-
-  /// The parameter `dateTo` of this provider.
-  DateTime? get dateTo;
-}
-
-class _BookingsListProviderElement
-    extends AutoDisposeFutureProviderElement<PaginatedResponse<BookingItem>>
-    with BookingsListRef {
-  _BookingsListProviderElement(super.provider);
-
-  @override
-  int get page => (origin as BookingsListProvider).page;
-  @override
-  String? get search => (origin as BookingsListProvider).search;
-  @override
-  String? get status => (origin as BookingsListProvider).status;
-  @override
-  DateTime? get dateFrom => (origin as BookingsListProvider).dateFrom;
-  @override
-  DateTime? get dateTo => (origin as BookingsListProvider).dateTo;
 }
 
 String _$bookingDetailHash() => r'7aa60430a7ad1d870bb57b587a67d97a820d914c';
 
-/// See also [bookingDetail].
-@ProviderFor(bookingDetail)
-const bookingDetailProvider = BookingDetailFamily();
-
-/// See also [bookingDetail].
-class BookingDetailFamily extends Family<AsyncValue<BookingDetail>> {
-  /// See also [bookingDetail].
-  const BookingDetailFamily();
-
-  /// See also [bookingDetail].
-  BookingDetailProvider call(String id) {
-    return BookingDetailProvider(id);
-  }
-
-  @override
-  BookingDetailProvider getProviderOverride(
-    covariant BookingDetailProvider provider,
-  ) {
-    return call(provider.id);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'bookingDetailProvider';
-}
-
-/// See also [bookingDetail].
-class BookingDetailProvider extends AutoDisposeFutureProvider<BookingDetail> {
-  /// See also [bookingDetail].
-  BookingDetailProvider(String id)
-    : this._internal(
-        (ref) => bookingDetail(ref as BookingDetailRef, id),
-        from: bookingDetailProvider,
+final class BookingDetailFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<BookingDetail>, String> {
+  BookingDetailFamily._()
+    : super(
+        retry: null,
         name: r'bookingDetailProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$bookingDetailHash,
-        dependencies: BookingDetailFamily._dependencies,
-        allTransitiveDependencies:
-            BookingDetailFamily._allTransitiveDependencies,
-        id: id,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  BookingDetailProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.id,
-  }) : super.internal();
-
-  final String id;
+  BookingDetailProvider call(String id) =>
+      BookingDetailProvider._(argument: id, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<BookingDetail> Function(BookingDetailRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: BookingDetailProvider._internal(
-        (ref) => create(ref as BookingDetailRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        id: id,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<BookingDetail> createElement() {
-    return _BookingDetailProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is BookingDetailProvider && other.id == id;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, id.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'bookingDetailProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin BookingDetailRef on AutoDisposeFutureProviderRef<BookingDetail> {
-  /// The parameter `id` of this provider.
-  String get id;
-}
-
-class _BookingDetailProviderElement
-    extends AutoDisposeFutureProviderElement<BookingDetail>
-    with BookingDetailRef {
-  _BookingDetailProviderElement(super.provider);
-
-  @override
-  String get id => (origin as BookingDetailProvider).id;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

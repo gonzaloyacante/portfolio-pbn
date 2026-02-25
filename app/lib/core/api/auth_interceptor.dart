@@ -55,32 +55,36 @@ class AuthInterceptor extends Interceptor {
     return handler.next(options);
   }
 
-  // ── onError ────────────────────────────────────────────────────────────────
+  // ── onResponse ────────────────────────────────────────────────────────────
+  //
+  // IMPORTANTE: el ApiClient usa validateStatus que acepta todos los códigos
+  // < 500, por lo que los 401 llegan aquí como "respuestas exitosas" de Dio.
+  // Por eso manejamos el refresco en onResponse, no en onError.
 
   @override
-  Future<void> onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
+  Future<void> onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
   ) async {
-    final statusCode = err.response?.statusCode;
-    final path = err.requestOptions.path;
+    final status = response.statusCode;
+    final path = response.requestOptions.path;
 
-    // Solo manejamos 401 en rutas NO-refresh.
-    if (statusCode != 401 || _isRefreshEndpoint(path)) {
-      return handler.next(err);
+    // Solo interceptamos 401 en rutas que no sean la de refresh.
+    if (status != 401 || _isRefreshEndpoint(path)) {
+      return handler.next(response);
     }
 
     AppLogger.info('AuthInterceptor: 401 on $path → attempting token refresh');
 
     if (_isRefreshing) {
       // Encolar la petición mientras el refresh está en curso.
-      final completer = _PendingRequest(err.requestOptions);
+      final completer = _PendingRequest(response.requestOptions);
       _pendingQueue.add(completer);
       try {
-        final response = await completer.future;
-        return handler.resolve(response);
-      } catch (e) {
-        return handler.next(err);
+        final resolved = await completer.future;
+        return handler.next(resolved);
+      } catch (_) {
+        return handler.reject(_make401Error(response));
       }
     }
 
@@ -90,7 +94,7 @@ class AuthInterceptor extends Interceptor {
       await _doRefresh();
 
       // Reintentar la petición original con el nuevo token.
-      final response = await _retry(err.requestOptions);
+      final retried = await _retry(response.requestOptions);
 
       // Resolver las peticiones encoladas.
       for (final pending in _pendingQueue) {
@@ -103,19 +107,35 @@ class AuthInterceptor extends Interceptor {
       }
       _pendingQueue.clear();
 
-      return handler.resolve(response);
+      return handler.next(retried);
     } on UnauthorizedException catch (_) {
       AppLogger.warn('AuthInterceptor: refresh failed → clearing session');
       await _clearSessionAndRedirect();
-      _rejectPending(err);
-      return handler.next(err);
+      final err = _make401Error(response);
+      _rejectPendingWithError(err);
+      return handler.reject(err);
     } catch (e) {
       AppLogger.error('AuthInterceptor: unexpected refresh error', e);
-      _rejectPending(err);
-      return handler.next(err);
+      final err = _make401Error(response);
+      _rejectPendingWithError(err);
+      return handler.reject(err);
     } finally {
       _isRefreshing = false;
     }
+  }
+
+  // ── onError ────────────────────────────────────────────────────────────────
+  // Maneja errores de red, 500+, timeouts, etc.
+  // Los 401 llegan por onResponse (ver arriba) gracias al validateStatus del cliente.
+
+  @override
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
+    // Pasamos todos los errores sin modificar;
+    // el refresco de sesión se gestiona en onResponse.
+    return handler.next(err);
   }
 
   // ── Private Helpers ────────────────────────────────────────────────────────
@@ -128,12 +148,19 @@ class AuthInterceptor extends Interceptor {
       throw const UnauthorizedException(message: 'No refresh token available');
     }
 
-    final response = await _refreshDio.post<Map<String, dynamic>>(
-      Endpoints.authRefresh,
-      data: {'refreshToken': refreshToken},
-    );
-
-    final body = response.data;
+    late final Map<String, dynamic>? body;
+    try {
+      final response = await _refreshDio.post<Map<String, dynamic>>(
+        Endpoints.authRefresh,
+        data: {'refreshToken': refreshToken},
+      );
+      body = response.data;
+    } on DioException catch (e) {
+      // El endpoint de refresh devolvió 4xx/5xx o hubo un error de red.
+      throw UnauthorizedException(
+        message: 'Refresh failed: ${e.response?.statusCode ?? e.message}',
+      );
+    }
     if (body == null) {
       throw const UnauthorizedException(message: 'Empty refresh response');
     }
@@ -190,11 +217,20 @@ class AuthInterceptor extends Interceptor {
     // (El authProvider escucha tokenStorage, así que se actualizará solo.)
   }
 
-  void _rejectPending(DioException err) {
+  void _rejectPendingWithError(DioException err) {
     for (final pending in _pendingQueue) {
       pending.completeError(err);
     }
     _pendingQueue.clear();
+  }
+
+  DioException _make401Error(Response<dynamic> response) {
+    return DioException(
+      requestOptions: response.requestOptions,
+      response: response,
+      type: DioExceptionType.badResponse,
+      error: const UnauthorizedException(message: 'Sesión expirada'),
+    );
   }
 
   static bool _isPublicEndpoint(String path) {

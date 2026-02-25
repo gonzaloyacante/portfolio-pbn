@@ -15,7 +15,7 @@ part 'paginated_response.g.dart';
 /// }
 /// ```
 @Freezed(genericArgumentFactories: true)
-class PaginatedResponse<T> with _$PaginatedResponse<T> {
+abstract class PaginatedResponse<T> with _$PaginatedResponse<T> {
   const factory PaginatedResponse({
     required List<T> data,
     required PaginationMeta pagination,
@@ -30,7 +30,7 @@ class PaginatedResponse<T> with _$PaginatedResponse<T> {
 // ── PaginationMeta ────────────────────────────────────────────────────────────
 
 @freezed
-class PaginationMeta with _$PaginationMeta {
+abstract class PaginationMeta with _$PaginationMeta {
   const factory PaginationMeta({
     required int page,
     required int limit,

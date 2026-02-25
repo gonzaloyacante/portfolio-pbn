@@ -9,11 +9,14 @@ import 'app_typography.dart';
 class AppTheme {
   AppTheme._();
 
-  static const BorderRadius cardRadius = BorderRadius.all(Radius.circular(40));
+  static const BorderRadius cardRadius = BorderRadius.all(Radius.circular(20));
   static const BorderRadius buttonRadius = BorderRadius.all(
     Radius.circular(12),
   );
   static const BorderRadius inputRadius = BorderRadius.all(Radius.circular(12));
+  static const BorderRadius smallCardRadius = BorderRadius.all(
+    Radius.circular(12),
+  );
 
   // ── Light ─────────────────────────────────────────────────────────────────
   static ThemeData get light => _build(Brightness.light);

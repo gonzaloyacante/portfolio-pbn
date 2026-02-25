@@ -96,40 +96,43 @@ class _DebugEnvBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: MediaQuery.of(context).padding.bottom + 72,
+      bottom: MediaQuery.of(context).padding.bottom + 16,
       right: 12,
-      child: SafeArea(
-        child: GestureDetector(
-          onTap: () => DebugPanel.show(context),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.green.shade800.withValues(alpha: 0.9),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.25),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+      child: GestureDetector(
+        onTap: () {
+          // Intentamos primero con el contexto del router (tiene Navigator),
+          // y como fallback usamos el contexto local del builder de MaterialApp.
+          final ctx = routerNavigatorKey.currentContext ?? context;
+          DebugPanel.show(ctx);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: Colors.green.shade800.withValues(alpha: 0.9),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.25),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: const Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.developer_mode, size: 12, color: Colors.white),
+              SizedBox(width: 4),
+              Text(
+                'DEV',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
                 ),
-              ],
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.developer_mode, size: 12, color: Colors.white),
-                SizedBox(width: 4),
-                Text(
-                  'DEV',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

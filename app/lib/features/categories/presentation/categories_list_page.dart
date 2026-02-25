@@ -151,64 +151,163 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final color = item.color != null
         ? Color(
             int.tryParse('0xFF${item.color!.replaceFirst('#', '')}') ??
                 0xFF6C0A0A,
           )
-        : Theme.of(context).colorScheme.primary;
+        : scheme.primary;
 
     return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color.withValues(alpha: 0.15),
-          child: item.iconName != null
-              ? Icon(Icons.category, color: color)
-              : Text(
-                  item.name.isNotEmpty ? item.name[0].toUpperCase() : '?',
-                  style: TextStyle(color: color, fontWeight: FontWeight.bold),
-                ),
-        ),
-        title: Text(
-          item.name,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(
-          '/${item.slug} · ${item.projectCount} proyectos',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            StatusBadge(
-              status: item.isActive ? AppStatus.active : AppStatus.inactive,
-              compact: true,
-            ),
-            const SizedBox(width: 4),
-            PopupMenuButton<String>(
-              itemBuilder: (_) => [
-                const PopupMenuItem(value: 'edit', child: Text('Editar')),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Text('Eliminar', style: TextStyle(color: Colors.red)),
-                ),
-              ],
-              onSelected: (action) {
-                if (action == 'edit') {
-                  context.pushNamed(
-                    RouteNames.categoryEdit,
-                    pathParameters: {'id': item.id},
-                  );
-                } else if (action == 'delete') {
-                  onDelete(context, item);
-                }
-              },
-            ),
-          ],
-        ),
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
         onTap: () => context.pushNamed(
           RouteNames.categoryEdit,
           pathParameters: {'id': item.id},
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+          child: Row(
+            children: [
+              // Icon
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: item.iconName != null
+                      ? Icon(Icons.category, color: color, size: 22)
+                      : Text(
+                          item.name.isNotEmpty
+                              ? item.name[0].toUpperCase()
+                              : '?',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        StatusBadge(
+                          status: item.isActive
+                              ? AppStatus.active
+                              : AppStatus.inactive,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.link_rounded,
+                          size: 13,
+                          color: scheme.outline,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '/${item.slug}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.outline,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.photo_library_outlined,
+                          size: 13,
+                          color: scheme.outline,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '${item.projectCount}',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.outline,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Menu
+              PopupMenuButton<String>(
+                iconSize: 20,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 20,
+                  color: scheme.outline,
+                ),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit_outlined,
+                          size: 18,
+                          color: scheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text('Editar'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                        SizedBox(width: 10),
+                        Text('Eliminar', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                ],
+                onSelected: (action) {
+                  if (action == 'edit') {
+                    context.pushNamed(
+                      RouteNames.categoryEdit,
+                      pathParameters: {'id': item.id},
+                    );
+                  } else if (action == 'delete') {
+                    onDelete(context, item);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

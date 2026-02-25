@@ -7,7 +7,7 @@ part 'booking_model.g.dart';
 
 /// Modelo resumido del servicio embebido
 @freezed
-class BookingService with _$BookingService {
+abstract class BookingService with _$BookingService {
   const factory BookingService({required String name}) = _BookingService;
 
   factory BookingService.fromJson(Map<String, dynamic> json) =>
@@ -16,7 +16,7 @@ class BookingService with _$BookingService {
 
 /// Modelo resumido para listas y calendario
 @freezed
-class BookingItem with _$BookingItem {
+abstract class BookingItem with _$BookingItem {
   const factory BookingItem({
     required String id,
     required DateTime date,
@@ -40,7 +40,7 @@ class BookingItem with _$BookingItem {
 
 /// Modelo completo para detalle / gestión
 @freezed
-class BookingDetail with _$BookingDetail {
+abstract class BookingDetail with _$BookingDetail {
   const factory BookingDetail({
     required String id,
     required DateTime date,

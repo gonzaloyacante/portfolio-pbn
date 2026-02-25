@@ -1,7 +1,7 @@
 // ignore_for_file: use_null_aware_elements
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 import 'package:intl/intl.dart';
 
 import '../../../shared/widgets/confirm_dialog.dart';
@@ -20,15 +20,8 @@ class TrashPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final trashAsync = ref.watch(trashItemsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-          tooltip: 'Volver',
-        ),
-        title: const Text('Papelera'),
-      ),
+    return AppScaffold(
+      title: 'Papelera',
       body: trashAsync.when(
         loading: () => const _TrashShimmer(),
         error: (e, _) => ErrorState(

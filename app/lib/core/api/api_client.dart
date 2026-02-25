@@ -16,7 +16,7 @@ import 'auth_interceptor.dart';
 /// En release, siempre usa [EnvConfig.apiBaseUrl].
 final apiClientProvider = Provider<ApiClient>((ref) {
   final baseUrl = kDebugMode
-      ? ref.watch(serverUrlProvider).resolvedUrl
+      ? ref.watch<ServerUrlState>(serverUrlProvider).resolvedUrl
       : EnvConfig.apiBaseUrl;
   return ApiClient(ref, baseUrl: baseUrl);
 });
@@ -71,12 +71,16 @@ class ApiClient {
     Map<String, dynamic>? queryParams,
     Options? options,
   }) async {
-    final response = await _dio.get<dynamic>(
-      path,
-      queryParameters: queryParams,
-      options: options,
-    );
-    return _handleResponse<T>(response);
+    try {
+      final response = await _dio.get<dynamic>(
+        path,
+        queryParameters: queryParams,
+        options: options,
+      );
+      return _handleResponse<T>(response);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
   }
 
   Future<T> post<T>(
@@ -85,40 +89,56 @@ class ApiClient {
     Map<String, dynamic>? queryParams,
     Options? options,
   }) async {
-    final response = await _dio.post<dynamic>(
-      path,
-      data: data,
-      queryParameters: queryParams,
-      options: options,
-    );
-    return _handleResponse<T>(response);
+    try {
+      final response = await _dio.post<dynamic>(
+        path,
+        data: data,
+        queryParameters: queryParams,
+        options: options,
+      );
+      return _handleResponse<T>(response);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
   }
 
   Future<T> put<T>(String path, {dynamic data, Options? options}) async {
-    final response = await _dio.put<dynamic>(
-      path,
-      data: data,
-      options: options,
-    );
-    return _handleResponse<T>(response);
+    try {
+      final response = await _dio.put<dynamic>(
+        path,
+        data: data,
+        options: options,
+      );
+      return _handleResponse<T>(response);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
   }
 
   Future<T> patch<T>(String path, {dynamic data, Options? options}) async {
-    final response = await _dio.patch<dynamic>(
-      path,
-      data: data,
-      options: options,
-    );
-    return _handleResponse<T>(response);
+    try {
+      final response = await _dio.patch<dynamic>(
+        path,
+        data: data,
+        options: options,
+      );
+      return _handleResponse<T>(response);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
   }
 
   Future<T> delete<T>(String path, {dynamic data, Options? options}) async {
-    final response = await _dio.delete<dynamic>(
-      path,
-      data: data,
-      options: options,
-    );
-    return _handleResponse<T>(response);
+    try {
+      final response = await _dio.delete<dynamic>(
+        path,
+        data: data,
+        options: options,
+      );
+      return _handleResponse<T>(response);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
   }
 
   // ── Upload ────────────────────────────────────────────────────────────────
@@ -128,13 +148,44 @@ class ApiClient {
     FormData formData, {
     void Function(int, int)? onProgress,
   }) async {
-    final response = await _dio.post<dynamic>(
-      path,
-      data: formData,
-      onSendProgress: onProgress,
-      options: Options(contentType: 'multipart/form-data'),
-    );
-    return _handleResponse<T>(response);
+    try {
+      final response = await _dio.post<dynamic>(
+        path,
+        data: formData,
+        onSendProgress: onProgress,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      return _handleResponse<T>(response);
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  // ── DioException → Domain Exception ──────────────────────────────────────
+
+  /// Convierte un [DioException] (generado por handler.reject en los interceptores)
+  /// en la excepción de dominio correspondiente.
+  Exception _handleDioError(DioException e) {
+    // Si el interceptor ya envolvió una excepción de dominio, la re-lanzamos.
+    if (e.error is Exception) return e.error as Exception;
+
+    // Si hay respuesta, convertimos por código de estado.
+    final status = e.response?.statusCode;
+    if (status != null) {
+      final msg = _extractError(e.response?.data);
+      return switch (status) {
+        400 => ValidationException(message: msg),
+        401 => UnauthorizedException(message: msg),
+        403 => ForbiddenException(message: msg),
+        404 => NotFoundException(message: msg),
+        409 => ConflictException(message: msg),
+        429 => RateLimitException(message: msg),
+        _ => HttpException(statusCode: status, message: msg),
+      };
+    }
+
+    // Error de red / sin respuesta.
+    return NetworkException(message: e.message ?? 'Error de red');
   }
 
   // ── Response Handler ──────────────────────────────────────────────────────

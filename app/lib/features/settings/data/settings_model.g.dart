@@ -6,8 +6,8 @@ part of 'settings_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AboutSettingsImpl _$$AboutSettingsImplFromJson(Map<String, dynamic> json) =>
-    _$AboutSettingsImpl(
+_AboutSettings _$AboutSettingsFromJson(Map<String, dynamic> json) =>
+    _AboutSettings(
       id: json['id'] as String?,
       bioTitle: json['bioTitle'] as String?,
       bioIntro: json['bioIntro'] as String?,
@@ -31,7 +31,7 @@ _$AboutSettingsImpl _$$AboutSettingsImplFromJson(Map<String, dynamic> json) =>
       isActive: json['isActive'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$$AboutSettingsImplToJson(_$AboutSettingsImpl instance) =>
+Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
     <String, dynamic>{
       'id': instance.id,
       'bioTitle': instance.bioTitle,
@@ -48,42 +48,40 @@ Map<String, dynamic> _$$AboutSettingsImplToJson(_$AboutSettingsImpl instance) =>
       'isActive': instance.isActive,
     };
 
-_$ContactSettingsImpl _$$ContactSettingsImplFromJson(
-  Map<String, dynamic> json,
-) => _$ContactSettingsImpl(
-  id: json['id'] as String?,
-  pageTitle: json['pageTitle'] as String?,
-  ownerName: json['ownerName'] as String?,
-  email: json['email'] as String?,
-  phone: json['phone'] as String?,
-  whatsapp: json['whatsapp'] as String?,
-  location: json['location'] as String?,
-  formTitle: json['formTitle'] as String?,
-  successTitle: json['successTitle'] as String?,
-  successMessage: json['successMessage'] as String?,
-  showSocialLinks: json['showSocialLinks'] as bool? ?? true,
-  isActive: json['isActive'] as bool? ?? true,
-);
+_ContactSettings _$ContactSettingsFromJson(Map<String, dynamic> json) =>
+    _ContactSettings(
+      id: json['id'] as String?,
+      pageTitle: json['pageTitle'] as String?,
+      ownerName: json['ownerName'] as String?,
+      email: json['email'] as String?,
+      phone: json['phone'] as String?,
+      whatsapp: json['whatsapp'] as String?,
+      location: json['location'] as String?,
+      formTitle: json['formTitle'] as String?,
+      successTitle: json['successTitle'] as String?,
+      successMessage: json['successMessage'] as String?,
+      showSocialLinks: json['showSocialLinks'] as bool? ?? true,
+      isActive: json['isActive'] as bool? ?? true,
+    );
 
-Map<String, dynamic> _$$ContactSettingsImplToJson(
-  _$ContactSettingsImpl instance,
-) => <String, dynamic>{
-  'id': instance.id,
-  'pageTitle': instance.pageTitle,
-  'ownerName': instance.ownerName,
-  'email': instance.email,
-  'phone': instance.phone,
-  'whatsapp': instance.whatsapp,
-  'location': instance.location,
-  'formTitle': instance.formTitle,
-  'successTitle': instance.successTitle,
-  'successMessage': instance.successMessage,
-  'showSocialLinks': instance.showSocialLinks,
-  'isActive': instance.isActive,
-};
+Map<String, dynamic> _$ContactSettingsToJson(_ContactSettings instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'pageTitle': instance.pageTitle,
+      'ownerName': instance.ownerName,
+      'email': instance.email,
+      'phone': instance.phone,
+      'whatsapp': instance.whatsapp,
+      'location': instance.location,
+      'formTitle': instance.formTitle,
+      'successTitle': instance.successTitle,
+      'successMessage': instance.successMessage,
+      'showSocialLinks': instance.showSocialLinks,
+      'isActive': instance.isActive,
+    };
 
-_$ThemeSettingsImpl _$$ThemeSettingsImplFromJson(Map<String, dynamic> json) =>
-    _$ThemeSettingsImpl(
+_ThemeSettings _$ThemeSettingsFromJson(Map<String, dynamic> json) =>
+    _ThemeSettings(
       id: json['id'] as String?,
       primaryColor: json['primaryColor'] as String? ?? '#6c0a0a',
       secondaryColor: json['secondaryColor'] as String? ?? '#ffaadd',
@@ -101,7 +99,7 @@ _$ThemeSettingsImpl _$$ThemeSettingsImplFromJson(Map<String, dynamic> json) =>
       isActive: json['isActive'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$$ThemeSettingsImplToJson(_$ThemeSettingsImpl instance) =>
+Map<String, dynamic> _$ThemeSettingsToJson(_ThemeSettings instance) =>
     <String, dynamic>{
       'id': instance.id,
       'primaryColor': instance.primaryColor,
@@ -120,8 +118,8 @@ Map<String, dynamic> _$$ThemeSettingsImplToJson(_$ThemeSettingsImpl instance) =>
       'isActive': instance.isActive,
     };
 
-_$SiteSettingsImpl _$$SiteSettingsImplFromJson(Map<String, dynamic> json) =>
-    _$SiteSettingsImpl(
+_SiteSettings _$SiteSettingsFromJson(Map<String, dynamic> json) =>
+    _SiteSettings(
       id: json['id'] as String?,
       siteName:
           json['siteName'] as String? ??
@@ -144,7 +142,7 @@ _$SiteSettingsImpl _$$SiteSettingsImplFromJson(Map<String, dynamic> json) =>
       isActive: json['isActive'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$$SiteSettingsImplToJson(_$SiteSettingsImpl instance) =>
+Map<String, dynamic> _$SiteSettingsToJson(_SiteSettings instance) =>
     <String, dynamic>{
       'id': instance.id,
       'siteName': instance.siteName,
@@ -166,24 +164,23 @@ Map<String, dynamic> _$$SiteSettingsImplToJson(_$SiteSettingsImpl instance) =>
       'isActive': instance.isActive,
     };
 
-_$SocialLinkImpl _$$SocialLinkImplFromJson(Map<String, dynamic> json) =>
-    _$SocialLinkImpl(
-      id: json['id'] as String,
-      platform: json['platform'] as String,
-      url: json['url'] as String,
-      username: json['username'] as String?,
-      icon: json['icon'] as String?,
-      isActive: json['isActive'] as bool? ?? true,
-      sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
-      createdAt: json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
-    );
+_SocialLink _$SocialLinkFromJson(Map<String, dynamic> json) => _SocialLink(
+  id: json['id'] as String,
+  platform: json['platform'] as String,
+  url: json['url'] as String,
+  username: json['username'] as String?,
+  icon: json['icon'] as String?,
+  isActive: json['isActive'] as bool? ?? true,
+  sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String),
+);
 
-Map<String, dynamic> _$$SocialLinkImplToJson(_$SocialLinkImpl instance) =>
+Map<String, dynamic> _$SocialLinkToJson(_SocialLink instance) =>
     <String, dynamic>{
       'id': instance.id,
       'platform': instance.platform,

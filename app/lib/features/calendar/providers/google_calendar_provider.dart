@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/utils/app_logger.dart';
@@ -102,6 +101,5 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
   }
 }
 
-// Compat alias: older code expected `googleCalendarProvider`.
-final AutoDisposeAsyncNotifierProvider<GoogleCalendarNotifier, GoogleAuthState>
-googleCalendarProvider = googleCalendarNotifierProvider;
+// Nota: el provider `googleCalendarProvider` es generado por `riverpod_generator`.
+// Se eliminó el alias manual para evitar definiciones duplicadas.

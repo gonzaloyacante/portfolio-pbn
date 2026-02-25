@@ -6,33 +6,32 @@ part of 'contact_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ContactItemImpl _$$ContactItemImplFromJson(Map<String, dynamic> json) =>
-    _$ContactItemImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      email: json['email'] as String,
-      phone: json['phone'] as String?,
-      subject: json['subject'] as String?,
-      status: json['status'] as String? ?? 'NEW',
-      priority: json['priority'] as String? ?? 'MEDIUM',
-      isRead: json['isRead'] as bool? ?? false,
-      isReplied: json['isReplied'] as bool? ?? false,
-      readAt: json['readAt'] == null
-          ? null
-          : DateTime.parse(json['readAt'] as String),
-      repliedAt: json['repliedAt'] == null
-          ? null
-          : DateTime.parse(json['repliedAt'] as String),
-      leadScore: (json['leadScore'] as num?)?.toInt(),
-      leadSource: json['leadSource'] as String?,
-      tags:
-          (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-          const [],
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
+_ContactItem _$ContactItemFromJson(Map<String, dynamic> json) => _ContactItem(
+  id: json['id'] as String,
+  name: json['name'] as String,
+  email: json['email'] as String,
+  phone: json['phone'] as String?,
+  subject: json['subject'] as String?,
+  status: json['status'] as String? ?? 'NEW',
+  priority: json['priority'] as String? ?? 'MEDIUM',
+  isRead: json['isRead'] as bool? ?? false,
+  isReplied: json['isReplied'] as bool? ?? false,
+  readAt: json['readAt'] == null
+      ? null
+      : DateTime.parse(json['readAt'] as String),
+  repliedAt: json['repliedAt'] == null
+      ? null
+      : DateTime.parse(json['repliedAt'] as String),
+  leadScore: (json['leadScore'] as num?)?.toInt(),
+  leadSource: json['leadSource'] as String?,
+  tags:
+      (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: DateTime.parse(json['updatedAt'] as String),
+);
 
-Map<String, dynamic> _$$ContactItemImplToJson(_$ContactItemImpl instance) =>
+Map<String, dynamic> _$ContactItemToJson(_ContactItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -52,8 +51,8 @@ Map<String, dynamic> _$$ContactItemImplToJson(_$ContactItemImpl instance) =>
       'updatedAt': instance.updatedAt.toIso8601String(),
     };
 
-_$ContactDetailImpl _$$ContactDetailImplFromJson(Map<String, dynamic> json) =>
-    _$ContactDetailImpl(
+_ContactDetail _$ContactDetailFromJson(Map<String, dynamic> json) =>
+    _ContactDetail(
       id: json['id'] as String,
       name: json['name'] as String,
       email: json['email'] as String,
@@ -90,7 +89,7 @@ _$ContactDetailImpl _$$ContactDetailImplFromJson(Map<String, dynamic> json) =>
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$ContactDetailImplToJson(_$ContactDetailImpl instance) =>
+Map<String, dynamic> _$ContactDetailToJson(_ContactDetail instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

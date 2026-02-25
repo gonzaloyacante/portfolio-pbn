@@ -143,6 +143,5 @@ class AuthNotifier extends _$AuthNotifier {
   }
 }
 
-// Compat alias (generado antes usaba el nombre `authProvider`).
-// Mantener para compatibilidad con código existente.
-final authProvider = authNotifierProvider;
+// Nota: el provider `authProvider` es generado por `riverpod_generator`.
+// Antes se usaba un alias manual; se eliminó para evitar definiciones duplicadas.

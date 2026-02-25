@@ -1,10 +1,11 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
+import 'widgets/page_views_chart.dart';
+import 'widgets/bookings_bar_chart.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -73,67 +74,82 @@ class _DashboardContent extends StatelessWidget {
         ),
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          sliver: SliverGrid.count(
-            crossAxisCount: _gridColumns(context),
-            childAspectRatio: 1.6,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            children: [
-              StatCard(
-                icon: Icons.photo_library_outlined,
-                label: 'Proyectos',
-                value: stats.totalProjects.toString(),
-                color: AppColors.lightPrimary,
-                onTap: () => context.goNamed(RouteNames.projects),
-              ),
-              StatCard(
-                icon: Icons.category_outlined,
-                label: 'Categorías',
-                value: stats.totalCategories.toString(),
-                color: const Color(0xFF7C3AED),
-                onTap: () => context.goNamed(RouteNames.categories),
-              ),
-              StatCard(
-                icon: Icons.design_services_outlined,
-                label: 'Servicios',
-                value: stats.totalServices.toString(),
-                color: const Color(0xFF0891B2),
-                onTap: () => context.goNamed(RouteNames.services),
-              ),
-              StatCard(
-                icon: Icons.format_quote_outlined,
-                label: 'Testimonios',
-                value: stats.totalTestimonials.toString(),
-                color: AppColors.success,
-                onTap: () => context.goNamed(RouteNames.testimonials),
-              ),
-              StatCard(
-                icon: Icons.mail_outline_rounded,
-                label: 'Contactos nuevos',
-                value: stats.newContacts.toString(),
-                trend: stats.newContacts > 0 ? '+${stats.newContacts}' : null,
-                trendPositive: true,
-                color: AppColors.darkPrimary,
-                onTap: () => context.goNamed(RouteNames.contacts),
-              ),
-              StatCard(
-                icon: Icons.calendar_month_outlined,
-                label: 'Reservas pendientes',
-                value: stats.pendingBookings.toString(),
-                trend: stats.pendingBookings > 0
-                    ? '${stats.pendingBookings} pendientes'
-                    : null,
-                trendPositive: stats.pendingBookings == 0,
-                color: AppColors.warning,
-                onTap: () => context.goNamed(RouteNames.calendar),
-              ),
-              StatCard(
-                icon: Icons.remove_red_eye_outlined,
-                label: 'Visitas (30d)',
-                value: _formatNumber(stats.pageViews30d),
-                color: const Color(0xFF059669),
-              ),
-            ],
+          sliver: SliverToBoxAdapter(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final cols = _gridColumns(context);
+                final spacing = 10.0;
+                final totalSpacing = spacing * (cols - 1);
+                final itemWidth = (constraints.maxWidth - totalSpacing) / cols;
+
+                final items = [
+                  StatCard(
+                    icon: Icons.photo_library_outlined,
+                    label: 'Proyectos',
+                    value: stats.totalProjects.toString(),
+                    color: AppColors.lightPrimary,
+                    onTap: () => context.goNamed(RouteNames.projects),
+                  ),
+                  StatCard(
+                    icon: Icons.category_outlined,
+                    label: 'Categorías',
+                    value: stats.totalCategories.toString(),
+                    color: const Color(0xFF7C3AED),
+                    onTap: () => context.goNamed(RouteNames.categories),
+                  ),
+                  StatCard(
+                    icon: Icons.design_services_outlined,
+                    label: 'Servicios',
+                    value: stats.totalServices.toString(),
+                    color: const Color(0xFF0891B2),
+                    onTap: () => context.goNamed(RouteNames.services),
+                  ),
+                  StatCard(
+                    icon: Icons.format_quote_outlined,
+                    label: 'Testimonios',
+                    value: stats.totalTestimonials.toString(),
+                    color: AppColors.success,
+                    onTap: () => context.goNamed(RouteNames.testimonials),
+                  ),
+                  StatCard(
+                    icon: Icons.mail_outline_rounded,
+                    label: 'Contactos nuevos',
+                    value: stats.newContacts.toString(),
+                    trend: stats.newContacts > 0
+                        ? '+${stats.newContacts}'
+                        : null,
+                    trendPositive: true,
+                    color: AppColors.darkPrimary,
+                    onTap: () => context.goNamed(RouteNames.contacts),
+                  ),
+                  StatCard(
+                    icon: Icons.calendar_month_outlined,
+                    label: 'Reservas pendientes',
+                    value: stats.pendingBookings.toString(),
+                    trend: stats.pendingBookings > 0
+                        ? '${stats.pendingBookings} pendientes'
+                        : null,
+                    trendPositive: stats.pendingBookings == 0,
+                    color: AppColors.warning,
+                    onTap: () => context.goNamed(RouteNames.calendar),
+                  ),
+                  StatCard(
+                    icon: Icons.remove_red_eye_outlined,
+                    label: 'Visitas (30d)',
+                    value: _formatNumber(stats.pageViews30d),
+                    color: const Color(0xFF059669),
+                  ),
+                ];
+
+                return Wrap(
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  children: items
+                      .map((w) => SizedBox(width: itemWidth, child: w))
+                      .toList(),
+                );
+              },
+            ),
           ),
         ),
         const SliverPadding(padding: EdgeInsets.only(bottom: 4)),
@@ -216,9 +232,9 @@ class _DashboardCharts extends ConsumerWidget {
       error: (_, _) => const SizedBox.shrink(),
       data: (charts) => Column(
         children: [
-          _PageViewsChart(data: charts.dailyPageViews),
+          PageViewsChart(data: charts.dailyPageViews),
           const SizedBox(height: 16),
-          _BookingsBarChart(data: charts.monthlyBookings),
+          BookingsBarChart(data: charts.monthlyBookings),
         ],
       ),
     );
@@ -235,264 +251,4 @@ class _DashboardCharts extends ConsumerWidget {
   }
 }
 
-// ── _PageViewsChart ────────────────────────────────────────────────────────────
-
-class _PageViewsChart extends StatelessWidget {
-  const _PageViewsChart({required this.data});
-
-  final List<ChartDataPoint> data;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 9);
-
-    final spots = data.asMap().entries.map((e) {
-      return FlSpot(e.key.toDouble(), e.value.count.toDouble());
-    }).toList();
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Visitas diarias (7 días)',
-              style: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 160,
-              child: LineChart(
-                LineChartData(
-                  lineTouchData: LineTouchData(
-                    handleBuiltInTouches: true,
-                    touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (_) =>
-                          scheme.inverseSurface.withValues(alpha: 0.9),
-                      getTooltipItems: (spots) => spots
-                          .map(
-                            (s) => LineTooltipItem(
-                              '${s.y.toInt()} visitas',
-                              TextStyle(
-                                color: scheme.onInverseSurface,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: spots.isEmpty ? [const FlSpot(0, 0)] : spots,
-                      isCurved: true,
-                      curveSmoothness: 0.35,
-                      color: AppColors.lightPrimary,
-                      barWidth: 2.5,
-                      dotData: FlDotData(
-                        show: true,
-                        getDotPainter: (spot, _, _, _) => FlDotCirclePainter(
-                          radius: 3,
-                          color: AppColors.lightPrimary,
-                          strokeWidth: 1.5,
-                          strokeColor: Colors.white,
-                        ),
-                      ),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.lightPrimary.withValues(alpha: 0.18),
-                            AppColors.lightPrimary.withValues(alpha: 0.0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: 1,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: scheme.outlineVariant.withValues(alpha: 0.3),
-                      strokeWidth: 1,
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  titlesData: _buildLineTitles(data, textStyle),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  FlTitlesData _buildLineTitles(
-    List<ChartDataPoint> data,
-    TextStyle? textStyle,
-  ) {
-    return FlTitlesData(
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 28,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
-        ),
-      ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          interval: 1,
-          reservedSize: 24,
-          getTitlesWidget: (value, _) {
-            final idx = value.toInt();
-            if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(data[idx].label, style: textStyle),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-// ── _BookingsBarChart ──────────────────────────────────────────────────────────
-
-class _BookingsBarChart extends StatelessWidget {
-  const _BookingsBarChart({required this.data});
-
-  final List<ChartDataPoint> data;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 9);
-
-    final barGroups = data.asMap().entries.map((e) {
-      return BarChartGroupData(
-        x: e.key,
-        barRods: [
-          BarChartRodData(
-            toY: e.value.count.toDouble(),
-            color: AppColors.darkPrimary,
-            width: 16,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-          ),
-        ],
-      );
-    }).toList();
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Reservas mensuales (6 meses)',
-              style: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 160,
-              child: BarChart(
-                BarChartData(
-                  barTouchData: BarTouchData(
-                    handleBuiltInTouches: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (_) =>
-                          scheme.inverseSurface.withValues(alpha: 0.9),
-                      getTooltipItem: (group, groupIndex, rod, rodIndex) =>
-                          BarTooltipItem(
-                            '${rod.toY.toInt()} reservas',
-                            TextStyle(
-                              color: scheme.onInverseSurface,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                    ),
-                  ),
-                  barGroups: barGroups,
-                  borderData: FlBorderData(show: false),
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: scheme.outlineVariant.withValues(alpha: 0.3),
-                      strokeWidth: 1,
-                    ),
-                  ),
-                  titlesData: _buildBarTitles(data, textStyle),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  FlTitlesData _buildBarTitles(
-    List<ChartDataPoint> data,
-    TextStyle? textStyle,
-  ) {
-    return FlTitlesData(
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 28,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
-        ),
-      ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          interval: 1,
-          reservedSize: 24,
-          getTitlesWidget: (value, _) {
-            final idx = value.toInt();
-            if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(data[idx].label, style: textStyle),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
+// Chart widgets extracted to `widgets/` to keep this file small and maintainable.

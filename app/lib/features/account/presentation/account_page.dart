@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/auth/auth_provider.dart';
@@ -10,6 +9,7 @@ import '../../../core/notifications/push_provider.dart';
 import '../../calendar/data/google_calendar_models.dart';
 import '../../calendar/providers/google_calendar_provider.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 import '../providers/account_provider.dart';
 
 class AccountPage extends ConsumerStatefulWidget {
@@ -82,15 +82,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
     return LoadingOverlay(
       isLoading: _loading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
-          title: const Text('Mi cuenta'),
-        ),
+      child: AppScaffold(
+        title: 'Mi cuenta',
         body: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           children: [

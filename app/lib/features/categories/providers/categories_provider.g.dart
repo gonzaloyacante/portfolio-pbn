@@ -6,309 +6,170 @@ part of 'categories_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$categoriesListHash() => r'870928df3fabe9b0ed2255a8d1b5fd12ed7bd91c';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [categoriesList].
 @ProviderFor(categoriesList)
-const categoriesListProvider = CategoriesListFamily();
+final categoriesListProvider = CategoriesListFamily._();
 
-/// See also [categoriesList].
-class CategoriesListFamily
-    extends Family<AsyncValue<PaginatedResponse<CategoryItem>>> {
-  /// See also [categoriesList].
-  const CategoriesListFamily();
+final class CategoriesListProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaginatedResponse<CategoryItem>>,
+          PaginatedResponse<CategoryItem>,
+          FutureOr<PaginatedResponse<CategoryItem>>
+        >
+    with
+        $FutureModifier<PaginatedResponse<CategoryItem>>,
+        $FutureProvider<PaginatedResponse<CategoryItem>> {
+  CategoriesListProvider._({
+    required CategoriesListFamily super.from,
+    required ({int page, String? search, bool? isActive}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'categoriesListProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [categoriesList].
-  CategoriesListProvider call({int page = 1, String? search, bool? isActive}) {
-    return CategoriesListProvider(
-      page: page,
-      search: search,
-      isActive: isActive,
-    );
+  @override
+  String debugGetCreateSourceHash() => _$categoriesListHash();
+
+  @override
+  String toString() {
+    return r'categoriesListProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  CategoriesListProvider getProviderOverride(
-    covariant CategoriesListProvider provider,
-  ) {
-    return call(
-      page: provider.page,
-      search: provider.search,
-      isActive: provider.isActive,
+  $FutureProviderElement<PaginatedResponse<CategoryItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<PaginatedResponse<CategoryItem>> create(Ref ref) {
+    final argument =
+        this.argument as ({int page, String? search, bool? isActive});
+    return categoriesList(
+      ref,
+      page: argument.page,
+      search: argument.search,
+      isActive: argument.isActive,
     );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'categoriesListProvider';
-}
-
-/// See also [categoriesList].
-class CategoriesListProvider
-    extends AutoDisposeFutureProvider<PaginatedResponse<CategoryItem>> {
-  /// See also [categoriesList].
-  CategoriesListProvider({int page = 1, String? search, bool? isActive})
-    : this._internal(
-        (ref) => categoriesList(
-          ref as CategoriesListRef,
-          page: page,
-          search: search,
-          isActive: isActive,
-        ),
-        from: categoriesListProvider,
-        name: r'categoriesListProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$categoriesListHash,
-        dependencies: CategoriesListFamily._dependencies,
-        allTransitiveDependencies:
-            CategoriesListFamily._allTransitiveDependencies,
-        page: page,
-        search: search,
-        isActive: isActive,
-      );
-
-  CategoriesListProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.page,
-    required this.search,
-    required this.isActive,
-  }) : super.internal();
-
-  final int page;
-  final String? search;
-  final bool? isActive;
-
-  @override
-  Override overrideWith(
-    FutureOr<PaginatedResponse<CategoryItem>> Function(
-      CategoriesListRef provider,
-    )
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: CategoriesListProvider._internal(
-        (ref) => create(ref as CategoriesListRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        page: page,
-        search: search,
-        isActive: isActive,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<PaginatedResponse<CategoryItem>>
-  createElement() {
-    return _CategoriesListProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is CategoriesListProvider &&
-        other.page == page &&
-        other.search == search &&
-        other.isActive == isActive;
+    return other is CategoriesListProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, search.hashCode);
-    hash = _SystemHash.combine(hash, isActive.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin CategoriesListRef
-    on AutoDisposeFutureProviderRef<PaginatedResponse<CategoryItem>> {
-  /// The parameter `page` of this provider.
-  int get page;
+String _$categoriesListHash() => r'870928df3fabe9b0ed2255a8d1b5fd12ed7bd91c';
 
-  /// The parameter `search` of this provider.
-  String? get search;
+final class CategoriesListFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<PaginatedResponse<CategoryItem>>,
+          ({int page, String? search, bool? isActive})
+        > {
+  CategoriesListFamily._()
+    : super(
+        retry: null,
+        name: r'categoriesListProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `isActive` of this provider.
-  bool? get isActive;
+  CategoriesListProvider call({int page = 1, String? search, bool? isActive}) =>
+      CategoriesListProvider._(
+        argument: (page: page, search: search, isActive: isActive),
+        from: this,
+      );
+
+  @override
+  String toString() => r'categoriesListProvider';
 }
 
-class _CategoriesListProviderElement
-    extends AutoDisposeFutureProviderElement<PaginatedResponse<CategoryItem>>
-    with CategoriesListRef {
-  _CategoriesListProviderElement(super.provider);
+@ProviderFor(categoryDetail)
+final categoryDetailProvider = CategoryDetailFamily._();
+
+final class CategoryDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<CategoryDetail>,
+          CategoryDetail,
+          FutureOr<CategoryDetail>
+        >
+    with $FutureModifier<CategoryDetail>, $FutureProvider<CategoryDetail> {
+  CategoryDetailProvider._({
+    required CategoryDetailFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'categoryDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  int get page => (origin as CategoriesListProvider).page;
+  String debugGetCreateSourceHash() => _$categoryDetailHash();
+
   @override
-  String? get search => (origin as CategoriesListProvider).search;
+  String toString() {
+    return r'categoryDetailProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
   @override
-  bool? get isActive => (origin as CategoriesListProvider).isActive;
+  $FutureProviderElement<CategoryDetail> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<CategoryDetail> create(Ref ref) {
+    final argument = this.argument as String;
+    return categoryDetail(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CategoryDetailProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$categoryDetailHash() => r'429be3e222910125a614d7b5c5912a8c34bbcdd0';
 
-/// See also [categoryDetail].
-@ProviderFor(categoryDetail)
-const categoryDetailProvider = CategoryDetailFamily();
-
-/// See also [categoryDetail].
-class CategoryDetailFamily extends Family<AsyncValue<CategoryDetail>> {
-  /// See also [categoryDetail].
-  const CategoryDetailFamily();
-
-  /// See also [categoryDetail].
-  CategoryDetailProvider call(String id) {
-    return CategoryDetailProvider(id);
-  }
-
-  @override
-  CategoryDetailProvider getProviderOverride(
-    covariant CategoryDetailProvider provider,
-  ) {
-    return call(provider.id);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'categoryDetailProvider';
-}
-
-/// See also [categoryDetail].
-class CategoryDetailProvider extends AutoDisposeFutureProvider<CategoryDetail> {
-  /// See also [categoryDetail].
-  CategoryDetailProvider(String id)
-    : this._internal(
-        (ref) => categoryDetail(ref as CategoryDetailRef, id),
-        from: categoryDetailProvider,
+final class CategoryDetailFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<CategoryDetail>, String> {
+  CategoryDetailFamily._()
+    : super(
+        retry: null,
         name: r'categoryDetailProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$categoryDetailHash,
-        dependencies: CategoryDetailFamily._dependencies,
-        allTransitiveDependencies:
-            CategoryDetailFamily._allTransitiveDependencies,
-        id: id,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  CategoryDetailProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.id,
-  }) : super.internal();
-
-  final String id;
+  CategoryDetailProvider call(String id) =>
+      CategoryDetailProvider._(argument: id, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<CategoryDetail> Function(CategoryDetailRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: CategoryDetailProvider._internal(
-        (ref) => create(ref as CategoryDetailRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        id: id,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<CategoryDetail> createElement() {
-    return _CategoryDetailProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is CategoryDetailProvider && other.id == id;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, id.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'categoryDetailProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin CategoryDetailRef on AutoDisposeFutureProviderRef<CategoryDetail> {
-  /// The parameter `id` of this provider.
-  String get id;
-}
-
-class _CategoryDetailProviderElement
-    extends AutoDisposeFutureProviderElement<CategoryDetail>
-    with CategoryDetailRef {
-  _CategoryDetailProviderElement(super.provider);
-
-  @override
-  String get id => (origin as CategoryDetailProvider).id;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

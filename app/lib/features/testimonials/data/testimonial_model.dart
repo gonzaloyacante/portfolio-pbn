@@ -7,7 +7,7 @@ part 'testimonial_model.g.dart';
 
 /// Modelo resumido para listas
 @freezed
-class TestimonialItem with _$TestimonialItem {
+abstract class TestimonialItem with _$TestimonialItem {
   const factory TestimonialItem({
     required String id,
     required String name,
@@ -32,7 +32,7 @@ class TestimonialItem with _$TestimonialItem {
 
 /// Modelo completo para detalle / edición
 @freezed
-class TestimonialDetail with _$TestimonialDetail {
+abstract class TestimonialDetail with _$TestimonialDetail {
   const factory TestimonialDetail({
     required String id,
     required String name,

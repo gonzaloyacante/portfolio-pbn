@@ -8,7 +8,7 @@ part 'service_model.g.dart';
 
 /// Modelo ligero para listas.
 @freezed
-class ServiceItem with _$ServiceItem {
+abstract class ServiceItem with _$ServiceItem {
   const factory ServiceItem({
     required String id,
     required String name,
@@ -39,7 +39,7 @@ class ServiceItem with _$ServiceItem {
 
 /// Modelo completo para vista/edición.
 @freezed
-class ServiceDetail with _$ServiceDetail {
+abstract class ServiceDetail with _$ServiceDetail {
   const factory ServiceDetail({
     required String id,
     required String name,

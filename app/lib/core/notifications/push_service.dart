@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
@@ -34,9 +35,25 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// final token = await service.getToken();
 /// ```
 class PushService {
-  PushService() : _messaging = FirebaseMessaging.instance;
+  PushService();
 
-  final FirebaseMessaging _messaging;
+  FirebaseMessaging? _messaging;
+
+  FirebaseMessaging? get _maybeMessaging {
+    try {
+      // Solo intentar obtener la instancia si Firebase ya fue inicializado.
+      if (Firebase.apps.isEmpty) return null;
+      _messaging ??= FirebaseMessaging.instance;
+      return _messaging;
+    } catch (e, st) {
+      AppLogger.debug(
+        'PushService: Firebase no disponible al pedir instancia',
+        e,
+        st,
+      );
+      return null;
+    }
+  }
 
   // ── init ───────────────────────────────────────────────────────────────────
 
@@ -46,8 +63,17 @@ class PushService {
   /// En iOS/macOS se muestra un diálogo de sistema.
   Future<void> init() async {
     try {
+      // Si Firebase no está inicializado, no podemos inicializar FCM ahora.
+      final messaging = _maybeMessaging;
+      if (messaging == null) {
+        AppLogger.warn(
+          'PushService: Firebase no inicializado — omitiendo init()',
+        );
+        return;
+      }
+
       // 1. Solicitar permisos (relevante en iOS/macOS)
-      final settings = await _messaging.requestPermission(
+      final settings = await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -62,12 +88,11 @@ class PushService {
       }
 
       // 2. Configurar presentación de notificaciones en foreground (iOS)
-      await FirebaseMessaging.instance
-          .setForegroundNotificationPresentationOptions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
       AppLogger.info(
         'PushService: inicializado correctamente '
@@ -86,7 +111,13 @@ class PushService {
   /// En web retorna el VAPID token; en móvil el FCM registration token.
   Future<String?> getToken() async {
     try {
-      final token = await _messaging.getToken();
+      final messaging = _maybeMessaging;
+      if (messaging == null) {
+        AppLogger.warn('PushService.getToken: Firebase no inicializado');
+        return null;
+      }
+
+      final token = await messaging.getToken();
       if (token != null) {
         AppLogger.debug('PushService: token obtenido (${token.length} chars)');
       }
@@ -113,5 +144,9 @@ class PushService {
   /// Stream que emite un nuevo token cuando FCM lo rota.
   ///
   /// Subscríbete en el provider para re-registrar el token rotado.
-  Stream<String> get onTokenRefresh => _messaging.onTokenRefresh;
+  Stream<String> get onTokenRefresh {
+    final messaging = _maybeMessaging;
+    if (messaging == null) return const Stream<String>.empty();
+    return messaging.onTokenRefresh;
+  }
 }

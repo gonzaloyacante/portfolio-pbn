@@ -190,107 +190,139 @@ class _ProjectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return Card(
       margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
         onTap: () => context.pushNamed(
           RouteNames.projectEdit,
           pathParameters: {'id': item.id},
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
+        child: IntrinsicHeight(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Thumbnail
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: CachedNetworkImage(
-                  imageUrl: item.thumbnailUrl ?? '',
-                  width: 64,
-                  height: 64,
-                  fit: BoxFit.cover,
-                  placeholder: (_, _) => Container(
-                    width: 64,
-                    height: 64,
-                    color: scheme.surfaceContainerHighest,
-                    child: const Center(
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+              // Thumbnail — full height, wider for portfolio feel
+              SizedBox(
+                width: 90,
+                child:
+                    item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: item.thumbnailUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (_, _) => Container(
+                          color: scheme.surfaceContainerHighest,
+                          child: Icon(
+                            Icons.image_outlined,
+                            color: scheme.outlineVariant,
+                            size: 28,
+                          ),
+                        ),
+                        errorWidget: (_, _, _) => Container(
+                          color: scheme.surfaceContainerHighest,
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            color: scheme.outlineVariant,
+                            size: 28,
+                          ),
+                        ),
+                      )
+                    : Container(
+                        color: scheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.photo_library_outlined,
+                          color: scheme.outlineVariant,
+                          size: 28,
+                        ),
                       ),
-                    ),
-                  ),
-                  errorWidget: (_, _, _) => Container(
-                    width: 64,
-                    height: 64,
-                    color: scheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.broken_image_outlined,
-                      color: scheme.outline,
-                    ),
-                  ),
-                ),
               ),
-              const SizedBox(width: 12),
               // Info
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        if (item.isPinned)
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
-                            child: Icon(
-                              Icons.push_pin_rounded,
-                              size: 14,
-                              color: scheme.primary,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Title row
+                      Row(
+                        children: [
+                          if (item.isPinned)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4),
+                              child: Icon(
+                                Icons.push_pin_rounded,
+                                size: 13,
+                                color: scheme.primary,
+                              ),
+                            ),
+                          Expanded(
+                            child: Text(
+                              item.title,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        Expanded(
-                          child: Text(
-                            item.title,
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(fontWeight: FontWeight.w600),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.category.name,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodySmall?.copyWith(color: scheme.outline),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        StatusBadge(
-                          status: item.isActive
-                              ? AppStatus.active
-                              : AppStatus.inactive,
-                        ),
-                        if (item.isFeatured) ...[
-                          const SizedBox(width: 6),
-                          StatusBadge(status: AppStatus.featured),
                         ],
-                      ],
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: 3),
+                      // Category
+                      Row(
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            margin: const EdgeInsets.only(right: 5),
+                            decoration: BoxDecoration(
+                              color: scheme.primary.withValues(alpha: 0.6),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              item.category.name,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.outline,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      // Status badges
+                      Row(
+                        children: [
+                          StatusBadge(
+                            status: item.isActive
+                                ? AppStatus.active
+                                : AppStatus.inactive,
+                          ),
+                          if (item.isFeatured) ...[
+                            const SizedBox(width: 6),
+                            StatusBadge(status: AppStatus.featured),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              // Actions
+              // Actions button
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert_rounded),
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 20,
+                  color: scheme.outline,
+                ),
                 onSelected: (value) {
                   if (value == 'edit') {
                     context.pushNamed(
@@ -302,23 +334,28 @@ class _ProjectTile extends StatelessWidget {
                   }
                 },
                 itemBuilder: (_) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'edit',
-                    child: ListTile(
-                      leading: Icon(Icons.edit_outlined),
-                      title: Text('Editar'),
-                      contentPadding: EdgeInsets.zero,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit_outlined,
+                          size: 18,
+                          color: scheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        const Text('Editar'),
+                      ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
-                    child: ListTile(
-                      leading: Icon(Icons.delete_outline, color: Colors.red),
-                      title: Text(
-                        'Eliminar',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      contentPadding: EdgeInsets.zero,
+                    child: Row(
+                      children: const [
+                        Icon(Icons.delete_outline, size: 18, color: Colors.red),
+                        SizedBox(width: 10),
+                        Text('Eliminar', style: TextStyle(color: Colors.red)),
+                      ],
                     ),
                   ),
                 ],

@@ -61,6 +61,8 @@ key.properties
 # Firebase Admin SDK private key (usar solo como GitHub Secret, NUNCA en el repo)
 *adminsdk*.json
 *firebase-adminsdk*.json
+# firebase_options.dart generado con API keys hardcodeadas (nunca commitear en repo público)
+app/lib/firebase_options.dart
 # Specific backups just in case
 .env.local
 .env.production
@@ -145,7 +147,7 @@ Thumbs.db
 /web/scripts/
 /web/docs/
 /docs/
-/app/scripts/
+# /app/scripts/ — scripts de distribución sí se committean (no tienen credenciales)
 /app/docs/
 Portfolio PBN - Desktop/
 Portfolio PBN - Movil/

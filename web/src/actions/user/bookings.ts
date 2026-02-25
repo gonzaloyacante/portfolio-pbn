@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
+import { sendPushToAdmins } from '@/lib/push-service'
 import { ROUTES } from '@/config/routes'
 
 const BookingSchema = z.object({
@@ -35,7 +36,7 @@ export async function createBooking(formData: FormData) {
   const data = validation.data
 
   try {
-    await prisma.booking.create({
+    const booking = await prisma.booking.create({
       data: {
         date: data.date,
         clientName: data.clientName,
@@ -45,6 +46,7 @@ export async function createBooking(formData: FormData) {
         clientNotes: data.notes,
         status: 'PENDING',
       },
+      include: { service: { select: { name: true } } },
     })
 
     // Send Email Notification to Admin & Client
@@ -65,6 +67,20 @@ export async function createBooking(formData: FormData) {
     ]).catch((err) => {
       logger.error('Failed to send booking emails', { error: err })
       // Don't fail the written booking, just log error
+    })
+
+    // Push notification to all admin devices (fire-and-forget)
+    const dateStr = data.date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+    void sendPushToAdmins({
+      title: '📅 Nueva reserva',
+      body: `${data.clientName} — ${booking.service?.name ?? 'Servicio'} · ${dateStr}`,
+      type: 'booking',
+      id: booking.id,
+      screen: 'calendar',
     })
 
     revalidatePath(ROUTES.admin.calendar)

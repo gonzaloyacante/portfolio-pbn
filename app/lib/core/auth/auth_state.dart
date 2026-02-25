@@ -8,7 +8,7 @@ part 'auth_state.g.dart';
 
 /// Perfil del usuario administrador autenticado.
 @freezed
-class UserProfile with _$UserProfile {
+abstract class UserProfile with _$UserProfile {
   const factory UserProfile({
     required String id,
     required String email,

@@ -6,30 +6,29 @@ part of 'service_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ServiceItemImpl _$$ServiceItemImplFromJson(Map<String, dynamic> json) =>
-    _$ServiceItemImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      slug: json['slug'] as String,
-      shortDesc: json['shortDesc'] as String?,
-      price: json['price'] as String?,
-      priceLabel: json['priceLabel'] as String?,
-      currency: json['currency'] as String? ?? 'ARS',
-      duration: json['duration'] as String?,
-      imageUrl: json['imageUrl'] as String?,
-      iconName: json['iconName'] as String?,
-      color: json['color'] as String?,
-      isActive: json['isActive'] as bool? ?? true,
-      isFeatured: json['isFeatured'] as bool? ?? false,
-      isAvailable: json['isAvailable'] as bool? ?? true,
-      sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
-      bookingCount: (json['bookingCount'] as num?)?.toInt() ?? 0,
-      viewCount: (json['viewCount'] as num?)?.toInt() ?? 0,
-      createdAt: json['createdAt'] as String,
-      updatedAt: json['updatedAt'] as String,
-    );
+_ServiceItem _$ServiceItemFromJson(Map<String, dynamic> json) => _ServiceItem(
+  id: json['id'] as String,
+  name: json['name'] as String,
+  slug: json['slug'] as String,
+  shortDesc: json['shortDesc'] as String?,
+  price: json['price'] as String?,
+  priceLabel: json['priceLabel'] as String?,
+  currency: json['currency'] as String? ?? 'ARS',
+  duration: json['duration'] as String?,
+  imageUrl: json['imageUrl'] as String?,
+  iconName: json['iconName'] as String?,
+  color: json['color'] as String?,
+  isActive: json['isActive'] as bool? ?? true,
+  isFeatured: json['isFeatured'] as bool? ?? false,
+  isAvailable: json['isAvailable'] as bool? ?? true,
+  sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
+  bookingCount: (json['bookingCount'] as num?)?.toInt() ?? 0,
+  viewCount: (json['viewCount'] as num?)?.toInt() ?? 0,
+  createdAt: json['createdAt'] as String,
+  updatedAt: json['updatedAt'] as String,
+);
 
-Map<String, dynamic> _$$ServiceItemImplToJson(_$ServiceItemImpl instance) =>
+Map<String, dynamic> _$ServiceItemToJson(_ServiceItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -52,8 +51,8 @@ Map<String, dynamic> _$$ServiceItemImplToJson(_$ServiceItemImpl instance) =>
       'updatedAt': instance.updatedAt,
     };
 
-_$ServiceDetailImpl _$$ServiceDetailImplFromJson(Map<String, dynamic> json) =>
-    _$ServiceDetailImpl(
+_ServiceDetail _$ServiceDetailFromJson(Map<String, dynamic> json) =>
+    _ServiceDetail(
       id: json['id'] as String,
       name: json['name'] as String,
       slug: json['slug'] as String,
@@ -88,7 +87,7 @@ _$ServiceDetailImpl _$$ServiceDetailImplFromJson(Map<String, dynamic> json) =>
       updatedAt: json['updatedAt'] as String,
     );
 
-Map<String, dynamic> _$$ServiceDetailImplToJson(_$ServiceDetailImpl instance) =>
+Map<String, dynamic> _$ServiceDetailToJson(_ServiceDetail instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

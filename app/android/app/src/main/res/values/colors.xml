@@ -8,4 +8,5 @@
     <color name="notification_color">#6C0A0A</color>
     <!-- Color de fondo del splash screen antes de que Flutter renderice -->
     <color name="splash_background">#FFF8FC</color>
+	<color name="ic_launcher_background">#ffffff</color>
 </resources>

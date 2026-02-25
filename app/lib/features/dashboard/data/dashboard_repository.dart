@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,7 +12,7 @@ part 'dashboard_repository.g.dart';
 
 /// Métricas globales del panel de administración.
 @freezed
-class DashboardStats with _$DashboardStats {
+abstract class DashboardStats with _$DashboardStats {
   const factory DashboardStats({
     @Default(0) int totalProjects,
     @Default(0) int totalCategories,
@@ -32,7 +31,7 @@ class DashboardStats with _$DashboardStats {
 
 /// Punto de datos para un gráfico (etiqueta + valor).
 @freezed
-class ChartDataPoint with _$ChartDataPoint {
+abstract class ChartDataPoint with _$ChartDataPoint {
   const factory ChartDataPoint({required String label, required int count}) =
       _ChartDataPoint;
 
@@ -44,7 +43,7 @@ class ChartDataPoint with _$ChartDataPoint {
 
 /// Datos de tendencias para los gráficos del dashboard.
 @freezed
-class DashboardCharts with _$DashboardCharts {
+abstract class DashboardCharts with _$DashboardCharts {
   const factory DashboardCharts({
     @Default([]) List<ChartDataPoint> dailyPageViews,
     @Default([]) List<ChartDataPoint> monthlyBookings,
@@ -97,5 +96,10 @@ class DashboardRepository {
 
 @riverpod
 DashboardRepository dashboardRepository(Ref ref) {
-  return DashboardRepository(ref.watch(apiClientProvider));
+  // Usamos `read` en lugar de `watch` para evitar que la instancia del
+  // `DashboardRepository` se re-cree automáticamente cuando cambia el
+  // `ApiClient` (por ejemplo, al cargar async el `serverUrlProvider` en debug).
+  // Evita re-fetchs duplicados al arranque.
+  final client = ref.read(apiClientProvider);
+  return DashboardRepository(client);
 }

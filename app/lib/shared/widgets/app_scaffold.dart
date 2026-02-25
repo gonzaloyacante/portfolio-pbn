@@ -99,10 +99,6 @@ const List<_NavItem> _allNavItems = [
   ),
 ];
 
-/// Ítems que aparecen en la barra de navegación inferior (móvil).
-List<_NavItem> get _mainNavItems =>
-    _allNavItems.where((i) => i.isMainNav).toList();
-
 // ── AppScaffold ───────────────────────────────────────────────────────────────
 
 /// Scaffold adaptativo de la app de administración.
@@ -192,14 +188,18 @@ class _TabletScaffold extends StatelessWidget {
             child: Scaffold(
               appBar: title != null
                   ? AppBar(
-                      leading: IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => GoRouter.of(context).pop(),
-                        tooltip: 'Volver',
-                      ),
+                      leading: GoRouter.of(context).canPop()
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                              ),
+                              onPressed: () => context.pop(),
+                              tooltip: 'Volver',
+                            )
+                          : null,
+                      automaticallyImplyLeading: false,
                       title: Text(title!),
                       actions: actions,
-                      automaticallyImplyLeading: false,
                     )
                   : null,
               body: body,
@@ -213,7 +213,7 @@ class _TabletScaffold extends StatelessWidget {
 
 // ── _MobileScaffold ───────────────────────────────────────────────────────────
 
-class _MobileScaffold extends StatelessWidget {
+class _MobileScaffold extends StatefulWidget {
   const _MobileScaffold({
     required this.body,
     this.title,
@@ -229,43 +229,39 @@ class _MobileScaffold extends StatelessWidget {
   final bool resizeToAvoidBottomInset;
 
   @override
+  State<_MobileScaffold> createState() => _MobileScaffoldState();
+}
+
+class _MobileScaffoldState extends State<_MobileScaffold> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
   Widget build(BuildContext context) {
-    final currentRoute = GoRouterState.of(context).name ?? '';
-    final currentIndex = _mainNavItems.indexWhere(
-      (item) => item.routeName == currentRoute,
-    );
-    final selectedIndex = currentIndex == -1 ? 0 : currentIndex;
+    final canPop = GoRouter.of(context).canPop();
 
     return Scaffold(
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      floatingActionButton: floatingActionButton,
-      appBar: title != null
+      key: _scaffoldKey,
+      resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
+      floatingActionButton: widget.floatingActionButton,
+      appBar: widget.title != null
           ? AppBar(
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => GoRouter.of(context).pop(),
-                tooltip: 'Volver',
-              ),
-              title: Text(title!),
-              actions: actions,
+              leading: canPop
+                  ? IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                      onPressed: () => context.pop(),
+                      tooltip: 'Volver',
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.menu_rounded),
+                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      tooltip: 'Menú',
+                    ),
+              automaticallyImplyLeading: false,
+              title: Text(widget.title!),
+              actions: widget.actions,
             )
           : null,
-      body: body,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (index) {
-          context.goNamed(_mainNavItems[index].routeName);
-        },
-        destinations: _mainNavItems
-            .map(
-              (item) => NavigationDestination(
-                icon: Icon(item.icon),
-                selectedIcon: Icon(item.selectedIcon),
-                label: item.label,
-              ),
-            )
-            .toList(),
-      ),
+      body: widget.body,
       drawer: const AppDrawer(),
     );
   }
@@ -289,6 +285,7 @@ class AppDrawer extends StatelessWidget {
       width: 260,
       color: colorScheme.surface,
       child: SafeArea(
+        top: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -305,7 +302,7 @@ class AppDrawer extends StatelessWidget {
                   _SectionLabel(label: 'CONTENIDO'),
                   ..._buildItems(
                     context,
-                    items: _allNavItems.sublist(0, 7),
+                    items: _allNavItems.sublist(0, 8),
                     currentRoute: currentRoute,
                     isTablet: isTablet,
                   ),
@@ -313,7 +310,7 @@ class AppDrawer extends StatelessWidget {
                   _SectionLabel(label: 'CONFIGURACIÓN'),
                   ..._buildItems(
                     context,
-                    items: _allNavItems.sublist(7),
+                    items: _allNavItems.sublist(8),
                     currentRoute: currentRoute,
                     isTablet: isTablet,
                   ),
@@ -361,18 +358,54 @@ class _DrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            colorScheme.primary.withValues(alpha: 0.12),
+            colorScheme.primary.withValues(alpha: 0.04),
+          ],
+        ),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        24 + MediaQuery.of(context).padding.top,
+        16,
+        20,
+      ),
       child: Row(
         children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundColor: colorScheme.primaryContainer,
-            child: Text(
-              'P',
-              style: AppTypography.decorativeTitle(
-                colorScheme.onPrimaryContainer,
-                fontSize: 22,
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.primary.withValues(alpha: 0.75),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                'P',
+                style: AppTypography.decorativeTitle(
+                  Colors.white,
+                  fontSize: 24,
+                ),
               ),
             ),
           ),
@@ -384,14 +417,26 @@ class _DrawerHeader extends StatelessWidget {
                 Text(
                   'Paola BN',
                   style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text(
-                  'Administración',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.outline,
+                const SizedBox(height: 3),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Admin',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

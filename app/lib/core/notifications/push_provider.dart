@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../api/api_client.dart';
@@ -42,7 +41,10 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
 
     try {
       await service.init();
+      if (!ref.mounted) return;
+
       final token = await service.getToken();
+      if (!ref.mounted) return;
 
       if (token == null) {
         AppLogger.warn('PushRegistration: no se obtuvo token FCM');
@@ -50,13 +52,16 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
       }
 
       await _sendTokenToBackend(token, service.platform);
+      if (!ref.mounted) return;
+
       state = token;
 
       // Escuchar rotación de tokens y re-registrar automáticamente.
       service.onTokenRefresh.listen((newToken) {
+        if (!ref.mounted) return;
         AppLogger.info('PushRegistration: token rotado, re-registrando…');
         _sendTokenToBackend(newToken, service.platform).ignore();
-        state = newToken;
+        if (ref.mounted) state = newToken;
       });
     } catch (e, st) {
       AppLogger.error('PushRegistration: error al registrar token', e, st);
@@ -73,6 +78,7 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
     try {
       final client = ref.read(apiClientProvider);
       await client.post<void>(Endpoints.pushUnregister, data: {'token': token});
+      if (!ref.mounted) return;
       state = null;
       AppLogger.info('PushRegistration: token desactivado en backend');
     } catch (e) {
@@ -100,6 +106,5 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
   }
 }
 
-// Compat alias: previously the provider was exposed as `pushRegistrationProvider`.
-// Keep an alias for existing call sites.
-final pushRegistrationProvider = pushRegistrationNotifierProvider;
+// Nota: `pushRegistrationProvider` es generado por `riverpod_generator`.
+// Se eliminó el alias manual para evitar duplicados generados.

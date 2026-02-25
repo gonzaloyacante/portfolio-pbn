@@ -8,7 +8,7 @@ part 'category_model.g.dart';
 
 /// Modelo ligero para listas.
 @freezed
-class CategoryItem with _$CategoryItem {
+abstract class CategoryItem with _$CategoryItem {
   const factory CategoryItem({
     required String id,
     required String name,
@@ -33,7 +33,7 @@ class CategoryItem with _$CategoryItem {
 
 /// Modelo completo para vista/edición.
 @freezed
-class CategoryDetail with _$CategoryDetail {
+abstract class CategoryDetail with _$CategoryDetail {
   const factory CategoryDetail({
     required String id,
     required String name,

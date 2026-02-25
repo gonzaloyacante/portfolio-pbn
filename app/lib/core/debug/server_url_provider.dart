@@ -73,72 +73,61 @@ class ServerUrlState {
 const _kPresetKey = 'debug_server_preset';
 const _kCustomUrlKey = 'debug_server_custom_url';
 
-class ServerUrlNotifier extends StateNotifier<ServerUrlState> {
-  ServerUrlNotifier(this._prefs) : super(_loadInitial(_prefs));
+/// Notifier idiomático Riverpod 3.x.
+/// Inicia con staging como estado por defecto y carga prefs en segundo plano.
+class ServerUrlNotifier extends Notifier<ServerUrlState> {
+  SharedPreferences? _prefs;
 
-  final SharedPreferences _prefs;
+  @override
+  ServerUrlState build() {
+    _loadAsync();
+    return const ServerUrlState(preset: ServerPreset.staging, customUrl: '');
+  }
 
-  static ServerUrlState _loadInitial(SharedPreferences prefs) {
-    final presetName = prefs.getString(_kPresetKey);
-    final customUrl = prefs.getString(_kCustomUrlKey) ?? '';
-    final preset = ServerPreset.values.firstWhere(
-      (p) => p.name == presetName,
-      orElse: () => ServerPreset.staging, // default: staging
-    );
-    AppLogger.debug(
-      '[ServerUrl] Cargado: preset=${preset.name}, url=${preset.resolveUrl(customUrl: customUrl)}',
-    );
-    return ServerUrlState(preset: preset, customUrl: customUrl);
+  Future<void> _loadAsync() async {
+    try {
+      _prefs = await SharedPreferences.getInstance();
+      final presetName = _prefs!.getString(_kPresetKey);
+      final customUrl = _prefs!.getString(_kCustomUrlKey) ?? '';
+      final preset = ServerPreset.values.firstWhere(
+        (p) => p.name == presetName,
+        orElse: () => ServerPreset.staging,
+      );
+      AppLogger.debug(
+        '[ServerUrl] Cargado: preset=${preset.name}, url=${preset.resolveUrl(customUrl: customUrl)}',
+      );
+      state = ServerUrlState(preset: preset, customUrl: customUrl);
+    } catch (e) {
+      AppLogger.warn('[ServerUrl] Error cargando prefs: $e');
+    }
   }
 
   Future<void> setPreset(ServerPreset preset) async {
-    await _prefs.setString(_kPresetKey, preset.name);
     state = state.copyWith(preset: preset);
+    try {
+      _prefs ??= await SharedPreferences.getInstance();
+      await _prefs!.setString(_kPresetKey, preset.name);
+    } catch (_) {}
     AppLogger.info(
       '[ServerUrl] Cambiado a ${preset.label}: ${state.resolvedUrl}',
     );
   }
 
   Future<void> setCustomUrl(String url) async {
-    await _prefs.setString(_kCustomUrlKey, url);
     state = state.copyWith(preset: ServerPreset.custom, customUrl: url);
-    await _prefs.setString(_kPresetKey, ServerPreset.custom.name);
+    try {
+      _prefs ??= await SharedPreferences.getInstance();
+      await _prefs!.setString(_kCustomUrlKey, url);
+      await _prefs!.setString(_kPresetKey, ServerPreset.custom.name);
+    } catch (_) {}
     AppLogger.info('[ServerUrl] Custom URL: $url');
   }
 }
 
-// ── Providers ─────────────────────────────────────────────────────────────────
-
-/// Provider que lee SharedPreferences de manera asíncrona.
-final sharedPreferencesProvider = FutureProvider<SharedPreferences>((ref) {
-  return SharedPreferences.getInstance();
-});
+// ── Provider ──────────────────────────────────────────────────────────────────
 
 /// URL activa según el preset seleccionado (solo en kDebugMode).
 /// En release, siempre devuelve staging como no-op.
-final serverUrlProvider =
-    StateNotifierProvider<ServerUrlNotifier, ServerUrlState>((ref) {
-      final prefsAsync = ref.watch(sharedPreferencesProvider);
-      return prefsAsync.maybeWhen(
-        data: (prefs) => ServerUrlNotifier(prefs),
-        orElse: () => ServerUrlNotifier(_FakePrefs()),
-      );
-    });
-
-/// SharedPreferences in-memory (fallback mientras el real carga).
-class _FakePrefs implements SharedPreferences {
-  final Map<String, Object> _data = {};
-
-  @override
-  String? getString(String key) => _data[key] as String?;
-
-  @override
-  Future<bool> setString(String key, String value) async {
-    _data[key] = value;
-    return true;
-  }
-
-  // Los demás métodos son no-ops necesarios para implementar la interfaz.
-  @override
-  dynamic noSuchMethod(Invocation i) => null;
-}
+final serverUrlProvider = NotifierProvider<ServerUrlNotifier, ServerUrlState>(
+  ServerUrlNotifier.new,
+);

@@ -42,25 +42,46 @@ class StatCard extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final cardColor = color ?? colorScheme.primary;
 
+    // Diseño rediseñado:
+    // - Valor grande y legible a la izquierda
+    // - Icono en un contenedor circular sutil a la izquierda del valor
+    // - Flecha o badge a la derecha
+    // - Etiqueta más abajo con contraste controlado por theme (outline)
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: Padding(
+        child: Container(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: cardColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(icon, color: cardColor, size: 22),
+                    alignment: Alignment.center,
+                    child: Icon(icon, color: cardColor, size: 20),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                        height: 1.0,
+                      ),
+                    ),
                   ),
                   const Spacer(),
                   if (trend != null)
@@ -71,24 +92,17 @@ class StatCard extends StatelessWidget {
                   else if (onTap != null)
                     Icon(
                       Icons.arrow_forward_ios_rounded,
-                      size: 12,
-                      color: colorScheme.outline.withValues(alpha: 0.5),
+                      size: 14,
+                      color: colorScheme.outline,
                     ),
                 ],
               ),
               const SizedBox(height: 10),
               Text(
-                value,
-                style: textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
                 label,
-                style: textTheme.bodySmall?.copyWith(
+                style: textTheme.bodyMedium?.copyWith(
                   color: colorScheme.outline,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
