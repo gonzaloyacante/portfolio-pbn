@@ -135,6 +135,14 @@ export const getPageVisibility = unstable_cache(
 /**
  * Update site settings
  */
+async function _upsertSiteSettings(cleanData: Record<string, unknown>) {
+  const existing = await prisma.siteSettings.findFirst({ where: { isActive: true } })
+  if (existing) {
+    return prisma.siteSettings.update({ where: { id: existing.id }, data: cleanData })
+  }
+  return prisma.siteSettings.create({ data: { ...cleanData, isActive: true } })
+}
+
 export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'id'>>) {
   try {
     const user = await requireAdmin()
@@ -145,19 +153,11 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
       return { success: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' }
     }
 
-    const cleanEntries = Object.entries(parsed.data).filter(([, v]) => v !== undefined)
-    const cleanData = Object.fromEntries(cleanEntries)
+    const cleanData = Object.fromEntries(
+      Object.entries(parsed.data).filter(([, v]) => v !== undefined)
+    ) as Record<string, unknown>
 
-    let settings = await prisma.siteSettings.findFirst({ where: { isActive: true } })
-
-    if (!settings) {
-      settings = await prisma.siteSettings.create({ data: { ...cleanData, isActive: true } })
-    } else {
-      settings = await prisma.siteSettings.update({
-        where: { id: settings.id },
-        data: cleanData,
-      })
-    }
+    const settings = await _upsertSiteSettings(cleanData)
 
     revalidatePath('/')
     revalidateTag(CACHE_TAGS.siteSettings, 'max')

@@ -2,6 +2,7 @@ exclude_paths:
     - web/src/sentry.client.config.ts
     - web/src/sentry.server.config.ts
     - web/src/sentry.edge.config.ts
+    - web/src/app/sentry-example-page/**
     - app/lib/**/*.g.dart
     - app/lib/**/*.freezed.dart
     - web/src/generated/**

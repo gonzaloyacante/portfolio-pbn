@@ -37,30 +37,34 @@ type ServiceForMetadata = {
   imageUrl?: string | null
 }
 
-function buildServiceMetadata(service: ServiceForMetadata, slug: string): Metadata {
+function _resolveServiceMeta(service: ServiceForMetadata, slug: string) {
+  const title = service.metaTitle || `${service.name} - Servicios`
   const description =
     service.metaDescription || service.shortDesc || service.description?.slice(0, 160) || ''
-  const title = service.metaTitle || `${service.name} - Servicios`
   const images = service.imageUrl
     ? [{ url: service.imageUrl, width: 1200, height: 630, alt: service.name }]
-    : []
+    : ([] as { url: string; width: number; height: number; alt: string }[])
+  return { title, description, images, canonicalUrl: `/servicios/${slug}` }
+}
 
+function buildServiceMetadata(service: ServiceForMetadata, slug: string): Metadata {
+  const meta = _resolveServiceMeta(service, slug)
   return {
-    title,
-    description,
+    title: meta.title,
+    description: meta.description,
     keywords: service.metaKeywords,
-    alternates: { canonical: `/servicios/${slug}` },
+    alternates: { canonical: meta.canonicalUrl },
     openGraph: {
       title: service.metaTitle || service.name,
-      description,
+      description: meta.description,
       type: 'website',
       locale: 'es_ES',
-      images,
+      images: meta.images,
     },
     twitter: {
       card: 'summary_large_image',
       title: service.metaTitle || service.name,
-      description,
+      description: meta.description,
       images: service.imageUrl ? [service.imageUrl] : [],
     },
   }

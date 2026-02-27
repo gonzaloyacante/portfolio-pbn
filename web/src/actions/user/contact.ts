@@ -37,16 +37,11 @@ async function getClientIp(): Promise<string> {
   return realIp || cfConnectingIp || 'unknown'
 }
 
-/**
- * Sanitizar texto para evitar XSS
- */
+/** Sanitizar texto para evitar XSS */
 function sanitizeText(text: string): string {
   return text
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;')
+    .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;').replaceAll("'", '&#x27;').replaceAll('/', '&#x2F;')
     .trim()
 }
 
