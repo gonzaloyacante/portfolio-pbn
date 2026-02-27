@@ -2,32 +2,32 @@ import * as Sentry from '@sentry/nextjs'
 
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
 
+const sentryEnvironment = process.env.VERCEL_ENV || process.env.NODE_ENV || 'development'
+
 Sentry.init({
   dsn: SENTRY_DSN,
 
-  // Performance Monitoring
-  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+  enabled: !!SENTRY_DSN && sentryEnvironment !== 'development',
 
-  // Environment
-  environment: process.env.NODE_ENV || 'development',
+  tracesSampleRate:
+    sentryEnvironment === 'production' ? 0.1 : sentryEnvironment === 'preview' ? 0.5 : 0,
 
-  // Release tracking
-  release: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+  environment: sentryEnvironment,
 
-  // Don't send errors in development - OVERRIDDEN FOR VERIFICATION
-  enabled: true, // process.env.NODE_ENV === 'production',
+  release:
+    process.env.VERCEL_GIT_COMMIT_SHA ||
+    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ||
+    process.env.NEXT_PUBLIC_APP_VERSION ||
+    'unknown',
 
-  // Server-side specific settings
   beforeSend(event) {
-    // Don't send database connection errors in dev - DISABLED FOR VERIFICATION
-    // if (process.env.NODE_ENV !== 'production') {
-    //   return null
-    // }
-
+    // No reenviar errores si el entorno es local
+    if (sentryEnvironment === 'development') {
+      return null
+    }
     return event
   },
 
-  // Attach user context when available
   beforeSendTransaction(event) {
     return event
   },
