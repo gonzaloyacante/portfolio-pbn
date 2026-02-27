@@ -102,6 +102,8 @@ export type NotificationType =
   | 'service'
   | 'testimonial'
   | 'system'
+  /// Notificación silenciosa de actualización de la app Flutter
+  | 'app_update'
 
 export interface PushPayload {
   /** Título visible en la bandeja del sistema */
@@ -116,6 +118,12 @@ export interface PushPayload {
   screen?: string
   /** URL de imagen en la notificación (Android 16+ / iOS rich) */
   imageUrl?: string
+  /**
+   * Datos extra de string→string que se incluyen en el payload `data` de FCM.
+   * Todos los valores deben ser string (requisito FCM HTTP v1).
+   * Útil para pasar metadatos adicionales sin tocar los campos estándar.
+   */
+  extra?: Record<string, string>
 }
 
 // ── Envío a un token ──────────────────────────────────────────────────────────
@@ -145,11 +153,13 @@ async function sendToToken(
         body: payload.body,
         ...(payload.imageUrl ? { image: payload.imageUrl } : {}),
       },
-      // data: todos los valores deben ser string
+      // data: todos los valores deben ser string (requisito FCM HTTP v1)
       data: {
         type: payload.type,
         ...(payload.id ? { id: payload.id } : {}),
         ...(payload.screen ? { screen: payload.screen } : {}),
+        // Datos extra (e.g., version, downloadUrl para app_update)
+        ...(payload.extra ?? {}),
         click_action: 'FLUTTER_NOTIFICATION_CLICK',
       },
       // Config Android: alta prioridad + canal dedicado

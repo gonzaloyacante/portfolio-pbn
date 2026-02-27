@@ -94,14 +94,14 @@ class _DashboardContent extends StatelessWidget {
                     icon: Icons.category_outlined,
                     label: 'Categorías',
                     value: stats.totalCategories.toString(),
-                    color: const Color(0xFF7C3AED),
+                    color: AppColors.categoriesColor,
                     onTap: () => context.goNamed(RouteNames.categories),
                   ),
                   StatCard(
                     icon: Icons.design_services_outlined,
                     label: 'Servicios',
                     value: stats.totalServices.toString(),
-                    color: const Color(0xFF0891B2),
+                    color: AppColors.servicesColor,
                     onTap: () => context.goNamed(RouteNames.services),
                   ),
                   StatCard(
@@ -137,7 +137,7 @@ class _DashboardContent extends StatelessWidget {
                     icon: Icons.remove_red_eye_outlined,
                     label: 'Visitas (30d)',
                     value: _formatNumber(stats.pageViews30d),
-                    color: const Color(0xFF059669),
+                    color: AppColors.success,
                   ),
                 ];
 
@@ -196,20 +196,43 @@ class _DashboardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-      child: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 1.6,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        children: List.generate(
-          6,
-          (_) => ShimmerBox(
-            width: double.infinity,
-            height: double.infinity,
-            borderRadius: 16,
-          ),
+    return ShimmerLoader(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Título sección
+            ShimmerBox(width: 160, height: 18, borderRadius: 6),
+            const SizedBox(height: 16),
+            // Grid de stats (2 columnas)
+            GridView.count(
+              crossAxisCount: 2,
+              childAspectRatio: 2.0,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: List.generate(
+                6,
+                (_) => ShimmerBox(
+                  width: double.infinity,
+                  height: double.infinity,
+                  borderRadius: 16,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Título tendencias
+            ShimmerBox(width: 120, height: 18, borderRadius: 6),
+            const SizedBox(height: 16),
+            // Gráfico 1
+            ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
+            const SizedBox(height: 16),
+            // Gráfico 2
+            ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
+          ],
         ),
       ),
     );

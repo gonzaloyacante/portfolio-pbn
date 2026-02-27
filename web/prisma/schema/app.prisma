@@ -1,0 +1,33 @@
+// ── App Release Management ────────────────────────────────────────────────────
+//
+// Modelo para gestionar las releases de la app Flutter (in-app updates).
+// El endpoint GET /api/admin/app/latest-release devuelve la última release
+// publicada. La app Flutter compara su versión instalada con ésta para saber
+// si hay una actualización disponible.
+//
+// Inserción: el script distribute.sh llama a POST con X-Deploy-Token.
+// Lectura:   el endpoint GET es público (solo información de versión).
+
+model AppRelease {
+  id             String   @id @default(cuid())
+  /// Versión semver: "1.1.0"
+  version        String
+  /// Build number (versionCode Android): 2
+  versionCode    Int
+  /// Notas de la versión (markdown permitido)
+  releaseNotes   String   @db.Text
+  /// URL HTTPS donde está alojado el APK (Firebase Storage, CDN, etc.)
+  downloadUrl    String
+  /// SHA-256 del APK en hex minúsculas (verifica integridad antes de instalar)
+  checksumSha256 String?
+  /// Si true → el diálogo no puede cerrarse sin instalar la actualización
+  mandatory      Boolean  @default(false)
+  /// Si la versión instalada es < minVersion → forzar actualización
+  minVersion     String?
+  /// Tamaño del APK en bytes (para mostrar en la UI)
+  fileSizeBytes  Int?
+  createdAt      DateTime @default(now())
+  publishedAt    DateTime @default(now())
+
+  @@map("app_releases")
+}

@@ -26,6 +26,11 @@ class AppColors {
   static const Color darkBorder = Color(0xFF2A1015);
 
   // ── Semánticos (igual en ambos modos) ────────────────────────────────────
+  // ── Colores de categorías de entidades ─────────────────────────────────────
+  static const Color categoriesColor = Color(0xFF7C3AED);
+  static const Color servicesColor = Color(0xFF0891B2);
+
+  // ── Semánticos (igual en ambos modos) ────────────────────────────────────
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color destructive = Color(0xFFEF4444);

@@ -13,24 +13,20 @@ import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
 // Patrones de slug compilados una sola vez
+// Tipados como Pattern para evitar DEPRECATED_MEMBER_USE del linter (RegExp
+// se usa como implementación de Pattern, que es el uso correcto y estable).
+final Pattern _reAccentA = RegExp(r'[áàâä]');
+final Pattern _reAccentE = RegExp(r'[éèêë]');
+final Pattern _reAccentI = RegExp(r'[íìîï]');
+final Pattern _reAccentO = RegExp(r'[óòôö]');
+final Pattern _reAccentU = RegExp(r'[úùûü]');
+final Pattern _reNyeN = RegExp(r'[ñ]');
+final Pattern _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
+final Pattern _reWhitespace = RegExp(r'\s+');
+// _reSlugValid necesita .hasMatch() (método de RegExp, no de Pattern) →
+// se mantiene tipado como RegExp; el ignore suprime el warning de Codacy.
 // ignore: deprecated_member_use
-final _reAccentA = RegExp(r'[áàâä]');
-// ignore: deprecated_member_use
-final _reAccentE = RegExp(r'[éèêë]');
-// ignore: deprecated_member_use
-final _reAccentI = RegExp(r'[íìîï]');
-// ignore: deprecated_member_use
-final _reAccentO = RegExp(r'[óòôö]');
-// ignore: deprecated_member_use
-final _reAccentU = RegExp(r'[úùûü]');
-// ignore: deprecated_member_use
-final _reNyeN = RegExp(r'[ñ]');
-// ignore: deprecated_member_use
-final _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
-// ignore: deprecated_member_use
-final _reWhitespace = RegExp(r'\s+');
-// ignore: deprecated_member_use
-final _reSlugValid = RegExp(r'^[a-z0-9-]+$');
+final RegExp _reSlugValid = RegExp(r'^[a-z0-9-]+$');
 
 class CategoryFormPage extends ConsumerStatefulWidget {
   const CategoryFormPage({super.key, this.categoryId});

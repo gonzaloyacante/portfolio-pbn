@@ -133,6 +133,41 @@ class ProjectsRepository {
       throw Exception(apiResponse.error ?? 'Error al reordenar proyectos');
     }
   }
+  // ── Images
+
+  /// Añade una imagen a la galería del proyecto.
+  Future<void> addProjectImage(
+    String projectId, {
+    required String url,
+    required String publicId,
+    int order = 0,
+    String? alt,
+  }) async {
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.projectImages(projectId),
+      data: {
+        'url': url,
+        'publicId': publicId,
+        'order': order,
+        if (alt != null) 'alt': alt,
+      },
+    );
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al añadir imagen');
+    }
+  }
+
+  /// Elimina una imagen de la galería del proyecto.
+  Future<void> removeProjectImage(String projectId, String imageId) async {
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.projectImage(projectId, imageId),
+    );
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al eliminar imagen');
+    }
+  }
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────

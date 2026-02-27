@@ -202,7 +202,8 @@ class _ProjectTile extends StatelessWidget {
           RouteNames.projectEdit,
           pathParameters: {'id': item.id},
         ),
-        child: IntrinsicHeight(
+        child: SizedBox(
+          height: 88,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
