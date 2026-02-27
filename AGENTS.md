@@ -373,6 +373,82 @@ flutter run               # Desarrollo local
 - Distribución Android: Firebase App Distribution (test) → Play Store (prod)
 - Distribución iOS: TestFlight (test) → App Store (prod)
 
+### Distribución Android — Workflow Automatizado
+
+> **La AI DEBE seguir este procedimiento exacto cada vez que distribuya la app Android.**
+
+#### Mecanismo de distribución (2 canales simultáneos)
+
+| Canal | Herramienta | Propósito |
+|-------|-------------|-----------|
+| **GitHub Releases** | `gh` CLI | Hospedaje APK gratuito y permanente. URL estable calculada automáticamente. |
+| **Firebase App Distribution** | `firebase-tools` | Email de notificación a testers. |
+| **API in-app update** | `curl` + backend | Notificación FCM push + diálogo de descarga dentro de la app. |
+
+#### Ejecutar distribución
+
+```bash
+# Desde la raíz del monorepo:
+bash app/scripts/distribute.sh
+
+# Con notas específicas:
+bash app/scripts/distribute.sh -m "Descripción del cambio"
+
+# Simular sin subir nada:
+bash app/scripts/distribute.sh --dry-run
+```
+
+**No se requiere ningún argumento obligatorio.** El script calcula automáticamente:
+- Versión y versionCode desde `app/pubspec.yaml`
+- Tag de GitHub Release: `app/v{VERSION}`
+- Nombre del APK: `portfolio-pbn-admin-v{VERSION}.apk`
+- URL de descarga: `https://github.com/gonzaloyacante/portfolio-pbn/releases/download/app/v{VERSION}/portfolio-pbn-admin-v{VERSION}.apk`
+- `DEPLOY_SECRET_TOKEN` auto-leído de `web/.env`
+
+#### Primera configuración (solo una vez)
+
+```bash
+# 1. Keystore Android
+bash app/scripts/setup_keystore.sh
+
+# 2. Firebase CLI
+npm install -g firebase-tools && firebase login
+
+# 3. GitHub CLI
+brew install gh && gh auth login
+```
+
+**Variables de entorno requeridas:**
+
+| Variable | Dónde | Descripción |
+|----------|-------|-------------|
+| `DEPLOY_SECRET_TOKEN` | `web/.env` y **Vercel** | Generado con `openssl rand -hex 32`. Autenticación del POST al backend. |
+
+> ⚠️ IMPORTANTE: `DEPLOY_SECRET_TOKEN` debe estar en **dos lugares**:
+> 1. `web/.env` (ya configurado)
+> 2. **Vercel** → Settings → Environment Variables (el usuario debe hacerlo manualmente)
+
+#### Generar nuevo DEPLOY_SECRET_TOKEN (si se necesita rotar)
+
+```bash
+# La AI debe ejecutar esto automáticamente, nunca pedir al usuario que lo genere:
+NEW_TOKEN=$(openssl rand -hex 32)
+echo "DEPLOY_SECRET_TOKEN=\"$NEW_TOKEN\"" >> web/.env
+echo "Añadir también en Vercel -> Settings -> Environment Variables:"
+echo "  DEPLOY_SECRET_TOKEN = $NEW_TOKEN"
+```
+
+#### Flujo interno de distribute.sh (5 pasos)
+
+```
+1/5  flutter pub get
+2/5  Verificar entorno (Flutter, Java, gh)
+3/5  flutter build apk --release --obfuscate
+4/5  gh release create/upload → GitHub Releases (APK hospedado)
+4b   firebase appdistribution:distribute → email a testers
+5/5  POST /api/admin/app/latest-release → FCM push in-app
+```
+
 ### Anti-Patrones App
 
 - ❌ Usar `print()` (usar `AppLogger`)
