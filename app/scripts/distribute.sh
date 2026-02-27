@@ -93,12 +93,17 @@ SLOW_MODE=false
 SLEEP_SECONDS=2
 RETRY_MAX=3
 
+# Nueva: opción para forzar una mínima versión soportada (semver)
+MIN_VERSION=""
+
 # ── Argumentos ────────────────────────────────────────────────────────────────
 RELEASE_NOTES=""
 TESTER_GROUP="admins"
 SKIP_BUILD=false
 API_BASE_URL="${API_BASE_URL:-https://dev.paolabolivar.es}"
 DEPLOY_SECRET_TOKEN="${DEPLOY_SECRET_TOKEN:-}"
+
+# Leer MIN_VERSION desde argumento si se pasa
 
 # Auto-leer DEPLOY_SECRET_TOKEN de web/.env si no está en el entorno
 if [[ -z "$DEPLOY_SECRET_TOKEN" && -f "$REPO_ROOT/web/.env" ]]; then
@@ -110,6 +115,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --release-notes|-m) RELEASE_NOTES="$2"; shift 2 ;;
     --group|-g)         TESTER_GROUP="$2"; shift 2 ;;
+    --min-version|-M)   MIN_VERSION="$2"; shift 2 ;;
     --api-base-url)     API_BASE_URL="$2"; shift 2 ;;
     --no-build)         SKIP_BUILD=true; shift ;;
     --confirm)          CONFIRM=true; shift ;;
@@ -167,6 +173,7 @@ info "Version:  v${APP_VERSION}+${APP_VERSION_CODE}"
 info "Firebase: grupo '${TESTER_GROUP}'"
 info "Release:  ${RELEASE_TAG}"
 info "API:      ${API_BASE_URL}"
+[[ -n "$MIN_VERSION" ]] && info "minVersion: ${MIN_VERSION}"
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 [[ "$DRY_RUN" == "true" ]] && warn "DRY-RUN activo — ningun cambio real." && echo ""
@@ -283,7 +290,17 @@ else
   info "URL:     $DOWNLOAD_URL"
 
   RELEASE_NOTES_ESC=$(echo "$RELEASE_NOTES" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' 2>/dev/null || echo "\"$RELEASE_NOTES\"")
-  RELEASE_JSON="{\"version\":\"${APP_VERSION}\",\"versionCode\":${APP_VERSION_CODE},\"releaseNotes\":${RELEASE_NOTES_ESC},\"downloadUrl\":\"${DOWNLOAD_URL}\",\"checksumSha256\":\"${APK_CHECKSUM}\",\"fileSizeBytes\":${APK_SIZE_BYTES}}"
+  # Construir JSON de release; añadimos minVersion solo si existe
+  RELEASE_JSON="{\"version\":\"${APP_VERSION}\",\"versionCode\":${APP_VERSION_CODE},\"releaseNotes\":${RELEASE_NOTES_ESC},\"downloadUrl\":\"${DOWNLOAD_URL}\",\"checksumSha256\":\"${APK_CHECKSUM}\",\"fileSizeBytes\":${APK_SIZE_BYTES}"
+  if [[ -n "${MIN_VERSION}" ]]; then
+    # Escapar cualquier comilla (aunque MIN_VERSION debería ser simple semver)
+    RELEASE_JSON=\"${RELEASE_JSON},\\\"minVersion\\\":\\\"${MIN_VERSION}\\\"\"
+    # El contenido anterior quedó con barras adicionales por la concatenación; reconstruimos correctamente
+    # (hacerlo de forma segura sin jq para evitar nuevas dependencias)
+    RELEASE_JSON="{\"version\":\"${APP_VERSION}\",\"versionCode\":${APP_VERSION_CODE},\"releaseNotes\":${RELEASE_NOTES_ESC},\"downloadUrl\":\"${DOWNLOAD_URL}\",\"checksumSha256\":\"${APK_CHECKSUM}\",\"fileSizeBytes\":${APK_SIZE_BYTES},\"minVersion\":\"${MIN_VERSION}\"}"
+  else
+    RELEASE_JSON="${RELEASE_JSON}}"
+  fi
 
   if [[ "$DRY_RUN" == "true" ]]; then
     info "(dry-run) POST ${API_BASE_URL}/api/admin/app/latest-release"
