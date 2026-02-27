@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/dashboard_repository.dart';
-import '../../../../core/theme/app_colors.dart';
 
 /// Gráfica de reservas mensuales (BarChart), extraída para mantener `dashboard_page.dart` limpio.
 class BookingsBarChart extends StatelessWidget {
@@ -23,7 +22,7 @@ class BookingsBarChart extends StatelessWidget {
         barRods: [
           BarChartRodData(
             toY: e.value.count.toDouble(),
-            color: AppColors.darkPrimary,
+            color: scheme.primary,
             width: 18,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
           ),

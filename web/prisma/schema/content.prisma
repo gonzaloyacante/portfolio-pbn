@@ -55,7 +55,7 @@ model Service {
   // Pricing
   price       Decimal?  @db.Decimal(10, 2)
   priceLabel  String?   @default("desde") // "desde", "fijo", "consultar", "gratis"
-  currency    String    @default("ARS")
+  currency    String    @default("EUR")
   // Pricing tiers (JSON for flexibility)
   pricingTiers Json?    // [{name: "Básico", price: 5000}, {name: "Premium", price: 8000}]
   // Time

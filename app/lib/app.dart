@@ -161,8 +161,24 @@ class _AppState extends ConsumerState<App> {
 
 /// Badge flotante que indica el entorno (DEV/STAGING/PROD).
 /// Solo visible en debug/profile mode. Un tap abre el [DebugPanel].
-class _DebugEnvBadge extends StatelessWidget {
+/// Guard interno evita abrir múltiples instancias simultáneas.
+class _DebugEnvBadge extends StatefulWidget {
   const _DebugEnvBadge();
+
+  @override
+  State<_DebugEnvBadge> createState() => _DebugEnvBadgeState();
+}
+
+class _DebugEnvBadgeState extends State<_DebugEnvBadge> {
+  bool _isOpen = false;
+
+  Future<void> _handleTap() async {
+    if (_isOpen) return; // Evita múltiples aperturas
+    setState(() => _isOpen = true);
+    final ctx = routerNavigatorKey.currentContext ?? context;
+    await DebugPanel.show(ctx);
+    if (mounted) setState(() => _isOpen = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,16 +186,13 @@ class _DebugEnvBadge extends StatelessWidget {
       bottom: MediaQuery.of(context).padding.bottom + 16,
       right: 12,
       child: GestureDetector(
-        onTap: () {
-          // Intentamos primero con el contexto del router (tiene Navigator),
-          // y como fallback usamos el contexto local del builder de MaterialApp.
-          final ctx = routerNavigatorKey.currentContext ?? context;
-          DebugPanel.show(ctx);
-        },
+        onTap: _handleTap,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: Colors.green.shade800.withValues(alpha: 0.9),
+            color: _isOpen
+                ? Colors.green.shade900.withValues(alpha: 0.95)
+                : Colors.green.shade800.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(

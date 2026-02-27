@@ -64,7 +64,23 @@ export default async function TestimonialsPage() {
                   <div className="flex items-center gap-3">
                     <span className="text-foreground font-bold">{t.name}</span>
                     <Badge variant={t.isActive ? 'success' : 'default'} className="shadow-sm">
-                      {t.isActive ? 'Activo' : 'Pendiente'}
+                      {t.isActive ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                    <Badge
+                      variant={
+                        t.status === 'APPROVED'
+                          ? 'success'
+                          : t.status === 'REJECTED'
+                            ? 'destructive'
+                            : 'warning'
+                      }
+                      className="shadow-sm"
+                    >
+                      {t.status === 'APPROVED'
+                        ? '✓ Aprobado'
+                        : t.status === 'REJECTED'
+                          ? '✕ Rechazado'
+                          : '⏳ Pendiente'}
                     </Badge>
                     <span className="text-muted-foreground text-xs">
                       {new Date(t.createdAt).toLocaleDateString()}

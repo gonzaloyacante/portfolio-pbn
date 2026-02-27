@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/dashboard_repository.dart';
-import '../../../../core/theme/app_colors.dart';
 
 /// Gráfica de visitas diarias (LineChart), extraída para mantener `dashboard_page.dart` limpio.
 class PageViewsChart extends StatelessWidget {
@@ -67,14 +66,14 @@ class PageViewsChart extends StatelessWidget {
                       spots: spots.isEmpty ? [const FlSpot(0, 0)] : spots,
                       isCurved: true,
                       curveSmoothness: 0.35,
-                      color: AppColors.lightPrimary,
+                      color: scheme.primary,
                       barWidth: 3,
                       dotData: FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, bar, index) =>
                             FlDotCirclePainter(
                               radius: 3.5,
-                              color: AppColors.lightPrimary,
+                              color: scheme.primary,
                               strokeWidth: 1.6,
                               strokeColor: Colors.white,
                             ),
@@ -85,8 +84,8 @@ class PageViewsChart extends StatelessWidget {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            AppColors.lightPrimary.withValues(alpha: 0.18),
-                            AppColors.lightPrimary.withValues(alpha: 0.0),
+                            scheme.primary.withValues(alpha: 0.18),
+                            scheme.primary.withValues(alpha: 0.0),
                           ],
                         ),
                       ),

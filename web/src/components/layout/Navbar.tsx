@@ -97,7 +97,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
           {/* Theme Toggle + Language Toggle */}
           <div className="ml-4 flex items-center gap-2">
             <ThemeToggle />
-            <LanguageToggle />
+            {/* <LanguageToggle /> */}
           </div>
         </div>
       </div>

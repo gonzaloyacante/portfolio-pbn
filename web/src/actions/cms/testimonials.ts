@@ -259,7 +259,7 @@ export const getActiveTestimonials = unstable_cache(
   async (limit = 6) => {
     try {
       const testimonials = await prisma.testimonial.findMany({
-        where: { isActive: true },
+        where: { isActive: true, status: 'APPROVED' },
         orderBy: { createdAt: 'desc' },
         take: limit,
       })

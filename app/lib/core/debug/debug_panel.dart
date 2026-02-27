@@ -38,8 +38,8 @@ class DebugPanel extends ConsumerStatefulWidget {
   const DebugPanel({super.key});
 
   /// Mostrar el panel como bottom sheet.
-  static void show(BuildContext context) {
-    showModalBottomSheet<void>(
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,

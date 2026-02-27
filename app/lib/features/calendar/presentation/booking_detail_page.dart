@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/utils/currency_helper.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -242,14 +243,14 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
                 icon: Icons.euro_outlined,
                 label: 'Total',
                 value: detail.totalAmount != null
-                    ? '€${detail.totalAmount}'
+                    ? '${currencySymbol(null)}${detail.totalAmount}'
                     : '—',
               ),
               _InfoRow(
                 icon: Icons.paid_outlined,
                 label: 'Pagado',
                 value: detail.paidAmount != null
-                    ? '€${detail.paidAmount}'
+                    ? '${currencySymbol(null)}${detail.paidAmount}'
                     : '—',
               ),
               _InfoRow(
