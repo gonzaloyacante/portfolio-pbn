@@ -147,7 +147,7 @@ Thumbs.db
 /web/scripts/
 /web/docs/
 /docs/
-# /app/scripts/ — scripts de distribución sí se committean (no tienen credenciales)
+/app/scripts/
 /app/docs/
 Portfolio PBN - Desktop/
 Portfolio PBN - Movil/
