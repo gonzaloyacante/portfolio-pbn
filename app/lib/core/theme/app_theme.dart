@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'app_radius.dart';
 import 'app_typography.dart';
 
-/// Construcción de [ThemeData] light y dark.
-/// BorderRadius de cards: 40px (= rounded-[2.5rem] del web).
-/// Transiciones: 500ms (= duration-500).
+/// Construcción de [ThemeData] light y dark — Material 3.
+/// Sistema de border-radius por nivel: tile=16, card=20, dialog=28. [AppRadius]
+/// Espaciado basado en escala 4px. [AppSpacing]
+/// Breakpoints responsivos: compact/medium/expanded. [AppBreakpoints]
 class AppTheme {
   AppTheme._();
 
-  static const BorderRadius cardRadius = BorderRadius.all(Radius.circular(20));
-  static const BorderRadius buttonRadius = BorderRadius.all(
-    Radius.circular(12),
-  );
-  static const BorderRadius inputRadius = BorderRadius.all(Radius.circular(12));
-  static const BorderRadius smallCardRadius = BorderRadius.all(
-    Radius.circular(12),
-  );
+  // Aliases para compatibilidad (usan AppRadius internamente)
+  static BorderRadius get cardRadius => AppRadius.forCard;
+  static BorderRadius get buttonRadius => AppRadius.forButton;
+  static BorderRadius get inputRadius => AppRadius.forInput;
+  static BorderRadius get smallCardRadius => AppRadius.forTile;
 
   // ── Light ─────────────────────────────────────────────────────────────────
   static ThemeData get light => _build(Brightness.light);
@@ -75,8 +74,13 @@ class AppTheme {
         foregroundColor: foreground,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: border,
-        titleTextStyle: AppTypography.textTheme(brightness).titleLarge,
+        shadowColor: border.withAlpha(80),
+        centerTitle: false,
+        titleTextStyle: AppTypography.textTheme(
+          brightness,
+        ).titleLarge?.copyWith(fontWeight: FontWeight.w600),
+        iconTheme: IconThemeData(color: foreground, size: 22),
+        actionsIconTheme: IconThemeData(color: foreground, size: 22),
       ),
 
       // ── Card ────────────────────────────────────────────────────────────
@@ -84,10 +88,11 @@ class AppTheme {
         color: card,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: cardRadius,
-          side: BorderSide(color: border),
+          borderRadius: AppRadius.forCard,
+          side: BorderSide(color: border.withAlpha(180)),
         ),
         margin: const EdgeInsets.all(0),
+        surfaceTintColor: Colors.transparent,
       ),
 
       // ── ElevatedButton ──────────────────────────────────────────────────
@@ -95,7 +100,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: isLight ? Colors.white : AppColors.darkBackground,
-          shape: const RoundedRectangleBorder(borderRadius: buttonRadius),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: AppTypography.textTheme(brightness).labelLarge,
           elevation: 0,
@@ -107,7 +112,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: primary,
           side: BorderSide(color: primary),
-          shape: const RoundedRectangleBorder(borderRadius: buttonRadius),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: AppTypography.textTheme(brightness).labelLarge,
         ),
@@ -117,7 +122,7 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: primary,
-          shape: const RoundedRectangleBorder(borderRadius: buttonRadius),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
           textStyle: AppTypography.textTheme(brightness).labelLarge,
         ),
       ),
@@ -131,23 +136,23 @@ class AppTheme {
           vertical: 14,
         ),
         border: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: AppRadius.forInput,
           borderSide: BorderSide(color: border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: AppRadius.forInput,
           borderSide: BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: AppRadius.forInput,
           borderSide: BorderSide(color: primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: AppRadius.forInput,
           borderSide: const BorderSide(color: AppColors.destructive),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: inputRadius,
+          borderRadius: AppRadius.forInput,
           borderSide: const BorderSide(color: AppColors.destructive, width: 2),
         ),
         labelStyle: AppTypography.textTheme(brightness).bodyMedium,
@@ -174,7 +179,8 @@ class AppTheme {
         selectedColor: secondary,
         labelStyle: AppTypography.textTheme(brightness).labelSmall,
         shape: const StadiumBorder(),
-        side: BorderSide(color: border),
+        side: BorderSide(color: border.withAlpha(150)),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       ),
 
       // ── Switch ──────────────────────────────────────────────────────────
@@ -194,10 +200,11 @@ class AppTheme {
       // ── Drawer ──────────────────────────────────────────────────────────
       drawerTheme: DrawerThemeData(
         backgroundColor: card,
+        surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            topRight: Radius.circular(24),
-            bottomRight: Radius.circular(24),
+            topRight: Radius.circular(AppRadius.xxl),
+            bottomRight: Radius.circular(AppRadius.xxl),
           ),
         ),
       ),
@@ -205,12 +212,36 @@ class AppTheme {
       // ── SnackBar ────────────────────────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
         backgroundColor: isLight ? AppColors.lightForeground : card,
         contentTextStyle: AppTypography.textTheme(brightness).bodyMedium
             ?.copyWith(color: isLight ? AppColors.lightBackground : foreground),
+      ),
+
+      // ── ListTile ────────────────────────────────────────────────────────
+      listTileTheme: ListTileThemeData(
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      ),
+
+      // ── Dialog ──────────────────────────────────────────────────────────
+      dialogTheme: DialogThemeData(
+        backgroundColor: card,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.forDialog),
+        elevation: 8,
+      ),
+
+      // ── BottomSheet ─────────────────────────────────────────────────────
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: card,
+        surfaceTintColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(AppRadius.dialog),
+            topRight: Radius.circular(AppRadius.dialog),
+          ),
+        ),
       ),
 
       // ── PageTransitions ─────────────────────────────────────────────────

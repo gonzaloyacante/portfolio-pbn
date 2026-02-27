@@ -13,7 +13,9 @@ class AppColors {
   static const Color lightSecondary = Color(0xFFFCE7F3);
   static const Color lightMuted = Color(0xFFF5F5F5);
   static const Color lightAccent = Color(0xFFFFF1F9);
-  static const Color lightBorder = Color(0xFF9E9E9E);
+  static const Color lightBorder = Color(
+    0xFFE5E5E5,
+  ); // ← corregido (era #9E9E9E)
 
   // ── Dark Mode ─────────────────────────────────────────────────────────────
   static const Color darkPrimary = Color(0xFFFB7185);
@@ -41,4 +43,13 @@ class AppColors {
   static const Color warningLight = Color(0xFFFEF3C7);
   static const Color destructiveLight = Color(0xFFFEE2E2);
   static const Color infoLight = Color(0xFFDBEAFE);
+
+  // ── Prioridad (para contactos y otras entidades) ───────────────────────────
+  static const Color priorityHigh = Color(0xFFEF4444); // red
+  static const Color priorityMedium = Color(0xFFF59E0B); // amber
+  static const Color priorityLow = Color(0xFF9CA3AF); // gray
+
+  static const Color priorityHighLight = Color(0xFFFEE2E2);
+  static const Color priorityMediumLight = Color(0xFFFEF3C7);
+  static const Color priorityLowLight = Color(0xFFF3F4F6);
 }
