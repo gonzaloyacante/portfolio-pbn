@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,20 +26,29 @@ import 'firebase_options.dart';
 /// NOTA: Requiere `android/app/google-services.json` e
 /// `ios/Runner/GoogleService-Info.plist` para Firebase (ficheros gitignored).
 Future<void> bootstrap() async {
-  // 0. Google Fonts — permitir descarga en runtime (solo en desarrollo) ──
-  // Habilita fetching de fuentes remotas para evitar excepciones si las
-  // fuentes no están empaquetadas en assets. No recomendado en producción.
-  GoogleFonts.config.allowRuntimeFetching = true;
+  // 0. Google Fonts — en release deshabilitar descarga de fuentes en runtime ──
+  // En producción las fuentes debería estar bundleadas en assets.
+  // allowRuntimeFetching = true solo en debug para facilitar el desarrollo.
+  GoogleFonts.config.allowRuntimeFetching = kDebugMode;
 
   // Inicializar datos de locale para español (table_calendar, intl, etc.)
   await initializeDateFormatting('es_ES');
   await initializeDateFormatting('es');
 
   // 1. Variables de entorno ─────────────────────────────────────────────────
-  // Carga .env desde la raíz del proyecto Flutter.
-  // En producción, las variables se inyectan vía CI/CD (no hay .env en prod).
-  await dotenv.load(fileName: '.env', mergeWith: const {});
-  AppLogger.info('✓ dotenv cargado (entorno: ${EnvConfig.environment})');
+  // Carga .env desde la raíz del proyecto Flutter (asset bundleado).
+  // En producción, el script distribute-prod.sh copia .env.production sobre .env
+  // antes de compilar, garantizando los valores correctos en el APK.
+  try {
+    await dotenv.load(fileName: '.env', mergeWith: const {});
+    AppLogger.info('✓ dotenv cargado (entorno: ${EnvConfig.environment})');
+  } catch (e) {
+    // Esto solo ocurre si el asset .env está ausente (error de build).
+    // La app continuará con los valores fallback definidos en EnvConfig.
+    AppLogger.warn(
+      'dotenv no disponible: $e — usando valores fallback de EnvConfig',
+    );
+  }
 
   // 2. Firebase ─────────────────────────────────────────────────────────────
   // Inicializar Firebase antes de registrar handlers o usar servicios.

@@ -4,4 +4,14 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         Label distinto para el build DEBUG.
+         Esto permite distinguir visualmente la app debug de la release:
+         - Release (packageId: es.paolabolivar.admin)      → "PBN Admin"
+         - Debug   (packageId: es.paolabolivar.admin.debug) → "PBN Admin [DEV]"
+         Sin esto ambas apps muestran el mismo nombre "PBN Admin" en el launcher
+         y el usuario no puede saber cuál es cuál.
+         ───────────────────────────────────────────────────────────────────── -->
+    <application android:label="PBN Admin [DEV]" />
 </manifest>

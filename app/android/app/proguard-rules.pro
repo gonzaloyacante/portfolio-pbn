@@ -43,11 +43,51 @@
 -keep class androidx.** { *; }
 -dontwarn androidx.**
 
+# ── flutter_secure_storage ────────────────────────────────────────────────────
+# Accede a AndroidKeyStore, cifra con AES/GCM. Preservar reflexión.
+-keep class com.it_nomads.fluttersecurestorage.** { *; }
+-keep class com.it_nomads.fluttersecurestorage.ciphers.** { *; }
+
+# ── image_picker ──────────────────────────────────────────────────────────────
+-keep class io.flutter.plugins.imagepicker.** { *; }
+
+# ── image_cropper ─────────────────────────────────────────────────────────────
+-keep class com.yalantis.ucrop.** { *; }
+-dontwarn com.yalantis.ucrop.**
+
+# ── open_file (in-app APK installer) ─────────────────────────────────────────
+# El plugin usa un FileProvider personalizado y reflection para abrir archivos.
+-keep class com.crazecoder.openfile.** { *; }
+-keep class com.crazecoder.openfile.utils.FileProvider { *; }
+
+# ── flutter_local_notifications ──────────────────────────────────────────────
+-keep class com.dexterous.flutterlocalnotifications.** { *; }
+-keep class com.dexterous.flutterlocalnotifications.models.** { *; }
+
+# ── shared_preferences ────────────────────────────────────────────────────────
+-keep class io.flutter.plugins.sharedpreferences.** { *; }
+
+# ── url_launcher ──────────────────────────────────────────────────────────────
+-keep class io.flutter.plugins.urllauncher.** { *; }
+
+# ── path_provider ─────────────────────────────────────────────────────────────
+-keep class io.flutter.plugins.pathprovider.** { *; }
+
+# ── package_info_plus ─────────────────────────────────────────────────────────
+-keep class dev.fluttercommunity.plus.packageinfo.** { *; }
+
+# ── connectivity_plus ─────────────────────────────────────────────────────────
+-keep class dev.fluttercommunity.plus.connectivity.** { *; }
+
+# ── camera / image_picker native ─────────────────────────────────────────────
+-keep class io.flutter.plugins.camera.** { *; }
+
 # ── Mantener anotaciones de debug para Sentry (stack traces legibles) ─────────
 -keepattributes SourceFile,LineNumberTable
 -keepattributes *Annotation*
 -keepattributes Signature
 -keepattributes Exceptions
 
-# Opcional: si quieres stack traces completamente legibles en Sentry,
-# sube el mapping.txt generado en build/app/outputs/mapping/release/
+# Subir el mapping.txt a Sentry para deobfuscar stack traces:
+# app/build/app/outputs/mapping/release/mapping.txt
+# → https://docs.sentry.io/platforms/android/proguard/
