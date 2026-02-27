@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import ThemeToggle from '@/components/layout/ThemeToggle'
-import LanguageToggle from '@/components/layout/LanguageToggle'
 import { ROUTES } from '@/config/routes'
 import type { PageVisibility } from '@/actions/settings/site'
 
