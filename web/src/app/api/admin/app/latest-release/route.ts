@@ -16,6 +16,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 
 import { prisma } from '@/lib/db'
 import { logger } from '@/lib/logger'
@@ -250,6 +251,15 @@ export async function POST(req: Request) {
   } catch (error) {
     // El push no es crítico — la release ya fue creada.
     logger.warn('AppRelease: error al enviar push FCM (no crítico)', { error: String(error) })
+  }
+
+  // 5. Revalidar la ruta pública para que la CDN/dev preview sirva la release nueva
+  try {
+    // Forzar revalidación del path para invalidar cached GET responses
+    revalidatePath('/api/admin/app/latest-release')
+    logger.info('Revalidated /api/admin/app/latest-release via revalidatePath')
+  } catch (err) {
+    logger.warn('No se pudo revalidatePath /api/admin/app/latest-release', { error: String(err) })
   }
 
   return NextResponse.json(
