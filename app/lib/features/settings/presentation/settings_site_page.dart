@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -108,26 +108,18 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   Widget build(BuildContext context) {
     final async = ref.watch(siteSettingsProvider);
 
-    return LoadingOverlay(
-      isLoading: _saving,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
-          title: const Text('Sitio Web'),
-          centerTitle: false,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.save_outlined),
-              tooltip: 'Guardar',
-              onPressed: _save,
-            ),
-          ],
+    return AppScaffold(
+      title: 'Sitio Web',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Guardar',
+          onPressed: _save,
         ),
-        body: async.when(
+      ],
+      body: LoadingOverlay(
+        isLoading: _saving,
+        child: async.when(
           loading: () => _buildShimmer(),
           error: (e, _) => ErrorState(
             message: e.toString(),

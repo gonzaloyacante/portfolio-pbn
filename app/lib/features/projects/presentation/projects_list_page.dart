@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/providers/app_preferences_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -82,9 +83,22 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
       ),
     );
 
+    final viewMode = ref.watch(projectsViewModeProvider);
+
     return AppScaffold(
       title: 'Proyectos',
       actions: [
+        IconButton(
+          icon: Icon(
+            viewMode == ViewMode.grid
+                ? Icons.view_list_rounded
+                : Icons.grid_view_rounded,
+          ),
+          tooltip: viewMode == ViewMode.grid
+              ? 'Vista lista'
+              : 'Vista cuadrícula',
+          onPressed: () => ref.read(projectsViewModeProvider.notifier).toggle(),
+        ),
         IconButton(
           icon: const Icon(Icons.add_rounded),
           tooltip: 'Nuevo proyecto',
@@ -112,6 +126,7 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
                     : _ProjectsList(
                         items: paginated.data,
                         onDelete: _deleteProject,
+                        viewMode: viewMode,
                       ),
               ),
             ),
@@ -158,13 +173,37 @@ class _SearchBar extends StatelessWidget {
 // ── _ProjectsList ─────────────────────────────────────────────────────────────
 
 class _ProjectsList extends StatelessWidget {
-  const _ProjectsList({required this.items, required this.onDelete});
+  const _ProjectsList({
+    required this.items,
+    required this.onDelete,
+    this.viewMode = ViewMode.grid,
+  });
 
   final List<ProjectListItem> items;
   final Future<void> Function(String id, String title) onDelete;
+  final ViewMode viewMode;
 
   @override
   Widget build(BuildContext context) {
+    if (viewMode == ViewMode.grid) {
+      return GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 0.8,
+        ),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return FadeSlideIn(
+            delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
+            child: _ProjectGridCard(item: item, onDelete: onDelete),
+          );
+        },
+      );
+    }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: items.length,
@@ -176,6 +215,166 @@ class _ProjectsList extends StatelessWidget {
           child: _ProjectTile(item: item, onDelete: onDelete),
         );
       },
+    );
+  }
+}
+
+// ── _ProjectGridCard ──────────────────────────────────────────────────────────
+
+class _ProjectGridCard extends StatelessWidget {
+  const _ProjectGridCard({required this.item, required this.onDelete});
+
+  final ProjectListItem item;
+  final Future<void> Function(String id, String title) onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: InkWell(
+        onTap: () => context.pushNamed(
+          RouteNames.projectEdit,
+          pathParameters: {'id': item.id},
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Thumbnail
+            Expanded(
+              child: item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: item.thumbnailUrl!,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (_, _) => Container(
+                        color: scheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: scheme.outlineVariant,
+                          size: 36,
+                        ),
+                      ),
+                      errorWidget: (_, _, _) => Container(
+                        color: scheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          color: scheme.outlineVariant,
+                          size: 36,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      color: scheme.surfaceContainerHighest,
+                      child: Center(
+                        child: Icon(
+                          Icons.photo_library_outlined,
+                          color: scheme.outlineVariant,
+                          size: 36,
+                        ),
+                      ),
+                    ),
+            ),
+            // Info
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 8, 4, 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      if (item.isPinned)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 3),
+                          child: Icon(
+                            Icons.push_pin_rounded,
+                            size: 12,
+                            color: scheme.primary,
+                          ),
+                        ),
+                      Expanded(
+                        child: Text(
+                          item.title,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_vert_rounded,
+                          size: 16,
+                          color: scheme.outline,
+                        ),
+                        itemBuilder: (_) => const [
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit_outlined, size: 18),
+                                SizedBox(width: 10),
+                                Text('Editar'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.delete_outline,
+                                  size: 18,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  'Eliminar',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onSelected: (val) {
+                          if (val == 'edit') {
+                            context.pushNamed(
+                              RouteNames.projectEdit,
+                              pathParameters: {'id': item.id},
+                            );
+                          } else if (val == 'delete') {
+                            onDelete(item.id, item.title);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      StatusBadge(
+                        status: item.isActive
+                            ? AppStatus.active
+                            : AppStatus.inactive,
+                        small: true,
+                      ),
+                      if (item.isFeatured) ...[
+                        const SizedBox(width: 4),
+                        StatusBadge(status: AppStatus.featured, small: true),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

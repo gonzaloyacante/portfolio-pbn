@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
@@ -46,6 +48,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   File? _pendingThumbnail;
   final _iconCtrl = TextEditingController();
   final _colorCtrl = TextEditingController();
+  String? _selectedIcon;
 
   bool _isActive = true;
   bool _loading = false;
@@ -81,7 +84,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _thumbnailCtrl.text = detail.thumbnailUrl ?? '';
     _iconCtrl.text = detail.iconName ?? '';
     _colorCtrl.text = detail.color ?? '';
-    setState(() => _isActive = detail.isActive);
+    setState(() {
+      _isActive = detail.isActive;
+      _selectedIcon = detail.iconName;
+    });
   }
 
   void _autoSlug(String name) {
@@ -123,7 +129,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
             ? null
             : _thumbnailCtrl.text.trim(),
-        iconName: _iconCtrl.text.trim().isEmpty ? null : _iconCtrl.text.trim(),
+        iconName: (_selectedIcon?.isEmpty ?? true) ? null : _selectedIcon,
         color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
         isActive: _isActive,
       );
@@ -160,24 +166,17 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       detailAsync.whenData(_populateForm);
     }
 
-    return LoadingOverlay(
-      isLoading: _loading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
-          title: Text(_isEdit ? 'Editar categoría' : 'Nueva categoría'),
-          actions: [
-            TextButton(
-              onPressed: _loading ? null : _submit,
-              child: const Text('Guardar'),
-            ),
-          ],
+    return AppScaffold(
+      title: _isEdit ? 'Editar categoría' : 'Nueva categoría',
+      actions: [
+        TextButton(
+          onPressed: _loading ? null : _submit,
+          child: const Text('Guardar'),
         ),
-        body: Form(
+      ],
+      body: LoadingOverlay(
+        isLoading: _loading,
+        child: Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.all(16),
@@ -226,12 +225,11 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               const SizedBox(height: 16),
 
               // Ícono
-              TextFormField(
-                controller: _iconCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre de ícono',
-                  hintText: 'ej. camera, paintbrush',
-                ),
+              EmojiIconPicker(
+                value: _selectedIcon,
+                onChanged: (v) => setState(() => _selectedIcon = v),
+                label: 'Ícono de la categoría',
+                hint: 'Toca para elegir un emoji',
               ),
               const SizedBox(height: 16),
 

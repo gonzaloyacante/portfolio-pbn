@@ -184,7 +184,15 @@ class _CategoryTile extends StatelessWidget {
                 ),
                 child: Center(
                   child: item.iconName != null
-                      ? Icon(Icons.category, color: color, size: 22)
+                      ? item.iconName!.runes.length <= 2
+                            ? Text(
+                                item.iconName!,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  height: 1.2,
+                                ),
+                                textAlign: TextAlign.center,
+                              )
+                            : Icon(Icons.category, color: color, size: 22)
                       : Text(
                           item.name.isNotEmpty
                               ? item.name[0].toUpperCase()

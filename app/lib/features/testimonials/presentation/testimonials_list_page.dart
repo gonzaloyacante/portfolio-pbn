@@ -102,8 +102,8 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
   }
 
   AppStatus _statusFromString(String status) => switch (status) {
-    'APPROVED' => AppStatus.active,
-    'REJECTED' => AppStatus.inactive,
+    'APPROVED' => AppStatus.approved,
+    'REJECTED' => AppStatus.rejected,
     _ => AppStatus.pending,
   };
 
@@ -368,7 +368,7 @@ class _TestimonialTile extends StatelessWidget {
                         children: [
                           StatusBadge(
                             status: statusOf(item.status),
-                            compact: true,
+                            small: true,
                           ),
                           if (item.featured) ...[
                             const SizedBox(width: 6),
