@@ -8,6 +8,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 
 import '../router/route_names.dart';
+import '../updates/app_release_model.dart';
+import '../updates/app_update_provider.dart';
 import '../utils/app_logger.dart';
 import 'notification_prefs.dart';
 
@@ -45,10 +47,7 @@ const _kChannelDesc =
 /// await _notifHandler.init();
 /// ```
 class NotificationHandler {
-  NotificationHandler({
-    required GoRouter router,
-    required GlobalKey<NavigatorState> navigatorKey,
-  }) : _router = router;
+  NotificationHandler({required GoRouter router}) : _router = router;
 
   final GoRouter _router;
 
@@ -204,6 +203,17 @@ class NotificationHandler {
     final data = message.data;
     final type = data['type'] as String?;
 
+    // ── Caso especial: actualización in-app ───────────────────────────────
+    // Para app_update no mostramos notificación del sistema en foreground:
+    // mostramos el diálogo directamente en la UI.
+    if (type == 'app_update') {
+      AppLogger.info(
+        'NotificationHandler[fg]: mensaje app_update recibido → mostrando diálogo',
+      );
+      _handleAppUpdateData(data);
+      return;
+    }
+
     // Comprobar preferencias del usuario (solo afecta al foreground)
     try {
       final prefs = NotificationPrefs.instance;
@@ -311,17 +321,62 @@ class NotificationHandler {
   // ── _navigateFromMessage ───────────────────────────────────────────────────
 
   void _navigateFromMessage(RemoteMessage message) {
+    // Si es un mensaje de actualización (usuario tapó la notificación)
+    if (message.data['type'] == 'app_update') {
+      _handleAppUpdateData(message.data);
+      return;
+    }
     _navigateFromData(
       screen: message.data['screen'] as String?,
       id: message.data['id'] as String?,
     );
   }
 
+  // ── _handleAppUpdateData ──────────────────────────────────────────────────────
+
+  /// Gestiona un mensaje FCM de tipo `app_update`.
+  ///
+  /// Si el payload contiene datos de release válidos (versión + URL),
+  /// muestra el diálogo directamente via el contexto del Navigator.
+  /// Si los datos son incompletos, dispara una nueva comprobación al servidor.
+  void _handleAppUpdateData(Map<String, dynamic> data) {
+    // Convertir todos los valores a String (FCM los envía como dynamic)
+    final stringData = data.map((k, v) => MapEntry(k, v?.toString() ?? ''));
+
+    final version = stringData['version'] ?? '';
+    final downloadUrl = stringData['downloadUrl'] ?? '';
+
+    if (version.isEmpty ||
+        downloadUrl.isEmpty ||
+        !downloadUrl.startsWith('https://')) {
+      // Datos insuficientes en el FCM → re-comprobar desde el servidor
+      AppLogger.info(
+        'NotificationHandler: datos de update incompletos en FCM → '
+        'disparando comprobación al servidor',
+      );
+      triggerUpdateCheckGlobal();
+      return;
+    }
+
+    // Datos OK en el FCM → construir release y mostrar diálogo directamente
+    final release = AppRelease.fromFcmData(stringData);
+    final mandatory = stringData['mandatory'] == 'true';
+
+    AppLogger.info(
+      'NotificationHandler: mostrando diálogo para v${release.version}',
+    );
+
+    // Usamos addPostFrameCallback para asegurarnos de que el Navigator
+    // ya está montado antes de llamar a showDialog.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showUpdateDialogFromData(release, mandatory);
+    });
+  }
+
   // ── _navigateFromData ──────────────────────────────────────────────────────
 
   /// Navega a la pantalla correcta según el screen y, si existe, al detalle
   /// directo usando el [id] de la entidad.
-  ///
   /// Mapeo:
   /// - `contacts`    → [ContactDetailPage] (con id) o [ContactsListPage]
   /// - `calendar`    → [BookingDetailPage] (con id) o [CalendarPage]

@@ -21,6 +21,13 @@
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISOS DE ACTUALIZACIONES IN-APP
+         ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Android 8+ (API 26+): permiso para instalar APKs desde la propia app -->
+    <!-- El usuario deberá activar "Instalar apps desconocidas" para esta app  -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
          PERMISOS DE CÁMARA E IMÁGENES (image_picker / image_cropper)
          ═══════════════════════════════════════════════════════════════════ -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -110,6 +117,22 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/cropper_file_paths" />
+        </provider>
+
+        <!-- ── Proveedor de archivos para open_file (in-app updates) ──── -->
+        <!--
+            Requerido por open_file para compartir el APK descargado con el
+            instalador del sistema en Android 7+ vía content:// URI.
+            Authority: ${applicationId}.fileProvider
+        -->
+        <provider
+            android:name="com.crazecoder.openfile.utils.FileProvider"
+            android:authorities="${applicationId}.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/open_file_paths" />
         </provider>
 
     </application>
