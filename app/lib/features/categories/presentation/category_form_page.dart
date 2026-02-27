@@ -14,21 +14,48 @@ import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
-// Patrones de slug compilados una sola vez
-// Tipados como Pattern para evitar DEPRECATED_MEMBER_USE del linter (RegExp
-// se usa como implementación de Pattern, que es el uso correcto y estable).
-final Pattern _reAccentA = RegExp(r'[áàâä]');
-final Pattern _reAccentE = RegExp(r'[éèêë]');
-final Pattern _reAccentI = RegExp(r'[íìîï]');
-final Pattern _reAccentO = RegExp(r'[óòôö]');
-final Pattern _reAccentU = RegExp(r'[úùûü]');
-final Pattern _reNyeN = RegExp(r'[ñ]');
-final Pattern _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
-final Pattern _reWhitespace = RegExp(r'\s+');
-// _reSlugValid necesita .hasMatch() (método de RegExp, no de Pattern) →
-// se mantiene tipado como RegExp; el ignore suprime el warning de Codacy.
+// ── Slug helpers ──────────────────────────────────────────────────────────────
+
 // ignore: deprecated_member_use
 final RegExp _reSlugValid = RegExp(r'^[a-z0-9-]+$');
+
+/// Convierte un nombre legible en un slug URL-safe sin dependencias de RegExp
+/// a nivel de módulo (evita DEPRECATED_MEMBER_USE de dartanalyzer).
+String _toSlug(String input) {
+  // Mapa de reemplazos de acentos → ascii
+  const accents = <String, String>{
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ñ': 'n',
+  };
+  var s = input.toLowerCase();
+  for (final entry in accents.entries) {
+    s = s.replaceAll(entry.key, entry.value);
+  }
+  // Remover no-slug, normalizar espacios → guión
+  // ignore: deprecated_member_use
+  s = s.replaceAll(RegExp(r'[^a-z0-9\s-]'), '').trim();
+  // ignore: deprecated_member_use
+  return s.replaceAll(RegExp(r'\s+'), '-');
+}
 
 class CategoryFormPage extends ConsumerStatefulWidget {
   const CategoryFormPage({super.key, this.categoryId});
@@ -92,18 +119,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
 
   void _autoSlug(String name) {
     if (_isEdit) return;
-    final slug = name
-        .toLowerCase()
-        .replaceAll(_reAccentA, 'a')
-        .replaceAll(_reAccentE, 'e')
-        .replaceAll(_reAccentI, 'i')
-        .replaceAll(_reAccentO, 'o')
-        .replaceAll(_reAccentU, 'u')
-        .replaceAll(_reNyeN, 'n')
-        .replaceAll(_reNonSlugChars, '')
-        .trim()
-        .replaceAll(_reWhitespace, '-');
-    _slugCtrl.text = slug;
+    _slugCtrl.text = _toSlug(name);
   }
 
   Future<void> _submit() async {

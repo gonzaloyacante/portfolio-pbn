@@ -1,3 +1,12 @@
+exclude_paths:
+    - web/src/sentry.client.config.ts
+    - web/src/sentry.server.config.ts
+    - web/src/sentry.edge.config.ts
+    - app/lib/**/*.g.dart
+    - app/lib/**/*.freezed.dart
+    - web/src/generated/**
+    - web/prisma/seeds/**
+    - web/prisma/migrations/**
 runtimes:
     - dart@3.7.2
     - go@1.22.3
