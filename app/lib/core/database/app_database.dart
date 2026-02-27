@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'tables/cache_table.dart';
 import 'tables/sync_operations_table.dart';
 
 part 'app_database.g.dart';
@@ -14,23 +15,24 @@ part 'app_database.g.dart';
 
 /// Base de datos SQLite local usando Drift.
 ///
-/// Tablas incluidas en esta fase:
+/// Tablas incluidas:
 /// - [SyncOperationsTable]: cola de operaciones offline pendientes de sincronizar.
-///
-/// Tablas futuras (se añadirán en las fases de features):
-/// - ProjectsTable, CategoriesTable, ServicesTable, etc. (caché offline)
-@DriftDatabase(tables: [SyncOperationsTable])
+/// - [CacheTable]: caché genérica key/value con TTL para reducir llamadas API.
+@DriftDatabase(tables: [SyncOperationsTable, CacheTable])
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
-      // Migraciones futuras aquí.
+      if (from < 2) {
+        // v2: añade tabla de caché genérica
+        await m.createTable(cacheTable);
+      }
     },
   );
 }

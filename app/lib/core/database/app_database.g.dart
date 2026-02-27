@@ -594,16 +594,347 @@ class SyncOperationsTableCompanion
   }
 }
 
+class $CacheTableTable extends CacheTable
+    with TableInfo<$CacheTableTable, CacheTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CacheTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _cacheKeyMeta = const VerificationMeta(
+    'cacheKey',
+  );
+  @override
+  late final GeneratedColumn<String> cacheKey = GeneratedColumn<String>(
+    'cache_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payloadMeta = const VerificationMeta(
+    'payload',
+  );
+  @override
+  late final GeneratedColumn<String> payload = GeneratedColumn<String>(
+    'payload',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _expiresAtMeta = const VerificationMeta(
+    'expiresAt',
+  );
+  @override
+  late final GeneratedColumn<int> expiresAt = GeneratedColumn<int>(
+    'expires_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    cacheKey,
+    payload,
+    expiresAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cache_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CacheTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('cache_key')) {
+      context.handle(
+        _cacheKeyMeta,
+        cacheKey.isAcceptableOrUnknown(data['cache_key']!, _cacheKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_cacheKeyMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(
+        _payloadMeta,
+        payload.isAcceptableOrUnknown(data['payload']!, _payloadMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('expires_at')) {
+      context.handle(
+        _expiresAtMeta,
+        expiresAt.isAcceptableOrUnknown(data['expires_at']!, _expiresAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_expiresAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {cacheKey};
+  @override
+  CacheTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CacheTableData(
+      cacheKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cache_key'],
+      )!,
+      payload: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payload'],
+      )!,
+      expiresAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expires_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CacheTableTable createAlias(String alias) {
+    return $CacheTableTable(attachedDatabase, alias);
+  }
+}
+
+class CacheTableData extends DataClass implements Insertable<CacheTableData> {
+  /// Identificador único de la entrada de caché.
+  final String cacheKey;
+
+  /// Contenido serializado como JSON string.
+  final String payload;
+
+  /// Timestamp Unix en segundos de cuando caduca esta entrada.
+  final int expiresAt;
+
+  /// Timestamp Unix en segundos de la última actualización.
+  final int updatedAt;
+  const CacheTableData({
+    required this.cacheKey,
+    required this.payload,
+    required this.expiresAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['cache_key'] = Variable<String>(cacheKey);
+    map['payload'] = Variable<String>(payload);
+    map['expires_at'] = Variable<int>(expiresAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  CacheTableCompanion toCompanion(bool nullToAbsent) {
+    return CacheTableCompanion(
+      cacheKey: Value(cacheKey),
+      payload: Value(payload),
+      expiresAt: Value(expiresAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory CacheTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CacheTableData(
+      cacheKey: serializer.fromJson<String>(json['cacheKey']),
+      payload: serializer.fromJson<String>(json['payload']),
+      expiresAt: serializer.fromJson<int>(json['expiresAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'cacheKey': serializer.toJson<String>(cacheKey),
+      'payload': serializer.toJson<String>(payload),
+      'expiresAt': serializer.toJson<int>(expiresAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  CacheTableData copyWith({
+    String? cacheKey,
+    String? payload,
+    int? expiresAt,
+    int? updatedAt,
+  }) => CacheTableData(
+    cacheKey: cacheKey ?? this.cacheKey,
+    payload: payload ?? this.payload,
+    expiresAt: expiresAt ?? this.expiresAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  CacheTableData copyWithCompanion(CacheTableCompanion data) {
+    return CacheTableData(
+      cacheKey: data.cacheKey.present ? data.cacheKey.value : this.cacheKey,
+      payload: data.payload.present ? data.payload.value : this.payload,
+      expiresAt: data.expiresAt.present ? data.expiresAt.value : this.expiresAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CacheTableData(')
+          ..write('cacheKey: $cacheKey, ')
+          ..write('payload: $payload, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(cacheKey, payload, expiresAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CacheTableData &&
+          other.cacheKey == this.cacheKey &&
+          other.payload == this.payload &&
+          other.expiresAt == this.expiresAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class CacheTableCompanion extends UpdateCompanion<CacheTableData> {
+  final Value<String> cacheKey;
+  final Value<String> payload;
+  final Value<int> expiresAt;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const CacheTableCompanion({
+    this.cacheKey = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.expiresAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CacheTableCompanion.insert({
+    required String cacheKey,
+    required String payload,
+    required int expiresAt,
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : cacheKey = Value(cacheKey),
+       payload = Value(payload),
+       expiresAt = Value(expiresAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<CacheTableData> custom({
+    Expression<String>? cacheKey,
+    Expression<String>? payload,
+    Expression<int>? expiresAt,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (cacheKey != null) 'cache_key': cacheKey,
+      if (payload != null) 'payload': payload,
+      if (expiresAt != null) 'expires_at': expiresAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CacheTableCompanion copyWith({
+    Value<String>? cacheKey,
+    Value<String>? payload,
+    Value<int>? expiresAt,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return CacheTableCompanion(
+      cacheKey: cacheKey ?? this.cacheKey,
+      payload: payload ?? this.payload,
+      expiresAt: expiresAt ?? this.expiresAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (cacheKey.present) {
+      map['cache_key'] = Variable<String>(cacheKey.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (expiresAt.present) {
+      map['expires_at'] = Variable<int>(expiresAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CacheTableCompanion(')
+          ..write('cacheKey: $cacheKey, ')
+          ..write('payload: $payload, ')
+          ..write('expiresAt: $expiresAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SyncOperationsTableTable syncOperationsTable =
       $SyncOperationsTableTable(this);
+  late final $CacheTableTable cacheTable = $CacheTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [syncOperationsTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    syncOperationsTable,
+    cacheTable,
+  ];
 }
 
 typedef $$SyncOperationsTableTableCreateCompanionBuilder =
@@ -902,12 +1233,195 @@ typedef $$SyncOperationsTableTableProcessedTableManager =
       SyncOperationsTableData,
       PrefetchHooks Function()
     >;
+typedef $$CacheTableTableCreateCompanionBuilder =
+    CacheTableCompanion Function({
+      required String cacheKey,
+      required String payload,
+      required int expiresAt,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$CacheTableTableUpdateCompanionBuilder =
+    CacheTableCompanion Function({
+      Value<String> cacheKey,
+      Value<String> payload,
+      Value<int> expiresAt,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$CacheTableTableFilterComposer
+    extends Composer<_$AppDatabase, $CacheTableTable> {
+  $$CacheTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get cacheKey => $composableBuilder(
+    column: $table.cacheKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CacheTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $CacheTableTable> {
+  $$CacheTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get cacheKey => $composableBuilder(
+    column: $table.cacheKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payload => $composableBuilder(
+    column: $table.payload,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get expiresAt => $composableBuilder(
+    column: $table.expiresAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CacheTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CacheTableTable> {
+  $$CacheTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get cacheKey =>
+      $composableBuilder(column: $table.cacheKey, builder: (column) => column);
+
+  GeneratedColumn<String> get payload =>
+      $composableBuilder(column: $table.payload, builder: (column) => column);
+
+  GeneratedColumn<int> get expiresAt =>
+      $composableBuilder(column: $table.expiresAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$CacheTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CacheTableTable,
+          CacheTableData,
+          $$CacheTableTableFilterComposer,
+          $$CacheTableTableOrderingComposer,
+          $$CacheTableTableAnnotationComposer,
+          $$CacheTableTableCreateCompanionBuilder,
+          $$CacheTableTableUpdateCompanionBuilder,
+          (
+            CacheTableData,
+            BaseReferences<_$AppDatabase, $CacheTableTable, CacheTableData>,
+          ),
+          CacheTableData,
+          PrefetchHooks Function()
+        > {
+  $$CacheTableTableTableManager(_$AppDatabase db, $CacheTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CacheTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CacheTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CacheTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> cacheKey = const Value.absent(),
+                Value<String> payload = const Value.absent(),
+                Value<int> expiresAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CacheTableCompanion(
+                cacheKey: cacheKey,
+                payload: payload,
+                expiresAt: expiresAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String cacheKey,
+                required String payload,
+                required int expiresAt,
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => CacheTableCompanion.insert(
+                cacheKey: cacheKey,
+                payload: payload,
+                expiresAt: expiresAt,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CacheTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CacheTableTable,
+      CacheTableData,
+      $$CacheTableTableFilterComposer,
+      $$CacheTableTableOrderingComposer,
+      $$CacheTableTableAnnotationComposer,
+      $$CacheTableTableCreateCompanionBuilder,
+      $$CacheTableTableUpdateCompanionBuilder,
+      (
+        CacheTableData,
+        BaseReferences<_$AppDatabase, $CacheTableTable, CacheTableData>,
+      ),
+      CacheTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$SyncOperationsTableTableTableManager get syncOperationsTable =>
       $$SyncOperationsTableTableTableManager(_db, _db.syncOperationsTable);
+  $$CacheTableTableTableManager get cacheTable =>
+      $$CacheTableTableTableManager(_db, _db.cacheTable);
 }
 
 // **************************************************************************

@@ -227,7 +227,7 @@ return $default(_that.id,_that.name,_that.slug,_that.shortDesc,_that.price,_that
 @JsonSerializable()
 
 class _ServiceItem implements ServiceItem {
-  const _ServiceItem({required this.id, required this.name, required this.slug, this.shortDesc, this.price, this.priceLabel, this.currency = 'ARS', this.duration, this.imageUrl, this.iconName, this.color, this.isActive = true, this.isFeatured = false, this.isAvailable = true, this.sortOrder = 0, this.bookingCount = 0, this.viewCount = 0, required this.createdAt, required this.updatedAt});
+  const _ServiceItem({required this.id, required this.name, required this.slug, this.shortDesc, this.price, this.priceLabel, this.currency = 'EUR', this.duration, this.imageUrl, this.iconName, this.color, this.isActive = true, this.isFeatured = false, this.isAvailable = true, this.sortOrder = 0, this.bookingCount = 0, this.viewCount = 0, required this.createdAt, required this.updatedAt});
   factory _ServiceItem.fromJson(Map<String, dynamic> json) => _$ServiceItemFromJson(json);
 
 @override final  String id;
@@ -553,7 +553,7 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.shortDesc
 @JsonSerializable()
 
 class _ServiceDetail implements ServiceDetail {
-  const _ServiceDetail({required this.id, required this.name, required this.slug, this.description, this.shortDesc, this.price, this.priceLabel, this.currency = 'ARS', this.duration, this.durationMinutes, this.imageUrl, this.iconName, this.color, this.isActive = true, this.isFeatured = false, this.isAvailable = true, this.maxBookingsPerDay, this.advanceNoticeDays, this.sortOrder = 0, this.metaTitle, this.metaDescription, final  List<String> metaKeywords = const [], this.requirements, this.cancellationPolicy, this.bookingCount = 0, this.viewCount = 0, required this.createdAt, required this.updatedAt}): _metaKeywords = metaKeywords;
+  const _ServiceDetail({required this.id, required this.name, required this.slug, this.description, this.shortDesc, this.price, this.priceLabel, this.currency = 'EUR', this.duration, this.durationMinutes, this.imageUrl, this.iconName, this.color, this.isActive = true, this.isFeatured = false, this.isAvailable = true, this.maxBookingsPerDay, this.advanceNoticeDays, this.sortOrder = 0, this.metaTitle, this.metaDescription, final  List<String> metaKeywords = const [], this.requirements, this.cancellationPolicy, this.bookingCount = 0, this.viewCount = 0, required this.createdAt, required this.updatedAt}): _metaKeywords = metaKeywords;
   factory _ServiceDetail.fromJson(Map<String, dynamic> json) => _$ServiceDetailFromJson(json);
 
 @override final  String id;
