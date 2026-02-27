@@ -237,7 +237,7 @@ export default withSentryConfig(pwaConfig, {
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
   org: 'gonzaloyacante',
-  project: 'portfolio-pbn',
+  project: 'portfolio-pbn-web',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
