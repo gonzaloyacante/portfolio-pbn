@@ -55,7 +55,7 @@ final class ConnectivityProvider
   }
 }
 
-String _$connectivityHash() => r'abebaf300d2d7ed73aa20f7f1793756ecde25810';
+String _$connectivityHash() => r'69244c039962533bfb913908ce9f71ce5419f00a';
 
 /// `true` si el dispositivo tiene algún tipo de conexión activa.
 ///

@@ -9,42 +9,42 @@ part 'settings_provider.g.dart';
 
 // ── Repositorio ───────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 SettingsRepository settingsRepository(Ref ref) {
   return SettingsRepository(ref.watch(apiClientProvider));
 }
 
 // ── About ─────────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<AboutSettings> aboutSettings(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getAbout();
 }
 
 // ── Contact ───────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<ContactSettings> contactSettings(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getContact();
 }
 
 // ── Theme ─────────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<ThemeSettings> themeSettings(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getTheme();
 }
 
 // ── Site ──────────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<SiteSettings> siteSettings(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getSite();
 }
 
 // ── Social Links ──────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<SocialLink>> socialLinks(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getSocialLinks();
 }

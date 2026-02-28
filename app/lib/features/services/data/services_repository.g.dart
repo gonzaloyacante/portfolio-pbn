@@ -26,7 +26,7 @@ final class ServicesRepositoryProvider
         argument: null,
         retry: null,
         name: r'servicesRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class ServicesRepositoryProvider
 }
 
 String _$servicesRepositoryHash() =>
-    r'ff50d289de93847acfa3d94183ebaf961d13908c';
+    r'7f17a0a488404342708a063a007bc6385404183b';

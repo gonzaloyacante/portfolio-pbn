@@ -6,12 +6,13 @@ import '../data/trash_repository.dart';
 
 part 'trash_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 TrashRepository trashRepository(Ref ref) {
   return TrashRepository(ref.watch(apiClientProvider));
 }
 
 @riverpod
 Future<Map<String, List<TrashItem>>> trashItems(Ref ref) async {
+  ref.keepAlive();
   return ref.watch(trashRepositoryProvider).getTrash();
 }

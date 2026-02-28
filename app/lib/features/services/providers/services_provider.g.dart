@@ -75,7 +75,7 @@ final class ServicesListProvider
   }
 }
 
-String _$servicesListHash() => r'2b4e00b4dde5960e6397cef5e8f2b5082f04fd02';
+String _$servicesListHash() => r'b884a39485d130d1e32b418099db9955f2e060ac';
 
 final class ServicesListFamily extends $Family
     with
@@ -166,7 +166,7 @@ final class ServiceDetailProvider
   }
 }
 
-String _$serviceDetailHash() => r'a03140d01f272a761fa0ea8736435948504f3180';
+String _$serviceDetailHash() => r'cf1055346236d6862c77b146282568a1ca5f418c';
 
 final class ServiceDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<ServiceDetail>, String> {

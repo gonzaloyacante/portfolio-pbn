@@ -26,7 +26,7 @@ final class ProjectsRepositoryProvider
         argument: null,
         retry: null,
         name: r'projectsRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class ProjectsRepositoryProvider
 }
 
 String _$projectsRepositoryHash() =>
-    r'7fa55e58cb52814bd36976eddf56e5cfe27faea5';
+    r'16a20d36361a8f788c11d45279269ae1a2ae9bcd';

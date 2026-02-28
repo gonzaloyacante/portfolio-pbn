@@ -10,7 +10,7 @@ part 'contacts_provider.g.dart';
 
 // ── Repositorio ───────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 ContactsRepository contactsRepository(Ref ref) {
   return ContactsRepository(ref.watch(apiClientProvider));
 }
@@ -26,6 +26,7 @@ Future<PaginatedResponse<ContactItem>> contactsList(
   String? priority,
   bool? unreadOnly,
 }) async {
+  ref.keepAlive();
   return ref
       .watch(contactsRepositoryProvider)
       .getContacts(
@@ -41,5 +42,6 @@ Future<PaginatedResponse<ContactItem>> contactsList(
 
 @riverpod
 Future<ContactDetail> contactDetail(Ref ref, String id) async {
+  ref.keepAlive();
   return ref.watch(contactsRepositoryProvider).getContact(id);
 }

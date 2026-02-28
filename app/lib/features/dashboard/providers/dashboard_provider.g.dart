@@ -56,7 +56,7 @@ final class DashboardStatsProvider
   }
 }
 
-String _$dashboardStatsHash() => r'1e569f721a0a97874e876c1fe7e1613a209ec571';
+String _$dashboardStatsHash() => r'd12a950380585ae905ec700cf2bbdb05ffece7ea';
 
 /// Provee los datos de tendencias para los gráficos del dashboard.
 
@@ -100,4 +100,4 @@ final class DashboardChartsProvider
   }
 }
 
-String _$dashboardChartsHash() => r'34aded17448a934363ebcfaf82175c3c18052982';
+String _$dashboardChartsHash() => r'147b67d14abb590b4ff235b88f652d86095059cf';

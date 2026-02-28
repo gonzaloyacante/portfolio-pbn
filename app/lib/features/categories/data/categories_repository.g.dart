@@ -26,7 +26,7 @@ final class CategoriesRepositoryProvider
         argument: null,
         retry: null,
         name: r'categoriesRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class CategoriesRepositoryProvider
 }
 
 String _$categoriesRepositoryHash() =>
-    r'9caae8531a6ae1f6217c329ad2ff634c50944b36';
+    r'39b88c79c86a20bf55a21eacc814f992719571ff';

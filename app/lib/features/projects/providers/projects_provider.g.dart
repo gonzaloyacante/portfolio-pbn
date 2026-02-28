@@ -76,7 +76,7 @@ final class ProjectsListProvider
   }
 }
 
-String _$projectsListHash() => r'ccb415e6c4a5f682f7ae278a16bbab0d31840585';
+String _$projectsListHash() => r'ae9f45d6d89a5d1be14ac07feced4ff7775377e8';
 
 /// Lista paginada de proyectos con parámetros de filtro.
 
@@ -170,7 +170,7 @@ final class ProjectDetailProvider
   }
 }
 
-String _$projectDetailHash() => r'0f04fbc526c36e4c939ecf4e1f6cb45b7e0de7d1';
+String _$projectDetailHash() => r'a1e09389fe7f889b20c846ce7f46a81abe459ef5';
 
 /// Detalle completo de un proyecto.
 

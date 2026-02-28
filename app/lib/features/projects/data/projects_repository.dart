@@ -172,7 +172,7 @@ class ProjectsRepository {
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 ProjectsRepository projectsRepository(Ref ref) {
   return ProjectsRepository(ref.watch(apiClientProvider));
 }

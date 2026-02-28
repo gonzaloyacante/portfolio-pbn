@@ -26,7 +26,7 @@ final class SettingsRepositoryProvider
         argument: null,
         retry: null,
         name: r'settingsRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,7 +55,7 @@ final class SettingsRepositoryProvider
 }
 
 String _$settingsRepositoryHash() =>
-    r'4368f37c1789efa0923609e03cfeedc62a70af08';
+    r'a4403698570087875b300af1c7388bb62d6f80fa';
 
 @ProviderFor(aboutSettings)
 final aboutSettingsProvider = AboutSettingsProvider._();
@@ -74,7 +74,7 @@ final class AboutSettingsProvider
         argument: null,
         retry: null,
         name: r'aboutSettingsProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -94,7 +94,7 @@ final class AboutSettingsProvider
   }
 }
 
-String _$aboutSettingsHash() => r'de3ee197d5af19c4df045e30f91cb37949c3e0fe';
+String _$aboutSettingsHash() => r'375d2e168c83755cdf59d821424a8a7f9d2a625a';
 
 @ProviderFor(contactSettings)
 final contactSettingsProvider = ContactSettingsProvider._();
@@ -113,7 +113,7 @@ final class ContactSettingsProvider
         argument: null,
         retry: null,
         name: r'contactSettingsProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -133,7 +133,7 @@ final class ContactSettingsProvider
   }
 }
 
-String _$contactSettingsHash() => r'4daf67676a7b81940123d6bb338f7f9a8056af0a';
+String _$contactSettingsHash() => r'bb741fe564b53d4cd0f89cd1c3000d668b33e797';
 
 @ProviderFor(themeSettings)
 final themeSettingsProvider = ThemeSettingsProvider._();
@@ -152,7 +152,7 @@ final class ThemeSettingsProvider
         argument: null,
         retry: null,
         name: r'themeSettingsProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -172,7 +172,7 @@ final class ThemeSettingsProvider
   }
 }
 
-String _$themeSettingsHash() => r'df135a4764cedc9d86cce1b380a428a54288b3a5';
+String _$themeSettingsHash() => r'fbc122f7b9e804b057f42a5be8b0973786bd8025';
 
 @ProviderFor(siteSettings)
 final siteSettingsProvider = SiteSettingsProvider._();
@@ -191,7 +191,7 @@ final class SiteSettingsProvider
         argument: null,
         retry: null,
         name: r'siteSettingsProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -211,7 +211,7 @@ final class SiteSettingsProvider
   }
 }
 
-String _$siteSettingsHash() => r'bb4101134e9e70a0ab23e66043d8337e77d6c75e';
+String _$siteSettingsHash() => r'980c784eca419f07af980f3c9283e1f215981674';
 
 @ProviderFor(socialLinks)
 final socialLinksProvider = SocialLinksProvider._();
@@ -230,7 +230,7 @@ final class SocialLinksProvider
         argument: null,
         retry: null,
         name: r'socialLinksProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -250,4 +250,4 @@ final class SocialLinksProvider
   }
 }
 
-String _$socialLinksHash() => r'6ee25cebb0dac38a0fbaf01cd0b92bf289f38d2c';
+String _$socialLinksHash() => r'ad7883c97487b6203bf74e12ac95254be2b5427e';

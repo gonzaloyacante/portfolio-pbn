@@ -14,6 +14,8 @@ _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
       totalTestimonials: (json['totalTestimonials'] as num?)?.toInt() ?? 0,
       newContacts: (json['newContacts'] as num?)?.toInt() ?? 0,
       pendingBookings: (json['pendingBookings'] as num?)?.toInt() ?? 0,
+      pendingTestimonials: (json['pendingTestimonials'] as num?)?.toInt() ?? 0,
+      trashCount: (json['trashCount'] as num?)?.toInt() ?? 0,
       pageViews30d: (json['pageViews30d'] as num?)?.toInt() ?? 0,
     );
 
@@ -25,6 +27,8 @@ Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
       'totalTestimonials': instance.totalTestimonials,
       'newContacts': instance.newContacts,
       'pendingBookings': instance.pendingBookings,
+      'pendingTestimonials': instance.pendingTestimonials,
+      'trashCount': instance.trashCount,
       'pageViews30d': instance.pageViews30d,
     };
 
@@ -81,7 +85,7 @@ final class DashboardRepositoryProvider
         argument: null,
         retry: null,
         name: r'dashboardRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -110,4 +114,4 @@ final class DashboardRepositoryProvider
 }
 
 String _$dashboardRepositoryHash() =>
-    r'9e1d19f1b9966ea45739ad0535c4759562482815';
+    r'a341376f387b5b966d01fbef0fe1a3ecb790ada3';

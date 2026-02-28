@@ -120,7 +120,7 @@ class CategoriesRepository {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 CategoriesRepository categoriesRepository(Ref ref) {
   final client = ref.watch(apiClientProvider);
   return CategoriesRepository(client);

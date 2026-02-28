@@ -20,6 +20,8 @@ abstract class DashboardStats with _$DashboardStats {
     @Default(0) int totalTestimonials,
     @Default(0) int newContacts,
     @Default(0) int pendingBookings,
+    @Default(0) int pendingTestimonials,
+    @Default(0) int trashCount,
     @Default(0) int pageViews30d,
   }) = _DashboardStats;
 
@@ -94,7 +96,7 @@ class DashboardRepository {
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 DashboardRepository dashboardRepository(Ref ref) {
   // Usamos `read` en lugar de `watch` para evitar que la instancia del
   // `DashboardRepository` se re-cree automáticamente cuando cambia el

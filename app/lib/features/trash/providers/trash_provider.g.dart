@@ -22,7 +22,7 @@ final class TrashRepositoryProvider
         argument: null,
         retry: null,
         name: r'trashRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -49,7 +49,7 @@ final class TrashRepositoryProvider
   }
 }
 
-String _$trashRepositoryHash() => r'5bfe44f213f7b8caee90d762f69ac79c44f8b69d';
+String _$trashRepositoryHash() => r'eb6e4903b4a5298babbc425a71e0c5a731e45230';
 
 @ProviderFor(trashItems)
 final trashItemsProvider = TrashItemsProvider._();
@@ -90,4 +90,4 @@ final class TrashItemsProvider
   }
 }
 
-String _$trashItemsHash() => r'd54a128858e219aee4b3486ac2eff78b72f2f12f';
+String _$trashItemsHash() => r'71732119b561c56236941e793e7353f5ee02ec62';

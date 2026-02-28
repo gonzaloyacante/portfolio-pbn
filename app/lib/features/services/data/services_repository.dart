@@ -110,7 +110,7 @@ class ServicesRepository {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 ServicesRepository servicesRepository(Ref ref) {
   final client = ref.watch(apiClientProvider);
   return ServicesRepository(client);

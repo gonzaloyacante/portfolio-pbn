@@ -59,7 +59,11 @@ class ConnectivityInterceptor extends Interceptor {
     // `checkConnectivity()` devuelve un `ConnectivityResult`.
     // Comprobarlo explícitamente evita errores en simuladores/emuladores.
     final result = await Connectivity().checkConnectivity();
-    final isOffline = result == ConnectivityResult.none;
+    // En algunas plataformas `checkConnectivity()` puede devolver
+    // `List<ConnectivityResult>`. Normalizar a un único ConnectivityResult.
+    final List<ConnectivityResult> resultList = result;
+    final normalized = resultList.isNotEmpty ? resultList.first : ConnectivityResult.none;
+    final isOffline = normalized == ConnectivityResult.none;
 
     if (isOffline) {
       AppLogger.warn('[HTTP] Request blocked: no network connectivity');

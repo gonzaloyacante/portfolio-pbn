@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DashboardStats {
 
- int get totalProjects; int get totalCategories; int get totalServices; int get totalTestimonials; int get newContacts; int get pendingBookings; int get pageViews30d;
+ int get totalProjects; int get totalCategories; int get totalServices; int get totalTestimonials; int get newContacts; int get pendingBookings; int get pendingTestimonials; int get trashCount; int get pageViews30d;
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $DashboardStatsCopyWith<DashboardStats> get copyWith => _$DashboardStatsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pageViews30d);
+int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d);
 
 @override
 String toString() {
-  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pageViews30d: $pageViews30d)';
+  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $DashboardStatsCopyWith<$Res>  {
   factory $DashboardStatsCopyWith(DashboardStats value, $Res Function(DashboardStats) _then) = _$DashboardStatsCopyWithImpl;
 @useResult
 $Res call({
- int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pageViews30d
+ int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d
 });
 
 
@@ -65,7 +65,7 @@ class _$DashboardStatsCopyWithImpl<$Res>
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pageViews30d = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,}) {
   return _then(_self.copyWith(
 totalProjects: null == totalProjects ? _self.totalProjects : totalProjects // ignore: cast_nullable_to_non_nullable
 as int,totalCategories: null == totalCategories ? _self.totalCategories : totalCategories // ignore: cast_nullable_to_non_nullable
@@ -73,6 +73,8 @@ as int,totalServices: null == totalServices ? _self.totalServices : totalService
 as int,totalTestimonials: null == totalTestimonials ? _self.totalTestimonials : totalTestimonials // ignore: cast_nullable_to_non_nullable
 as int,newContacts: null == newContacts ? _self.newContacts : newContacts // ignore: cast_nullable_to_non_nullable
 as int,pendingBookings: null == pendingBookings ? _self.pendingBookings : pendingBookings // ignore: cast_nullable_to_non_nullable
+as int,pendingTestimonials: null == pendingTestimonials ? _self.pendingTestimonials : pendingTestimonials // ignore: cast_nullable_to_non_nullable
+as int,trashCount: null == trashCount ? _self.trashCount : trashCount // ignore: cast_nullable_to_non_nullable
 as int,pageViews30d: null == pageViews30d ? _self.pageViews30d : pageViews30d // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -159,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pageViews30d)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardStats() when $default != null:
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pageViews30d);case _:
+return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d);case _:
   return orElse();
 
 }
@@ -180,10 +182,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pageViews30d)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardStats():
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pageViews30d);case _:
+return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +202,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pageViews30d)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardStats() when $default != null:
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pageViews30d);case _:
+return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d);case _:
   return null;
 
 }
@@ -215,7 +217,7 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 @JsonSerializable()
 
 class _DashboardStats implements DashboardStats {
-  const _DashboardStats({this.totalProjects = 0, this.totalCategories = 0, this.totalServices = 0, this.totalTestimonials = 0, this.newContacts = 0, this.pendingBookings = 0, this.pageViews30d = 0});
+  const _DashboardStats({this.totalProjects = 0, this.totalCategories = 0, this.totalServices = 0, this.totalTestimonials = 0, this.newContacts = 0, this.pendingBookings = 0, this.pendingTestimonials = 0, this.trashCount = 0, this.pageViews30d = 0});
   factory _DashboardStats.fromJson(Map<String, dynamic> json) => _$DashboardStatsFromJson(json);
 
 @override@JsonKey() final  int totalProjects;
@@ -224,6 +226,8 @@ class _DashboardStats implements DashboardStats {
 @override@JsonKey() final  int totalTestimonials;
 @override@JsonKey() final  int newContacts;
 @override@JsonKey() final  int pendingBookings;
+@override@JsonKey() final  int pendingTestimonials;
+@override@JsonKey() final  int trashCount;
 @override@JsonKey() final  int pageViews30d;
 
 /// Create a copy of DashboardStats
@@ -239,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pageViews30d);
+int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d);
 
 @override
 String toString() {
-  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pageViews30d: $pageViews30d)';
+  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d)';
 }
 
 
@@ -259,7 +263,7 @@ abstract mixin class _$DashboardStatsCopyWith<$Res> implements $DashboardStatsCo
   factory _$DashboardStatsCopyWith(_DashboardStats value, $Res Function(_DashboardStats) _then) = __$DashboardStatsCopyWithImpl;
 @override @useResult
 $Res call({
- int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pageViews30d
+ int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d
 });
 
 
@@ -276,7 +280,7 @@ class __$DashboardStatsCopyWithImpl<$Res>
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pageViews30d = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,}) {
   return _then(_DashboardStats(
 totalProjects: null == totalProjects ? _self.totalProjects : totalProjects // ignore: cast_nullable_to_non_nullable
 as int,totalCategories: null == totalCategories ? _self.totalCategories : totalCategories // ignore: cast_nullable_to_non_nullable
@@ -284,6 +288,8 @@ as int,totalServices: null == totalServices ? _self.totalServices : totalService
 as int,totalTestimonials: null == totalTestimonials ? _self.totalTestimonials : totalTestimonials // ignore: cast_nullable_to_non_nullable
 as int,newContacts: null == newContacts ? _self.newContacts : newContacts // ignore: cast_nullable_to_non_nullable
 as int,pendingBookings: null == pendingBookings ? _self.pendingBookings : pendingBookings // ignore: cast_nullable_to_non_nullable
+as int,pendingTestimonials: null == pendingTestimonials ? _self.pendingTestimonials : pendingTestimonials // ignore: cast_nullable_to_non_nullable
+as int,trashCount: null == trashCount ? _self.trashCount : trashCount // ignore: cast_nullable_to_non_nullable
 as int,pageViews30d: null == pageViews30d ? _self.pageViews30d : pageViews30d // ignore: cast_nullable_to_non_nullable
 as int,
   ));

@@ -26,7 +26,7 @@ final class TestimonialsRepositoryProvider
         argument: null,
         retry: null,
         name: r'testimonialsRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,7 +55,7 @@ final class TestimonialsRepositoryProvider
 }
 
 String _$testimonialsRepositoryHash() =>
-    r'016a3202f34acbfaf728bd69f2bd807bc02fe661';
+    r'e94f722b88b969f8719007a53495ce4eb3b88d12';
 
 @ProviderFor(testimonialsList)
 final testimonialsListProvider = TestimonialsListFamily._();
@@ -123,7 +123,7 @@ final class TestimonialsListProvider
   }
 }
 
-String _$testimonialsListHash() => r'dfc32a75d54ac5627113561ef12258587b8c050f';
+String _$testimonialsListHash() => r'fd31f9702f5249863ca753e3e3df59604dde4f6e';
 
 final class TestimonialsListFamily extends $Family
     with
@@ -216,7 +216,7 @@ final class TestimonialDetailProvider
   }
 }
 
-String _$testimonialDetailHash() => r'28e06a9459a01de458f3bf8a15e630b5e73028e3';
+String _$testimonialDetailHash() => r'eae89cb1409c252b2d621a8836e0918718f68b07';
 
 final class TestimonialDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<TestimonialDetail>, String> {

@@ -26,7 +26,7 @@ final class ContactsRepositoryProvider
         argument: null,
         retry: null,
         name: r'contactsRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,7 +55,7 @@ final class ContactsRepositoryProvider
 }
 
 String _$contactsRepositoryHash() =>
-    r'e8a89bf5730b722b5ade5c86622df5a3852c14df';
+    r'0adb2da73c201bea42a64f46769138d210ea3d15';
 
 @ProviderFor(contactsList)
 final contactsListProvider = ContactsListFamily._();
@@ -136,7 +136,7 @@ final class ContactsListProvider
   }
 }
 
-String _$contactsListHash() => r'2bbc308f0eacca1bd87f526f2129d1c4468f3399';
+String _$contactsListHash() => r'fba71b9a3fe6e4d0237c687f9d2fd3caa97e1c7b';
 
 final class ContactsListFamily extends $Family
     with
@@ -235,7 +235,7 @@ final class ContactDetailProvider
   }
 }
 
-String _$contactDetailHash() => r'e7a5f32d03ead5460d9ef02f9ba4317d24516a82';
+String _$contactDetailHash() => r'7abb27bd245c33b1e476ba859de7a1b662311b8b';
 
 final class ContactDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<ContactDetail>, String> {

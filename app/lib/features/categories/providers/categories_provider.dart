@@ -13,12 +13,14 @@ Future<PaginatedResponse<CategoryItem>> categoriesList(
   String? search,
   bool? isActive,
 }) async {
+  ref.keepAlive();
   final repo = ref.watch(categoriesRepositoryProvider);
   return repo.getCategories(page: page, search: search, isActive: isActive);
 }
 
 @riverpod
 Future<CategoryDetail> categoryDetail(Ref ref, String id) async {
+  ref.keepAlive();
   final repo = ref.watch(categoriesRepositoryProvider);
   return repo.getCategory(id);
 }

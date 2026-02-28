@@ -14,6 +14,7 @@ Future<PaginatedResponse<ServiceItem>> servicesList(
   bool? isActive,
   bool? isFeatured,
 }) async {
+  ref.keepAlive();
   final repo = ref.watch(servicesRepositoryProvider);
   return repo.getServices(
     page: page,
@@ -25,6 +26,7 @@ Future<PaginatedResponse<ServiceItem>> servicesList(
 
 @riverpod
 Future<ServiceDetail> serviceDetail(Ref ref, String id) async {
+  ref.keepAlive();
   final repo = ref.watch(servicesRepositoryProvider);
   return repo.getService(id);
 }

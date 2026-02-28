@@ -72,7 +72,7 @@ final class CategoriesListProvider
   }
 }
 
-String _$categoriesListHash() => r'870928df3fabe9b0ed2255a8d1b5fd12ed7bd91c';
+String _$categoriesListHash() => r'98604930e606ad6531606b3b6282ecb3a8137860';
 
 final class CategoriesListFamily extends $Family
     with
@@ -154,7 +154,7 @@ final class CategoryDetailProvider
   }
 }
 
-String _$categoryDetailHash() => r'429be3e222910125a614d7b5c5912a8c34bbcdd0';
+String _$categoryDetailHash() => r'0a492c1cae400a1f15eeec0a58d6195f9d1b845f';
 
 final class CategoryDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<CategoryDetail>, String> {

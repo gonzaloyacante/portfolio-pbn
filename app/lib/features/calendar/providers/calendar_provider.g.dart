@@ -26,7 +26,7 @@ final class BookingsRepositoryProvider
         argument: null,
         retry: null,
         name: r'bookingsRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,7 +55,7 @@ final class BookingsRepositoryProvider
 }
 
 String _$bookingsRepositoryHash() =>
-    r'99621fd214e4b8e635d313fc215878dd2048390a';
+    r'8b9622825bb1ead202d7555fe023dddb7c8075fe';
 
 @ProviderFor(bookingsList)
 final bookingsListProvider = BookingsListFamily._();
@@ -136,7 +136,7 @@ final class BookingsListProvider
   }
 }
 
-String _$bookingsListHash() => r'987b8aeda9c525e0ccd09039f7510a372a3adcd3';
+String _$bookingsListHash() => r'49cce804ca833baba65648e57c4f5f1cb0005441';
 
 final class BookingsListFamily extends $Family
     with
@@ -235,7 +235,7 @@ final class BookingDetailProvider
   }
 }
 
-String _$bookingDetailHash() => r'7aa60430a7ad1d870bb57b587a67d97a820d914c';
+String _$bookingDetailHash() => r'427c9cf47bb2d185e527df98567628261f4a16b3';
 
 final class BookingDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<BookingDetail>, String> {
