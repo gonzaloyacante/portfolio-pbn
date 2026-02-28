@@ -88,18 +88,8 @@ const List<_NavItem> _allNavItems = [
     selectedIcon: Icons.tune,
     label: 'Preferencias',
   ),
-  _NavItem(
-    routeName: RouteNames.trash,
-    icon: Icons.delete_outline,
-    selectedIcon: Icons.delete,
-    label: 'Papelera',
-  ),
-  _NavItem(
-    routeName: RouteNames.account,
-    icon: Icons.person_outline,
-    selectedIcon: Icons.person,
-    label: 'Mi cuenta',
-  ),
+  _NavItem(routeName: RouteNames.trash, icon: Icons.delete_outline, selectedIcon: Icons.delete, label: 'Papelera'),
+  _NavItem(routeName: RouteNames.account, icon: Icons.person_outline, selectedIcon: Icons.person, label: 'Mi cuenta'),
 ];
 
 // ── AppScaffold ───────────────────────────────────────────────────────────────
@@ -199,11 +189,7 @@ class _ExpandedScaffold extends StatelessWidget {
       body: Row(
         children: [
           const AppDrawer(),
-          VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-          ),
+          VerticalDivider(width: 1, thickness: 1, color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
           Expanded(
             child: Scaffold(
               resizeToAvoidBottomInset: resizeToAvoidBottomInset,
@@ -211,9 +197,7 @@ class _ExpandedScaffold extends StatelessWidget {
                   ? AppBar(
                       leading: GoRouter.of(context).canPop()
                           ? IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios_new_rounded,
-                              ),
+                              icon: const Icon(Icons.arrow_back_ios_new_rounded),
                               onPressed: () => context.pop(),
                               tooltip: 'Volver',
                             )
@@ -260,11 +244,7 @@ class _MediumScaffold extends StatelessWidget {
       body: Row(
         children: [
           _AppNavigationRail(),
-          VerticalDivider(
-            width: 1,
-            thickness: 1,
-            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
-          ),
+          VerticalDivider(width: 1, thickness: 1, color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2)),
           Expanded(
             child: Scaffold(
               resizeToAvoidBottomInset: resizeToAvoidBottomInset,
@@ -272,9 +252,7 @@ class _MediumScaffold extends StatelessWidget {
                   ? AppBar(
                       leading: GoRouter.of(context).canPop()
                           ? IconButton(
-                              icon: const Icon(
-                                Icons.arrow_back_ios_new_rounded,
-                              ),
+                              icon: const Icon(Icons.arrow_back_ios_new_rounded),
                               onPressed: () => context.pop(),
                               tooltip: 'Volver',
                             )
@@ -338,8 +316,7 @@ class _CompactScaffoldState extends State<_CompactScaffold> {
                     )
                   : IconButton(
                       icon: const Icon(Icons.menu_rounded),
-                      onPressed: () =>
-                          _scaffoldKey.currentState?.openDrawer(),
+                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
                       tooltip: 'Menú',
                     ),
               automaticallyImplyLeading: false,
@@ -364,9 +341,7 @@ class _AppNavigationRail extends StatelessWidget {
     final currentRoute = GoRouterState.of(context).name ?? '';
 
     // Índice activo entre todos los items
-    final activeIndex = _allNavItems.indexWhere(
-      (item) => item.routeName == currentRoute,
-    );
+    final activeIndex = _allNavItems.indexWhere((item) => item.routeName == currentRoute);
 
     return NavigationRail(
       backgroundColor: colorScheme.surface,
@@ -386,45 +361,22 @@ class _AppNavigationRail extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  colorScheme.primary,
-                  colorScheme.primary.withValues(alpha: 0.75),
-                ],
+                colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.75)],
               ),
               borderRadius: AppRadius.forIconContainer,
               boxShadow: [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
+                BoxShadow(color: colorScheme.primary.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2)),
               ],
             ),
-            child: Center(
-              child: Text(
-                'P',
-                style: AppTypography.decorativeTitle(
-                  Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
+            child: Center(child: Text('P', style: AppTypography.decorativeTitle(Colors.white, fontSize: 20))),
           ),
         ),
       ),
       destinations: _allNavItems
           .map(
             (item) => NavigationRailDestination(
-              icon: Tooltip(
-                message: item.label,
-                preferBelow: false,
-                child: Icon(item.icon),
-              ),
-              selectedIcon: Tooltip(
-                message: item.label,
-                preferBelow: false,
-                child: Icon(item.selectedIcon),
-              ),
+              icon: Tooltip(message: item.label, preferBelow: false, child: Icon(item.icon)),
+              selectedIcon: Tooltip(message: item.label, preferBelow: false, child: Icon(item.selectedIcon)),
               label: Text(item.label),
               padding: const EdgeInsets.symmetric(vertical: 2),
             ),
@@ -469,9 +421,7 @@ class AppDrawer extends StatelessWidget {
             // Items principales de navegación
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                 children: [
                   _SectionLabel(label: 'CONTENIDO'),
                   ..._buildItems(
@@ -538,10 +488,7 @@ class _DrawerHeader extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primary.withValues(alpha: 0.12),
-            colorScheme.primary.withValues(alpha: 0.04),
-          ],
+          colors: [colorScheme.primary.withValues(alpha: 0.12), colorScheme.primary.withValues(alpha: 0.04)],
         ),
       ),
       padding: EdgeInsets.fromLTRB(
@@ -559,29 +506,14 @@ class _DrawerHeader extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  colorScheme.primary,
-                  colorScheme.primary.withValues(alpha: 0.75),
-                ],
+                colors: [colorScheme.primary, colorScheme.primary.withValues(alpha: 0.75)],
               ),
               borderRadius: AppRadius.forIconContainer,
               boxShadow: [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
+                BoxShadow(color: colorScheme.primary.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2)),
               ],
             ),
-            child: Center(
-              child: Text(
-                'P',
-                style: AppTypography.decorativeTitle(
-                  Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
+            child: Center(child: Text('P', style: AppTypography.decorativeTitle(Colors.white, fontSize: 24))),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
@@ -590,27 +522,19 @@ class _DrawerHeader extends StatelessWidget {
               children: [
                 Text(
                   'Paola BN',
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 3),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm - 1,
-                    vertical: 2,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm - 1, vertical: 2),
                   decoration: BoxDecoration(
                     color: colorScheme.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
                     'Admin',
-                    style: textTheme.labelSmall?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: textTheme.labelSmall?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -633,22 +557,16 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Theme.of(context).colorScheme.outline,
-          letterSpacing: 1.2,
-        ),
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.outline, letterSpacing: 1.2),
       ),
     );
   }
 }
 
 class _DrawerNavItem extends StatelessWidget {
-  const _DrawerNavItem({
-    required this.item,
-    required this.isSelected,
-    required this.isExpanded,
-    required this.onTap,
-  });
+  const _DrawerNavItem({required this.item, required this.isSelected, required this.isExpanded, required this.onTap});
 
   final _NavItem item;
   final bool isSelected;

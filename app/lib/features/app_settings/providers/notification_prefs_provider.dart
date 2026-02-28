@@ -49,8 +49,7 @@ class NotificationPrefsState {
     return NotificationPrefsState(
       contactsEnabled: contactsEnabled ?? this.contactsEnabled,
       bookingsEnabled: bookingsEnabled ?? this.bookingsEnabled,
-      bookingRemindersEnabled:
-          bookingRemindersEnabled ?? this.bookingRemindersEnabled,
+      bookingRemindersEnabled: bookingRemindersEnabled ?? this.bookingRemindersEnabled,
       projectsEnabled: projectsEnabled ?? this.projectsEnabled,
       servicesEnabled: servicesEnabled ?? this.servicesEnabled,
       testimonialsEnabled: testimonialsEnabled ?? this.testimonialsEnabled,
@@ -61,10 +60,9 @@ class NotificationPrefsState {
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
-final notificationPrefsProvider =
-    NotifierProvider<NotificationPrefsNotifier, NotificationPrefsState>(
-      NotificationPrefsNotifier.new,
-    );
+final notificationPrefsProvider = NotifierProvider<NotificationPrefsNotifier, NotificationPrefsState>(
+  NotificationPrefsNotifier.new,
+);
 
 // ── Notifier ──────────────────────────────────────────────────────────────────
 
@@ -95,57 +93,36 @@ class NotificationPrefsNotifier extends Notifier<NotificationPrefsState> {
 
   Future<void> setContacts({required bool enabled}) async {
     state = state.copyWith(contactsEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifContacts,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifContacts, enabled: enabled);
   }
 
   Future<void> setBookings({required bool enabled}) async {
     state = state.copyWith(bookingsEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifBookings,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifBookings, enabled: enabled);
   }
 
   Future<void> setBookingReminders({required bool enabled}) async {
     state = state.copyWith(bookingRemindersEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifBookingReminders,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifBookingReminders, enabled: enabled);
   }
 
   Future<void> setProjects({required bool enabled}) async {
     state = state.copyWith(projectsEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifProjects,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifProjects, enabled: enabled);
   }
 
   Future<void> setServices({required bool enabled}) async {
     state = state.copyWith(servicesEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifServices,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifServices, enabled: enabled);
   }
 
   Future<void> setTestimonials({required bool enabled}) async {
     state = state.copyWith(testimonialsEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifTestimonials,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifTestimonials, enabled: enabled);
   }
 
   Future<void> setSystem({required bool enabled}) async {
     state = state.copyWith(systemEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifSystem,
-      enabled: enabled,
-    );
+    await (await NotificationPrefs.init()).set(NotifPrefKeys.notifSystem, enabled: enabled);
   }
 }

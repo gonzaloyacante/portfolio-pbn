@@ -8,14 +8,9 @@ part 'project_model.g.dart';
 
 @freezed
 abstract class ProjectCategory with _$ProjectCategory {
-  const factory ProjectCategory({
-    required String id,
-    required String name,
-    required String slug,
-  }) = _ProjectCategory;
+  const factory ProjectCategory({required String id, required String name, required String slug}) = _ProjectCategory;
 
-  factory ProjectCategory.fromJson(Map<String, dynamic> json) =>
-      _$ProjectCategoryFromJson(json);
+  factory ProjectCategory.fromJson(Map<String, dynamic> json) => _$ProjectCategoryFromJson(json);
 }
 
 // ── ProjectImage ──────────────────────────────────────────────────────────────
@@ -29,8 +24,7 @@ abstract class ProjectImage with _$ProjectImage {
     @JsonKey(name: 'order') @Default(0) int sortOrder,
   }) = _ProjectImage;
 
-  factory ProjectImage.fromJson(Map<String, dynamic> json) =>
-      _$ProjectImageFromJson(json);
+  factory ProjectImage.fromJson(Map<String, dynamic> json) => _$ProjectImageFromJson(json);
 }
 
 // ── ProjectListItem ───────────────────────────────────────────────────────────
@@ -55,8 +49,7 @@ abstract class ProjectListItem with _$ProjectListItem {
     required ProjectCategory category,
   }) = _ProjectListItem;
 
-  factory ProjectListItem.fromJson(Map<String, dynamic> json) =>
-      _$ProjectListItemFromJson(json);
+  factory ProjectListItem.fromJson(Map<String, dynamic> json) => _$ProjectListItemFromJson(json);
 }
 
 // ── ProjectDetail ─────────────────────────────────────────────────────────────
@@ -95,8 +88,7 @@ abstract class ProjectDetail with _$ProjectDetail {
     @Default([]) List<ProjectImage> images,
   }) = _ProjectDetail;
 
-  factory ProjectDetail.fromJson(Map<String, dynamic> json) =>
-      _$ProjectDetailFromJson(json);
+  factory ProjectDetail.fromJson(Map<String, dynamic> json) => _$ProjectDetailFromJson(json);
 }
 
 // ── ProjectFormData ───────────────────────────────────────────────────────────

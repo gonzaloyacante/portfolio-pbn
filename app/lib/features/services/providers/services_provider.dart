@@ -15,12 +15,7 @@ Future<PaginatedResponse<ServiceItem>> servicesList(
   bool? isFeatured,
 }) async {
   final repo = ref.watch(servicesRepositoryProvider);
-  return repo.getServices(
-    page: page,
-    search: search,
-    isActive: isActive,
-    isFeatured: isFeatured,
-  );
+  return repo.getServices(page: page, search: search, isActive: isActive, isFeatured: isFeatured);
 }
 
 @riverpod

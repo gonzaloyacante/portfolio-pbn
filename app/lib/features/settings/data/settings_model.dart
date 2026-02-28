@@ -25,8 +25,7 @@ abstract class AboutSettings with _$AboutSettings {
     @Default(true) bool isActive,
   }) = _AboutSettings;
 
-  factory AboutSettings.fromJson(Map<String, dynamic> json) =>
-      _$AboutSettingsFromJson(json);
+  factory AboutSettings.fromJson(Map<String, dynamic> json) => _$AboutSettingsFromJson(json);
 }
 
 // ── Contact Settings ──────────────────────────────────────────────────────────
@@ -48,8 +47,7 @@ abstract class ContactSettings with _$ContactSettings {
     @Default(true) bool isActive,
   }) = _ContactSettings;
 
-  factory ContactSettings.fromJson(Map<String, dynamic> json) =>
-      _$ContactSettingsFromJson(json);
+  factory ContactSettings.fromJson(Map<String, dynamic> json) => _$ContactSettingsFromJson(json);
 }
 
 // ── Theme Settings ───────────────────────────────────────────────────────────
@@ -74,8 +72,7 @@ abstract class ThemeSettings with _$ThemeSettings {
     @Default(true) bool isActive,
   }) = _ThemeSettings;
 
-  factory ThemeSettings.fromJson(Map<String, dynamic> json) =>
-      _$ThemeSettingsFromJson(json);
+  factory ThemeSettings.fromJson(Map<String, dynamic> json) => _$ThemeSettingsFromJson(json);
 }
 
 // ── Site Settings ─────────────────────────────────────────────────────────────
@@ -103,8 +100,7 @@ abstract class SiteSettings with _$SiteSettings {
     @Default(true) bool isActive,
   }) = _SiteSettings;
 
-  factory SiteSettings.fromJson(Map<String, dynamic> json) =>
-      _$SiteSettingsFromJson(json);
+  factory SiteSettings.fromJson(Map<String, dynamic> json) => _$SiteSettingsFromJson(json);
 }
 
 // ── Social Link ───────────────────────────────────────────────────────────────
@@ -123,6 +119,5 @@ abstract class SocialLink with _$SocialLink {
     DateTime? updatedAt,
   }) = _SocialLink;
 
-  factory SocialLink.fromJson(Map<String, dynamic> json) =>
-      _$SocialLinkFromJson(json);
+  factory SocialLink.fromJson(Map<String, dynamic> json) => _$SocialLinkFromJson(json);
 }

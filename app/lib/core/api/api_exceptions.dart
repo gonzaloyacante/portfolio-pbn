@@ -28,11 +28,7 @@ final class TimeoutException extends AppException {
 
 /// Respuesta HTTP con error (4xx / 5xx).
 final class HttpException extends AppException {
-  const HttpException({
-    required this.statusCode,
-    super.message = 'Error HTTP',
-    this.errors,
-  });
+  const HttpException({required this.statusCode, super.message = 'Error HTTP', this.errors});
 
   final int statusCode;
   final Map<String, dynamic>? errors;
@@ -55,9 +51,7 @@ final class TokenExpiredException extends AppException {
 
 /// El refresh token fue revocado o expiró — debe volver al login.
 final class SessionExpiredException extends AppException {
-  const SessionExpiredException({
-    super.message = 'La sesión ha caducado. Inicia sesión de nuevo.',
-  });
+  const SessionExpiredException({super.message = 'La sesión ha caducado. Inicia sesión de nuevo.'});
 }
 
 /// El usuario no tiene permisos para esta operación.
@@ -79,19 +73,14 @@ final class ConflictException extends AppException {
 
 /// Validación del servidor falló (422).
 final class ValidationException extends AppException {
-  const ValidationException({
-    super.message = 'Datos inválidos',
-    this.fieldErrors = const {},
-  });
+  const ValidationException({super.message = 'Datos inválidos', this.fieldErrors = const {}});
 
   final Map<String, String> fieldErrors;
 }
 
 /// Error de límite de velocidad (429).
 final class RateLimitException extends AppException {
-  const RateLimitException({
-    super.message = 'Demasiadas solicitudes. Espera un momento.',
-  });
+  const RateLimitException({super.message = 'Demasiadas solicitudes. Espera un momento.'});
 }
 
 // ── Servidor ──────────────────────────────────────────────────────────────────

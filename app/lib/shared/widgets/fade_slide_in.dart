@@ -33,8 +33,7 @@ class FadeSlideIn extends StatefulWidget {
   State<FadeSlideIn> createState() => _FadeSlideInState();
 }
 
-class _FadeSlideInState extends State<FadeSlideIn>
-    with SingleTickerProviderStateMixin {
+class _FadeSlideInState extends State<FadeSlideIn> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _opacity;
   late final Animation<Offset> _slide;

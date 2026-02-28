@@ -23,8 +23,7 @@ abstract class DashboardStats with _$DashboardStats {
     @Default(0) int pageViews30d,
   }) = _DashboardStats;
 
-  factory DashboardStats.fromJson(Map<String, dynamic> json) =>
-      _$DashboardStatsFromJson(json);
+  factory DashboardStats.fromJson(Map<String, dynamic> json) => _$DashboardStatsFromJson(json);
 }
 
 // ── ChartDataPoint ─────────────────────────────────────────────────────────────
@@ -32,11 +31,9 @@ abstract class DashboardStats with _$DashboardStats {
 /// Punto de datos para un gráfico (etiqueta + valor).
 @freezed
 abstract class ChartDataPoint with _$ChartDataPoint {
-  const factory ChartDataPoint({required String label, required int count}) =
-      _ChartDataPoint;
+  const factory ChartDataPoint({required String label, required int count}) = _ChartDataPoint;
 
-  factory ChartDataPoint.fromJson(Map<String, dynamic> json) =>
-      _$ChartDataPointFromJson(json);
+  factory ChartDataPoint.fromJson(Map<String, dynamic> json) => _$ChartDataPointFromJson(json);
 }
 
 // ── DashboardCharts ────────────────────────────────────────────────────────────
@@ -49,8 +46,7 @@ abstract class DashboardCharts with _$DashboardCharts {
     @Default([]) List<ChartDataPoint> monthlyBookings,
   }) = _DashboardCharts;
 
-  factory DashboardCharts.fromJson(Map<String, dynamic> json) =>
-      _$DashboardChartsFromJson(json);
+  factory DashboardCharts.fromJson(Map<String, dynamic> json) => _$DashboardChartsFromJson(json);
 }
 
 // ── DashboardRepository ────────────────────────────────────────────────────────
@@ -63,9 +59,7 @@ class DashboardRepository {
 
   /// Obtiene el resumen de métricas del panel.
   Future<DashboardStats> getOverview() async {
-    final resp = await _client.get<Map<String, dynamic>>(
-      Endpoints.analyticsOverview,
-    );
+    final resp = await _client.get<Map<String, dynamic>>(Endpoints.analyticsOverview);
     final apiResponse = ApiResponse<DashboardStats>.fromJson(
       resp,
       (json) => DashboardStats.fromJson(json as Map<String, dynamic>),
@@ -78,9 +72,7 @@ class DashboardRepository {
 
   /// Obtiene los datos de tendencias para los gráficos del dashboard.
   Future<DashboardCharts> getCharts() async {
-    final resp = await _client.get<Map<String, dynamic>>(
-      Endpoints.analyticsCharts,
-    );
+    final resp = await _client.get<Map<String, dynamic>>(Endpoints.analyticsCharts);
     final apiResponse = ApiResponse<DashboardCharts>.fromJson(
       resp,
       (json) => DashboardCharts.fromJson(json as Map<String, dynamic>),

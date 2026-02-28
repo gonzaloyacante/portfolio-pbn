@@ -13,9 +13,7 @@ class AppColors {
   static const Color lightSecondary = Color(0xFFFCE7F3);
   static const Color lightMuted = Color(0xFFF5F5F5);
   static const Color lightAccent = Color(0xFFFFF1F9);
-  static const Color lightBorder = Color(
-    0xFFE5E5E5,
-  ); // ← corregido (era #9E9E9E)
+  static const Color lightBorder = Color(0xFFE5E5E5); // ← corregido (era #9E9E9E)
 
   // ── Dark Mode ─────────────────────────────────────────────────────────────
   static const Color darkPrimary = Color(0xFFFB7185);

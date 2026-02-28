@@ -23,8 +23,7 @@ abstract class UserProfile with _$UserProfile {
     DateTime? updatedAt,
   }) = _UserProfile;
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) =>
-      _$UserProfileFromJson(json);
+  factory UserProfile.fromJson(Map<String, dynamic> json) => _$UserProfileFromJson(json);
 }
 
 // ── AuthState ─────────────────────────────────────────────────────────────────
@@ -44,8 +43,7 @@ sealed class AuthState with _$AuthState {
   const factory AuthState.authenticating() = Authenticating;
 
   /// Sesión activa con el perfil del usuario cargado.
-  const factory AuthState.authenticated({required UserProfile user}) =
-      Authenticated;
+  const factory AuthState.authenticated({required UserProfile user}) = Authenticated;
 
   /// Error de autenticación (credenciales incorrectas, red, etc.).
   const factory AuthState.error({required String message}) = AuthError;

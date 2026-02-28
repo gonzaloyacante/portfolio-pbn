@@ -7,10 +7,7 @@ class AccountRepository {
   const AccountRepository(this._client);
 
   /// Cambia la contraseña del usuario autenticado.
-  Future<void> changePassword({
-    required String currentPassword,
-    required String newPassword,
-  }) async {
+  Future<void> changePassword({required String currentPassword, required String newPassword}) async {
     await _client.patch<Map<String, dynamic>>(
       Endpoints.authMe,
       data: {'currentPassword': currentPassword, 'newPassword': newPassword},

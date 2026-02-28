@@ -81,16 +81,11 @@ class SyncManager extends _$SyncManager {
     }
   }
 
-  Future<void> _processOperation(
-    SyncOperationsTableData operation,
-    SyncQueueRepository queue,
-  ) async {
+  Future<void> _processOperation(SyncOperationsTableData operation, SyncQueueRepository queue) async {
     final handler = _registry.handlerFor(operation.resource);
 
     if (handler == null) {
-      AppLogger.warn(
-        'SyncManager: no handler for resource "${operation.resource}" — skipping',
-      );
+      AppLogger.warn('SyncManager: no handler for resource "${operation.resource}" — skipping');
       await queue.markCompleted(operation.id);
       return;
     }
@@ -98,14 +93,9 @@ class SyncManager extends _$SyncManager {
     try {
       await handler.execute(operation);
       await queue.markCompleted(operation.id);
-      AppLogger.info(
-        'SyncManager: completed ${operation.operation} on ${operation.resource} [${operation.id}]',
-      );
+      AppLogger.info('SyncManager: completed ${operation.operation} on ${operation.resource} [${operation.id}]');
     } catch (e) {
-      AppLogger.error(
-        'SyncManager: failed ${operation.operation} on ${operation.resource} [${operation.id}]',
-        e,
-      );
+      AppLogger.error('SyncManager: failed ${operation.operation} on ${operation.resource} [${operation.id}]', e);
       await queue.incrementAttempts(operation.id);
       rethrow;
     }

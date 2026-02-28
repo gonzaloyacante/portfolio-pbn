@@ -13,12 +13,7 @@ part of 'categories_repository.dart';
 final categoriesRepositoryProvider = CategoriesRepositoryProvider._();
 
 final class CategoriesRepositoryProvider
-    extends
-        $FunctionalProvider<
-          CategoriesRepository,
-          CategoriesRepository,
-          CategoriesRepository
-        >
+    extends $FunctionalProvider<CategoriesRepository, CategoriesRepository, CategoriesRepository>
     with $Provider<CategoriesRepository> {
   CategoriesRepositoryProvider._()
     : super(
@@ -36,9 +31,7 @@ final class CategoriesRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<CategoriesRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<CategoriesRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   CategoriesRepository create(Ref ref) {
@@ -47,12 +40,8 @@ final class CategoriesRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(CategoriesRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<CategoriesRepository>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<CategoriesRepository>(value));
   }
 }
 
-String _$categoriesRepositoryHash() =>
-    r'9caae8531a6ae1f6217c329ad2ff634c50944b36';
+String _$categoriesRepositoryHash() => r'9caae8531a6ae1f6217c329ad2ff634c50944b36';

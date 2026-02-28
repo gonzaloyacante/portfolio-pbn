@@ -54,18 +54,14 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
 
       final email = await service.getConnectedEmail();
       if (email == null) {
-        state = const AsyncData(
-          GoogleAuthState.error(message: 'No se pudo obtener el email'),
-        );
+        state = const AsyncData(GoogleAuthState.error(message: 'No se pudo obtener el email'));
         return;
       }
 
       state = AsyncData(GoogleAuthState.connected(email: email));
     } catch (e, st) {
       AppLogger.error('GoogleCalendarNotifier: error en signIn()', e, st);
-      state = AsyncData(
-        GoogleAuthState.error(message: 'Error al conectar con Google: $e'),
-      );
+      state = AsyncData(GoogleAuthState.error(message: 'Error al conectar con Google: $e'));
     }
   }
 

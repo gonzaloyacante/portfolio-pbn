@@ -28,13 +28,7 @@ Future<PaginatedResponse<ContactItem>> contactsList(
 }) async {
   return ref
       .watch(contactsRepositoryProvider)
-      .getContacts(
-        page: page,
-        search: search,
-        status: status,
-        priority: priority,
-        unreadOnly: unreadOnly,
-      );
+      .getContacts(page: page, search: search, status: status, priority: priority, unreadOnly: unreadOnly);
 }
 
 // ── Detalle ───────────────────────────────────────────────────────────────────

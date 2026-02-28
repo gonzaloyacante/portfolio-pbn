@@ -19,13 +19,10 @@ final class ServicesListProvider
           PaginatedResponse<ServiceItem>,
           FutureOr<PaginatedResponse<ServiceItem>>
         >
-    with
-        $FutureModifier<PaginatedResponse<ServiceItem>>,
-        $FutureProvider<PaginatedResponse<ServiceItem>> {
+    with $FutureModifier<PaginatedResponse<ServiceItem>>, $FutureProvider<PaginatedResponse<ServiceItem>> {
   ServicesListProvider._({
     required ServicesListFamily super.from,
-    required ({int page, String? search, bool? isActive, bool? isFeatured})
-    super.argument,
+    required ({int page, String? search, bool? isActive, bool? isFeatured}) super.argument,
   }) : super(
          retry: null,
          name: r'servicesListProvider',
@@ -46,15 +43,12 @@ final class ServicesListProvider
 
   @$internal
   @override
-  $FutureProviderElement<PaginatedResponse<ServiceItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<PaginatedResponse<ServiceItem>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<ServiceItem>> create(Ref ref) {
-    final argument =
-        this.argument
-            as ({int page, String? search, bool? isActive, bool? isFeatured});
+    final argument = this.argument as ({int page, String? search, bool? isActive, bool? isFeatured});
     return servicesList(
       ref,
       page: argument.page,
@@ -92,18 +86,8 @@ final class ServicesListFamily extends $Family
         isAutoDispose: true,
       );
 
-  ServicesListProvider call({
-    int page = 1,
-    String? search,
-    bool? isActive,
-    bool? isFeatured,
-  }) => ServicesListProvider._(
-    argument: (
-      page: page,
-      search: search,
-      isActive: isActive,
-      isFeatured: isFeatured,
-    ),
+  ServicesListProvider call({int page = 1, String? search, bool? isActive, bool? isFeatured}) => ServicesListProvider._(
+    argument: (page: page, search: search, isActive: isActive, isFeatured: isFeatured),
     from: this,
   );
 
@@ -115,23 +99,16 @@ final class ServicesListFamily extends $Family
 final serviceDetailProvider = ServiceDetailFamily._();
 
 final class ServiceDetailProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<ServiceDetail>,
-          ServiceDetail,
-          FutureOr<ServiceDetail>
-        >
+    extends $FunctionalProvider<AsyncValue<ServiceDetail>, ServiceDetail, FutureOr<ServiceDetail>>
     with $FutureModifier<ServiceDetail>, $FutureProvider<ServiceDetail> {
-  ServiceDetailProvider._({
-    required ServiceDetailFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'serviceDetailProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  ServiceDetailProvider._({required ServiceDetailFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'serviceDetailProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$serviceDetailHash();
@@ -145,9 +122,7 @@ final class ServiceDetailProvider
 
   @$internal
   @override
-  $FutureProviderElement<ServiceDetail> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<ServiceDetail> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<ServiceDetail> create(Ref ref) {
@@ -168,8 +143,7 @@ final class ServiceDetailProvider
 
 String _$serviceDetailHash() => r'a03140d01f272a761fa0ea8736435948504f3180';
 
-final class ServiceDetailFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<ServiceDetail>, String> {
+final class ServiceDetailFamily extends $Family with $FunctionalFamilyOverride<FutureOr<ServiceDetail>, String> {
   ServiceDetailFamily._()
     : super(
         retry: null,
@@ -179,8 +153,7 @@ final class ServiceDetailFamily extends $Family
         isAutoDispose: true,
       );
 
-  ServiceDetailProvider call(String id) =>
-      ServiceDetailProvider._(argument: id, from: this);
+  ServiceDetailProvider call(String id) => ServiceDetailProvider._(argument: id, from: this);
 
   @override
   String toString() => r'serviceDetailProvider';

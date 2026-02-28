@@ -20,10 +20,7 @@ class TrashRepository {
     final result = <String, List<TrashItem>>{};
     data.forEach((key, value) {
       if (value is List) {
-        result[key] = value
-            .whereType<Map<String, dynamic>>()
-            .map((item) => TrashItem.fromMap(key, item))
-            .toList();
+        result[key] = value.whereType<Map<String, dynamic>>().map((item) => TrashItem.fromMap(key, item)).toList();
       }
     });
     return result;
@@ -31,15 +28,11 @@ class TrashRepository {
 
   /// Restaura un elemento de la papelera.
   Future<void> restore({required String type, required String id}) async {
-    await _client.patch<Map<String, dynamic>>(
-      Endpoints.trashTypedItem(type, id),
-    );
+    await _client.patch<Map<String, dynamic>>(Endpoints.trashTypedItem(type, id));
   }
 
   /// Elimina permanentemente un elemento de la papelera.
   Future<void> purge({required String type, required String id}) async {
-    await _client.delete<Map<String, dynamic>>(
-      Endpoints.trashTypedItem(type, id),
-    );
+    await _client.delete<Map<String, dynamic>>(Endpoints.trashTypedItem(type, id));
   }
 }

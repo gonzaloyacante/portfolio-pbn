@@ -19,9 +19,7 @@ final class CategoriesListProvider
           PaginatedResponse<CategoryItem>,
           FutureOr<PaginatedResponse<CategoryItem>>
         >
-    with
-        $FutureModifier<PaginatedResponse<CategoryItem>>,
-        $FutureProvider<PaginatedResponse<CategoryItem>> {
+    with $FutureModifier<PaginatedResponse<CategoryItem>>, $FutureProvider<PaginatedResponse<CategoryItem>> {
   CategoriesListProvider._({
     required CategoriesListFamily super.from,
     required ({int page, String? search, bool? isActive}) super.argument,
@@ -45,20 +43,13 @@ final class CategoriesListProvider
 
   @$internal
   @override
-  $FutureProviderElement<PaginatedResponse<CategoryItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<PaginatedResponse<CategoryItem>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<CategoryItem>> create(Ref ref) {
-    final argument =
-        this.argument as ({int page, String? search, bool? isActive});
-    return categoriesList(
-      ref,
-      page: argument.page,
-      search: argument.search,
-      isActive: argument.isActive,
-    );
+    final argument = this.argument as ({int page, String? search, bool? isActive});
+    return categoriesList(ref, page: argument.page, search: argument.search, isActive: argument.isActive);
   }
 
   @override
@@ -90,10 +81,7 @@ final class CategoriesListFamily extends $Family
       );
 
   CategoriesListProvider call({int page = 1, String? search, bool? isActive}) =>
-      CategoriesListProvider._(
-        argument: (page: page, search: search, isActive: isActive),
-        from: this,
-      );
+      CategoriesListProvider._(argument: (page: page, search: search, isActive: isActive), from: this);
 
   @override
   String toString() => r'categoriesListProvider';
@@ -103,23 +91,16 @@ final class CategoriesListFamily extends $Family
 final categoryDetailProvider = CategoryDetailFamily._();
 
 final class CategoryDetailProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<CategoryDetail>,
-          CategoryDetail,
-          FutureOr<CategoryDetail>
-        >
+    extends $FunctionalProvider<AsyncValue<CategoryDetail>, CategoryDetail, FutureOr<CategoryDetail>>
     with $FutureModifier<CategoryDetail>, $FutureProvider<CategoryDetail> {
-  CategoryDetailProvider._({
-    required CategoryDetailFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'categoryDetailProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  CategoryDetailProvider._({required CategoryDetailFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'categoryDetailProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$categoryDetailHash();
@@ -133,9 +114,7 @@ final class CategoryDetailProvider
 
   @$internal
   @override
-  $FutureProviderElement<CategoryDetail> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<CategoryDetail> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<CategoryDetail> create(Ref ref) {
@@ -156,8 +135,7 @@ final class CategoryDetailProvider
 
 String _$categoryDetailHash() => r'429be3e222910125a614d7b5c5912a8c34bbcdd0';
 
-final class CategoryDetailFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<CategoryDetail>, String> {
+final class CategoryDetailFamily extends $Family with $FunctionalFamilyOverride<FutureOr<CategoryDetail>, String> {
   CategoryDetailFamily._()
     : super(
         retry: null,
@@ -167,8 +145,7 @@ final class CategoryDetailFamily extends $Family
         isAutoDispose: true,
       );
 
-  CategoryDetailProvider call(String id) =>
-      CategoryDetailProvider._(argument: id, from: this);
+  CategoryDetailProvider call(String id) => CategoryDetailProvider._(argument: id, from: this);
 
   @override
   String toString() => r'categoryDetailProvider';

@@ -70,9 +70,7 @@ class _DashboardContent extends StatelessWidget {
         // ── Sección: Resumen ─────────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(bottom: AppSpacing.sm),
-          sliver: SliverToBoxAdapter(
-            child: SectionHeader(title: 'Resumen general'),
-          ),
+          sliver: SliverToBoxAdapter(child: SectionHeader(title: 'Resumen general')),
         ),
         SliverPadding(
           padding: padding.copyWith(top: 0, bottom: 0),
@@ -114,9 +112,7 @@ class _DashboardContent extends StatelessWidget {
                 icon: Icons.mail_outline_rounded,
                 label: 'Contactos nuevos',
                 value: stats.newContacts.toString(),
-                trend: stats.newContacts > 0
-                    ? '+${stats.newContacts}'
-                    : null,
+                trend: stats.newContacts > 0 ? '+${stats.newContacts}' : null,
                 trendPositive: true,
                 color: AppColors.darkPrimary,
                 onTap: () => context.goNamed(RouteNames.contacts),
@@ -125,9 +121,7 @@ class _DashboardContent extends StatelessWidget {
                 icon: Icons.calendar_month_outlined,
                 label: 'Reservas pendientes',
                 value: stats.pendingBookings.toString(),
-                trend: stats.pendingBookings > 0
-                    ? '${stats.pendingBookings} pendientes'
-                    : null,
+                trend: stats.pendingBookings > 0 ? '${stats.pendingBookings} pendientes' : null,
                 trendPositive: stats.pendingBookings == 0,
                 color: AppColors.warning,
                 onTap: () => context.goNamed(RouteNames.calendar),
@@ -146,15 +140,11 @@ class _DashboardContent extends StatelessWidget {
         // ── Sección: Tendencias ──────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(bottom: AppSpacing.sm),
-          sliver: SliverToBoxAdapter(
-            child: SectionHeader(title: 'Tendencias'),
-          ),
+          sliver: SliverToBoxAdapter(child: SectionHeader(title: 'Tendencias')),
         ),
         SliverPadding(
           padding: padding.copyWith(top: 0),
-          sliver: SliverToBoxAdapter(
-            child: _DashboardCharts(),
-          ),
+          sliver: SliverToBoxAdapter(child: _DashboardCharts()),
         ),
         const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xxxl)),
       ],
@@ -189,11 +179,7 @@ class _DashboardSkeleton extends StatelessWidget {
             ),
             Padding(
               padding: padding.copyWith(top: 0, bottom: 0),
-              child: SkeletonGridView(
-                itemCount: 7,
-                compactCols: 2,
-                childAspectRatio: 1.45,
-              ),
+              child: SkeletonGridView(itemCount: 7, compactCols: 2, childAspectRatio: 1.45),
             ),
             const SizedBox(height: AppSpacing.xl),
             Padding(
@@ -204,17 +190,9 @@ class _DashboardSkeleton extends StatelessWidget {
               padding: padding.copyWith(top: 0),
               child: Column(
                 children: [
-                  ShimmerBox(
-                    width: double.infinity,
-                    height: 180,
-                    borderRadius: 16,
-                  ),
+                  ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
                   const SizedBox(height: AppSpacing.base),
-                  ShimmerBox(
-                    width: double.infinity,
-                    height: 180,
-                    borderRadius: 16,
-                  ),
+                  ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
                 ],
               ),
             ),
@@ -273,21 +251,9 @@ class _DashboardCharts extends ConsumerWidget {
     if (isExpanded) {
       return Row(
         children: [
-          Expanded(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 180,
-              borderRadius: 16,
-            ),
-          ),
+          Expanded(child: ShimmerBox(width: double.infinity, height: 180, borderRadius: 16)),
           const SizedBox(width: AppSpacing.base),
-          Expanded(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 180,
-              borderRadius: 16,
-            ),
-          ),
+          Expanded(child: ShimmerBox(width: double.infinity, height: 180, borderRadius: 16)),
         ],
       );
     }

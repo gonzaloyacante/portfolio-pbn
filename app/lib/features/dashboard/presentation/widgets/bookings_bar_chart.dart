@@ -12,9 +12,7 @@ class BookingsBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 10);
+    final textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 10);
 
     final barGroups = data.asMap().entries.map((e) {
       return BarChartGroupData(
@@ -43,9 +41,7 @@ class BookingsBarChart extends StatelessWidget {
           children: [
             Text(
               'Reservas mensuales (6 meses)',
-              style: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -55,17 +51,11 @@ class BookingsBarChart extends StatelessWidget {
                   barTouchData: BarTouchData(
                     handleBuiltInTouches: true,
                     touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (_) =>
-                          scheme.inverseSurface.withValues(alpha: 0.94),
-                      getTooltipItem: (group, groupIndex, rod, rodIndex) =>
-                          BarTooltipItem(
-                            '${rod.toY.toInt()} reservas',
-                            TextStyle(
-                              color: scheme.onInverseSurface,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                      getTooltipColor: (_) => scheme.inverseSurface.withValues(alpha: 0.94),
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) => BarTooltipItem(
+                        '${rod.toY.toInt()} reservas',
+                        TextStyle(color: scheme.onInverseSurface, fontSize: 12, fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                   barGroups: barGroups,
@@ -73,10 +63,8 @@ class BookingsBarChart extends StatelessWidget {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: scheme.outlineVariant.withValues(alpha: 0.28),
-                      strokeWidth: 1,
-                    ),
+                    getDrawingHorizontalLine: (_) =>
+                        FlLine(color: scheme.outlineVariant.withValues(alpha: 0.28), strokeWidth: 1),
                   ),
                   titlesData: _buildBarTitles(data, textStyle),
                 ),
@@ -88,10 +76,7 @@ class BookingsBarChart extends StatelessWidget {
     );
   }
 
-  FlTitlesData _buildBarTitles(
-    List<ChartDataPoint> data,
-    TextStyle? textStyle,
-  ) {
+  FlTitlesData _buildBarTitles(List<ChartDataPoint> data, TextStyle? textStyle) {
     return FlTitlesData(
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -99,8 +84,7 @@ class BookingsBarChart extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 34,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
+          getTitlesWidget: (value, _) => Text(value.toInt().toString(), style: textStyle),
         ),
       ),
       bottomTitles: AxisTitles(

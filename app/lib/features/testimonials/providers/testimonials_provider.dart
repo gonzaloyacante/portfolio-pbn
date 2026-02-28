@@ -27,12 +27,7 @@ Future<PaginatedResponse<TestimonialItem>> testimonialsList(
 }) async {
   return ref
       .watch(testimonialsRepositoryProvider)
-      .getTestimonials(
-        page: page,
-        search: search,
-        status: status,
-        isFeatured: isFeatured,
-      );
+      .getTestimonials(page: page, search: search, status: status, isFeatured: isFeatured);
 }
 
 // ── Detalle ───────────────────────────────────────────────────────────────────

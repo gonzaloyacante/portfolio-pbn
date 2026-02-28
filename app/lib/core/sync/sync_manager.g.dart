@@ -20,8 +20,7 @@ final syncManagerProvider = SyncManagerProvider._();
 ///
 /// Se activa automáticamente al recuperar la conexión a internet.
 /// Procesa las operaciones en orden FIFO con reintento.
-final class SyncManagerProvider
-    extends $NotifierProvider<SyncManager, SyncStatus> {
+final class SyncManagerProvider extends $NotifierProvider<SyncManager, SyncStatus> {
   /// Procesa la cola de operaciones pendientes cuando hay conectividad.
   ///
   /// Se activa automáticamente al recuperar la conexión a internet.
@@ -46,10 +45,7 @@ final class SyncManagerProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(SyncStatus value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SyncStatus>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<SyncStatus>(value));
   }
 }
 
@@ -67,13 +63,7 @@ abstract class _$SyncManager extends $Notifier<SyncStatus> {
   void runBuild() {
     final ref = this.ref as $Ref<SyncStatus, SyncStatus>;
     final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<SyncStatus, SyncStatus>,
-              SyncStatus,
-              Object?,
-              Object?
-            >;
+        ref.element as $ClassProviderElement<AnyNotifier<SyncStatus, SyncStatus>, SyncStatus, Object?, Object?>;
     element.handleCreate(ref, build);
   }
 }
@@ -85,8 +75,7 @@ final syncStatusProvider = SyncStatusProvider._();
 
 /// Estado actual del proceso de sincronización.
 
-final class SyncStatusProvider
-    extends $FunctionalProvider<SyncStatus, SyncStatus, SyncStatus>
+final class SyncStatusProvider extends $FunctionalProvider<SyncStatus, SyncStatus, SyncStatus>
     with $Provider<SyncStatus> {
   /// Estado actual del proceso de sincronización.
   SyncStatusProvider._()
@@ -105,8 +94,7 @@ final class SyncStatusProvider
 
   @$internal
   @override
-  $ProviderElement<SyncStatus> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<SyncStatus> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   SyncStatus create(Ref ref) {
@@ -115,10 +103,7 @@ final class SyncStatusProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(SyncStatus value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SyncStatus>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<SyncStatus>(value));
   }
 }
 

@@ -49,16 +49,8 @@ class EmojiIconPicker extends StatelessWidget {
                 Container(
                   width: 42,
                   height: 42,
-                  decoration: BoxDecoration(
-                    color: scheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Text(
-                      value ?? '📁',
-                      style: const TextStyle(fontSize: 22),
-                    ),
-                  ),
+                  decoration: BoxDecoration(color: scheme.primaryContainer, borderRadius: BorderRadius.circular(10)),
+                  child: Center(child: Text(value ?? '📁', style: const TextStyle(fontSize: 22))),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -67,16 +59,13 @@ class EmojiIconPicker extends StatelessWidget {
                     children: [
                       Text(
                         label,
-                        style: Theme.of(context).textTheme.labelMedium
-                            ?.copyWith(color: scheme.onSurfaceVariant),
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(color: scheme.onSurfaceVariant),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         value != null ? 'Emoji: $value' : hint,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: value != null
-                              ? scheme.onSurface
-                              : scheme.onSurfaceVariant,
+                          color: value != null ? scheme.onSurface : scheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -96,9 +85,7 @@ class EmojiIconPicker extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => _EmojiPickerSheet(
         currentValue: value,
         onSelected: (emoji) {
@@ -122,8 +109,7 @@ class _EmojiPickerSheet extends StatefulWidget {
   State<_EmojiPickerSheet> createState() => _EmojiPickerSheetState();
 }
 
-class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
-    with SingleTickerProviderStateMixin {
+class _EmojiPickerSheetState extends State<_EmojiPickerSheet> with SingleTickerProviderStateMixin {
   late final TabController _tab;
 
   @override
@@ -165,9 +151,7 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Text(
               'Seleccionar emoji',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           // Tabs
@@ -175,9 +159,7 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
             controller: _tab,
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            tabs: _categories
-                .map((c) => Tab(text: '${c.icon} ${c.name}'))
-                .toList(),
+            tabs: _categories.map((c) => Tab(text: '${c.icon} ${c.name}')).toList(),
           ),
           // Grid
           Expanded(
@@ -201,17 +183,10 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
                       onTap: () => widget.onSelected(emoji),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? scheme.primaryContainer
-                              : Colors.transparent,
+                          color: isSelected ? scheme.primaryContainer : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
-                          child: Text(
-                            emoji,
-                            style: const TextStyle(fontSize: 22),
-                          ),
-                        ),
+                        child: Center(child: Text(emoji, style: const TextStyle(fontSize: 22))),
                       ),
                     );
                   },
@@ -228,11 +203,7 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
 // ── Categorías de emojis ──────────────────────────────────────────────────────
 
 class _EmojiCategory {
-  const _EmojiCategory({
-    required this.name,
-    required this.icon,
-    required this.emojis,
-  });
+  const _EmojiCategory({required this.name, required this.icon, required this.emojis});
   final String name;
   final String icon;
   final List<String> emojis;

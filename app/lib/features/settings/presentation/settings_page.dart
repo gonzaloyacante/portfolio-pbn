@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/route_names.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -42,12 +45,13 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hPad = AppBreakpoints.pageMargin(context);
     return AppScaffold(
       title: 'Configuración',
       body: ListView.separated(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(hPad),
         itemCount: _items.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 8),
+        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
         itemBuilder: (_, i) => _SettingsTile(_items[i]),
       ),
     );
@@ -57,12 +61,7 @@ class SettingsPage extends StatelessWidget {
 // ── Modelo auxiliar ───────────────────────────────────────────────────────────
 
 class _SettingsItem {
-  const _SettingsItem({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.routeName,
-  });
+  const _SettingsItem({required this.icon, required this.title, required this.subtitle, required this.routeName});
   final IconData icon;
   final String title;
   final String subtitle;
@@ -83,9 +82,9 @@ class _SettingsTile extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.forTile,
         onTap: () => context.pushNamed(item.routeName),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
@@ -99,10 +98,7 @@ class _SettingsTile extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      colorScheme.primary.withValues(alpha: 0.15),
-                      colorScheme.primary.withValues(alpha: 0.06),
-                    ],
+                    colors: [colorScheme.primary.withValues(alpha: 0.15), colorScheme.primary.withValues(alpha: 0.06)],
                   ),
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -114,31 +110,20 @@ class _SettingsTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Text(item.title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.outline,
-                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.outline),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
               // ── Chevron ────────────────────────────────────
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colorScheme.outline,
-              ),
+              Icon(Icons.chevron_right_rounded, size: 20, color: colorScheme.outline),
             ],
           ),
         ),

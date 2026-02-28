@@ -26,8 +26,7 @@ abstract class TestimonialItem with _$TestimonialItem {
     required DateTime updatedAt,
   }) = _TestimonialItem;
 
-  factory TestimonialItem.fromJson(Map<String, dynamic> json) =>
-      _$TestimonialItemFromJson(json);
+  factory TestimonialItem.fromJson(Map<String, dynamic> json) => _$TestimonialItemFromJson(json);
 }
 
 /// Modelo completo para detalle / edición
@@ -59,8 +58,7 @@ abstract class TestimonialDetail with _$TestimonialDetail {
     required DateTime updatedAt,
   }) = _TestimonialDetail;
 
-  factory TestimonialDetail.fromJson(Map<String, dynamic> json) =>
-      _$TestimonialDetailFromJson(json);
+  factory TestimonialDetail.fromJson(Map<String, dynamic> json) => _$TestimonialDetailFromJson(json);
 }
 
 /// DTO para crear / editar testimonio

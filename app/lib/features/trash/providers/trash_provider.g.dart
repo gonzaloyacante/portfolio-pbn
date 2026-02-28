@@ -12,9 +12,7 @@ part of 'trash_provider.dart';
 @ProviderFor(trashRepository)
 final trashRepositoryProvider = TrashRepositoryProvider._();
 
-final class TrashRepositoryProvider
-    extends
-        $FunctionalProvider<TrashRepository, TrashRepository, TrashRepository>
+final class TrashRepositoryProvider extends $FunctionalProvider<TrashRepository, TrashRepository, TrashRepository>
     with $Provider<TrashRepository> {
   TrashRepositoryProvider._()
     : super(
@@ -32,8 +30,7 @@ final class TrashRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<TrashRepository> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<TrashRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   TrashRepository create(Ref ref) {
@@ -42,10 +39,7 @@ final class TrashRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(TrashRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<TrashRepository>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<TrashRepository>(value));
   }
 }
 
@@ -61,9 +55,7 @@ final class TrashItemsProvider
           Map<String, List<TrashItem>>,
           FutureOr<Map<String, List<TrashItem>>>
         >
-    with
-        $FutureModifier<Map<String, List<TrashItem>>>,
-        $FutureProvider<Map<String, List<TrashItem>>> {
+    with $FutureModifier<Map<String, List<TrashItem>>>, $FutureProvider<Map<String, List<TrashItem>>> {
   TrashItemsProvider._()
     : super(
         from: null,
@@ -80,9 +72,8 @@ final class TrashItemsProvider
 
   @$internal
   @override
-  $FutureProviderElement<Map<String, List<TrashItem>>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<Map<String, List<TrashItem>>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<Map<String, List<TrashItem>>> create(Ref ref) {

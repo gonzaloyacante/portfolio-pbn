@@ -32,12 +32,9 @@ class CacheManager {
   /// Retorna el payload JSON si existe y no ha caducado, sino `null`.
   Future<String?> get(String key) async {
     final now = _nowSeconds();
-    final row =
-        await (_db.select(_db.cacheTable)..where(
-              (t) =>
-                  t.cacheKey.equals(key) & t.expiresAt.isBiggerThanValue(now),
-            ))
-            .getSingleOrNull();
+    final row = await (_db.select(
+      _db.cacheTable,
+    )..where((t) => t.cacheKey.equals(key) & t.expiresAt.isBiggerThanValue(now))).getSingleOrNull();
     return row?.payload;
   }
 
@@ -51,53 +48,35 @@ class CacheManager {
   // ── Escritura ────────────────────────────────────────────────────────────
 
   /// Guarda `payload` JSON bajo `key` con TTL opcional.
-  Future<void> set(
-    String key, {
-    required String payload,
-    Duration ttl = defaultTtl,
-  }) async {
+  Future<void> set(String key, {required String payload, Duration ttl = defaultTtl}) async {
     final now = _nowSeconds();
     await _db
         .into(_db.cacheTable)
         .insertOnConflictUpdate(
-          CacheTableCompanion.insert(
-            cacheKey: key,
-            payload: payload,
-            expiresAt: now + ttl.inSeconds,
-            updatedAt: now,
-          ),
+          CacheTableCompanion.insert(cacheKey: key, payload: payload, expiresAt: now + ttl.inSeconds, updatedAt: now),
         );
   }
 
   /// Convenience: serializa `data` con `jsonEncode` y llama a [set].
-  Future<void> setJson(
-    String key, {
-    required dynamic data,
-    Duration ttl = defaultTtl,
-  }) => set(key, payload: jsonEncode(data), ttl: ttl);
+  Future<void> setJson(String key, {required dynamic data, Duration ttl = defaultTtl}) =>
+      set(key, payload: jsonEncode(data), ttl: ttl);
 
   // ── Invalidación ─────────────────────────────────────────────────────────
 
   /// Invalida una entrada específica por clave exacta.
   Future<void> invalidate(String key) async {
-    await (_db.delete(
-      _db.cacheTable,
-    )..where((t) => t.cacheKey.equals(key))).go();
+    await (_db.delete(_db.cacheTable)..where((t) => t.cacheKey.equals(key))).go();
   }
 
   /// Invalida todas las entradas cuya clave contenga [prefix].
   Future<void> invalidatePrefix(String prefix) async {
-    await (_db.delete(
-      _db.cacheTable,
-    )..where((t) => t.cacheKey.like('$prefix%'))).go();
+    await (_db.delete(_db.cacheTable)..where((t) => t.cacheKey.like('$prefix%'))).go();
   }
 
   /// Elimina todas las entradas caducadas (limpieza periódica).
   Future<int> purgeExpired() async {
     final now = _nowSeconds();
-    return (_db.delete(
-      _db.cacheTable,
-    )..where((t) => t.expiresAt.isSmallerOrEqualValue(now))).go();
+    return (_db.delete(_db.cacheTable)..where((t) => t.expiresAt.isSmallerOrEqualValue(now))).go();
   }
 
   /// Vacía toda la caché.

@@ -36,10 +36,7 @@ class ErrorState extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    colorScheme.error.withValues(alpha: 0.15),
-                    colorScheme.error.withValues(alpha: 0.05),
-                  ],
+                  colors: [colorScheme.error.withValues(alpha: 0.15), colorScheme.error.withValues(alpha: 0.05)],
                 ),
                 shape: BoxShape.circle,
               ),
@@ -52,18 +49,12 @@ class ErrorState extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Algo salió mal',
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                color: colorScheme.error,
-              ),
+              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700, color: colorScheme.error),
             ),
             const SizedBox(height: 6),
             Text(
               message,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                height: 1.4,
-              ),
+              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant, height: 1.4),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
@@ -94,24 +85,15 @@ class InlineError extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: BoxDecoration(color: colorScheme.errorContainer, borderRadius: BorderRadius.circular(12)),
       child: Row(
         children: [
-          Icon(
-            Icons.error_outline,
-            size: 18,
-            color: colorScheme.onErrorContainer,
-          ),
+          Icon(Icons.error_outline, size: 18, color: colorScheme.onErrorContainer),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onErrorContainer,
-              ),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colorScheme.onErrorContainer),
             ),
           ),
         ],

@@ -13,15 +13,8 @@ part of 'app_preferences_provider.dart';
 final sharedPreferencesProvider = SharedPreferencesProvider._();
 
 final class SharedPreferencesProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<SharedPreferences>,
-          SharedPreferences,
-          FutureOr<SharedPreferences>
-        >
-    with
-        $FutureModifier<SharedPreferences>,
-        $FutureProvider<SharedPreferences> {
+    extends $FunctionalProvider<AsyncValue<SharedPreferences>, SharedPreferences, FutureOr<SharedPreferences>>
+    with $FutureModifier<SharedPreferences>, $FutureProvider<SharedPreferences> {
   SharedPreferencesProvider._()
     : super(
         from: null,
@@ -38,9 +31,7 @@ final class SharedPreferencesProvider
 
   @$internal
   @override
-  $FutureProviderElement<SharedPreferences> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<SharedPreferences> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<SharedPreferences> create(Ref ref) {
@@ -56,8 +47,7 @@ String _$sharedPreferencesHash() => r'ad13470fe866595ad0f58a3e26f11048d94ef22e';
 final projectsViewModeProvider = ProjectsViewModeProvider._();
 
 /// Vista seleccionada para la lista de proyectos (grid o list).
-final class ProjectsViewModeProvider
-    extends $NotifierProvider<ProjectsViewMode, ViewMode> {
+final class ProjectsViewModeProvider extends $NotifierProvider<ProjectsViewMode, ViewMode> {
   /// Vista seleccionada para la lista de proyectos (grid o list).
   ProjectsViewModeProvider._()
     : super(
@@ -79,10 +69,7 @@ final class ProjectsViewModeProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(ViewMode value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ViewMode>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<ViewMode>(value));
   }
 }
 
@@ -96,14 +83,7 @@ abstract class _$ProjectsViewMode extends $Notifier<ViewMode> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<ViewMode, ViewMode>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<ViewMode, ViewMode>,
-              ViewMode,
-              Object?,
-              Object?
-            >;
+    final element = ref.element as $ClassProviderElement<AnyNotifier<ViewMode, ViewMode>, ViewMode, Object?, Object?>;
     element.handleCreate(ref, build);
   }
 }
@@ -114,8 +94,7 @@ abstract class _$ProjectsViewMode extends $Notifier<ViewMode> {
 final servicesViewModeProvider = ServicesViewModeProvider._();
 
 /// Vista seleccionada para la lista de servicios (grid o list).
-final class ServicesViewModeProvider
-    extends $NotifierProvider<ServicesViewMode, ViewMode> {
+final class ServicesViewModeProvider extends $NotifierProvider<ServicesViewMode, ViewMode> {
   /// Vista seleccionada para la lista de servicios (grid o list).
   ServicesViewModeProvider._()
     : super(
@@ -137,10 +116,7 @@ final class ServicesViewModeProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(ViewMode value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ViewMode>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<ViewMode>(value));
   }
 }
 
@@ -154,14 +130,7 @@ abstract class _$ServicesViewMode extends $Notifier<ViewMode> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<ViewMode, ViewMode>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<ViewMode, ViewMode>,
-              ViewMode,
-              Object?,
-              Object?
-            >;
+    final element = ref.element as $ClassProviderElement<AnyNotifier<ViewMode, ViewMode>, ViewMode, Object?, Object?>;
     element.handleCreate(ref, build);
   }
 }

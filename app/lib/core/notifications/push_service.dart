@@ -12,9 +12,7 @@ import '../utils/app_logger.dart';
 /// por Firebase Messaging como handler en isolate separado.
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  AppLogger.info(
-    'PushService[bg]: mensaje recibido — ${message.notification?.title}',
-  );
+  AppLogger.info('PushService[bg]: mensaje recibido — ${message.notification?.title}');
   // Aquí se pueden guardar datos en base de datos local si es necesario.
   // Firebase muestra automáticamente la notificación del sistema.
 }
@@ -46,11 +44,7 @@ class PushService {
       _messaging ??= FirebaseMessaging.instance;
       return _messaging;
     } catch (e, st) {
-      AppLogger.debug(
-        'PushService: Firebase no disponible al pedir instancia',
-        e,
-        st,
-      );
+      AppLogger.debug('PushService: Firebase no disponible al pedir instancia', e, st);
       return null;
     }
   }
@@ -66,33 +60,20 @@ class PushService {
       // Si Firebase no está inicializado, no podemos inicializar FCM ahora.
       final messaging = _maybeMessaging;
       if (messaging == null) {
-        AppLogger.warn(
-          'PushService: Firebase no inicializado — omitiendo init()',
-        );
+        AppLogger.warn('PushService: Firebase no inicializado — omitiendo init()');
         return;
       }
 
       // 1. Solicitar permisos (relevante en iOS/macOS)
-      final settings = await messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        provisional: false,
-      );
+      final settings = await messaging.requestPermission(alert: true, badge: true, sound: true, provisional: false);
 
       if (settings.authorizationStatus == AuthorizationStatus.denied) {
-        AppLogger.warn(
-          'PushService: permisos de notificación denegados por el usuario',
-        );
+        AppLogger.warn('PushService: permisos de notificación denegados por el usuario');
         return;
       }
 
       // 2. Configurar presentación de notificaciones en foreground (iOS)
-      await messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+      await messaging.setForegroundNotificationPresentationOptions(alert: true, badge: true, sound: true);
 
       AppLogger.info(
         'PushService: inicializado correctamente '
@@ -132,8 +113,7 @@ class PushService {
 
   /// Devuelve la plataforma actual para registrar el token en el backend.
   String get platform {
-    if (defaultTargetPlatform == TargetPlatform.iOS ||
-        defaultTargetPlatform == TargetPlatform.macOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS) {
       return 'ios';
     }
     return 'android';

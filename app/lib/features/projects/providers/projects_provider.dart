@@ -10,15 +10,8 @@ part 'projects_provider.g.dart';
 
 /// Lista paginada de proyectos con parámetros de filtro.
 @riverpod
-Future<PaginatedResponse<ProjectListItem>> projectsList(
-  Ref ref, {
-  int page = 1,
-  String? search,
-  String? categoryId,
-}) {
-  return ref
-      .watch(projectsRepositoryProvider)
-      .getProjects(page: page, search: search, categoryId: categoryId);
+Future<PaginatedResponse<ProjectListItem>> projectsList(Ref ref, {int page = 1, String? search, String? categoryId}) {
+  return ref.watch(projectsRepositoryProvider).getProjects(page: page, search: search, categoryId: categoryId);
 }
 
 // ── projectDetailProvider ─────────────────────────────────────────────────────

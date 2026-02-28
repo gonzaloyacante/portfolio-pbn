@@ -41,12 +41,10 @@ sealed class GoogleAuthState {
   const factory GoogleAuthState.connecting() = GoogleAuthConnecting;
 
   /// Cuenta Google conectada y validada.
-  const factory GoogleAuthState.connected({required String email}) =
-      GoogleAuthConnected;
+  const factory GoogleAuthState.connected({required String email}) = GoogleAuthConnected;
 
   /// Error durante la autenticación.
-  const factory GoogleAuthState.error({required String message}) =
-      GoogleAuthError;
+  const factory GoogleAuthState.error({required String message}) = GoogleAuthError;
 }
 
 /// Estado: sin cuenta Google conectada.

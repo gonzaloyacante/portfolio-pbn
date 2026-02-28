@@ -13,12 +13,7 @@ part of 'calendar_provider.dart';
 final bookingsRepositoryProvider = BookingsRepositoryProvider._();
 
 final class BookingsRepositoryProvider
-    extends
-        $FunctionalProvider<
-          BookingsRepository,
-          BookingsRepository,
-          BookingsRepository
-        >
+    extends $FunctionalProvider<BookingsRepository, BookingsRepository, BookingsRepository>
     with $Provider<BookingsRepository> {
   BookingsRepositoryProvider._()
     : super(
@@ -36,9 +31,7 @@ final class BookingsRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<BookingsRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<BookingsRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   BookingsRepository create(Ref ref) {
@@ -47,15 +40,11 @@ final class BookingsRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(BookingsRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<BookingsRepository>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<BookingsRepository>(value));
   }
 }
 
-String _$bookingsRepositoryHash() =>
-    r'99621fd214e4b8e635d313fc215878dd2048390a';
+String _$bookingsRepositoryHash() => r'99621fd214e4b8e635d313fc215878dd2048390a';
 
 @ProviderFor(bookingsList)
 final bookingsListProvider = BookingsListFamily._();
@@ -67,19 +56,10 @@ final class BookingsListProvider
           PaginatedResponse<BookingItem>,
           FutureOr<PaginatedResponse<BookingItem>>
         >
-    with
-        $FutureModifier<PaginatedResponse<BookingItem>>,
-        $FutureProvider<PaginatedResponse<BookingItem>> {
+    with $FutureModifier<PaginatedResponse<BookingItem>>, $FutureProvider<PaginatedResponse<BookingItem>> {
   BookingsListProvider._({
     required BookingsListFamily super.from,
-    required ({
-      int page,
-      String? search,
-      String? status,
-      DateTime? dateFrom,
-      DateTime? dateTo,
-    })
-    super.argument,
+    required ({int page, String? search, String? status, DateTime? dateFrom, DateTime? dateTo}) super.argument,
   }) : super(
          retry: null,
          name: r'bookingsListProvider',
@@ -100,21 +80,13 @@ final class BookingsListProvider
 
   @$internal
   @override
-  $FutureProviderElement<PaginatedResponse<BookingItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<PaginatedResponse<BookingItem>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<BookingItem>> create(Ref ref) {
     final argument =
-        this.argument
-            as ({
-              int page,
-              String? search,
-              String? status,
-              DateTime? dateFrom,
-              DateTime? dateTo,
-            });
+        this.argument as ({int page, String? search, String? status, DateTime? dateFrom, DateTime? dateTo});
     return bookingsList(
       ref,
       page: argument.page,
@@ -142,13 +114,7 @@ final class BookingsListFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<PaginatedResponse<BookingItem>>,
-          ({
-            int page,
-            String? search,
-            String? status,
-            DateTime? dateFrom,
-            DateTime? dateTo,
-          })
+          ({int page, String? search, String? status, DateTime? dateFrom, DateTime? dateTo})
         > {
   BookingsListFamily._()
     : super(
@@ -159,22 +125,11 @@ final class BookingsListFamily extends $Family
         isAutoDispose: true,
       );
 
-  BookingsListProvider call({
-    int page = 1,
-    String? search,
-    String? status,
-    DateTime? dateFrom,
-    DateTime? dateTo,
-  }) => BookingsListProvider._(
-    argument: (
-      page: page,
-      search: search,
-      status: status,
-      dateFrom: dateFrom,
-      dateTo: dateTo,
-    ),
-    from: this,
-  );
+  BookingsListProvider call({int page = 1, String? search, String? status, DateTime? dateFrom, DateTime? dateTo}) =>
+      BookingsListProvider._(
+        argument: (page: page, search: search, status: status, dateFrom: dateFrom, dateTo: dateTo),
+        from: this,
+      );
 
   @override
   String toString() => r'bookingsListProvider';
@@ -184,23 +139,16 @@ final class BookingsListFamily extends $Family
 final bookingDetailProvider = BookingDetailFamily._();
 
 final class BookingDetailProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<BookingDetail>,
-          BookingDetail,
-          FutureOr<BookingDetail>
-        >
+    extends $FunctionalProvider<AsyncValue<BookingDetail>, BookingDetail, FutureOr<BookingDetail>>
     with $FutureModifier<BookingDetail>, $FutureProvider<BookingDetail> {
-  BookingDetailProvider._({
-    required BookingDetailFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'bookingDetailProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  BookingDetailProvider._({required BookingDetailFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'bookingDetailProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$bookingDetailHash();
@@ -214,9 +162,7 @@ final class BookingDetailProvider
 
   @$internal
   @override
-  $FutureProviderElement<BookingDetail> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<BookingDetail> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<BookingDetail> create(Ref ref) {
@@ -237,8 +183,7 @@ final class BookingDetailProvider
 
 String _$bookingDetailHash() => r'7aa60430a7ad1d870bb57b587a67d97a820d914c';
 
-final class BookingDetailFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<BookingDetail>, String> {
+final class BookingDetailFamily extends $Family with $FunctionalFamilyOverride<FutureOr<BookingDetail>, String> {
   BookingDetailFamily._()
     : super(
         retry: null,
@@ -248,8 +193,7 @@ final class BookingDetailFamily extends $Family
         isAutoDispose: true,
       );
 
-  BookingDetailProvider call(String id) =>
-      BookingDetailProvider._(argument: id, from: this);
+  BookingDetailProvider call(String id) => BookingDetailProvider._(argument: id, from: this);
 
   @override
   String toString() => r'bookingDetailProvider';

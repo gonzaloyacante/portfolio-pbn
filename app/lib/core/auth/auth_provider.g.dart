@@ -52,8 +52,7 @@ final authProvider = AuthNotifierProvider._();
 ///   error: (msg) => Text(msg),
 /// );
 /// ```
-final class AuthNotifierProvider
-    extends $AsyncNotifierProvider<AuthNotifier, AuthState> {
+final class AuthNotifierProvider extends $AsyncNotifierProvider<AuthNotifier, AuthState> {
   /// Controla el estado de autenticación global de la app.
   ///
   /// El router escucha este notifier para proteger rutas:

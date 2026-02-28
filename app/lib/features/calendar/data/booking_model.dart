@@ -10,8 +10,7 @@ part 'booking_model.g.dart';
 abstract class BookingService with _$BookingService {
   const factory BookingService({required String name}) = _BookingService;
 
-  factory BookingService.fromJson(Map<String, dynamic> json) =>
-      _$BookingServiceFromJson(json);
+  factory BookingService.fromJson(Map<String, dynamic> json) => _$BookingServiceFromJson(json);
 }
 
 /// Modelo resumido para listas y calendario
@@ -34,8 +33,7 @@ abstract class BookingItem with _$BookingItem {
     required DateTime updatedAt,
   }) = _BookingItem;
 
-  factory BookingItem.fromJson(Map<String, dynamic> json) =>
-      _$BookingItemFromJson(json);
+  factory BookingItem.fromJson(Map<String, dynamic> json) => _$BookingItemFromJson(json);
 }
 
 /// Modelo completo para detalle / gestión
@@ -73,8 +71,7 @@ abstract class BookingDetail with _$BookingDetail {
     required DateTime updatedAt,
   }) = _BookingDetail;
 
-  factory BookingDetail.fromJson(Map<String, dynamic> json) =>
-      _$BookingDetailFromJson(json);
+  factory BookingDetail.fromJson(Map<String, dynamic> json) => _$BookingDetailFromJson(json);
 }
 
 /// DTO para crear / editar una reserva

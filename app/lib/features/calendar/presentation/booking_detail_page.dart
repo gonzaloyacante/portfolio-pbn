@@ -46,31 +46,21 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
   Future<void> _save() async {
     setState(() => _saving = true);
     try {
-      await ref
-          .read(bookingsRepositoryProvider)
-          .updateBooking(widget.bookingId, {
-            'status': _status,
-            'adminNotes': _notesController.text.trim().isEmpty
-                ? null
-                : _notesController.text.trim(),
-          });
+      await ref.read(bookingsRepositoryProvider).updateBooking(widget.bookingId, {
+        'status': _status,
+        'adminNotes': _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+      });
       ref.invalidate(bookingDetailProvider(widget.bookingId));
       ref.invalidate(bookingsListProvider);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Reserva actualizada')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reserva actualizada')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -83,8 +73,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar reserva',
-      message:
-          '¿Seguro que deseas eliminar esta reserva? Esta acción no se puede deshacer.',
+      message: '¿Seguro que deseas eliminar esta reserva? Esta acción no se puede deshacer.',
       confirmLabel: 'Eliminar',
       isDestructive: true,
     );
@@ -92,21 +81,15 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
 
     setState(() => _saving = true);
     try {
-      await ref
-          .read(bookingsRepositoryProvider)
-          .deleteBooking(widget.bookingId);
+      await ref.read(bookingsRepositoryProvider).deleteBooking(widget.bookingId);
       ref.invalidate(bookingsListProvider);
       if (mounted) context.pop();
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
         setState(() => _saving = false);
       }
     }
@@ -122,33 +105,18 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
       isLoading: _saving,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
+          leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
           title: const Text('Detalle de reserva'),
           centerTitle: false,
           actions: [
-            IconButton(
-              icon: const Icon(Icons.delete_outline),
-              tooltip: 'Eliminar',
-              onPressed: _delete,
-            ),
-            IconButton(
-              icon: const Icon(Icons.save_outlined),
-              tooltip: 'Guardar',
-              onPressed: _save,
-            ),
+            IconButton(icon: const Icon(Icons.delete_outline), tooltip: 'Eliminar', onPressed: _delete),
+            IconButton(icon: const Icon(Icons.save_outlined), tooltip: 'Guardar', onPressed: _save),
           ],
         ),
         body: async.when(
           loading: () => _buildShimmer(),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () =>
-                ref.invalidate(bookingDetailProvider(widget.bookingId)),
-          ),
+          error: (e, _) =>
+              ErrorState(message: e.toString(), onRetry: () => ref.invalidate(bookingDetailProvider(widget.bookingId))),
           data: (detail) {
             _populate(detail);
             return _buildDetail(context, detail);
@@ -165,13 +133,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
         5,
         (_) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
+          child: ShimmerLoader(child: ShimmerBox(width: double.infinity, height: 56, borderRadius: 12)),
         ),
       ),
     );
@@ -188,50 +150,22 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           // ── Cabecera ──────────────────────────────────────────────────────
           _SectionCard(
             children: [
-              _InfoRow(
-                icon: Icons.person_outline,
-                label: 'Cliente',
-                value: detail.clientName,
-              ),
-              _InfoRow(
-                icon: Icons.email_outlined,
-                label: 'Email',
-                value: detail.clientEmail,
-              ),
+              _InfoRow(icon: Icons.person_outline, label: 'Cliente', value: detail.clientName),
+              _InfoRow(icon: Icons.email_outlined, label: 'Email', value: detail.clientEmail),
               if (detail.clientPhone != null)
-                _InfoRow(
-                  icon: Icons.phone_outlined,
-                  label: 'Teléfono',
-                  value: detail.clientPhone!,
-                ),
+                _InfoRow(icon: Icons.phone_outlined, label: 'Teléfono', value: detail.clientPhone!),
               if (detail.guestCount > 0)
-                _InfoRow(
-                  icon: Icons.people_outline,
-                  label: 'Asistentes',
-                  value: '${detail.guestCount}',
-                ),
+                _InfoRow(icon: Icons.people_outline, label: 'Asistentes', value: '${detail.guestCount}'),
             ],
           ),
           const SizedBox(height: 12),
           // ── Servicio y fecha ──────────────────────────────────────────────
           _SectionCard(
             children: [
-              _InfoRow(
-                icon: Icons.design_services_outlined,
-                label: 'Servicio',
-                value: detail.service?.name ?? '—',
-              ),
-              _InfoRow(
-                icon: Icons.calendar_today_outlined,
-                label: 'Fecha',
-                value: _formatDate(detail.date),
-              ),
+              _InfoRow(icon: Icons.design_services_outlined, label: 'Servicio', value: detail.service?.name ?? '—'),
+              _InfoRow(icon: Icons.calendar_today_outlined, label: 'Fecha', value: _formatDate(detail.date)),
               if (detail.endDate != null)
-                _InfoRow(
-                  icon: Icons.schedule_outlined,
-                  label: 'Fin',
-                  value: _formatDate(detail.endDate!),
-                ),
+                _InfoRow(icon: Icons.schedule_outlined, label: 'Fin', value: _formatDate(detail.endDate!)),
             ],
           ),
           const SizedBox(height: 12),
@@ -242,36 +176,22 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
               _InfoRow(
                 icon: Icons.euro_outlined,
                 label: 'Total',
-                value: detail.totalAmount != null
-                    ? '${currencySymbol(null)}${detail.totalAmount}'
-                    : '—',
+                value: detail.totalAmount != null ? '${currencySymbol(null)}${detail.totalAmount}' : '—',
               ),
               _InfoRow(
                 icon: Icons.paid_outlined,
                 label: 'Pagado',
-                value: detail.paidAmount != null
-                    ? '${currencySymbol(null)}${detail.paidAmount}'
-                    : '—',
+                value: detail.paidAmount != null ? '${currencySymbol(null)}${detail.paidAmount}' : '—',
               ),
-              _InfoRow(
-                icon: Icons.receipt_outlined,
-                label: 'Estado pago',
-                value: _paymentLabel(detail.paymentStatus),
-              ),
+              _InfoRow(icon: Icons.receipt_outlined, label: 'Estado pago', value: _paymentLabel(detail.paymentStatus)),
               if (detail.paymentMethod != null)
-                _InfoRow(
-                  icon: Icons.credit_card_outlined,
-                  label: 'Método',
-                  value: detail.paymentMethod!,
-                ),
+                _InfoRow(icon: Icons.credit_card_outlined, label: 'Método', value: detail.paymentMethod!),
             ],
           ),
           const SizedBox(height: 12),
           // ── Estado ────────────────────────────────────────────────────────
           Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -279,9 +199,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
                 children: [
                   Text(
                     'Estado de la reserva',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   Wrap(
@@ -304,20 +222,13 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           const SizedBox(height: 12),
           // ── Notas admin ───────────────────────────────────────────────────
           Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Notas internas',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text('Notas internas', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _notesController,
@@ -335,9 +246,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
             const SizedBox(height: 12),
             _SectionCard(
               title: 'Notas del cliente',
-              children: [
-                Text(detail.clientNotes!, style: theme.textTheme.bodyMedium),
-              ],
+              children: [Text(detail.clientNotes!, style: theme.textTheme.bodyMedium)],
             ),
           ],
           const SizedBox(height: 24),
@@ -360,21 +269,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
   }
 
   String _formatDate(DateTime d) {
-    const months = [
-      '',
-      'ene',
-      'feb',
-      'mar',
-      'abr',
-      'may',
-      'jun',
-      'jul',
-      'ago',
-      'sep',
-      'oct',
-      'nov',
-      'dic',
-    ];
+    const months = ['', 'ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
     final h = d.hour.toString().padLeft(2, '0');
     final m = d.minute.toString().padLeft(2, '0');
     return '${d.day} ${months[d.month]} ${d.year}  $h:$m';
@@ -414,12 +309,7 @@ class _SectionCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (title != null) ...[
-              Text(
-                title!,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
+              Text(title!, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
             ],
             ...children,
@@ -431,11 +321,7 @@ class _SectionCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
+  const _InfoRow({required this.icon, required this.label, required this.value});
   final IconData icon;
   final String label;
   final String value;
@@ -454,12 +340,7 @@ class _InfoRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.outline,
-                  ),
-                ),
+                Text(label, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.outline)),
                 Text(value, style: theme.textTheme.bodyMedium),
               ],
             ),
@@ -499,51 +380,35 @@ class _GoogleCalendarSection extends ConsumerWidget {
               'assets/images/google_calendar_logo.png',
               width: 20,
               height: 20,
-              errorBuilder: (_, _, _) =>
-                  const Icon(Icons.calendar_month_outlined, size: 20),
+              errorBuilder: (_, _, _) => const Icon(Icons.calendar_month_outlined, size: 20),
             ),
-            label: Text(
-              isConnected
-                  ? 'Añadir a Google Calendar'
-                  : 'Conectar Google Calendar',
-            ),
+            label: Text(isConnected ? 'Añadir a Google Calendar' : 'Conectar Google Calendar'),
           ),
         );
       },
     );
   }
 
-  Future<void> _handlePress(
-    BuildContext context,
-    WidgetRef ref,
-    bool isConnected,
-  ) async {
+  Future<void> _handlePress(BuildContext context, WidgetRef ref, bool isConnected) async {
     if (!isConnected) {
       // Conectar cuenta Google primero.
       await ref.read(googleCalendarProvider.notifier).signIn();
 
-      final newState = ref
-          .read(googleCalendarProvider)
-          .whenOrNull(data: (v) => v);
+      final newState = ref.read(googleCalendarProvider).whenOrNull(data: (v) => v);
       if (newState is! GoogleAuthConnected || !context.mounted) return;
     }
 
     // Crear evento en Google Calendar.
-    final endDate =
-        bookingDetail.endDate ??
-        bookingDetail.date.add(const Duration(hours: 2));
+    final endDate = bookingDetail.endDate ?? bookingDetail.date.add(const Duration(hours: 2));
 
     final parts = <String>[
-      if (bookingDetail.clientPhone != null)
-        'Teléfono: ${bookingDetail.clientPhone}',
-      if (bookingDetail.clientNotes != null &&
-          bookingDetail.clientNotes!.isNotEmpty)
+      if (bookingDetail.clientPhone != null) 'Teléfono: ${bookingDetail.clientPhone}',
+      if (bookingDetail.clientNotes != null && bookingDetail.clientNotes!.isNotEmpty)
         'Notas: ${bookingDetail.clientNotes}',
     ];
 
     final event = GoogleCalendarEvent(
-      title:
-          'Reserva — ${bookingDetail.service?.name ?? 'Sesión'} — ${bookingDetail.clientName}',
+      title: 'Reserva — ${bookingDetail.service?.name ?? 'Sesión'} — ${bookingDetail.clientName}',
       description: parts.isEmpty ? bookingDetail.clientEmail : parts.join('\n'),
       startDateTime: bookingDetail.date,
       endDateTime: endDate,
@@ -551,29 +416,21 @@ class _GoogleCalendarSection extends ConsumerWidget {
     );
 
     try {
-      final created = await ref
-          .read(googleCalendarProvider.notifier)
-          .createEvent(event);
+      final created = await ref.read(googleCalendarProvider.notifier).createEvent(event);
 
       if (!context.mounted) return;
 
       if (created) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Evento añadido a Google Calendar'),
-            behavior: SnackBarBehavior.floating,
-          ),
+          const SnackBar(content: Text('Evento añadido a Google Calendar'), behavior: SnackBarBehavior.floating),
         );
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al crear evento: $e'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error al crear evento: $e'), behavior: SnackBarBehavior.floating));
     }
   }
 }

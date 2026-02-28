@@ -24,10 +24,7 @@ class TrashPage extends ConsumerWidget {
       title: 'Papelera',
       body: trashAsync.when(
         loading: () => const _TrashShimmer(),
-        error: (e, _) => ErrorState(
-          message: e.toString(),
-          onRetry: () => ref.invalidate(trashItemsProvider),
-        ),
+        error: (e, _) => ErrorState(message: e.toString(), onRetry: () => ref.invalidate(trashItemsProvider)),
         data: (grouped) {
           final allItems = grouped.values.expand((list) => list).toList();
           if (allItems.isEmpty) {
@@ -56,64 +53,43 @@ class TrashPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _restore(
-    BuildContext context,
-    WidgetRef ref,
-    TrashItem item,
-  ) async {
+  Future<void> _restore(BuildContext context, WidgetRef ref, TrashItem item) async {
     try {
-      await ref
-          .read(trashRepositoryProvider)
-          .restore(type: item.type, id: item.id);
+      await ref.read(trashRepositoryProvider).restore(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${item.displayName} restaurado correctamente'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${item.displayName} restaurado correctamente')));
       }
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo restaurar el elemento')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se pudo restaurar el elemento')));
       }
     }
   }
 
-  Future<void> _purge(
-    BuildContext context,
-    WidgetRef ref,
-    TrashItem item,
-  ) async {
+  Future<void> _purge(BuildContext context, WidgetRef ref, TrashItem item) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar permanentemente',
-      message:
-          '¿Eliminar "${item.displayName}" de forma permanente? Esta acción no se puede deshacer.',
+      message: '¿Eliminar "${item.displayName}" de forma permanente? Esta acción no se puede deshacer.',
       confirmLabel: 'Eliminar',
       isDestructive: true,
     );
     if (!confirmed) return;
 
     try {
-      await ref
-          .read(trashRepositoryProvider)
-          .purge(type: item.type, id: item.id);
+      await ref.read(trashRepositoryProvider).purge(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${item.displayName} eliminado permanentemente'),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('${item.displayName} eliminado permanentemente')));
       }
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo eliminar el elemento')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se pudo eliminar el elemento')));
       }
     }
   }
@@ -122,12 +98,7 @@ class TrashPage extends ConsumerWidget {
 // ── Sección por tipo ───────────────────────────────────────────────────────────
 
 class _TrashSection extends StatelessWidget {
-  const _TrashSection({
-    required this.type,
-    required this.items,
-    required this.onRestore,
-    required this.onPurge,
-  });
+  const _TrashSection({required this.type, required this.items, required this.onRestore, required this.onPurge});
 
   final String type;
   final List<TrashItem> items;
@@ -143,18 +114,10 @@ class _TrashSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
             trashTypeLabel(type),
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),
         ),
-        ...items.map(
-          (item) => _TrashCard(
-            item: item,
-            onRestore: () => onRestore(item),
-            onPurge: () => onPurge(item),
-          ),
-        ),
+        ...items.map((item) => _TrashCard(item: item, onRestore: () => onRestore(item), onPurge: () => onPurge(item))),
         const SizedBox(height: 8),
       ],
     );
@@ -164,11 +127,7 @@ class _TrashSection extends StatelessWidget {
 // ── Card de item ───────────────────────────────────────────────────────────────
 
 class _TrashCard extends StatelessWidget {
-  const _TrashCard({
-    required this.item,
-    required this.onRestore,
-    required this.onPurge,
-  });
+  const _TrashCard({required this.item, required this.onRestore, required this.onPurge});
 
   final TrashItem item;
   final VoidCallback onRestore;
@@ -192,17 +151,12 @@ class _TrashCard extends StatelessWidget {
                 children: [
                   Text(
                     item.displayName,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    'Eliminado: $deletedStr',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  Text('Eliminado: $deletedStr', style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -234,11 +188,7 @@ class _TrashShimmer extends StatelessWidget {
           6,
           (_) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 72,
-              borderRadius: 16,
-            ),
+            child: ShimmerBox(width: double.infinity, height: 72, borderRadius: 16),
           ),
         ),
       ),

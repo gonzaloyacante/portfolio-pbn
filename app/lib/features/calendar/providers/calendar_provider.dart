@@ -28,13 +28,7 @@ Future<PaginatedResponse<BookingItem>> bookingsList(
 }) async {
   return ref
       .watch(bookingsRepositoryProvider)
-      .getBookings(
-        page: page,
-        search: search,
-        status: status,
-        dateFrom: dateFrom,
-        dateTo: dateTo,
-      );
+      .getBookings(page: page, search: search, status: status, dateFrom: dateFrom, dateTo: dateTo);
 }
 
 // ── Detalle ───────────────────────────────────────────────────────────────────

@@ -26,29 +26,15 @@ class SettingsSocialPage extends ConsumerWidget {
 
     return AppScaffold(
       title: 'Redes Sociales',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: () => ref.invalidate(socialLinksProvider),
-        ),
-      ],
+      actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: () => ref.invalidate(socialLinksProvider))],
       body: async.when(
         loading: () => ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: _kPlatforms.length,
           separatorBuilder: (_, _) => const SizedBox(height: 8),
-          itemBuilder: (_, _) => ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 72,
-              borderRadius: 20,
-            ),
-          ),
+          itemBuilder: (_, _) => ShimmerLoader(child: ShimmerBox(width: double.infinity, height: 72, borderRadius: 20)),
         ),
-        error: (e, _) => ErrorState(
-          message: e.toString(),
-          onRetry: () => ref.invalidate(socialLinksProvider),
-        ),
+        error: (e, _) => ErrorState(message: e.toString(), onRetry: () => ref.invalidate(socialLinksProvider)),
         data: (links) => ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: _kPlatforms.length,
@@ -123,28 +109,20 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
       await ref.read(settingsRepositoryProvider).upsertSocialLink({
         'platform': widget.platformId,
         'url': _urlCtrl.text.trim(),
-        'username': _usernameCtrl.text.trim().isEmpty
-            ? null
-            : _usernameCtrl.text.trim(),
+        'username': _usernameCtrl.text.trim().isEmpty ? null : _usernameCtrl.text.trim(),
         'isActive': _isActive,
       });
       widget.onSaved();
       if (mounted) {
         setState(() => _expanded = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${widget.platform} guardado')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.platform} guardado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -162,46 +140,29 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
         children: [
           ListTile(
             leading: CircleAvatar(
-              backgroundColor: hasLink
-                  ? cs.primary.withValues(alpha: 0.12)
-                  : cs.surfaceContainerHighest,
-              child: Icon(
-                widget.icon,
-                color: hasLink ? cs.primary : cs.outline,
-              ),
+              backgroundColor: hasLink ? cs.primary.withValues(alpha: 0.12) : cs.surfaceContainerHighest,
+              child: Icon(widget.icon, color: hasLink ? cs.primary : cs.outline),
             ),
             title: Text(widget.platform),
             subtitle: Text(
-              hasLink
-                  ? (widget.link!.username ?? widget.link!.url)
-                  : 'Sin configurar',
+              hasLink ? (widget.link!.username ?? widget.link!.url) : 'Sin configurar',
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: hasLink ? null : cs.outline,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: hasLink ? null : cs.outline, fontSize: 12),
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (hasLink)
                   Icon(
-                    widget.link!.isActive
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
+                    widget.link!.isActive ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                     size: 18,
                     color: widget.link!.isActive ? cs.primary : cs.outline,
                   ),
                 const SizedBox(width: 4),
-                Icon(
-                  _expanded ? Icons.expand_less : Icons.edit_outlined,
-                  size: 18,
-                ),
+                Icon(_expanded ? Icons.expand_less : Icons.edit_outlined, size: 18),
               ],
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             onTap: () => setState(() => _expanded = !_expanded),
           ),
           if (_expanded)
@@ -240,11 +201,7 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                     child: FilledButton(
                       onPressed: _saving ? null : _save,
                       child: _saving
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
+                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                           : const Text('Guardar'),
                     ),
                   ),

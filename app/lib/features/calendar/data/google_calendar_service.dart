@@ -30,9 +30,7 @@ class GoogleCalendarService {
   Future<bool> signIn() async {
     try {
       // Interactive authenticate: may throw a GoogleSignInException on failure.
-      final account = await _googleSignIn.authenticate(
-        scopeHint: [gcal.CalendarApi.calendarEventsScope],
-      );
+      final account = await _googleSignIn.authenticate(scopeHint: [gcal.CalendarApi.calendarEventsScope]);
       AppLogger.info('GoogleCalendarService: conectado como ${account.email}');
       return true;
     } catch (e, st) {
@@ -89,23 +87,17 @@ class GoogleCalendarService {
     // Obtain a signed-in account (silent attempt). If none, signal the caller.
     final account = await _googleSignIn.attemptLightweightAuthentication();
     if (account == null) {
-      throw Exception(
-        'No hay cuenta Google conectada. Conecta tu cuenta primero.',
-      );
+      throw Exception('No hay cuenta Google conectada. Conecta tu cuenta primero.');
     }
 
     // Request client authorization tokens for the required scopes.
-    final clientAuth = await account.authorizationClient.authorizationForScopes(
-      [gcal.CalendarApi.calendarEventsScope],
-    );
+    final clientAuth = await account.authorizationClient.authorizationForScopes([gcal.CalendarApi.calendarEventsScope]);
 
     if (clientAuth == null) {
       throw Exception('No se pudo obtener autorización para Google Calendar.');
     }
 
-    final authClient = clientAuth.authClient(
-      scopes: [gcal.CalendarApi.calendarEventsScope],
-    );
+    final authClient = clientAuth.authClient(scopes: [gcal.CalendarApi.calendarEventsScope]);
 
     try {
       final calendarApi = gcal.CalendarApi(authClient);
@@ -113,23 +105,13 @@ class GoogleCalendarService {
       final gcalEvent = gcal.Event(
         summary: event.title,
         description: event.description,
-        start: gcal.EventDateTime(
-          dateTime: event.startDateTime.toUtc(),
-          timeZone: 'UTC',
-        ),
-        end: gcal.EventDateTime(
-          dateTime: event.endDateTime.toUtc(),
-          timeZone: 'UTC',
-        ),
+        start: gcal.EventDateTime(dateTime: event.startDateTime.toUtc(), timeZone: 'UTC'),
+        end: gcal.EventDateTime(dateTime: event.endDateTime.toUtc(), timeZone: 'UTC'),
         reminders: gcal.EventReminders(
           useDefault: false,
-          overrides: [
-            gcal.EventReminder(method: 'popup', minutes: event.reminderMinutes),
-          ],
+          overrides: [gcal.EventReminder(method: 'popup', minutes: event.reminderMinutes)],
         ),
-        attendees: event.attendeeEmail != null
-            ? [gcal.EventAttendee(email: event.attendeeEmail)]
-            : null,
+        attendees: event.attendeeEmail != null ? [gcal.EventAttendee(email: event.attendeeEmail)] : null,
       );
 
       await calendarApi.events.insert(gcalEvent, 'primary');

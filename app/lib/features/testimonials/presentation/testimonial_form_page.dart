@@ -18,8 +18,7 @@ class TestimonialFormPage extends ConsumerStatefulWidget {
   final String? testimonialId;
 
   @override
-  ConsumerState<TestimonialFormPage> createState() =>
-      _TestimonialFormPageState();
+  ConsumerState<TestimonialFormPage> createState() => _TestimonialFormPageState();
 }
 
 class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
@@ -95,35 +94,20 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       // Subir avatar si se seleccionó uno nuevo.
       if (_pendingAvatar != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _avatarCtrl.text = await uploadSvc.uploadImage(
-          _pendingAvatar!,
-          folder: 'portfolio/testimonials',
-        );
+        _avatarCtrl.text = await uploadSvc.uploadImage(_pendingAvatar!, folder: 'portfolio/testimonials');
       }
 
       final data = TestimonialFormData(
         name: _nameCtrl.text.trim(),
         text: _textCtrl.text.trim(),
-        excerpt: _excerptCtrl.text.trim().isEmpty
-            ? null
-            : _excerptCtrl.text.trim(),
+        excerpt: _excerptCtrl.text.trim().isEmpty ? null : _excerptCtrl.text.trim(),
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
         phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
-        position: _positionCtrl.text.trim().isEmpty
-            ? null
-            : _positionCtrl.text.trim(),
-        company: _companyCtrl.text.trim().isEmpty
-            ? null
-            : _companyCtrl.text.trim(),
-        website: _websiteCtrl.text.trim().isEmpty
-            ? null
-            : _websiteCtrl.text.trim(),
-        avatarUrl: _avatarCtrl.text.trim().isEmpty
-            ? null
-            : _avatarCtrl.text.trim(),
-        source: _sourceCtrl.text.trim().isEmpty
-            ? null
-            : _sourceCtrl.text.trim(),
+        position: _positionCtrl.text.trim().isEmpty ? null : _positionCtrl.text.trim(),
+        company: _companyCtrl.text.trim().isEmpty ? null : _companyCtrl.text.trim(),
+        website: _websiteCtrl.text.trim().isEmpty ? null : _websiteCtrl.text.trim(),
+        avatarUrl: _avatarCtrl.text.trim().isEmpty ? null : _avatarCtrl.text.trim(),
+        source: _sourceCtrl.text.trim().isEmpty ? null : _sourceCtrl.text.trim(),
         rating: _rating,
         verified: _verified,
         featured: _featured,
@@ -132,9 +116,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       );
 
       if (_isEdit) {
-        await ref
-            .read(testimonialsRepositoryProvider)
-            .updateTestimonial(widget.testimonialId!, data.toJson());
+        await ref.read(testimonialsRepositoryProvider).updateTestimonial(widget.testimonialId!, data.toJson());
       } else {
         await ref.read(testimonialsRepositoryProvider).createTestimonial(data);
       }
@@ -142,21 +124,15 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       ref.invalidate(testimonialsListProvider);
       if (mounted) {
         final msg = _isEdit ? 'Testimonio actualizado' : 'Testimonio creado';
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg)));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
         context.pop();
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -180,8 +156,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
             TextFormField(
               controller: _nameCtrl,
               decoration: const InputDecoration(labelText: 'Nombre *'),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null,
             ),
             const SizedBox(height: 12),
             Row(
@@ -225,9 +200,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
             // Avatar del cliente
             ImageUploadWidget(
               label: 'Foto del cliente (opcional)',
-              currentImageUrl: _avatarCtrl.text.isNotEmpty
-                  ? _avatarCtrl.text
-                  : null,
+              currentImageUrl: _avatarCtrl.text.isNotEmpty ? _avatarCtrl.text : null,
               hint: 'Toca para seleccionar foto del cliente',
               aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
               onImageSelected: (file) {
@@ -250,8 +223,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
               controller: _textCtrl,
               decoration: const InputDecoration(labelText: 'Texto completo *'),
               maxLines: 5,
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Requerido' : null,
             ),
             const SizedBox(height: 12),
             TextFormField(
@@ -271,11 +243,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                 for (int i = 1; i <= 5; i++)
                   GestureDetector(
                     onTap: () => setState(() => _rating = i),
-                    child: Icon(
-                      i <= _rating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
-                      size: 28,
-                    ),
+                    child: Icon(i <= _rating ? Icons.star : Icons.star_border, color: Colors.amber, size: 28),
                   ),
                 const SizedBox(width: 8),
                 Text('$_rating/5', style: theme.textTheme.bodySmall),
@@ -291,20 +259,14 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                 Expanded(
                   child: TextFormField(
                     controller: _websiteCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Sitio web',
-                      hintText: 'https://...',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Sitio web', hintText: 'https://...'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     controller: _sourceCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente',
-                      hintText: 'Google, Instagram…',
-                    ),
+                    decoration: const InputDecoration(labelText: 'Fuente', hintText: 'Google, Instagram…'),
                   ),
                 ),
               ],
@@ -358,9 +320,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
     );
 
     if (_isEdit) {
-      final detailAsync = ref.watch(
-        testimonialDetailProvider(widget.testimonialId!),
-      );
+      final detailAsync = ref.watch(testimonialDetailProvider(widget.testimonialId!));
       body = detailAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
@@ -375,11 +335,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       isLoading: _loading,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
+          leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
           title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),
         ),
         body: body,

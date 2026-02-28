@@ -57,12 +57,8 @@ class AppRelease {
       checksumSha256: json['checksumSha256'] as String?,
       mandatory: json['mandatory'] as bool? ?? false,
       minVersion: json['minVersion'] as String?,
-      fileSizeBytes: json['fileSizeBytes'] != null
-          ? (json['fileSizeBytes'] as num).toInt()
-          : null,
-      publishedAt:
-          DateTime.tryParse(json['publishedAt'] as String? ?? '') ??
-          DateTime.now(),
+      fileSizeBytes: json['fileSizeBytes'] != null ? (json['fileSizeBytes'] as num).toInt() : null,
+      publishedAt: DateTime.tryParse(json['publishedAt'] as String? ?? '') ?? DateTime.now(),
     );
   }
 
@@ -75,13 +71,9 @@ class AppRelease {
       versionCode: int.tryParse(data['versionCode'] ?? '0') ?? 0,
       releaseNotes: data['releaseNotes'] ?? '',
       downloadUrl: data['downloadUrl'] ?? '',
-      checksumSha256: data['checksumSha256']?.isEmpty ?? true
-          ? null
-          : data['checksumSha256'],
+      checksumSha256: data['checksumSha256']?.isEmpty ?? true ? null : data['checksumSha256'],
       mandatory: data['mandatory'] == 'true',
-      minVersion: data['minVersion']?.isEmpty ?? true
-          ? null
-          : data['minVersion'],
+      minVersion: data['minVersion']?.isEmpty ?? true ? null : data['minVersion'],
       fileSizeBytes: int.tryParse(data['fileSizeBytes'] ?? ''),
       publishedAt: DateTime.now(),
     );

@@ -69,9 +69,7 @@ class AppFilterChips<T> extends StatelessWidget {
             final isSelected = selected == option;
             final color = colorBuilder?.call(option) ?? colorScheme.primary;
             final count = countBuilder?.call(option);
-            final labelText = count != null
-                ? '${labelBuilder(option)} ($count)'
-                : labelBuilder(option);
+            final labelText = count != null ? '${labelBuilder(option)} ($count)' : labelBuilder(option);
             return Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
               child: _FilterChipItem(
@@ -113,10 +111,7 @@ class _FilterChipItem extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs + 2,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
         decoration: BoxDecoration(
           color: isSelected ? color.withAlpha(30) : Colors.transparent,
           borderRadius: AppRadius.forChip,

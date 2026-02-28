@@ -28,16 +28,10 @@ class AppTheme {
     final isLight = brightness == Brightness.light;
 
     final primary = isLight ? AppColors.lightPrimary : AppColors.darkPrimary;
-    final background = isLight
-        ? AppColors.lightBackground
-        : AppColors.darkBackground;
-    final foreground = isLight
-        ? AppColors.lightForeground
-        : AppColors.darkForeground;
+    final background = isLight ? AppColors.lightBackground : AppColors.darkBackground;
+    final foreground = isLight ? AppColors.lightForeground : AppColors.darkForeground;
     final card = isLight ? AppColors.lightCard : AppColors.darkCard;
-    final secondary = isLight
-        ? AppColors.lightSecondary
-        : AppColors.darkSecondary;
+    final secondary = isLight ? AppColors.lightSecondary : AppColors.darkSecondary;
     final border = isLight ? AppColors.lightBorder : AppColors.darkBorder;
     final muted = isLight ? AppColors.lightMuted : AppColors.darkMuted;
 
@@ -76,9 +70,7 @@ class AppTheme {
         scrolledUnderElevation: 1,
         shadowColor: border.withAlpha(80),
         centerTitle: false,
-        titleTextStyle: AppTypography.textTheme(
-          brightness,
-        ).titleLarge?.copyWith(fontWeight: FontWeight.w600),
+        titleTextStyle: AppTypography.textTheme(brightness).titleLarge?.copyWith(fontWeight: FontWeight.w600),
         iconTheme: IconThemeData(color: foreground, size: 22),
         actionsIconTheme: IconThemeData(color: foreground, size: 22),
       ),
@@ -131,10 +123,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: muted,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: AppRadius.forInput,
           borderSide: BorderSide(color: border),
@@ -156,9 +145,7 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.destructive, width: 2),
         ),
         labelStyle: AppTypography.textTheme(brightness).bodyMedium,
-        hintStyle: AppTypography.textTheme(
-          brightness,
-        ).bodyMedium?.copyWith(color: foreground.withAlpha(102)),
+        hintStyle: AppTypography.textTheme(brightness).bodyMedium?.copyWith(color: foreground.withAlpha(102)),
       ),
 
       // ── Divider ─────────────────────────────────────────────────────────
@@ -214,8 +201,9 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
         backgroundColor: isLight ? AppColors.lightForeground : card,
-        contentTextStyle: AppTypography.textTheme(brightness).bodyMedium
-            ?.copyWith(color: isLight ? AppColors.lightBackground : foreground),
+        contentTextStyle: AppTypography.textTheme(
+          brightness,
+        ).bodyMedium?.copyWith(color: isLight ? AppColors.lightBackground : foreground),
       ),
 
       // ── ListTile ────────────────────────────────────────────────────────

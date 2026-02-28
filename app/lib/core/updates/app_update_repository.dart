@@ -27,10 +27,7 @@ import 'app_release_model.dart';
 ///   el package manager de Android sin necesidad de acceso amplio a storage).
 class AppUpdateRepository {
   AppUpdateRepository({Dio? dio}) : _dio = dio ?? Dio() {
-    _dio.options = BaseOptions(
-      connectTimeout: const Duration(seconds: 20),
-      receiveTimeout: const Duration(minutes: 5),
-    );
+    _dio.options = BaseOptions(connectTimeout: const Duration(seconds: 20), receiveTimeout: const Duration(minutes: 5));
   }
 
   final Dio _dio;
@@ -63,17 +60,12 @@ class AppUpdateRepository {
 
       final response = await _dio.get<Map<String, dynamic>>(
         url,
-        options: Options(
-          headers: {'Accept': 'application/json'},
-          receiveTimeout: const Duration(seconds: 15),
-        ),
+        options: Options(headers: {'Accept': 'application/json'}, receiveTimeout: const Duration(seconds: 15)),
       );
 
       final body = response.data;
       if (body == null || body['success'] != true) {
-        return const AppUpdateCheckFailed(
-          reason: 'Respuesta inesperada del servidor',
-        );
+        return const AppUpdateCheckFailed(reason: 'Respuesta inesperada del servidor');
       }
 
       final updateAvailable = body['updateAvailable'] as bool? ?? false;
@@ -84,9 +76,7 @@ class AppUpdateRepository {
 
       final data = body['data'] as Map<String, dynamic>?;
       if (data == null) {
-        return const AppUpdateCheckFailed(
-          reason: 'Datos de release no disponibles',
-        );
+        return const AppUpdateCheckFailed(reason: 'Datos de release no disponibles');
       }
 
       final release = AppRelease.fromJson(data);
@@ -97,9 +87,7 @@ class AppUpdateRepository {
         return const AppUpToDate();
       }
       if (!release.downloadUrl.startsWith('https://')) {
-        AppLogger.warn(
-          'AppUpdateRepository: downloadUrl no es HTTPS — omitiendo update',
-        );
+        AppLogger.warn('AppUpdateRepository: downloadUrl no es HTTPS — omitiendo update');
         return const AppUpdateCheckFailed(reason: 'URL de descarga no segura');
       }
 
@@ -135,10 +123,7 @@ class AppUpdateRepository {
   ///
   /// Retorna el [File] descargado, listo para instalar.
   /// Lanza [AppUpdateException] si algo falla.
-  Future<File> downloadApk(
-    AppRelease release, {
-    void Function(int received, int total)? onProgress,
-  }) async {
+  Future<File> downloadApk(AppRelease release, {void Function(int received, int total)? onProgress}) async {
     // Verificar URL segura
     if (!release.downloadUrl.startsWith('https://')) {
       throw AppUpdateException('La URL de descarga debe ser HTTPS');
@@ -169,9 +154,7 @@ class AppUpdateRepository {
 
       final file = File(savePath);
       if (!file.existsSync()) {
-        throw AppUpdateException(
-          'El archivo descargado no existe en: $savePath',
-        );
+        throw AppUpdateException('El archivo descargado no existe en: $savePath');
       }
 
       final fileSize = file.lengthSync();
@@ -197,9 +180,7 @@ class AppUpdateRepository {
       rethrow;
     } on DioException catch (e) {
       _tryDelete(savePath);
-      throw AppUpdateException(
-        'Error de descarga: ${e.type.name} — ${e.message}',
-      );
+      throw AppUpdateException('Error de descarga: ${e.type.name} — ${e.message}');
     } catch (e) {
       _tryDelete(savePath);
       throw AppUpdateException('Error inesperado durante la descarga: $e');
@@ -243,14 +224,10 @@ class AppUpdateRepository {
   Future<String> _apkSavePath(String version, int versionCode) async {
     try {
       // Android: getExternalStorageDirectory() → /sdcard/Android/data/APP/files
-      final dir = Platform.isAndroid
-          ? await getExternalStorageDirectory()
-          : await getApplicationDocumentsDirectory();
+      final dir = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
 
       if (dir == null) {
-        throw AppUpdateException(
-          'No se pudo obtener el directorio de almacenamiento',
-        );
+        throw AppUpdateException('No se pudo obtener el directorio de almacenamiento');
       }
 
       // Subdirectorio para updates
@@ -272,9 +249,7 @@ class AppUpdateRepository {
   /// Se llama tras una instalación exitosa o al inicio de una nueva descarga.
   Future<void> cleanOldApks() async {
     try {
-      final dir = Platform.isAndroid
-          ? await getExternalStorageDirectory()
-          : await getApplicationDocumentsDirectory();
+      final dir = Platform.isAndroid ? await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
       if (dir == null) return;
 
       final updatesDir = Directory('${dir.path}/updates');
@@ -284,9 +259,7 @@ class AppUpdateRepository {
         if (entity is File && entity.path.endsWith('.apk')) {
           try {
             entity.deleteSync();
-            AppLogger.debug(
-              'AppUpdateRepository: eliminado APK antiguo: ${entity.path}',
-            );
+            AppLogger.debug('AppUpdateRepository: eliminado APK antiguo: ${entity.path}');
           } catch (_) {}
         }
       }

@@ -49,6 +49,5 @@ class AppDateUtils {
   }
 
   /// Rango de tiempo para un evento: "14:00 – 15:30"
-  static String toTimeRange(DateTime start, DateTime end) =>
-      '${toTimeOnly(start)} – ${toTimeOnly(end)}';
+  static String toTimeRange(DateTime start, DateTime end) => '${toTimeOnly(start)} – ${toTimeOnly(end)}';
 }

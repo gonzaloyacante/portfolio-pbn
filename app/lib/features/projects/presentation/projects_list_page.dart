@@ -61,31 +61,21 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
       await ref.read(projectsRepositoryProvider).deleteProject(id);
       ref.invalidate(projectsListProvider);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('"$title" eliminado')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('"$title" eliminado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: AppColors.destructive,
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.destructive));
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final projectsAsync = ref.watch(
-      projectsListProvider(
-        search: _searchQuery,
-        categoryId: _selectedCategoryId,
-      ),
-    );
+    final projectsAsync = ref.watch(projectsListProvider(search: _searchQuery, categoryId: _selectedCategoryId));
 
     final viewMode = ref.watch(projectsViewModeProvider);
 
@@ -93,14 +83,8 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
       title: 'Proyectos',
       actions: [
         IconButton(
-          icon: Icon(
-            viewMode == ViewMode.grid
-                ? Icons.view_list_rounded
-                : Icons.grid_view_rounded,
-          ),
-          tooltip: viewMode == ViewMode.grid
-              ? 'Vista lista'
-              : 'Vista cuadrícula',
+          icon: Icon(viewMode == ViewMode.grid ? Icons.view_list_rounded : Icons.grid_view_rounded),
+          tooltip: viewMode == ViewMode.grid ? 'Vista lista' : 'Vista cuadrícula',
           onPressed: () => ref.read(projectsViewModeProvider.notifier).toggle(),
         ),
         IconButton(
@@ -111,11 +95,7 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
       ],
       body: Column(
         children: [
-          AppSearchBar(
-            hint: 'Buscar proyectos…',
-            controller: _searchController,
-            onChanged: _onSearch,
-          ),
+          AppSearchBar(hint: 'Buscar proyectos…', controller: _searchController, onChanged: _onSearch),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async => ref.invalidate(projectsListProvider),
@@ -131,11 +111,7 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
                         title: 'Sin proyectos',
                         subtitle: 'Crea tu primer proyecto con el botón +',
                       )
-                    : _ProjectsList(
-                        items: paginated.data,
-                        onDelete: _deleteProject,
-                        viewMode: viewMode,
-                      ),
+                    : _ProjectsList(items: paginated.data, onDelete: _deleteProject, viewMode: viewMode),
               ),
             ),
           ),
@@ -181,11 +157,7 @@ class _SearchBar extends StatelessWidget {
 // ── _ProjectsList ─────────────────────────────────────────────────────────────
 
 class _ProjectsList extends StatelessWidget {
-  const _ProjectsList({
-    required this.items,
-    required this.onDelete,
-    this.viewMode = ViewMode.grid,
-  });
+  const _ProjectsList({required this.items, required this.onDelete, this.viewMode = ViewMode.grid});
 
   final List<ProjectListItem> items;
   final Future<void> Function(String id, String title) onDelete;
@@ -195,12 +167,7 @@ class _ProjectsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final hPad = AppBreakpoints.pageMargin(context);
     final gutter = AppBreakpoints.gutter(context);
-    final cols = AppBreakpoints.gridColumns(
-      context,
-      compact: 2,
-      medium: 3,
-      expanded: 4,
-    );
+    final cols = AppBreakpoints.gridColumns(context, compact: 2, medium: 3, expanded: 4);
 
     if (viewMode == ViewMode.grid) {
       return GridView.builder(
@@ -254,10 +221,7 @@ class _ProjectGridCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
-        onTap: () => context.pushNamed(
-          RouteNames.projectEdit,
-          pathParameters: {'id': item.id},
-        ),
+        onTap: () => context.pushNamed(RouteNames.projectEdit, pathParameters: {'id': item.id}),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -270,30 +234,16 @@ class _ProjectGridCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       placeholder: (_, _) => Container(
                         color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 36,
-                        ),
+                        child: Icon(Icons.image_outlined, color: scheme.outlineVariant, size: 36),
                       ),
                       errorWidget: (_, _, _) => Container(
                         color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 36,
-                        ),
+                        child: Icon(Icons.broken_image_outlined, color: scheme.outlineVariant, size: 36),
                       ),
                     )
                   : Container(
                       color: scheme.surfaceContainerHighest,
-                      child: Center(
-                        child: Icon(
-                          Icons.photo_library_outlined,
-                          color: scheme.outlineVariant,
-                          size: 36,
-                        ),
-                      ),
+                      child: Center(child: Icon(Icons.photo_library_outlined, color: scheme.outlineVariant, size: 36)),
                     ),
             ),
             // Info
@@ -307,65 +257,39 @@ class _ProjectGridCard extends StatelessWidget {
                       if (item.isPinned)
                         Padding(
                           padding: const EdgeInsets.only(right: 3),
-                          child: Icon(
-                            Icons.push_pin_rounded,
-                            size: 12,
-                            color: scheme.primary,
-                          ),
+                          child: Icon(Icons.push_pin_rounded, size: 12, color: scheme.primary),
                         ),
                       Expanded(
                         child: Text(
                           item.title,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.more_vert_rounded,
-                          size: 16,
-                          color: scheme.outline,
-                        ),
+                        icon: Icon(Icons.more_vert_rounded, size: 16, color: scheme.outline),
                         itemBuilder: (_) => const [
                           PopupMenuItem(
                             value: 'edit',
                             child: Row(
-                              children: [
-                                Icon(Icons.edit_outlined, size: 18),
-                                SizedBox(width: 10),
-                                Text('Editar'),
-                              ],
+                              children: [Icon(Icons.edit_outlined, size: 18), SizedBox(width: 10), Text('Editar')],
                             ),
                           ),
                           PopupMenuItem(
                             value: 'delete',
                             child: Row(
                               children: [
-                                Icon(
-                                  Icons.delete_outline,
-                                  size: 18,
-                                  color: AppColors.destructive,
-                                ),
+                                Icon(Icons.delete_outline, size: 18, color: AppColors.destructive),
                                 const SizedBox(width: 10),
-                                Text(
-                                  'Eliminar',
-                                  style: TextStyle(
-                                    color: AppColors.destructive,
-                                  ),
-                                ),
+                                Text('Eliminar', style: TextStyle(color: AppColors.destructive)),
                               ],
                             ),
                           ),
                         ],
                         onSelected: (val) {
                           if (val == 'edit') {
-                            context.pushNamed(
-                              RouteNames.projectEdit,
-                              pathParameters: {'id': item.id},
-                            );
+                            context.pushNamed(RouteNames.projectEdit, pathParameters: {'id': item.id});
                           } else if (val == 'delete') {
                             onDelete(item.id, item.title);
                           }
@@ -376,12 +300,7 @@ class _ProjectGridCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      StatusBadge(
-                        status: item.isActive
-                            ? AppStatus.active
-                            : AppStatus.inactive,
-                        small: true,
-                      ),
+                      StatusBadge(status: item.isActive ? AppStatus.active : AppStatus.inactive, small: true),
                       if (item.isFeatured) ...[
                         const SizedBox(width: 4),
                         StatusBadge(status: AppStatus.featured, small: true),
@@ -416,10 +335,7 @@ class _ProjectTile extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
-        onTap: () => context.pushNamed(
-          RouteNames.projectEdit,
-          pathParameters: {'id': item.id},
-        ),
+        onTap: () => context.pushNamed(RouteNames.projectEdit, pathParameters: {'id': item.id}),
         child: SizedBox(
           height: 88,
           child: Row(
@@ -428,35 +344,22 @@ class _ProjectTile extends StatelessWidget {
               // Thumbnail — full height, wider for portfolio feel
               SizedBox(
                 width: 90,
-                child:
-                    item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                child: item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: item.thumbnailUrl!,
                         fit: BoxFit.cover,
                         placeholder: (_, _) => Container(
                           color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.image_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
+                          child: Icon(Icons.image_outlined, color: scheme.outlineVariant, size: 28),
                         ),
                         errorWidget: (_, _, _) => Container(
                           color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
+                          child: Icon(Icons.broken_image_outlined, color: scheme.outlineVariant, size: 28),
                         ),
                       )
                     : Container(
                         color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.photo_library_outlined,
-                          color: scheme.outlineVariant,
-                          size: 28,
-                        ),
+                        child: Icon(Icons.photo_library_outlined, color: scheme.outlineVariant, size: 28),
                       ),
               ),
               // Info
@@ -473,18 +376,12 @@ class _ProjectTile extends StatelessWidget {
                           if (item.isPinned)
                             Padding(
                               padding: const EdgeInsets.only(right: 4),
-                              child: Icon(
-                                Icons.push_pin_rounded,
-                                size: 13,
-                                color: scheme.primary,
-                              ),
+                              child: Icon(Icons.push_pin_rounded, size: 13, color: scheme.primary),
                             ),
                           Expanded(
                             child: Text(
                               item.title,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
+                              style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -507,9 +404,7 @@ class _ProjectTile extends StatelessWidget {
                           Expanded(
                             child: Text(
                               item.category.name,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.outline,
-                              ),
+                              style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -520,15 +415,8 @@ class _ProjectTile extends StatelessWidget {
                       // Status badges
                       Row(
                         children: [
-                          StatusBadge(
-                            status: item.isActive
-                                ? AppStatus.active
-                                : AppStatus.inactive,
-                          ),
-                          if (item.isFeatured) ...[
-                            const SizedBox(width: 6),
-                            StatusBadge(status: AppStatus.featured),
-                          ],
+                          StatusBadge(status: item.isActive ? AppStatus.active : AppStatus.inactive),
+                          if (item.isFeatured) ...[const SizedBox(width: 6), StatusBadge(status: AppStatus.featured)],
                         ],
                       ),
                     ],
@@ -537,17 +425,10 @@ class _ProjectTile extends StatelessWidget {
               ),
               // Actions button
               PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  size: 20,
-                  color: scheme.outline,
-                ),
+                icon: Icon(Icons.more_vert_rounded, size: 20, color: scheme.outline),
                 onSelected: (value) {
                   if (value == 'edit') {
-                    context.pushNamed(
-                      RouteNames.projectEdit,
-                      pathParameters: {'id': item.id},
-                    );
+                    context.pushNamed(RouteNames.projectEdit, pathParameters: {'id': item.id});
                   } else if (value == 'delete') {
                     onDelete(item.id, item.title);
                   }
@@ -557,11 +438,7 @@ class _ProjectTile extends StatelessWidget {
                     value: 'edit',
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.edit_outlined,
-                          size: 18,
-                          color: scheme.onSurface,
-                        ),
+                        Icon(Icons.edit_outlined, size: 18, color: scheme.onSurface),
                         const SizedBox(width: 10),
                         const Text('Editar'),
                       ],
@@ -571,16 +448,9 @@ class _ProjectTile extends StatelessWidget {
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: AppColors.destructive,
-                        ),
+                        Icon(Icons.delete_outline, size: 18, color: AppColors.destructive),
                         const SizedBox(width: 10),
-                        Text(
-                          'Eliminar',
-                          style: TextStyle(color: AppColors.destructive),
-                        ),
+                        Text('Eliminar', style: TextStyle(color: AppColors.destructive)),
                       ],
                     ),
                   ),

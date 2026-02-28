@@ -59,23 +59,14 @@ class _AppState extends ConsumerState<App> {
 
   /// Muestra el diálogo de actualización in-app.
   /// Verifica que el contexto del Navigator esté disponible antes de llamar.
-  Future<void> _showUpdateDialog(
-    AppRelease release, {
-    required bool mandatory,
-  }) async {
+  Future<void> _showUpdateDialog(AppRelease release, {required bool mandatory}) async {
     final context = routerNavigatorKey.currentContext;
     if (context == null || !context.mounted) {
       AppLogger.warn('App._showUpdateDialog: contexto no disponible');
       return;
     }
-    AppLogger.info(
-      'App: mostrando diálogo de actualización para v${release.version}',
-    );
-    await AppUpdateDialog.show(
-      context,
-      release: release,
-      forceUpdate: mandatory,
-    );
+    AppLogger.info('App: mostrando diálogo de actualización para v${release.version}');
+    await AppUpdateDialog.show(context, release: release, forceUpdate: mandatory);
   }
 
   @override
@@ -111,10 +102,7 @@ class _AppState extends ConsumerState<App> {
     // Escuchar el resultado del check de actualización y mostrar diálogo.
     // autoDispose implica que se recalcula solo cuando hay suscriptores;
     // este listen actúa como "suscriptor permanente" mientras App esté vivo.
-    ref.listen<AsyncValue<AppUpdateStatus>>(appUpdateStatusProvider, (
-      previous,
-      next,
-    ) {
+    ref.listen<AsyncValue<AppUpdateStatus>>(appUpdateStatusProvider, (previous, next) {
       next.whenData((status) {
         if (status is AppUpdateAvailable) {
           AppLogger.info(
@@ -124,10 +112,7 @@ class _AppState extends ConsumerState<App> {
           _showUpdateDialog(status.release, mandatory: status.forceUpdate);
         }
       });
-      next.whenOrNull(
-        error: (e, _) =>
-            AppLogger.error('App: error al verificar actualizaciones: $e'),
-      );
+      next.whenOrNull(error: (e, _) => AppLogger.error('App: error al verificar actualizaciones: $e'));
     });
 
     return MaterialApp.router(
@@ -195,11 +180,7 @@ class _DebugEnvBadgeState extends State<_DebugEnvBadge> {
                 : Colors.green.shade800.withValues(alpha: 0.9),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
+              BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 6, offset: const Offset(0, 2)),
             ],
           ),
           child: const Row(
@@ -209,12 +190,7 @@ class _DebugEnvBadgeState extends State<_DebugEnvBadge> {
               SizedBox(width: 4),
               Text(
                 'DEV',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.5,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
               ),
             ],
           ),

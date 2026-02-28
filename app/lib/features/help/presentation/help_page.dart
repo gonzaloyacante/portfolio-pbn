@@ -13,11 +13,7 @@ class HelpPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final version = ref
         .watch(appBuildInfoProvider)
-        .when(
-          data: (info) => '${info.version} (build ${info.buildNumber})',
-          loading: () => '…',
-          error: (_, _) => '—',
-        );
+        .when(data: (info) => '${info.version} (build ${info.buildNumber})', loading: () => '…', error: (_, _) => '—');
     return AppScaffold(
       title: 'Ayuda',
       body: ListView(
@@ -43,44 +39,17 @@ class HelpPage extends ConsumerWidget {
             icon: Icons.dashboard_outlined,
             title: 'Secciones del panel',
             children: [
-              _HelpItem(
-                label: 'Dashboard',
-                value: 'Resumen de actividad y métricas principales.',
-              ),
-              _HelpItem(
-                label: 'Proyectos',
-                value:
-                    'Gestiona el portfolio: título, descripción, imágenes y categoría.',
-              ),
-              _HelpItem(
-                label: 'Categorías',
-                value: 'Organiza los proyectos por tipo de trabajo.',
-              ),
-              _HelpItem(
-                label: 'Servicios',
-                value: 'Servicios ofrecidos con precio y descripción.',
-              ),
-              _HelpItem(
-                label: 'Testimonios',
-                value: 'Opiniones de clientes que aparecen en el sitio.',
-              ),
-              _HelpItem(
-                label: 'Contactos',
-                value: 'Mensajes recibidos desde el formulario de contacto.',
-              ),
-              _HelpItem(
-                label: 'Calendario',
-                value: 'Reservas agendadas con estado y detalles del cliente.',
-              ),
-              _HelpItem(
-                label: 'Configuración',
-                value:
-                    'Ajustes del sitio: textos, colores, redes sociales y más.',
-              ),
+              _HelpItem(label: 'Dashboard', value: 'Resumen de actividad y métricas principales.'),
+              _HelpItem(label: 'Proyectos', value: 'Gestiona el portfolio: título, descripción, imágenes y categoría.'),
+              _HelpItem(label: 'Categorías', value: 'Organiza los proyectos por tipo de trabajo.'),
+              _HelpItem(label: 'Servicios', value: 'Servicios ofrecidos con precio y descripción.'),
+              _HelpItem(label: 'Testimonios', value: 'Opiniones de clientes que aparecen en el sitio.'),
+              _HelpItem(label: 'Contactos', value: 'Mensajes recibidos desde el formulario de contacto.'),
+              _HelpItem(label: 'Calendario', value: 'Reservas agendadas con estado y detalles del cliente.'),
+              _HelpItem(label: 'Configuración', value: 'Ajustes del sitio: textos, colores, redes sociales y más.'),
               _HelpItem(
                 label: 'Papelera',
-                value:
-                    'Elementos eliminados. Se pueden restaurar o eliminar permanentemente.',
+                value: 'Elementos eliminados. Se pueden restaurar o eliminar permanentemente.',
               ),
             ],
           ),
@@ -97,13 +66,9 @@ class HelpPage extends ConsumerWidget {
               ),
               _HelpItem(
                 label: '¿Cómo restaurar un elemento eliminado?',
-                value:
-                    'Ve a Papelera, localiza el elemento y pulsa "Restaurar".',
+                value: 'Ve a Papelera, localiza el elemento y pulsa "Restaurar".',
               ),
-              _HelpItem(
-                label: '¿Cómo cambiar la contraseña?',
-                value: 'Ve a Mi cuenta → Cambiar contraseña.',
-              ),
+              _HelpItem(label: '¿Cómo cambiar la contraseña?', value: 'Ve a Mi cuenta → Cambiar contraseña.'),
             ],
           ),
           SizedBox(height: 16),
@@ -124,11 +89,7 @@ class HelpPage extends ConsumerWidget {
 // ── Widgets auxiliares ─────────────────────────────────────────────────────────
 
 class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.icon,
-    required this.title,
-    required this.children,
-  });
+  const _SectionCard({required this.icon, required this.title, required this.children});
 
   final IconData icon;
   final String title;
@@ -147,12 +108,7 @@ class _SectionCard extends StatelessWidget {
               children: [
                 Icon(icon, color: Theme.of(context).colorScheme.primary),
                 const SizedBox(width: 10),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               ],
             ),
             const Divider(height: 24),
@@ -177,12 +133,7 @@ class _HelpItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: Theme.of(
-              context,
-            ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
-          ),
+          Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 2),
           Text(value, style: Theme.of(context).textTheme.bodyMedium),
         ],

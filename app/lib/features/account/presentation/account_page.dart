@@ -6,6 +6,9 @@ import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/debug/debug_provider.dart';
 import '../../../core/notifications/push_provider.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../calendar/data/google_calendar_models.dart';
 import '../../calendar/providers/google_calendar_provider.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -44,17 +47,12 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     try {
       await ref
           .read(accountRepositoryProvider)
-          .changePassword(
-            currentPassword: _currentPwCtrl.text.trim(),
-            newPassword: _newPwCtrl.text.trim(),
-          );
+          .changePassword(currentPassword: _currentPwCtrl.text.trim(), newPassword: _newPwCtrl.text.trim());
       if (!mounted) return;
       _currentPwCtrl.clear();
       _newPwCtrl.clear();
       _confirmPwCtrl.clear();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contraseña actualizada correctamente')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Contraseña actualizada correctamente')));
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (!mounted) return;
@@ -80,123 +78,117 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     final user = authState is Authenticated ? authState.user : null;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final hPad = AppBreakpoints.pageMargin(context);
+    final isExpanded = AppBreakpoints.isExpanded(context);
+
     return LoadingOverlay(
       isLoading: _loading,
       child: AppScaffold(
         title: 'Mi cuenta',
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          children: [
-            // ── Perfil ────────────────────────────────────────────────────
-            _ProfileCard(user: user),
-            const SizedBox(height: 24),
-            // ── Cambiar contraseña ────────────────────────────────────────
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Cambiar contraseña',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 16),
-                      _PasswordField(
-                        controller: _currentPwCtrl,
-                        label: 'Contraseña actual',
-                        show: _showCurrent,
-                        onToggle: () =>
-                            setState(() => _showCurrent = !_showCurrent),
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Requerido' : null,
-                      ),
-                      const SizedBox(height: 12),
-                      _PasswordField(
-                        controller: _newPwCtrl,
-                        label: 'Nueva contraseña',
-                        show: _showNew,
-                        onToggle: () => setState(() => _showNew = !_showNew),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Requerido';
-                          if (v.length < 8) {
-                            return 'Mínimo 8 caracteres';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      _PasswordField(
-                        controller: _confirmPwCtrl,
-                        label: 'Confirmar nueva contraseña',
-                        show: _showConfirm,
-                        onToggle: () =>
-                            setState(() => _showConfirm = !_showConfirm),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Requerido';
-                          if (v != _newPwCtrl.text) {
-                            return 'Las contraseñas no coinciden';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed: _changePassword,
-                          child: const Text('Actualizar contraseña'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            // ── Google Calendar ───────────────────────────────────────────
-            _GoogleCalendarCard(),
-            const SizedBox(height: 12),
-            // ── Cerrar sesión ─────────────────────────────────────────────
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: ListTile(
-                leading: Icon(Icons.logout, color: colorScheme.error),
-                title: Text(
-                  'Cerrar sesión',
-                  style: TextStyle(
-                    color: colorScheme.error,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                onTap: _logout,
-              ),
-            ),
-            const SizedBox(height: 24),
-            // ── Versión ───────────────────────────────────────────────────
-            ref
-                .watch(appBuildInfoProvider)
-                .when(
-                  data: (info) => Center(
-                    child: Text(
-                      'Versión ${info.fullVersion}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+        body: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: isExpanded ? 640.0 : double.infinity),
+            child: ListView(
+              padding: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.xl),
+              children: [
+                // ── Perfil ────────────────────────────────────────────────────
+                _ProfileCard(user: user),
+                const SizedBox(height: 24),
+                // ── Cambiar contraseña ────────────────────────────────────────
+                Card(
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cambiar contraseña',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 16),
+                          _PasswordField(
+                            controller: _currentPwCtrl,
+                            label: 'Contraseña actual',
+                            show: _showCurrent,
+                            onToggle: () => setState(() => _showCurrent = !_showCurrent),
+                            validator: (v) => (v == null || v.isEmpty) ? 'Requerido' : null,
+                          ),
+                          const SizedBox(height: 12),
+                          _PasswordField(
+                            controller: _newPwCtrl,
+                            label: 'Nueva contraseña',
+                            show: _showNew,
+                            onToggle: () => setState(() => _showNew = !_showNew),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Requerido';
+                              if (v.length < 8) {
+                                return 'Mínimo 8 caracteres';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          _PasswordField(
+                            controller: _confirmPwCtrl,
+                            label: 'Confirmar nueva contraseña',
+                            show: _showConfirm,
+                            onToggle: () => setState(() => _showConfirm = !_showConfirm),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Requerido';
+                              if (v != _newPwCtrl.text) {
+                                return 'Las contraseñas no coinciden';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(onPressed: _changePassword, child: const Text('Actualizar contraseña')),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, _) => const SizedBox.shrink(),
                 ),
-          ],
+                const SizedBox(height: 24),
+                // ── Google Calendar ───────────────────────────────────────────
+                _GoogleCalendarCard(),
+                const SizedBox(height: 12),
+                // ── Cerrar sesión ─────────────────────────────────────────────
+                Card(
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+                  child: ListTile(
+                    leading: Icon(Icons.logout, color: colorScheme.error),
+                    title: Text(
+                      'Cerrar sesión',
+                      style: TextStyle(color: colorScheme.error, fontWeight: FontWeight.w600),
+                    ),
+                    onTap: _logout,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // ── Versión ───────────────────────────────────────────────────
+                ref
+                    .watch(appBuildInfoProvider)
+                    .when(
+                      data: (info) => Center(
+                        child: Text(
+                          'Versión ${info.fullVersion}',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, _) => const SizedBox.shrink(),
+                    ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -216,7 +208,7 @@ class _ProfileCard extends StatelessWidget {
     final email = user?.email ?? '—';
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
@@ -226,9 +218,9 @@ class _ProfileCard extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               child: Text(
                 name.isNotEmpty ? name[0].toUpperCase() : 'A',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
               ),
             ),
             const SizedBox(width: 16),
@@ -236,12 +228,7 @@ class _ProfileCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  Text(name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
                   Text(email, style: Theme.of(context).textTheme.bodySmall),
                 ],
@@ -277,10 +264,7 @@ class _PasswordField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
-        suffixIcon: IconButton(
-          icon: Icon(show ? Icons.visibility_off : Icons.visibility),
-          onPressed: onToggle,
-        ),
+        suffixIcon: IconButton(icon: Icon(show ? Icons.visibility_off : Icons.visibility), onPressed: onToggle),
       ),
       validator: validator,
     );
@@ -308,37 +292,24 @@ class _GoogleCalendarCard extends ConsumerWidget {
         };
 
         return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
           child: ListTile(
             leading: const Icon(Icons.calendar_month_outlined),
             title: Text(
-              isConnected
-                  ? 'Google Calendar conectado'
-                  : 'Conectar Google Calendar',
+              isConnected ? 'Google Calendar conectado' : 'Conectar Google Calendar',
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: email != null ? Text(email) : null,
             trailing: isConnecting
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
+                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
                 : isConnected
                 ? TextButton(
-                    onPressed: () =>
-                        ref.read(googleCalendarProvider.notifier).signOut(),
-                    style: TextButton.styleFrom(
-                      foregroundColor: colorScheme.error,
-                    ),
+                    onPressed: () => ref.read(googleCalendarProvider.notifier).signOut(),
+                    style: TextButton.styleFrom(foregroundColor: colorScheme.error),
                     child: const Text('Desconectar'),
                   )
                 : null,
-            onTap: isConnected || isConnecting
-                ? null
-                : () => ref.read(googleCalendarProvider.notifier).signIn(),
+            onTap: isConnected || isConnecting ? null : () => ref.read(googleCalendarProvider.notifier).signIn(),
           ),
         );
       },

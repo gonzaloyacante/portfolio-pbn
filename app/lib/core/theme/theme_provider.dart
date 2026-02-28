@@ -8,9 +8,7 @@ import 'app_theme.dart';
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 /// Controla el [ThemeMode] de la app y lo persiste en SharedPreferences.
-final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
-  ThemeModeNotifier.new,
-);
+final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(ThemeModeNotifier.new);
 
 // ── Notifier ──────────────────────────────────────────────────────────────────
 

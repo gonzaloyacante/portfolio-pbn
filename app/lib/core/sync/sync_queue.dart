@@ -83,23 +83,17 @@ class SyncQueueRepository {
   /// Marca una operación como completada y la elimina de la cola.
   Future<void> markCompleted(String id) async {
     AppLogger.info('SyncQueue: completed [$id]');
-    await (_db.delete(
-      _db.syncOperationsTable,
-    )..where((t) => t.id.equals(id))).go();
+    await (_db.delete(_db.syncOperationsTable)..where((t) => t.id.equals(id))).go();
   }
 
   /// Incrementa el contador de intentos de una operación.
   Future<void> incrementAttempts(String id) async {
     await (_db.update(
       _db.syncOperationsTable,
-    )..where((t) => t.id.equals(id))).write(
-      SyncOperationsTableCompanion(lastAttemptAt: Value(DateTime.now())),
-    );
+    )..where((t) => t.id.equals(id))).write(SyncOperationsTableCompanion(lastAttemptAt: Value(DateTime.now())));
 
     // Marcar como fallida si supera el máximo de intentos.
-    final row = await (_db.select(
-      _db.syncOperationsTable,
-    )..where((t) => t.id.equals(id))).getSingleOrNull();
+    final row = await (_db.select(_db.syncOperationsTable)..where((t) => t.id.equals(id))).getSingleOrNull();
     if (row != null && row.attempts >= 3) {
       await markFailed(id);
     }
@@ -108,8 +102,9 @@ class SyncQueueRepository {
   /// Marca una operación como permanentemente fallida.
   Future<void> markFailed(String id) async {
     AppLogger.warn('SyncQueue: marking [$id] as permanently failed');
-    await (_db.update(_db.syncOperationsTable)..where((t) => t.id.equals(id)))
-        .write(const SyncOperationsTableCompanion(failed: Value(true)));
+    await (_db.update(
+      _db.syncOperationsTable,
+    )..where((t) => t.id.equals(id))).write(const SyncOperationsTableCompanion(failed: Value(true)));
   }
 
   // ── Clear ──────────────────────────────────────────────────────────────────

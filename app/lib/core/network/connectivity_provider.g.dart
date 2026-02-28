@@ -18,15 +18,8 @@ final connectivityProvider = ConnectivityProvider._();
 /// Emite [ConnectivityResult] cada vez que cambia la red.
 
 final class ConnectivityProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<ConnectivityResult>,
-          ConnectivityResult,
-          Stream<ConnectivityResult>
-        >
-    with
-        $FutureModifier<ConnectivityResult>,
-        $StreamProvider<ConnectivityResult> {
+    extends $FunctionalProvider<AsyncValue<ConnectivityResult>, ConnectivityResult, Stream<ConnectivityResult>>
+    with $FutureModifier<ConnectivityResult>, $StreamProvider<ConnectivityResult> {
   /// Stream reactivo del estado de conectividad del dispositivo.
   /// Emite [ConnectivityResult] cada vez que cambia la red.
   ConnectivityProvider._()
@@ -45,9 +38,8 @@ final class ConnectivityProvider
 
   @$internal
   @override
-  $StreamProviderElement<ConnectivityResult> $createElement(
-    $ProviderPointer pointer,
-  ) => $StreamProviderElement(pointer);
+  $StreamProviderElement<ConnectivityResult> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
 
   @override
   Stream<ConnectivityResult> create(Ref ref) {
@@ -70,8 +62,7 @@ final isOnlineProvider = IsOnlineProvider._();
 /// Por defecto asume `true` (optimista) hasta tener el primer resultado.
 /// Esto evita bloquear la UI en el arranque por razones de red.
 
-final class IsOnlineProvider extends $FunctionalProvider<bool, bool, bool>
-    with $Provider<bool> {
+final class IsOnlineProvider extends $FunctionalProvider<bool, bool, bool> with $Provider<bool> {
   /// `true` si el dispositivo tiene algún tipo de conexión activa.
   ///
   /// Por defecto asume `true` (optimista) hasta tener el primer resultado.
@@ -92,8 +83,7 @@ final class IsOnlineProvider extends $FunctionalProvider<bool, bool, bool>
 
   @$internal
   @override
-  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   bool create(Ref ref) {
@@ -102,10 +92,7 @@ final class IsOnlineProvider extends $FunctionalProvider<bool, bool, bool>
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<bool>(value));
   }
 }
 

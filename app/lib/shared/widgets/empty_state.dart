@@ -14,13 +14,7 @@ import 'package:flutter/material.dart';
 /// )
 /// ```
 class EmptyState extends StatelessWidget {
-  const EmptyState({
-    super.key,
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    this.action,
-  });
+  const EmptyState({super.key, required this.icon, required this.title, this.subtitle, this.action});
 
   final IconData icon;
   final String title;
@@ -45,35 +39,23 @@ class EmptyState extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [
-                    colorScheme.primary.withValues(alpha: 0.12),
-                    colorScheme.primary.withValues(alpha: 0.04),
-                  ],
+                  colors: [colorScheme.primary.withValues(alpha: 0.12), colorScheme.primary.withValues(alpha: 0.04)],
                 ),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 36,
-                color: colorScheme.primary.withValues(alpha: 0.6),
-              ),
+              child: Icon(icon, size: 36, color: colorScheme.primary.withValues(alpha: 0.6)),
             ),
             const SizedBox(height: 20),
             Text(
               title,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+              style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               textAlign: TextAlign.center,
             ),
             if (subtitle != null) ...[
               const SizedBox(height: 6),
               Text(
                 subtitle!,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.outline,
-                  height: 1.4,
-                ),
+                style: textTheme.bodyMedium?.copyWith(color: colorScheme.outline, height: 1.4),
                 textAlign: TextAlign.center,
               ),
             ],

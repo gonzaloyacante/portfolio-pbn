@@ -22,9 +22,7 @@ final class ProjectsListProvider
           PaginatedResponse<ProjectListItem>,
           FutureOr<PaginatedResponse<ProjectListItem>>
         >
-    with
-        $FutureModifier<PaginatedResponse<ProjectListItem>>,
-        $FutureProvider<PaginatedResponse<ProjectListItem>> {
+    with $FutureModifier<PaginatedResponse<ProjectListItem>>, $FutureProvider<PaginatedResponse<ProjectListItem>> {
   /// Lista paginada de proyectos con parámetros de filtro.
   ProjectsListProvider._({
     required ProjectsListFamily super.from,
@@ -49,20 +47,13 @@ final class ProjectsListProvider
 
   @$internal
   @override
-  $FutureProviderElement<PaginatedResponse<ProjectListItem>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<PaginatedResponse<ProjectListItem>> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<ProjectListItem>> create(Ref ref) {
-    final argument =
-        this.argument as ({int page, String? search, String? categoryId});
-    return projectsList(
-      ref,
-      page: argument.page,
-      search: argument.search,
-      categoryId: argument.categoryId,
-    );
+    final argument = this.argument as ({int page, String? search, String? categoryId});
+    return projectsList(ref, page: argument.page, search: argument.search, categoryId: argument.categoryId);
   }
 
   @override
@@ -97,14 +88,8 @@ final class ProjectsListFamily extends $Family
 
   /// Lista paginada de proyectos con parámetros de filtro.
 
-  ProjectsListProvider call({
-    int page = 1,
-    String? search,
-    String? categoryId,
-  }) => ProjectsListProvider._(
-    argument: (page: page, search: search, categoryId: categoryId),
-    from: this,
-  );
+  ProjectsListProvider call({int page = 1, String? search, String? categoryId}) =>
+      ProjectsListProvider._(argument: (page: page, search: search, categoryId: categoryId), from: this);
 
   @override
   String toString() => r'projectsListProvider';
@@ -118,24 +103,17 @@ final projectDetailProvider = ProjectDetailFamily._();
 /// Detalle completo de un proyecto.
 
 final class ProjectDetailProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<ProjectDetail>,
-          ProjectDetail,
-          FutureOr<ProjectDetail>
-        >
+    extends $FunctionalProvider<AsyncValue<ProjectDetail>, ProjectDetail, FutureOr<ProjectDetail>>
     with $FutureModifier<ProjectDetail>, $FutureProvider<ProjectDetail> {
   /// Detalle completo de un proyecto.
-  ProjectDetailProvider._({
-    required ProjectDetailFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'projectDetailProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  ProjectDetailProvider._({required ProjectDetailFamily super.from, required String super.argument})
+    : super(
+        retry: null,
+        name: r'projectDetailProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$projectDetailHash();
@@ -149,9 +127,7 @@ final class ProjectDetailProvider
 
   @$internal
   @override
-  $FutureProviderElement<ProjectDetail> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
+  $FutureProviderElement<ProjectDetail> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<ProjectDetail> create(Ref ref) {
@@ -174,8 +150,7 @@ String _$projectDetailHash() => r'0f04fbc526c36e4c939ecf4e1f6cb45b7e0de7d1';
 
 /// Detalle completo de un proyecto.
 
-final class ProjectDetailFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<ProjectDetail>, String> {
+final class ProjectDetailFamily extends $Family with $FunctionalFamilyOverride<FutureOr<ProjectDetail>, String> {
   ProjectDetailFamily._()
     : super(
         retry: null,
@@ -187,8 +162,7 @@ final class ProjectDetailFamily extends $Family
 
   /// Detalle completo de un proyecto.
 
-  ProjectDetailProvider call(String id) =>
-      ProjectDetailProvider._(argument: id, from: this);
+  ProjectDetailProvider call(String id) => ProjectDetailProvider._(argument: id, from: this);
 
   @override
   String toString() => r'projectDetailProvider';

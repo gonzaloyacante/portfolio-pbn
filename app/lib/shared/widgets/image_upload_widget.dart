@@ -69,10 +69,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label.isNotEmpty) ...[
-          Text(
-            widget.label,
-            style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurface),
-          ),
+          Text(widget.label, style: textTheme.labelLarge?.copyWith(color: colorScheme.onSurface)),
           const SizedBox(height: 8),
         ],
         GestureDetector(
@@ -83,9 +80,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.3),
-              ),
+              border: Border.all(color: colorScheme.outline.withValues(alpha: 0.3)),
               color: colorScheme.surfaceContainerHighest,
             ),
             child: _isProcessing
@@ -111,9 +106,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
   Future<void> _showSourcePicker() async {
     final source = await showModalBottomSheet<ImagePickerSource>(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -145,9 +138,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
     try {
       final picker = ImagePicker();
       final picked = await picker.pickImage(
-        source: source == ImagePickerSource.gallery
-            ? ImageSource.gallery
-            : ImageSource.camera,
+        source: source == ImagePickerSource.gallery ? ImageSource.gallery : ImageSource.camera,
         maxWidth: widget.maxWidth.toDouble(),
         maxHeight: widget.maxHeight.toDouble(),
         imageQuality: AppConstants.imageQuality,
@@ -160,10 +151,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
         aspectRatio: widget.aspectRatio,
         compressQuality: AppConstants.imageQuality,
         uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: 'Recortar imagen',
-            lockAspectRatio: widget.aspectRatio != null,
-          ),
+          AndroidUiSettings(toolbarTitle: 'Recortar imagen', lockAspectRatio: widget.aspectRatio != null),
           IOSUiSettings(
             title: 'Recortar imagen',
             doneButtonTitle: 'Listo',
@@ -181,9 +169,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
     } catch (e) {
       AppLogger.error('ImageUploadWidget: error picking image', e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al seleccionar la imagen')),
-        );
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error al seleccionar la imagen')));
       }
     } finally {
       if (mounted) setState(() => _isProcessing = false);
@@ -208,11 +194,7 @@ class _ImagePreview extends StatelessWidget {
         if (file != null)
           Image.file(file!, fit: BoxFit.cover)
         else if (url != null)
-          Image.network(
-            url!,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => const Icon(Icons.broken_image),
-          ),
+          Image.network(url!, fit: BoxFit.cover, errorBuilder: (_, _, _) => const Icon(Icons.broken_image)),
         // Overlay con botón de eliminar
         if (onRemove != null)
           Positioned(
@@ -249,11 +231,7 @@ class _ImagePreview extends StatelessWidget {
                       SizedBox(width: 4),
                       Text(
                         'Cambiar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -280,17 +258,11 @@ class _EmptyPreview extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.add_photo_alternate_outlined,
-          size: 48,
-          color: colorScheme.outline,
-        ),
+        Icon(Icons.add_photo_alternate_outlined, size: 48, color: colorScheme.outline),
         const SizedBox(height: 12),
         Text(
           hint,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: colorScheme.outline),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.outline),
           textAlign: TextAlign.center,
         ),
       ],

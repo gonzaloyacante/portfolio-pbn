@@ -92,10 +92,7 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
   Future<void> _sendTokenToBackend(String token, String platform) async {
     try {
       final client = ref.read(apiClientProvider);
-      await client.post<void>(
-        Endpoints.pushRegister,
-        data: {'token': token, 'platform': platform},
-      );
+      await client.post<void>(Endpoints.pushRegister, data: {'token': token, 'platform': platform});
       AppLogger.info('PushRegistration: token registrado en backend');
     } on UnauthorizedException {
       // La sesión expiró — no reintentar; el siguiente login re-registrará.

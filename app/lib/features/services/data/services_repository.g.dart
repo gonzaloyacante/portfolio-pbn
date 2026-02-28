@@ -13,12 +13,7 @@ part of 'services_repository.dart';
 final servicesRepositoryProvider = ServicesRepositoryProvider._();
 
 final class ServicesRepositoryProvider
-    extends
-        $FunctionalProvider<
-          ServicesRepository,
-          ServicesRepository,
-          ServicesRepository
-        >
+    extends $FunctionalProvider<ServicesRepository, ServicesRepository, ServicesRepository>
     with $Provider<ServicesRepository> {
   ServicesRepositoryProvider._()
     : super(
@@ -36,9 +31,7 @@ final class ServicesRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<ServicesRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<ServicesRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   ServicesRepository create(Ref ref) {
@@ -47,12 +40,8 @@ final class ServicesRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(ServicesRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ServicesRepository>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<ServicesRepository>(value));
   }
 }
 
-String _$servicesRepositoryHash() =>
-    r'ff50d289de93847acfa3d94183ebaf961d13908c';
+String _$servicesRepositoryHash() => r'ff50d289de93847acfa3d94183ebaf961d13908c';

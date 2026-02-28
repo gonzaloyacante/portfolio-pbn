@@ -15,8 +15,7 @@ final pushServiceProvider = PushServiceProvider._();
 
 /// Proveedor del servicio Push singleton.
 
-final class PushServiceProvider
-    extends $FunctionalProvider<PushService, PushService, PushService>
+final class PushServiceProvider extends $FunctionalProvider<PushService, PushService, PushService>
     with $Provider<PushService> {
   /// Proveedor del servicio Push singleton.
   PushServiceProvider._()
@@ -35,8 +34,7 @@ final class PushServiceProvider
 
   @$internal
   @override
-  $ProviderElement<PushService> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<PushService> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   PushService create(Ref ref) {
@@ -45,10 +43,7 @@ final class PushServiceProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(PushService value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<PushService>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<PushService>(value));
   }
 }
 
@@ -70,8 +65,7 @@ final pushRegistrationProvider = PushRegistrationNotifierProvider._();
 /// - [unregister]: llama a POST /api/admin/push/unregister
 /// - Suscribe al stream [PushService.onTokenRefresh] para re-registrar
 ///   automáticamente cuando FCM rota el token.
-final class PushRegistrationNotifierProvider
-    extends $NotifierProvider<PushRegistrationNotifier, String?> {
+final class PushRegistrationNotifierProvider extends $NotifierProvider<PushRegistrationNotifier, String?> {
   /// Gestiona el registro/desregistro del token FCM en el backend.
   ///
   /// - [register]: llama a POST /api/admin/push/register
@@ -98,15 +92,11 @@ final class PushRegistrationNotifierProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String?>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<String?>(value));
   }
 }
 
-String _$pushRegistrationNotifierHash() =>
-    r'5cd7b1ffaa8699794012e35cf70fc89ee0cad7ee';
+String _$pushRegistrationNotifierHash() => r'5cd7b1ffaa8699794012e35cf70fc89ee0cad7ee';
 
 /// Gestiona el registro/desregistro del token FCM en el backend.
 ///
@@ -121,14 +111,7 @@ abstract class _$PushRegistrationNotifier extends $Notifier<String?> {
   @override
   void runBuild() {
     final ref = this.ref as $Ref<String?, String?>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<String?, String?>,
-              String?,
-              Object?,
-              Object?
-            >;
+    final element = ref.element as $ClassProviderElement<AnyNotifier<String?, String?>, String?, Object?, Object?>;
     element.handleCreate(ref, build);
   }
 }

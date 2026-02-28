@@ -13,14 +13,7 @@ import '../../core/theme/app_spacing.dart';
 /// )
 /// ```
 class SectionHeader extends StatelessWidget {
-  const SectionHeader({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.padding,
-    this.titleStyle,
-  });
+  const SectionHeader({super.key, required this.title, this.subtitle, this.trailing, this.padding, this.titleStyle});
 
   final String title;
   final String? subtitle;
@@ -34,14 +27,7 @@ class SectionHeader extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
-      padding:
-          padding ??
-          EdgeInsets.fromLTRB(
-            AppSpacing.base,
-            AppSpacing.base,
-            AppSpacing.base,
-            AppSpacing.sm,
-          ),
+      padding: padding ?? EdgeInsets.fromLTRB(AppSpacing.base, AppSpacing.base, AppSpacing.base, AppSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -49,22 +35,10 @@ class SectionHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style:
-                      titleStyle ??
-                      textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
+                Text(title, style: titleStyle ?? textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle!,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withAlpha(140),
-                    ),
-                  ),
+                  Text(subtitle!, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface.withAlpha(140))),
                 ],
               ],
             ),

@@ -21,13 +21,7 @@ final syncQueueProvider = SyncQueueProvider._();
 /// Patrón: cuando la app está offline, las mutaciones se guardan aquí.
 /// [SyncManager] lee esta cola y la procesa al recuperar la conexión.
 
-final class SyncQueueProvider
-    extends
-        $FunctionalProvider<
-          SyncQueueRepository,
-          SyncQueueRepository,
-          SyncQueueRepository
-        >
+final class SyncQueueProvider extends $FunctionalProvider<SyncQueueRepository, SyncQueueRepository, SyncQueueRepository>
     with $Provider<SyncQueueRepository> {
   /// Gestiona la cola de operaciones pendientes de sincronizar con el servidor.
   ///
@@ -49,9 +43,7 @@ final class SyncQueueProvider
 
   @$internal
   @override
-  $ProviderElement<SyncQueueRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  $ProviderElement<SyncQueueRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
 
   @override
   SyncQueueRepository create(Ref ref) {
@@ -60,10 +52,7 @@ final class SyncQueueProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(SyncQueueRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SyncQueueRepository>(value),
-    );
+    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<SyncQueueRepository>(value));
   }
 }
 

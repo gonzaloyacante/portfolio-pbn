@@ -43,9 +43,7 @@ class DebugPanel extends ConsumerStatefulWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (_) => const DebugPanel(),
     );
   }
@@ -142,11 +140,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
   void _showSnack(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating, duration: const Duration(seconds: 2)),
     );
   }
 
@@ -173,10 +167,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
               child: Container(
                 width: 40,
                 height: 4,
-                decoration: BoxDecoration(
-                  color: colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
-                ),
+                decoration: BoxDecoration(color: colorScheme.outlineVariant, borderRadius: BorderRadius.circular(2)),
               ),
             ),
             // ── Header ─────────────────────────────────────────────────
@@ -184,17 +175,11 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.developer_mode,
-                    color: colorScheme.primary,
-                    size: 22,
-                  ),
+                  Icon(Icons.developer_mode, color: colorScheme.primary, size: 22),
                   const SizedBox(width: 10),
                   Text(
                     'Developer Tools',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
                   // Badge de entorno
@@ -215,27 +200,18 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
 
                   // ── Build Info ──────────────────────────────────────
                   buildInfoAsync.when(
-                    data: (info) =>
-                        _BuildInfoCard(info: info, onCopy: _copyToClipboard),
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
+                    data: (info) => _BuildInfoCard(info: info, onCopy: _copyToClipboard),
+                    loading: () => const Center(child: CircularProgressIndicator()),
                     error: (e, _) => Text('Error cargando build info: $e'),
                   ),
                   const SizedBox(height: 12),
 
                   // ── Auth Status ─────────────────────────────────────
-                  _AuthInfoCard(
-                    authAsync: authAsync,
-                    onClearTokens: _clearTokens,
-                    onCopy: _copyToClipboard,
-                  ),
+                  _AuthInfoCard(authAsync: authAsync, onClearTokens: _clearTokens, onCopy: _copyToClipboard),
                   const SizedBox(height: 12),
 
                   // ── Sync Status ─────────────────────────────────────
-                  _SyncInfoCard(
-                    pendingCount: pendingSync,
-                    onClearQueue: _clearSyncQueue,
-                  ),
+                  _SyncInfoCard(pendingCount: pendingSync, onClearQueue: _clearSyncQueue),
                   const SizedBox(height: 12),
 
                   // ── Acciones de Debug ───────────────────────────────
@@ -245,11 +221,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                     onClearCache: _clearCache,
                     onClearDatabase: _clearDatabase,
                     onOpenLogs: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const DebugLogPage(),
-                        ),
-                      );
+                      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DebugLogPage()));
                     },
                   ),
                   const SizedBox(height: 12),
@@ -262,10 +234,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                     'Solo visible en builds debug/profile.\n'
                     'No aparece en producción (kReleaseMode = true).',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
+                    style: TextStyle(fontSize: 11, color: colorScheme.onSurface.withValues(alpha: 0.4)),
                   ),
                 ],
               ),
@@ -286,8 +255,7 @@ class _ServerSwitcherCard extends ConsumerStatefulWidget {
   const _ServerSwitcherCard();
 
   @override
-  ConsumerState<_ServerSwitcherCard> createState() =>
-      _ServerSwitcherCardState();
+  ConsumerState<_ServerSwitcherCard> createState() => _ServerSwitcherCardState();
 }
 
 class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
@@ -325,11 +293,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
               Expanded(
                 child: Text(
                   serverState.resolvedUrl,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontSize: 12, fontFamily: 'monospace', fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -355,9 +319,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(
-                        '${preset.emoji} Servidor: ${preset.resolveUrl()}',
-                      ),
+                      content: Text('${preset.emoji} Servidor: ${preset.resolveUrl()}'),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
                     ),
@@ -367,14 +329,9 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
               borderRadius: BorderRadius.circular(8),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? scheme.primaryContainer
-                      : scheme.surfaceContainerHighest,
+                  color: isSelected ? scheme.primaryContainer : scheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isSelected ? scheme.primary : scheme.outlineVariant,
@@ -399,10 +356,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                         ),
                         Text(
                           preset.description,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: scheme.onSurface.withValues(alpha: 0.5),
-                          ),
+                          style: TextStyle(fontSize: 10, color: scheme.onSurface.withValues(alpha: 0.5)),
                         ),
                       ],
                     ),
@@ -444,20 +398,12 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                   await notifier.setCustomUrl(url);
                   setState(() => _showCustomInput = false);
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('✏️ URL: $url'),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('✏️ URL: $url'), behavior: SnackBarBehavior.floating));
                   }
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                ),
+                style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
                 child: const Text('OK', style: TextStyle(fontSize: 12)),
               ),
             ],
@@ -467,10 +413,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
         const SizedBox(height: 4),
         Text(
           '⚠️ El cambio reconstruye el cliente HTTP (Dio). Válido solo en Debug.',
-          style: TextStyle(
-            fontSize: 10,
-            color: scheme.onSurface.withValues(alpha: 0.5),
-          ),
+          style: TextStyle(fontSize: 10, color: scheme.onSurface.withValues(alpha: 0.5)),
         ),
       ],
     );
@@ -491,30 +434,15 @@ class _BuildInfoCard extends StatelessWidget {
       title: 'Build Info',
       icon: Icons.info_outline,
       children: [
-        _InfoRow(
-          label: 'Versión',
-          value: info.fullVersion,
-          onTap: () => onCopy(info.fullVersion, 'Versión'),
-        ),
-        _InfoRow(
-          label: 'Package',
-          value: info.packageName,
-          onTap: () => onCopy(info.packageName, 'Package'),
-        ),
+        _InfoRow(label: 'Versión', value: info.fullVersion, onTap: () => onCopy(info.fullVersion, 'Versión')),
+        _InfoRow(label: 'Package', value: info.packageName, onTap: () => onCopy(info.packageName, 'Package')),
         _InfoRow(
           label: 'Entorno',
           value: info.environment.toUpperCase(),
           valueColor: _envColor(info.environment, context),
         ),
-        _InfoRow(
-          label: 'API URL',
-          value: info.apiBaseUrl,
-          onTap: () => onCopy(info.apiBaseUrl, 'API URL'),
-        ),
-        _InfoRow(
-          label: 'Sentry',
-          value: info.hasActiveSentry ? '✅ Activo' : '⚪ Inactivo',
-        ),
+        _InfoRow(label: 'API URL', value: info.apiBaseUrl, onTap: () => onCopy(info.apiBaseUrl, 'API URL')),
+        _InfoRow(label: 'Sentry', value: info.hasActiveSentry ? '✅ Activo' : '⚪ Inactivo'),
         _InfoRow(
           label: 'Modo Flutter',
           value: kDebugMode
@@ -537,11 +465,7 @@ class _BuildInfoCard extends StatelessWidget {
 // ── Tarjeta: Auth Info ────────────────────────────────────────────────────────
 
 class _AuthInfoCard extends StatelessWidget {
-  const _AuthInfoCard({
-    required this.authAsync,
-    required this.onClearTokens,
-    required this.onCopy,
-  });
+  const _AuthInfoCard({required this.authAsync, required this.onClearTokens, required this.onCopy});
 
   final AsyncValue<AuthState> authAsync;
   final VoidCallback onClearTokens;
@@ -554,15 +478,8 @@ class _AuthInfoCard extends StatelessWidget {
       icon: Icons.lock_outline,
       children: [
         authAsync.when(
-          data: (state) => _AuthStateContent(
-            state: state,
-            onClearTokens: onClearTokens,
-            onCopy: onCopy,
-          ),
-          loading: () => const Padding(
-            padding: EdgeInsets.all(8),
-            child: LinearProgressIndicator(),
-          ),
+          data: (state) => _AuthStateContent(state: state, onClearTokens: onClearTokens, onCopy: onCopy),
+          loading: () => const Padding(padding: EdgeInsets.all(8), child: LinearProgressIndicator()),
           error: (e, _) => Text('Error: $e'),
         ),
       ],
@@ -571,11 +488,7 @@ class _AuthInfoCard extends StatelessWidget {
 }
 
 class _AuthStateContent extends StatelessWidget {
-  const _AuthStateContent({
-    required this.state,
-    required this.onClearTokens,
-    required this.onCopy,
-  });
+  const _AuthStateContent({required this.state, required this.onClearTokens, required this.onCopy});
 
   final AuthState state;
   final VoidCallback onClearTokens;
@@ -587,11 +500,7 @@ class _AuthStateContent extends StatelessWidget {
       Authenticated(:final user) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _InfoRow(
-            label: 'Estado',
-            value: '✅ Autenticado',
-            valueColor: Colors.green,
-          ),
+          _InfoRow(label: 'Estado', value: '✅ Autenticado', valueColor: Colors.green),
           _InfoRow(label: 'Usuario', value: user.email),
           _InfoRow(label: 'Rol', value: user.role),
           const Divider(height: 16),
@@ -606,16 +515,8 @@ class _AuthStateContent extends StatelessWidget {
           ),
         ],
       ),
-      Unauthenticated() => _InfoRow(
-        label: 'Estado',
-        value: '🔴 No autenticado',
-        valueColor: Colors.red,
-      ),
-      AuthError(:final message) => _InfoRow(
-        label: 'Estado',
-        value: '❌ Error: $message',
-        valueColor: Colors.red,
-      ),
+      Unauthenticated() => _InfoRow(label: 'Estado', value: '🔴 No autenticado', valueColor: Colors.red),
+      AuthError(:final message) => _InfoRow(label: 'Estado', value: '❌ Error: $message', valueColor: Colors.red),
       _ => _InfoRow(label: 'Estado', value: 'Cargando...'),
     };
   }
@@ -685,12 +586,7 @@ class _DebugActionsCard extends StatelessWidget {
       title: 'Acciones',
       icon: Icons.build_outlined,
       children: [
-        _ActionButton(
-          icon: Icons.cached,
-          label: 'Limpiar caché',
-          loading: clearingCache,
-          onTap: onClearCache,
-        ),
+        _ActionButton(icon: Icons.cached, label: 'Limpiar caché', loading: clearingCache, onTap: onClearCache),
         _ActionButton(
           icon: Icons.storage_outlined,
           label: 'Borrar DB local',
@@ -698,11 +594,7 @@ class _DebugActionsCard extends StatelessWidget {
           onTap: onClearDatabase,
           color: Colors.red,
         ),
-        _ActionButton(
-          icon: Icons.article_outlined,
-          label: 'Ver logs',
-          onTap: onOpenLogs,
-        ),
+        _ActionButton(icon: Icons.article_outlined, label: 'Ver logs', onTap: onOpenLogs),
         _ActionButton(
           icon: Icons.notifications_outlined,
           label: 'Test snackbar',
@@ -748,11 +640,7 @@ class _SystemInfoCard extends StatelessWidget {
 // ── Componentes reutilizables ─────────────────────────────────────────────────
 
 class _DebugCard extends StatelessWidget {
-  const _DebugCard({
-    required this.title,
-    required this.icon,
-    required this.children,
-  });
+  const _DebugCard({required this.title, required this.icon, required this.children});
 
   final String title;
   final IconData icon;
@@ -798,12 +686,7 @@ class _DebugCard extends StatelessWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.valueColor,
-    this.onTap,
-  });
+  const _InfoRow({required this.label, required this.value, this.valueColor, this.onTap});
 
   final String label;
   final String value;
@@ -814,12 +697,7 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final valueWidget = Text(
       value,
-      style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: valueColor,
-        fontFamily: 'monospace',
-      ),
+      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: valueColor, fontFamily: 'monospace'),
       overflow: TextOverflow.ellipsis,
     );
 
@@ -830,18 +708,11 @@ class _InfoRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 90,
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
+            child: Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ),
           Expanded(
             child: onTap != null
-                ? InkWell(
-                    onTap: onTap,
-                    borderRadius: BorderRadius.circular(4),
-                    child: valueWidget,
-                  )
+                ? InkWell(onTap: onTap, borderRadius: BorderRadius.circular(4), child: valueWidget)
                 : valueWidget,
           ),
         ],
@@ -851,13 +722,7 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.loading = false,
-    this.color,
-  });
+  const _ActionButton({required this.icon, required this.label, required this.onTap, this.loading = false, this.color});
 
   final IconData icon;
   final String label;
@@ -873,17 +738,11 @@ class _ActionButton extends StatelessWidget {
         width: double.infinity,
         child: OutlinedButton.icon(
           icon: loading
-              ? const SizedBox.square(
-                  dimension: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
+              ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
               : Icon(icon, size: 16),
           label: Text(label),
           onPressed: loading ? null : onTap,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: color,
-            alignment: Alignment.centerLeft,
-          ),
+          style: OutlinedButton.styleFrom(foregroundColor: color, alignment: Alignment.centerLeft),
         ),
       ),
     );
@@ -912,12 +771,7 @@ class _EnvBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: color,
-          letterSpacing: 0.5,
-        ),
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color, letterSpacing: 0.5),
       ),
     );
   }

@@ -36,10 +36,7 @@ class AuthInterceptor extends Interceptor {
   // ── onRequest ──────────────────────────────────────────────────────────────
 
   @override
-  Future<void> onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Rutas públicas: no necesitan token.
     if (_isPublicEndpoint(options.path)) {
       return handler.next(options);
@@ -62,10 +59,7 @@ class AuthInterceptor extends Interceptor {
   // Por eso manejamos el refresco en onResponse, no en onError.
 
   @override
-  Future<void> onResponse(
-    Response<dynamic> response,
-    ResponseInterceptorHandler handler,
-  ) async {
+  Future<void> onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) async {
     final status = response.statusCode;
     final path = response.requestOptions.path;
 
@@ -129,10 +123,7 @@ class AuthInterceptor extends Interceptor {
   // Los 401 llegan por onResponse (ver arriba) gracias al validateStatus del cliente.
 
   @override
-  Future<void> onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     // Pasamos todos los errores sin modificar;
     // el refresco de sesión se gestiona en onResponse.
     return handler.next(err);
@@ -157,26 +148,20 @@ class AuthInterceptor extends Interceptor {
       body = response.data;
     } on DioException catch (e) {
       // El endpoint de refresh devolvió 4xx/5xx o hubo un error de red.
-      throw UnauthorizedException(
-        message: 'Refresh failed: ${e.response?.statusCode ?? e.message}',
-      );
+      throw UnauthorizedException(message: 'Refresh failed: ${e.response?.statusCode ?? e.message}');
     }
     if (body == null) {
       throw const UnauthorizedException(message: 'Empty refresh response');
     }
 
     // Backend devuelve { success, data: { accessToken, refreshToken } }
-    final data = (body['data'] is Map<String, dynamic>)
-        ? body['data'] as Map<String, dynamic>
-        : body;
+    final data = (body['data'] is Map<String, dynamic>) ? body['data'] as Map<String, dynamic> : body;
 
     final newAccess = data['accessToken'] as String?;
     final newRefresh = data['refreshToken'] as String?;
 
     if (newAccess == null || newRefresh == null) {
-      throw const UnauthorizedException(
-        message: 'Invalid refresh response tokens',
-      );
+      throw const UnauthorizedException(message: 'Invalid refresh response tokens');
     }
 
     await storage.saveAccessToken(newAccess);
@@ -191,10 +176,7 @@ class AuthInterceptor extends Interceptor {
 
     final opts = Options(
       method: options.method,
-      headers: {
-        ...options.headers,
-        if (token != null) 'Authorization': 'Bearer $token',
-      },
+      headers: {...options.headers, if (token != null) 'Authorization': 'Bearer $token'},
     );
 
     return dio.request<dynamic>(

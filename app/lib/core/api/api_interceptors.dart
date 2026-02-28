@@ -15,22 +15,16 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     // attach a lightweight requestId to correlate request/response logs
-    final requestId =
-        '${DateTime.now().microsecondsSinceEpoch}-${Random().nextInt(1 << 32)}';
+    final requestId = '${DateTime.now().microsecondsSinceEpoch}-${Random().nextInt(1 << 32)}';
     options.extra['requestId'] = requestId;
     AppLogger.debug('[HTTP] → $requestId ${options.method} ${options.uri}');
     return handler.next(options);
   }
 
   @override
-  void onResponse(
-    Response<dynamic> response,
-    ResponseInterceptorHandler handler,
-  ) {
+  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
     final rid = response.requestOptions.extra['requestId'] ?? '-';
-    AppLogger.debug(
-      '[HTTP] ← $rid ${response.statusCode} ${response.requestOptions.uri}',
-    );
+    AppLogger.debug('[HTTP] ← $rid ${response.statusCode} ${response.requestOptions.uri}');
     return handler.next(response);
   }
 
@@ -52,10 +46,7 @@ class LoggingInterceptor extends Interceptor {
 /// Evita esperar el timeout de Dio cuando sabemos que no hay red.
 class ConnectivityInterceptor extends Interceptor {
   @override
-  Future<void> onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final results = await Connectivity().checkConnectivity();
     final isOffline = results.every((r) => r == ConnectivityResult.none);
 
@@ -84,10 +75,7 @@ class RetryInterceptor extends Interceptor {
   final Dio dio;
 
   @override
-  Future<void> onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     final options = err.requestOptions;
     final attempt = (options.extra['retryAttempt'] as int?) ?? 0;
 

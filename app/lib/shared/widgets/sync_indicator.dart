@@ -35,21 +35,14 @@ class _SyncIndicatorContent extends StatelessWidget {
         child: SizedBox(
           width: 20,
           height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: colorScheme.primary,
-          ),
+          child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.primary),
         ),
       ),
       SyncStatus.error => Tooltip(
         message: 'Error de sincronización. Toca para reintentar.',
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Icon(
-            Icons.sync_problem_rounded,
-            color: colorScheme.error,
-            size: 22,
-          ),
+          child: Icon(Icons.sync_problem_rounded, color: colorScheme.error, size: 22),
         ),
       ),
       SyncStatus.idle => const SizedBox.shrink(),
@@ -76,19 +69,14 @@ class OfflineBanner extends StatelessWidget {
           ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.wifi_off_rounded,
-                  size: 16,
-                  color: Colors.white,
-                ),
+                const Icon(Icons.wifi_off_rounded, size: 16, color: Colors.white),
                 const SizedBox(width: AppSpacing.sm),
                 Flexible(
                   child: Text(
                     'Sin conexión — los cambios se sincronizarán al reconectar',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
