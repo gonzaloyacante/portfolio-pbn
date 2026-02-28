@@ -12,12 +12,12 @@ class SettingsSocialPage extends ConsumerWidget {
   const SettingsSocialPage({super.key});
 
   static const _kPlatforms = [
-    ('Instagram', 'instagram', Icons.photo_camera_outlined),
-    ('TikTok', 'tiktok', Icons.music_note_outlined),
-    ('YouTube', 'youtube', Icons.play_circle_outlined),
-    ('WhatsApp', 'whatsapp', Icons.chat_outlined),
-    ('LinkedIn', 'linkedin', Icons.work_outline),
-    ('Facebook', 'facebook', Icons.facebook_outlined),
+    ('Instagram', 'instagram', Icons.photo_camera_outlined, 'https://instagram.com/tu_usuario'),
+    ('TikTok', 'tiktok', Icons.music_note_outlined, 'https://tiktok.com/@tu_usuario'),
+    ('YouTube', 'youtube', Icons.play_circle_outlined, 'https://youtube.com/@tu_canal'),
+    ('WhatsApp', 'whatsapp', Icons.chat_outlined, 'https://wa.me/549XXXXXXXXXX'),
+    ('LinkedIn', 'linkedin', Icons.work_outline, 'https://linkedin.com/in/tu_perfil'),
+    ('Facebook', 'facebook', Icons.facebook_outlined, 'https://facebook.com/tu_pagina'),
   ];
 
   @override
@@ -62,6 +62,7 @@ class SettingsSocialPage extends ConsumerWidget {
               platform: platform.$1,
               platformId: platform.$2,
               icon: platform.$3,
+              urlHint: platform.$4,
               link: link,
               onSaved: () => ref.invalidate(socialLinksProvider),
             );
@@ -79,6 +80,7 @@ class _SocialLinkTile extends ConsumerStatefulWidget {
     required this.platform,
     required this.platformId,
     required this.icon,
+    required this.urlHint,
     this.link,
     required this.onSaved,
   });
@@ -86,6 +88,7 @@ class _SocialLinkTile extends ConsumerStatefulWidget {
   final String platform;
   final String platformId;
   final IconData icon;
+  final String urlHint;
   final SocialLink? link;
   final VoidCallback onSaved;
 
@@ -215,7 +218,8 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       labelText: 'URL de ${widget.platform}',
-                      hintText: 'https://',
+                      hintText: widget.urlHint,
+                      helperText: 'Enlace completo al perfil',
                       prefixIcon: const Icon(Icons.link),
                     ),
                   ),
@@ -224,12 +228,14 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                     controller: _usernameCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Usuario / handle',
+                      helperText: 'Se muestra como texto del enlace',
                       prefixIcon: Icon(Icons.alternate_email),
                     ),
                   ),
                   const SizedBox(height: 8),
                   SwitchListTile(
                     title: const Text('Activo'),
+                    subtitle: const Text('Visible en el portfolio público'),
                     value: _isActive,
                     onChanged: (v) => setState(() => _isActive = v),
                     contentPadding: EdgeInsets.zero,

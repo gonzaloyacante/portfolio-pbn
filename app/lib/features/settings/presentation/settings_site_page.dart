@@ -24,7 +24,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   final _siteTaglineCtrl = TextEditingController();
   final _metaTitleCtrl = TextEditingController();
   final _metaDescCtrl = TextEditingController();
-  final _gaIdCtrl = TextEditingController();
   final _maintenanceMsgCtrl = TextEditingController();
 
   bool _maintenanceMode = false;
@@ -32,7 +31,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   bool _showProjects = true;
   bool _showServices = false;
   bool _showContact = true;
-  bool _allowIndexing = true;
 
   @override
   void dispose() {
@@ -40,7 +38,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
     _siteTaglineCtrl.dispose();
     _metaTitleCtrl.dispose();
     _metaDescCtrl.dispose();
-    _gaIdCtrl.dispose();
     _maintenanceMsgCtrl.dispose();
     super.dispose();
   }
@@ -52,14 +49,12 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
     _siteTaglineCtrl.text = s.siteTagline ?? '';
     _metaTitleCtrl.text = s.defaultMetaTitle ?? '';
     _metaDescCtrl.text = s.defaultMetaDescription ?? '';
-    _gaIdCtrl.text = s.googleAnalyticsId ?? '';
     _maintenanceMsgCtrl.text = s.maintenanceMessage ?? '';
     _maintenanceMode = s.maintenanceMode;
     _showAbout = s.showAboutPage;
     _showProjects = s.showProjectsPage;
     _showServices = s.showServicesPage;
     _showContact = s.showContactPage;
-    _allowIndexing = s.allowIndexing;
   }
 
   String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v.trim();
@@ -72,14 +67,12 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'siteTagline': _nullIfEmpty(_siteTaglineCtrl.text),
         'defaultMetaTitle': _nullIfEmpty(_metaTitleCtrl.text),
         'defaultMetaDescription': _nullIfEmpty(_metaDescCtrl.text),
-        'googleAnalyticsId': _nullIfEmpty(_gaIdCtrl.text),
         'maintenanceMode': _maintenanceMode,
         'maintenanceMessage': _nullIfEmpty(_maintenanceMsgCtrl.text),
         'showAboutPage': _showAbout,
         'showProjectsPage': _showProjects,
         'showServicesPage': _showServices,
         'showContactPage': _showContact,
-        'allowIndexing': _allowIndexing,
       });
       ref.invalidate(siteSettingsProvider);
       setState(() => _populated = false);
@@ -185,7 +178,10 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
             children: [
               TextFormField(
                 controller: _metaTitleCtrl,
-                decoration: const InputDecoration(labelText: 'Meta título'),
+                decoration: const InputDecoration(
+                  labelText: 'Meta título',
+                  helperText: 'Título para buscadores (Google)',
+                ),
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -193,16 +189,8 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                 maxLines: 3,
                 decoration: const InputDecoration(
                   labelText: 'Meta descripción',
+                  helperText: 'Descripción en resultados de búsqueda',
                   border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _gaIdCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Google Analytics ID',
-                  hintText: 'G-XXXXXXXXXX',
-                  prefixIcon: Icon(Icons.analytics_outlined),
                 ),
               ),
             ],
@@ -246,12 +234,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                     title: const Text('Contacto'),
                     value: _showContact,
                     onChanged: (v) => setState(() => _showContact = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Permitir indexación SEO'),
-                    value: _allowIndexing,
-                    onChanged: (v) => setState(() => _allowIndexing = v),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ],

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/color_field.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -154,12 +155,12 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             context: context,
             title: 'Colores — Modo claro',
             fields: [
-              _ColorField(controller: _primaryCtrl, label: 'Color primario'),
-              _ColorField(
+              ColorField(controller: _primaryCtrl, label: 'Color primario'),
+              ColorField(
                 controller: _secondaryCtrl,
                 label: 'Color secundario',
               ),
-              _ColorField(controller: _bgCtrl, label: 'Fondo'),
+              ColorField(controller: _bgCtrl, label: 'Fondo'),
             ],
           ),
           const SizedBox(height: 12),
@@ -167,11 +168,11 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             context: context,
             title: 'Colores — Modo oscuro',
             fields: [
-              _ColorField(
+              ColorField(
                 controller: _darkPrimaryCtrl,
                 label: 'Color primario (dark)',
               ),
-              _ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
+              ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
             ],
           ),
           const SizedBox(height: 12),
@@ -264,55 +265,6 @@ class _ColorCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _ColorField extends StatelessWidget {
-  const _ColorField({required this.controller, required this.label});
-  final TextEditingController controller;
-  final String label;
-
-  Color? _parseColor(String hex) {
-    try {
-      final h = hex.replaceAll('#', '');
-      return Color(int.parse('FF$h', radix: 16));
-    } catch (_) {
-      return null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: controller,
-      builder: (_, value, _) {
-        final color = _parseColor(value.text);
-        return TextFormField(
-          controller: controller,
-          decoration: InputDecoration(
-            labelText: label,
-            hintText: '#6c0a0a',
-            prefixIcon: color != null
-                ? Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: color,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outline,
-                          width: 0.5,
-                        ),
-                      ),
-                    ),
-                  )
-                : const Icon(Icons.circle_outlined),
-          ),
-        );
-      },
     );
   }
 }
