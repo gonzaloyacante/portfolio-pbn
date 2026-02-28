@@ -143,7 +143,7 @@ class PushService {
       }
       return token;
     } catch (e, st) {
-      final msg = e?.toString() ?? '';
+      final msg = e.toString();
       // Mensaje esperado en simuladores iOS/macOS cuando APNS aún no devuelve token.
       if (msg.contains('APNS token has not been received') ||
           msg.toLowerCase().contains('apns')) {
