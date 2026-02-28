@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/route_names.dart';
+import '../../core/theme/app_breakpoints.dart';
+import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
 // ── NavItem ───────────────────────────────────────────────────────────────────
@@ -103,8 +106,9 @@ const List<_NavItem> _allNavItems = [
 
 /// Scaffold adaptativo de la app de administración.
 ///
-/// - **Tablet (≥600px)**: Drawer persistente lateral (réplica del AdminSidebar web).
-/// - **Móvil (<600px)**: BottomNavigationBar con las 4 secciones principales.
+/// - **Compact (<600px)**: Drawer deslizable con hamburger en AppBar.
+/// - **Medium (600-839px)**: NavigationRail fijo (72px, íconos + tooltip).
+/// - **Expanded (≥840px)**: Drawer persistente lateral (280px).
 ///
 /// Uso:
 /// ```dart
@@ -121,6 +125,7 @@ class AppScaffold extends StatelessWidget {
     this.title,
     this.actions,
     this.floatingActionButton,
+    this.floatingActionButtonLocation,
     this.resizeToAvoidBottomInset = true,
   });
 
@@ -128,40 +133,53 @@ class AppScaffold extends StatelessWidget {
   final String? title;
   final List<Widget>? actions;
   final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
   final bool resizeToAvoidBottomInset;
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = MediaQuery.sizeOf(context).width >= 600;
-
-    if (isTablet) {
-      return _TabletScaffold(
+    if (AppBreakpoints.isExpanded(context)) {
+      return _ExpandedScaffold(
         title: title,
         actions: actions,
         floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: floatingActionButtonLocation,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
         body: body,
       );
     }
 
-    return _MobileScaffold(
+    if (AppBreakpoints.isMedium(context)) {
+      return _MediumScaffold(
+        title: title,
+        actions: actions,
+        floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: floatingActionButtonLocation,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        body: body,
+      );
+    }
+
+    return _CompactScaffold(
       title: title,
       actions: actions,
       floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       body: body,
     );
   }
 }
 
-// ── _TabletScaffold ───────────────────────────────────────────────────────────
+// ── _ExpandedScaffold (≥840px) ────────────────────────────────────────────────
 
-class _TabletScaffold extends StatelessWidget {
-  const _TabletScaffold({
+class _ExpandedScaffold extends StatelessWidget {
+  const _ExpandedScaffold({
     required this.body,
     this.title,
     this.actions,
     this.floatingActionButton,
+    this.floatingActionButtonLocation,
     this.resizeToAvoidBottomInset = true,
   });
 
@@ -169,6 +187,7 @@ class _TabletScaffold extends StatelessWidget {
   final String? title;
   final List<Widget>? actions;
   final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
   final bool resizeToAvoidBottomInset;
 
   @override
@@ -176,6 +195,7 @@ class _TabletScaffold extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
       body: Row(
         children: [
           const AppDrawer(),
@@ -186,6 +206,7 @@ class _TabletScaffold extends StatelessWidget {
           ),
           Expanded(
             child: Scaffold(
+              resizeToAvoidBottomInset: resizeToAvoidBottomInset,
               appBar: title != null
                   ? AppBar(
                       leading: GoRouter.of(context).canPop()
@@ -211,14 +232,15 @@ class _TabletScaffold extends StatelessWidget {
   }
 }
 
-// ── _MobileScaffold ───────────────────────────────────────────────────────────
+// ── _MediumScaffold (600-839px) ───────────────────────────────────────────────
 
-class _MobileScaffold extends StatefulWidget {
-  const _MobileScaffold({
+class _MediumScaffold extends StatelessWidget {
+  const _MediumScaffold({
     required this.body,
     this.title,
     this.actions,
     this.floatingActionButton,
+    this.floatingActionButtonLocation,
     this.resizeToAvoidBottomInset = true,
   });
 
@@ -226,13 +248,75 @@ class _MobileScaffold extends StatefulWidget {
   final String? title;
   final List<Widget>? actions;
   final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
   final bool resizeToAvoidBottomInset;
 
   @override
-  State<_MobileScaffold> createState() => _MobileScaffoldState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      floatingActionButton: floatingActionButton,
+      floatingActionButtonLocation: floatingActionButtonLocation,
+      body: Row(
+        children: [
+          _AppNavigationRail(),
+          VerticalDivider(
+            width: 1,
+            thickness: 1,
+            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+          ),
+          Expanded(
+            child: Scaffold(
+              resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+              appBar: title != null
+                  ? AppBar(
+                      leading: GoRouter.of(context).canPop()
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.arrow_back_ios_new_rounded,
+                              ),
+                              onPressed: () => context.pop(),
+                              tooltip: 'Volver',
+                            )
+                          : null,
+                      automaticallyImplyLeading: false,
+                      title: Text(title!),
+                      actions: actions,
+                    )
+                  : null,
+              body: body,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _MobileScaffoldState extends State<_MobileScaffold> {
+// ── _CompactScaffold (<600px) ─────────────────────────────────────────────────
+
+class _CompactScaffold extends StatefulWidget {
+  const _CompactScaffold({
+    required this.body,
+    this.title,
+    this.actions,
+    this.floatingActionButton,
+    this.floatingActionButtonLocation,
+    this.resizeToAvoidBottomInset = true,
+  });
+
+  final Widget body;
+  final String? title;
+  final List<Widget>? actions;
+  final Widget? floatingActionButton;
+  final FloatingActionButtonLocation? floatingActionButtonLocation;
+  final bool resizeToAvoidBottomInset;
+
+  @override
+  State<_CompactScaffold> createState() => _CompactScaffoldState();
+}
+
+class _CompactScaffoldState extends State<_CompactScaffold> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -243,6 +327,7 @@ class _MobileScaffoldState extends State<_MobileScaffold> {
       key: _scaffoldKey,
       resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
       floatingActionButton: widget.floatingActionButton,
+      floatingActionButtonLocation: widget.floatingActionButtonLocation,
       appBar: widget.title != null
           ? AppBar(
               leading: canPop
@@ -253,7 +338,8 @@ class _MobileScaffoldState extends State<_MobileScaffold> {
                     )
                   : IconButton(
                       icon: const Icon(Icons.menu_rounded),
-                      onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+                      onPressed: () =>
+                          _scaffoldKey.currentState?.openDrawer(),
                       tooltip: 'Menú',
                     ),
               automaticallyImplyLeading: false,
@@ -267,10 +353,96 @@ class _MobileScaffoldState extends State<_MobileScaffold> {
   }
 }
 
+// ── _AppNavigationRail ────────────────────────────────────────────────────────
+
+/// NavigationRail para breakpoint medium (600-839px).
+/// Muestra íconos con tooltip y resalta la sección activa.
+class _AppNavigationRail extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final currentRoute = GoRouterState.of(context).name ?? '';
+
+    // Índice activo entre todos los items
+    final activeIndex = _allNavItems.indexWhere(
+      (item) => item.routeName == currentRoute,
+    );
+
+    return NavigationRail(
+      backgroundColor: colorScheme.surface,
+      selectedIndex: activeIndex < 0 ? null : activeIndex,
+      useIndicator: true,
+      indicatorColor: colorScheme.primaryContainer,
+      minWidth: AppBreakpoints.railWidth,
+      labelType: NavigationRailLabelType.none,
+      leading: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.base),
+        child: Tooltip(
+          message: 'Menú',
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme.primary,
+                  colorScheme.primary.withValues(alpha: 0.75),
+                ],
+              ),
+              borderRadius: AppRadius.forIconContainer,
+              boxShadow: [
+                BoxShadow(
+                  color: colorScheme.primary.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: Text(
+                'P',
+                style: AppTypography.decorativeTitle(
+                  Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      destinations: _allNavItems
+          .map(
+            (item) => NavigationRailDestination(
+              icon: Tooltip(
+                message: item.label,
+                preferBelow: false,
+                child: Icon(item.icon),
+              ),
+              selectedIcon: Tooltip(
+                message: item.label,
+                preferBelow: false,
+                child: Icon(item.selectedIcon),
+              ),
+              label: Text(item.label),
+              padding: const EdgeInsets.symmetric(vertical: 2),
+            ),
+          )
+          .toList(),
+      onDestinationSelected: (index) {
+        context.goNamed(_allNavItems[index].routeName);
+      },
+      groupAlignment: -1.0,
+    );
+  }
+}
+
 // ── AppDrawer ─────────────────────────────────────────────────────────────────
 
 /// Drawer lateral de administración.
-/// En tablet se usa como NavigationRail fijo; en móvil como Drawer deslizable.
+/// En expanded (≥840px) se usa como NavigationDrawer fijo; en compact/medium
+/// como Drawer deslizable o botón en modal.
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
 
@@ -279,10 +451,10 @@ class AppDrawer extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final currentRoute = GoRouterState.of(context).name ?? '';
-    final isTablet = MediaQuery.sizeOf(context).width >= 600;
+    final isExpanded = AppBreakpoints.isExpanded(context);
 
     final content = Container(
-      width: 260,
+      width: AppBreakpoints.drawerWidth,
       color: colorScheme.surface,
       child: SafeArea(
         top: false,
@@ -292,27 +464,29 @@ class AppDrawer extends StatelessWidget {
             // Header: logo + nombre
             _DrawerHeader(textTheme: textTheme, colorScheme: colorScheme),
             const Divider(height: 1),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.sm),
 
             // Items principales de navegación
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                ),
                 children: [
                   _SectionLabel(label: 'CONTENIDO'),
                   ..._buildItems(
                     context,
                     items: _allNavItems.sublist(0, 8),
                     currentRoute: currentRoute,
-                    isTablet: isTablet,
+                    isExpanded: isExpanded,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   _SectionLabel(label: 'CONFIGURACIÓN'),
                   ..._buildItems(
                     context,
                     items: _allNavItems.sublist(8),
                     currentRoute: currentRoute,
-                    isTablet: isTablet,
+                    isExpanded: isExpanded,
                   ),
                 ],
               ),
@@ -322,7 +496,7 @@ class AppDrawer extends StatelessWidget {
       ),
     );
 
-    if (isTablet) return content;
+    if (isExpanded) return content;
 
     return Drawer(child: content);
   }
@@ -331,16 +505,16 @@ class AppDrawer extends StatelessWidget {
     BuildContext context, {
     required List<_NavItem> items,
     required String currentRoute,
-    required bool isTablet,
+    required bool isExpanded,
   }) {
     return items.map((item) {
       final isSelected = item.routeName == currentRoute;
       return _DrawerNavItem(
         item: item,
         isSelected: isSelected,
-        isTablet: isTablet,
+        isExpanded: isExpanded,
         onTap: () {
-          if (!isTablet) Navigator.of(context).pop();
+          if (!isExpanded) Navigator.of(context).pop();
           context.goNamed(item.routeName);
         },
       );
@@ -371,10 +545,10 @@ class _DrawerHeader extends StatelessWidget {
         ),
       ),
       padding: EdgeInsets.fromLTRB(
-        16,
-        24 + MediaQuery.of(context).padding.top,
-        16,
-        20,
+        AppSpacing.base,
+        AppSpacing.xl + MediaQuery.of(context).padding.top,
+        AppSpacing.base,
+        AppSpacing.lg,
       ),
       child: Row(
         children: [
@@ -390,7 +564,7 @@ class _DrawerHeader extends StatelessWidget {
                   colorScheme.primary.withValues(alpha: 0.75),
                 ],
               ),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: AppRadius.forIconContainer,
               boxShadow: [
                 BoxShadow(
                   color: colorScheme.primary.withValues(alpha: 0.3),
@@ -409,7 +583,7 @@ class _DrawerHeader extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,7 +598,7 @@ class _DrawerHeader extends StatelessWidget {
                 const SizedBox(height: 3),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 7,
+                    horizontal: AppSpacing.sm - 1,
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
@@ -472,13 +646,13 @@ class _DrawerNavItem extends StatelessWidget {
   const _DrawerNavItem({
     required this.item,
     required this.isSelected,
-    required this.isTablet,
+    required this.isExpanded,
     required this.onTap,
   });
 
   final _NavItem item;
   final bool isSelected;
-  final bool isTablet;
+  final bool isExpanded;
   final VoidCallback onTap;
 
   @override
@@ -487,7 +661,7 @@ class _DrawerNavItem extends StatelessWidget {
 
     return ListTile(
       dense: true,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       selected: isSelected,
       selectedTileColor: colorScheme.primaryContainer.withValues(alpha: 0.5),
       leading: Icon(

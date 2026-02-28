@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../core/debug/debug_provider.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 
 /// Pantalla de ayuda — información de la app y guía de uso básica.
 class HelpPage extends ConsumerWidget {
@@ -17,15 +18,8 @@ class HelpPage extends ConsumerWidget {
           loading: () => '…',
           error: (_, _) => '—',
         );
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-          tooltip: 'Volver',
-        ),
-        title: const Text('Ayuda'),
-      ),
+    return AppScaffold(
+      title: 'Ayuda',
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
         children: [
@@ -143,7 +137,7 @@ class _SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(

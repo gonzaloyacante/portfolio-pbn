@@ -6,8 +6,12 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/providers/app_preferences_provider.dart';
 import '../../../core/router/route_names.dart';
+import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/app_search_bar.dart';
 import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -107,7 +111,11 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
       ],
       body: Column(
         children: [
-          _SearchBar(controller: _searchController, onSearch: _onSearch),
+          AppSearchBar(
+            hint: 'Buscar proyectos…',
+            controller: _searchController,
+            onChanged: _onSearch,
+          ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async => ref.invalidate(projectsListProvider),
@@ -185,13 +193,22 @@ class _ProjectsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hPad = AppBreakpoints.pageMargin(context);
+    final gutter = AppBreakpoints.gutter(context);
+    final cols = AppBreakpoints.gridColumns(
+      context,
+      compact: 2,
+      medium: 3,
+      expanded: 4,
+    );
+
     if (viewMode == ViewMode.grid) {
       return GridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
+        padding: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.sm),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: cols,
+          crossAxisSpacing: gutter,
+          mainAxisSpacing: gutter,
           childAspectRatio: 0.8,
         ),
         itemCount: items.length,
@@ -205,7 +222,7 @@ class _ProjectsList extends StatelessWidget {
       );
     }
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.sm),
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
@@ -235,7 +252,7 @@ class _ProjectGridCard extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
         onTap: () => context.pushNamed(
           RouteNames.projectEdit,
@@ -330,12 +347,14 @@ class _ProjectGridCard extends StatelessWidget {
                                 Icon(
                                   Icons.delete_outline,
                                   size: 18,
-                                  color: Colors.red,
+                                  color: AppColors.destructive,
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Text(
                                   'Eliminar',
-                                  style: TextStyle(color: Colors.red),
+                                  style: TextStyle(
+                                    color: AppColors.destructive,
+                                  ),
                                 ),
                               ],
                             ),
@@ -395,7 +414,7 @@ class _ProjectTile extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
         onTap: () => context.pushNamed(
           RouteNames.projectEdit,
@@ -551,10 +570,17 @@ class _ProjectTile extends StatelessWidget {
                   PopupMenuItem(
                     value: 'delete',
                     child: Row(
-                      children: const [
-                        Icon(Icons.delete_outline, size: 18, color: Colors.red),
-                        SizedBox(width: 10),
-                        Text('Eliminar', style: TextStyle(color: Colors.red)),
+                      children: [
+                        Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: AppColors.destructive,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Eliminar',
+                          style: TextStyle(color: AppColors.destructive),
+                        ),
                       ],
                     ),
                   ),
