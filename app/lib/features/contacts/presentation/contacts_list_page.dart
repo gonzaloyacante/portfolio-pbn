@@ -16,6 +16,7 @@ import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../core/utils/date_utils.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 
@@ -223,7 +224,9 @@ class _ContactTile extends StatelessWidget {
 
     return Card(
       margin: EdgeInsets.zero,
+      elevation: unread ? 2 : 0,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+      color: unread ? scheme.surfaceVariant.withOpacity(0.03) : null,
       child: InkWell(
         borderRadius: AppRadius.forTile,
         onTap: () => context.pushNamed(
@@ -231,7 +234,7 @@ class _ContactTile extends StatelessWidget {
           pathParameters: {'id': item.id},
         ),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+          padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -276,6 +279,7 @@ class _ContactTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
@@ -283,25 +287,22 @@ class _ContactTile extends StatelessWidget {
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: unread
                                   ? FontWeight.w700
-                                  : FontWeight.w500,
+                                  : FontWeight.w600,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        // Priority dot
-                        Container(
-                          width: 7,
-                          height: 7,
-                          margin: const EdgeInsets.only(left: 6, right: 4),
-                          decoration: BoxDecoration(
-                            color: priorityColor,
-                            shape: BoxShape.circle,
+                        const SizedBox(width: 8),
+                        Text(
+                          AppDateUtils.toRelative(item.createdAt),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: scheme.outline,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 6),
                     Text(
                       item.email,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -311,18 +312,18 @@ class _ContactTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (item.subject != null && item.subject!.isNotEmpty) ...[
-                      const SizedBox(height: 3),
+                      const SizedBox(height: 6),
                       Text(
                         item.subject!,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: unread
                               ? scheme.onSurface
                               : scheme.onSurfaceVariant,
                           fontWeight: unread
-                              ? FontWeight.w500
-                              : FontWeight.normal,
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                         ),
                       ),
                     ],

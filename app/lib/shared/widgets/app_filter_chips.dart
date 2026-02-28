@@ -47,6 +47,11 @@ class AppFilterChips<T> extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final allNorm = allLabel.trim().toLowerCase();
+    final filtered = options
+        .where((o) => labelBuilder(o).trim().toLowerCase() != allNorm)
+        .toList();
+
     return SizedBox(
       height: 40,
       child: ListView(
@@ -64,7 +69,8 @@ class AppFilterChips<T> extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.sm),
           ],
-          ...options.asMap().entries.map((entry) {
+          // Las opciones ya se filtraron arriba en `filtered`.
+          ...filtered.asMap().entries.map((entry) {
             final option = entry.value;
             final isSelected = selected == option;
             final color = colorBuilder?.call(option) ?? colorScheme.primary;
