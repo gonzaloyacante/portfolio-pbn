@@ -214,6 +214,8 @@ class SkeletonGridView extends StatelessWidget {
 
     return ShimmerLoader(
       child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(
           horizontal: hPad,
           vertical: AppSpacing.sm,
