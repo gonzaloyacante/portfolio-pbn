@@ -42,8 +42,9 @@ class _DebugLogPageState extends State<DebugLogPage> {
     });
   }
 
-  List<LogEntry> get _filteredLogs =>
-      _filterLevel == null ? _logs : _logs.where((e) => e.level == _filterLevel).toList();
+  List<LogEntry> get _filteredLogs => _filterLevel == null
+      ? _logs
+      : _logs.where((e) => e.level == _filterLevel).toList();
 
   Color _levelColor(LogLevel level) => switch (level) {
     LogLevel.debug => Colors.grey,
@@ -69,19 +70,31 @@ class _DebugLogPageState extends State<DebugLogPage> {
               const PopupMenuItem(value: null, child: Text('Todos')),
               PopupMenuItem(
                 value: LogLevel.debug,
-                child: Text('🐛 Debug', style: TextStyle(color: _levelColor(LogLevel.debug))),
+                child: Text(
+                  '🐛 Debug',
+                  style: TextStyle(color: _levelColor(LogLevel.debug)),
+                ),
               ),
               PopupMenuItem(
                 value: LogLevel.info,
-                child: Text('✅ Info', style: TextStyle(color: _levelColor(LogLevel.info))),
+                child: Text(
+                  '✅ Info',
+                  style: TextStyle(color: _levelColor(LogLevel.info)),
+                ),
               ),
               PopupMenuItem(
                 value: LogLevel.warn,
-                child: Text('⚠️ Warn', style: TextStyle(color: _levelColor(LogLevel.warn))),
+                child: Text(
+                  '⚠️ Warn',
+                  style: TextStyle(color: _levelColor(LogLevel.warn)),
+                ),
               ),
               PopupMenuItem(
                 value: LogLevel.error,
-                child: Text('❌ Error', style: TextStyle(color: _levelColor(LogLevel.error))),
+                child: Text(
+                  '❌ Error',
+                  style: TextStyle(color: _levelColor(LogLevel.error)),
+                ),
               ),
             ],
           ),
@@ -115,7 +128,11 @@ class _DebugLogPageState extends State<DebugLogPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle_outline, size: 48, color: Colors.grey),
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 48,
+                    color: Colors.grey,
+                  ),
                   SizedBox(height: 8),
                   Text('Sin logs', style: TextStyle(color: Colors.grey)),
                 ],
@@ -125,10 +142,14 @@ class _DebugLogPageState extends State<DebugLogPage> {
               controller: _scrollController,
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: logs.length,
-              separatorBuilder: (context, index) => const Divider(height: 1, indent: 16),
+              separatorBuilder: (context, index) =>
+                  const Divider(height: 1, indent: 16),
               itemBuilder: (context, index) {
                 final entry = logs[index];
-                return _LogTile(entry: entry, levelColor: _levelColor(entry.level));
+                return _LogTile(
+                  entry: entry,
+                  levelColor: _levelColor(entry.level),
+                );
               },
             ),
     );
@@ -157,9 +178,12 @@ class _LogTile extends StatelessWidget {
             '[${entry.levelLabel}] $time\n${entry.message}'
             '${entry.error != null ? '\nError: ${entry.error}' : ''}';
         Clipboard.setData(ClipboardData(text: text));
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Log copiado al portapapeles'), duration: Duration(seconds: 1)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Log copiado al portapapeles'),
+            duration: Duration(seconds: 1),
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -170,7 +194,10 @@ class _LogTile extends StatelessWidget {
             Container(
               width: 4,
               height: 40,
-              decoration: BoxDecoration(color: levelColor, borderRadius: BorderRadius.circular(2)),
+              decoration: BoxDecoration(
+                color: levelColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -181,10 +208,20 @@ class _LogTile extends StatelessWidget {
                     children: [
                       Text(
                         '${entry.emoji} ${entry.levelLabel}',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: levelColor),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: levelColor,
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      Text(time, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                      Text(
+                        time,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 2),

@@ -48,7 +48,10 @@ class NotificationPrefs {
 
   /// Instancia singleton. Lanza [StateError] si no se ha llamado a [init].
   static NotificationPrefs get instance {
-    assert(_instance != null, 'NotificationPrefs.init() debe llamarse antes de acceder a instance.');
+    assert(
+      _instance != null,
+      'NotificationPrefs.init() debe llamarse antes de acceder a instance.',
+    );
     return _instance!;
   }
 
@@ -82,7 +85,8 @@ class NotificationPrefs {
 
   bool get contactsEnabled => isEnabled(NotifPrefKeys.notifContacts);
   bool get bookingsEnabled => isEnabled(NotifPrefKeys.notifBookings);
-  bool get bookingRemindersEnabled => isEnabled(NotifPrefKeys.notifBookingReminders);
+  bool get bookingRemindersEnabled =>
+      isEnabled(NotifPrefKeys.notifBookingReminders);
   bool get projectsEnabled => isEnabled(NotifPrefKeys.notifProjects);
   bool get servicesEnabled => isEnabled(NotifPrefKeys.notifServices);
   bool get testimonialsEnabled => isEnabled(NotifPrefKeys.notifTestimonials);

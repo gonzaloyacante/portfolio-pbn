@@ -88,12 +88,16 @@ class AdaptiveFormLayout extends StatelessWidget {
           }
         }
 
-        return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: rows);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: rows,
+        );
       },
     );
   }
 
-  Widget _unwrap(Widget child) => child is _FullWidthFormItem ? child.child : child;
+  Widget _unwrap(Widget child) =>
+      child is _FullWidthFormItem ? child.child : child;
 }
 
 // ── Marker widget ─────────────────────────────────────────────────────────────

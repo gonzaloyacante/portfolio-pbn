@@ -5,27 +5,27 @@ void main() {
   // ── TestimonialItem fromJson ──────────────────────────────────────────────
 
   group('TestimonialItem.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 't1',
       'name': 'Laura Sánchez',
       'createdAt': '2024-01-10T00:00:00Z',
       'updatedAt': '2024-01-10T00:00:00Z',
     };
 
-    test('parses id', () => expect(TestimonialItem.fromJson(_base()).id, 't1'));
+    test('parses id', () => expect(TestimonialItem.fromJson(base0()).id, 't1'));
     test(
       'parses name',
-      () => expect(TestimonialItem.fromJson(_base()).name, 'Laura Sánchez'),
+      () => expect(TestimonialItem.fromJson(base0()).name, 'Laura Sánchez'),
     );
     test(
       'createdAt is DateTime',
       () =>
-          expect(TestimonialItem.fromJson(_base()).createdAt, isA<DateTime>()),
+          expect(TestimonialItem.fromJson(base0()).createdAt, isA<DateTime>()),
     );
     test(
       'updatedAt is DateTime',
       () =>
-          expect(TestimonialItem.fromJson(_base()).updatedAt, isA<DateTime>()),
+          expect(TestimonialItem.fromJson(base0()).updatedAt, isA<DateTime>()),
     );
   });
 
@@ -84,7 +84,7 @@ void main() {
   });
 
   group('TestimonialItem.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 't2',
       'name': 'Carmen Torres',
       'excerpt': 'Excelente profesional',
@@ -105,54 +105,52 @@ void main() {
     test(
       'parses excerpt',
       () => expect(
-        TestimonialItem.fromJson(_full()).excerpt,
+        TestimonialItem.fromJson(full()).excerpt,
         'Excelente profesional',
       ),
     );
     test(
       'parses position',
-      () => expect(TestimonialItem.fromJson(_full()).position, 'Novia'),
+      () => expect(TestimonialItem.fromJson(full()).position, 'Novia'),
     );
     test(
       'parses company',
-      () => expect(
-        TestimonialItem.fromJson(_full()).company,
-        'Evento particular',
-      ),
+      () =>
+          expect(TestimonialItem.fromJson(full()).company, 'Evento particular'),
     );
     test(
       'parses avatarUrl',
       () => expect(
-        TestimonialItem.fromJson(_full()).avatarUrl,
+        TestimonialItem.fromJson(full()).avatarUrl,
         'https://x.com/avatar.jpg',
       ),
     );
     test(
       'parses rating',
-      () => expect(TestimonialItem.fromJson(_full()).rating, 4),
+      () => expect(TestimonialItem.fromJson(full()).rating, 4),
     );
     test(
       'parses verified = true',
-      () => expect(TestimonialItem.fromJson(_full()).verified, isTrue),
+      () => expect(TestimonialItem.fromJson(full()).verified, isTrue),
     );
     test(
       'parses featured = true',
-      () => expect(TestimonialItem.fromJson(_full()).featured, isTrue),
+      () => expect(TestimonialItem.fromJson(full()).featured, isTrue),
     );
     test(
       'parses status',
-      () => expect(TestimonialItem.fromJson(_full()).status, 'APPROVED'),
+      () => expect(TestimonialItem.fromJson(full()).status, 'APPROVED'),
     );
     test(
       'parses sortOrder',
-      () => expect(TestimonialItem.fromJson(_full()).sortOrder, 2),
+      () => expect(TestimonialItem.fromJson(full()).sortOrder, 2),
     );
     test(
       'parses viewCount',
-      () => expect(TestimonialItem.fromJson(_full()).viewCount, 55),
+      () => expect(TestimonialItem.fromJson(full()).viewCount, 55),
     );
     test('createdAt parsed correctly', () {
-      expect(TestimonialItem.fromJson(_full()).createdAt.month, 3);
+      expect(TestimonialItem.fromJson(full()).createdAt.month, 3);
     });
   });
 
@@ -182,7 +180,7 @@ void main() {
   // ── TestimonialDetail fromJson ────────────────────────────────────────────
 
   group('TestimonialDetail.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 'td1',
       'name': 'Marta Ruiz',
       'text': 'Increíble trabajo, recomiendo totalmente.',
@@ -192,16 +190,16 @@ void main() {
 
     test(
       'parses id',
-      () => expect(TestimonialDetail.fromJson(_base()).id, 'td1'),
+      () => expect(TestimonialDetail.fromJson(base0()).id, 'td1'),
     );
     test(
       'parses name',
-      () => expect(TestimonialDetail.fromJson(_base()).name, 'Marta Ruiz'),
+      () => expect(TestimonialDetail.fromJson(base0()).name, 'Marta Ruiz'),
     );
     test(
       'parses text',
       () => expect(
-        TestimonialDetail.fromJson(_base()).text,
+        TestimonialDetail.fromJson(base0()).text,
         'Increíble trabajo, recomiendo totalmente.',
       ),
     );
@@ -255,7 +253,7 @@ void main() {
   });
 
   group('TestimonialDetail.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'td2',
       'name': 'Elena Vidal',
       'text': 'Muy satisfecha con el resultado.',
@@ -276,34 +274,34 @@ void main() {
 
     test(
       'parses email',
-      () => expect(TestimonialDetail.fromJson(_full()).email, 'elena@test.com'),
+      () => expect(TestimonialDetail.fromJson(full()).email, 'elena@test.com'),
     );
     test(
       'parses website',
       () => expect(
-        TestimonialDetail.fromJson(_full()).website,
+        TestimonialDetail.fromJson(full()).website,
         'https://elena.com',
       ),
     );
     test(
       'parses source',
-      () => expect(TestimonialDetail.fromJson(_full()).source, 'google'),
+      () => expect(TestimonialDetail.fromJson(full()).source, 'google'),
     );
     test(
       'parses projectId',
-      () => expect(TestimonialDetail.fromJson(_full()).projectId, 'proj-5'),
+      () => expect(TestimonialDetail.fromJson(full()).projectId, 'proj-5'),
     );
     test(
       'parses moderatedBy',
-      () => expect(TestimonialDetail.fromJson(_full()).moderatedBy, 'admin'),
+      () => expect(TestimonialDetail.fromJson(full()).moderatedBy, 'admin'),
     );
     test(
       'parses status = APPROVED',
-      () => expect(TestimonialDetail.fromJson(_full()).status, 'APPROVED'),
+      () => expect(TestimonialDetail.fromJson(full()).status, 'APPROVED'),
     );
     test(
       'parses featured = true',
-      () => expect(TestimonialDetail.fromJson(_full()).featured, isTrue),
+      () => expect(TestimonialDetail.fromJson(full()).featured, isTrue),
     );
   });
 

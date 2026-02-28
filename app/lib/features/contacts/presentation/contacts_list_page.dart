@@ -44,7 +44,8 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
     final confirmed = await ConfirmDialog.show(
       ctx,
       title: 'Eliminar contacto',
-      message: '¿Eliminar el mensaje de "${item.name}"? Esta acción no se puede deshacer.',
+      message:
+          '¿Eliminar el mensaje de "${item.name}"? Esta acción no se puede deshacer.',
       confirmLabel: 'Eliminar',
       isDestructive: true,
     );
@@ -54,24 +55,31 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
       await ref.read(contactsRepositoryProvider).deleteContact(item.id);
       ref.invalidate(contactsListProvider);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Contacto eliminado')));
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Contacto eliminado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     }
   }
 
-  Color _priorityColor(BuildContext context, String priority) => switch (priority) {
-    'URGENT' => AppColors.priorityHigh,
-    'HIGH' => AppColors.priorityMedium,
-    'LOW' => AppColors.priorityLow,
-    _ => Theme.of(context).colorScheme.secondary,
-  };
+  Color _priorityColor(BuildContext context, String priority) =>
+      switch (priority) {
+        'URGENT' => AppColors.priorityHigh,
+        'HIGH' => AppColors.priorityMedium,
+        'LOW' => AppColors.priorityLow,
+        _ => Theme.of(context).colorScheme.secondary,
+      };
 
   IconData _statusIcon(String status) => switch (status) {
     'REPLIED' => Icons.reply,
@@ -102,7 +110,15 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
 
     // Opciones de filtro: null=Todos, 'UNREAD'=No leídos, valores de _kStatuses
     final selectedChip = _unreadOnly ? 'UNREAD' : _statusFilter;
-    const filterOptions = <String?>[null, 'UNREAD', 'NEW', 'IN_PROGRESS', 'REPLIED', 'CLOSED', 'SPAM'];
+    const filterOptions = <String?>[
+      null,
+      'UNREAD',
+      'NEW',
+      'IN_PROGRESS',
+      'REPLIED',
+      'CLOSED',
+      'SPAM',
+    ];
 
     return AppScaffold(
       title: 'Contactos',
@@ -112,7 +128,11 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
             padding: EdgeInsets.fromLTRB(hPad, AppSpacing.base, hPad, 0),
             child: Column(
               children: [
-                AppSearchBar(hint: 'Buscar por nombre, email…', controller: _searchController, onChanged: _onSearch),
+                AppSearchBar(
+                  hint: 'Buscar por nombre, email…',
+                  controller: _searchController,
+                  onChanged: _onSearch,
+                ),
                 const SizedBox(height: AppSpacing.sm),
                 AppFilterChips<String?>(
                   options: filterOptions,
@@ -138,15 +158,20 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
           Expanded(
             child: async.when(
               loading: () => const _ContactsSkeleton(),
-              error: (e, _) => ErrorState(message: e.toString(), onRetry: () => ref.invalidate(contactsListProvider)),
+              error: (e, _) => ErrorState(
+                message: e.toString(),
+                onRetry: () => ref.invalidate(contactsListProvider),
+              ),
               data: (paginated) => paginated.data.isEmpty
                   ? const EmptyState(
                       icon: Icons.mail_outline,
                       title: 'Sin mensajes',
-                      subtitle: 'Aquí aparecen los mensajes del formulario de contacto',
+                      subtitle:
+                          'Aquí aparecen los mensajes del formulario de contacto',
                     )
                   : RefreshIndicator(
-                      onRefresh: () async => ref.invalidate(contactsListProvider),
+                      onRefresh: () async =>
+                          ref.invalidate(contactsListProvider),
                       child: ListView.separated(
                         padding: EdgeInsets.symmetric(horizontal: hPad),
                         itemCount: paginated.data.length,
@@ -154,7 +179,9 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                         itemBuilder: (ctx, i) {
                           final item = paginated.data[i];
                           return FadeSlideIn(
-                            delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+                            delay: Duration(
+                              milliseconds: (i * 40).clamp(0, 300),
+                            ),
                             child: _ContactTile(
                               item: item,
                               priorityColor: _priorityColor(ctx, item.priority),
@@ -199,7 +226,10 @@ class _ContactTile extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
         borderRadius: AppRadius.forTile,
-        onTap: () => context.pushNamed(RouteNames.contactDetail, pathParameters: {'id': item.id}),
+        onTap: () => context.pushNamed(
+          RouteNames.contactDetail,
+          pathParameters: {'id': item.id},
+        ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
           child: Row(
@@ -212,10 +242,16 @@ class _ContactTile extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: unread ? 0.15 : 0.07),
+                      color: scheme.primary.withValues(
+                        alpha: unread ? 0.15 : 0.07,
+                      ),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(statusIcon, color: unread ? scheme.primary : scheme.outline, size: 20),
+                    child: Icon(
+                      statusIcon,
+                      color: unread ? scheme.primary : scheme.outline,
+                      size: 20,
+                    ),
                   ),
                   if (unread)
                     Positioned(
@@ -245,7 +281,9 @@ class _ContactTile extends StatelessWidget {
                           child: Text(
                             item.name,
                             style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: unread ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: unread
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -256,14 +294,19 @@ class _ContactTile extends StatelessWidget {
                           width: 7,
                           height: 7,
                           margin: const EdgeInsets.only(left: 6, right: 4),
-                          decoration: BoxDecoration(color: priorityColor, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                            color: priorityColor,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.email,
-                      style: theme.textTheme.bodySmall?.copyWith(color: scheme.outline),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.outline,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -274,8 +317,12 @@ class _ContactTile extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: unread ? scheme.onSurface : scheme.onSurfaceVariant,
-                          fontWeight: unread ? FontWeight.w500 : FontWeight.normal,
+                          color: unread
+                              ? scheme.onSurface
+                              : scheme.onSurfaceVariant,
+                          fontWeight: unread
+                              ? FontWeight.w500
+                              : FontWeight.normal,
                         ),
                       ),
                     ],
@@ -286,17 +333,30 @@ class _ContactTile extends StatelessWidget {
               PopupMenuButton<String>(
                 iconSize: 20,
                 padding: EdgeInsets.zero,
-                icon: Icon(Icons.more_vert_rounded, size: 20, color: scheme.outline),
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 20,
+                  color: scheme.outline,
+                ),
                 itemBuilder: (_) => [
-                  const PopupMenuItem(value: 'view', child: Text('Ver detalle')),
+                  const PopupMenuItem(
+                    value: 'view',
+                    child: Text('Ver detalle'),
+                  ),
                   const PopupMenuItem(
                     value: 'delete',
-                    child: Text('Eliminar', style: TextStyle(color: AppColors.destructive)),
+                    child: Text(
+                      'Eliminar',
+                      style: TextStyle(color: AppColors.destructive),
+                    ),
                   ),
                 ],
                 onSelected: (action) {
                   if (action == 'view') {
-                    context.pushNamed(RouteNames.contactDetail, pathParameters: {'id': item.id});
+                    context.pushNamed(
+                      RouteNames.contactDetail,
+                      pathParameters: {'id': item.id},
+                    );
                   } else if (action == 'delete') {
                     onDelete(context, item);
                   }

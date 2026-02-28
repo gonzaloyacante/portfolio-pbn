@@ -56,7 +56,9 @@ class AppValidators {
   }
 
   /// Combina múltiples validadores en uno.
-  static String? Function(String?) compose(List<String? Function(String?)> validators) {
+  static String? Function(String?) compose(
+    List<String? Function(String?)> validators,
+  ) {
     return (value) {
       for (final v in validators) {
         final error = v(value);

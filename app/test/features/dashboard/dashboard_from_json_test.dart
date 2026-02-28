@@ -18,23 +18,44 @@ void main() {
   });
 
   group('DashboardStats.fromJson — full data', () {
-    Map<String, dynamic> _full() => {
-          'totalProjects': 25,
-          'totalCategories': 8,
-          'totalServices': 12,
-          'totalTestimonials': 50,
-          'newContacts': 7,
-          'pendingBookings': 3,
-          'pageViews30d': 1500,
-        };
+    Map<String, dynamic> full() => {
+      'totalProjects': 25,
+      'totalCategories': 8,
+      'totalServices': 12,
+      'totalTestimonials': 50,
+      'newContacts': 7,
+      'pendingBookings': 3,
+      'pageViews30d': 1500,
+    };
 
-    test('parses totalProjects', () => expect(DashboardStats.fromJson(_full()).totalProjects, 25));
-    test('parses totalCategories', () => expect(DashboardStats.fromJson(_full()).totalCategories, 8));
-    test('parses totalServices', () => expect(DashboardStats.fromJson(_full()).totalServices, 12));
-    test('parses totalTestimonials', () => expect(DashboardStats.fromJson(_full()).totalTestimonials, 50));
-    test('parses newContacts', () => expect(DashboardStats.fromJson(_full()).newContacts, 7));
-    test('parses pendingBookings', () => expect(DashboardStats.fromJson(_full()).pendingBookings, 3));
-    test('parses pageViews30d', () => expect(DashboardStats.fromJson(_full()).pageViews30d, 1500));
+    test(
+      'parses totalProjects',
+      () => expect(DashboardStats.fromJson(full()).totalProjects, 25),
+    );
+    test(
+      'parses totalCategories',
+      () => expect(DashboardStats.fromJson(full()).totalCategories, 8),
+    );
+    test(
+      'parses totalServices',
+      () => expect(DashboardStats.fromJson(full()).totalServices, 12),
+    );
+    test(
+      'parses totalTestimonials',
+      () => expect(DashboardStats.fromJson(full()).totalTestimonials, 50),
+    );
+    test(
+      'parses newContacts',
+      () => expect(DashboardStats.fromJson(full()).newContacts, 7),
+    );
+    test(
+      'parses pendingBookings',
+      () => expect(DashboardStats.fromJson(full()).pendingBookings, 3),
+    );
+    test(
+      'parses pageViews30d',
+      () => expect(DashboardStats.fromJson(full()).pageViews30d, 1500),
+    );
   });
 
   group('DashboardStats — equality and copyWith', () {
@@ -53,7 +74,10 @@ void main() {
     });
 
     test('copyWith leaves other fields unchanged', () {
-      final s = DashboardStats.fromJson({'totalProjects': 5, 'totalServices': 3});
+      final s = DashboardStats.fromJson({
+        'totalProjects': 5,
+        'totalServices': 3,
+      });
       final updated = s.copyWith(newContacts: 2);
       expect(updated.totalProjects, 5);
       expect(updated.totalServices, 3);
@@ -87,19 +111,28 @@ void main() {
 
   group('ChartDataPoint.fromJson — required fields', () {
     test('parses label', () {
-      expect(ChartDataPoint.fromJson({'label': 'Jan', 'count': 10}).label, 'Jan');
+      expect(
+        ChartDataPoint.fromJson({'label': 'Jan', 'count': 10}).label,
+        'Jan',
+      );
     });
     test('parses count', () {
       expect(ChartDataPoint.fromJson({'label': 'Feb', 'count': 25}).count, 25);
     });
     test('label can be Spanish month', () {
-      expect(ChartDataPoint.fromJson({'label': 'Enero', 'count': 5}).label, 'Enero');
+      expect(
+        ChartDataPoint.fromJson({'label': 'Enero', 'count': 5}).label,
+        'Enero',
+      );
     });
     test('count can be zero', () {
       expect(ChartDataPoint.fromJson({'label': 'Mar', 'count': 0}).count, 0);
     });
     test('count can be large', () {
-      expect(ChartDataPoint.fromJson({'label': 'Big', 'count': 99999}).count, 99999);
+      expect(
+        ChartDataPoint.fromJson({'label': 'Big', 'count': 99999}).count,
+        99999,
+      );
     });
   });
 

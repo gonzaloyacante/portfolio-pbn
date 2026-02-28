@@ -60,27 +60,48 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
       // Subir imagen de perfil si se seleccionó una nueva.
       if (_pendingProfileImage != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _profileImageCtrl.text = await uploadSvc.uploadImage(_pendingProfileImage!, folder: 'portfolio/about');
+        _profileImageCtrl.text = await uploadSvc.uploadImage(
+          _pendingProfileImage!,
+          folder: 'portfolio/about',
+        );
       }
 
       await ref.read(settingsRepositoryProvider).updateAbout({
-        'bioTitle': _bioTitleCtrl.text.trim().isEmpty ? null : _bioTitleCtrl.text.trim(),
-        'bioIntro': _bioIntroCtrl.text.trim().isEmpty ? null : _bioIntroCtrl.text.trim(),
-        'bioDescription': _bioDescCtrl.text.trim().isEmpty ? null : _bioDescCtrl.text.trim(),
+        'bioTitle': _bioTitleCtrl.text.trim().isEmpty
+            ? null
+            : _bioTitleCtrl.text.trim(),
+        'bioIntro': _bioIntroCtrl.text.trim().isEmpty
+            ? null
+            : _bioIntroCtrl.text.trim(),
+        'bioDescription': _bioDescCtrl.text.trim().isEmpty
+            ? null
+            : _bioDescCtrl.text.trim(),
         'yearsExperience': int.tryParse(_yearsCtrl.text.trim()),
-        'profileImageUrl': _profileImageCtrl.text.trim().isEmpty ? null : _profileImageCtrl.text.trim(),
-        'skills': _skillsCtrl.text.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList(),
+        'profileImageUrl': _profileImageCtrl.text.trim().isEmpty
+            ? null
+            : _profileImageCtrl.text.trim(),
+        'skills': _skillsCtrl.text
+            .split(',')
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty)
+            .toList(),
       });
       ref.invalidate(aboutSettingsProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Configuración guardada')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Configuración guardada')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -93,12 +114,21 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
 
     return AppScaffold(
       title: 'Sobre mí',
-      actions: [IconButton(icon: const Icon(Icons.save_outlined), tooltip: 'Guardar', onPressed: _save)],
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Guardar',
+          onPressed: _save,
+        ),
+      ],
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
           loading: () => _buildShimmer(),
-          error: (e, _) => ErrorState(message: e.toString(), onRetry: () => ref.invalidate(aboutSettingsProvider)),
+          error: (e, _) => ErrorState(
+            message: e.toString(),
+            onRetry: () => ref.invalidate(aboutSettingsProvider),
+          ),
           data: (settings) {
             _populate(settings);
             return _buildForm(context);
@@ -115,7 +145,13 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
         4,
         (_) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(child: ShimmerBox(width: double.infinity, height: 56, borderRadius: 12)),
+          child: ShimmerLoader(
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 56,
+              borderRadius: 12,
+            ),
+          ),
         ),
       ),
     );
@@ -138,13 +174,19 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
               TextFormField(
                 controller: _bioIntroCtrl,
                 maxLines: 3,
-                decoration: const InputDecoration(labelText: 'Intro', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Intro',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _bioDescCtrl,
                 maxLines: 5,
-                decoration: const InputDecoration(labelText: 'Descripción', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  border: OutlineInputBorder(),
+                ),
               ),
             ],
           ),
@@ -154,7 +196,9 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
             children: [
               ImageUploadWidget(
                 label: 'Imagen de perfil',
-                currentImageUrl: _profileImageCtrl.text.isNotEmpty ? _profileImageCtrl.text : null,
+                currentImageUrl: _profileImageCtrl.text.isNotEmpty
+                    ? _profileImageCtrl.text
+                    : null,
                 hint: 'Foto de perfil para el é About',
                 onImageSelected: (file) {
                   setState(() => _pendingProfileImage = file);
@@ -222,7 +266,12 @@ class _FormCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             ...children,
           ],

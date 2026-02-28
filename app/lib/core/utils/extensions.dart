@@ -6,14 +6,16 @@ final _emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
 
 /// Extensions de Dart/Flutter usadas en toda la app.
 extension StringExtensions on String {
-  String get capitalize => isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
+  String get capitalize =>
+      isEmpty ? this : '${this[0].toUpperCase()}${substring(1)}';
 
   String get titleCase => split(' ').map((word) => word.capitalize).join(' ');
 
   bool get isValidEmail => _emailRegex.hasMatch(this);
 
   /// Trunca con elipsis si supera [maxLength].
-  String truncate(int maxLength) => length <= maxLength ? this : '${substring(0, maxLength)}…';
+  String truncate(int maxLength) =>
+      length <= maxLength ? this : '${substring(0, maxLength)}…';
 }
 
 extension NullableStringExtensions on String? {
@@ -29,7 +31,9 @@ extension DateTimeExtensions on DateTime {
 
   bool get isYesterday {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return year == yesterday.year && month == yesterday.month && day == yesterday.day;
+    return year == yesterday.year &&
+        month == yesterday.month &&
+        day == yesterday.day;
   }
 
   DateTime get startOfDay => DateTime(year, month, day);
@@ -50,7 +54,9 @@ extension BuildContextExtensions on BuildContext {
     ScaffoldMessenger.of(this).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: isError ? Theme.of(this).colorScheme.error : Theme.of(this).colorScheme.primary,
+        backgroundColor: isError
+            ? Theme.of(this).colorScheme.error
+            : Theme.of(this).colorScheme.primary,
         behavior: SnackBarBehavior.floating,
       ),
     );

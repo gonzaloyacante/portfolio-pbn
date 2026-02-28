@@ -57,6 +57,7 @@ abstract final class AppRadius {
   static BorderRadius get forButton => BorderRadius.circular(button);
   static BorderRadius get forInput => BorderRadius.circular(input);
   static BorderRadius get forImage => BorderRadius.circular(image);
-  static BorderRadius get forIconContainer => BorderRadius.circular(iconContainer);
+  static BorderRadius get forIconContainer =>
+      BorderRadius.circular(iconContainer);
   static BorderRadius get forFull => BorderRadius.circular(full);
 }

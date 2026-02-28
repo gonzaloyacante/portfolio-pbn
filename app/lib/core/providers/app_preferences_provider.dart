@@ -17,7 +17,8 @@ enum ViewMode { grid, list }
 // ── SharedPreferences singleton ───────────────────────────────────────────────
 
 @Riverpod(keepAlive: true)
-Future<SharedPreferences> sharedPreferences(Ref ref) => SharedPreferences.getInstance();
+Future<SharedPreferences> sharedPreferences(Ref ref) =>
+    SharedPreferences.getInstance();
 
 // ── ViewMode providers ────────────────────────────────────────────────────────
 
@@ -34,7 +35,10 @@ class ProjectsViewMode extends _$ProjectsViewMode {
     final prefs = await ref.read(sharedPreferencesProvider.future);
     final stored = prefs.getString(_PrefKeys.projectsViewMode);
     if (stored != null) {
-      state = ViewMode.values.firstWhere((e) => e.name == stored, orElse: () => ViewMode.grid);
+      state = ViewMode.values.firstWhere(
+        (e) => e.name == stored,
+        orElse: () => ViewMode.grid,
+      );
     }
   }
 
@@ -65,7 +69,10 @@ class ServicesViewMode extends _$ServicesViewMode {
     final prefs = await ref.read(sharedPreferencesProvider.future);
     final stored = prefs.getString(_PrefKeys.servicesViewMode);
     if (stored != null) {
-      state = ViewMode.values.firstWhere((e) => e.name == stored, orElse: () => ViewMode.list);
+      state = ViewMode.values.firstWhere(
+        (e) => e.name == stored,
+        orElse: () => ViewMode.list,
+      );
     }
   }
 

@@ -13,7 +13,12 @@ part of 'settings_provider.dart';
 final settingsRepositoryProvider = SettingsRepositoryProvider._();
 
 final class SettingsRepositoryProvider
-    extends $FunctionalProvider<SettingsRepository, SettingsRepository, SettingsRepository>
+    extends
+        $FunctionalProvider<
+          SettingsRepository,
+          SettingsRepository,
+          SettingsRepository
+        >
     with $Provider<SettingsRepository> {
   SettingsRepositoryProvider._()
     : super(
@@ -31,7 +36,9 @@ final class SettingsRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<SettingsRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<SettingsRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   SettingsRepository create(Ref ref) {
@@ -40,17 +47,26 @@ final class SettingsRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(SettingsRepository value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<SettingsRepository>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SettingsRepository>(value),
+    );
   }
 }
 
-String _$settingsRepositoryHash() => r'4368f37c1789efa0923609e03cfeedc62a70af08';
+String _$settingsRepositoryHash() =>
+    r'4368f37c1789efa0923609e03cfeedc62a70af08';
 
 @ProviderFor(aboutSettings)
 final aboutSettingsProvider = AboutSettingsProvider._();
 
 final class AboutSettingsProvider
-    extends $FunctionalProvider<AsyncValue<AboutSettings>, AboutSettings, FutureOr<AboutSettings>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<AboutSettings>,
+          AboutSettings,
+          FutureOr<AboutSettings>
+        >
     with $FutureModifier<AboutSettings>, $FutureProvider<AboutSettings> {
   AboutSettingsProvider._()
     : super(
@@ -68,7 +84,9 @@ final class AboutSettingsProvider
 
   @$internal
   @override
-  $FutureProviderElement<AboutSettings> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<AboutSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<AboutSettings> create(Ref ref) {
@@ -82,7 +100,12 @@ String _$aboutSettingsHash() => r'de3ee197d5af19c4df045e30f91cb37949c3e0fe';
 final contactSettingsProvider = ContactSettingsProvider._();
 
 final class ContactSettingsProvider
-    extends $FunctionalProvider<AsyncValue<ContactSettings>, ContactSettings, FutureOr<ContactSettings>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<ContactSettings>,
+          ContactSettings,
+          FutureOr<ContactSettings>
+        >
     with $FutureModifier<ContactSettings>, $FutureProvider<ContactSettings> {
   ContactSettingsProvider._()
     : super(
@@ -100,7 +123,9 @@ final class ContactSettingsProvider
 
   @$internal
   @override
-  $FutureProviderElement<ContactSettings> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<ContactSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<ContactSettings> create(Ref ref) {
@@ -114,7 +139,12 @@ String _$contactSettingsHash() => r'4daf67676a7b81940123d6bb338f7f9a8056af0a';
 final themeSettingsProvider = ThemeSettingsProvider._();
 
 final class ThemeSettingsProvider
-    extends $FunctionalProvider<AsyncValue<ThemeSettings>, ThemeSettings, FutureOr<ThemeSettings>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<ThemeSettings>,
+          ThemeSettings,
+          FutureOr<ThemeSettings>
+        >
     with $FutureModifier<ThemeSettings>, $FutureProvider<ThemeSettings> {
   ThemeSettingsProvider._()
     : super(
@@ -132,7 +162,9 @@ final class ThemeSettingsProvider
 
   @$internal
   @override
-  $FutureProviderElement<ThemeSettings> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<ThemeSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<ThemeSettings> create(Ref ref) {
@@ -146,7 +178,12 @@ String _$themeSettingsHash() => r'df135a4764cedc9d86cce1b380a428a54288b3a5';
 final siteSettingsProvider = SiteSettingsProvider._();
 
 final class SiteSettingsProvider
-    extends $FunctionalProvider<AsyncValue<SiteSettings>, SiteSettings, FutureOr<SiteSettings>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<SiteSettings>,
+          SiteSettings,
+          FutureOr<SiteSettings>
+        >
     with $FutureModifier<SiteSettings>, $FutureProvider<SiteSettings> {
   SiteSettingsProvider._()
     : super(
@@ -164,7 +201,9 @@ final class SiteSettingsProvider
 
   @$internal
   @override
-  $FutureProviderElement<SiteSettings> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<SiteSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<SiteSettings> create(Ref ref) {
@@ -178,7 +217,12 @@ String _$siteSettingsHash() => r'bb4101134e9e70a0ab23e66043d8337e77d6c75e';
 final socialLinksProvider = SocialLinksProvider._();
 
 final class SocialLinksProvider
-    extends $FunctionalProvider<AsyncValue<List<SocialLink>>, List<SocialLink>, FutureOr<List<SocialLink>>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<SocialLink>>,
+          List<SocialLink>,
+          FutureOr<List<SocialLink>>
+        >
     with $FutureModifier<List<SocialLink>>, $FutureProvider<List<SocialLink>> {
   SocialLinksProvider._()
     : super(
@@ -196,7 +240,9 @@ final class SocialLinksProvider
 
   @$internal
   @override
-  $FutureProviderElement<List<SocialLink>> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<List<SocialLink>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<List<SocialLink>> create(Ref ref) {

@@ -61,7 +61,12 @@ class SettingsPage extends StatelessWidget {
 // ── Modelo auxiliar ───────────────────────────────────────────────────────────
 
 class _SettingsItem {
-  const _SettingsItem({required this.icon, required this.title, required this.subtitle, required this.routeName});
+  const _SettingsItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.routeName,
+  });
   final IconData icon;
   final String title;
   final String subtitle;
@@ -98,7 +103,10 @@ class _SettingsTile extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [colorScheme.primary.withValues(alpha: 0.15), colorScheme.primary.withValues(alpha: 0.06)],
+                    colors: [
+                      colorScheme.primary.withValues(alpha: 0.15),
+                      colorScheme.primary.withValues(alpha: 0.06),
+                    ],
                   ),
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -110,20 +118,31 @@ class _SettingsTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(item.title, style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      item.title,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.outline),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.outline,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
               // ── Chevron ────────────────────────────────────
-              Icon(Icons.chevron_right_rounded, size: 20, color: colorScheme.outline),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: colorScheme.outline,
+              ),
             ],
           ),
         ),

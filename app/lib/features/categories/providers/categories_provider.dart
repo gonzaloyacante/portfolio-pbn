@@ -7,7 +7,12 @@ import '../../../shared/models/paginated_response.dart';
 part 'categories_provider.g.dart';
 
 @riverpod
-Future<PaginatedResponse<CategoryItem>> categoriesList(Ref ref, {int page = 1, String? search, bool? isActive}) async {
+Future<PaginatedResponse<CategoryItem>> categoriesList(
+  Ref ref, {
+  int page = 1,
+  String? search,
+  bool? isActive,
+}) async {
   final repo = ref.watch(categoriesRepositoryProvider);
   return repo.getCategories(page: page, search: search, isActive: isActive);
 }

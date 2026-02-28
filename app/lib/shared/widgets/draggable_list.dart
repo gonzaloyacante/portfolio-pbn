@@ -47,7 +47,10 @@ class DraggableList<T> extends StatelessWidget {
       proxyDecorator: _proxyDecorator,
       itemBuilder: (context, index) {
         final item = items[index];
-        return KeyedSubtree(key: keyBuilder(item), child: itemBuilder(item, index, false));
+        return KeyedSubtree(
+          key: keyBuilder(item),
+          child: itemBuilder(item, index, false),
+        );
       },
     );
   }
@@ -56,10 +59,11 @@ class DraggableList<T> extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
-        final elevation = Tween<double>(
-          begin: 0,
-          end: 8,
-        ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)).value;
+        final elevation = Tween<double>(begin: 0, end: 8)
+            .animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeInOut),
+            )
+            .value;
 
         return Material(
           elevation: elevation,
@@ -84,6 +88,10 @@ class DragHandle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.drag_handle_rounded, color: Theme.of(context).colorScheme.outline, size: 22);
+    return Icon(
+      Icons.drag_handle_rounded,
+      color: Theme.of(context).colorScheme.outline,
+      size: 22,
+    );
   }
 }

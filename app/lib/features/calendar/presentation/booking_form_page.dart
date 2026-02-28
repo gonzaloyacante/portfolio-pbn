@@ -47,22 +47,35 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     );
     if (pickedDate == null || !mounted) return;
 
-    final pickedTime = await showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(_date ?? now));
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_date ?? now),
+    );
     if (pickedTime == null || !mounted) return;
 
     setState(() {
-      _date = DateTime(pickedDate.year, pickedDate.month, pickedDate.day, pickedTime.hour, pickedTime.minute);
+      _date = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
     });
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     if (_date == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Selecciona la fecha y hora')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecciona la fecha y hora')),
+      );
       return;
     }
     if (_serviceId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Selecciona un servicio')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Selecciona un servicio')));
       return;
     }
 
@@ -73,9 +86,13 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         date: _date!,
         clientName: _clientNameCtrl.text.trim(),
         clientEmail: _clientEmailCtrl.text.trim(),
-        clientPhone: _clientPhoneCtrl.text.trim().isEmpty ? null : _clientPhoneCtrl.text.trim(),
+        clientPhone: _clientPhoneCtrl.text.trim().isEmpty
+            ? null
+            : _clientPhoneCtrl.text.trim(),
         guestCount: int.tryParse(_guestCountCtrl.text.trim()) ?? 1,
-        clientNotes: _notesCtrl.text.trim().isEmpty ? null : _notesCtrl.text.trim(),
+        clientNotes: _notesCtrl.text.trim().isEmpty
+            ? null
+            : _notesCtrl.text.trim(),
         serviceId: _serviceId!,
       );
       await repo.createBooking(data);
@@ -84,9 +101,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No se pudo crear la reserva. Inténtalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo crear la reserva. Inténtalo de nuevo.'),
+          ),
+        );
         setState(() => _saving = false);
       }
     }
@@ -104,10 +123,16 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
       isLoading: _saving,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+            tooltip: 'Volver',
+          ),
           title: const Text('Nueva reserva'),
           centerTitle: false,
-          actions: [TextButton(onPressed: _submit, child: const Text('GUARDAR'))],
+          actions: [
+            TextButton(onPressed: _submit, child: const Text('GUARDAR')),
+          ],
         ),
         body: Form(
           key: _formKey,
@@ -116,7 +141,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             children: [
               // ── Datos del cliente ────────────────────────────────────────
               Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -124,13 +151,18 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                     children: [
                       Text(
                         'Datos del cliente',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _clientNameCtrl,
-                        decoration: const InputDecoration(labelText: 'Nombre *'),
-                        validator: (v) => (v == null || v.isEmpty) ? 'Obligatorio' : null,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre *',
+                        ),
+                        validator: (v) =>
+                            (v == null || v.isEmpty) ? 'Obligatorio' : null,
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -147,13 +179,17 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                       TextFormField(
                         controller: _clientPhoneCtrl,
                         keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(labelText: 'Teléfono'),
+                        decoration: const InputDecoration(
+                          labelText: 'Teléfono',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _guestCountCtrl,
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(labelText: 'Nº de asistentes'),
+                        decoration: const InputDecoration(
+                          labelText: 'Nº de asistentes',
+                        ),
                       ),
                     ],
                   ),
@@ -162,19 +198,25 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
               const SizedBox(height: 12),
               // ── Fecha y hora ─────────────────────────────────────────────
               Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: ListTile(
                   leading: const Icon(Icons.calendar_month_outlined),
                   title: Text(dateLabel),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _pickDateTime,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
               // ── Notas ────────────────────────────────────────────────────
               Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -182,7 +224,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                     children: [
                       Text(
                         'Notas',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextFormField(

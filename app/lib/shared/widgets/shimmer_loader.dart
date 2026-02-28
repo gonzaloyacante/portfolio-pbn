@@ -43,7 +43,12 @@ class ShimmerLoader extends StatelessWidget {
 
 /// Caja rectangular shimmer para usar como placeholder.
 class ShimmerBox extends StatelessWidget {
-  const ShimmerBox({super.key, required this.width, required this.height, this.borderRadius});
+  const ShimmerBox({
+    super.key,
+    required this.width,
+    required this.height,
+    this.borderRadius,
+  });
 
   final double width;
   final double height;
@@ -74,7 +79,10 @@ class SkeletonCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: AppBreakpoints.pageMargin(context), vertical: AppSpacing.xs + 2),
+      margin: EdgeInsets.symmetric(
+        horizontal: AppBreakpoints.pageMargin(context),
+        vertical: AppSpacing.xs + 2,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.base),
         child: Row(
@@ -123,7 +131,11 @@ class SkeletonGridCard extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.card),
                 topRight: Radius.circular(AppRadius.card),
               ),
-              child: Container(height: 120, width: double.infinity, color: Colors.white),
+              child: Container(
+                height: 120,
+                width: double.infinity,
+                color: Colors.white,
+              ),
             ),
           ],
           Padding(
@@ -202,7 +214,10 @@ class SkeletonGridView extends StatelessWidget {
 
     return ShimmerLoader(
       child: GridView.builder(
-        padding: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.sm),
+        padding: EdgeInsets.symmetric(
+          horizontal: hPad,
+          vertical: AppSpacing.sm,
+        ),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: cols,
           mainAxisSpacing: spacing,

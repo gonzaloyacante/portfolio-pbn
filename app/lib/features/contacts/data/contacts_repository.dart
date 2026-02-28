@@ -32,7 +32,10 @@ class ContactsRepository {
       },
     );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return PaginatedResponse<ContactItem>.fromJson(
       apiResp.data!,
@@ -43,15 +46,27 @@ class ContactsRepository {
   Future<ContactDetail> getContact(String id) async {
     final resp = await _client.get<Map<String, dynamic>>(Endpoints.contact(id));
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return ContactDetail.fromJson(apiResp.data!);
   }
 
-  Future<ContactDetail> updateContact(String id, Map<String, dynamic> updates) async {
-    final resp = await _client.patch<Map<String, dynamic>>(Endpoints.contact(id), data: updates);
+  Future<ContactDetail> updateContact(
+    String id,
+    Map<String, dynamic> updates,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.contact(id),
+      data: updates,
+    );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return ContactDetail.fromJson(apiResp.data!);
   }

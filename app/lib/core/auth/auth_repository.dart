@@ -13,7 +13,10 @@ part 'auth_repository.g.dart';
 
 @riverpod
 AuthRepository authRepository(Ref ref) {
-  return AuthRepository(apiClient: ref.watch(apiClientProvider), tokenStorage: ref.watch(tokenStorageProvider));
+  return AuthRepository(
+    apiClient: ref.watch(apiClientProvider),
+    tokenStorage: ref.watch(tokenStorageProvider),
+  );
 }
 
 // ── AuthRepository ────────────────────────────────────────────────────────────
@@ -26,9 +29,11 @@ AuthRepository authRepository(Ref ref) {
 /// - Logout (local + revocación en servidor).
 /// - Obtener el perfil del usuario autenticado (GET /me).
 class AuthRepository {
-  const AuthRepository({required ApiClient apiClient, required TokenStorage tokenStorage})
-    : _api = apiClient,
-      _storage = tokenStorage;
+  const AuthRepository({
+    required ApiClient apiClient,
+    required TokenStorage tokenStorage,
+  }) : _api = apiClient,
+       _storage = tokenStorage;
 
   final ApiClient _api;
   final TokenStorage _storage;
@@ -41,17 +46,26 @@ class AuthRepository {
   /// Devuelve el [UserProfile] si tiene éxito.
   /// Lanza [UnauthorizedException] si las credenciales son incorrectas.
   /// Lanza [RateLimitException] si la cuenta ha sido bloqueada.
-  Future<UserProfile> login({required String email, required String password, String? fcmToken}) async {
+  Future<UserProfile> login({
+    required String email,
+    required String password,
+    String? fcmToken,
+  }) async {
     AppLogger.info('AuthRepository: login attempt for $email');
 
     final payload = <String, dynamic>{'email': email, 'password': password};
     if (fcmToken != null) payload['pushToken'] = fcmToken;
 
-    final raw = await _api.post<Map<String, dynamic>>(Endpoints.authLogin, data: payload);
+    final raw = await _api.post<Map<String, dynamic>>(
+      Endpoints.authLogin,
+      data: payload,
+    );
 
     // El backend devuelve { success: true, data: { accessToken, refreshToken, user } }
     // pero mantenemos compatibilidad si la respuesta viene con los campos al tope.
-    final body = (raw['data'] is Map<String, dynamic>) ? raw['data'] as Map<String, dynamic> : raw;
+    final body = (raw['data'] is Map<String, dynamic>)
+        ? raw['data'] as Map<String, dynamic>
+        : raw;
 
     final accessToken = body['accessToken'] as String?;
     final refreshToken = body['refreshToken'] as String?;
@@ -61,7 +75,10 @@ class AuthRepository {
       throw const ServerException(message: 'Respuesta de login inválida');
     }
 
-    await Future.wait([_storage.saveAccessToken(accessToken), _storage.saveRefreshToken(refreshToken)]);
+    await Future.wait([
+      _storage.saveAccessToken(accessToken),
+      _storage.saveRefreshToken(refreshToken),
+    ]);
 
     final profile = UserProfile.fromJson(userData);
     AppLogger.info('AuthRepository: login successful for ${profile.email}');
@@ -80,7 +97,10 @@ class AuthRepository {
     try {
       final refreshToken = await _storage.getRefreshToken();
       if (refreshToken != null) {
-        await _api.post<void>(Endpoints.authLogout, data: {'refreshToken': refreshToken, 'everywhere': everywhere});
+        await _api.post<void>(
+          Endpoints.authLogout,
+          data: {'refreshToken': refreshToken, 'everywhere': everywhere},
+        );
       }
     } catch (e) {
       // Siempre limpiar localmente aunque el servidor falle.
@@ -98,10 +118,14 @@ class AuthRepository {
     final raw = await _api.get<Map<String, dynamic>>(Endpoints.authMe);
 
     // Backend returns { success: true, data: <user> }
-    final body = (raw['data'] is Map<String, dynamic>) ? raw['data'] as Map<String, dynamic> : raw;
+    final body = (raw['data'] is Map<String, dynamic>)
+        ? raw['data'] as Map<String, dynamic>
+        : raw;
 
     // body may be either the user map directly or { user: { ... } }
-    final userData = (body['user'] is Map<String, dynamic>) ? body['user'] as Map<String, dynamic> : body;
+    final userData = (body['user'] is Map<String, dynamic>)
+        ? body['user'] as Map<String, dynamic>
+        : body;
 
     if (userData.isEmpty) {
       throw const ServerException(message: 'Respuesta de /me inválida');

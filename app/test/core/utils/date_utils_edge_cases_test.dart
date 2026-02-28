@@ -11,43 +11,82 @@ void main() {
 
   group('AppDateUtils.toFullDate — edge dates', () {
     test('first day of year', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 1, 1)), '1 de enero de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 1, 1)),
+        '1 de enero de 2024',
+      );
     });
     test('last day of year', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 12, 31)), '31 de diciembre de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 12, 31)),
+        '31 de diciembre de 2024',
+      );
     });
     test('leap day February 29', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 2, 29)), '29 de febrero de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 2, 29)),
+        '29 de febrero de 2024',
+      );
     });
     test('March 15', () {
-      expect(AppDateUtils.toFullDate(DateTime(2023, 3, 15)), '15 de marzo de 2023');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2023, 3, 15)),
+        '15 de marzo de 2023',
+      );
     });
     test('April 30', () {
-      expect(AppDateUtils.toFullDate(DateTime(2025, 4, 30)), '30 de abril de 2025');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2025, 4, 30)),
+        '30 de abril de 2025',
+      );
     });
     test('May 1 labor day', () {
-      expect(AppDateUtils.toFullDate(DateTime(2025, 5, 1)), '1 de mayo de 2025');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2025, 5, 1)),
+        '1 de mayo de 2025',
+      );
     });
     test('June 15', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 6, 15)), '15 de junio de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 6, 15)),
+        '15 de junio de 2024',
+      );
     });
     test('July 4', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 7, 4)), '4 de julio de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 7, 4)),
+        '4 de julio de 2024',
+      );
     });
     test('August 31', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 8, 31)), '31 de agosto de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 8, 31)),
+        '31 de agosto de 2024',
+      );
     });
     test('September 10', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 9, 10)), '10 de septiembre de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 9, 10)),
+        '10 de septiembre de 2024',
+      );
     });
     test('October 31 Halloween', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 10, 31)), '31 de octubre de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 10, 31)),
+        '31 de octubre de 2024',
+      );
     });
     test('November 11', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 11, 11)), '11 de noviembre de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 11, 11)),
+        '11 de noviembre de 2024',
+      );
     });
     test('December 25 Christmas', () {
-      expect(AppDateUtils.toFullDate(DateTime(2024, 12, 25)), '25 de diciembre de 2024');
+      expect(
+        AppDateUtils.toFullDate(DateTime(2024, 12, 25)),
+        '25 de diciembre de 2024',
+      );
     });
   });
 
@@ -79,23 +118,38 @@ void main() {
 
   group('AppDateUtils.toShortDateTime', () {
     test('midnight time', () {
-      expect(AppDateUtils.toShortDateTime(DateTime(2024, 6, 1, 0, 0)), '01/06/2024 00:00');
+      expect(
+        AppDateUtils.toShortDateTime(DateTime(2024, 6, 1, 0, 0)),
+        '01/06/2024 00:00',
+      );
     });
     test('noon time', () {
-      expect(AppDateUtils.toShortDateTime(DateTime(2024, 6, 1, 12, 0)), '01/06/2024 12:00');
+      expect(
+        AppDateUtils.toShortDateTime(DateTime(2024, 6, 1, 12, 0)),
+        '01/06/2024 12:00',
+      );
     });
     test('last minute of day', () {
-      expect(AppDateUtils.toShortDateTime(DateTime(2024, 6, 1, 23, 59)), '01/06/2024 23:59');
+      expect(
+        AppDateUtils.toShortDateTime(DateTime(2024, 6, 1, 23, 59)),
+        '01/06/2024 23:59',
+      );
     });
     test('contains space between date and time', () {
       final result = AppDateUtils.toShortDateTime(DateTime(2024, 1, 1, 9, 30));
       expect(result.contains(' '), isTrue);
     });
     test('minutes are fixed two digits', () {
-      expect(AppDateUtils.toShortDateTime(DateTime(2024, 1, 1, 10, 5)), '01/01/2024 10:05');
+      expect(
+        AppDateUtils.toShortDateTime(DateTime(2024, 1, 1, 10, 5)),
+        '01/01/2024 10:05',
+      );
     });
     test('hours are fixed two digits', () {
-      expect(AppDateUtils.toShortDateTime(DateTime(2024, 1, 1, 9, 0)), '01/01/2024 09:00');
+      expect(
+        AppDateUtils.toShortDateTime(DateTime(2024, 1, 1, 9, 0)),
+        '01/01/2024 09:00',
+      );
     });
   });
 
@@ -115,7 +169,10 @@ void main() {
       expect(AppDateUtils.toTimeOnly(DateTime(2024, 1, 1, 9, 5)), '09:05');
     });
     test('contains colon', () {
-      expect(AppDateUtils.toTimeOnly(DateTime(2024, 1, 1, 14, 30)).contains(':'), isTrue);
+      expect(
+        AppDateUtils.toTimeOnly(DateTime(2024, 1, 1, 14, 30)).contains(':'),
+        isTrue,
+      );
     });
     test('length is exactly 5', () {
       expect(AppDateUtils.toTimeOnly(DateTime(2024, 1, 1, 14, 30)).length, 5);
@@ -129,7 +186,10 @@ void main() {
       expect(AppDateUtils.toMonthYear(DateTime(2024, 1, 15)), 'enero de 2024');
     });
     test('December 2023', () {
-      expect(AppDateUtils.toMonthYear(DateTime(2023, 12, 1)), 'diciembre de 2023');
+      expect(
+        AppDateUtils.toMonthYear(DateTime(2023, 12, 1)),
+        'diciembre de 2023',
+      );
     });
     test('July 2025', () {
       expect(AppDateUtils.toMonthYear(DateTime(2025, 7, 20)), 'julio de 2025');

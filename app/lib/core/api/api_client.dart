@@ -15,7 +15,9 @@ import 'auth_interceptor.dart';
 /// En modo debug, reconstruye el cliente cuando cambia [serverUrlProvider].
 /// En release, siempre usa [EnvConfig.apiBaseUrl].
 final apiClientProvider = Provider<ApiClient>((ref) {
-  final baseUrl = kDebugMode ? ref.watch<ServerUrlState>(serverUrlProvider).resolvedUrl : EnvConfig.apiBaseUrl;
+  final baseUrl = kDebugMode
+      ? ref.watch<ServerUrlState>(serverUrlProvider).resolvedUrl
+      : EnvConfig.apiBaseUrl;
   return ApiClient(ref, baseUrl: baseUrl);
 });
 
@@ -24,7 +26,8 @@ final apiClientProvider = Provider<ApiClient>((ref) {
 /// Cliente HTTP centralizado basado en Dio.
 /// NUNCA instanciar Dio directamente fuera de esta clase.
 class ApiClient {
-  ApiClient(this._ref, {String? baseUrl}) : _baseUrl = baseUrl ?? EnvConfig.apiBaseUrl {
+  ApiClient(this._ref, {String? baseUrl})
+    : _baseUrl = baseUrl ?? EnvConfig.apiBaseUrl {
     _dio = _buildDio();
     _addInterceptors();
   }
@@ -63,18 +66,36 @@ class ApiClient {
 
   // ── HTTP Methods ──────────────────────────────────────────────────────────
 
-  Future<T> get<T>(String path, {Map<String, dynamic>? queryParams, Options? options}) async {
+  Future<T> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParams,
+    Options? options,
+  }) async {
     try {
-      final response = await _dio.get<dynamic>(path, queryParameters: queryParams, options: options);
+      final response = await _dio.get<dynamic>(
+        path,
+        queryParameters: queryParams,
+        options: options,
+      );
       return _handleResponse<T>(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
     }
   }
 
-  Future<T> post<T>(String path, {dynamic data, Map<String, dynamic>? queryParams, Options? options}) async {
+  Future<T> post<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParams,
+    Options? options,
+  }) async {
     try {
-      final response = await _dio.post<dynamic>(path, data: data, queryParameters: queryParams, options: options);
+      final response = await _dio.post<dynamic>(
+        path,
+        data: data,
+        queryParameters: queryParams,
+        options: options,
+      );
       return _handleResponse<T>(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -83,7 +104,11 @@ class ApiClient {
 
   Future<T> put<T>(String path, {dynamic data, Options? options}) async {
     try {
-      final response = await _dio.put<dynamic>(path, data: data, options: options);
+      final response = await _dio.put<dynamic>(
+        path,
+        data: data,
+        options: options,
+      );
       return _handleResponse<T>(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -92,7 +117,11 @@ class ApiClient {
 
   Future<T> patch<T>(String path, {dynamic data, Options? options}) async {
     try {
-      final response = await _dio.patch<dynamic>(path, data: data, options: options);
+      final response = await _dio.patch<dynamic>(
+        path,
+        data: data,
+        options: options,
+      );
       return _handleResponse<T>(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -101,7 +130,11 @@ class ApiClient {
 
   Future<T> delete<T>(String path, {dynamic data, Options? options}) async {
     try {
-      final response = await _dio.delete<dynamic>(path, data: data, options: options);
+      final response = await _dio.delete<dynamic>(
+        path,
+        data: data,
+        options: options,
+      );
       return _handleResponse<T>(response);
     } on DioException catch (e) {
       throw _handleDioError(e);
@@ -110,7 +143,11 @@ class ApiClient {
 
   // ── Upload ────────────────────────────────────────────────────────────────
 
-  Future<T> upload<T>(String path, FormData formData, {void Function(int, int)? onProgress}) async {
+  Future<T> upload<T>(
+    String path,
+    FormData formData, {
+    void Function(int, int)? onProgress,
+  }) async {
     try {
       final response = await _dio.post<dynamic>(
         path,
@@ -181,7 +218,9 @@ class ApiClient {
 
   String _extractError(dynamic body) {
     if (body is Map<String, dynamic>) {
-      return (body['error'] as String?) ?? (body['message'] as String?) ?? 'Error inesperado';
+      return (body['error'] as String?) ??
+          (body['message'] as String?) ??
+          'Error inesperado';
     }
     return 'Error inesperado';
   }

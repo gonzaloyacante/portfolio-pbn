@@ -8,12 +8,24 @@ import '../utils/app_logger.dart';
 
 /// Configuraciones de servidor disponibles en modo debug.
 enum ServerPreset {
-  local(label: 'LOCAL', description: 'Servidor local de desarrollo', emoji: '💻'),
-  staging(label: 'STAGING', description: 'dev.paolabolivar.es (develop)', emoji: '🧪'),
+  local(
+    label: 'LOCAL',
+    description: 'Servidor local de desarrollo',
+    emoji: '💻',
+  ),
+  staging(
+    label: 'STAGING',
+    description: 'dev.paolabolivar.es (develop)',
+    emoji: '🧪',
+  ),
   production(label: 'PROD', description: 'paolabolivar.es (main)', emoji: '🚀'),
   custom(label: 'CUSTOM', description: 'URL personalizada', emoji: '✏️');
 
-  const ServerPreset({required this.label, required this.description, required this.emoji});
+  const ServerPreset({
+    required this.label,
+    required this.description,
+    required this.emoji,
+  });
 
   final String label;
   final String description;
@@ -25,7 +37,9 @@ enum ServerPreset {
       case ServerPreset.local:
         // En emulador Android el localhost del host es 10.0.2.2.
         // En simulador iOS y dispositivo físico, se usa la URL del .env.
-        return defaultTargetPlatform == TargetPlatform.android ? 'http://10.0.2.2:3000' : 'http://localhost:3000';
+        return defaultTargetPlatform == TargetPlatform.android
+            ? 'http://10.0.2.2:3000'
+            : 'http://localhost:3000';
       case ServerPreset.staging:
         return 'https://dev.paolabolivar.es';
       case ServerPreset.production:
@@ -47,7 +61,10 @@ class ServerUrlState {
   String get resolvedUrl => preset.resolveUrl(customUrl: customUrl);
 
   ServerUrlState copyWith({ServerPreset? preset, String? customUrl}) {
-    return ServerUrlState(preset: preset ?? this.preset, customUrl: customUrl ?? this.customUrl);
+    return ServerUrlState(
+      preset: preset ?? this.preset,
+      customUrl: customUrl ?? this.customUrl,
+    );
   }
 }
 
@@ -72,8 +89,13 @@ class ServerUrlNotifier extends Notifier<ServerUrlState> {
       _prefs = await SharedPreferences.getInstance();
       final presetName = _prefs!.getString(_kPresetKey);
       final customUrl = _prefs!.getString(_kCustomUrlKey) ?? '';
-      final preset = ServerPreset.values.firstWhere((p) => p.name == presetName, orElse: () => ServerPreset.staging);
-      AppLogger.debug('[ServerUrl] Cargado: preset=${preset.name}, url=${preset.resolveUrl(customUrl: customUrl)}');
+      final preset = ServerPreset.values.firstWhere(
+        (p) => p.name == presetName,
+        orElse: () => ServerPreset.staging,
+      );
+      AppLogger.debug(
+        '[ServerUrl] Cargado: preset=${preset.name}, url=${preset.resolveUrl(customUrl: customUrl)}',
+      );
       state = ServerUrlState(preset: preset, customUrl: customUrl);
     } catch (e) {
       AppLogger.warn('[ServerUrl] Error cargando prefs: $e');
@@ -86,7 +108,9 @@ class ServerUrlNotifier extends Notifier<ServerUrlState> {
       _prefs ??= await SharedPreferences.getInstance();
       await _prefs!.setString(_kPresetKey, preset.name);
     } catch (_) {}
-    AppLogger.info('[ServerUrl] Cambiado a ${preset.label}: ${state.resolvedUrl}');
+    AppLogger.info(
+      '[ServerUrl] Cambiado a ${preset.label}: ${state.resolvedUrl}',
+    );
   }
 
   Future<void> setCustomUrl(String url) async {
@@ -104,4 +128,6 @@ class ServerUrlNotifier extends Notifier<ServerUrlState> {
 
 /// URL activa según el preset seleccionado (solo en kDebugMode).
 /// En release, siempre devuelve staging como no-op.
-final serverUrlProvider = NotifierProvider<ServerUrlNotifier, ServerUrlState>(ServerUrlNotifier.new);
+final serverUrlProvider = NotifierProvider<ServerUrlNotifier, ServerUrlState>(
+  ServerUrlNotifier.new,
+);

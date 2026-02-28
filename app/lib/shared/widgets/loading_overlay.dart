@@ -12,7 +12,12 @@ import 'package:flutter/material.dart';
 /// )
 /// ```
 class LoadingOverlay extends StatelessWidget {
-  const LoadingOverlay({super.key, required this.isLoading, required this.child, this.message});
+  const LoadingOverlay({
+    super.key,
+    required this.isLoading,
+    required this.child,
+    this.message,
+  });
 
   final bool isLoading;
   final Widget child;
@@ -30,16 +35,25 @@ class LoadingOverlay extends StatelessWidget {
               child: Center(
                 child: Card(
                   elevation: 8,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 28,
+                      vertical: 24,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const CircularProgressIndicator(),
                         if (message != null) ...[
                           const SizedBox(height: 16),
-                          Text(message!, style: Theme.of(context).textTheme.bodyMedium, textAlign: TextAlign.center),
+                          Text(
+                            message!,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
                         ],
                       ],
                     ),
@@ -72,7 +86,9 @@ class AppLoadingIndicator extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               message!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.outline),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.outline,
+              ),
             ),
           ],
         ],

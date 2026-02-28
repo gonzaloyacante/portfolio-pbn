@@ -37,7 +37,9 @@ import 'route_names.dart';
 
 /// Clave global del NavigatorState raíz del router.
 /// Usada por [NotificationHandler] para navegar sin BuildContext.
-final GlobalKey<NavigatorState> routerNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'rootNavigator');
+final GlobalKey<NavigatorState> routerNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'rootNavigator',
+);
 
 /// Señal que indica si la animación de splash terminó. El router espera
 /// a que sea true antes de redirigir desde la ruta de splash.
@@ -69,7 +71,10 @@ final routerProvider = Provider<GoRouter>((ref) {
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
     // Escuchar al authProvider y notificar al router ante cualquier cambio.
-    _subscription = _ref.listen<AsyncValue<AuthState>>(authProvider, (_, _) => notifyListeners());
+    _subscription = _ref.listen<AsyncValue<AuthState>>(
+      authProvider,
+      (_, _) => notifyListeners(),
+    );
     // Escuchar la señal de animación del splash para forzar reevaluación
     splashAnimationFinished.addListener(notifyListeners);
   }
@@ -106,7 +111,9 @@ class RouterNotifier extends ChangeNotifier {
     final authState = authAsync.whenOrNull(data: (v) => v);
 
     // Estado de error o no autenticado → ir al login si no está ya ahí.
-    if (authState == null || authState is Unauthenticated || authState is AuthError) {
+    if (authState == null ||
+        authState is Unauthenticated ||
+        authState is AuthError) {
       return isLoginRoute ? null : RoutePaths.login;
     }
 
@@ -125,34 +132,47 @@ class RouterNotifier extends ChangeNotifier {
 // ── Helpers de transición ─────────────────────────────────────────────────────
 
 /// Página con transición de fade suave (200 ms) para formularios y detalles.
-CustomTransitionPage<void> _fadePage({required GoRouterState state, required Widget child}) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 200),
-      transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-          FadeTransition(opacity: animation, child: child),
-    );
+CustomTransitionPage<void> _fadePage({
+  required GoRouterState state,
+  required Widget child,
+}) => CustomTransitionPage<void>(
+  key: state.pageKey,
+  child: child,
+  transitionDuration: const Duration(milliseconds: 200),
+  transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+      FadeTransition(opacity: animation, child: child),
+);
 
 // ── Rutas ─────────────────────────────────────────────────────────────────────
 
 final List<RouteBase> _routes = [
-  GoRoute(path: RoutePaths.splash, name: RouteNames.splash, builder: (context, state) => const SplashPage()),
-  GoRoute(path: RoutePaths.login, name: RouteNames.login, builder: (context, state) => const LoginPage()),
+  GoRoute(
+    path: RoutePaths.splash,
+    name: RouteNames.splash,
+    builder: (context, state) => const SplashPage(),
+  ),
+  GoRoute(
+    path: RoutePaths.login,
+    name: RouteNames.login,
+    builder: (context, state) => const LoginPage(),
+  ),
   GoRoute(
     path: RoutePaths.dashboard,
     name: RouteNames.dashboard,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const DashboardPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const DashboardPage()),
   ),
   GoRoute(
     path: RoutePaths.projects,
     name: RouteNames.projects,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const ProjectsListPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ProjectsListPage()),
   ),
   GoRoute(
     path: RoutePaths.projectNew,
     name: RouteNames.projectNew,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const ProjectFormPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ProjectFormPage()),
   ),
   GoRoute(
     path: RoutePaths.projectEdit,
@@ -166,12 +186,14 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.categories,
     name: RouteNames.categories,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const CategoriesListPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const CategoriesListPage()),
   ),
   GoRoute(
     path: RoutePaths.categoryNew,
     name: RouteNames.categoryNew,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const CategoryFormPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const CategoryFormPage()),
   ),
   GoRoute(
     path: RoutePaths.categoryEdit,
@@ -185,12 +207,14 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.services,
     name: RouteNames.services,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const ServicesListPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ServicesListPage()),
   ),
   GoRoute(
     path: RoutePaths.serviceNew,
     name: RouteNames.serviceNew,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const ServiceFormPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ServiceFormPage()),
   ),
   GoRoute(
     path: RoutePaths.serviceEdit,
@@ -204,12 +228,14 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.testimonials,
     name: RouteNames.testimonials,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const TestimonialsListPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const TestimonialsListPage()),
   ),
   GoRoute(
     path: RoutePaths.testimonialNew,
     name: RouteNames.testimonialNew,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const TestimonialFormPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const TestimonialFormPage()),
   ),
   GoRoute(
     path: RoutePaths.testimonialEdit,
@@ -223,7 +249,8 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.contacts,
     name: RouteNames.contacts,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const ContactsListPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const ContactsListPage()),
   ),
   GoRoute(
     path: RoutePaths.contactDetail,
@@ -237,12 +264,14 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.calendar,
     name: RouteNames.calendar,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const CalendarPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const CalendarPage()),
   ),
   GoRoute(
     path: RoutePaths.bookingNew,
     name: RouteNames.bookingNew,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const BookingFormPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const BookingFormPage()),
   ),
   GoRoute(
     path: RoutePaths.bookingDetail,
@@ -256,55 +285,65 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: RoutePaths.settings,
     name: RouteNames.settings,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const SettingsPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsPage()),
   ),
   GoRoute(
     path: RoutePaths.settingsAbout,
     name: RouteNames.settingsAbout,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const SettingsAboutPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsAboutPage()),
   ),
   GoRoute(
     path: RoutePaths.settingsContact,
     name: RouteNames.settingsContact,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const SettingsContactPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsContactPage()),
   ),
   GoRoute(
     path: RoutePaths.settingsTheme,
     name: RouteNames.settingsTheme,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const SettingsThemePage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsThemePage()),
   ),
   GoRoute(
     path: RoutePaths.settingsSite,
     name: RouteNames.settingsSite,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const SettingsSitePage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsSitePage()),
   ),
   GoRoute(
     path: RoutePaths.settingsSocial,
     name: RouteNames.settingsSocial,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const SettingsSocialPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsSocialPage()),
   ),
   // ── Cuenta ────────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.account,
     name: RouteNames.account,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const AccountPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const AccountPage()),
   ),
   // ── Papelera ──────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.trash,
     name: RouteNames.trash,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const TrashPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const TrashPage()),
   ),
   // ── Ayuda ───────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.help,
     name: RouteNames.help,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const HelpPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const HelpPage()),
   ),
   // ── Preferencias de la App ───────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.appSettings,
     name: RouteNames.appSettings,
-    pageBuilder: (context, state) => _fadePage(state: state, child: const AppSettingsPage()),
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const AppSettingsPage()),
   ),
 ];

@@ -29,8 +29,16 @@ class HelpTooltip extends StatelessWidget {
         color: Theme.of(context).colorScheme.inverseSurface,
         borderRadius: BorderRadius.circular(10),
       ),
-      textStyle: TextStyle(color: Theme.of(context).colorScheme.onInverseSurface, fontSize: 12, height: 1.5),
-      child: Icon(Icons.help_outline_rounded, size: iconSize, color: Theme.of(context).colorScheme.outline),
+      textStyle: TextStyle(
+        color: Theme.of(context).colorScheme.onInverseSurface,
+        fontSize: 12,
+        height: 1.5,
+      ),
+      child: Icon(
+        Icons.help_outline_rounded,
+        size: iconSize,
+        color: Theme.of(context).colorScheme.outline,
+      ),
     );
   }
 }
@@ -48,7 +56,12 @@ class HelpTooltip extends StatelessWidget {
 /// ])
 /// ```
 class FormFieldLabel extends StatelessWidget {
-  const FormFieldLabel(this.label, {super.key, this.help, this.required = false});
+  const FormFieldLabel(
+    this.label, {
+    super.key,
+    this.help,
+    this.required = false,
+  });
 
   final String label;
   final String? help;
@@ -73,7 +86,10 @@ class FormFieldLabel extends StatelessWidget {
             const SizedBox(width: 2),
             Text(
               ' *',
-              style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: theme.colorScheme.error,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
           if (help != null) ...[const SizedBox(width: 6), HelpTooltip(help!)],

@@ -45,8 +45,8 @@ void main() {
         _wrap(
           const LoadingOverlay(
             isLoading: true,
-            child: Text('X'),
             message: 'Guardando...',
+            child: Text('X'),
           ),
         ),
       );

@@ -31,7 +31,10 @@ class UploadService {
     AppLogger.info('UploadService: uploading ${file.path}');
 
     final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split('/').last,
+      ),
       'folder': folder,
     });
 
@@ -61,7 +64,10 @@ class UploadService {
     AppLogger.info('UploadService: uploading (full) ${file.path}');
 
     final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split('/').last,
+      ),
       'folder': folder,
     });
 
@@ -86,7 +92,10 @@ class UploadService {
   /// Elimina la imagen con [publicId] de Cloudinary.
   Future<void> deleteImage(String publicId) async {
     AppLogger.info('UploadService: deleting $publicId');
-    await _client.delete<void>(Endpoints.adminUpload, data: {'publicId': publicId});
+    await _client.delete<void>(
+      Endpoints.adminUpload,
+      data: {'publicId': publicId},
+    );
     AppLogger.info('UploadService: delete successful');
   }
 }
@@ -94,4 +103,6 @@ class UploadService {
 // ── Provider ──────────────────────────────────────────────────────────────────
 
 /// Instancia singleton del servicio de subida de imágenes.
-final uploadServiceProvider = Provider<UploadService>((ref) => UploadService(ref.watch(apiClientProvider)));
+final uploadServiceProvider = Provider<UploadService>(
+  (ref) => UploadService(ref.watch(apiClientProvider)),
+);

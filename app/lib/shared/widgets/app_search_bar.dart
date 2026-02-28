@@ -90,7 +90,12 @@ class _AppSearchBarState extends State<AppSearchBar> {
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
-      padding: widget.padding ?? EdgeInsets.symmetric(horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+      padding:
+          widget.padding ??
+          EdgeInsets.symmetric(
+            horizontal: AppSpacing.base,
+            vertical: AppSpacing.sm,
+          ),
       child: TextField(
         controller: _ctrl,
         autofocus: widget.autofocus,
@@ -99,16 +104,30 @@ class _AppSearchBarState extends State<AppSearchBar> {
         style: textTheme.bodyMedium,
         decoration: InputDecoration(
           hintText: widget.hint,
-          prefixIcon: Icon(Icons.search_rounded, color: colorScheme.onSurface.withAlpha(120), size: 20),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: colorScheme.onSurface.withAlpha(120),
+            size: 20,
+          ),
           suffixIcon: _hasText
               ? IconButton(
                   onPressed: _clear,
-                  icon: Icon(Icons.close_rounded, color: colorScheme.onSurface.withAlpha(160), size: 18),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: colorScheme.onSurface.withAlpha(160),
+                    size: 18,
+                  ),
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
                 )
               : null,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 12,
+          ),
           border: OutlineInputBorder(
             borderRadius: AppRadius.forChip,
             borderSide: BorderSide(color: colorScheme.outline.withAlpha(120)),

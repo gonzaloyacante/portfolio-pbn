@@ -20,7 +20,12 @@ final dashboardStatsProvider = DashboardStatsProvider._();
 /// Se invalida automáticamente al hacer pull-to-refresh desde [DashboardPage].
 
 final class DashboardStatsProvider
-    extends $FunctionalProvider<AsyncValue<DashboardStats>, DashboardStats, FutureOr<DashboardStats>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<DashboardStats>,
+          DashboardStats,
+          FutureOr<DashboardStats>
+        >
     with $FutureModifier<DashboardStats>, $FutureProvider<DashboardStats> {
   /// Provee las métricas del dashboard con auto-refresh.
   ///
@@ -41,7 +46,9 @@ final class DashboardStatsProvider
 
   @$internal
   @override
-  $FutureProviderElement<DashboardStats> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<DashboardStats> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<DashboardStats> create(Ref ref) {
@@ -59,7 +66,12 @@ final dashboardChartsProvider = DashboardChartsProvider._();
 /// Provee los datos de tendencias para los gráficos del dashboard.
 
 final class DashboardChartsProvider
-    extends $FunctionalProvider<AsyncValue<DashboardCharts>, DashboardCharts, FutureOr<DashboardCharts>>
+    extends
+        $FunctionalProvider<
+          AsyncValue<DashboardCharts>,
+          DashboardCharts,
+          FutureOr<DashboardCharts>
+        >
     with $FutureModifier<DashboardCharts>, $FutureProvider<DashboardCharts> {
   /// Provee los datos de tendencias para los gráficos del dashboard.
   DashboardChartsProvider._()
@@ -78,7 +90,9 @@ final class DashboardChartsProvider
 
   @$internal
   @override
-  $FutureProviderElement<DashboardCharts> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<DashboardCharts> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<DashboardCharts> create(Ref ref) {

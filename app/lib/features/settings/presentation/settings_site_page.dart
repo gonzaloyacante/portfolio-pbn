@@ -84,14 +84,20 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
       ref.invalidate(siteSettingsProvider);
       setState(() => _populated = false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Configuración guardada')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Configuración guardada')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No se pudo guardar la configuración. Inténtalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudo guardar la configuración. Inténtalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -104,12 +110,21 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
 
     return AppScaffold(
       title: 'Sitio Web',
-      actions: [IconButton(icon: const Icon(Icons.save_outlined), tooltip: 'Guardar', onPressed: _save)],
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Guardar',
+          onPressed: _save,
+        ),
+      ],
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
           loading: () => _buildShimmer(),
-          error: (e, _) => ErrorState(message: e.toString(), onRetry: () => ref.invalidate(siteSettingsProvider)),
+          error: (e, _) => ErrorState(
+            message: e.toString(),
+            onRetry: () => ref.invalidate(siteSettingsProvider),
+          ),
           data: (settings) {
             _populate(settings);
             return _buildForm(context);
@@ -126,7 +141,13 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         4,
         (_) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(child: ShimmerBox(width: double.infinity, height: 56, borderRadius: 12)),
+          child: ShimmerLoader(
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 56,
+              borderRadius: 12,
+            ),
+          ),
         ),
       ),
     );
@@ -145,7 +166,9 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
             children: [
               TextFormField(
                 controller: _siteNameCtrl,
-                decoration: const InputDecoration(labelText: 'Nombre del sitio'),
+                decoration: const InputDecoration(
+                  labelText: 'Nombre del sitio',
+                ),
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -168,7 +191,10 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
               TextFormField(
                 controller: _metaDescCtrl,
                 maxLines: 3,
-                decoration: const InputDecoration(labelText: 'Meta descripción', border: OutlineInputBorder()),
+                decoration: const InputDecoration(
+                  labelText: 'Meta descripción',
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -184,7 +210,9 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
           const SizedBox(height: 12),
           // ── Visibilidad de páginas ────────────────────────────────────────
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -192,7 +220,9 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                 children: [
                   Text(
                     'Visibilidad de páginas',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   SwitchListTile(
                     title: const Text('Sobre mí'),
@@ -231,8 +261,12 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
           const SizedBox(height: 12),
           // ── Mantenimiento ────────────────────────────────────────────────
           Card(
-            color: _maintenanceMode ? Colors.orange.withValues(alpha: 0.12) : null,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            color: _maintenanceMode
+                ? Colors.orange.withValues(alpha: 0.12)
+                : null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -240,14 +274,22 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.engineering_outlined, color: Colors.orange),
+                      const Icon(
+                        Icons.engineering_outlined,
+                        color: Colors.orange,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Modo mantenimiento',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const Spacer(),
-                      Switch(value: _maintenanceMode, onChanged: (v) => setState(() => _maintenanceMode = v)),
+                      Switch(
+                        value: _maintenanceMode,
+                        onChanged: (v) => setState(() => _maintenanceMode = v),
+                      ),
                     ],
                   ),
                   if (_maintenanceMode) ...[
@@ -279,7 +321,11 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
 }
 
 class _SectionCard extends StatelessWidget {
-  const _SectionCard({required this.context, required this.title, required this.children});
+  const _SectionCard({
+    required this.context,
+    required this.title,
+    required this.children,
+  });
   final BuildContext context;
   final String title;
   final List<Widget> children;
@@ -293,7 +339,12 @@ class _SectionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
             ...children,
           ],

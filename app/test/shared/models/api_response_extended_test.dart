@@ -6,60 +6,84 @@ void main() {
 
   group('ApiResponse<String> — fromJson', () {
     test('success with string data', () {
-      final r = ApiResponse<String>.fromJson({'success': true, 'data': 'hello'}, (e) => e as String);
+      final r = ApiResponse<String>.fromJson({
+        'success': true,
+        'data': 'hello',
+      }, (e) => e as String);
       expect(r.success, isTrue);
       expect(r.data, 'hello');
     });
     test('failure with error message', () {
-      final r = ApiResponse<String>.fromJson({'success': false, 'error': 'Not found'}, (e) => e as String);
+      final r = ApiResponse<String>.fromJson({
+        'success': false,
+        'error': 'Not found',
+      }, (e) => e as String);
       expect(r.success, isFalse);
       expect(r.error, 'Not found');
     });
     test('success with message', () {
-      final r = ApiResponse<String>.fromJson(
-        {'success': true, 'data': 'ok', 'message': 'Created'},
-        (e) => e as String,
-      );
+      final r = ApiResponse<String>.fromJson({
+        'success': true,
+        'data': 'ok',
+        'message': 'Created',
+      }, (e) => e as String);
       expect(r.message, 'Created');
     });
     test('null data field', () {
-      final r = ApiResponse<String?>.fromJson({'success': true}, (e) => e as String?);
+      final r = ApiResponse<String?>.fromJson({
+        'success': true,
+      }, (e) => e as String?);
       expect(r.data, isNull);
     });
   });
 
   group('ApiResponse<int> — fromJson', () {
     test('success with int data', () {
-      final r = ApiResponse<int>.fromJson({'success': true, 'data': 42}, (e) => e as int);
+      final r = ApiResponse<int>.fromJson({
+        'success': true,
+        'data': 42,
+      }, (e) => e as int);
       expect(r.data, 42);
     });
     test('int 0 is valid data', () {
-      final r = ApiResponse<int>.fromJson({'success': true, 'data': 0}, (e) => e as int);
+      final r = ApiResponse<int>.fromJson({
+        'success': true,
+        'data': 0,
+      }, (e) => e as int);
       expect(r.data, 0);
     });
   });
 
   group('ApiResponse<bool> — fromJson', () {
     test('success with bool data', () {
-      final r = ApiResponse<bool>.fromJson({'success': true, 'data': true}, (e) => e as bool);
+      final r = ApiResponse<bool>.fromJson({
+        'success': true,
+        'data': true,
+      }, (e) => e as bool);
       expect(r.data, isTrue);
     });
     test('false is valid bool data', () {
-      final r = ApiResponse<bool>.fromJson({'success': true, 'data': false}, (e) => e as bool);
+      final r = ApiResponse<bool>.fromJson({
+        'success': true,
+        'data': false,
+      }, (e) => e as bool);
       expect(r.data, isFalse);
     });
   });
 
-  group('ApiResponse<List> — fromJson', () {
+  group('ApiResponse<List<dynamic>> — fromJson', () {
     test('success with list data', () {
-      final r = ApiResponse<List>.fromJson(
-        {'success': true, 'data': [1, 2, 3]},
-        (e) => e as List,
-      );
+      final r = ApiResponse<List<dynamic>>.fromJson({
+        'success': true,
+        'data': [1, 2, 3],
+      }, (e) => e as List<dynamic>);
       expect(r.data, [1, 2, 3]);
     });
     test('empty list is valid', () {
-      final r = ApiResponse<List>.fromJson({'success': true, 'data': []}, (e) => e as List);
+      final r = ApiResponse<List<dynamic>>.fromJson({
+        'success': true,
+        'data': <dynamic>[],
+      }, (e) => e as List<dynamic>);
       expect(r.data, isEmpty);
     });
   });
@@ -83,7 +107,11 @@ void main() {
       expect(r.message, 'Done');
     });
     test('error and message can coexist', () {
-      const r = ApiResponse<String>(success: false, error: 'Error', message: 'Try again');
+      const r = ApiResponse<String>(
+        success: false,
+        error: 'Error',
+        message: 'Try again',
+      );
       expect(r.error, 'Error');
       expect(r.message, 'Try again');
     });
@@ -104,7 +132,7 @@ void main() {
       expect(base.copyWith(error: 'new error').error, 'new error');
     });
     test('original unchanged', () {
-      base.copyWith(data: 'changed');
+      final _ = base.copyWith(data: 'changed');
       expect(base.data, 'original');
     });
   });
@@ -136,12 +164,19 @@ void main() {
 
   group('ApiResponse — practical scenarios', () {
     test('create success from data', () {
-      const resp = ApiResponse<Map>(success: true, data: {'id': '1', 'name': 'Test'});
+      const resp = ApiResponse<Map<String, dynamic>>(
+        success: true,
+        data: {'id': '1', 'name': 'Test'},
+      );
       expect(resp.success, isTrue);
       expect(resp.data?['id'], '1');
     });
     test('error with no data', () {
-      const resp = ApiResponse<String>(success: false, error: 'Unauthorized', message: 'Login required');
+      const resp = ApiResponse<String>(
+        success: false,
+        error: 'Unauthorized',
+        message: 'Login required',
+      );
       expect(resp.data, isNull);
       expect(resp.error, 'Unauthorized');
     });

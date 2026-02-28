@@ -129,15 +129,22 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       // Subir imagen si se seleccionó una nueva.
       if (_pendingThumbnail != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _thumbnailCtrl.text = await uploadSvc.uploadImage(_pendingThumbnail!, folder: 'portfolio/categories');
+        _thumbnailCtrl.text = await uploadSvc.uploadImage(
+          _pendingThumbnail!,
+          folder: 'portfolio/categories',
+        );
       }
 
       final repo = ref.read(categoriesRepositoryProvider);
       final formData = CategoryFormData(
         name: _nameCtrl.text.trim(),
         slug: _slugCtrl.text.trim(),
-        description: _descriptionCtrl.text.trim().isEmpty ? null : _descriptionCtrl.text.trim(),
-        thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty ? null : _thumbnailCtrl.text.trim(),
+        description: _descriptionCtrl.text.trim().isEmpty
+            ? null
+            : _descriptionCtrl.text.trim(),
+        thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
+            ? null
+            : _thumbnailCtrl.text.trim(),
         iconName: (_selectedIcon?.isEmpty ?? true) ? null : _selectedIcon,
         color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
         isActive: _isActive,
@@ -155,9 +162,13 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No se pudo guardar la categoría. Inténtalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudo guardar la categoría. Inténtalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -173,7 +184,12 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
 
     return AppScaffold(
       title: _isEdit ? 'Editar categoría' : 'Nueva categoría',
-      actions: [TextButton(onPressed: _loading ? null : _submit, child: const Text('Guardar'))],
+      actions: [
+        TextButton(
+          onPressed: _loading ? null : _submit,
+          child: const Text('Guardar'),
+        ),
+      ],
       body: LoadingOverlay(
         isLoading: _loading,
         child: Form(
@@ -184,17 +200,25 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               // Nombre
               TextFormField(
                 controller: _nameCtrl,
-                decoration: const InputDecoration(labelText: 'Nombre *', hintText: 'ej. Fotografía'),
+                decoration: const InputDecoration(
+                  labelText: 'Nombre *',
+                  hintText: 'ej. Fotografía',
+                ),
                 textCapitalization: TextCapitalization.words,
                 onChanged: _autoSlug,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
               ),
               const SizedBox(height: 16),
 
               // Slug
               TextFormField(
                 controller: _slugCtrl,
-                decoration: const InputDecoration(labelText: 'Slug *', hintText: 'ej. fotografia', prefixText: '/'),
+                decoration: const InputDecoration(
+                  labelText: 'Slug *',
+                  hintText: 'ej. fotografia',
+                  prefixText: '/',
+                ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Slug requerido';
                   if (!_reSlugValid.hasMatch(v.trim())) {
@@ -208,7 +232,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               // Descripción
               TextFormField(
                 controller: _descriptionCtrl,
-                decoration: const InputDecoration(labelText: 'Descripción', hintText: 'Descripción de la categoría'),
+                decoration: const InputDecoration(
+                  labelText: 'Descripción',
+                  hintText: 'Descripción de la categoría',
+                ),
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -236,7 +263,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               // Thumbnail
               ImageUploadWidget(
                 label: 'Imagen de portada',
-                currentImageUrl: _thumbnailCtrl.text.isNotEmpty ? _thumbnailCtrl.text : null,
+                currentImageUrl: _thumbnailCtrl.text.isNotEmpty
+                    ? _thumbnailCtrl.text
+                    : null,
                 onImageSelected: (file) {
                   setState(() => _pendingThumbnail = file);
                 },
@@ -261,7 +290,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
 
               FilledButton(
                 onPressed: _loading ? null : _submit,
-                child: Text(_isEdit ? 'Actualizar categoría' : 'Crear categoría'),
+                child: Text(
+                  _isEdit ? 'Actualizar categoría' : 'Crear categoría',
+                ),
               ),
             ],
           ),

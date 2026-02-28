@@ -33,7 +33,10 @@ void main() {
     test('empty string returns empty', () => expect(''.titleCase, ''));
     test('three words split correctly', () {
       final words = 'one two three'.titleCase.split(' ');
-      expect(words.every((w) => w.isEmpty || w[0] == w[0].toUpperCase()), isTrue);
+      expect(
+        words.every((w) => w.isEmpty || w[0] == w[0].toUpperCase()),
+        isTrue,
+      );
     });
     test('already titleCase unchanged in case', () {
       expect('Hello World'.titleCase[0], 'H');
@@ -53,14 +56,32 @@ void main() {
   // ── String.isValidEmail ───────────────────────────────────────────────────
 
   group('String.isValidEmail — extra cases', () {
-    test('valid standard email', () => expect('user@domain.com'.isValidEmail, isTrue));
-    test('valid with plus', () => expect('user+tag@domain.com'.isValidEmail, isTrue));
-    test('valid subdomain', () => expect('user@mail.domain.co'.isValidEmail, isTrue));
-    test('no at sign invalid', () => expect('userdomain.com'.isValidEmail, isFalse));
+    test(
+      'valid standard email',
+      () => expect('user@domain.com'.isValidEmail, isTrue),
+    );
+    test(
+      'valid with plus',
+      () => expect('user+tag@domain.com'.isValidEmail, isTrue),
+    );
+    test(
+      'valid subdomain',
+      () => expect('user@mail.domain.co'.isValidEmail, isTrue),
+    );
+    test(
+      'no at sign invalid',
+      () => expect('userdomain.com'.isValidEmail, isFalse),
+    );
     test('no domain invalid', () => expect('user@'.isValidEmail, isFalse));
     test('empty invalid', () => expect(''.isValidEmail, isFalse));
-    test('spaces invalid', () => expect('user domain.com'.isValidEmail, isFalse));
-    test('two ats invalid', () => expect('user@@domain.com'.isValidEmail, isFalse));
+    test(
+      'spaces invalid',
+      () => expect('user domain.com'.isValidEmail, isFalse),
+    );
+    test(
+      'two ats invalid',
+      () => expect('user@@domain.com'.isValidEmail, isFalse),
+    );
     test('local only invalid', () => expect('user'.isValidEmail, isFalse));
     test('at start invalid', () => expect('@domain.com'.isValidEmail, isFalse));
   });
@@ -77,14 +98,20 @@ void main() {
       expect('Hello World'.truncate(5).length, lessThanOrEqualTo(6));
     });
     test('empty string returns empty', () => expect(''.truncate(5), ''));
-    test('max=0 truncates all', () => expect('hi'.truncate(0).contains('…'), isTrue));
+    test(
+      'max=0 truncates all',
+      () => expect('hi'.truncate(0).contains('…'), isTrue),
+    );
     test('single char max', () {
       final r = 'hello'.truncate(1);
       expect(r.length, lessThanOrEqualTo(2));
     });
     test('unicode character safe', () => expect('Hé'.truncate(10), 'Hé'));
     test('long string result has ellipsis', () {
-      expect('The quick brown fox jumps over'.truncate(5).contains('…'), isTrue);
+      expect(
+        'The quick brown fox jumps over'.truncate(5).contains('…'),
+        isTrue,
+      );
     });
     test('max exactly length returns unchanged', () {
       const s = 'Dart';
@@ -95,17 +122,38 @@ void main() {
   // ── NullableStringExtensions ──────────────────────────────────────────────
 
   group('NullableStringExtensions.isNullOrEmpty', () {
-    test('null is null or empty', () => expect((null as String?).isNullOrEmpty, isTrue));
+    test(
+      'null is null or empty',
+      () => expect((null as String?).isNullOrEmpty, isTrue),
+    );
     test('empty is null or empty', () => expect(''.isNullOrEmpty, isTrue));
-    test('space is not null or empty', () => expect(' '.isNullOrEmpty, isFalse));
-    test('non-empty is not null or empty', () => expect('hello'.isNullOrEmpty, isFalse));
+    test(
+      'space is not null or empty',
+      () => expect(' '.isNullOrEmpty, isFalse),
+    );
+    test(
+      'non-empty is not null or empty',
+      () => expect('hello'.isNullOrEmpty, isFalse),
+    );
   });
 
   group('NullableStringExtensions.isNotNullOrEmpty', () {
-    test('non-empty isNotNullOrEmpty', () => expect('hello'.isNotNullOrEmpty, isTrue));
-    test('null isNotNullOrEmpty false', () => expect((null as String?).isNotNullOrEmpty, isFalse));
-    test('empty isNotNullOrEmpty false', () => expect(''.isNotNullOrEmpty, isFalse));
-    test('space is not null or empty', () => expect(' '.isNotNullOrEmpty, isTrue));
+    test(
+      'non-empty isNotNullOrEmpty',
+      () => expect('hello'.isNotNullOrEmpty, isTrue),
+    );
+    test(
+      'null isNotNullOrEmpty false',
+      () => expect((null as String?).isNotNullOrEmpty, isFalse),
+    );
+    test(
+      'empty isNotNullOrEmpty false',
+      () => expect(''.isNotNullOrEmpty, isFalse),
+    );
+    test(
+      'space is not null or empty',
+      () => expect(' '.isNotNullOrEmpty, isTrue),
+    );
   });
 
   // ── DateTimeExtensions ────────────────────────────────────────────────────
@@ -119,7 +167,13 @@ void main() {
       expect(DateTime.now().add(const Duration(days: 1)).isToday, isFalse);
     });
     test('same day different time is today', () {
-      final d = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day, 6, 0);
+      final d = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        6,
+        0,
+      );
       expect(d.isToday, isTrue);
     });
     test('2 days ago not today', () {
@@ -129,11 +183,20 @@ void main() {
 
   group('DateTimeExtensions.isYesterday', () {
     test('yesterday is yesterday', () {
-      expect(DateTime.now().subtract(const Duration(days: 1)).isYesterday, isTrue);
+      expect(
+        DateTime.now().subtract(const Duration(days: 1)).isYesterday,
+        isTrue,
+      );
     });
-    test('today not yesterday', () => expect(DateTime.now().isYesterday, isFalse));
+    test(
+      'today not yesterday',
+      () => expect(DateTime.now().isYesterday, isFalse),
+    );
     test('2 days ago not yesterday', () {
-      expect(DateTime.now().subtract(const Duration(days: 2)).isYesterday, isFalse);
+      expect(
+        DateTime.now().subtract(const Duration(days: 2)).isYesterday,
+        isFalse,
+      );
     });
     test('tomorrow not yesterday', () {
       expect(DateTime.now().add(const Duration(days: 1)).isYesterday, isFalse);
@@ -182,18 +245,36 @@ void main() {
     test('single element returns it', () => expect(['a'].firstOrNull, 'a'));
     test('strings list', () => expect(['x', 'y'].firstOrNull, 'x'));
     test('bools list', () => expect([false, true].firstOrNull, isFalse));
-    test('nested list', () => expect([[1, 2], [3]].firstOrNull, [1, 2]));
+    test(
+      'nested list',
+      () => expect(
+        [
+          [1, 2],
+          [3],
+        ].firstOrNull,
+        [1, 2],
+      ),
+    );
   });
 
   group('ListExtensions.tryGet', () {
     test('valid index 0', () => expect([10, 20, 30].tryGet(0), 10));
     test('valid index 1', () => expect([10, 20, 30].tryGet(1), 20));
     test('valid last index', () => expect([10, 20, 30].tryGet(2), 30));
-    test('out of bounds returns null', () => expect([10, 20, 30].tryGet(5), isNull));
-    test('negative index returns null', () => expect([10, 20, 30].tryGet(-1), isNull));
+    test(
+      'out of bounds returns null',
+      () => expect([10, 20, 30].tryGet(5), isNull),
+    );
+    test(
+      'negative index returns null',
+      () => expect([10, 20, 30].tryGet(-1), isNull),
+    );
     test('empty list any index null', () => expect(<int>[].tryGet(0), isNull));
     test('single element index 0', () => expect(['only'].tryGet(0), 'only'));
-    test('single element index 1 null', () => expect(['only'].tryGet(1), isNull));
+    test(
+      'single element index 1 null',
+      () => expect(['only'].tryGet(1), isNull),
+    );
     test('string list', () => expect(['a', 'b', 'c'].tryGet(2), 'c'));
     test('exactly length-1 is last', () {
       final l = [1, 2, 3, 4, 5];

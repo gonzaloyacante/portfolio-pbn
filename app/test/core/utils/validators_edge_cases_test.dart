@@ -297,14 +297,16 @@ void main() {
 
     test('first failing validator stops the chain', () {
       int callCount = 0;
-      final v1 = (String? val) {
+      String v1(String? val) {
         callCount++;
         return 'Error from v1';
-      };
-      final v2 = (String? val) {
+      }
+
+      Null v2(String? val) {
         callCount++;
         return null;
-      };
+      }
+
       final composed = AppValidators.compose([v1, v2]);
       composed('value');
       expect(callCount, 1); // v2 never called

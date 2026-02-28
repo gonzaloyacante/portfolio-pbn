@@ -13,7 +13,12 @@ part of 'account_provider.dart';
 final accountRepositoryProvider = AccountRepositoryProvider._();
 
 final class AccountRepositoryProvider
-    extends $FunctionalProvider<AccountRepository, AccountRepository, AccountRepository>
+    extends
+        $FunctionalProvider<
+          AccountRepository,
+          AccountRepository,
+          AccountRepository
+        >
     with $Provider<AccountRepository> {
   AccountRepositoryProvider._()
     : super(
@@ -31,7 +36,9 @@ final class AccountRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<AccountRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<AccountRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   AccountRepository create(Ref ref) {
@@ -40,7 +47,10 @@ final class AccountRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(AccountRepository value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<AccountRepository>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AccountRepository>(value),
+    );
   }
 }
 

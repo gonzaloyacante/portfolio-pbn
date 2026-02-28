@@ -62,15 +62,25 @@ class StatCard extends StatelessWidget {
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(color: cardColor.withAlpha(30), borderRadius: AppRadius.forIconContainer),
+                    decoration: BoxDecoration(
+                      color: cardColor.withAlpha(30),
+                      borderRadius: AppRadius.forIconContainer,
+                    ),
                     alignment: Alignment.center,
                     child: Icon(icon, color: cardColor, size: 22),
                   ),
                   const Spacer(),
                   if (trend != null)
-                    _TrendBadge(trend: trend!, isPositive: trendPositive ?? true)
+                    _TrendBadge(
+                      trend: trend!,
+                      isPositive: trendPositive ?? true,
+                    )
                   else if (onTap != null)
-                    Icon(Icons.arrow_forward_ios_rounded, size: 13, color: colorScheme.outline),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 13,
+                      color: colorScheme.outline,
+                    ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
@@ -78,11 +88,15 @@ class StatCard extends StatelessWidget {
                 value,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: (isExpanded ? textTheme.headlineMedium : textTheme.headlineSmall)?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
-                  height: 1.0,
-                ),
+                style:
+                    (isExpanded
+                            ? textTheme.headlineMedium
+                            : textTheme.headlineSmall)
+                        ?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.onSurface,
+                          height: 1.0,
+                        ),
               ),
               const SizedBox(height: AppSpacing.xs),
               Text(
@@ -115,16 +129,31 @@ class _TrendBadge extends StatelessWidget {
     final color = isPositive ? AppColors.success : AppColors.destructive;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-      decoration: BoxDecoration(color: color.withAlpha(30), borderRadius: AppRadius.forChip),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color.withAlpha(30),
+        borderRadius: AppRadius.forChip,
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(isPositive ? Icons.trending_up_rounded : Icons.trending_down_rounded, size: 13, color: color),
+          Icon(
+            isPositive
+                ? Icons.trending_up_rounded
+                : Icons.trending_down_rounded,
+            size: 13,
+            color: color,
+          ),
           const SizedBox(width: AppSpacing.xs),
           Text(
             trend,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: color, fontWeight: FontWeight.w700),
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),

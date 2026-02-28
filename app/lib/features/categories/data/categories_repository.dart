@@ -49,7 +49,9 @@ class CategoriesRepository {
   // ── Detail ────────────────────────────────────────────────────────────────
 
   Future<CategoryDetail> getCategory(String id) async {
-    final resp = await _client.get<Map<String, dynamic>>(Endpoints.category(id));
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.category(id),
+    );
 
     final apiResponse = ApiResponse<CategoryDetail>.fromJson(
       resp,
@@ -65,7 +67,10 @@ class CategoriesRepository {
   // ── Create ────────────────────────────────────────────────────────────────
 
   Future<CategoryDetail> createCategory(CategoryFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(Endpoints.categories, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.categories,
+      data: data.toJson(),
+    );
 
     final apiResponse = ApiResponse<CategoryDetail>.fromJson(
       resp,
@@ -80,8 +85,14 @@ class CategoriesRepository {
 
   // ── Update ────────────────────────────────────────────────────────────────
 
-  Future<CategoryDetail> updateCategory(String id, Map<String, dynamic> data) async {
-    final resp = await _client.patch<Map<String, dynamic>>(Endpoints.category(id), data: data);
+  Future<CategoryDetail> updateCategory(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.category(id),
+      data: data,
+    );
 
     final apiResponse = ApiResponse<CategoryDetail>.fromJson(
       resp,
@@ -97,7 +108,9 @@ class CategoriesRepository {
   // ── Delete ────────────────────────────────────────────────────────────────
 
   Future<void> deleteCategory(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(Endpoints.category(id));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.category(id),
+    );
 
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
 

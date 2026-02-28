@@ -13,7 +13,12 @@ part of 'testimonials_provider.dart';
 final testimonialsRepositoryProvider = TestimonialsRepositoryProvider._();
 
 final class TestimonialsRepositoryProvider
-    extends $FunctionalProvider<TestimonialsRepository, TestimonialsRepository, TestimonialsRepository>
+    extends
+        $FunctionalProvider<
+          TestimonialsRepository,
+          TestimonialsRepository,
+          TestimonialsRepository
+        >
     with $Provider<TestimonialsRepository> {
   TestimonialsRepositoryProvider._()
     : super(
@@ -31,7 +36,9 @@ final class TestimonialsRepositoryProvider
 
   @$internal
   @override
-  $ProviderElement<TestimonialsRepository> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<TestimonialsRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   TestimonialsRepository create(Ref ref) {
@@ -40,11 +47,15 @@ final class TestimonialsRepositoryProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(TestimonialsRepository value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<TestimonialsRepository>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TestimonialsRepository>(value),
+    );
   }
 }
 
-String _$testimonialsRepositoryHash() => r'016a3202f34acbfaf728bd69f2bd807bc02fe661';
+String _$testimonialsRepositoryHash() =>
+    r'016a3202f34acbfaf728bd69f2bd807bc02fe661';
 
 @ProviderFor(testimonialsList)
 final testimonialsListProvider = TestimonialsListFamily._();
@@ -56,10 +67,13 @@ final class TestimonialsListProvider
           PaginatedResponse<TestimonialItem>,
           FutureOr<PaginatedResponse<TestimonialItem>>
         >
-    with $FutureModifier<PaginatedResponse<TestimonialItem>>, $FutureProvider<PaginatedResponse<TestimonialItem>> {
+    with
+        $FutureModifier<PaginatedResponse<TestimonialItem>>,
+        $FutureProvider<PaginatedResponse<TestimonialItem>> {
   TestimonialsListProvider._({
     required TestimonialsListFamily super.from,
-    required ({int page, String? search, String? status, bool? isFeatured}) super.argument,
+    required ({int page, String? search, String? status, bool? isFeatured})
+    super.argument,
   }) : super(
          retry: null,
          name: r'testimonialsListProvider',
@@ -80,12 +94,15 @@ final class TestimonialsListProvider
 
   @$internal
   @override
-  $FutureProviderElement<PaginatedResponse<TestimonialItem>> $createElement($ProviderPointer pointer) =>
-      $FutureProviderElement(pointer);
+  $FutureProviderElement<PaginatedResponse<TestimonialItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<TestimonialItem>> create(Ref ref) {
-    final argument = this.argument as ({int page, String? search, String? status, bool? isFeatured});
+    final argument =
+        this.argument
+            as ({int page, String? search, String? status, bool? isFeatured});
     return testimonialsList(
       ref,
       page: argument.page,
@@ -123,11 +140,20 @@ final class TestimonialsListFamily extends $Family
         isAutoDispose: true,
       );
 
-  TestimonialsListProvider call({int page = 1, String? search, String? status, bool? isFeatured}) =>
-      TestimonialsListProvider._(
-        argument: (page: page, search: search, status: status, isFeatured: isFeatured),
-        from: this,
-      );
+  TestimonialsListProvider call({
+    int page = 1,
+    String? search,
+    String? status,
+    bool? isFeatured,
+  }) => TestimonialsListProvider._(
+    argument: (
+      page: page,
+      search: search,
+      status: status,
+      isFeatured: isFeatured,
+    ),
+    from: this,
+  );
 
   @override
   String toString() => r'testimonialsListProvider';
@@ -137,16 +163,25 @@ final class TestimonialsListFamily extends $Family
 final testimonialDetailProvider = TestimonialDetailFamily._();
 
 final class TestimonialDetailProvider
-    extends $FunctionalProvider<AsyncValue<TestimonialDetail>, TestimonialDetail, FutureOr<TestimonialDetail>>
-    with $FutureModifier<TestimonialDetail>, $FutureProvider<TestimonialDetail> {
-  TestimonialDetailProvider._({required TestimonialDetailFamily super.from, required String super.argument})
-    : super(
-        retry: null,
-        name: r'testimonialDetailProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+    extends
+        $FunctionalProvider<
+          AsyncValue<TestimonialDetail>,
+          TestimonialDetail,
+          FutureOr<TestimonialDetail>
+        >
+    with
+        $FutureModifier<TestimonialDetail>,
+        $FutureProvider<TestimonialDetail> {
+  TestimonialDetailProvider._({
+    required TestimonialDetailFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'testimonialDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$testimonialDetailHash();
@@ -160,7 +195,9 @@ final class TestimonialDetailProvider
 
   @$internal
   @override
-  $FutureProviderElement<TestimonialDetail> $createElement($ProviderPointer pointer) => $FutureProviderElement(pointer);
+  $FutureProviderElement<TestimonialDetail> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<TestimonialDetail> create(Ref ref) {
@@ -192,7 +229,8 @@ final class TestimonialDetailFamily extends $Family
         isAutoDispose: true,
       );
 
-  TestimonialDetailProvider call(String id) => TestimonialDetailProvider._(argument: id, from: this);
+  TestimonialDetailProvider call(String id) =>
+      TestimonialDetailProvider._(argument: id, from: this);
 
   @override
   String toString() => r'testimonialDetailProvider';

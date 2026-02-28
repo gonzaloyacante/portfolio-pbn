@@ -8,7 +8,13 @@ enum LogLevel { debug, info, warn, error }
 /// Entrada individual del log en memoria.
 /// Acumulada en [AppLogger._recentLogs] para el in-app log viewer.
 class LogEntry {
-  const LogEntry({required this.level, required this.message, required this.timestamp, this.error, this.stackTrace});
+  const LogEntry({
+    required this.level,
+    required this.message,
+    required this.timestamp,
+    this.error,
+    this.stackTrace,
+  });
 
   final LogLevel level;
   final String message;
@@ -109,7 +115,12 @@ class AppLogger {
 
   // ── Internos ────────────────────────────────────────────────────────────
 
-  static void _store(LogLevel level, dynamic message, dynamic error, StackTrace? stackTrace) {
+  static void _store(
+    LogLevel level,
+    dynamic message,
+    dynamic error,
+    StackTrace? stackTrace,
+  ) {
     // Solo almacenar en debug + profile (nunca en release por rendimiento)
     if (kReleaseMode) return;
 

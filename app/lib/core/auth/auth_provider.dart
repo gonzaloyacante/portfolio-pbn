@@ -42,26 +42,46 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// Inicia sesión con email y password.
   /// Opcionalmente registra el [fcmToken] del dispositivo para push notifications.
-  Future<void> login({required String email, required String password, String? fcmToken}) async {
+  Future<void> login({
+    required String email,
+    required String password,
+    String? fcmToken,
+  }) async {
     state = const AsyncData(AuthState.authenticating());
 
     try {
       final repo = ref.read(authRepositoryProvider);
-      final user = await repo.login(email: email, password: password, fcmToken: fcmToken);
+      final user = await repo.login(
+        email: email,
+        password: password,
+        fcmToken: fcmToken,
+      );
       AppLogger.info('AuthNotifier: login success → ${user.email}');
       state = AsyncData(AuthState.authenticated(user: user));
       // Asociar usuario a eventos de Sentry.
-      Sentry.configureScope((scope) => scope.setUser(SentryUser(id: user.id, email: user.email, name: user.name)));
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(id: user.id, email: user.email, name: user.name),
+        ),
+      );
     } on UnauthorizedException catch (e) {
       AppLogger.warn('AuthNotifier: login failed → ${e.message}');
       state = AsyncData(AuthState.error(message: e.message));
     } on RateLimitException catch (_) {
-      state = const AsyncData(AuthState.error(message: 'Demasiados intentos fallidos. Inténtalo en 15 minutos.'));
+      state = const AsyncData(
+        AuthState.error(
+          message: 'Demasiados intentos fallidos. Inténtalo en 15 minutos.',
+        ),
+      );
     } on NetworkException catch (_) {
-      state = const AsyncData(AuthState.error(message: 'Sin conexión a internet. Verifica tu red.'));
+      state = const AsyncData(
+        AuthState.error(message: 'Sin conexión a internet. Verifica tu red.'),
+      );
     } catch (e, st) {
       AppLogger.error('AuthNotifier: unexpected login error', e, st);
-      state = const AsyncData(AuthState.error(message: 'Error inesperado. Inténtalo de nuevo.'));
+      state = const AsyncData(
+        AuthState.error(message: 'Error inesperado. Inténtalo de nuevo.'),
+      );
     }
   }
 
@@ -100,11 +120,17 @@ class AuthNotifier extends _$AuthNotifier {
         return const AuthState.unauthenticated();
       }
 
-      AppLogger.info('AuthNotifier: stored session found → validating with /me');
+      AppLogger.info(
+        'AuthNotifier: stored session found → validating with /me',
+      );
       final user = await repo.getMe();
       AppLogger.info('AuthNotifier: session restored for ${user.email}');
       // Re-asociar usuario a Sentry al restaurar sesión.
-      Sentry.configureScope((scope) => scope.setUser(SentryUser(id: user.id, email: user.email, name: user.name)));
+      Sentry.configureScope(
+        (scope) => scope.setUser(
+          SentryUser(id: user.id, email: user.email, name: user.name),
+        ),
+      );
       return AuthState.authenticated(user: user);
     } on UnauthorizedException catch (_) {
       AppLogger.warn('AuthNotifier: stored session expired → unauthenticated');

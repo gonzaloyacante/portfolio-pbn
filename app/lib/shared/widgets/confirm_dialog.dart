@@ -68,12 +68,16 @@ class ConfirmDialog extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: isDestructive ? colorScheme.errorContainer : colorScheme.primaryContainer,
+              color: isDestructive
+                  ? colorScheme.errorContainer
+                  : colorScheme.primaryContainer,
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon ?? Icons.warning_amber_rounded,
-              color: isDestructive ? colorScheme.onErrorContainer : colorScheme.onPrimaryContainer,
+              color: isDestructive
+                  ? colorScheme.onErrorContainer
+                  : colorScheme.onPrimaryContainer,
               size: 28,
             ),
           )
@@ -82,20 +86,32 @@ class ConfirmDialog extends StatelessWidget {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       icon: iconWidget,
-      title: Text(title, style: textTheme.titleLarge, textAlign: TextAlign.center),
+      title: Text(
+        title,
+        style: textTheme.titleLarge,
+        textAlign: TextAlign.center,
+      ),
       content: Text(
         message,
-        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+        style: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
         textAlign: TextAlign.center,
       ),
       actionsAlignment: MainAxisAlignment.center,
       actions: [
-        OutlinedButton(onPressed: () => Navigator.of(context).pop(false), child: Text(cancelLabel)),
+        OutlinedButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(cancelLabel),
+        ),
         const SizedBox(width: 12),
         FilledButton(
           onPressed: () => Navigator.of(context).pop(true),
           style: isDestructive
-              ? FilledButton.styleFrom(backgroundColor: colorScheme.error, foregroundColor: colorScheme.onError)
+              ? FilledButton.styleFrom(
+                  backgroundColor: colorScheme.error,
+                  foregroundColor: colorScheme.onError,
+                )
               : null,
           child: Text(confirmLabel),
         ),

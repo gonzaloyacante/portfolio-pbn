@@ -5,7 +5,7 @@ void main() {
   // ── ServiceItem fromJson ──────────────────────────────────────────────────
 
   group('ServiceItem.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 's1',
       'name': 'Maquillaje de novia',
       'slug': 'maquillaje-novia',
@@ -13,19 +13,19 @@ void main() {
       'updatedAt': '2024-01-01T00:00:00Z',
     };
 
-    test('parses id', () => expect(ServiceItem.fromJson(_base()).id, 's1'));
+    test('parses id', () => expect(ServiceItem.fromJson(base0()).id, 's1'));
     test(
       'parses name',
-      () => expect(ServiceItem.fromJson(_base()).name, 'Maquillaje de novia'),
+      () => expect(ServiceItem.fromJson(base0()).name, 'Maquillaje de novia'),
     );
     test(
       'parses slug',
-      () => expect(ServiceItem.fromJson(_base()).slug, 'maquillaje-novia'),
+      () => expect(ServiceItem.fromJson(base0()).slug, 'maquillaje-novia'),
     );
     test(
       'createdAt is String',
       () => expect(
-        ServiceItem.fromJson(_base()).createdAt,
+        ServiceItem.fromJson(base0()).createdAt,
         '2024-01-01T00:00:00Z',
       ),
     );
@@ -99,7 +99,7 @@ void main() {
   });
 
   group('ServiceItem.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 's2',
       'name': 'Maquillaje artístico',
       'slug': 'maquillaje-artistico',
@@ -123,65 +123,63 @@ void main() {
 
     test(
       'parses shortDesc',
-      () => expect(
-        ServiceItem.fromJson(_full()).shortDesc,
-        'Maquillaje especial',
-      ),
+      () =>
+          expect(ServiceItem.fromJson(full()).shortDesc, 'Maquillaje especial'),
     );
     test(
       'parses price',
-      () => expect(ServiceItem.fromJson(_full()).price, '150'),
+      () => expect(ServiceItem.fromJson(full()).price, '150'),
     );
     test(
       'parses priceLabel',
-      () => expect(ServiceItem.fromJson(_full()).priceLabel, 'desde'),
+      () => expect(ServiceItem.fromJson(full()).priceLabel, 'desde'),
     );
     test(
       'parses currency',
-      () => expect(ServiceItem.fromJson(_full()).currency, 'USD'),
+      () => expect(ServiceItem.fromJson(full()).currency, 'USD'),
     );
     test(
       'parses duration',
-      () => expect(ServiceItem.fromJson(_full()).duration, '2 horas'),
+      () => expect(ServiceItem.fromJson(full()).duration, '2 horas'),
     );
     test(
       'parses imageUrl',
       () => expect(
-        ServiceItem.fromJson(_full()).imageUrl,
+        ServiceItem.fromJson(full()).imageUrl,
         'https://x.com/img.jpg',
       ),
     );
     test(
       'parses iconName',
-      () => expect(ServiceItem.fromJson(_full()).iconName, 'brush'),
+      () => expect(ServiceItem.fromJson(full()).iconName, 'brush'),
     );
     test(
       'parses color',
-      () => expect(ServiceItem.fromJson(_full()).color, '#FF5733'),
+      () => expect(ServiceItem.fromJson(full()).color, '#FF5733'),
     );
     test(
       'parses isActive = false',
-      () => expect(ServiceItem.fromJson(_full()).isActive, isFalse),
+      () => expect(ServiceItem.fromJson(full()).isActive, isFalse),
     );
     test(
       'parses isFeatured = true',
-      () => expect(ServiceItem.fromJson(_full()).isFeatured, isTrue),
+      () => expect(ServiceItem.fromJson(full()).isFeatured, isTrue),
     );
     test(
       'parses isAvailable = false',
-      () => expect(ServiceItem.fromJson(_full()).isAvailable, isFalse),
+      () => expect(ServiceItem.fromJson(full()).isAvailable, isFalse),
     );
     test(
       'parses sortOrder',
-      () => expect(ServiceItem.fromJson(_full()).sortOrder, 3),
+      () => expect(ServiceItem.fromJson(full()).sortOrder, 3),
     );
     test(
       'parses bookingCount',
-      () => expect(ServiceItem.fromJson(_full()).bookingCount, 12),
+      () => expect(ServiceItem.fromJson(full()).bookingCount, 12),
     );
     test(
       'parses viewCount',
-      () => expect(ServiceItem.fromJson(_full()).viewCount, 100),
+      () => expect(ServiceItem.fromJson(full()).viewCount, 100),
     );
   });
 
@@ -212,7 +210,7 @@ void main() {
   // ── ServiceDetail fromJson ────────────────────────────────────────────────
 
   group('ServiceDetail.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 'sd1',
       'name': 'Servicio Completo',
       'slug': 'servicio-completo',
@@ -220,14 +218,14 @@ void main() {
       'updatedAt': '2024-01-01T00:00:00Z',
     };
 
-    test('parses id', () => expect(ServiceDetail.fromJson(_base()).id, 'sd1'));
+    test('parses id', () => expect(ServiceDetail.fromJson(base0()).id, 'sd1'));
     test(
       'parses name',
-      () => expect(ServiceDetail.fromJson(_base()).name, 'Servicio Completo'),
+      () => expect(ServiceDetail.fromJson(base0()).name, 'Servicio Completo'),
     );
     test(
       'parses slug',
-      () => expect(ServiceDetail.fromJson(_base()).slug, 'servicio-completo'),
+      () => expect(ServiceDetail.fromJson(base0()).slug, 'servicio-completo'),
     );
   });
 
@@ -275,7 +273,7 @@ void main() {
   });
 
   group('ServiceDetail.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'sd2',
       'name': 'Completo Detalle',
       'slug': 'completo-detalle',
@@ -295,29 +293,29 @@ void main() {
     test(
       'parses description',
       () => expect(
-        ServiceDetail.fromJson(_full()).description,
+        ServiceDetail.fromJson(full()).description,
         'Descripción larga',
       ),
     );
     test(
       'parses durationMinutes',
-      () => expect(ServiceDetail.fromJson(_full()).durationMinutes, 120),
+      () => expect(ServiceDetail.fromJson(full()).durationMinutes, 120),
     );
     test(
       'parses maxBookingsPerDay',
-      () => expect(ServiceDetail.fromJson(_full()).maxBookingsPerDay, 3),
+      () => expect(ServiceDetail.fromJson(full()).maxBookingsPerDay, 3),
     );
     test(
       'parses advanceNoticeDays',
-      () => expect(ServiceDetail.fromJson(_full()).advanceNoticeDays, 2),
+      () => expect(ServiceDetail.fromJson(full()).advanceNoticeDays, 2),
     );
     test(
       'parses metaTitle',
-      () => expect(ServiceDetail.fromJson(_full()).metaTitle, 'SEO Title'),
+      () => expect(ServiceDetail.fromJson(full()).metaTitle, 'SEO Title'),
     );
     test(
       'parses metaKeywords',
-      () => expect(ServiceDetail.fromJson(_full()).metaKeywords, [
+      () => expect(ServiceDetail.fromJson(full()).metaKeywords, [
         'makeup',
         'novia',
       ]),
@@ -325,14 +323,14 @@ void main() {
     test(
       'parses requirements',
       () => expect(
-        ServiceDetail.fromJson(_full()).requirements,
+        ServiceDetail.fromJson(full()).requirements,
         'Traer fotos de referencia',
       ),
     );
     test(
       'parses cancellationPolicy',
       () => expect(
-        ServiceDetail.fromJson(_full()).cancellationPolicy,
+        ServiceDetail.fromJson(full()).cancellationPolicy,
         '48h previas',
       ),
     );

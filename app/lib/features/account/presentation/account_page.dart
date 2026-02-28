@@ -47,12 +47,17 @@ class _AccountPageState extends ConsumerState<AccountPage> {
     try {
       await ref
           .read(accountRepositoryProvider)
-          .changePassword(currentPassword: _currentPwCtrl.text.trim(), newPassword: _newPwCtrl.text.trim());
+          .changePassword(
+            currentPassword: _currentPwCtrl.text.trim(),
+            newPassword: _newPwCtrl.text.trim(),
+          );
       if (!mounted) return;
       _currentPwCtrl.clear();
       _newPwCtrl.clear();
       _confirmPwCtrl.clear();
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Contraseña actualizada correctamente')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Contraseña actualizada correctamente')),
+      );
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (!mounted) return;
@@ -87,16 +92,23 @@ class _AccountPageState extends ConsumerState<AccountPage> {
         title: 'Mi cuenta',
         body: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: isExpanded ? 640.0 : double.infinity),
+            constraints: BoxConstraints(
+              maxWidth: isExpanded ? 640.0 : double.infinity,
+            ),
             child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.xl),
+              padding: EdgeInsets.symmetric(
+                horizontal: hPad,
+                vertical: AppSpacing.xl,
+              ),
               children: [
                 // ── Perfil ────────────────────────────────────────────────────
                 _ProfileCard(user: user),
                 const SizedBox(height: 24),
                 // ── Cambiar contraseña ────────────────────────────────────────
                 Card(
-                  shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.forCard,
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: Form(
@@ -106,22 +118,26 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                         children: [
                           Text(
                             'Cambiar contraseña',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 16),
                           _PasswordField(
                             controller: _currentPwCtrl,
                             label: 'Contraseña actual',
                             show: _showCurrent,
-                            onToggle: () => setState(() => _showCurrent = !_showCurrent),
-                            validator: (v) => (v == null || v.isEmpty) ? 'Requerido' : null,
+                            onToggle: () =>
+                                setState(() => _showCurrent = !_showCurrent),
+                            validator: (v) =>
+                                (v == null || v.isEmpty) ? 'Requerido' : null,
                           ),
                           const SizedBox(height: 12),
                           _PasswordField(
                             controller: _newPwCtrl,
                             label: 'Nueva contraseña',
                             show: _showNew,
-                            onToggle: () => setState(() => _showNew = !_showNew),
+                            onToggle: () =>
+                                setState(() => _showNew = !_showNew),
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Requerido';
                               if (v.length < 8) {
@@ -135,7 +151,8 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                             controller: _confirmPwCtrl,
                             label: 'Confirmar nueva contraseña',
                             show: _showConfirm,
-                            onToggle: () => setState(() => _showConfirm = !_showConfirm),
+                            onToggle: () =>
+                                setState(() => _showConfirm = !_showConfirm),
                             validator: (v) {
                               if (v == null || v.isEmpty) return 'Requerido';
                               if (v != _newPwCtrl.text) {
@@ -147,7 +164,10 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                           const SizedBox(height: 20),
                           SizedBox(
                             width: double.infinity,
-                            child: FilledButton(onPressed: _changePassword, child: const Text('Actualizar contraseña')),
+                            child: FilledButton(
+                              onPressed: _changePassword,
+                              child: const Text('Actualizar contraseña'),
+                            ),
                           ),
                         ],
                       ),
@@ -160,12 +180,17 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                 const SizedBox(height: 12),
                 // ── Cerrar sesión ─────────────────────────────────────────────
                 Card(
-                  shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.forCard,
+                  ),
                   child: ListTile(
                     leading: Icon(Icons.logout, color: colorScheme.error),
                     title: Text(
                       'Cerrar sesión',
-                      style: TextStyle(color: colorScheme.error, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: colorScheme.error,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     onTap: _logout,
                   ),
@@ -178,9 +203,10 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                       data: (info) => Center(
                         child: Text(
                           'Versión ${info.fullVersion}',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.outline),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
                         ),
                       ),
                       loading: () => const SizedBox.shrink(),
@@ -218,9 +244,9 @@ class _ProfileCard extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               child: Text(
                 name.isNotEmpty ? name[0].toUpperCase() : 'A',
-                style: Theme.of(
-                  context,
-                ).textTheme.headlineMedium?.copyWith(color: Theme.of(context).colorScheme.onPrimaryContainer),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -228,7 +254,12 @@ class _ProfileCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(
+                    name,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(email, style: Theme.of(context).textTheme.bodySmall),
                 ],
@@ -264,7 +295,10 @@ class _PasswordField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
-        suffixIcon: IconButton(icon: Icon(show ? Icons.visibility_off : Icons.visibility), onPressed: onToggle),
+        suffixIcon: IconButton(
+          icon: Icon(show ? Icons.visibility_off : Icons.visibility),
+          onPressed: onToggle,
+        ),
       ),
       validator: validator,
     );
@@ -296,20 +330,31 @@ class _GoogleCalendarCard extends ConsumerWidget {
           child: ListTile(
             leading: const Icon(Icons.calendar_month_outlined),
             title: Text(
-              isConnected ? 'Google Calendar conectado' : 'Conectar Google Calendar',
+              isConnected
+                  ? 'Google Calendar conectado'
+                  : 'Conectar Google Calendar',
               style: const TextStyle(fontWeight: FontWeight.w600),
             ),
             subtitle: email != null ? Text(email) : null,
             trailing: isConnecting
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
                 : isConnected
                 ? TextButton(
-                    onPressed: () => ref.read(googleCalendarProvider.notifier).signOut(),
-                    style: TextButton.styleFrom(foregroundColor: colorScheme.error),
+                    onPressed: () =>
+                        ref.read(googleCalendarProvider.notifier).signOut(),
+                    style: TextButton.styleFrom(
+                      foregroundColor: colorScheme.error,
+                    ),
                     child: const Text('Desconectar'),
                   )
                 : null,
-            onTap: isConnected || isConnecting ? null : () => ref.read(googleCalendarProvider.notifier).signIn(),
+            onTap: isConnected || isConnecting
+                ? null
+                : () => ref.read(googleCalendarProvider.notifier).signIn(),
           ),
         );
       },

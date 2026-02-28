@@ -14,7 +14,8 @@ class Endpoints {
   static String project(String id) => '/api/admin/projects/$id';
   static const String projectsReorder = '/api/admin/projects/reorder';
   static String projectImages(String id) => '/api/admin/projects/$id/images';
-  static String projectImage(String id, String imageId) => '/api/admin/projects/$id/images/$imageId';
+  static String projectImage(String id, String imageId) =>
+      '/api/admin/projects/$id/images/$imageId';
 
   // ── Categorías ────────────────────────────────────────────────────────────
   static const String categories = '/api/admin/categories';
@@ -38,7 +39,8 @@ class Endpoints {
 
   // ── Settings ──────────────────────────────────────────────────────────────
   static const String settings = '/api/admin/settings';
-  static String settingsSection(String section) => '/api/admin/settings/$section';
+  static String settingsSection(String section) =>
+      '/api/admin/settings/$section';
 
   // ── Analytics ────────────────────────────────────────────────────────────
   static const String analytics = '/api/admin/analytics';
@@ -51,7 +53,8 @@ class Endpoints {
   // ── Papelera ─────────────────────────────────────────────────────────────
   static const String trash = '/api/admin/trash';
   static String trashItem(String id) => '/api/admin/trash/$id';
-  static String trashTypedItem(String type, String id) => '/api/admin/trash/$type/$id';
+  static String trashTypedItem(String type, String id) =>
+      '/api/admin/trash/$type/$id';
 
   // ── Push notifications ────────────────────────────────────────────────────
   static const String pushRegister = '/api/admin/push/register';

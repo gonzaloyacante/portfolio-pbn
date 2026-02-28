@@ -12,7 +12,8 @@ part of 'cache_manager.dart';
 @ProviderFor(cacheManager)
 final cacheManagerProvider = CacheManagerProvider._();
 
-final class CacheManagerProvider extends $FunctionalProvider<CacheManager, CacheManager, CacheManager>
+final class CacheManagerProvider
+    extends $FunctionalProvider<CacheManager, CacheManager, CacheManager>
     with $Provider<CacheManager> {
   CacheManagerProvider._()
     : super(
@@ -30,7 +31,8 @@ final class CacheManagerProvider extends $FunctionalProvider<CacheManager, Cache
 
   @$internal
   @override
-  $ProviderElement<CacheManager> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<CacheManager> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
   CacheManager create(Ref ref) {
@@ -39,7 +41,10 @@ final class CacheManagerProvider extends $FunctionalProvider<CacheManager, Cache
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(CacheManager value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<CacheManager>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CacheManager>(value),
+    );
   }
 }
 

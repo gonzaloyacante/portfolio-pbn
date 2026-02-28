@@ -61,7 +61,10 @@ class ServicesRepository {
   }
 
   Future<ServiceDetail> createService(ServiceFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(Endpoints.services, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.services,
+      data: data.toJson(),
+    );
 
     final apiResponse = ApiResponse<ServiceDetail>.fromJson(
       resp,
@@ -74,8 +77,14 @@ class ServicesRepository {
     return apiResponse.data!;
   }
 
-  Future<ServiceDetail> updateService(String id, Map<String, dynamic> data) async {
-    final resp = await _client.patch<Map<String, dynamic>>(Endpoints.service(id), data: data);
+  Future<ServiceDetail> updateService(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.service(id),
+      data: data,
+    );
 
     final apiResponse = ApiResponse<ServiceDetail>.fromJson(
       resp,
@@ -89,7 +98,9 @@ class ServicesRepository {
   }
 
   Future<void> deleteService(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(Endpoints.service(id));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.service(id),
+    );
 
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
 

@@ -23,7 +23,11 @@ import '../../core/utils/app_logger.dart';
 /// AppUpdateDialog.show(context, release: release, forceUpdate: false);
 /// ```
 class AppUpdateDialog extends StatefulWidget {
-  const AppUpdateDialog({super.key, required this.release, this.forceUpdate = false});
+  const AppUpdateDialog({
+    super.key,
+    required this.release,
+    this.forceUpdate = false,
+  });
 
   final AppRelease release;
 
@@ -33,16 +37,24 @@ class AppUpdateDialog extends StatefulWidget {
   /// Muestra el diálogo con animación de entrada suave.
   ///
   /// Retorna `true` si el usuario inició la instalación, `false` si canceló.
-  static Future<bool?> show(BuildContext context, {required AppRelease release, bool forceUpdate = false}) {
+  static Future<bool?> show(
+    BuildContext context, {
+    required AppRelease release,
+    bool forceUpdate = false,
+  }) {
     return showGeneralDialog<bool>(
       context: context,
       barrierDismissible: !forceUpdate,
       barrierLabel: forceUpdate ? null : 'Cerrar',
       barrierColor: Colors.black54,
       transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (ctx, animation, secondaryAnimation) => AppUpdateDialog(release: release, forceUpdate: forceUpdate),
+      pageBuilder: (ctx, animation, secondaryAnimation) =>
+          AppUpdateDialog(release: release, forceUpdate: forceUpdate),
       transitionBuilder: (ctx, animation, secondary, child) {
-        final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutBack);
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
         return ScaleTransition(
           scale: Tween<double>(begin: 0.85, end: 1.0).animate(curved),
           child: FadeTransition(opacity: animation, child: child),
@@ -61,7 +73,8 @@ enum _Phase { info, downloading, verifying, ready, error }
 
 // ── _AppUpdateDialogState ─────────────────────────────────────────────────────
 
-class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProviderStateMixin {
+class _AppUpdateDialogState extends State<AppUpdateDialog>
+    with SingleTickerProviderStateMixin {
   _Phase _phase = _Phase.info;
   int _received = 0;
   int _total = 0;
@@ -77,7 +90,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _progressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
     _progressAnimation = _progressController;
   }
 
@@ -109,7 +125,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
         onProgress: (received, total) {
           if (!mounted) return;
           // Calcular velocidad (bytes/s)
-          final elapsed = DateTime.now().difference(_downloadStart!).inMilliseconds;
+          final elapsed = DateTime.now()
+              .difference(_downloadStart!)
+              .inMilliseconds;
           final speed = elapsed > 0 ? received / elapsed * 1000.0 : 0.0;
 
           setState(() {
@@ -173,7 +191,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
 
     try {
       AppLogger.info('AppUpdateDialog: abriendo instalador → ${file.path}');
-      final result = await OpenFile.open(file.path, type: 'application/vnd.android.package-archive');
+      final result = await OpenFile.open(
+        file.path,
+        type: 'application/vnd.android.package-archive',
+      );
 
       if (result.type == ResultType.done) {
         if (mounted) Navigator.of(context).pop(true);
@@ -181,7 +202,8 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
         // El instalador fue abierto pero el usuario no ha completado la
         // instalación todavía — no hacemos nada el dialog seguirá visible.
         AppLogger.warn('OpenFile result: ${result.type} — ${result.message}');
-        if (result.type == ResultType.noAppToOpen || result.type == ResultType.permissionDenied) {
+        if (result.type == ResultType.noAppToOpen ||
+            result.type == ResultType.permissionDenied) {
           _showInstallPermissionGuide();
         }
       }
@@ -233,7 +255,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.25), blurRadius: 32, offset: const Offset(0, 8)),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 32,
+                    offset: const Offset(0, 8),
+                  ),
                 ],
               ),
               child: ClipRRect(
@@ -243,7 +269,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // ── Header con gradiente ───────────────────────────────
-                    _UpdateHeader(version: widget.release.version, mandatory: widget.forceUpdate, phase: _phase),
+                    _UpdateHeader(
+                      version: widget.release.version,
+                      mandatory: widget.forceUpdate,
+                      phase: _phase,
+                    ),
                     // ── Contenido según fase ───────────────────────────────
                     Flexible(
                       child: SingleChildScrollView(
@@ -253,7 +283,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
                           transitionBuilder: (child, anim) => FadeTransition(
                             opacity: anim,
                             child: SlideTransition(
-                              position: Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero).animate(anim),
+                              position: Tween<Offset>(
+                                begin: const Offset(0, 0.05),
+                                end: Offset.zero,
+                              ).animate(anim),
                               child: child,
                             ),
                           ),
@@ -276,7 +309,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
 
   Widget _buildPhaseContent() {
     return switch (_phase) {
-      _Phase.info => _InfoPhase(key: const ValueKey('info'), release: widget.release),
+      _Phase.info => _InfoPhase(
+        key: const ValueKey('info'),
+        release: widget.release,
+      ),
       _Phase.downloading => _DownloadPhase(
         key: const ValueKey('downloading'),
         received: _received,
@@ -289,7 +325,10 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
         hasChecksum: widget.release.checksumSha256 != null,
       ),
       _Phase.ready => _ReadyPhase(key: const ValueKey('ready')),
-      _Phase.error => _ErrorPhase(key: const ValueKey('error'), message: _errorMessage ?? 'Error desconocido'),
+      _Phase.error => _ErrorPhase(
+        key: const ValueKey('error'),
+        message: _errorMessage ?? 'Error desconocido',
+      ),
     };
   }
 
@@ -311,22 +350,33 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
               ),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
             ),
             if (!widget.forceUpdate) ...[
               const SizedBox(height: 8),
-              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Ahora no')),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Ahora no'),
+              ),
             ],
           ],
         ),
         _Phase.downloading => TextButton(
           onPressed: null,
-          child: Text('Descargando…', style: TextStyle(color: colors.onSurface.withValues(alpha: 0.5))),
+          child: Text(
+            'Descargando…',
+            style: TextStyle(color: colors.onSurface.withValues(alpha: 0.5)),
+          ),
         ),
         _Phase.verifying => TextButton(
           onPressed: null,
-          child: Text('Verificando integridad…', style: TextStyle(color: colors.onSurface.withValues(alpha: 0.5))),
+          child: Text(
+            'Verificando integridad…',
+            style: TextStyle(color: colors.onSurface.withValues(alpha: 0.5)),
+          ),
         ),
         _Phase.ready => FilledButton.icon(
           onPressed: _launchInstaller,
@@ -335,7 +385,9 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
           style: FilledButton.styleFrom(
             backgroundColor: Colors.green.shade600,
             minimumSize: const Size(double.infinity, 48),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
           ),
         ),
         _Phase.error => Column(
@@ -346,12 +398,17 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
               label: const Text('Reintentar'),
               style: FilledButton.styleFrom(
                 minimumSize: const Size(double.infinity, 48),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
             ),
             if (!widget.forceUpdate) ...[
               const SizedBox(height: 8),
-              TextButton(onPressed: () => Navigator.of(context).pop(false), child: const Text('Cancelar')),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('Cancelar'),
+              ),
             ],
           ],
         ),
@@ -363,7 +420,11 @@ class _AppUpdateDialogState extends State<AppUpdateDialog> with SingleTickerProv
 // ── _UpdateHeader ─────────────────────────────────────────────────────────────
 
 class _UpdateHeader extends StatelessWidget {
-  const _UpdateHeader({required this.version, required this.mandatory, required this.phase});
+  const _UpdateHeader({
+    required this.version,
+    required this.mandatory,
+    required this.phase,
+  });
 
   final String version;
   final bool mandatory;
@@ -408,9 +469,13 @@ class _UpdateHeader extends StatelessWidget {
       default:
         headerColor1 = isDark ? colors.primary : const Color(0xFF6C0A0A);
         headerColor2 = isDark ? colors.secondary : const Color(0xFFB71C1C);
-        icon = mandatory ? Icons.system_update_rounded : Icons.system_update_alt_rounded;
+        icon = mandatory
+            ? Icons.system_update_rounded
+            : Icons.system_update_alt_rounded;
         title = 'Nueva versión $version';
-        subtitle = mandatory ? '⚠ Actualización obligatoria' : 'Actualización disponible';
+        subtitle = mandatory
+            ? '⚠ Actualización obligatoria'
+            : 'Actualización disponible';
     }
 
     return Container(
@@ -448,7 +513,13 @@ class _UpdateHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(subtitle, style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 13)),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 13,
+                  ),
+                ),
               ],
             ),
           ),
@@ -467,14 +538,21 @@ class _InfoPhase extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final lines = release.releaseNotes.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList();
+    final lines = release.releaseNotes
+        .split('\n')
+        .map((l) => l.trim())
+        .where((l) => l.isNotEmpty)
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Novedades',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: colors.primary, fontWeight: FontWeight.w700),
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: colors.primary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         const SizedBox(height: 10),
         ...lines.map(
@@ -483,13 +561,21 @@ class _InfoPhase extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.check_circle_outline_rounded, size: 16, color: colors.primary),
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  size: 16,
+                  color: colors.primary,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     // Strip leading bullet/dash prefix if present
-                    (line.startsWith('- ') || line.startsWith('• ')) ? line.substring(2) : line,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.4),
+                    (line.startsWith('- ') || line.startsWith('• '))
+                        ? line.substring(2)
+                        : line,
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(height: 1.4),
                   ),
                 ),
               ],
@@ -500,14 +586,24 @@ class _InfoPhase extends StatelessWidget {
         // Fecha y tamaño
         Row(
           children: [
-            _MetaChip(icon: Icons.calendar_today_outlined, label: _formatDate(release.publishedAt)),
+            _MetaChip(
+              icon: Icons.calendar_today_outlined,
+              label: _formatDate(release.publishedAt),
+            ),
             if (release.fileSizeFormatted != null) ...[
               const SizedBox(width: 8),
-              _MetaChip(icon: Icons.storage_outlined, label: release.fileSizeFormatted!),
+              _MetaChip(
+                icon: Icons.storage_outlined,
+                label: release.fileSizeFormatted!,
+              ),
             ],
             if (release.checksumSha256 != null) ...[
               const SizedBox(width: 8),
-              _MetaChip(icon: Icons.security_outlined, label: 'SHA-256', color: Colors.green.shade700),
+              _MetaChip(
+                icon: Icons.security_outlined,
+                label: 'SHA-256',
+                color: Colors.green.shade700,
+              ),
             ],
           ],
         ),
@@ -517,7 +613,20 @@ class _InfoPhase extends StatelessWidget {
   }
 
   String _formatDate(DateTime dt) {
-    final months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+    final months = [
+      'ene',
+      'feb',
+      'mar',
+      'abr',
+      'may',
+      'jun',
+      'jul',
+      'ago',
+      'sep',
+      'oct',
+      'nov',
+      'dic',
+    ];
     return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
   }
 }
@@ -538,7 +647,10 @@ class _MetaChip extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: effectiveColor.withValues(alpha: 0.09), borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: effectiveColor.withValues(alpha: 0.09),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -546,7 +658,11 @@ class _MetaChip extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: TextStyle(fontSize: 11, color: effectiveColor, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 11,
+              color: effectiveColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),
@@ -576,7 +692,9 @@ class _DownloadPhase extends StatelessWidget {
     final pct = total > 0 ? (received / total * 100).toStringAsFixed(0) : '?';
     final receivedMb = (received / 1024 / 1024).toStringAsFixed(1);
     final totalMb = total > 0 ? (total / 1024 / 1024).toStringAsFixed(1) : '?';
-    final speed = speedBytesPerSec > 0 ? '${(speedBytesPerSec / 1024).toStringAsFixed(0)} KB/s' : '';
+    final speed = speedBytesPerSec > 0
+        ? '${(speedBytesPerSec / 1024).toStringAsFixed(0)} KB/s'
+        : '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -586,15 +704,18 @@ class _DownloadPhase extends StatelessWidget {
           children: [
             Text(
               '$pct%',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, color: colors.primary),
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: colors.primary,
+              ),
             ),
             const Spacer(),
             if (speed.isNotEmpty)
               Text(
                 speed,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSurface.withValues(alpha: 0.6)),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: colors.onSurface.withValues(alpha: 0.6),
+                ),
               ),
           ],
         ),
@@ -617,16 +738,24 @@ class _DownloadPhase extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           '$receivedMb MB de $totalMb MB',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSurface.withValues(alpha: 0.6)),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: colors.onSurface.withValues(alpha: 0.6),
+          ),
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Icon(Icons.info_outline_rounded, size: 14, color: colors.onSurface.withValues(alpha: 0.5)),
+            Icon(
+              Icons.info_outline_rounded,
+              size: 14,
+              color: colors.onSurface.withValues(alpha: 0.5),
+            ),
             const SizedBox(width: 6),
             Text(
               'No cierres la aplicación durante la descarga',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: colors.onSurface.withValues(alpha: 0.5)),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colors.onSurface.withValues(alpha: 0.5),
+              ),
             ),
           ],
         ),
@@ -651,12 +780,17 @@ class _VerifyingPhase extends StatelessWidget {
           child: SizedBox(
             width: 48,
             height: 48,
-            child: CircularProgressIndicator(strokeWidth: 3, color: Colors.teal.shade600),
+            child: CircularProgressIndicator(
+              strokeWidth: 3,
+              color: Colors.teal.shade600,
+            ),
           ),
         ),
         const SizedBox(height: 16),
         Text(
-          hasChecksum ? 'Verificando integridad SHA-256…' : 'Preparando instalación…',
+          hasChecksum
+              ? 'Verificando integridad SHA-256…'
+              : 'Preparando instalación…',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -675,7 +809,9 @@ class _VerifyingPhase extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   'Comprobando autenticidad del archivo',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.teal.shade600),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.teal.shade600),
                 ),
               ],
             ),
@@ -701,14 +837,23 @@ class _ReadyPhase extends StatelessWidget {
           child: Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(color: Colors.green.shade600.withValues(alpha: 0.12), shape: BoxShape.circle),
-            child: Icon(Icons.check_rounded, size: 36, color: Colors.green.shade600),
+            decoration: BoxDecoration(
+              color: Colors.green.shade600.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.check_rounded,
+              size: 36,
+              color: Colors.green.shade600,
+            ),
           ),
         ),
         const SizedBox(height: 14),
         Text(
           'Descarga completada',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 6),
@@ -717,7 +862,9 @@ class _ReadyPhase extends StatelessWidget {
           'Android te pedirá confirmación antes de instalar.',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
             height: 1.5,
           ),
         ),
@@ -742,16 +889,24 @@ class _ErrorPhase extends StatelessWidget {
           child: Container(
             width: 56,
             height: 56,
-            decoration: BoxDecoration(color: Colors.red.shade600.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Icon(Icons.cloud_off_rounded, size: 30, color: Colors.red.shade600),
+            decoration: BoxDecoration(
+              color: Colors.red.shade600.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.cloud_off_rounded,
+              size: 30,
+              color: Colors.red.shade600,
+            ),
           ),
         ),
         const SizedBox(height: 14),
         Text(
           'No se pudo descargar',
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: Colors.red.shade700),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Colors.red.shade700,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
@@ -764,7 +919,10 @@ class _ErrorPhase extends StatelessWidget {
           child: Text(
             message,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.red.shade700, height: 1.5),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.red.shade700,
+              height: 1.5,
+            ),
           ),
         ),
         const SizedBox(height: 12),

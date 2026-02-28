@@ -32,7 +32,10 @@ class TestimonialsRepository {
       },
     );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return PaginatedResponse<TestimonialItem>.fromJson(
       apiResp.data!,
@@ -41,25 +44,45 @@ class TestimonialsRepository {
   }
 
   Future<TestimonialDetail> getTestimonial(String id) async {
-    final resp = await _client.get<Map<String, dynamic>>(Endpoints.testimonial(id));
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.testimonial(id),
+    );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return TestimonialDetail.fromJson(apiResp.data!);
   }
 
   Future<TestimonialDetail> createTestimonial(TestimonialFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(Endpoints.testimonials, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.testimonials,
+      data: data.toJson(),
+    );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return TestimonialDetail.fromJson(apiResp.data!);
   }
 
-  Future<TestimonialDetail> updateTestimonial(String id, Map<String, dynamic> updates) async {
-    final resp = await _client.patch<Map<String, dynamic>>(Endpoints.testimonial(id), data: updates);
+  Future<TestimonialDetail> updateTestimonial(
+    String id,
+    Map<String, dynamic> updates,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.testimonial(id),
+      data: updates,
+    );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return TestimonialDetail.fromJson(apiResp.data!);
   }

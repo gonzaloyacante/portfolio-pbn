@@ -54,15 +54,21 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
       AppLogger.info('AppSettings: cache cleared');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Caché limpiada correctamente'), behavior: SnackBarBehavior.floating),
+        const SnackBar(
+          content: Text('Caché limpiada correctamente'),
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       AppLogger.error('AppSettings: error clearing cache', e);
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('No se pudo limpiar la caché'), behavior: SnackBarBehavior.floating));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo limpiar la caché'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _clearingCache = false);
     }
@@ -88,21 +94,27 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                 icon: Icons.light_mode_outlined,
                 mode: ThemeMode.light,
                 current: themeMode,
-                onTap: () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.light),
+                onTap: () => ref
+                    .read(themeModeProvider.notifier)
+                    .setThemeMode(ThemeMode.light),
               ),
               _ThemeTile(
                 label: 'Oscuro',
                 icon: Icons.dark_mode_outlined,
                 mode: ThemeMode.dark,
                 current: themeMode,
-                onTap: () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.dark),
+                onTap: () => ref
+                    .read(themeModeProvider.notifier)
+                    .setThemeMode(ThemeMode.dark),
               ),
               _ThemeTile(
                 label: 'Sistema',
                 icon: Icons.brightness_auto_outlined,
                 mode: ThemeMode.system,
                 current: themeMode,
-                onTap: () => ref.read(themeModeProvider.notifier).setThemeMode(ThemeMode.system),
+                onTap: () => ref
+                    .read(themeModeProvider.notifier)
+                    .setThemeMode(ThemeMode.system),
               ),
             ],
           ),
@@ -116,13 +128,28 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
               ListTile(
                 dense: true,
                 visualDensity: VisualDensity.compact,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                leading: Icon(Icons.cleaning_services_outlined, color: colorScheme.primary),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 0,
+                  vertical: 0,
+                ),
+                leading: Icon(
+                  Icons.cleaning_services_outlined,
+                  color: colorScheme.primary,
+                ),
                 title: const Text('Limpiar caché'),
-                subtitle: const Text('Elimina archivos temporales e imágenes en caché'),
+                subtitle: const Text(
+                  'Elimina archivos temporales e imágenes en caché',
+                ),
                 trailing: _clearingCache
-                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                    : Icon(Icons.chevron_right, color: colorScheme.onSurface.withValues(alpha: 0.4)),
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        Icons.chevron_right,
+                        color: colorScheme.onSurface.withValues(alpha: 0.4),
+                      ),
                 onTap: _clearingCache ? null : _clearCache,
               ),
             ],
@@ -145,12 +172,16 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                     data: (v) => Column(
                       children: [
                         _InfoTile(label: 'Versión', value: v.fullVersion),
-                        _InfoTile(label: 'Aplicación', value: 'Portfolio PBN Admin'),
+                        _InfoTile(
+                          label: 'Aplicación',
+                          value: 'Portfolio PBN Admin',
+                        ),
                         _InfoTile(label: 'Entorno', value: _environmentLabel),
                       ],
                     ),
                     loading: () => _InfoTile(label: 'Versión', value: '...'),
-                    error: (error, stackTrace) => _InfoTile(label: 'Versión', value: 'N/A'),
+                    error: (error, stackTrace) =>
+                        _InfoTile(label: 'Versión', value: 'N/A'),
                   );
                 },
               ),
@@ -170,23 +201,46 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                 ListTile(
                   dense: true,
                   visualDensity: VisualDensity.compact,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  leading: Icon(Icons.bug_report_outlined, color: colorScheme.primary),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 0,
+                  ),
+                  leading: Icon(
+                    Icons.bug_report_outlined,
+                    color: colorScheme.primary,
+                  ),
                   title: const Text('Developer Tools'),
-                  subtitle: const Text('Ver estado, logs y herramientas de debug'),
-                  trailing: Icon(Icons.chevron_right, color: colorScheme.onSurface.withValues(alpha: 0.4)),
+                  subtitle: const Text(
+                    'Ver estado, logs y herramientas de debug',
+                  ),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  ),
                   onTap: () => DebugPanel.show(context),
                 ),
                 ListTile(
                   dense: true,
                   visualDensity: VisualDensity.compact,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                  leading: Icon(Icons.article_outlined, color: colorScheme.primary),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 0,
+                  ),
+                  leading: Icon(
+                    Icons.article_outlined,
+                    color: colorScheme.primary,
+                  ),
                   title: const Text('Ver logs'),
                   subtitle: const Text('Historial de mensajes de la sesión'),
-                  trailing: Icon(Icons.chevron_right, color: colorScheme.onSurface.withValues(alpha: 0.4)),
-                  onTap: () =>
-                      Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const DebugLogPage())),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  ),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const DebugLogPage(),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -209,7 +263,11 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
 // ── _SectionCard ──────────────────────────────────────────────────────────────
 
 class _SectionCard extends StatelessWidget {
-  const _SectionCard({required this.title, required this.icon, required this.children});
+  const _SectionCard({
+    required this.title,
+    required this.icon,
+    required this.children,
+  });
 
   final String title;
   final IconData icon;
@@ -232,9 +290,10 @@ class _SectionCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   title,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.primary),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
                 ),
               ],
             ),
@@ -282,7 +341,9 @@ class _ThemeTile extends StatelessWidget {
           color: isSelected ? colorScheme.primary : null,
         ),
       ),
-      trailing: isSelected ? Icon(Icons.check_circle, color: colorScheme.primary) : const SizedBox.shrink(),
+      trailing: isSelected
+          ? Icon(Icons.check_circle, color: colorScheme.primary)
+          : const SizedBox.shrink(),
       onTap: onTap,
     );
   }
@@ -305,9 +366,9 @@ class _InfoTile extends StatelessWidget {
       title: Text(label),
       trailing: Text(
         value,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        ),
       ),
     );
   }
@@ -334,7 +395,10 @@ class _NotificationsPrefSection extends ConsumerWidget {
       icon: Icons.notifications_outlined,
       children: [
         // ── Actividad del público ──────────────────────────────────────────
-        _NotifGroupHeader(label: 'Actividad del público', colorScheme: colorScheme),
+        _NotifGroupHeader(
+          label: 'Actividad del público',
+          colorScheme: colorScheme,
+        ),
         _NotifToggleTile(
           icon: Icons.mail_outline,
           label: 'Mensajes de contacto',
@@ -364,7 +428,10 @@ class _NotificationsPrefSection extends ConsumerWidget {
         ),
 
         // ── Contenido del sitio ────────────────────────────────────────────
-        _NotifGroupHeader(label: 'Contenido del sitio', colorScheme: colorScheme),
+        _NotifGroupHeader(
+          label: 'Contenido del sitio',
+          colorScheme: colorScheme,
+        ),
         _NotifToggleTile(
           icon: Icons.photo_library_outlined,
           label: 'Proyectos',
@@ -407,16 +474,21 @@ class _NotificationsPrefSection extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.info_outline, size: 13, color: colorScheme.onSurface.withValues(alpha: 0.4)),
+              Icon(
+                Icons.info_outline,
+                size: 13,
+                color: colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   'Estas preferencias solo afectan a las alertas en '
                   'primer plano. Las notificaciones del sistema siguen '
                   'llegando desde el servidor.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.45), fontSize: 11),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withValues(alpha: 0.45),
+                    fontSize: 11,
+                  ),
                 ),
               ),
             ],
@@ -472,7 +544,10 @@ class _NotifToggleTile extends StatelessWidget {
       dense: true,
       visualDensity: VisualDensity.compact,
       contentPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-      secondary: Icon(icon, color: value ? colorScheme.primary : colorScheme.outline),
+      secondary: Icon(
+        icon,
+        color: value ? colorScheme.primary : colorScheme.outline,
+      ),
       title: Text(
         label,
         style: TextStyle(
@@ -480,7 +555,13 @@ class _NotifToggleTile extends StatelessWidget {
           color: value ? null : colorScheme.onSurface.withValues(alpha: 0.5),
         ),
       ),
-      subtitle: Text(subtitle, style: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5), fontSize: 12)),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: colorScheme.onSurface.withValues(alpha: 0.5),
+          fontSize: 12,
+        ),
+      ),
       value: value,
       onChanged: onChanged,
       activeThumbColor: colorScheme.primary,
@@ -499,10 +580,12 @@ class _CheckForUpdatesButton extends ConsumerStatefulWidget {
   const _CheckForUpdatesButton();
 
   @override
-  ConsumerState<_CheckForUpdatesButton> createState() => _CheckForUpdatesButtonState();
+  ConsumerState<_CheckForUpdatesButton> createState() =>
+      _CheckForUpdatesButtonState();
 }
 
-class _CheckForUpdatesButtonState extends ConsumerState<_CheckForUpdatesButton> {
+class _CheckForUpdatesButtonState
+    extends ConsumerState<_CheckForUpdatesButton> {
   bool _checking = false;
 
   Future<void> _check() async {
@@ -520,15 +603,24 @@ class _CheckForUpdatesButtonState extends ConsumerState<_CheckForUpdatesButton> 
 
       if (status is AppUpdateAvailable) {
         // Mostrar el diálogo in-app directamente
-        await AppUpdateDialog.show(context, release: status.release, forceUpdate: status.forceUpdate);
-      } else if (status is AppUpToDate) {
-        ScaffoldMessenger.of(
+        await AppUpdateDialog.show(
           context,
-        ).showSnackBar(const SnackBar(content: Text('✅ La app está actualizada'), duration: Duration(seconds: 3)));
+          release: status.release,
+          forceUpdate: status.forceUpdate,
+        );
+      } else if (status is AppUpToDate) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ La app está actualizada'),
+            duration: Duration(seconds: 3),
+          ),
+        );
       } else if (status is AppUpdateCheckFailed) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No se pudo verificar actualizaciones: ${status.reason}'),
+            content: Text(
+              'No se pudo verificar actualizaciones: ${status.reason}',
+            ),
             duration: const Duration(seconds: 4),
           ),
         );
@@ -537,7 +629,10 @@ class _CheckForUpdatesButtonState extends ConsumerState<_CheckForUpdatesButton> 
       AppLogger.error('_CheckForUpdatesButton: error — $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al verificar actualizaciones'), duration: Duration(seconds: 3)),
+          const SnackBar(
+            content: Text('Error al verificar actualizaciones'),
+            duration: Duration(seconds: 3),
+          ),
         );
       }
     } finally {
@@ -557,13 +652,19 @@ class _CheckForUpdatesButtonState extends ConsumerState<_CheckForUpdatesButton> 
           ? SizedBox(
               width: 20,
               height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2.5, color: colorScheme.primary),
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                color: colorScheme.primary,
+              ),
             )
           : Icon(Icons.system_update_alt_outlined, color: colorScheme.primary),
       title: const Text('Buscar actualizaciones'),
       subtitle: Text(
         _checking ? 'Verificando...' : 'Comprobar si hay una nueva versión',
-        style: TextStyle(fontSize: 12, color: colorScheme.onSurface.withValues(alpha: 0.5)),
+        style: TextStyle(
+          fontSize: 12,
+          color: colorScheme.onSurface.withValues(alpha: 0.5),
+        ),
       ),
       onTap: _checking ? null : _check,
     );

@@ -7,7 +7,7 @@ Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
 void main() {
   final sampleItems = ['Alpha', 'Beta', 'Gamma'];
 
-  Widget _buildList({
+  Widget buildList({
     List<String>? items,
     void Function(int, int)? onReorder,
     bool shrinkWrap = true,
@@ -15,7 +15,7 @@ void main() {
     return DraggableList<String>(
       items: items ?? sampleItems,
       shrinkWrap: shrinkWrap,
-      onReorder: onReorder ?? (_, __) {},
+      onReorder: onReorder ?? (_, _) {},
       itemBuilder: (item, index, isDragging) =>
           ListTile(key: ValueKey(item), title: Text(item)),
       keyBuilder: (item) => ValueKey(item),
@@ -24,24 +24,24 @@ void main() {
 
   group('DraggableList — renders items', () {
     testWidgets('renders all items', (tester) async {
-      await tester.pumpWidget(_wrap(_buildList()));
+      await tester.pumpWidget(_wrap(buildList()));
       expect(find.text('Alpha'), findsOneWidget);
       expect(find.text('Beta'), findsOneWidget);
       expect(find.text('Gamma'), findsOneWidget);
     });
 
     testWidgets('renders empty list without error', (tester) async {
-      await tester.pumpWidget(_wrap(_buildList(items: [])));
+      await tester.pumpWidget(_wrap(buildList(items: [])));
       expect(find.byType(DraggableList<String>), findsOneWidget);
     });
 
     testWidgets('renders single item', (tester) async {
-      await tester.pumpWidget(_wrap(_buildList(items: ['Solo'])));
+      await tester.pumpWidget(_wrap(buildList(items: ['Solo'])));
       expect(find.text('Solo'), findsOneWidget);
     });
 
     testWidgets('uses ReorderableListView under the hood', (tester) async {
-      await tester.pumpWidget(_wrap(_buildList()));
+      await tester.pumpWidget(_wrap(buildList()));
       expect(find.byType(ReorderableListView), findsOneWidget);
     });
   });
@@ -52,7 +52,7 @@ void main() {
       int? capturedNew;
       await tester.pumpWidget(
         _wrap(
-          _buildList(
+          buildList(
             onReorder: (old, newIdx) {
               capturedOld = old;
               capturedNew = newIdx;
@@ -76,7 +76,7 @@ void main() {
             items: sampleItems,
             shrinkWrap: true,
             padding: const EdgeInsets.all(16),
-            onReorder: (_, __) {},
+            onReorder: (_, _) {},
             itemBuilder: (item, index, _) =>
                 ListTile(key: ValueKey(item), title: Text(item)),
             keyBuilder: (item) => ValueKey(item),
@@ -90,7 +90,7 @@ void main() {
   group('DraggableList — shrinkWrap', () {
     testWidgets('shrinkWrap=true renders in place', (tester) async {
       await tester.pumpWidget(
-        _wrap(SingleChildScrollView(child: _buildList(shrinkWrap: true))),
+        _wrap(SingleChildScrollView(child: buildList(shrinkWrap: true))),
       );
       expect(find.text('Alpha'), findsOneWidget);
     });

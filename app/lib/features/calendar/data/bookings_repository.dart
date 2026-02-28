@@ -34,7 +34,10 @@ class BookingsRepository {
       },
     );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return PaginatedResponse<BookingItem>.fromJson(
       apiResp.data!,
@@ -45,23 +48,41 @@ class BookingsRepository {
   Future<BookingDetail> getBooking(String id) async {
     final resp = await _client.get<Map<String, dynamic>>(Endpoints.booking(id));
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return BookingDetail.fromJson(apiResp.data!);
   }
 
   Future<BookingDetail> createBooking(BookingFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(Endpoints.bookings, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.bookings,
+      data: data.toJson(),
+    );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return BookingDetail.fromJson(apiResp.data!);
   }
 
-  Future<BookingDetail> updateBooking(String id, Map<String, dynamic> updates) async {
-    final resp = await _client.patch<Map<String, dynamic>>(Endpoints.booking(id), data: updates);
+  Future<BookingDetail> updateBooking(
+    String id,
+    Map<String, dynamic> updates,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.booking(id),
+      data: updates,
+    );
 
-    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(resp, (d) => d as Map<String, dynamic>);
+    final apiResp = ApiResponse<Map<String, dynamic>>.fromJson(
+      resp,
+      (d) => d as Map<String, dynamic>,
+    );
 
     return BookingDetail.fromJson(apiResp.data!);
   }

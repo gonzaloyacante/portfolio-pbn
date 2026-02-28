@@ -378,8 +378,8 @@ void main() {
   group('DashboardCharts — fromJson', () {
     test('fromJson with empty lists', () {
       final c = DashboardCharts.fromJson({
-        'dailyPageViews': <Map>[],
-        'monthlyBookings': <Map>[],
+        'dailyPageViews': <Map<String, dynamic>>[],
+        'monthlyBookings': <Map<String, dynamic>>[],
       });
       expect(c.dailyPageViews, isEmpty);
       expect(c.monthlyBookings, isEmpty);

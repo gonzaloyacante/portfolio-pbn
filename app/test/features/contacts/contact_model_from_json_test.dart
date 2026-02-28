@@ -5,7 +5,7 @@ void main() {
   // ── ContactItem fromJson ──────────────────────────────────────────────────
 
   group('ContactItem.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 'c1',
       'name': 'Ana García',
       'email': 'ana@example.com',
@@ -14,19 +14,19 @@ void main() {
     };
 
     test('parses id correctly', () {
-      expect(ContactItem.fromJson(_base()).id, 'c1');
+      expect(ContactItem.fromJson(base0()).id, 'c1');
     });
     test('parses name correctly', () {
-      expect(ContactItem.fromJson(_base()).name, 'Ana García');
+      expect(ContactItem.fromJson(base0()).name, 'Ana García');
     });
     test('parses email correctly', () {
-      expect(ContactItem.fromJson(_base()).email, 'ana@example.com');
+      expect(ContactItem.fromJson(base0()).email, 'ana@example.com');
     });
     test('parses createdAt as DateTime', () {
-      expect(ContactItem.fromJson(_base()).createdAt, isA<DateTime>());
+      expect(ContactItem.fromJson(base0()).createdAt, isA<DateTime>());
     });
     test('parses updatedAt as DateTime', () {
-      expect(ContactItem.fromJson(_base()).updatedAt, isA<DateTime>());
+      expect(ContactItem.fromJson(base0()).updatedAt, isA<DateTime>());
     });
   });
 
@@ -86,7 +86,7 @@ void main() {
   });
 
   group('ContactItem.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'c2',
       'name': 'Carlos López',
       'email': 'carlos@test.com',
@@ -105,42 +105,42 @@ void main() {
 
     test(
       'parses phone',
-      () => expect(ContactItem.fromJson(_full()).phone, '+34 600 123 456'),
+      () => expect(ContactItem.fromJson(full()).phone, '+34 600 123 456'),
     );
     test(
       'parses subject',
-      () => expect(ContactItem.fromJson(_full()).subject, 'Consulta de precio'),
+      () => expect(ContactItem.fromJson(full()).subject, 'Consulta de precio'),
     );
     test(
       'parses status',
-      () => expect(ContactItem.fromJson(_full()).status, 'REPLIED'),
+      () => expect(ContactItem.fromJson(full()).status, 'REPLIED'),
     );
     test(
       'parses priority',
-      () => expect(ContactItem.fromJson(_full()).priority, 'HIGH'),
+      () => expect(ContactItem.fromJson(full()).priority, 'HIGH'),
     );
     test(
       'parses isRead = true',
-      () => expect(ContactItem.fromJson(_full()).isRead, isTrue),
+      () => expect(ContactItem.fromJson(full()).isRead, isTrue),
     );
     test(
       'parses isReplied = true',
-      () => expect(ContactItem.fromJson(_full()).isReplied, isTrue),
+      () => expect(ContactItem.fromJson(full()).isReplied, isTrue),
     );
     test(
       'parses leadScore',
-      () => expect(ContactItem.fromJson(_full()).leadScore, 85),
+      () => expect(ContactItem.fromJson(full()).leadScore, 85),
     );
     test(
       'parses leadSource',
-      () => expect(ContactItem.fromJson(_full()).leadSource, 'instagram'),
+      () => expect(ContactItem.fromJson(full()).leadSource, 'instagram'),
     );
     test(
       'parses tags list',
-      () => expect(ContactItem.fromJson(_full()).tags, ['vip', 'boda']),
+      () => expect(ContactItem.fromJson(full()).tags, ['vip', 'boda']),
     );
     test('createdAt is parsed as DateTime', () {
-      final item = ContactItem.fromJson(_full());
+      final item = ContactItem.fromJson(full());
       expect(item.createdAt.year, 2024);
       expect(item.createdAt.month, 2);
       expect(item.createdAt.day, 10);
@@ -185,7 +185,7 @@ void main() {
   // ── ContactDetail fromJson ────────────────────────────────────────────────
 
   group('ContactDetail.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 'd1',
       'name': 'María Pérez',
       'email': 'maria@test.com',
@@ -194,25 +194,25 @@ void main() {
       'updatedAt': '2024-03-01T08:00:00Z',
     };
 
-    test('parses id', () => expect(ContactDetail.fromJson(_base()).id, 'd1'));
+    test('parses id', () => expect(ContactDetail.fromJson(base0()).id, 'd1'));
     test(
       'parses name',
-      () => expect(ContactDetail.fromJson(_base()).name, 'María Pérez'),
+      () => expect(ContactDetail.fromJson(base0()).name, 'María Pérez'),
     );
     test(
       'parses email',
-      () => expect(ContactDetail.fromJson(_base()).email, 'maria@test.com'),
+      () => expect(ContactDetail.fromJson(base0()).email, 'maria@test.com'),
     );
     test(
       'parses message',
       () => expect(
-        ContactDetail.fromJson(_base()).message,
+        ContactDetail.fromJson(base0()).message,
         'Hola, quiero información sobre bodas.',
       ),
     );
     test(
       'createdAt is DateTime',
-      () => expect(ContactDetail.fromJson(_base()).createdAt, isA<DateTime>()),
+      () => expect(ContactDetail.fromJson(base0()).createdAt, isA<DateTime>()),
     );
   });
 
@@ -276,7 +276,7 @@ void main() {
   });
 
   group('ContactDetail.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'd2',
       'name': 'Full Contact',
       'email': 'full@test.com',
@@ -305,70 +305,68 @@ void main() {
 
     test(
       'parses phone',
-      () => expect(ContactDetail.fromJson(_full()).phone, '+34 911 000 000'),
+      () => expect(ContactDetail.fromJson(full()).phone, '+34 911 000 000'),
     );
     test(
       'parses responsePreference',
-      () => expect(ContactDetail.fromJson(_full()).responsePreference, 'PHONE'),
+      () => expect(ContactDetail.fromJson(full()).responsePreference, 'PHONE'),
     );
     test(
       'parses leadScore',
-      () => expect(ContactDetail.fromJson(_full()).leadScore, 92),
+      () => expect(ContactDetail.fromJson(full()).leadScore, 92),
     );
     test(
       'parses leadSource',
-      () => expect(ContactDetail.fromJson(_full()).leadSource, 'referral'),
+      () => expect(ContactDetail.fromJson(full()).leadSource, 'referral'),
     );
     test(
       'parses status',
-      () => expect(ContactDetail.fromJson(_full()).status, 'ARCHIVED'),
+      () => expect(ContactDetail.fromJson(full()).status, 'ARCHIVED'),
     );
     test(
       'parses priority',
-      () => expect(ContactDetail.fromJson(_full()).priority, 'LOW'),
+      () => expect(ContactDetail.fromJson(full()).priority, 'LOW'),
     );
     test(
       'parses assignedTo',
-      () => expect(ContactDetail.fromJson(_full()).assignedTo, 'admin'),
+      () => expect(ContactDetail.fromJson(full()).assignedTo, 'admin'),
     );
     test(
       'parses isRead = true',
-      () => expect(ContactDetail.fromJson(_full()).isRead, isTrue),
+      () => expect(ContactDetail.fromJson(full()).isRead, isTrue),
     );
     test(
       'parses replyText',
-      () => expect(ContactDetail.fromJson(_full()).replyText, 'We replied'),
+      () => expect(ContactDetail.fromJson(full()).replyText, 'We replied'),
     );
     test(
       'parses adminNote',
-      () => expect(ContactDetail.fromJson(_full()).adminNote, 'VIP client'),
+      () => expect(ContactDetail.fromJson(full()).adminNote, 'VIP client'),
     );
     test(
       'parses tags list',
-      () => expect(ContactDetail.fromJson(_full()).tags, ['client', 'vip']),
+      () => expect(ContactDetail.fromJson(full()).tags, ['client', 'vip']),
     );
     test(
       'parses ipAddress',
-      () => expect(ContactDetail.fromJson(_full()).ipAddress, '192.168.1.1'),
+      () => expect(ContactDetail.fromJson(full()).ipAddress, '192.168.1.1'),
     );
     test(
       'parses referrer',
-      () => expect(
-        ContactDetail.fromJson(_full()).referrer,
-        'https://google.com',
-      ),
+      () =>
+          expect(ContactDetail.fromJson(full()).referrer, 'https://google.com'),
     );
     test(
       'parses utmSource',
-      () => expect(ContactDetail.fromJson(_full()).utmSource, 'google'),
+      () => expect(ContactDetail.fromJson(full()).utmSource, 'google'),
     );
     test(
       'parses utmMedium',
-      () => expect(ContactDetail.fromJson(_full()).utmMedium, 'cpc'),
+      () => expect(ContactDetail.fromJson(full()).utmMedium, 'cpc'),
     );
     test(
       'parses utmCampaign',
-      () => expect(ContactDetail.fromJson(_full()).utmCampaign, 'summer2024'),
+      () => expect(ContactDetail.fromJson(full()).utmCampaign, 'summer2024'),
     );
   });
 
@@ -394,7 +392,7 @@ void main() {
 
     test('original unchanged after copyWith', () {
       final detail = ContactDetail.fromJson(base);
-      detail.copyWith(status: 'READ');
+      final _ = detail.copyWith(status: 'READ');
       expect(detail.status, 'NEW'); // original unchanged
     });
   });

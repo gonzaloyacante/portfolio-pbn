@@ -5,7 +5,7 @@ void main() {
   // ── TrashItem.fromMap ─────────────────────────────────────────────────────
 
   group('TrashItem.fromMap — using title field', () {
-    Map<String, dynamic> _project() => {
+    Map<String, dynamic> project() => {
       'id': 'proj-1',
       'title': 'Wedding Shoot',
       'deletedAt': '2024-06-01T10:00:00Z',
@@ -13,35 +13,35 @@ void main() {
 
     test(
       'parses id',
-      () => expect(TrashItem.fromMap('project', _project()).id, 'proj-1'),
+      () => expect(TrashItem.fromMap('project', project()).id, 'proj-1'),
     );
     test(
       'parses type',
-      () => expect(TrashItem.fromMap('project', _project()).type, 'project'),
+      () => expect(TrashItem.fromMap('project', project()).type, 'project'),
     );
     test(
       'displayName uses title',
       () => expect(
-        TrashItem.fromMap('project', _project()).displayName,
+        TrashItem.fromMap('project', project()).displayName,
         'Wedding Shoot',
       ),
     );
     test(
       'deletedAt is DateTime',
       () => expect(
-        TrashItem.fromMap('project', _project()).deletedAt,
+        TrashItem.fromMap('project', project()).deletedAt,
         isA<DateTime>(),
       ),
     );
     test('deletedAt parsed correctly', () {
-      expect(TrashItem.fromMap('project', _project()).deletedAt.year, 2024);
-      expect(TrashItem.fromMap('project', _project()).deletedAt.month, 6);
-      expect(TrashItem.fromMap('project', _project()).deletedAt.day, 1);
+      expect(TrashItem.fromMap('project', project()).deletedAt.year, 2024);
+      expect(TrashItem.fromMap('project', project()).deletedAt.month, 6);
+      expect(TrashItem.fromMap('project', project()).deletedAt.day, 1);
     });
   });
 
   group('TrashItem.fromMap — using name field', () {
-    Map<String, dynamic> _service() => {
+    Map<String, dynamic> service() => {
       'id': 'srv-2',
       'name': 'Maquillaje novias',
       'deletedAt': '2024-07-15T08:30:00Z',
@@ -49,18 +49,18 @@ void main() {
 
     test('displayName uses name when no title', () {
       expect(
-        TrashItem.fromMap('service', _service()).displayName,
+        TrashItem.fromMap('service', service()).displayName,
         'Maquillaje novias',
       );
     });
     test(
       'type is service',
-      () => expect(TrashItem.fromMap('service', _service()).type, 'service'),
+      () => expect(TrashItem.fromMap('service', service()).type, 'service'),
     );
   });
 
   group('TrashItem.fromMap — using clientName field', () {
-    Map<String, dynamic> _booking() => {
+    Map<String, dynamic> booking() => {
       'id': 'bk-3',
       'clientName': 'Ana Martínez',
       'deletedAt': '2024-08-20T14:00:00Z',
@@ -68,31 +68,28 @@ void main() {
 
     test('displayName uses clientName', () {
       expect(
-        TrashItem.fromMap('booking', _booking()).displayName,
+        TrashItem.fromMap('booking', booking()).displayName,
         'Ana Martínez',
       );
     });
     test(
       'type is booking',
-      () => expect(TrashItem.fromMap('booking', _booking()).type, 'booking'),
+      () => expect(TrashItem.fromMap('booking', booking()).type, 'booking'),
     );
   });
 
   group('TrashItem.fromMap — fallback to (sin nombre)', () {
-    Map<String, dynamic> _empty() => {
+    Map<String, dynamic> empty() => {
       'id': 'x-1',
       'deletedAt': '2024-09-01T00:00:00Z',
     };
 
     test('displayName fallback is "(sin nombre)"', () {
-      expect(
-        TrashItem.fromMap('contact', _empty()).displayName,
-        '(sin nombre)',
-      );
+      expect(TrashItem.fromMap('contact', empty()).displayName, '(sin nombre)');
     });
     test(
       'id is parsed',
-      () => expect(TrashItem.fromMap('contact', _empty()).id, 'x-1'),
+      () => expect(TrashItem.fromMap('contact', empty()).id, 'x-1'),
     );
   });
 
@@ -156,7 +153,7 @@ void main() {
     });
 
     test('original unchanged after copyWith', () {
-      base.copyWith(type: 'other');
+      final _ = base.copyWith(type: 'other');
       expect(base.type, 'project');
     });
   });

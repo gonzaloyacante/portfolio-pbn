@@ -25,7 +25,8 @@ abstract class CategoryItem with _$CategoryItem {
     required String updatedAt,
   }) = _CategoryItem;
 
-  factory CategoryItem.fromJson(Map<String, dynamic> json) => _$CategoryItemFromJson(json);
+  factory CategoryItem.fromJson(Map<String, dynamic> json) =>
+      _$CategoryItemFromJson(json);
 }
 
 // ── CategoryDetail ────────────────────────────────────────────────────────────
@@ -54,7 +55,8 @@ abstract class CategoryDetail with _$CategoryDetail {
     required String updatedAt,
   }) = _CategoryDetail;
 
-  factory CategoryDetail.fromJson(Map<String, dynamic> json) => _$CategoryDetailFromJson(json);
+  factory CategoryDetail.fromJson(Map<String, dynamic> json) =>
+      _$CategoryDetailFromJson(json);
 }
 
 // ── CategoryFormData ──────────────────────────────────────────────────────────

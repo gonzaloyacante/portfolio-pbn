@@ -18,7 +18,8 @@ class PbnSplashLogo extends StatefulWidget {
   State<PbnSplashLogo> createState() => _PbnSplashLogoState();
 }
 
-class _PbnSplashLogoState extends State<PbnSplashLogo> with SingleTickerProviderStateMixin {
+class _PbnSplashLogoState extends State<PbnSplashLogo>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
 
   @override
@@ -97,11 +98,20 @@ class _PbnFontRevealPainter extends CustomPainter {
     );
     final spanStroke = TextSpan(
       text: text,
-      style: GoogleFonts.greatVibes(fontSize: fontSize, foreground: strokePaint),
+      style: GoogleFonts.greatVibes(
+        fontSize: fontSize,
+        foreground: strokePaint,
+      ),
     );
 
-    final tpGuide = TextPainter(text: spanGuide, textDirection: TextDirection.ltr);
-    final tpStroke = TextPainter(text: spanStroke, textDirection: TextDirection.ltr);
+    final tpGuide = TextPainter(
+      text: spanGuide,
+      textDirection: TextDirection.ltr,
+    );
+    final tpStroke = TextPainter(
+      text: spanStroke,
+      textDirection: TextDirection.ltr,
+    );
     tpGuide.layout();
     tpStroke.layout();
 
@@ -120,12 +130,17 @@ class _PbnFontRevealPainter extends CustomPainter {
     for (var i = 0; i < n; i++) {
       final start = per * i;
       final end = per * (i + 1);
-      final localProgress = ((progress - start) / (end - start)).clamp(0.0, 1.0);
+      final localProgress = ((progress - start) / (end - start)).clamp(
+        0.0,
+        1.0,
+      );
 
       if (localProgress <= 0) continue;
 
       // get box for letter i
-      final boxes = tpStroke.getBoxesForSelection(TextSelection(baseOffset: i, extentOffset: i + 1));
+      final boxes = tpStroke.getBoxesForSelection(
+        TextSelection(baseOffset: i, extentOffset: i + 1),
+      );
       if (boxes.isEmpty) continue;
       final b = boxes.first.toRect();
 

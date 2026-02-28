@@ -35,7 +35,10 @@ void main() {
       expect(const NetworkException().message, 'Sin conexión a internet');
     });
     test('custom message', () {
-      expect(const NetworkException(message: 'No hay red').message, 'No hay red');
+      expect(
+        const NetworkException(message: 'No hay red').message,
+        'No hay red',
+      );
     });
     test('toString includes type', () {
       expect(const NetworkException().toString(), contains('NetworkException'));
@@ -55,7 +58,10 @@ void main() {
       expect(const TimeoutException().message, 'La solicitud tardó demasiado');
     });
     test('custom message', () {
-      expect(const TimeoutException(message: 'Timeout 30s').message, 'Timeout 30s');
+      expect(
+        const TimeoutException(message: 'Timeout 30s').message,
+        'Timeout 30s',
+      );
     });
     test('toString includes type', () {
       expect(const TimeoutException().toString(), contains('TimeoutException'));
@@ -72,50 +78,104 @@ void main() {
       expect(const HttpException(statusCode: 500).message, 'Error HTTP');
     });
     test('custom message', () {
-      expect(const HttpException(statusCode: 403, message: 'Forbidden').message, 'Forbidden');
+      expect(
+        const HttpException(statusCode: 403, message: 'Forbidden').message,
+        'Forbidden',
+      );
     });
     test('errors default to null', () {
       expect(const HttpException(statusCode: 400).errors, isNull);
     });
     test('errors can be set', () {
-      final e = const HttpException(statusCode: 422, errors: {'field': 'required'});
+      final e = const HttpException(
+        statusCode: 422,
+        errors: {'field': 'required'},
+      );
       expect(e.errors!['field'], 'required');
     });
   });
 
   group('HttpException — isClientError', () {
-    test('400 is client error', () => expect(const HttpException(statusCode: 400).isClientError, isTrue));
-    test('401 is client error', () => expect(const HttpException(statusCode: 401).isClientError, isTrue));
-    test('404 is client error', () => expect(const HttpException(statusCode: 404).isClientError, isTrue));
-    test('499 is client error', () => expect(const HttpException(statusCode: 499).isClientError, isTrue));
-    test('500 is NOT client error', () => expect(const HttpException(statusCode: 500).isClientError, isFalse));
-    test('200 is NOT client error', () => expect(const HttpException(statusCode: 200).isClientError, isFalse));
+    test(
+      '400 is client error',
+      () => expect(const HttpException(statusCode: 400).isClientError, isTrue),
+    );
+    test(
+      '401 is client error',
+      () => expect(const HttpException(statusCode: 401).isClientError, isTrue),
+    );
+    test(
+      '404 is client error',
+      () => expect(const HttpException(statusCode: 404).isClientError, isTrue),
+    );
+    test(
+      '499 is client error',
+      () => expect(const HttpException(statusCode: 499).isClientError, isTrue),
+    );
+    test(
+      '500 is NOT client error',
+      () => expect(const HttpException(statusCode: 500).isClientError, isFalse),
+    );
+    test(
+      '200 is NOT client error',
+      () => expect(const HttpException(statusCode: 200).isClientError, isFalse),
+    );
   });
 
   group('HttpException — isServerError', () {
-    test('500 is server error', () => expect(const HttpException(statusCode: 500).isServerError, isTrue));
-    test('503 is server error', () => expect(const HttpException(statusCode: 503).isServerError, isTrue));
-    test('599 is server error', () => expect(const HttpException(statusCode: 599).isServerError, isTrue));
-    test('400 is NOT server error', () => expect(const HttpException(statusCode: 400).isServerError, isFalse));
-    test('200 is NOT server error', () => expect(const HttpException(statusCode: 200).isServerError, isFalse));
+    test(
+      '500 is server error',
+      () => expect(const HttpException(statusCode: 500).isServerError, isTrue),
+    );
+    test(
+      '503 is server error',
+      () => expect(const HttpException(statusCode: 503).isServerError, isTrue),
+    );
+    test(
+      '599 is server error',
+      () => expect(const HttpException(statusCode: 599).isServerError, isTrue),
+    );
+    test(
+      '400 is NOT server error',
+      () => expect(const HttpException(statusCode: 400).isServerError, isFalse),
+    );
+    test(
+      '200 is NOT server error',
+      () => expect(const HttpException(statusCode: 200).isServerError, isFalse),
+    );
   });
 
   // ── Auth exceptions ───────────────────────────────────────────────────────
 
   group('UnauthorizedException', () {
-    test('default message', () => expect(const UnauthorizedException().message, 'No autorizado'));
+    test(
+      'default message',
+      () => expect(const UnauthorizedException().message, 'No autorizado'),
+    );
     test('custom message', () {
-      expect(const UnauthorizedException(message: 'Invalid token').message, 'Invalid token');
+      expect(
+        const UnauthorizedException(message: 'Invalid token').message,
+        'Invalid token',
+      );
     });
     test('toString', () {
-      expect(const UnauthorizedException().toString(), contains('UnauthorizedException'));
+      expect(
+        const UnauthorizedException().toString(),
+        contains('UnauthorizedException'),
+      );
     });
   });
 
   group('TokenExpiredException', () {
-    test('default message', () => expect(const TokenExpiredException().message, 'Sesión expirada'));
+    test(
+      'default message',
+      () => expect(const TokenExpiredException().message, 'Sesión expirada'),
+    );
     test('custom message', () {
-      expect(const TokenExpiredException(message: 'JWT expired').message, 'JWT expired');
+      expect(
+        const TokenExpiredException(message: 'JWT expired').message,
+        'JWT expired',
+      );
     });
   });
 
@@ -124,50 +184,82 @@ void main() {
       expect(const SessionExpiredException().message, contains('caducado'));
     });
     test('custom message', () {
-      expect(const SessionExpiredException(message: 'Expired').message, 'Expired');
+      expect(
+        const SessionExpiredException(message: 'Expired').message,
+        'Expired',
+      );
     });
   });
 
   group('ForbiddenException', () {
-    test('default message', () => expect(const ForbiddenException().message, 'Sin permisos'));
+    test(
+      'default message',
+      () => expect(const ForbiddenException().message, 'Sin permisos'),
+    );
     test('custom message', () {
-      expect(const ForbiddenException(message: 'Admin only').message, 'Admin only');
+      expect(
+        const ForbiddenException(message: 'Admin only').message,
+        'Admin only',
+      );
     });
   });
 
   // ── Business exceptions ───────────────────────────────────────────────────
 
   group('NotFoundException', () {
-    test('default message', () => expect(const NotFoundException().message, 'Recurso no encontrado'));
+    test(
+      'default message',
+      () => expect(const NotFoundException().message, 'Recurso no encontrado'),
+    );
     test('custom message', () {
-      expect(const NotFoundException(message: 'Project not found').message, 'Project not found');
+      expect(
+        const NotFoundException(message: 'Project not found').message,
+        'Project not found',
+      );
     });
     test('toString includes type', () {
-      expect(const NotFoundException().toString(), contains('NotFoundException'));
+      expect(
+        const NotFoundException().toString(),
+        contains('NotFoundException'),
+      );
     });
   });
 
   group('ConflictException', () {
     test('default message', () {
-      expect(const ConflictException().message, 'Conflicto con el estado actual');
+      expect(
+        const ConflictException().message,
+        'Conflicto con el estado actual',
+      );
     });
     test('custom message', () {
-      expect(const ConflictException(message: 'Duplicate slug').message, 'Duplicate slug');
+      expect(
+        const ConflictException(message: 'Duplicate slug').message,
+        'Duplicate slug',
+      );
     });
   });
 
   group('ValidationException', () {
-    test('default message', () => expect(const ValidationException().message, 'Datos inválidos'));
+    test(
+      'default message',
+      () => expect(const ValidationException().message, 'Datos inválidos'),
+    );
     test('fieldErrors defaults to empty map', () {
       expect(const ValidationException().fieldErrors, isEmpty);
     });
     test('fieldErrors can be set', () {
-      const e = ValidationException(fieldErrors: {'email': 'Invalid email', 'name': 'Required'});
+      const e = ValidationException(
+        fieldErrors: {'email': 'Invalid email', 'name': 'Required'},
+      );
       expect(e.fieldErrors['email'], 'Invalid email');
       expect(e.fieldErrors['name'], 'Required');
     });
     test('custom message', () {
-      expect(const ValidationException(message: 'Form error').message, 'Form error');
+      expect(
+        const ValidationException(message: 'Form error').message,
+        'Form error',
+      );
     });
   });
 
@@ -183,18 +275,31 @@ void main() {
   // ── Server/Local exceptions ───────────────────────────────────────────────
 
   group('ServerException', () {
-    test('default message', () => expect(const ServerException().message, 'Error interno del servidor'));
+    test(
+      'default message',
+      () =>
+          expect(const ServerException().message, 'Error interno del servidor'),
+    );
     test('custom message', () {
-      expect(const ServerException(message: 'DB connection failed').message, 'DB connection failed');
+      expect(
+        const ServerException(message: 'DB connection failed').message,
+        'DB connection failed',
+      );
     });
   });
 
   group('StorageException', () {
     test('default message', () {
-      expect(const StorageException().message, 'Error al acceder a datos locales');
+      expect(
+        const StorageException().message,
+        'Error al acceder a datos locales',
+      );
     });
     test('custom message', () {
-      expect(const StorageException(message: 'SQLite error').message, 'SQLite error');
+      expect(
+        const StorageException(message: 'SQLite error').message,
+        'SQLite error',
+      );
     });
   });
 
@@ -203,7 +308,10 @@ void main() {
       expect(const ParseException().message, 'Error al procesar la respuesta');
     });
     test('custom message', () {
-      expect(const ParseException(message: 'JSON parse error').message, 'JSON parse error');
+      expect(
+        const ParseException(message: 'JSON parse error').message,
+        'JSON parse error',
+      );
     });
   });
 

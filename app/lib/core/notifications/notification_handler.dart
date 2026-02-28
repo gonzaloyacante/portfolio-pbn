@@ -19,7 +19,8 @@ import 'notification_prefs.dart';
 /// Debe coincidir con el `channel_id` que envía el backend (push-service.ts).
 const _kChannelId = 'admin_high';
 const _kChannelName = 'Notificaciones de Administración';
-const _kChannelDesc = 'Alertas de nuevos contactos, reservas y actividad del sitio.';
+const _kChannelDesc =
+    'Alertas de nuevos contactos, reservas y actividad del sitio.';
 
 // ── NotificationHandler ────────────────────────────────────────────────────────
 
@@ -50,7 +51,8 @@ class NotificationHandler {
 
   final GoRouter _router;
 
-  final FlutterLocalNotificationsPlugin _localNotif = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotif =
+      FlutterLocalNotificationsPlugin();
 
   // ── init ───────────────────────────────────────────────────────────────────
 
@@ -60,7 +62,9 @@ class NotificationHandler {
   Future<void> init() async {
     // Evitar acceder a FirebaseMessaging si Firebase no ha sido inicializado.
     if (Firebase.apps.isEmpty) {
-      AppLogger.warn('Firebase no inicializado — omitiendo NotificationHandler.init()');
+      AppLogger.warn(
+        'Firebase no inicializado — omitiendo NotificationHandler.init()',
+      );
       return;
     }
 
@@ -70,7 +74,9 @@ class NotificationHandler {
     // 2. Mensajes recibidos en foreground → notificación del sistema
     try {
       FirebaseMessaging.onMessage.listen((message) {
-        AppLogger.info('NotificationHandler[fg]: ${message.notification?.title}');
+        AppLogger.info(
+          'NotificationHandler[fg]: ${message.notification?.title}',
+        );
         _showLocalNotification(message);
       });
     } catch (e, st) {
@@ -82,7 +88,9 @@ class NotificationHandler {
     // 3. App abierta desde notificación (background → foreground tap)
     try {
       FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        AppLogger.info('NotificationHandler[tap]: ${message.notification?.title}');
+        AppLogger.info(
+          'NotificationHandler[tap]: ${message.notification?.title}',
+        );
         _navigateFromMessage(message);
       });
     } catch (e, st) {
@@ -94,7 +102,9 @@ class NotificationHandler {
     try {
       FirebaseMessaging.instance.getInitialMessage().then((message) {
         if (message != null) {
-          AppLogger.info('NotificationHandler[initial]: ${message.notification?.title}');
+          AppLogger.info(
+            'NotificationHandler[initial]: ${message.notification?.title}',
+          );
           // Leve delay para que el router esté montado
           Future.delayed(const Duration(milliseconds: 600), () {
             _navigateFromMessage(message);
@@ -111,7 +121,9 @@ class NotificationHandler {
 
   Future<void> _initLocalNotifications() async {
     try {
-      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const androidSettings = AndroidInitializationSettings(
+        '@mipmap/ic_launcher',
+      );
 
       // En iOS no pedimos permisos aquí — ya los gestiona FirebaseMessaging.
       const iosSettings = DarwinInitializationSettings(
@@ -124,7 +136,10 @@ class NotificationHandler {
         defaultPresentSound: true,
       );
 
-      const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
+      const initSettings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
 
       await _localNotif.initialize(
         settings: initSettings,
@@ -147,10 +162,14 @@ class NotificationHandler {
         );
 
         await _localNotif
-            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >()
             ?.createNotificationChannel(channel);
 
-        AppLogger.info('NotificationHandler: canal Android "$_kChannelId" creado');
+        AppLogger.info(
+          'NotificationHandler: canal Android "$_kChannelId" creado',
+        );
       }
 
       AppLogger.info('NotificationHandler: flutter_local_notifications listo');
@@ -158,7 +177,11 @@ class NotificationHandler {
       // Inicializar preferencias de notificaciones (singleton)
       await NotificationPrefs.init();
     } catch (e, st) {
-      AppLogger.error('NotificationHandler: error al inicializar local notifications', e, st);
+      AppLogger.error(
+        'NotificationHandler: error al inicializar local notifications',
+        e,
+        st,
+      );
     }
   }
 
@@ -184,7 +207,9 @@ class NotificationHandler {
     // Para app_update no mostramos notificación del sistema en foreground:
     // mostramos el diálogo directamente en la UI.
     if (type == 'app_update') {
-      AppLogger.info('NotificationHandler[fg]: mensaje app_update recibido → mostrando diálogo');
+      AppLogger.info(
+        'NotificationHandler[fg]: mensaje app_update recibido → mostrando diálogo',
+      );
       _handleAppUpdateData(data);
       return;
     }
@@ -203,7 +228,9 @@ class NotificationHandler {
         _ => false,
       };
       if (suppressed) {
-        AppLogger.debug('NotificationHandler: notificación "$type" suprimida por preferencias');
+        AppLogger.debug(
+          'NotificationHandler: notificación "$type" suprimida por preferencias',
+        );
         return;
       }
     } catch (_) {
@@ -211,7 +238,11 @@ class NotificationHandler {
     }
 
     // Payload de navegación codificado como JSON
-    final payloadJson = jsonEncode({'screen': data['screen'], 'id': data['id'], 'type': type});
+    final payloadJson = jsonEncode({
+      'screen': data['screen'],
+      'id': data['id'],
+      'type': type,
+    });
 
     final androidDetails = AndroidNotificationDetails(
       _kChannelId,
@@ -232,9 +263,16 @@ class NotificationHandler {
       ),
     );
 
-    const iosDetails = DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true);
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
 
-    final details = NotificationDetails(android: androidDetails, iOS: iosDetails);
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
 
     _localNotif
         .show(
@@ -244,14 +282,21 @@ class NotificationHandler {
           notificationDetails: details,
           payload: payloadJson,
         )
-        .catchError((Object e) => AppLogger.error('NotificationHandler: error al mostrar local notification', e));
+        .catchError(
+          (Object e) => AppLogger.error(
+            'NotificationHandler: error al mostrar local notification',
+            e,
+          ),
+        );
   }
 
   // ── Tap handlers ───────────────────────────────────────────────────────────
 
   /// Tap en notificación local (app en foreground o background).
   void _onLocalNotifTap(NotificationResponse response) {
-    AppLogger.info('NotificationHandler[local-tap]: payload=${response.payload}');
+    AppLogger.info(
+      'NotificationHandler[local-tap]: payload=${response.payload}',
+    );
     _navigateFromPayload(response.payload);
   }
 
@@ -263,7 +308,10 @@ class NotificationHandler {
     }
     try {
       final data = jsonDecode(payloadJson) as Map<String, dynamic>;
-      _navigateFromData(screen: data['screen'] as String?, id: data['id'] as String?);
+      _navigateFromData(
+        screen: data['screen'] as String?,
+        id: data['id'] as String?,
+      );
     } catch (e) {
       AppLogger.warn('NotificationHandler: payload inválido — $payloadJson');
       _router.goNamed(RouteNames.dashboard);
@@ -278,7 +326,10 @@ class NotificationHandler {
       _handleAppUpdateData(message.data);
       return;
     }
-    _navigateFromData(screen: message.data['screen'] as String?, id: message.data['id'] as String?);
+    _navigateFromData(
+      screen: message.data['screen'] as String?,
+      id: message.data['id'] as String?,
+    );
   }
 
   // ── _handleAppUpdateData ──────────────────────────────────────────────────────
@@ -295,7 +346,9 @@ class NotificationHandler {
     final version = stringData['version'] ?? '';
     final downloadUrl = stringData['downloadUrl'] ?? '';
 
-    if (version.isEmpty || downloadUrl.isEmpty || !downloadUrl.startsWith('https://')) {
+    if (version.isEmpty ||
+        downloadUrl.isEmpty ||
+        !downloadUrl.startsWith('https://')) {
       // Datos insuficientes en el FCM → re-comprobar desde el servidor
       AppLogger.info(
         'NotificationHandler: datos de update incompletos en FCM → '
@@ -309,7 +362,9 @@ class NotificationHandler {
     final release = AppRelease.fromFcmData(stringData);
     final mandatory = stringData['mandatory'] == 'true';
 
-    AppLogger.info('NotificationHandler: mostrando diálogo para v${release.version}');
+    AppLogger.info(
+      'NotificationHandler: mostrando diálogo para v${release.version}',
+    );
 
     // Usamos addPostFrameCallback para asegurarnos de que el Navigator
     // ya está montado antes de llamar a showDialog.

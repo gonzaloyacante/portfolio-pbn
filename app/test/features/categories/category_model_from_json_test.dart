@@ -5,7 +5,7 @@ void main() {
   // ── CategoryItem fromJson ─────────────────────────────────────────────────
 
   group('CategoryItem.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 'cat-1',
       'name': 'Bodas',
       'slug': 'bodas',
@@ -13,19 +13,19 @@ void main() {
       'updatedAt': '2024-01-01T00:00:00Z',
     };
 
-    test('parses id', () => expect(CategoryItem.fromJson(_base()).id, 'cat-1'));
+    test('parses id', () => expect(CategoryItem.fromJson(base0()).id, 'cat-1'));
     test(
       'parses name',
-      () => expect(CategoryItem.fromJson(_base()).name, 'Bodas'),
+      () => expect(CategoryItem.fromJson(base0()).name, 'Bodas'),
     );
     test(
       'parses slug',
-      () => expect(CategoryItem.fromJson(_base()).slug, 'bodas'),
+      () => expect(CategoryItem.fromJson(base0()).slug, 'bodas'),
     );
     test(
       'createdAt is String',
       () => expect(
-        CategoryItem.fromJson(_base()).createdAt,
+        CategoryItem.fromJson(base0()).createdAt,
         '2024-01-01T00:00:00Z',
       ),
     );
@@ -75,7 +75,7 @@ void main() {
   });
 
   group('CategoryItem.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'cat-2',
       'name': 'Maternidad',
       'slug': 'maternidad',
@@ -94,40 +94,40 @@ void main() {
     test(
       'parses description',
       () => expect(
-        CategoryItem.fromJson(_full()).description,
+        CategoryItem.fromJson(full()).description,
         'Sesiones de maternidad',
       ),
     );
     test(
       'parses thumbnailUrl',
       () => expect(
-        CategoryItem.fromJson(_full()).thumbnailUrl,
+        CategoryItem.fromJson(full()).thumbnailUrl,
         'https://x.com/thumb.jpg',
       ),
     );
     test(
       'parses iconName',
-      () => expect(CategoryItem.fromJson(_full()).iconName, 'baby'),
+      () => expect(CategoryItem.fromJson(full()).iconName, 'baby'),
     );
     test(
       'parses color',
-      () => expect(CategoryItem.fromJson(_full()).color, '#FFD700'),
+      () => expect(CategoryItem.fromJson(full()).color, '#FFD700'),
     );
     test(
       'parses sortOrder',
-      () => expect(CategoryItem.fromJson(_full()).sortOrder, 5),
+      () => expect(CategoryItem.fromJson(full()).sortOrder, 5),
     );
     test(
       'parses isActive = false',
-      () => expect(CategoryItem.fromJson(_full()).isActive, isFalse),
+      () => expect(CategoryItem.fromJson(full()).isActive, isFalse),
     );
     test(
       'parses projectCount',
-      () => expect(CategoryItem.fromJson(_full()).projectCount, 12),
+      () => expect(CategoryItem.fromJson(full()).projectCount, 12),
     );
     test(
       'parses viewCount',
-      () => expect(CategoryItem.fromJson(_full()).viewCount, 340),
+      () => expect(CategoryItem.fromJson(full()).viewCount, 340),
     );
   });
 
@@ -158,7 +158,7 @@ void main() {
   // ── CategoryDetail fromJson ───────────────────────────────────────────────
 
   group('CategoryDetail.fromJson — required fields', () {
-    Map<String, dynamic> _base() => {
+    Map<String, dynamic> base0() => {
       'id': 'cd-1',
       'name': 'Boudoir',
       'slug': 'boudoir',
@@ -168,15 +168,15 @@ void main() {
 
     test(
       'parses id',
-      () => expect(CategoryDetail.fromJson(_base()).id, 'cd-1'),
+      () => expect(CategoryDetail.fromJson(base0()).id, 'cd-1'),
     );
     test(
       'parses name',
-      () => expect(CategoryDetail.fromJson(_base()).name, 'Boudoir'),
+      () => expect(CategoryDetail.fromJson(base0()).name, 'Boudoir'),
     );
     test(
       'parses slug',
-      () => expect(CategoryDetail.fromJson(_base()).slug, 'boudoir'),
+      () => expect(CategoryDetail.fromJson(base0()).slug, 'boudoir'),
     );
   });
 
@@ -216,7 +216,7 @@ void main() {
   });
 
   group('CategoryDetail.fromJson — optional fields', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'cd-2',
       'name': 'Estudio',
       'slug': 'estudio',
@@ -236,24 +236,24 @@ void main() {
     test(
       'parses description',
       () => expect(
-        CategoryDetail.fromJson(_full()).description,
+        CategoryDetail.fromJson(full()).description,
         'Sesiones en estudio',
       ),
     );
     test(
       'parses coverImageUrl',
       () => expect(
-        CategoryDetail.fromJson(_full()).coverImageUrl,
+        CategoryDetail.fromJson(full()).coverImageUrl,
         'https://x.com/cover.jpg',
       ),
     );
     test(
       'parses metaTitle',
-      () => expect(CategoryDetail.fromJson(_full()).metaTitle, 'Estudio - SEO'),
+      () => expect(CategoryDetail.fromJson(full()).metaTitle, 'Estudio - SEO'),
     );
     test(
       'parses metaKeywords',
-      () => expect(CategoryDetail.fromJson(_full()).metaKeywords, [
+      () => expect(CategoryDetail.fromJson(full()).metaKeywords, [
         'estudio',
         'foto',
       ]),
@@ -261,17 +261,17 @@ void main() {
     test(
       'parses ogImage',
       () => expect(
-        CategoryDetail.fromJson(_full()).ogImage,
+        CategoryDetail.fromJson(full()).ogImage,
         'https://x.com/og.jpg',
       ),
     );
     test(
       'parses sortOrder',
-      () => expect(CategoryDetail.fromJson(_full()).sortOrder, 3),
+      () => expect(CategoryDetail.fromJson(full()).sortOrder, 3),
     );
     test(
       'parses projectCount',
-      () => expect(CategoryDetail.fromJson(_full()).projectCount, 8),
+      () => expect(CategoryDetail.fromJson(full()).projectCount, 8),
     );
   });
 

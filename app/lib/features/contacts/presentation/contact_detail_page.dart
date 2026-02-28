@@ -41,24 +41,34 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     setState(() => _loading = true);
     try {
       final updates = <String, dynamic>{
-        if (_replyCtrl.text.trim().isNotEmpty) 'replyText': _replyCtrl.text.trim(),
-        if (_noteCtrl.text.trim().isNotEmpty) 'adminNote': _noteCtrl.text.trim(),
+        if (_replyCtrl.text.trim().isNotEmpty)
+          'replyText': _replyCtrl.text.trim(),
+        if (_noteCtrl.text.trim().isNotEmpty)
+          'adminNote': _noteCtrl.text.trim(),
         if (status != null) 'status': status,
         if (priority != null) 'priority': priority,
       };
-      await ref.read(contactsRepositoryProvider).updateContact(widget.contactId, updates);
+      await ref
+          .read(contactsRepositoryProvider)
+          .updateContact(widget.contactId, updates);
       ref
         ..invalidate(contactsListProvider)
         ..invalidate(contactDetailProvider(widget.contactId));
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cambios guardados')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Cambios guardados')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No se pudieron guardar los cambios. Inténtalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudieron guardar los cambios. Inténtalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -74,7 +84,11 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
       isLoading: _loading,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+            tooltip: 'Volver',
+          ),
           title: const Text('Detalle del contacto'),
         ),
         body: async.when(
@@ -99,7 +113,9 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                               CircleAvatar(
                                 radius: 24,
                                 child: Text(
-                                  detail.name.isNotEmpty ? detail.name[0].toUpperCase() : '?',
+                                  detail.name.isNotEmpty
+                                      ? detail.name[0].toUpperCase()
+                                      : '?',
                                   style: const TextStyle(fontSize: 20),
                                 ),
                               ),
@@ -110,10 +126,20 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                                   children: [
                                     Text(
                                       detail.name,
-                                      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                     ),
-                                    Text(detail.email, style: theme.textTheme.bodySmall),
-                                    if (detail.phone != null) Text(detail.phone!, style: theme.textTheme.bodySmall),
+                                    Text(
+                                      detail.email,
+                                      style: theme.textTheme.bodySmall,
+                                    ),
+                                    if (detail.phone != null)
+                                      Text(
+                                        detail.phone!,
+                                        style: theme.textTheme.bodySmall,
+                                      ),
                                   ],
                                 ),
                               ),
@@ -123,17 +149,25 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                             const SizedBox(height: 12),
                             Text(
                               'Asunto: ${detail.subject}',
-                              style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                           const SizedBox(height: 12),
                           Row(
                             children: [
-                              _StatusChip(label: _statusLabel(detail.status), color: _statusColor(detail.status)),
+                              _StatusChip(
+                                label: _statusLabel(detail.status),
+                                color: _statusColor(detail.status),
+                              ),
                               const SizedBox(width: 8),
                               _PriorityChip(priority: detail.priority),
                               const Spacer(),
-                              Text(_formatDate(detail.createdAt), style: theme.textTheme.labelSmall),
+                              Text(
+                                _formatDate(detail.createdAt),
+                                style: theme.textTheme.labelSmall,
+                              ),
                             ],
                           ),
                         ],
@@ -146,7 +180,10 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                   Text('Mensaje', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
                   Card(
-                    child: Padding(padding: const EdgeInsets.all(16), child: Text(detail.message)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(detail.message),
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -157,7 +194,13 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      for (final s in ['NEW', 'IN_PROGRESS', 'REPLIED', 'CLOSED', 'SPAM'])
+                      for (final s in [
+                        'NEW',
+                        'IN_PROGRESS',
+                        'REPLIED',
+                        'CLOSED',
+                        'SPAM',
+                      ])
                         ChoiceChip(
                           label: Text(_statusLabel(s)),
                           selected: detail.status == s,
@@ -191,11 +234,17 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, size: 16, color: Colors.green),
+                          const Icon(
+                            Icons.check_circle,
+                            size: 16,
+                            color: Colors.green,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'Respondido ${detail.repliedAt != null ? _formatDate(detail.repliedAt!) : ""}',
-                            style: theme.textTheme.labelSmall?.copyWith(color: Colors.green),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: Colors.green,
+                            ),
                           ),
                         ],
                       ),
@@ -228,7 +277,10 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                       detail.utmMedium != null ||
                       detail.utmCampaign != null ||
                       detail.referrer != null) ...[
-                    Text('Origen del tráfico', style: theme.textTheme.titleSmall),
+                    Text(
+                      'Origen del tráfico',
+                      style: theme.textTheme.titleSmall,
+                    ),
                     const SizedBox(height: 8),
                     Card(
                       child: Padding(
@@ -236,11 +288,26 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (detail.referrer != null) _TrackingRow(label: 'Referrer', value: detail.referrer!),
-                            if (detail.utmSource != null) _TrackingRow(label: 'UTM Source', value: detail.utmSource!),
-                            if (detail.utmMedium != null) _TrackingRow(label: 'UTM Medium', value: detail.utmMedium!),
+                            if (detail.referrer != null)
+                              _TrackingRow(
+                                label: 'Referrer',
+                                value: detail.referrer!,
+                              ),
+                            if (detail.utmSource != null)
+                              _TrackingRow(
+                                label: 'UTM Source',
+                                value: detail.utmSource!,
+                              ),
+                            if (detail.utmMedium != null)
+                              _TrackingRow(
+                                label: 'UTM Medium',
+                                value: detail.utmMedium!,
+                              ),
                             if (detail.utmCampaign != null)
-                              _TrackingRow(label: 'UTM Campaign', value: detail.utmCampaign!),
+                              _TrackingRow(
+                                label: 'UTM Campaign',
+                                value: detail.utmCampaign!,
+                              ),
                           ],
                         ),
                       ),
@@ -304,10 +371,17 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Text(
         label,
-        style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -349,9 +423,16 @@ class _TrackingRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 110,
-            child: Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600)),
+            child: Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
-          Expanded(child: Text(value, style: Theme.of(context).textTheme.bodySmall)),
+          Expanded(
+            child: Text(value, style: Theme.of(context).textTheme.bodySmall),
+          ),
         ],
       ),
     );

@@ -75,14 +75,20 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
       });
       ref.invalidate(themeSettingsProvider);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tema guardado')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Tema guardado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No fue posible completar la accion. Intentalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -95,12 +101,21 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
 
     return AppScaffold(
       title: 'Tema',
-      actions: [IconButton(icon: const Icon(Icons.save_outlined), tooltip: 'Guardar', onPressed: _save)],
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Guardar',
+          onPressed: _save,
+        ),
+      ],
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
           loading: () => _buildShimmer(),
-          error: (e, _) => ErrorState(message: e.toString(), onRetry: () => ref.invalidate(themeSettingsProvider)),
+          error: (e, _) => ErrorState(
+            message: e.toString(),
+            onRetry: () => ref.invalidate(themeSettingsProvider),
+          ),
           data: (settings) {
             _populate(settings);
             return _buildForm(context);
@@ -117,7 +132,13 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
         4,
         (_) => Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(child: ShimmerBox(width: double.infinity, height: 56, borderRadius: 12)),
+          child: ShimmerLoader(
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 56,
+              borderRadius: 12,
+            ),
+          ),
         ),
       ),
     );
@@ -134,7 +155,10 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             title: 'Colores — Modo claro',
             fields: [
               _ColorField(controller: _primaryCtrl, label: 'Color primario'),
-              _ColorField(controller: _secondaryCtrl, label: 'Color secundario'),
+              _ColorField(
+                controller: _secondaryCtrl,
+                label: 'Color secundario',
+              ),
               _ColorField(controller: _bgCtrl, label: 'Fondo'),
             ],
           ),
@@ -143,13 +167,18 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             context: context,
             title: 'Colores — Modo oscuro',
             fields: [
-              _ColorField(controller: _darkPrimaryCtrl, label: 'Color primario (dark)'),
+              _ColorField(
+                controller: _darkPrimaryCtrl,
+                label: 'Color primario (dark)',
+              ),
               _ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
             ],
           ),
           const SizedBox(height: 12),
           Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -157,12 +186,17 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
                 children: [
                   Text(
                     'Tipografías',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _headingFontCtrl,
-                    decoration: const InputDecoration(labelText: 'Fuente de títulos', prefixIcon: Icon(Icons.title)),
+                    decoration: const InputDecoration(
+                      labelText: 'Fuente de títulos',
+                      prefixIcon: Icon(Icons.title),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
@@ -185,7 +219,11 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             ),
           ),
           const SizedBox(height: 24),
-          FilledButton.icon(onPressed: _save, icon: const Icon(Icons.save_outlined), label: const Text('Guardar tema')),
+          FilledButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save_outlined),
+            label: const Text('Guardar tema'),
+          ),
           const SizedBox(height: 16),
         ],
       ),
@@ -196,7 +234,11 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
 // ── Auxiliares ────────────────────────────────────────────────────────────────
 
 class _ColorCard extends StatelessWidget {
-  const _ColorCard({required this.context, required this.title, required this.fields});
+  const _ColorCard({
+    required this.context,
+    required this.title,
+    required this.fields,
+  });
   final BuildContext context;
   final String title;
   final List<Widget> fields;
@@ -210,9 +252,15 @@ class _ColorCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
-            ...fields.expand((f) => [f, const SizedBox(height: 12)]).toList()..removeLast(),
+            ...fields.expand((f) => [f, const SizedBox(height: 12)]).toList()
+              ..removeLast(),
           ],
         ),
       ),
@@ -254,7 +302,10 @@ class _ColorField extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: color,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Theme.of(context).colorScheme.outline, width: 0.5),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.outline,
+                          width: 0.5,
+                        ),
                       ),
                     ),
                   )

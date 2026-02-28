@@ -12,7 +12,9 @@ class PageViewsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(context).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 10);
+    final textStyle = Theme.of(
+      context,
+    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 10);
 
     final spots = data.asMap().entries.map((e) {
       return FlSpot(e.key.toDouble(), e.value.count.toDouble());
@@ -31,7 +33,9 @@ class PageViewsChart extends StatelessWidget {
           children: [
             Text(
               'Visitas diarias (7 días)',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: Theme.of(
+                context,
+              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -41,12 +45,17 @@ class PageViewsChart extends StatelessWidget {
                   lineTouchData: LineTouchData(
                     handleBuiltInTouches: true,
                     touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (_) => scheme.inverseSurface.withValues(alpha: 0.94),
+                      getTooltipColor: (_) =>
+                          scheme.inverseSurface.withValues(alpha: 0.94),
                       getTooltipItems: (spots) => spots
                           .map(
                             (s) => LineTooltipItem(
                               '${s.y.toInt()} visitas',
-                              TextStyle(color: scheme.onInverseSurface, fontSize: 12, fontWeight: FontWeight.w600),
+                              TextStyle(
+                                color: scheme.onInverseSurface,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           )
                           .toList(),
@@ -61,19 +70,23 @@ class PageViewsChart extends StatelessWidget {
                       barWidth: 3,
                       dotData: FlDotData(
                         show: true,
-                        getDotPainter: (spot, percent, bar, index) => FlDotCirclePainter(
-                          radius: 3.5,
-                          color: scheme.primary,
-                          strokeWidth: 1.6,
-                          strokeColor: Colors.white,
-                        ),
+                        getDotPainter: (spot, percent, bar, index) =>
+                            FlDotCirclePainter(
+                              radius: 3.5,
+                              color: scheme.primary,
+                              strokeWidth: 1.6,
+                              strokeColor: Colors.white,
+                            ),
                       ),
                       belowBarData: BarAreaData(
                         show: true,
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [scheme.primary.withValues(alpha: 0.18), scheme.primary.withValues(alpha: 0.0)],
+                          colors: [
+                            scheme.primary.withValues(alpha: 0.18),
+                            scheme.primary.withValues(alpha: 0.0),
+                          ],
                         ),
                       ),
                     ),
@@ -82,8 +95,10 @@ class PageViewsChart extends StatelessWidget {
                     show: true,
                     drawVerticalLine: false,
                     horizontalInterval: 1,
-                    getDrawingHorizontalLine: (_) =>
-                        FlLine(color: scheme.outlineVariant.withValues(alpha: 0.28), strokeWidth: 1),
+                    getDrawingHorizontalLine: (_) => FlLine(
+                      color: scheme.outlineVariant.withValues(alpha: 0.28),
+                      strokeWidth: 1,
+                    ),
                   ),
                   borderData: FlBorderData(show: false),
                   titlesData: _buildLineTitles(data, textStyle),
@@ -96,7 +111,10 @@ class PageViewsChart extends StatelessWidget {
     );
   }
 
-  FlTitlesData _buildLineTitles(List<ChartDataPoint> data, TextStyle? textStyle) {
+  FlTitlesData _buildLineTitles(
+    List<ChartDataPoint> data,
+    TextStyle? textStyle,
+  ) {
     return FlTitlesData(
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
       rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -104,7 +122,8 @@ class PageViewsChart extends StatelessWidget {
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 34,
-          getTitlesWidget: (value, _) => Text(value.toInt().toString(), style: textStyle),
+          getTitlesWidget: (value, _) =>
+              Text(value.toInt().toString(), style: textStyle),
         ),
       ),
       bottomTitles: AxisTitles(

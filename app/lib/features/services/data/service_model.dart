@@ -31,7 +31,8 @@ abstract class ServiceItem with _$ServiceItem {
     required String updatedAt,
   }) = _ServiceItem;
 
-  factory ServiceItem.fromJson(Map<String, dynamic> json) => _$ServiceItemFromJson(json);
+  factory ServiceItem.fromJson(Map<String, dynamic> json) =>
+      _$ServiceItemFromJson(json);
 }
 
 // ── ServiceDetail ─────────────────────────────────────────────────────────────
@@ -70,7 +71,8 @@ abstract class ServiceDetail with _$ServiceDetail {
     required String updatedAt,
   }) = _ServiceDetail;
 
-  factory ServiceDetail.fromJson(Map<String, dynamic> json) => _$ServiceDetailFromJson(json);
+  factory ServiceDetail.fromJson(Map<String, dynamic> json) =>
+      _$ServiceDetailFromJson(json);
 }
 
 // ── ServiceFormData ───────────────────────────────────────────────────────────

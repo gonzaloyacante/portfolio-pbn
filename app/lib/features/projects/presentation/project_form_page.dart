@@ -63,14 +63,22 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       return detailAsync.when(
         loading: () => Scaffold(
           appBar: AppBar(
-            leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+              tooltip: 'Volver',
+            ),
             title: const Text('Editar proyecto'),
           ),
           body: const SkeletonListView(itemCount: 6),
         ),
         error: (err, _) => Scaffold(
           appBar: AppBar(
-            leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+              tooltip: 'Volver',
+            ),
             title: const Text('Error'),
           ),
           body: ErrorState(message: err.toString()),
@@ -124,7 +132,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   Future<void> _pickGalleryImage() async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
     if (picked == null) return;
     setState(() => _pendingNewImages.add(File(picked.path)));
   }
@@ -143,14 +154,20 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       // 1. Subir imagen de portada si se seleccionó una nueva.
       if (_pendingCoverImage != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _data.thumbnailUrl = await uploadSvc.uploadImage(_pendingCoverImage!, folder: 'portfolio/projects');
+        _data.thumbnailUrl = await uploadSvc.uploadImage(
+          _pendingCoverImage!,
+          folder: 'portfolio/projects',
+        );
       }
 
       final repo = ref.read(projectsRepositoryProvider);
       String projectId;
 
       if (widget.isEditing) {
-        final updated = await repo.updateProject(widget.projectId!, _data.toJson());
+        final updated = await repo.updateProject(
+          widget.projectId!,
+          _data.toJson(),
+        );
         projectId = updated.id;
         ref.invalidate(projectDetailProvider(widget.projectId!));
       } else {
@@ -167,7 +184,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       if (_pendingNewImages.isNotEmpty) {
         final uploadSvc = ref.read(uploadServiceProvider);
         for (int i = 0; i < _pendingNewImages.length; i++) {
-          final result = await uploadSvc.uploadImageFull(_pendingNewImages[i], folder: 'portfolio/projects/gallery');
+          final result = await uploadSvc.uploadImageFull(
+            _pendingNewImages[i],
+            folder: 'portfolio/projects/gallery',
+          );
           await repo.addProjectImage(
             projectId,
             url: result.url,
@@ -181,7 +201,9 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       if (mounted) context.pop();
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
-      setState(() => _errorMsg = 'No se pudo guardar el proyecto. Inténtalo de nuevo.');
+      setState(
+        () => _errorMsg = 'No se pudo guardar el proyecto. Inténtalo de nuevo.',
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -192,7 +214,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       isLoading: _isLoading,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+            tooltip: 'Volver',
+          ),
           title: Text(widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto'),
           actions: [
             TextButton.icon(
@@ -208,8 +234,13 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
             return Form(
               key: _formKey,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: isTablet ? _buildTabletLayout(context) : _buildPhoneLayout(context),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                child: isTablet
+                    ? _buildTabletLayout(context)
+                    : _buildPhoneLayout(context),
               ),
             );
           },
@@ -224,7 +255,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_errorMsg != null) ...[_InlineError(message: _errorMsg!), const SizedBox(height: 16)],
+        if (_errorMsg != null) ...[
+          _InlineError(message: _errorMsg!),
+          const SizedBox(height: 16),
+        ],
         _imageField(),
         const SizedBox(height: 20),
         _titleField(),
@@ -248,7 +282,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_errorMsg != null) ...[_InlineError(message: _errorMsg!), const SizedBox(height: 16)],
+        if (_errorMsg != null) ...[
+          _InlineError(message: _errorMsg!),
+          const SizedBox(height: 16),
+        ],
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -301,22 +338,31 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     textInputAction: TextInputAction.next,
     onChanged: _autoSlug,
     onSaved: (v) => _data.title = v?.trim() ?? '',
-    validator: (v) => (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
   );
 
   Widget _descriptionField() => TextFormField(
     initialValue: _data.description,
     maxLines: 5,
-    decoration: const InputDecoration(labelText: 'Descripción *', alignLabelWithHint: true),
+    decoration: const InputDecoration(
+      labelText: 'Descripción *',
+      alignLabelWithHint: true,
+    ),
     onSaved: (v) => _data.description = v?.trim() ?? '',
-    validator: (v) => (v == null || v.trim().isEmpty) ? 'La descripción es requerida' : null,
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'La descripción es requerida' : null,
   );
 
   Widget _excerptField() => TextFormField(
     initialValue: _data.excerpt,
     maxLines: 2,
-    decoration: const InputDecoration(labelText: 'Extracto (opcional)', alignLabelWithHint: true),
-    onSaved: (v) => _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+    decoration: const InputDecoration(
+      labelText: 'Extracto (opcional)',
+      alignLabelWithHint: true,
+    ),
+    onSaved: (v) =>
+        _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
   );
 
   Widget _clientDurationRow() => Row(
@@ -326,16 +372,21 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           initialValue: _data.client,
           decoration: const InputDecoration(labelText: 'Cliente'),
           textInputAction: TextInputAction.next,
-          onSaved: (v) => _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+          onSaved: (v) =>
+              _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
         ),
       ),
       const SizedBox(width: 12),
       Expanded(
         child: TextFormField(
           initialValue: _data.duration,
-          decoration: const InputDecoration(labelText: 'Duración', hintText: '2 semanas'),
+          decoration: const InputDecoration(
+            labelText: 'Duración',
+            hintText: '2 semanas',
+          ),
           textInputAction: TextInputAction.next,
-          onSaved: (v) => _data.duration = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+          onSaved: (v) =>
+              _data.duration = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
         ),
       ),
     ],
@@ -374,8 +425,16 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       children: [
         Row(
           children: [
-            Text('Galería de imágenes', style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
-            if (allImages > 0) ...[const SizedBox(width: 8), _CountBadge(count: allImages, scheme: scheme)],
+            Text(
+              'Galería de imágenes',
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (allImages > 0) ...[
+              const SizedBox(width: 8),
+              _CountBadge(count: allImages, scheme: scheme),
+            ],
           ],
         ),
         const SizedBox(height: 10),
@@ -404,12 +463,16 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               if (pi < _pendingNewImages.length) {
                 return _GalleryThumb.file(
                   file: _pendingNewImages[pi],
-                  onRemove: () => setState(() => _pendingNewImages.removeAt(pi)),
+                  onRemove: () =>
+                      setState(() => _pendingNewImages.removeAt(pi)),
                 );
               }
 
               // Botón "Añadir imagen"
-              return _AddImageButton(scheme: scheme, onTap: _isLoading ? null : _pickGalleryImage);
+              return _AddImageButton(
+                scheme: scheme,
+                onTap: _isLoading ? null : _pickGalleryImage,
+              );
             },
           ),
         ),
@@ -439,13 +502,19 @@ class _InlineError extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(color: scheme.errorContainer, borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+        color: scheme.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Row(
         children: [
           Icon(Icons.error_outline_rounded, color: scheme.onErrorContainer),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(message, style: TextStyle(color: scheme.onErrorContainer)),
+            child: Text(
+              message,
+              style: TextStyle(color: scheme.onErrorContainer),
+            ),
           ),
         ],
       ),
@@ -455,9 +524,13 @@ class _InlineError extends StatelessWidget {
 
 /// Miniatura de galería (red o archivo local) con botón de eliminar.
 class _GalleryThumb extends StatelessWidget {
-  const _GalleryThumb.network({required String url, required this.onRemove}) : _url = url, _file = null;
+  const _GalleryThumb.network({required String url, required this.onRemove})
+    : _url = url,
+      _file = null;
 
-  const _GalleryThumb.file({required File file, required this.onRemove}) : _url = null, _file = file;
+  const _GalleryThumb.file({required File file, required this.onRemove})
+    : _url = null,
+      _file = file;
 
   final String? _url;
   final File? _file;
@@ -473,10 +546,14 @@ class _GalleryThumb extends StatelessWidget {
         width: 100,
         height: 100,
         fit: BoxFit.cover,
-        placeholder: (context, url) => Container(color: scheme.surfaceContainerHighest),
+        placeholder: (context, url) =>
+            Container(color: scheme.surfaceContainerHighest),
         errorWidget: (context, url, error) => Container(
           color: scheme.surfaceContainerHighest,
-          child: Icon(Icons.broken_image_outlined, color: scheme.outlineVariant),
+          child: Icon(
+            Icons.broken_image_outlined,
+            color: scheme.outlineVariant,
+          ),
         ),
       );
     } else {
@@ -494,8 +571,15 @@ class _GalleryThumb extends StatelessWidget {
             child: Container(
               width: 22,
               height: 22,
-              decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.65), shape: BoxShape.circle),
-              child: const Icon(Icons.close_rounded, size: 14, color: Colors.white),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.65),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.close_rounded,
+                size: 14,
+                color: Colors.white,
+              ),
             ),
           ),
         ),
@@ -528,7 +612,10 @@ class _AddImageButton extends StatelessWidget {
           children: [
             Icon(Icons.add_photo_alternate_outlined, color: scheme.primary),
             const SizedBox(height: 4),
-            Text('Añadir', style: TextStyle(fontSize: 11, color: scheme.outline)),
+            Text(
+              'Añadir',
+              style: TextStyle(fontSize: 11, color: scheme.outline),
+            ),
           ],
         ),
       ),
@@ -546,10 +633,17 @@ class _CountBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(color: scheme.primaryContainer, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Text(
         '$count',
-        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: scheme.onPrimaryContainer),
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: scheme.onPrimaryContainer,
+        ),
       ),
     );
   }
@@ -557,7 +651,11 @@ class _CountBadge extends StatelessWidget {
 
 /// Widget para seleccionar imagen de portada (cover).
 class _ImageField extends StatelessWidget {
-  const _ImageField({required this.label, this.currentImageUrl, required this.onImageSelected});
+  const _ImageField({
+    required this.label,
+    this.currentImageUrl,
+    required this.onImageSelected,
+  });
 
   final String label;
   final String? currentImageUrl;
@@ -609,12 +707,17 @@ class _ImageField extends StatelessWidget {
             ? CachedNetworkImage(
                 imageUrl: currentImageUrl!,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const Center(child: CircularProgressIndicator.adaptive()),
+                placeholder: (context, url) =>
+                    const Center(child: CircularProgressIndicator.adaptive()),
               )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_photo_alternate_outlined, size: 40, color: scheme.primary),
+                  Icon(
+                    Icons.add_photo_alternate_outlined,
+                    size: 40,
+                    color: scheme.primary,
+                  ),
                   const SizedBox(height: 8),
                   Text(label, style: TextStyle(color: scheme.outline)),
                 ],

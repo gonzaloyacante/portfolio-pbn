@@ -55,7 +55,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       await pushService.init();
       fcmToken = await pushService.getToken();
       if (fcmToken != null) {
-        AppLogger.info('LoginPage: FCM token obtenido (${fcmToken.length} chars)');
+        AppLogger.info(
+          'LoginPage: FCM token obtenido (${fcmToken.length} chars)',
+        );
       }
     } catch (e) {
       AppLogger.warn('LoginPage: no se pudo obtener FCM token: $e');
@@ -63,7 +65,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     await ref
         .read(authProvider.notifier)
-        .login(email: _emailController.text.trim(), password: _passwordController.text, fcmToken: fcmToken);
+        .login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          fcmToken: fcmToken,
+        );
   }
 
   // ── Build ────────────────────────────────────────────────────────────────────
@@ -72,7 +78,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final authAsync = ref.watch(authProvider);
     final isLoading = authAsync.value == const AuthState.authenticating();
-    final errorMsg = authAsync.whenOrNull(data: (v) => v)?.mapOrNull(error: (e) => e.message);
+    final errorMsg = authAsync
+        .whenOrNull(data: (v) => v)
+        ?.mapOrNull(error: (e) => e.message);
     final isExpanded = AppBreakpoints.isExpanded(context);
 
     final formContent = Column(
@@ -84,11 +92,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           emailController: _emailController,
           passwordController: _passwordController,
           obscurePassword: _obscurePassword,
-          onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
+          onTogglePassword: () =>
+              setState(() => _obscurePassword = !_obscurePassword),
           onSubmit: _handleLogin,
           isLoading: isLoading,
         ),
-        if (errorMsg != null) ...[const SizedBox(height: 16), InlineError(message: errorMsg)],
+        if (errorMsg != null) ...[
+          const SizedBox(height: 16),
+          InlineError(message: errorMsg),
+        ],
         const SizedBox(height: AppSpacing.xl),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -96,14 +108,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             Icon(
               Icons.lock_outline_rounded,
               size: 13,
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.6),
             ),
             const SizedBox(width: 6),
             Text(
               'Acceso exclusivo para administradores',
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6)),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.outline.withValues(alpha: 0.6),
+              ),
             ),
           ],
         ),
@@ -167,7 +183,10 @@ class _TwoColumnLayout extends StatelessWidget {
                   children: [
                     Text(
                       'Paola\nBolívar',
-                      style: AppTypography.decorativeTitle(scheme.onPrimary, fontSize: 72),
+                      style: AppTypography.decorativeTitle(
+                        scheme.onPrimary,
+                        fontSize: 72,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -189,8 +208,14 @@ class _TwoColumnLayout extends StatelessWidget {
         Expanded(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl, vertical: AppSpacing.xxxl),
-              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 400), child: formContent),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xxxl,
+                vertical: AppSpacing.xxxl,
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 400),
+                child: formContent,
+              ),
             ),
           ),
         ),
@@ -215,7 +240,10 @@ class _Brand extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Panel de administración',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.outline, letterSpacing: 0.5),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: scheme.outline,
+            letterSpacing: 0.5,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -261,7 +289,9 @@ class _LoginCard extends StatelessWidget {
             children: [
               Text(
                 'Iniciar sesión',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -276,7 +306,10 @@ class _LoginCard extends StatelessWidget {
                   labelText: 'Correo electrónico',
                   prefixIcon: Icon(Icons.mail_outline_rounded),
                 ),
-                validator: AppValidators.compose([AppValidators.required, AppValidators.email]),
+                validator: AppValidators.compose([
+                  AppValidators.required,
+                  AppValidators.email,
+                ]),
               ),
               const SizedBox(height: 16),
               // Password
@@ -290,12 +323,21 @@ class _LoginCard extends StatelessWidget {
                   labelText: 'Contraseña',
                   prefixIcon: const Icon(Icons.lock_outline_rounded),
                   suffixIcon: IconButton(
-                    icon: Icon(obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                    icon: Icon(
+                      obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                    ),
                     onPressed: onTogglePassword,
-                    tooltip: obscurePassword ? 'Mostrar contraseña' : 'Ocultar contraseña',
+                    tooltip: obscurePassword
+                        ? 'Mostrar contraseña'
+                        : 'Ocultar contraseña',
                   ),
                 ),
-                validator: AppValidators.compose([AppValidators.required, AppValidators.minLength(6)]),
+                validator: AppValidators.compose([
+                  AppValidators.required,
+                  AppValidators.minLength(6),
+                ]),
               ),
               const SizedBox(height: 28),
               // Submit
@@ -303,11 +345,16 @@ class _LoginCard extends StatelessWidget {
                 onPressed: isLoading ? null : onSubmit,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.forButton,
+                  ),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Entrar', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                child: const Text(
+                  'Entrar',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
               ),
             ],
           ),

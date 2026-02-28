@@ -91,7 +91,10 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
 
   void _autoSlug(String name) {
     if (_isEdit) return;
-    final slug = name.toLowerCase().replaceAll(_reServiceWhitespace, '-').replaceAll(_reServiceNonSlug, '');
+    final slug = name
+        .toLowerCase()
+        .replaceAll(_reServiceWhitespace, '-')
+        .replaceAll(_reServiceNonSlug, '');
     _slugCtrl.text = slug;
   }
 
@@ -102,20 +105,31 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       // Subir imagen si se seleccionó una nueva.
       if (_pendingImage != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _imageCtrl.text = await uploadSvc.uploadImage(_pendingImage!, folder: 'portfolio/services');
+        _imageCtrl.text = await uploadSvc.uploadImage(
+          _pendingImage!,
+          folder: 'portfolio/services',
+        );
       }
 
       final repo = ref.read(servicesRepositoryProvider);
       final formData = ServiceFormData(
         name: _nameCtrl.text.trim(),
         slug: _slugCtrl.text.trim(),
-        description: _descCtrl.text.trim().isEmpty ? null : _descCtrl.text.trim(),
-        shortDesc: _shortDescCtrl.text.trim().isEmpty ? null : _shortDescCtrl.text.trim(),
+        description: _descCtrl.text.trim().isEmpty
+            ? null
+            : _descCtrl.text.trim(),
+        shortDesc: _shortDescCtrl.text.trim().isEmpty
+            ? null
+            : _shortDescCtrl.text.trim(),
         price: _priceCtrl.text.trim().isEmpty ? null : _priceCtrl.text.trim(),
         priceLabel: _priceLabel,
         currency: _currency,
-        duration: _durationCtrl.text.trim().isEmpty ? null : _durationCtrl.text.trim(),
-        imageUrl: _imageCtrl.text.trim().isEmpty ? null : _imageCtrl.text.trim(),
+        duration: _durationCtrl.text.trim().isEmpty
+            ? null
+            : _durationCtrl.text.trim(),
+        imageUrl: _imageCtrl.text.trim().isEmpty
+            ? null
+            : _imageCtrl.text.trim(),
         iconName: _iconCtrl.text.trim().isEmpty ? null : _iconCtrl.text.trim(),
         color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
         isActive: _isActive,
@@ -134,9 +148,13 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('No se pudo guardar el servicio. Inténtalo de nuevo.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No se pudo guardar el servicio. Inténtalo de nuevo.',
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -154,9 +172,18 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       isLoading: _loading,
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop(), tooltip: 'Volver'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => context.pop(),
+            tooltip: 'Volver',
+          ),
           title: Text(_isEdit ? 'Editar servicio' : 'Nuevo servicio'),
-          actions: [TextButton(onPressed: _loading ? null : _submit, child: const Text('Guardar'))],
+          actions: [
+            TextButton(
+              onPressed: _loading ? null : _submit,
+              child: const Text('Guardar'),
+            ),
+          ],
         ),
         body: Form(
           key: _formKey,
@@ -169,14 +196,18 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                 decoration: const InputDecoration(labelText: 'Nombre *'),
                 textCapitalization: TextCapitalization.words,
                 onChanged: _autoSlug,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
               ),
               const SizedBox(height: 16),
 
               // Slug
               TextFormField(
                 controller: _slugCtrl,
-                decoration: const InputDecoration(labelText: 'Slug *', prefixText: '/'),
+                decoration: const InputDecoration(
+                  labelText: 'Slug *',
+                  prefixText: '/',
+                ),
                 validator: (v) {
                   if (v == null || v.trim().isEmpty) return 'Slug requerido';
                   if (!_reServiceSlugValid.hasMatch(v.trim())) {
@@ -190,7 +221,9 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               // Descripción corta
               TextFormField(
                 controller: _shortDescCtrl,
-                decoration: const InputDecoration(labelText: 'Descripción corta'),
+                decoration: const InputDecoration(
+                  labelText: 'Descripción corta',
+                ),
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
@@ -198,7 +231,9 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               // Descripción larga
               TextFormField(
                 controller: _descCtrl,
-                decoration: const InputDecoration(labelText: 'Descripción detallada'),
+                decoration: const InputDecoration(
+                  labelText: 'Descripción detallada',
+                ),
                 maxLines: 4,
               ),
               const SizedBox(height: 16),
@@ -211,7 +246,9 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                     child: TextFormField(
                       controller: _priceCtrl,
                       decoration: const InputDecoration(labelText: 'Precio'),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -223,10 +260,17 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                       items: const [
                         DropdownMenuItem(value: 'desde', child: Text('desde')),
                         DropdownMenuItem(value: 'fijo', child: Text('fijo')),
-                        DropdownMenuItem(value: 'consultar', child: Text('consultar')),
-                        DropdownMenuItem(value: 'gratis', child: Text('gratis')),
+                        DropdownMenuItem(
+                          value: 'consultar',
+                          child: Text('consultar'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'gratis',
+                          child: Text('gratis'),
+                        ),
                       ],
-                      onChanged: (v) => setState(() => _priceLabel = v ?? 'desde'),
+                      onChanged: (v) =>
+                          setState(() => _priceLabel = v ?? 'desde'),
                     ),
                   ),
                 ],
@@ -236,7 +280,10 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               // Duración
               TextFormField(
                 controller: _durationCtrl,
-                decoration: const InputDecoration(labelText: 'Duración', hintText: 'ej. 2 horas, Todo el día'),
+                decoration: const InputDecoration(
+                  labelText: 'Duración',
+                  hintText: 'ej. 2 horas, Todo el día',
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -253,7 +300,10 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                   Expanded(
                     child: TextFormField(
                       controller: _colorCtrl,
-                      decoration: const InputDecoration(labelText: 'Color', hintText: '#6C0A0A'),
+                      decoration: const InputDecoration(
+                        labelText: 'Color',
+                        hintText: '#6C0A0A',
+                      ),
                     ),
                   ),
                 ],
@@ -263,7 +313,9 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               // Imagen del servicio
               ImageUploadWidget(
                 label: 'Imagen del servicio',
-                currentImageUrl: _imageCtrl.text.isNotEmpty ? _imageCtrl.text : null,
+                currentImageUrl: _imageCtrl.text.isNotEmpty
+                    ? _imageCtrl.text
+                    : null,
                 onImageSelected: (file) {
                   setState(() => _pendingImage = file);
                 },

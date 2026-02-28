@@ -17,7 +17,8 @@ class SplashPage extends ConsumerStatefulWidget {
   ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends ConsumerState<SplashPage> with SingleTickerProviderStateMixin {
+class _SplashPageState extends ConsumerState<SplashPage>
+    with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
@@ -47,20 +48,27 @@ class _SplashPageState extends ConsumerState<SplashPage> with SingleTickerProvid
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              PbnSplashLogo(size: 96, onCompleted: () => splashAnimationFinished.value = true),
+              PbnSplashLogo(
+                size: 96,
+                onCompleted: () => splashAnimationFinished.value = true,
+              ),
               const SizedBox(height: 28),
               Text(
                 message,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.outline, letterSpacing: 0.3),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                  letterSpacing: 0.3,
+                ),
               ),
               const SizedBox(height: 20),
               if (authAsync.isLoading)
                 SizedBox(
                   width: 24,
                   height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2.5, color: Theme.of(context).colorScheme.primary),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.5,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
                 ),
             ],
           ),

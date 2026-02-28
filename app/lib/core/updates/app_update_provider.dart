@@ -40,7 +40,10 @@ class AppUpdateTriggerNotifier extends Notifier<int> {
 /// Se usa en dos casos:
 /// 1. Al iniciar sesión (desde [app.dart])
 /// 2. Al recibir una notificación FCM de tipo `app_update`
-final appUpdateTriggerProvider = NotifierProvider<AppUpdateTriggerNotifier, int>(AppUpdateTriggerNotifier.new);
+final appUpdateTriggerProvider =
+    NotifierProvider<AppUpdateTriggerNotifier, int>(
+      AppUpdateTriggerNotifier.new,
+    );
 
 // ── appUpdateStatusProvider ───────────────────────────────────────────────────
 
@@ -51,7 +54,9 @@ final appUpdateTriggerProvider = NotifierProvider<AppUpdateTriggerNotifier, int>
 ///
 /// NUNCA lanza si falla — retorna [AppUpdateCheckFailed] silenciosamente
 /// para no interrumpir el flujo de la app.
-final appUpdateStatusProvider = FutureProvider.autoDispose<AppUpdateStatus>((ref) async {
+final appUpdateStatusProvider = FutureProvider.autoDispose<AppUpdateStatus>((
+  ref,
+) async {
   // Observar el trigger para reejecutar cuando se incremente
   ref.watch(appUpdateTriggerProvider);
 
@@ -88,12 +93,16 @@ void initAppUpdateContainer(ProviderContainer container) {
 void triggerUpdateCheckGlobal() {
   final container = _globalContainer;
   if (container == null) {
-    AppLogger.warn('triggerUpdateCheckGlobal: contenedor no disponible — ignorado');
+    AppLogger.warn(
+      'triggerUpdateCheckGlobal: contenedor no disponible — ignorado',
+    );
     return;
   }
   try {
     container.read(appUpdateTriggerProvider.notifier).trigger();
-    AppLogger.info('triggerUpdateCheckGlobal: comprobación de update disparada');
+    AppLogger.info(
+      'triggerUpdateCheckGlobal: comprobación de update disparada',
+    );
   } catch (e) {
     AppLogger.warn('triggerUpdateCheckGlobal: error — $e');
   }

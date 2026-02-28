@@ -113,7 +113,7 @@ void main() {
   // ── ProjectListItem fromJson ──────────────────────────────────────────────
 
   group('ProjectListItem.fromJson', () {
-    Map<String, dynamic> _minimal() => {
+    Map<String, dynamic> minimal() => {
       'id': 'p1',
       'title': 'My Project',
       'slug': 'my-project',
@@ -124,68 +124,68 @@ void main() {
     };
 
     test('parses minimal JSON', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.id, 'p1');
       expect(item.title, 'My Project');
       expect(item.slug, 'my-project');
     });
 
     test('defaults sortOrder to 0', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.sortOrder, 0);
     });
 
     test('defaults isFeatured to false', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.isFeatured, isFalse);
     });
 
     test('defaults isPinned to false', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.isPinned, isFalse);
     });
 
     test('defaults isActive to true', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.isActive, isTrue);
     });
 
     test('defaults viewCount to 0', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.viewCount, 0);
     });
 
     test('excerpt is null when not provided', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.excerpt, isNull);
     });
 
     test('thumbnailUrl is null when not provided', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.thumbnailUrl, isNull);
     });
 
     test('parses nested category correctly', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       expect(item.category.id, 'c1');
       expect(item.category.name, 'Art');
       expect(item.category.slug, 'art');
     });
 
     test('parses isFeatured = true when provided', () {
-      final data = _minimal()..['isFeatured'] = true;
+      final data = minimal()..['isFeatured'] = true;
       final item = ProjectListItem.fromJson(data);
       expect(item.isFeatured, isTrue);
     });
 
     test('parses viewCount when provided', () {
-      final data = _minimal()..['viewCount'] = 42;
+      final data = minimal()..['viewCount'] = 42;
       final item = ProjectListItem.fromJson(data);
       expect(item.viewCount, 42);
     });
 
     test('toJson produces a map', () {
-      final item = ProjectListItem.fromJson(_minimal());
+      final item = ProjectListItem.fromJson(minimal());
       final json = item.toJson();
       expect(json, isA<Map<String, dynamic>>());
       expect(json['id'], 'p1');
@@ -196,7 +196,7 @@ void main() {
   // ── ProjectDetail fromJson ────────────────────────────────────────────────
 
   group('ProjectDetail.fromJson', () {
-    Map<String, dynamic> _full() => {
+    Map<String, dynamic> full() => {
       'id': 'pd1',
       'title': 'Full Project',
       'slug': 'full-project',
@@ -209,7 +209,7 @@ void main() {
     };
 
     test('parses required fields', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.id, 'pd1');
       expect(detail.title, 'Full Project');
       expect(detail.slug, 'full-project');
@@ -217,43 +217,43 @@ void main() {
     });
 
     test('defaults tags to empty list', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.tags, isEmpty);
     });
 
     test('defaults metaKeywords to empty list', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.metaKeywords, isEmpty);
     });
 
     test('defaults images to empty list', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.images, isEmpty);
     });
 
     test('defaults isFeatured to false', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.isFeatured, isFalse);
     });
 
     test('defaults isActive to true', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.isActive, isTrue);
     });
 
     test('defaults likeCount to 0', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.likeCount, 0);
     });
 
     test('parses tags when provided', () {
-      final data = _full()..['tags'] = ['flutter', 'dart'];
+      final data = full()..['tags'] = ['flutter', 'dart'];
       final detail = ProjectDetail.fromJson(data);
       expect(detail.tags, ['flutter', 'dart']);
     });
 
     test('parses images list with nested objects', () {
-      final data = _full()
+      final data = full()
         ..['images'] = [
           {'id': 'img1', 'url': 'https://x.com/1.jpg', 'order': 0},
           {'id': 'img2', 'url': 'https://x.com/2.jpg', 'order': 1},
@@ -265,7 +265,7 @@ void main() {
     });
 
     test('parses optional fields', () {
-      final data = _full()
+      final data = full()
         ..['excerpt'] = 'Excerpt text'
         ..['client'] = 'Client A'
         ..['location'] = 'Madrid'
@@ -280,13 +280,13 @@ void main() {
     });
 
     test('parses nested category', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       expect(detail.category.id, 'c2');
       expect(detail.category.name, 'Design');
     });
 
     test('toJson produces a map with id and title', () {
-      final detail = ProjectDetail.fromJson(_full());
+      final detail = ProjectDetail.fromJson(full());
       final json = detail.toJson();
       expect(json, isA<Map<String, dynamic>>());
       expect(json['id'], 'pd1');

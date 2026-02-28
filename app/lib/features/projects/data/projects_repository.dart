@@ -39,13 +39,14 @@ class ProjectsRepository {
       },
     );
 
-    final apiResponse = ApiResponse<PaginatedResponse<ProjectListItem>>.fromJson(
-      resp,
-      (json) => PaginatedResponse<ProjectListItem>.fromJson(
-        json as Map<String, dynamic>,
-        (item) => ProjectListItem.fromJson(item as Map<String, dynamic>),
-      ),
-    );
+    final apiResponse =
+        ApiResponse<PaginatedResponse<ProjectListItem>>.fromJson(
+          resp,
+          (json) => PaginatedResponse<ProjectListItem>.fromJson(
+            json as Map<String, dynamic>,
+            (item) => ProjectListItem.fromJson(item as Map<String, dynamic>),
+          ),
+        );
 
     if (!apiResponse.success || apiResponse.data == null) {
       throw Exception(apiResponse.error ?? 'Error al obtener proyectos');
@@ -70,7 +71,10 @@ class ProjectsRepository {
   // ── Create ──────────────────────────────────────────────────────────────────
 
   Future<ProjectListItem> createProject(ProjectFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(Endpoints.projects, data: data.toJson());
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.projects,
+      data: data.toJson(),
+    );
     final apiResponse = ApiResponse<ProjectListItem>.fromJson(
       resp,
       (json) => ProjectListItem.fromJson(json as Map<String, dynamic>),
@@ -83,8 +87,14 @@ class ProjectsRepository {
 
   // ── Update ──────────────────────────────────────────────────────────────────
 
-  Future<ProjectDetail> updateProject(String id, Map<String, dynamic> changes) async {
-    final resp = await _client.patch<Map<String, dynamic>>(Endpoints.project(id), data: changes);
+  Future<ProjectDetail> updateProject(
+    String id,
+    Map<String, dynamic> changes,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.project(id),
+      data: changes,
+    );
     final apiResponse = ApiResponse<ProjectDetail>.fromJson(
       resp,
       (json) => ProjectDetail.fromJson(json as Map<String, dynamic>),
@@ -98,7 +108,9 @@ class ProjectsRepository {
   // ── Delete ──────────────────────────────────────────────────────────────────
 
   Future<void> deleteProject(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(Endpoints.project(id));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.project(id),
+    );
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
     if (!apiResponse.success) {
       throw Exception(apiResponse.error ?? 'Error al eliminar proyecto');
@@ -111,7 +123,9 @@ class ProjectsRepository {
     final resp = await _client.post<Map<String, dynamic>>(
       Endpoints.projectsReorder,
       data: {
-        'items': items.map((e) => {'id': e.id, 'sortOrder': e.sortOrder}).toList(),
+        'items': items
+            .map((e) => {'id': e.id, 'sortOrder': e.sortOrder})
+            .toList(),
       },
     );
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
@@ -131,7 +145,12 @@ class ProjectsRepository {
   }) async {
     final resp = await _client.post<Map<String, dynamic>>(
       Endpoints.projectImages(projectId),
-      data: {'url': url, 'publicId': publicId, 'order': order, if (alt != null) 'alt': alt},
+      data: {
+        'url': url,
+        'publicId': publicId,
+        'order': order,
+        if (alt != null) 'alt': alt,
+      },
     );
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
     if (!apiResponse.success) {
@@ -141,7 +160,9 @@ class ProjectsRepository {
 
   /// Elimina una imagen de la galería del proyecto.
   Future<void> removeProjectImage(String projectId, String imageId) async {
-    final resp = await _client.delete<Map<String, dynamic>>(Endpoints.projectImage(projectId, imageId));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.projectImage(projectId, imageId),
+    );
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
     if (!apiResponse.success) {
       throw Exception(apiResponse.error ?? 'Error al eliminar imagen');

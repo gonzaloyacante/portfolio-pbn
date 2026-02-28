@@ -71,7 +71,12 @@ class AdaptiveGrid extends StatelessWidget {
     return GridView.builder(
       shrinkWrap: shrinkWrap,
       physics: physics,
-      padding: padding ?? EdgeInsets.symmetric(horizontal: AppBreakpoints.pageMargin(context), vertical: AppSpacing.sm),
+      padding:
+          padding ??
+          EdgeInsets.symmetric(
+            horizontal: AppBreakpoints.pageMargin(context),
+            vertical: AppSpacing.sm,
+          ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: _cols(context),
         mainAxisSpacing: mainSpacing,
@@ -125,9 +130,14 @@ class SliverAdaptiveGrid extends StatelessWidget {
     final hPad = AppBreakpoints.pageMargin(context);
 
     return SliverPadding(
-      padding: padding ?? EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.sm),
+      padding:
+          padding ??
+          EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.sm),
       sliver: SliverGrid(
-        delegate: SliverChildBuilderDelegate((_, i) => children[i], childCount: children.length),
+        delegate: SliverChildBuilderDelegate(
+          (_, i) => children[i],
+          childCount: children.length,
+        ),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: _cols(context),
           mainAxisSpacing: mainSpacing,

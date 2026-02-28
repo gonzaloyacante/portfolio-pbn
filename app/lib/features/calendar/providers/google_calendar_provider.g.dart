@@ -13,7 +13,12 @@ part of 'google_calendar_provider.dart';
 final googleCalendarServiceProvider = GoogleCalendarServiceProvider._();
 
 final class GoogleCalendarServiceProvider
-    extends $FunctionalProvider<GoogleCalendarService, GoogleCalendarService, GoogleCalendarService>
+    extends
+        $FunctionalProvider<
+          GoogleCalendarService,
+          GoogleCalendarService,
+          GoogleCalendarService
+        >
     with $Provider<GoogleCalendarService> {
   GoogleCalendarServiceProvider._()
     : super(
@@ -31,7 +36,9 @@ final class GoogleCalendarServiceProvider
 
   @$internal
   @override
-  $ProviderElement<GoogleCalendarService> $createElement($ProviderPointer pointer) => $ProviderElement(pointer);
+  $ProviderElement<GoogleCalendarService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   GoogleCalendarService create(Ref ref) {
@@ -40,11 +47,15 @@ final class GoogleCalendarServiceProvider
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(GoogleCalendarService value) {
-    return $ProviderOverride(origin: this, providerOverride: $SyncValueProvider<GoogleCalendarService>(value));
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GoogleCalendarService>(value),
+    );
   }
 }
 
-String _$googleCalendarServiceHash() => r'd4cea88ff33c6204cea3f01aaa55f6e70e0c44b9';
+String _$googleCalendarServiceHash() =>
+    r'd4cea88ff33c6204cea3f01aaa55f6e70e0c44b9';
 
 /// Gestiona el estado de autenticación de Google Calendar y la creación
 /// de eventos en el calendario del usuario.
@@ -66,7 +77,8 @@ final googleCalendarProvider = GoogleCalendarNotifierProvider._();
 /// - [GoogleAuthConnecting]: flujo OAuth en curso.
 /// - [GoogleAuthConnected(email)]: cuenta conectada y operativa.
 /// - [GoogleAuthError(message)]: error en el proceso.
-final class GoogleCalendarNotifierProvider extends $AsyncNotifierProvider<GoogleCalendarNotifier, GoogleAuthState> {
+final class GoogleCalendarNotifierProvider
+    extends $AsyncNotifierProvider<GoogleCalendarNotifier, GoogleAuthState> {
   /// Gestiona el estado de autenticación de Google Calendar y la creación
   /// de eventos en el calendario del usuario.
   ///
@@ -94,7 +106,8 @@ final class GoogleCalendarNotifierProvider extends $AsyncNotifierProvider<Google
   GoogleCalendarNotifier create() => GoogleCalendarNotifier();
 }
 
-String _$googleCalendarNotifierHash() => r'89e0a67d051b74f6a3b29209f57e1647e86f6561';
+String _$googleCalendarNotifierHash() =>
+    r'89e0a67d051b74f6a3b29209f57e1647e86f6561';
 
 /// Gestiona el estado de autenticación de Google Calendar y la creación
 /// de eventos en el calendario del usuario.
@@ -105,7 +118,8 @@ String _$googleCalendarNotifierHash() => r'89e0a67d051b74f6a3b29209f57e1647e86f6
 /// - [GoogleAuthConnected(email)]: cuenta conectada y operativa.
 /// - [GoogleAuthError(message)]: error en el proceso.
 
-abstract class _$GoogleCalendarNotifier extends $AsyncNotifier<GoogleAuthState> {
+abstract class _$GoogleCalendarNotifier
+    extends $AsyncNotifier<GoogleAuthState> {
   FutureOr<GoogleAuthState> build();
   @$mustCallSuper
   @override

@@ -27,7 +27,8 @@ abstract class ContactItem with _$ContactItem {
     required DateTime updatedAt,
   }) = _ContactItem;
 
-  factory ContactItem.fromJson(Map<String, dynamic> json) => _$ContactItemFromJson(json);
+  factory ContactItem.fromJson(Map<String, dynamic> json) =>
+      _$ContactItemFromJson(json);
 }
 
 /// Modelo completo para detalle / gestión
@@ -64,5 +65,6 @@ abstract class ContactDetail with _$ContactDetail {
     required DateTime updatedAt,
   }) = _ContactDetail;
 
-  factory ContactDetail.fromJson(Map<String, dynamic> json) => _$ContactDetailFromJson(json);
+  factory ContactDetail.fromJson(Map<String, dynamic> json) =>
+      _$ContactDetailFromJson(json);
 }

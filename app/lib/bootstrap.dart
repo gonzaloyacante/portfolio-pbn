@@ -45,7 +45,9 @@ Future<void> bootstrap() async {
   } catch (e) {
     // Esto solo ocurre si el asset .env está ausente (error de build).
     // La app continuará con los valores fallback definidos en EnvConfig.
-    AppLogger.warn('dotenv no disponible: $e — usando valores fallback de EnvConfig');
+    AppLogger.warn(
+      'dotenv no disponible: $e — usando valores fallback de EnvConfig',
+    );
   }
 
   // 2. Firebase ─────────────────────────────────────────────────────────────
@@ -56,7 +58,9 @@ Future<void> bootstrap() async {
   try {
     // Inicialización explícita usando opciones generadas a partir de los
     // ficheros `google-services.json` / `GoogleService-Info.plist`.
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
     AppLogger.info('✓ Firebase inicializado (con DefaultFirebaseOptions)');
 
     if (Platform.isAndroid) {
@@ -81,7 +85,9 @@ Future<void> bootstrap() async {
     }, appRunner: _runApp);
   } else {
     // Sin DSN de Sentry (entorno local sin configurar): arrancar directamente.
-    AppLogger.warn('Sentry DSN no configurado — omitiendo captura de errores remota');
+    AppLogger.warn(
+      'Sentry DSN no configurado — omitiendo captura de errores remota',
+    );
     _runApp();
   }
 }

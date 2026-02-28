@@ -45,5 +45,8 @@ abstract final class AppSpacing {
   static const EdgeInsets cardInsets = EdgeInsets.all(base);
   static const EdgeInsets tileInsets = EdgeInsets.all(tilePadding);
   static const EdgeInsets pageInsets = EdgeInsets.all(base);
-  static const EdgeInsets listInsets = EdgeInsets.symmetric(horizontal: base, vertical: sm);
+  static const EdgeInsets listInsets = EdgeInsets.symmetric(
+    horizontal: base,
+    vertical: sm,
+  );
 }

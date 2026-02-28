@@ -16,10 +16,15 @@ part 'paginated_response.g.dart';
 /// ```
 @Freezed(genericArgumentFactories: true)
 abstract class PaginatedResponse<T> with _$PaginatedResponse<T> {
-  const factory PaginatedResponse({required List<T> data, required PaginationMeta pagination}) = _PaginatedResponse<T>;
+  const factory PaginatedResponse({
+    required List<T> data,
+    required PaginationMeta pagination,
+  }) = _PaginatedResponse<T>;
 
-  factory PaginatedResponse.fromJson(Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
-      _$PaginatedResponseFromJson(json, fromJsonT);
+  factory PaginatedResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Object?) fromJsonT,
+  ) => _$PaginatedResponseFromJson(json, fromJsonT);
 }
 
 // ── PaginationMeta ────────────────────────────────────────────────────────────
@@ -35,7 +40,8 @@ abstract class PaginationMeta with _$PaginationMeta {
     @Default(false) bool hasPrev,
   }) = _PaginationMeta;
 
-  factory PaginationMeta.fromJson(Map<String, dynamic> json) => _$PaginationMetaFromJson(json);
+  factory PaginationMeta.fromJson(Map<String, dynamic> json) =>
+      _$PaginationMetaFromJson(json);
 }
 
 // ── PaginationParams ──────────────────────────────────────────────────────────

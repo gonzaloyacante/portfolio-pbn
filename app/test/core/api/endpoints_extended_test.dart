@@ -5,11 +5,26 @@ void main() {
   // ── Auth endpoints ────────────────────────────────────────────────────────
 
   group('Endpoints — Auth', () {
-    test('authLogin starts with /api/admin', () => expect(Endpoints.authLogin, startsWith('/api/admin')));
-    test('authLogin ends with /login', () => expect(Endpoints.authLogin, endsWith('/login')));
-    test('authRefresh contains refresh', () => expect(Endpoints.authRefresh, contains('refresh')));
-    test('authLogout contains logout', () => expect(Endpoints.authLogout, contains('logout')));
-    test('authMe contains /me', () => expect(Endpoints.authMe, contains('/me')));
+    test(
+      'authLogin starts with /api/admin',
+      () => expect(Endpoints.authLogin, startsWith('/api/admin')),
+    );
+    test(
+      'authLogin ends with /login',
+      () => expect(Endpoints.authLogin, endsWith('/login')),
+    );
+    test(
+      'authRefresh contains refresh',
+      () => expect(Endpoints.authRefresh, contains('refresh')),
+    );
+    test(
+      'authLogout contains logout',
+      () => expect(Endpoints.authLogout, contains('logout')),
+    );
+    test(
+      'authMe contains /me',
+      () => expect(Endpoints.authMe, contains('/me')),
+    );
     test('all auth endpoints contain /auth/', () {
       expect(Endpoints.authLogin, contains('/auth/'));
       expect(Endpoints.authRefresh, contains('/auth/'));
@@ -21,7 +36,10 @@ void main() {
   // ── Project endpoints ─────────────────────────────────────────────────────
 
   group('Endpoints — Projects', () {
-    test('projects static constant', () => expect(Endpoints.projects, '/api/admin/projects'));
+    test(
+      'projects static constant',
+      () => expect(Endpoints.projects, '/api/admin/projects'),
+    );
     test('project(id) returns correct path', () {
       expect(Endpoints.project('p-1'), '/api/admin/projects/p-1');
     });
@@ -35,7 +53,10 @@ void main() {
       expect(Endpoints.projectImages('p-2'), '/api/admin/projects/p-2/images');
     });
     test('projectImage(id, imageId) returns correct path', () {
-      expect(Endpoints.projectImage('p-2', 'img-1'), '/api/admin/projects/p-2/images/img-1');
+      expect(
+        Endpoints.projectImage('p-2', 'img-1'),
+        '/api/admin/projects/p-2/images/img-1',
+      );
     });
     test('project path includes id', () {
       const id = 'unique-project-id';
@@ -50,20 +71,29 @@ void main() {
   // ── Category endpoints ────────────────────────────────────────────────────
 
   group('Endpoints — Categories', () {
-    test('categories constant', () => expect(Endpoints.categories, '/api/admin/categories'));
+    test(
+      'categories constant',
+      () => expect(Endpoints.categories, '/api/admin/categories'),
+    );
     test('category(id) correct path', () {
       expect(Endpoints.category('cat-5'), '/api/admin/categories/cat-5');
     });
     test('category path includes admin prefix', () {
       expect(Endpoints.category('x'), startsWith('/api/admin'));
     });
-    test('categories path contains admin', () => expect(Endpoints.categories, contains('/admin/')));
+    test(
+      'categories path contains admin',
+      () => expect(Endpoints.categories, contains('/admin/')),
+    );
   });
 
   // ── Services endpoints ────────────────────────────────────────────────────
 
   group('Endpoints — Services', () {
-    test('services constant', () => expect(Endpoints.services, '/api/admin/services'));
+    test(
+      'services constant',
+      () => expect(Endpoints.services, '/api/admin/services'),
+    );
     test('service(id) correct path', () {
       expect(Endpoints.service('srv-3'), '/api/admin/services/srv-3');
     });
@@ -75,19 +105,28 @@ void main() {
   // ── Testimonial endpoints ─────────────────────────────────────────────────
 
   group('Endpoints — Testimonials', () {
-    test('testimonials constant', () => expect(Endpoints.testimonials, '/api/admin/testimonials'));
+    test(
+      'testimonials constant',
+      () => expect(Endpoints.testimonials, '/api/admin/testimonials'),
+    );
     test('testimonial(id) correct path', () {
       expect(Endpoints.testimonial('t-10'), '/api/admin/testimonials/t-10');
     });
     test('testimonial path starts with base', () {
-      expect(Endpoints.testimonial('x'), startsWith('/api/admin/testimonials/'));
+      expect(
+        Endpoints.testimonial('x'),
+        startsWith('/api/admin/testimonials/'),
+      );
     });
   });
 
   // ── Contact endpoints ─────────────────────────────────────────────────────
 
   group('Endpoints — Contacts', () {
-    test('contacts constant', () => expect(Endpoints.contacts, '/api/admin/contacts'));
+    test(
+      'contacts constant',
+      () => expect(Endpoints.contacts, '/api/admin/contacts'),
+    );
     test('contact(id) correct path', () {
       expect(Endpoints.contact('c-7'), '/api/admin/contacts/c-7');
     });
@@ -99,7 +138,10 @@ void main() {
   // ── Booking endpoints ─────────────────────────────────────────────────────
 
   group('Endpoints — Bookings', () {
-    test('bookings constant', () => expect(Endpoints.bookings, '/api/admin/bookings'));
+    test(
+      'bookings constant',
+      () => expect(Endpoints.bookings, '/api/admin/bookings'),
+    );
     test('booking(id) correct path', () {
       expect(Endpoints.booking('bk-15'), '/api/admin/bookings/bk-15');
     });
@@ -111,7 +153,10 @@ void main() {
   // ── Settings endpoints ────────────────────────────────────────────────────
 
   group('Endpoints — Settings', () {
-    test('settings constant', () => expect(Endpoints.settings, '/api/admin/settings'));
+    test(
+      'settings constant',
+      () => expect(Endpoints.settings, '/api/admin/settings'),
+    );
     test('settingsSection(section) correct path', () {
       expect(Endpoints.settingsSection('theme'), '/api/admin/settings/theme');
     });
@@ -119,7 +164,10 @@ void main() {
       expect(Endpoints.settingsSection('about'), '/api/admin/settings/about');
     });
     test('settingsSection contact', () {
-      expect(Endpoints.settingsSection('contact'), '/api/admin/settings/contact');
+      expect(
+        Endpoints.settingsSection('contact'),
+        '/api/admin/settings/contact',
+      );
     });
     test('settingsSection includes section name', () {
       expect(Endpoints.settingsSection('custom'), contains('custom'));
@@ -129,7 +177,10 @@ void main() {
   // ── Analytics endpoints ───────────────────────────────────────────────────
 
   group('Endpoints — Analytics', () {
-    test('analytics constant', () => expect(Endpoints.analytics, '/api/admin/analytics'));
+    test(
+      'analytics constant',
+      () => expect(Endpoints.analytics, '/api/admin/analytics'),
+    );
     test('analyticsOverview contains overview', () {
       expect(Endpoints.analyticsOverview, contains('overview'));
     });
@@ -157,7 +208,10 @@ void main() {
       expect(Endpoints.trashItem('ti-1'), '/api/admin/trash/ti-1');
     });
     test('trashTypedItem(type, id) correct path', () {
-      expect(Endpoints.trashTypedItem('project', 'p-5'), '/api/admin/trash/project/p-5');
+      expect(
+        Endpoints.trashTypedItem('project', 'p-5'),
+        '/api/admin/trash/project/p-5',
+      );
     });
     test('trashTypedItem includes type and id', () {
       final path = Endpoints.trashTypedItem('booking', 'bk-99');
