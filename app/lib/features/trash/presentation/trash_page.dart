@@ -226,18 +226,20 @@ class _TrashShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(
-          6,
-          (_) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 72,
-              borderRadius: 16,
+    return ShimmerLoader(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+            6,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ShimmerBox(
+                width: double.infinity,
+                height: 72,
+                borderRadius: 16,
+              ),
             ),
           ),
         ),

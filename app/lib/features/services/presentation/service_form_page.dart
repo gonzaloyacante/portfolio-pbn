@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../shared/widgets/color_field.dart';
+import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/service_model.dart';
@@ -17,8 +19,6 @@ import '../providers/services_provider.dart';
 final _reServiceWhitespace = RegExp(r'\s+');
 // ignore: deprecated_member_use
 final _reServiceNonSlug = RegExp(r'[^a-z0-9-]');
-// ignore: deprecated_member_use
-final _reServiceSlugValid = RegExp(r'^[a-z0-9-]+$');
 
 class ServiceFormPage extends ConsumerStatefulWidget {
   const ServiceFormPage({super.key, this.serviceId});
@@ -39,8 +39,8 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   final _durationCtrl = TextEditingController();
   final _imageCtrl = TextEditingController();
   File? _pendingImage;
-  final _iconCtrl = TextEditingController();
   final _colorCtrl = TextEditingController();
+  String? _selectedIcon;
 
   String _priceLabel = 'desde';
   String _currency = 'ARS';
@@ -61,7 +61,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       _priceCtrl,
       _durationCtrl,
       _imageCtrl,
-      _iconCtrl,
       _colorCtrl,
     ]) {
       ctrl.dispose();
@@ -79,7 +78,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     _priceCtrl.text = detail.price ?? '';
     _durationCtrl.text = detail.duration ?? '';
     _imageCtrl.text = detail.imageUrl ?? '';
-    _iconCtrl.text = detail.iconName ?? '';
+    _selectedIcon = detail.iconName;
     _colorCtrl.text = detail.color ?? '';
     setState(() {
       _priceLabel = detail.priceLabel ?? 'desde';
@@ -130,7 +129,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
         imageUrl: _imageCtrl.text.trim().isEmpty
             ? null
             : _imageCtrl.text.trim(),
-        iconName: _iconCtrl.text.trim().isEmpty ? null : _iconCtrl.text.trim(),
+        iconName: _selectedIcon,
         color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
         isActive: _isActive,
         isFeatured: _isFeatured,
@@ -193,28 +192,14 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               // Nombre
               TextFormField(
                 controller: _nameCtrl,
-                decoration: const InputDecoration(labelText: 'Nombre *'),
+                decoration: const InputDecoration(
+                  labelText: 'Nombre *',
+                  helperText: 'Nombre público del servicio',
+                ),
                 textCapitalization: TextCapitalization.words,
                 onChanged: _autoSlug,
                 validator: (v) =>
                     (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
-              ),
-              const SizedBox(height: 16),
-
-              // Slug
-              TextFormField(
-                controller: _slugCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Slug *',
-                  prefixText: '/',
-                ),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Slug requerido';
-                  if (!_reServiceSlugValid.hasMatch(v.trim())) {
-                    return 'Solo minúsculas, números y guiones';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 16),
 
@@ -223,6 +208,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                 controller: _shortDescCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Descripción corta',
+                  helperText: 'Se muestra en tarjetas y listados',
                 ),
                 maxLines: 2,
               ),
@@ -233,6 +219,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                 controller: _descCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Descripción detallada',
+                  helperText: 'Visible en la página del servicio',
                 ),
                 maxLines: 4,
               ),
@@ -287,26 +274,20 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Ícono + Color
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _iconCtrl,
-                      decoration: const InputDecoration(labelText: 'Ícono'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _colorCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Color',
-                        hintText: '#6C0A0A',
-                      ),
-                    ),
-                  ),
-                ],
+              // Ícono
+              EmojiIconPicker(
+                value: _selectedIcon,
+                onChanged: (v) => setState(() => _selectedIcon = v),
+                label: 'Ícono del servicio',
+                hint: 'Toca para elegir un emoji',
+              ),
+              const SizedBox(height: 16),
+
+              // Color
+              ColorField(
+                controller: _colorCtrl,
+                label: 'Color de marca',
+                helperText: 'Hex del color identificativo',
               ),
               const SizedBox(height: 16),
 
@@ -332,11 +313,13 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               // Switches
               SwitchListTile(
                 title: const Text('Servicio activo'),
+                subtitle: const Text('Visible en el portfolio público'),
                 value: _isActive,
                 onChanged: (v) => setState(() => _isActive = v),
               ),
               SwitchListTile(
                 title: const Text('Destacado'),
+                subtitle: const Text('Aparece en la sección principal'),
                 value: _isFeatured,
                 onChanged: (v) => setState(() => _isFeatured = v),
               ),

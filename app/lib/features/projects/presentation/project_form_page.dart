@@ -334,7 +334,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   Widget _titleField() => TextFormField(
     initialValue: _data.title,
-    decoration: const InputDecoration(labelText: 'Título *'),
+    decoration: const InputDecoration(
+      labelText: 'Título *',
+      helperText: 'Nombre del proyecto en el portfolio',
+    ),
     textInputAction: TextInputAction.next,
     onChanged: _autoSlug,
     onSaved: (v) => _data.title = v?.trim() ?? '',
@@ -348,6 +351,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     decoration: const InputDecoration(
       labelText: 'Descripción *',
       alignLabelWithHint: true,
+      helperText: 'Texto completo visible en la página del proyecto',
     ),
     onSaved: (v) => _data.description = v?.trim() ?? '',
     validator: (v) =>
@@ -360,6 +364,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     decoration: const InputDecoration(
       labelText: 'Extracto (opcional)',
       alignLabelWithHint: true,
+      helperText: 'Resumen corto para listados y tarjetas',
     ),
     onSaved: (v) =>
         _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),

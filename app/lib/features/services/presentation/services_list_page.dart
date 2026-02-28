@@ -491,14 +491,16 @@ class _ServicesSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
-      itemCount: 6,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemBuilder: (_, _) => const ShimmerBox(
-        width: double.infinity,
-        height: 72,
-        borderRadius: 12,
+    return ShimmerLoader(
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
+        itemCount: 6,
+        separatorBuilder: (_, _) => const SizedBox(height: 8),
+        itemBuilder: (_, _) => const ShimmerBox(
+          width: double.infinity,
+          height: 72,
+          borderRadius: 12,
+        ),
       ),
     );
   }

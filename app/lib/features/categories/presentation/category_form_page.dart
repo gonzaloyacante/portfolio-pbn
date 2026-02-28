@@ -7,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/color_field.dart';
 import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -15,9 +16,6 @@ import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
 // ── Slug helpers ──────────────────────────────────────────────────────────────
-
-// ignore: deprecated_member_use
-final RegExp _reSlugValid = RegExp(r'^[a-z0-9-]+$');
 
 /// Convierte un nombre legible en un slug URL-safe sin dependencias de RegExp
 /// a nivel de módulo (evita DEPRECATED_MEMBER_USE de dartanalyzer).
@@ -203,6 +201,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                 decoration: const InputDecoration(
                   labelText: 'Nombre *',
                   hintText: 'ej. Fotografía',
+                  helperText: 'Nombre público de la categoría',
                 ),
                 textCapitalization: TextCapitalization.words,
                 onChanged: _autoSlug,
@@ -211,30 +210,13 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Slug
-              TextFormField(
-                controller: _slugCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Slug *',
-                  hintText: 'ej. fotografia',
-                  prefixText: '/',
-                ),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Slug requerido';
-                  if (!_reSlugValid.hasMatch(v.trim())) {
-                    return 'Solo letras minúsculas, números y guiones';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
               // Descripción
               TextFormField(
                 controller: _descriptionCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Descripción',
-                  hintText: 'Descripción de la categoría',
+                  hintText: 'Breve descripción de esta categoría',
+                  helperText: 'Se muestra en la página de la categoría',
                 ),
                 maxLines: 3,
               ),
@@ -250,13 +232,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               const SizedBox(height: 16),
 
               // Color
-              TextFormField(
+              ColorField(
                 controller: _colorCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Color de marca',
-                  hintText: 'ej. #6C0A0A',
-                  prefixIcon: Icon(Icons.color_lens_outlined),
-                ),
+                label: 'Color de marca',
+                helperText: 'Hex del color identificativo',
               ),
               const SizedBox(height: 16),
 

@@ -179,7 +179,10 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _nameCtrl,
-              decoration: const InputDecoration(labelText: 'Nombre *'),
+              decoration: const InputDecoration(
+                labelText: 'Nombre *',
+                helperText: 'Nombre del cliente que dio el testimonio',
+              ),
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Requerido' : null,
             ),
@@ -248,7 +251,10 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
             const SizedBox(height: 12),
             TextFormField(
               controller: _textCtrl,
-              decoration: const InputDecoration(labelText: 'Texto completo *'),
+              decoration: const InputDecoration(
+                labelText: 'Texto completo *',
+                helperText: 'La reseña completa del cliente',
+              ),
               maxLines: 5,
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Requerido' : null,
@@ -259,6 +265,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
               decoration: const InputDecoration(
                 labelText: 'Extracto (opcional)',
                 hintText: 'Resumen breve para mostrar en la galería',
+                helperText: 'Se muestra en tarjetas y previews',
               ),
               maxLines: 2,
             ),
