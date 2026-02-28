@@ -149,16 +149,25 @@ export async function PATCH(req: Request, { params }: Params) {
       select: SERVICE_FULL_SELECT,
     })
 
-    revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
-    revalidateTag(CACHE_TAGS.services, 'max')
+    try {
+      revalidatePath(ROUTES.admin.services)
+      revalidatePath(ROUTES.public.services)
+      revalidateTag(CACHE_TAGS.services, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-service-patch] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, data: service })
   } catch (err) {
     logger.error('[admin-service-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }
 
@@ -176,15 +185,24 @@ export async function DELETE(req: Request, { params }: Params) {
       data: { deletedAt: new Date() },
     })
 
-    revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
-    revalidateTag(CACHE_TAGS.services, 'max')
+    try {
+      revalidatePath(ROUTES.admin.services)
+      revalidatePath(ROUTES.public.services)
+      revalidateTag(CACHE_TAGS.services, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-service-delete] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, message: 'Servicio eliminado' })
   } catch (err) {
     logger.error('[admin-service-delete] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

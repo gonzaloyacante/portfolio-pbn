@@ -200,7 +200,7 @@ class _DashboardSkeleton extends StatelessWidget {
               child: SkeletonGridView(
                 itemCount: 7,
                 compactCols: 2,
-                childAspectRatio: 1.45,
+                childAspectRatio: 1.1,
               ),
             ),
             const SizedBox(height: AppSpacing.xl),

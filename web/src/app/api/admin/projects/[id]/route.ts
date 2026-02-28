@@ -151,19 +151,28 @@ export async function PATCH(req: Request, { params }: Params) {
       select: PROJECT_FULL_SELECT,
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.projects)
-    revalidatePath(`${ROUTES.admin.projects}/${id}`)
-    revalidatePath(ROUTES.home, 'layout')
-    revalidateTag(CACHE_TAGS.projects, 'max')
-    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.projects)
+      revalidatePath(`${ROUTES.admin.projects}/${id}`)
+      revalidatePath(ROUTES.home, 'layout')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-project-patch] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, data: project })
   } catch (err) {
     logger.error('[admin-project-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }
 
@@ -191,18 +200,27 @@ export async function DELETE(req: Request, { params }: Params) {
       },
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.projects)
-    revalidatePath(ROUTES.admin.trash)
-    revalidatePath(ROUTES.home, 'layout')
-    revalidateTag(CACHE_TAGS.projects, 'max')
-    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.projects)
+      revalidatePath(ROUTES.admin.trash)
+      revalidatePath(ROUTES.home, 'layout')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-project-delete] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, message: 'Proyecto eliminado' })
   } catch (err) {
     logger.error('[admin-project-delete] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

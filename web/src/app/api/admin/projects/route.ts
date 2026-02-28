@@ -169,17 +169,26 @@ export async function POST(req: Request) {
       select: PROJECT_SELECT,
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.projects)
-    revalidatePath(ROUTES.home, 'layout')
-    revalidateTag(CACHE_TAGS.projects, 'max')
-    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.projects)
+      revalidatePath(ROUTES.home, 'layout')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-projects-create] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, data: project }, { status: 201 })
   } catch (err) {
     logger.error('[admin-projects-create] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

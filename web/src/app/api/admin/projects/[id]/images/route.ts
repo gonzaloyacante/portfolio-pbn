@@ -82,15 +82,24 @@ export async function POST(req: Request, { params }: Params) {
       select: { id: true, url: true, publicId: true, order: true, alt: true, isCover: true },
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(`${ROUTES.admin.projects}/${id}`)
-    revalidateTag(CACHE_TAGS.projects, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(`${ROUTES.admin.projects}/${id}`)
+      revalidateTag(CACHE_TAGS.projects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-project-images-post] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, data: image }, { status: 201 })
   } catch (err) {
     logger.error('[admin-project-images-post] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

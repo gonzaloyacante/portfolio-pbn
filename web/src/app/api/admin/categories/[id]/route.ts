@@ -123,17 +123,26 @@ export async function PATCH(req: Request, { params }: Params) {
       select: CATEGORY_FULL_SELECT,
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.categories)
-    revalidatePath(ROUTES.admin.projects)
-    revalidateTag(CACHE_TAGS.categories, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.admin.projects)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-category-patch] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, data: category })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }
 
@@ -151,16 +160,25 @@ export async function DELETE(req: Request, { params }: Params) {
       data: { deletedAt: new Date() },
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.categories)
-    revalidatePath(ROUTES.admin.projects)
-    revalidateTag(CACHE_TAGS.categories, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.admin.projects)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-category-delete] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, message: 'Categoría eliminada' })
   } catch (err) {
     logger.error('[admin-category-delete] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

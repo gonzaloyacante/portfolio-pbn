@@ -127,15 +127,24 @@ export async function POST(req: Request) {
       select: CATEGORY_SELECT,
     })
 
-    revalidatePath(ROUTES.public.projects)
-    revalidatePath(ROUTES.admin.categories)
-    revalidateTag(CACHE_TAGS.categories, 'max')
+    try {
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.categories)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-categories-post] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, data: category }, { status: 201 })
   } catch (err) {
     logger.error('[admin-categories-post] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }
