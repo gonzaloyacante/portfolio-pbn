@@ -36,14 +36,14 @@ class SectionHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: titleStyle ?? textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-                if (subtitle != null) ...[
+                if (subtitle case final subtitle?) ...[
                   const SizedBox(height: 2),
-                  Text(subtitle!, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface.withAlpha(140))),
+                  Text(subtitle, style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface.withAlpha(140))),
                 ],
               ],
             ),
           ),
-          if (trailing != null) trailing!,
+          ?trailing,
         ],
       ),
     );

@@ -121,39 +121,6 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
   }
 }
 
-// ── _SearchBar ────────────────────────────────────────────────────────────────
-
-class _SearchBar extends StatelessWidget {
-  const _SearchBar({required this.controller, required this.onSearch});
-
-  final TextEditingController controller;
-  final void Function(String) onSearch;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: SearchBar(
-        controller: controller,
-        hintText: 'Buscar proyectos…',
-        leading: const Icon(Icons.search_rounded),
-        trailing: [
-          if (controller.text.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear_rounded),
-              onPressed: () {
-                controller.clear();
-                onSearch('');
-              },
-            ),
-        ],
-        onChanged: onSearch,
-        elevation: const WidgetStatePropertyAll(0),
-      ),
-    );
-  }
-}
-
 // ── _ProjectsList ─────────────────────────────────────────────────────────────
 
 class _ProjectsList extends StatelessWidget {
@@ -281,7 +248,7 @@ class _ProjectGridCard extends StatelessWidget {
                             child: Row(
                               children: [
                                 Icon(Icons.delete_outline, size: 18, color: AppColors.destructive),
-                                const SizedBox(width: 10),
+                                SizedBox(width: 10),
                                 Text('Eliminar', style: TextStyle(color: AppColors.destructive)),
                               ],
                             ),

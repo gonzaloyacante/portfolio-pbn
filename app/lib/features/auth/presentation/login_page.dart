@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/notifications/push_provider.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/validators.dart';
@@ -70,49 +73,111 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final authAsync = ref.watch(authProvider);
     final isLoading = authAsync.value == const AuthState.authenticating();
     final errorMsg = authAsync.whenOrNull(data: (v) => v)?.mapOrNull(error: (e) => e.message);
+    final isExpanded = AppBreakpoints.isExpanded(context);
+
+    final formContent = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _LoginCard(
+          formKey: _formKey,
+          emailController: _emailController,
+          passwordController: _passwordController,
+          obscurePassword: _obscurePassword,
+          onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
+          onSubmit: _handleLogin,
+          isLoading: isLoading,
+        ),
+        if (errorMsg != null) ...[const SizedBox(height: 16), InlineError(message: errorMsg)],
+        const SizedBox(height: AppSpacing.xl),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.lock_outline_rounded,
+              size: 13,
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Acceso exclusivo para administradores',
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6)),
+            ),
+          ],
+        ),
+      ],
+    );
 
     return LoadingOverlay(
       isLoading: isLoading,
       message: 'Iniciando sesión…',
       child: Scaffold(
         body: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 420),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _Brand(),
-                    const SizedBox(height: 40),
-                    _LoginCard(
-                      formKey: _formKey,
-                      emailController: _emailController,
-                      passwordController: _passwordController,
-                      obscurePassword: _obscurePassword,
-                      onTogglePassword: () => setState(() => _obscurePassword = !_obscurePassword),
-                      onSubmit: _handleLogin,
-                      isLoading: isLoading,
+          child: isExpanded
+              ? _TwoColumnLayout(formContent: formContent)
+              : Center(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppBreakpoints.pageMargin(context),
+                      vertical: AppSpacing.xxxl,
                     ),
-                    if (errorMsg != null) ...[const SizedBox(height: 16), InlineError(message: errorMsg)],
-                    const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.lock_outline_rounded,
-                          size: 14,
-                          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Acceso exclusivo para administradores',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.6),
-                          ),
-                        ),
-                      ],
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _Brand(),
+                          const SizedBox(height: AppSpacing.xxxl),
+                          formContent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── _TwoColumnLayout ──────────────────────────────────────────────────────────
+
+/// Layout de dos columnas para pantallas expanded (tablet/desktop).
+/// Columna izquierda: branding decorativo. Columna derecha: formulario.
+class _TwoColumnLayout extends StatelessWidget {
+  const _TwoColumnLayout({required this.formContent});
+  final Widget formContent;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        // Lado izquierdo — panel de marca con fondo de color
+        Expanded(
+          child: Container(
+            color: scheme.primary,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xxxl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Paola\nBolívar',
+                      style: AppTypography.decorativeTitle(scheme.onPrimary, fontSize: 72),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      'Panel de administración',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: scheme.onPrimary.withValues(alpha: 0.75),
+                        letterSpacing: 0.5,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
@@ -120,7 +185,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             ),
           ),
         ),
-      ),
+        // Lado derecho — formulario con scroll
+        Expanded(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl, vertical: AppSpacing.xxxl),
+              child: ConstrainedBox(constraints: const BoxConstraints(maxWidth: 400), child: formContent),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -175,7 +249,7 @@ class _LoginCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
       elevation: 0,
       color: scheme.surface,
       child: Padding(
@@ -229,7 +303,7 @@ class _LoginCard extends StatelessWidget {
                 onPressed: isLoading ? null : onSubmit,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,
                 ),

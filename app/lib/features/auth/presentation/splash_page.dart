@@ -42,17 +42,28 @@ class _SplashPageState extends ConsumerState<SplashPage> with SingleTickerProvid
     }
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(height: 8),
-            PbnSplashLogo(size: 80, onCompleted: () => splashAnimationFinished.value = true),
-            const SizedBox(height: 20),
-            Text(message, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
-            if (authAsync.isLoading) const CircularProgressIndicator(),
-          ],
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              PbnSplashLogo(size: 96, onCompleted: () => splashAnimationFinished.value = true),
+              const SizedBox(height: 28),
+              Text(
+                message,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.outline, letterSpacing: 0.3),
+              ),
+              const SizedBox(height: 20),
+              if (authAsync.isLoading)
+                SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2.5, color: Theme.of(context).colorScheme.primary),
+                ),
+            ],
+          ),
         ),
       ),
     );
