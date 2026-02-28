@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -64,14 +67,14 @@ class SettingsSocialPage extends ConsumerWidget {
       ],
       body: async.when(
         loading: () => ListView.separated(
-          padding: const EdgeInsets.all(16),
+          padding: AppBreakpoints.pagePadding(context),
           itemCount: _kPlatforms.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (_, _) => ShimmerLoader(
             child: ShimmerBox(
               width: double.infinity,
               height: 72,
-              borderRadius: 20,
+              borderRadius: AppRadius.card,
             ),
           ),
         ),
@@ -80,9 +83,9 @@ class SettingsSocialPage extends ConsumerWidget {
           onRetry: () => ref.invalidate(socialLinksProvider),
         ),
         data: (links) => ListView.separated(
-          padding: const EdgeInsets.all(16),
+          padding: AppBreakpoints.pagePadding(context),
           itemCount: _kPlatforms.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (_, i) {
             final platform = _kPlatforms[i];
             final existing = links.where((l) => l.platform == platform.$2);
@@ -239,7 +242,12 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
           ),
           if (_expanded)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.base,
+                0,
+                AppSpacing.base,
+                AppSpacing.base,
+              ),
               child: Column(
                 children: [
                   const Divider(),
@@ -253,7 +261,7 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                       prefixIcon: const Icon(Icons.link),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   TextFormField(
                     controller: _usernameCtrl,
                     decoration: const InputDecoration(
@@ -262,7 +270,7 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                       prefixIcon: Icon(Icons.alternate_email),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   SwitchListTile(
                     title: const Text('Activo'),
                     subtitle: const Text('Visible en el portfolio público'),

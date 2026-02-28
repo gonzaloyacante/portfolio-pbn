@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import '../utils/app_logger.dart';
 
@@ -117,13 +118,41 @@ class PushService {
         return null;
       }
 
+      // Evitar intentar obtener el token en simuladores iOS/macOS donde
+      // APNS no devuelve un token real.
+      if ((defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS)) {
+        try {
+          final info = DeviceInfoPlugin();
+          final iosInfo = await info.iosInfo;
+          if (iosInfo.isPhysicalDevice == false) {
+            AppLogger.warn(
+              'PushService.getToken: iOS Simulator detectado — omitiendo getToken',
+            );
+            return null;
+          }
+        } catch (_) {
+          // Si no podemos detectar el dispositivo, continuar y dejar que
+          // la lógica de Firebase maneje el caso (se captura abajo).
+        }
+      }
+
       final token = await messaging.getToken();
       if (token != null) {
         AppLogger.debug('PushService: token obtenido (${token.length} chars)');
       }
       return token;
     } catch (e, st) {
-      AppLogger.error('PushService: error al obtener token', e, st);
+      final msg = e?.toString() ?? '';
+      // Mensaje esperado en simuladores iOS/macOS cuando APNS aún no devuelve token.
+      if (msg.contains('APNS token has not been received') ||
+          msg.toLowerCase().contains('apns')) {
+        AppLogger.warn(
+          'PushService: APNS token no disponible (simulador/dispositivo) — omitido',
+        );
+      } else {
+        AppLogger.error('PushService: error al obtener token', e, st);
+      }
       return null;
     }
   }

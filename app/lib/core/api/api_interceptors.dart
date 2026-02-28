@@ -58,13 +58,25 @@ class ConnectivityInterceptor extends Interceptor {
   ) async {
     // `checkConnectivity()` devuelve un `ConnectivityResult`.
     // Comprobarlo explícitamente evita errores en simuladores/emuladores.
-    final result = await Connectivity().checkConnectivity();
-    // En algunas plataformas `checkConnectivity()` puede devolver
-    // `List<ConnectivityResult>`. Normalizar a un único ConnectivityResult.
-    final List<ConnectivityResult> resultList = result;
-    final normalized = resultList.isNotEmpty
-        ? resultList.first
-        : ConnectivityResult.none;
+    // `checkConnectivity()` puede devolver diferentes formas en plataformas
+    // antiguas o adaptaciones (ConnectivityResult o List<ConnectivityResult>).
+    // Normalizar a un único ConnectivityResult.
+    dynamic raw;
+    try {
+      raw = await Connectivity().checkConnectivity();
+    } catch (_) {
+      raw = ConnectivityResult.none;
+    }
+
+    late final ConnectivityResult normalized;
+    if (raw is List<ConnectivityResult> && raw.isNotEmpty) {
+      normalized = raw.first;
+    } else if (raw is ConnectivityResult) {
+      normalized = raw;
+    } else {
+      normalized = ConnectivityResult.none;
+    }
+
     final isOffline = normalized == ConnectivityResult.none;
 
     if (isOffline) {

@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
+import 'widgets/settings_form_card.dart';
 
 class SettingsSitePage extends ConsumerStatefulWidget {
   const SettingsSitePage({super.key});
@@ -129,7 +133,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
 
   Widget _buildShimmer() {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.base),
       children: List.generate(
         4,
         (_) => Padding(
@@ -147,189 +151,166 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final padding = AppBreakpoints.pagePadding(context);
+    final maxWidth = AppBreakpoints.value<double>(
+      context,
+      compact: double.infinity,
+      medium: 760,
+      expanded: 960,
+    );
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Branding ─────────────────────────────────────────────────────
-          _SectionCard(
-            context: context,
-            title: 'Branding',
+      padding: padding,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
-                controller: _siteNameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del sitio',
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _siteTaglineCtrl,
-                decoration: const InputDecoration(labelText: 'Eslogan'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // ── SEO ───────────────────────────────────────────────────────────
-          _SectionCard(
-            context: context,
-            title: 'SEO',
-            children: [
-              TextFormField(
-                controller: _metaTitleCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Meta título',
-                  helperText: 'Título para buscadores (Google)',
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _metaDescCtrl,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Meta descripción',
-                  helperText: 'Descripción en resultados de búsqueda',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // ── Visibilidad de páginas ────────────────────────────────────────
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // ── Branding ─────────────────────────────────────────────────────
+              SettingsFormCard(
+                title: 'Branding',
                 children: [
-                  Text(
-                    'Visibilidad de páginas',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  TextFormField(
+                    controller: _siteNameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre del sitio',
                     ),
                   ),
-                  SwitchListTile(
-                    title: const Text('Sobre mí'),
-                    value: _showAbout,
-                    onChanged: (v) => setState(() => _showAbout = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Proyectos'),
-                    value: _showProjects,
-                    onChanged: (v) => setState(() => _showProjects = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Servicios'),
-                    value: _showServices,
-                    onChanged: (v) => setState(() => _showServices = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Contacto'),
-                    value: _showContact,
-                    onChanged: (v) => setState(() => _showContact = v),
-                    contentPadding: EdgeInsets.zero,
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _siteTaglineCtrl,
+                    decoration: const InputDecoration(labelText: 'Eslogan'),
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          // ── Mantenimiento ────────────────────────────────────────────────
-          Card(
-            color: _maintenanceMode
-                ? Colors.orange.withValues(alpha: 0.12)
-                : null,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(height: AppSpacing.md),
+              // ── SEO ────────────────────────────────────────────────────────
+              SettingsFormCard(
+                title: 'SEO',
                 children: [
-                  Row(
+                  TextFormField(
+                    controller: _metaTitleCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Meta título',
+                      helperText: 'Título para buscadores (Google)',
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _metaDescCtrl,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Meta descripción',
+                      helperText: 'Descripción en resultados de búsqueda',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              // ── Visibilidad ────────────────────────────────────────────────
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.card),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.engineering_outlined,
-                        color: Colors.orange,
-                      ),
-                      const SizedBox(width: 8),
                       Text(
-                        'Modo mantenimiento',
+                        'Visibilidad de páginas',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const Spacer(),
-                      Switch(
-                        value: _maintenanceMode,
-                        onChanged: (v) => setState(() => _maintenanceMode = v),
+                      SwitchListTile(
+                        title: const Text('Sobre mí'),
+                        value: _showAbout,
+                        onChanged: (v) => setState(() => _showAbout = v),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      SwitchListTile(
+                        title: const Text('Proyectos'),
+                        value: _showProjects,
+                        onChanged: (v) => setState(() => _showProjects = v),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      SwitchListTile(
+                        title: const Text('Servicios'),
+                        value: _showServices,
+                        onChanged: (v) => setState(() => _showServices = v),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      SwitchListTile(
+                        title: const Text('Contacto'),
+                        value: _showContact,
+                        onChanged: (v) => setState(() => _showContact = v),
+                        contentPadding: EdgeInsets.zero,
                       ),
                     ],
                   ),
-                  if (_maintenanceMode) ...[
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _maintenanceMsgCtrl,
-                      maxLines: 2,
-                      decoration: const InputDecoration(
-                        labelText: 'Mensaje de mantenimiento',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: AppSpacing.md),
+              // ── Mantenimiento ──────────────────────────────────────────────
+              Card(
+                color: _maintenanceMode
+                    ? Colors.orange.withValues(alpha: 0.12)
+                    : null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadius.card),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.cardPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.engineering_outlined,
+                            color: Colors.orange,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Modo mantenimiento',
+                            style: Theme.of(context).textTheme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const Spacer(),
+                          Switch(
+                            value: _maintenanceMode,
+                            onChanged: (v) =>
+                                setState(() => _maintenanceMode = v),
+                          ),
+                        ],
+                      ),
+                      if (_maintenanceMode) ...[
+                        const SizedBox(height: 12),
+                        TextFormField(
+                          controller: _maintenanceMsgCtrl,
+                          maxLines: 2,
+                          decoration: const InputDecoration(
+                            labelText: 'Mensaje de mantenimiento',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              FilledButton.icon(
+                onPressed: _save,
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Guardar cambios'),
+              ),
+              const SizedBox(height: AppSpacing.base),
+            ],
           ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: _save,
-            icon: const Icon(Icons.save_outlined),
-            label: const Text('Guardar cambios'),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({
-    required this.context,
-    required this.title,
-    required this.children,
-  });
-  final BuildContext context;
-  final String title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext _) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ...children,
-          ],
         ),
       ),
     );

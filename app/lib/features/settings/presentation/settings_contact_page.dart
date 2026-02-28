@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
+import 'widgets/settings_form_card.dart';
 
 class SettingsContactPage extends ConsumerStatefulWidget {
   const SettingsContactPage({super.key});
@@ -138,121 +141,106 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   }
 
   Widget _buildForm(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _card(
-            context,
-            title: 'Página de contacto',
-            children: [
-              TextFormField(
-                controller: _pageTitleCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Título de página',
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _ownerNameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del propietario',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _card(
-            context,
-            title: 'Datos de contacto',
-            children: [
-              TextFormField(
-                controller: _emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email_outlined),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _phoneCtrl,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'Teléfono',
-                  prefixIcon: Icon(Icons.phone_outlined),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _whatsappCtrl,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'WhatsApp',
-                  prefixIcon: Icon(Icons.chat_outlined),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _locationCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Ubicación',
-                  prefixIcon: Icon(Icons.location_on_outlined),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SwitchListTile(
-              title: const Text('Mostrar redes sociales'),
-              subtitle: const Text(
-                'Muestra iconos de redes en la página de contacto',
-              ),
-              value: _showSocialLinks,
-              onChanged: (v) => setState(() => _showSocialLinks = v),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: _save,
-            icon: const Icon(Icons.save_outlined),
-            label: const Text('Guardar cambios'),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
+    final padding = AppBreakpoints.pagePadding(context);
+    final maxWidth = AppBreakpoints.value<double>(
+      context,
+      compact: double.infinity,
+      medium: 760,
+      expanded: 960,
     );
-  }
 
-  Widget _card(
-    BuildContext context, {
-    required String title,
-    required List<Widget> children,
-  }) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ...children,
-          ],
+    return SingleChildScrollView(
+      padding: padding,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SettingsFormCard(
+                title: 'Página de contacto',
+                children: [
+                  TextFormField(
+                    controller: _pageTitleCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Título de página',
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _ownerNameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre del propietario',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SettingsFormCard(
+                title: 'Datos de contacto',
+                children: [
+                  TextFormField(
+                    controller: _emailCtrl,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.email_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _phoneCtrl,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'Teléfono',
+                      prefixIcon: Icon(Icons.phone_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _whatsappCtrl,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'WhatsApp',
+                      prefixIcon: Icon(Icons.chat_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _locationCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Ubicación',
+                      prefixIcon: Icon(Icons.location_on_outlined),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: SwitchListTile(
+                  title: const Text('Mostrar redes sociales'),
+                  subtitle: const Text(
+                    'Muestra iconos de redes en la página de contacto',
+                  ),
+                  value: _showSocialLinks,
+                  onChanged: (v) => setState(() => _showSocialLinks = v),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              FilledButton.icon(
+                onPressed: _save,
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Guardar cambios'),
+              ),
+              const SizedBox(height: AppSpacing.base),
+            ],
+          ),
         ),
       ),
     );

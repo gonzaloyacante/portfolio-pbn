@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/color_field.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -9,6 +11,7 @@ import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
+import 'widgets/settings_form_card.dart';
 
 class SettingsThemePage extends ConsumerStatefulWidget {
   const SettingsThemePage({super.key});
@@ -128,7 +131,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
 
   Widget _buildShimmer() {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.base),
       children: List.generate(
         4,
         (_) => Padding(
@@ -146,49 +149,51 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final padding = AppBreakpoints.pagePadding(context);
+    final maxWidth = AppBreakpoints.value<double>(
+      context,
+      compact: double.infinity,
+      medium: 760,
+      expanded: 960,
+    );
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _ColorCard(
-            context: context,
-            title: 'Colores — Modo claro',
-            fields: [
-              ColorField(controller: _primaryCtrl, label: 'Color primario'),
-              ColorField(controller: _secondaryCtrl, label: 'Color secundario'),
-              ColorField(controller: _bgCtrl, label: 'Fondo'),
-            ],
-          ),
-          const SizedBox(height: 12),
-          _ColorCard(
-            context: context,
-            title: 'Colores — Modo oscuro',
-            fields: [
-              ColorField(
-                controller: _darkPrimaryCtrl,
-                label: 'Color primario (dark)',
-              ),
-              ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      padding: padding,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SettingsFormCard(
+                title: 'Colores — Modo claro',
                 children: [
-                  Text(
-                    'Tipografías',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  ColorField(controller: _primaryCtrl, label: 'Color primario'),
+                  const SizedBox(height: AppSpacing.md),
+                  ColorField(
+                    controller: _secondaryCtrl,
+                    label: 'Color secundario',
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
+                  ColorField(controller: _bgCtrl, label: 'Fondo'),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SettingsFormCard(
+                title: 'Colores — Modo oscuro',
+                children: [
+                  ColorField(
+                    controller: _darkPrimaryCtrl,
+                    label: 'Color primario (dark)',
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              SettingsFormCard(
+                title: 'Tipografías',
+                children: [
                   TextFormField(
                     controller: _headingFontCtrl,
                     decoration: const InputDecoration(
@@ -196,7 +201,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
                       prefixIcon: Icon(Icons.title),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   TextFormField(
                     controller: _bodyFontCtrl,
                     decoration: const InputDecoration(
@@ -204,7 +209,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
                       prefixIcon: Icon(Icons.text_fields),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   TextFormField(
                     controller: _scriptFontCtrl,
                     decoration: const InputDecoration(
@@ -214,52 +219,15 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: AppSpacing.xl),
+              FilledButton.icon(
+                onPressed: _save,
+                icon: const Icon(Icons.save_outlined),
+                label: const Text('Guardar tema'),
+              ),
+              const SizedBox(height: AppSpacing.base),
+            ],
           ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: _save,
-            icon: const Icon(Icons.save_outlined),
-            label: const Text('Guardar tema'),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Auxiliares ────────────────────────────────────────────────────────────────
-
-class _ColorCard extends StatelessWidget {
-  const _ColorCard({
-    required this.context,
-    required this.title,
-    required this.fields,
-  });
-  final BuildContext context;
-  final String title;
-  final List<Widget> fields;
-
-  @override
-  Widget build(BuildContext _) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            ...fields.expand((f) => [f, const SizedBox(height: 12)]).toList()
-              ..removeLast(),
-          ],
         ),
       ),
     );

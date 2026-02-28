@@ -136,8 +136,15 @@ class AuthNotifier extends _$AuthNotifier {
       AppLogger.warn('AuthNotifier: stored session expired → unauthenticated');
       // Los tokens ya fueron limpiados por el AuthInterceptor.
       return const AuthState.unauthenticated();
-    } catch (e) {
-      AppLogger.error('AuthNotifier: session restore failed', e);
+    } catch (e, st) {
+      // Manejar errores de red de forma no ruidosa (p. ej. modo offline)
+      if (e is NetworkException) {
+        AppLogger.warn(
+          'AuthNotifier: session restore failed — sin conectividad',
+        );
+      } else {
+        AppLogger.error('AuthNotifier: session restore failed', e, st);
+      }
       return const AuthState.unauthenticated();
     }
   }
