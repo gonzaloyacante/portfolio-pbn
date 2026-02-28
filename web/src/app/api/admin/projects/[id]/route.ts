@@ -4,8 +4,11 @@
  * DELETE /api/admin/projects/[id]  — Soft delete
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -148,6 +151,13 @@ export async function PATCH(req: Request, { params }: Params) {
       select: PROJECT_FULL_SELECT,
     })
 
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
+    revalidatePath(`${ROUTES.admin.projects}/${id}`)
+    revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+
     return NextResponse.json({ success: true, data: project })
   } catch (err) {
     logger.error('[admin-project-patch] Error', {
@@ -180,6 +190,13 @@ export async function DELETE(req: Request, { params }: Params) {
         isActive: false,
       },
     })
+
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.admin.trash)
+    revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
 
     return NextResponse.json({ success: true, message: 'Proyecto eliminado' })
   } catch (err) {

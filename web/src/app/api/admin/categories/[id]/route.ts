@@ -4,8 +4,11 @@
  * DELETE /api/admin/categories/[id]  — Soft delete
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -120,6 +123,11 @@ export async function PATCH(req: Request, { params }: Params) {
       select: CATEGORY_FULL_SELECT,
     })
 
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.categories)
+    revalidatePath(ROUTES.admin.projects)
+    revalidateTag(CACHE_TAGS.categories, 'max')
+
     return NextResponse.json({ success: true, data: category })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
@@ -142,6 +150,11 @@ export async function DELETE(req: Request, { params }: Params) {
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.categories)
+    revalidatePath(ROUTES.admin.projects)
+    revalidateTag(CACHE_TAGS.categories, 'max')
 
     return NextResponse.json({ success: true, message: 'Categoría eliminada' })
   } catch (err) {

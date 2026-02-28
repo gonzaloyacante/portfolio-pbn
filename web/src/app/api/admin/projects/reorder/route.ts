@@ -4,8 +4,11 @@
  * Body: { items: [{ id: string, sortOrder: number }] }
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -32,6 +35,12 @@ export async function POST(req: Request) {
         })
       )
     )
+
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.home, 'layout')
+    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
 
     return NextResponse.json({ success: true, message: 'Orden actualizado' })
   } catch (err) {

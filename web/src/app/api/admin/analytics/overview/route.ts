@@ -27,6 +27,8 @@ export async function GET(req: Request) {
       totalTestimonials,
       newContacts,
       pendingBookings,
+      pendingTestimonials,
+      trashCount,
       pageViews30d,
     ] = await Promise.all([
       prisma.project.count({ where: { deletedAt: null } }),
@@ -37,6 +39,18 @@ export async function GET(req: Request) {
       prisma.booking.count({
         where: { status: 'PENDING', deletedAt: null },
       }),
+      prisma.testimonial.count({
+        where: { status: 'PENDING', deletedAt: null },
+      }),
+      // Total de elementos en la papelera (soft-deleted)
+      Promise.all([
+        prisma.project.count({ where: { deletedAt: { not: null } } }),
+        prisma.category.count({ where: { deletedAt: { not: null } } }),
+        prisma.service.count({ where: { deletedAt: { not: null } } }),
+        prisma.testimonial.count({ where: { deletedAt: { not: null } } }),
+        prisma.contact.count({ where: { deletedAt: { not: null } } }),
+        prisma.booking.count({ where: { deletedAt: { not: null } } }),
+      ]).then((counts) => counts.reduce((a, b) => a + b, 0)),
       prisma.analyticLog.count({
         where: { timestamp: { gte: thirtyDaysAgo } },
       }),
@@ -51,6 +65,8 @@ export async function GET(req: Request) {
         totalTestimonials,
         newContacts,
         pendingBookings,
+        pendingTestimonials,
+        trashCount,
         pageViews30d,
       },
     })

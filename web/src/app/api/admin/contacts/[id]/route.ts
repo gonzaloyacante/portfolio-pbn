@@ -4,8 +4,10 @@
  * DELETE /api/admin/contacts/[id]  — Soft delete
  */
 
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -115,6 +117,8 @@ export async function PATCH(req: Request, { params }: Params) {
       select: CONTACT_DETAIL_SELECT,
     })
 
+    revalidatePath(ROUTES.admin.contacts)
+
     return NextResponse.json({ success: true, data: updated })
   } catch (err) {
     logger.error('[admin-contact-patch] Error', {
@@ -140,6 +144,8 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     await prisma.contact.update({ where: { id }, data: { deletedAt: new Date() } })
+
+    revalidatePath(ROUTES.admin.contacts)
 
     return NextResponse.json({ success: true, message: 'Contacto eliminado' })
   } catch (err) {

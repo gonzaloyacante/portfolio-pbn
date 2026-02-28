@@ -4,8 +4,11 @@
  * DELETE /api/admin/services/[id]  — Soft delete
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -146,6 +149,10 @@ export async function PATCH(req: Request, { params }: Params) {
       select: SERVICE_FULL_SELECT,
     })
 
+    revalidatePath(ROUTES.admin.services)
+    revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
+
     return NextResponse.json({ success: true, data: service })
   } catch (err) {
     logger.error('[admin-service-patch] Error', {
@@ -168,6 +175,10 @@ export async function DELETE(req: Request, { params }: Params) {
       where: { id },
       data: { deletedAt: new Date() },
     })
+
+    revalidatePath(ROUTES.admin.services)
+    revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
 
     return NextResponse.json({ success: true, message: 'Servicio eliminado' })
   } catch (err) {

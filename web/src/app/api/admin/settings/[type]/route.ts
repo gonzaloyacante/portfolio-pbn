@@ -1,5 +1,8 @@
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -92,6 +95,47 @@ export async function PATCH(
   try {
     const body = (await req.json()) as Record<string, unknown>
     const settings = await upsertSettings(type, body)
+
+    // Invalidate caches by settings type
+    switch (type) {
+      case 'home':
+        revalidatePath(ROUTES.home)
+        revalidateTag(CACHE_TAGS.homeSettings, 'max')
+        break
+      case 'about':
+        revalidatePath(ROUTES.public.about)
+        revalidateTag(CACHE_TAGS.aboutSettings, 'max')
+        break
+      case 'contact':
+        revalidatePath(ROUTES.public.contact)
+        revalidateTag(CACHE_TAGS.contactSettings, 'max')
+        break
+      case 'theme':
+        revalidatePath(ROUTES.home, 'layout')
+        revalidateTag(CACHE_TAGS.themeSettings, 'max')
+        break
+      case 'site':
+        revalidatePath('/')
+        revalidateTag(CACHE_TAGS.siteSettings, 'max')
+        break
+      case 'project':
+        revalidatePath(ROUTES.home)
+        revalidatePath(ROUTES.public.projects)
+        revalidatePath(ROUTES.admin.projects)
+        revalidateTag(CACHE_TAGS.projectSettings, 'max')
+        break
+      case 'testimonial':
+        revalidatePath(ROUTES.home)
+        revalidatePath(ROUTES.public.about)
+        revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
+        break
+      case 'category':
+        revalidatePath(ROUTES.public.projects)
+        revalidatePath(ROUTES.admin.categories)
+        revalidateTag(CACHE_TAGS.categorySettings, 'max')
+        break
+    }
+
     return NextResponse.json({ success: true, data: settings })
   } catch (error) {
     logger.error(`[settings/${type}] PATCH error`, { error })

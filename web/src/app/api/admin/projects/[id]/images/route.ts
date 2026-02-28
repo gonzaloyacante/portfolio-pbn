@@ -2,9 +2,12 @@
  * POST  /api/admin/projects/[id]/images  — Agregar imagen a un proyecto
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -78,6 +81,10 @@ export async function POST(req: Request, { params }: Params) {
       },
       select: { id: true, url: true, publicId: true, order: true, alt: true, isCover: true },
     })
+
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(`${ROUTES.admin.projects}/${id}`)
+    revalidateTag(CACHE_TAGS.projects, 'max')
 
     return NextResponse.json({ success: true, data: image }, { status: 201 })
   } catch (err) {

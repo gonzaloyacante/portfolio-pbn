@@ -4,8 +4,11 @@
  * DELETE /api/admin/testimonials/[id]  — Eliminar (soft delete)
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -137,6 +140,11 @@ export async function PATCH(req: Request, { params }: Params) {
       select: TESTIMONIAL_DETAIL_SELECT,
     })
 
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.admin.testimonials)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
+
     return NextResponse.json({ success: true, data: updated })
   } catch (err) {
     logger.error('[admin-testimonial-patch] Error', {
@@ -165,6 +173,10 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     await prisma.testimonial.update({ where: { id }, data: { deletedAt: new Date() } })
+
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
 
     return NextResponse.json({ success: true, message: 'Testimonio eliminado' })
   } catch (err) {

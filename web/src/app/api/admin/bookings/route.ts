@@ -3,8 +3,10 @@
  * POST /api/admin/bookings  — Crear reserva manual
  */
 
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -130,6 +132,8 @@ export async function POST(req: Request) {
       },
       select: BOOKING_SELECT,
     })
+
+    revalidatePath(ROUTES.admin.calendar)
 
     return NextResponse.json({
       success: true,

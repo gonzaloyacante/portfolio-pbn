@@ -2,8 +2,11 @@
  * DELETE /api/admin/projects/[id]/images/[imageId]  — Eliminar imagen de un proyecto
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { deleteImage } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
@@ -31,6 +34,10 @@ export async function DELETE(req: Request, { params }: Params) {
 
     // Eliminar de DB primero
     await prisma.projectImage.delete({ where: { id: imageId } })
+
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(`${ROUTES.admin.projects}/${id}`)
+    revalidateTag(CACHE_TAGS.projects, 'max')
 
     // Eliminar de Cloudinary (no bloqueante — si falla no afecta la respuesta)
     if (image.publicId) {

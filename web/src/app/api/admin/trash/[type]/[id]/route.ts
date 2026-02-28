@@ -1,5 +1,8 @@
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -31,6 +34,42 @@ async function purgeItem(type: TrashType, id: string) {
   return model.delete({ where: { id } })
 }
 
+/** Invalidate caches for the given entity type */
+function revalidateForType(type: TrashType) {
+  revalidatePath(ROUTES.admin.trash)
+  switch (type) {
+    case 'project':
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.projects)
+      revalidatePath(ROUTES.home, 'layout')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+      break
+    case 'category':
+      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.admin.categories)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+      break
+    case 'service':
+      revalidatePath(ROUTES.public.services)
+      revalidatePath(ROUTES.admin.services)
+      revalidateTag(CACHE_TAGS.services, 'max')
+      break
+    case 'testimonial':
+      revalidatePath(ROUTES.home)
+      revalidatePath(ROUTES.public.about)
+      revalidatePath(ROUTES.admin.testimonials)
+      revalidateTag(CACHE_TAGS.testimonials, 'max')
+      break
+    case 'contact':
+      revalidatePath(ROUTES.admin.contacts)
+      break
+    case 'booking':
+      revalidatePath(ROUTES.admin.calendar)
+      break
+  }
+}
+
 // ── PATCH /api/admin/trash/[type]/[id] — Restaurar ───────────────────────────
 export async function PATCH(
   req: Request,
@@ -52,6 +91,7 @@ export async function PATCH(
         { status: 404 }
       )
     }
+    revalidateForType(type)
     return NextResponse.json({ success: true, data: item })
   } catch (error) {
     logger.error(`[trash] PATCH ${type}/${id} error`, { error })
@@ -80,6 +120,7 @@ export async function DELETE(
         { status: 404 }
       )
     }
+    revalidateForType(type)
     return NextResponse.json({ success: true })
   } catch (error) {
     logger.error(`[trash] DELETE ${type}/${id} error`, { error })

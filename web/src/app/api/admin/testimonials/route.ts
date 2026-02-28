@@ -3,8 +3,11 @@
  * POST  /api/admin/testimonials  — Crear testimonio
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -148,6 +151,10 @@ export async function POST(req: Request) {
       },
       select: TESTIMONIAL_SELECT,
     })
+
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
 
     return NextResponse.json({ success: true, data: testimonial }, { status: 201 })
   } catch (err) {

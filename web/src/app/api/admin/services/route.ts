@@ -3,8 +3,11 @@
  * POST  /api/admin/services  — Crear servicio
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -149,6 +152,10 @@ export async function POST(req: Request) {
       },
       select: SERVICE_SELECT,
     })
+
+    revalidatePath(ROUTES.admin.services)
+    revalidatePath(ROUTES.public.services)
+    revalidateTag(CACHE_TAGS.services, 'max')
 
     return NextResponse.json({ success: true, data: service }, { status: 201 })
   } catch (err) {

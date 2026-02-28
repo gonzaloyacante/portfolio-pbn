@@ -4,8 +4,10 @@
  * DELETE /api/admin/bookings/[id]  — Soft delete
  */
 
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -134,6 +136,8 @@ export async function PATCH(req: Request, { params }: Params) {
       select: BOOKING_DETAIL_SELECT,
     })
 
+    revalidatePath(ROUTES.admin.calendar)
+
     return NextResponse.json({
       success: true,
       data: {
@@ -166,6 +170,8 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     await prisma.booking.update({ where: { id }, data: { deletedAt: new Date() } })
+
+    revalidatePath(ROUTES.admin.calendar)
 
     return NextResponse.json({ success: true, message: 'Reserva eliminada' })
   } catch (err) {

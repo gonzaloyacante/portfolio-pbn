@@ -3,8 +3,11 @@
  * POST  /api/admin/categories  — Crear categoría
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -123,6 +126,10 @@ export async function POST(req: Request) {
       },
       select: CATEGORY_SELECT,
     })
+
+    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.admin.categories)
+    revalidateTag(CACHE_TAGS.categories, 'max')
 
     return NextResponse.json({ success: true, data: category }, { status: 201 })
   } catch (err) {
