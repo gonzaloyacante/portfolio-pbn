@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/router/route_names.dart';
@@ -6,6 +7,7 @@ import '../../core/theme/app_breakpoints.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../features/dashboard/providers/dashboard_provider.dart';
 
 // ── NavItem ───────────────────────────────────────────────────────────────────
 
@@ -356,11 +358,21 @@ class _CompactScaffoldState extends State<_CompactScaffold> {
 
 /// NavigationRail para breakpoint medium (600-839px).
 /// Muestra íconos con tooltip y resalta la sección activa.
-class _AppNavigationRail extends StatelessWidget {
+/// Incluye badges con contadores para Contactos y Agenda.
+class _AppNavigationRail extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final currentRoute = GoRouterState.of(context).name ?? '';
+
+    // Badge counts
+    final stats = ref.watch(dashboardStatsProvider).value;
+    final badgeCounts = <String, int>{
+      if (stats != null && stats.newContacts > 0)
+        RouteNames.contacts: stats.newContacts,
+      if (stats != null && stats.pendingBookings > 0)
+        RouteNames.calendar: stats.pendingBookings,
+    };
 
     // Índice activo entre todos los items
     final activeIndex = _allNavItems.indexWhere(
@@ -413,20 +425,33 @@ class _AppNavigationRail extends StatelessWidget {
       ),
       destinations: _allNavItems
           .map(
-            (item) => NavigationRailDestination(
-              icon: Tooltip(
-                message: item.label,
-                preferBelow: false,
-                child: Icon(item.icon),
-              ),
-              selectedIcon: Tooltip(
-                message: item.label,
-                preferBelow: false,
-                child: Icon(item.selectedIcon),
-              ),
-              label: Text(item.label),
-              padding: const EdgeInsets.symmetric(vertical: 2),
-            ),
+            (item) {
+              final count = badgeCounts[item.routeName] ?? 0;
+              return NavigationRailDestination(
+                icon: Tooltip(
+                  message: item.label,
+                  preferBelow: false,
+                  child: count > 0
+                      ? Badge.count(
+                          count: count,
+                          child: Icon(item.icon),
+                        )
+                      : Icon(item.icon),
+                ),
+                selectedIcon: Tooltip(
+                  message: item.label,
+                  preferBelow: false,
+                  child: count > 0
+                      ? Badge.count(
+                          count: count,
+                          child: Icon(item.selectedIcon),
+                        )
+                      : Icon(item.selectedIcon),
+                ),
+                label: Text(item.label),
+                padding: const EdgeInsets.symmetric(vertical: 2),
+              );
+            },
           )
           .toList(),
       onDestinationSelected: (index) {
@@ -442,15 +467,27 @@ class _AppNavigationRail extends StatelessWidget {
 /// Drawer lateral de administración.
 /// En expanded (≥840px) se usa como NavigationDrawer fijo; en compact/medium
 /// como Drawer deslizable o botón en modal.
-class AppDrawer extends StatelessWidget {
+///
+/// Muestra badges con contadores para Contactos (no leídos) y Agenda
+/// (reservas pendientes) usando datos del [dashboardStatsProvider].
+class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final currentRoute = GoRouterState.of(context).name ?? '';
     final isExpanded = AppBreakpoints.isExpanded(context);
+
+    // Badge counts — silently 0 if data isn't loaded yet
+    final stats = ref.watch(dashboardStatsProvider).value;
+    final badgeCounts = <String, int>{
+      if (stats != null && stats.newContacts > 0)
+        RouteNames.contacts: stats.newContacts,
+      if (stats != null && stats.pendingBookings > 0)
+        RouteNames.calendar: stats.pendingBookings,
+    };
 
     final content = Container(
       width: AppBreakpoints.drawerWidth,
@@ -476,6 +513,7 @@ class AppDrawer extends StatelessWidget {
                     items: _allNavItems.sublist(0, 8),
                     currentRoute: currentRoute,
                     isExpanded: isExpanded,
+                    badgeCounts: badgeCounts,
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _SectionLabel(label: 'CONFIGURACIÓN'),
@@ -484,6 +522,7 @@ class AppDrawer extends StatelessWidget {
                     items: _allNavItems.sublist(8),
                     currentRoute: currentRoute,
                     isExpanded: isExpanded,
+                    badgeCounts: badgeCounts,
                   ),
                 ],
               ),
@@ -503,6 +542,7 @@ class AppDrawer extends StatelessWidget {
     required List<_NavItem> items,
     required String currentRoute,
     required bool isExpanded,
+    required Map<String, int> badgeCounts,
   }) {
     return items.map((item) {
       final isSelected = item.routeName == currentRoute;
@@ -510,6 +550,7 @@ class AppDrawer extends StatelessWidget {
         item: item,
         isSelected: isSelected,
         isExpanded: isExpanded,
+        badgeCount: badgeCounts[item.routeName] ?? 0,
         onTap: () {
           if (!isExpanded) Navigator.of(context).pop();
           context.goNamed(item.routeName);
@@ -645,12 +686,14 @@ class _DrawerNavItem extends StatelessWidget {
     required this.isSelected,
     required this.isExpanded,
     required this.onTap,
+    this.badgeCount = 0,
   });
 
   final _NavItem item;
   final bool isSelected;
   final bool isExpanded;
   final VoidCallback onTap;
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -673,6 +716,23 @@ class _DrawerNavItem extends StatelessWidget {
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
       ),
+      trailing: badgeCount > 0
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                badgeCount > 99 ? '99+' : badgeCount.toString(),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                ),
+              ),
+            )
+          : null,
       onTap: onTap,
     );
   }
