@@ -8,6 +8,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import 'widgets/page_views_chart.dart';
 import 'widgets/bookings_bar_chart.dart';
+import 'widgets/alerts_section.dart';
+import 'widgets/quick_actions.dart';
 import '../../../shared/widgets/adaptive_grid.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -67,6 +69,22 @@ class _DashboardContent extends StatelessWidget {
 
     return CustomScrollView(
       slivers: [
+        // ── Sección: Alertas ─────────────────────────────────────────────
+        SliverPadding(
+          padding: padding.copyWith(bottom: AppSpacing.sm),
+          sliver: SliverToBoxAdapter(
+            child: AlertsSection(stats: stats),
+          ),
+        ),
+
+        // ── Sección: Acciones rápidas ────────────────────────────────────
+        SliverPadding(
+          padding: padding.copyWith(top: 0, bottom: AppSpacing.md),
+          sliver: const SliverToBoxAdapter(
+            child: QuickActions(),
+          ),
+        ),
+
         // ── Sección: Resumen ─────────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(bottom: AppSpacing.sm),
