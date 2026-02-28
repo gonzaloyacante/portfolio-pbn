@@ -62,7 +62,9 @@ class ConnectivityInterceptor extends Interceptor {
     // En algunas plataformas `checkConnectivity()` puede devolver
     // `List<ConnectivityResult>`. Normalizar a un único ConnectivityResult.
     final List<ConnectivityResult> resultList = result;
-    final normalized = resultList.isNotEmpty ? resultList.first : ConnectivityResult.none;
+    final normalized = resultList.isNotEmpty
+        ? resultList.first
+        : ConnectivityResult.none;
     final isOffline = normalized == ConnectivityResult.none;
 
     if (isOffline) {

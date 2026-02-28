@@ -156,10 +156,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             title: 'Colores — Modo claro',
             fields: [
               ColorField(controller: _primaryCtrl, label: 'Color primario'),
-              ColorField(
-                controller: _secondaryCtrl,
-                label: 'Color secundario',
-              ),
+              ColorField(controller: _secondaryCtrl, label: 'Color secundario'),
               ColorField(controller: _bgCtrl, label: 'Fondo'),
             ],
           ),

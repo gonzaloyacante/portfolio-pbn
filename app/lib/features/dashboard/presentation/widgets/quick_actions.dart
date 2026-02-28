@@ -69,9 +69,9 @@ class _QuickActionButton extends StatelessWidget {
     return ActionChip(
       avatar: Icon(icon, size: 18, color: color),
       label: Text(label),
-      labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
+      labelStyle: Theme.of(
+        context,
+      ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
       side: BorderSide(color: colorScheme.outlineVariant),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.card),

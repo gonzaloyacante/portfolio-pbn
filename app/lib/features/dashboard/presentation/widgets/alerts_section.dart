@@ -39,39 +39,51 @@ class AlertsSection extends StatelessWidget {
     final items = <Widget>[];
 
     if (stats.newContacts > 0) {
-      items.add(_AlertChip(
-        icon: Icons.mail_outline_rounded,
-        label: '${stats.newContacts} contacto${stats.newContacts == 1 ? '' : 's'} sin leer',
-        color: AppColors.darkPrimary,
-        onTap: () => context.goNamed(RouteNames.contacts),
-      ));
+      items.add(
+        _AlertChip(
+          icon: Icons.mail_outline_rounded,
+          label:
+              '${stats.newContacts} contacto${stats.newContacts == 1 ? '' : 's'} sin leer',
+          color: AppColors.darkPrimary,
+          onTap: () => context.goNamed(RouteNames.contacts),
+        ),
+      );
     }
 
     if (stats.pendingTestimonials > 0) {
-      items.add(_AlertChip(
-        icon: Icons.format_quote_outlined,
-        label: '${stats.pendingTestimonials} testimonio${stats.pendingTestimonials == 1 ? '' : 's'} pendiente${stats.pendingTestimonials == 1 ? '' : 's'}',
-        color: AppColors.warning,
-        onTap: () => context.goNamed(RouteNames.testimonials),
-      ));
+      items.add(
+        _AlertChip(
+          icon: Icons.format_quote_outlined,
+          label:
+              '${stats.pendingTestimonials} testimonio${stats.pendingTestimonials == 1 ? '' : 's'} pendiente${stats.pendingTestimonials == 1 ? '' : 's'}',
+          color: AppColors.warning,
+          onTap: () => context.goNamed(RouteNames.testimonials),
+        ),
+      );
     }
 
     if (stats.pendingBookings > 0) {
-      items.add(_AlertChip(
-        icon: Icons.calendar_month_outlined,
-        label: '${stats.pendingBookings} reserva${stats.pendingBookings == 1 ? '' : 's'} pendiente${stats.pendingBookings == 1 ? '' : 's'}',
-        color: AppColors.warning,
-        onTap: () => context.goNamed(RouteNames.calendar),
-      ));
+      items.add(
+        _AlertChip(
+          icon: Icons.calendar_month_outlined,
+          label:
+              '${stats.pendingBookings} reserva${stats.pendingBookings == 1 ? '' : 's'} pendiente${stats.pendingBookings == 1 ? '' : 's'}',
+          color: AppColors.warning,
+          onTap: () => context.goNamed(RouteNames.calendar),
+        ),
+      );
     }
 
     if (stats.trashCount > 0) {
-      items.add(_AlertChip(
-        icon: Icons.delete_outline_rounded,
-        label: '${stats.trashCount} elemento${stats.trashCount == 1 ? '' : 's'} en papelera',
-        color: AppColors.destructive,
-        onTap: () => context.goNamed(RouteNames.trash),
-      ));
+      items.add(
+        _AlertChip(
+          icon: Icons.delete_outline_rounded,
+          label:
+              '${stats.trashCount} elemento${stats.trashCount == 1 ? '' : 's'} en papelera',
+          color: AppColors.destructive,
+          onTap: () => context.goNamed(RouteNames.trash),
+        ),
+      );
     }
 
     return items;
@@ -115,9 +127,9 @@ class _AlertChip extends StatelessWidget {
                 child: Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),

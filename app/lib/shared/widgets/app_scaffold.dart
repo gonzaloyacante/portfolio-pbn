@@ -423,37 +423,27 @@ class _AppNavigationRail extends ConsumerWidget {
           ),
         ),
       ),
-      destinations: _allNavItems
-          .map(
-            (item) {
-              final count = badgeCounts[item.routeName] ?? 0;
-              return NavigationRailDestination(
-                icon: Tooltip(
-                  message: item.label,
-                  preferBelow: false,
-                  child: count > 0
-                      ? Badge.count(
-                          count: count,
-                          child: Icon(item.icon),
-                        )
-                      : Icon(item.icon),
-                ),
-                selectedIcon: Tooltip(
-                  message: item.label,
-                  preferBelow: false,
-                  child: count > 0
-                      ? Badge.count(
-                          count: count,
-                          child: Icon(item.selectedIcon),
-                        )
-                      : Icon(item.selectedIcon),
-                ),
-                label: Text(item.label),
-                padding: const EdgeInsets.symmetric(vertical: 2),
-              );
-            },
-          )
-          .toList(),
+      destinations: _allNavItems.map((item) {
+        final count = badgeCounts[item.routeName] ?? 0;
+        return NavigationRailDestination(
+          icon: Tooltip(
+            message: item.label,
+            preferBelow: false,
+            child: count > 0
+                ? Badge.count(count: count, child: Icon(item.icon))
+                : Icon(item.icon),
+          ),
+          selectedIcon: Tooltip(
+            message: item.label,
+            preferBelow: false,
+            child: count > 0
+                ? Badge.count(count: count, child: Icon(item.selectedIcon))
+                : Icon(item.selectedIcon),
+          ),
+          label: Text(item.label),
+          padding: const EdgeInsets.symmetric(vertical: 2),
+        );
+      }).toList(),
       onDestinationSelected: (index) {
         context.goNamed(_allNavItems[index].routeName);
       },

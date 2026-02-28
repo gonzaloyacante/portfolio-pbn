@@ -18,7 +18,9 @@ Stream<ConnectivityResult> connectivity(Ref ref) {
   // The `connectivity_plus` package may provide a stream of
   // `List<ConnectivityResult>` on some platforms; treat the event as a
   // `List<ConnectivityResult>` and map to a single `ConnectivityResult`.
-  return Connectivity().onConnectivityChanged.map((List<ConnectivityResult> event) {
+  return Connectivity().onConnectivityChanged.map((
+    List<ConnectivityResult> event,
+  ) {
     return event.isNotEmpty ? event.first : ConnectivityResult.none;
   });
 }

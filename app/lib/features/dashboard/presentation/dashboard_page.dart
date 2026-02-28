@@ -72,17 +72,13 @@ class _DashboardContent extends StatelessWidget {
         // ── Sección: Alertas ─────────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(bottom: AppSpacing.sm),
-          sliver: SliverToBoxAdapter(
-            child: AlertsSection(stats: stats),
-          ),
+          sliver: SliverToBoxAdapter(child: AlertsSection(stats: stats)),
         ),
 
         // ── Sección: Acciones rápidas ────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(top: 0, bottom: AppSpacing.md),
-          sliver: const SliverToBoxAdapter(
-            child: QuickActions(),
-          ),
+          sliver: const SliverToBoxAdapter(child: QuickActions()),
         ),
 
         // ── Sección: Resumen ─────────────────────────────────────────────

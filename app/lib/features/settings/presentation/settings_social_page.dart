@@ -12,12 +12,42 @@ class SettingsSocialPage extends ConsumerWidget {
   const SettingsSocialPage({super.key});
 
   static const _kPlatforms = [
-    ('Instagram', 'instagram', Icons.photo_camera_outlined, 'https://instagram.com/tu_usuario'),
-    ('TikTok', 'tiktok', Icons.music_note_outlined, 'https://tiktok.com/@tu_usuario'),
-    ('YouTube', 'youtube', Icons.play_circle_outlined, 'https://youtube.com/@tu_canal'),
-    ('WhatsApp', 'whatsapp', Icons.chat_outlined, 'https://wa.me/549XXXXXXXXXX'),
-    ('LinkedIn', 'linkedin', Icons.work_outline, 'https://linkedin.com/in/tu_perfil'),
-    ('Facebook', 'facebook', Icons.facebook_outlined, 'https://facebook.com/tu_pagina'),
+    (
+      'Instagram',
+      'instagram',
+      Icons.photo_camera_outlined,
+      'https://instagram.com/tu_usuario',
+    ),
+    (
+      'TikTok',
+      'tiktok',
+      Icons.music_note_outlined,
+      'https://tiktok.com/@tu_usuario',
+    ),
+    (
+      'YouTube',
+      'youtube',
+      Icons.play_circle_outlined,
+      'https://youtube.com/@tu_canal',
+    ),
+    (
+      'WhatsApp',
+      'whatsapp',
+      Icons.chat_outlined,
+      'https://wa.me/549XXXXXXXXXX',
+    ),
+    (
+      'LinkedIn',
+      'linkedin',
+      Icons.work_outline,
+      'https://linkedin.com/in/tu_perfil',
+    ),
+    (
+      'Facebook',
+      'facebook',
+      Icons.facebook_outlined,
+      'https://facebook.com/tu_pagina',
+    ),
   ];
 
   @override
