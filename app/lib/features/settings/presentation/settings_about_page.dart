@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -155,19 +156,11 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
       });
 
       ref.invalidate(aboutSettingsProvider);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Configuración guardada')));
-      }
+      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No fue posible guardar. Intenta de nuevo.'),
-          ),
-        );
+        AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);

@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'package:go_router/go_router.dart';
+
+import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -70,21 +74,11 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
         'showSocialLinks': _showSocialLinks,
       });
       ref.invalidate(contactSettingsProvider);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Configuración guardada')));
-      }
+      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -220,16 +214,42 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: SwitchListTile(
-                  title: const Text('Mostrar redes sociales'),
-                  subtitle: const Text(
-                    'Muestra iconos de redes en la página de contacto',
-                  ),
-                  value: _showSocialLinks,
-                  onChanged: (v) => setState(() => _showSocialLinks = v),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      title: const Text('Mostrar redes sociales'),
+                      subtitle: const Text(
+                        'Muestra iconos de redes en la página de contacto',
+                      ),
+                      value: _showSocialLinks,
+                      onChanged: (v) => setState(() => _showSocialLinks = v),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      leading: const Icon(Icons.share_outlined, size: 20),
+                      title: const Text('Administrar redes sociales'),
+                      subtitle: const Text(
+                        'Activar o desactivar cada red individualmente',
+                      ),
+                      trailing: const Icon(
+                        Icons.chevron_right_rounded,
+                        size: 20,
+                      ),
+                      onTap: () => context.pushNamed(RouteNames.settingsSocial),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),

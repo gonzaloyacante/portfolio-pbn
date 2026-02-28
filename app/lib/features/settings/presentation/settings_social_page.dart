@@ -5,6 +5,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -59,12 +60,6 @@ class SettingsSocialPage extends ConsumerWidget {
 
     return AppScaffold(
       title: 'Redes Sociales',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: () => ref.invalidate(socialLinksProvider),
-        ),
-      ],
       body: async.when(
         loading: () => ListView.separated(
           padding: AppBreakpoints.pagePadding(context),
@@ -167,20 +162,12 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
       widget.onSaved();
       if (mounted) {
         setState(() => _expanded = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${widget.platform} guardado')));
+        AppSnackBar.success(context, '${widget.platform} guardado');
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);

@@ -19,6 +19,7 @@ import '../../features/calendar/presentation/booking_form_page.dart';
 import '../../features/calendar/presentation/calendar_page.dart';
 import '../../features/contacts/presentation/contact_detail_page.dart';
 import '../../features/contacts/presentation/contacts_list_page.dart';
+import '../../features/settings/presentation/settings_home_page.dart';
 import '../../features/settings/presentation/settings_about_page.dart';
 import '../../features/settings/presentation/settings_contact_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
@@ -287,6 +288,12 @@ final List<RouteBase> _routes = [
     name: RouteNames.settings,
     pageBuilder: (context, state) =>
         _fadePage(state: state, child: const SettingsPage()),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsHome,
+    name: RouteNames.settingsHome,
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsHomePage()),
   ),
   GoRoute(
     path: RoutePaths.settingsAbout,

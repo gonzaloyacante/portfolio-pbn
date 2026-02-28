@@ -25,7 +25,9 @@ class AppColors {
   static const Color darkSecondary = Color(0xFF881337);
   static const Color darkMuted = Color(0xFF2A1015);
   static const Color darkAccent = Color(0xFF2A1015);
-  static const Color darkBorder = Color(0xFF2A1015);
+  static const Color darkBorder = Color(
+    0xFF4A1E28,
+  ); // separación visible en dark mode
 
   // ── Semánticos (igual en ambos modos) ────────────────────────────────────
   // ── Colores de categorías de entidades ─────────────────────────────────────

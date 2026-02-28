@@ -164,6 +164,40 @@ Map<String, dynamic> _$SiteSettingsToJson(_SiteSettings instance) =>
       'isActive': instance.isActive,
     };
 
+_HomeSettings _$HomeSettingsFromJson(Map<String, dynamic> json) =>
+    _HomeSettings(
+      id: json['id'] as String?,
+      heroTitle1Text: json['heroTitle1Text'] as String?,
+      heroTitle2Text: json['heroTitle2Text'] as String?,
+      ownerNameText: json['ownerNameText'] as String?,
+      heroMainImageUrl: json['heroMainImageUrl'] as String?,
+      heroMainImageAlt: json['heroMainImageAlt'] as String?,
+      ctaText: json['ctaText'] as String?,
+      ctaLink: json['ctaLink'] as String?,
+      showFeaturedProjects: json['showFeaturedProjects'] as bool? ?? true,
+      featuredTitle: json['featuredTitle'] as String?,
+      featuredCount: (json['featuredCount'] as num?)?.toInt() ?? 3,
+      illustrationUrl: json['illustrationUrl'] as String?,
+      isActive: json['isActive'] as bool? ?? true,
+    );
+
+Map<String, dynamic> _$HomeSettingsToJson(_HomeSettings instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'heroTitle1Text': instance.heroTitle1Text,
+      'heroTitle2Text': instance.heroTitle2Text,
+      'ownerNameText': instance.ownerNameText,
+      'heroMainImageUrl': instance.heroMainImageUrl,
+      'heroMainImageAlt': instance.heroMainImageAlt,
+      'ctaText': instance.ctaText,
+      'ctaLink': instance.ctaLink,
+      'showFeaturedProjects': instance.showFeaturedProjects,
+      'featuredTitle': instance.featuredTitle,
+      'featuredCount': instance.featuredCount,
+      'illustrationUrl': instance.illustrationUrl,
+      'isActive': instance.isActive,
+    };
+
 _SocialLink _$SocialLinkFromJson(Map<String, dynamic> json) => _SocialLink(
   id: json['id'] as String,
   platform: json['platform'] as String,

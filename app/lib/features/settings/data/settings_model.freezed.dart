@@ -1239,6 +1239,305 @@ as bool,
 
 
 /// @nodoc
+mixin _$HomeSettings {
+
+ String? get id; String? get heroTitle1Text; String? get heroTitle2Text; String? get ownerNameText; String? get heroMainImageUrl; String? get heroMainImageAlt; String? get ctaText; String? get ctaLink; bool get showFeaturedProjects; String? get featuredTitle; int get featuredCount; String? get illustrationUrl; bool get isActive;
+/// Create a copy of HomeSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$HomeSettingsCopyWith<HomeSettings> get copyWith => _$HomeSettingsCopyWithImpl<HomeSettings>(this as HomeSettings, _$identity);
+
+  /// Serializes this HomeSettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.heroTitle1Text, heroTitle1Text) || other.heroTitle1Text == heroTitle1Text)&&(identical(other.heroTitle2Text, heroTitle2Text) || other.heroTitle2Text == heroTitle2Text)&&(identical(other.ownerNameText, ownerNameText) || other.ownerNameText == ownerNameText)&&(identical(other.heroMainImageUrl, heroMainImageUrl) || other.heroMainImageUrl == heroMainImageUrl)&&(identical(other.heroMainImageAlt, heroMainImageAlt) || other.heroMainImageAlt == heroMainImageAlt)&&(identical(other.ctaText, ctaText) || other.ctaText == ctaText)&&(identical(other.ctaLink, ctaLink) || other.ctaLink == ctaLink)&&(identical(other.showFeaturedProjects, showFeaturedProjects) || other.showFeaturedProjects == showFeaturedProjects)&&(identical(other.featuredTitle, featuredTitle) || other.featuredTitle == featuredTitle)&&(identical(other.featuredCount, featuredCount) || other.featuredCount == featuredCount)&&(identical(other.illustrationUrl, illustrationUrl) || other.illustrationUrl == illustrationUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,heroTitle1Text,heroTitle2Text,ownerNameText,heroMainImageUrl,heroMainImageAlt,ctaText,ctaLink,showFeaturedProjects,featuredTitle,featuredCount,illustrationUrl,isActive);
+
+@override
+String toString() {
+  return 'HomeSettings(id: $id, heroTitle1Text: $heroTitle1Text, heroTitle2Text: $heroTitle2Text, ownerNameText: $ownerNameText, heroMainImageUrl: $heroMainImageUrl, heroMainImageAlt: $heroMainImageAlt, ctaText: $ctaText, ctaLink: $ctaLink, showFeaturedProjects: $showFeaturedProjects, featuredTitle: $featuredTitle, featuredCount: $featuredCount, illustrationUrl: $illustrationUrl, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $HomeSettingsCopyWith<$Res>  {
+  factory $HomeSettingsCopyWith(HomeSettings value, $Res Function(HomeSettings) _then) = _$HomeSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String? id, String? heroTitle1Text, String? heroTitle2Text, String? ownerNameText, String? heroMainImageUrl, String? heroMainImageAlt, String? ctaText, String? ctaLink, bool showFeaturedProjects, String? featuredTitle, int featuredCount, String? illustrationUrl, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class _$HomeSettingsCopyWithImpl<$Res>
+    implements $HomeSettingsCopyWith<$Res> {
+  _$HomeSettingsCopyWithImpl(this._self, this._then);
+
+  final HomeSettings _self;
+  final $Res Function(HomeSettings) _then;
+
+/// Create a copy of HomeSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? heroTitle1Text = freezed,Object? heroTitle2Text = freezed,Object? ownerNameText = freezed,Object? heroMainImageUrl = freezed,Object? heroMainImageAlt = freezed,Object? ctaText = freezed,Object? ctaLink = freezed,Object? showFeaturedProjects = null,Object? featuredTitle = freezed,Object? featuredCount = null,Object? illustrationUrl = freezed,Object? isActive = null,}) {
+  return _then(_self.copyWith(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,heroTitle1Text: freezed == heroTitle1Text ? _self.heroTitle1Text : heroTitle1Text // ignore: cast_nullable_to_non_nullable
+as String?,heroTitle2Text: freezed == heroTitle2Text ? _self.heroTitle2Text : heroTitle2Text // ignore: cast_nullable_to_non_nullable
+as String?,ownerNameText: freezed == ownerNameText ? _self.ownerNameText : ownerNameText // ignore: cast_nullable_to_non_nullable
+as String?,heroMainImageUrl: freezed == heroMainImageUrl ? _self.heroMainImageUrl : heroMainImageUrl // ignore: cast_nullable_to_non_nullable
+as String?,heroMainImageAlt: freezed == heroMainImageAlt ? _self.heroMainImageAlt : heroMainImageAlt // ignore: cast_nullable_to_non_nullable
+as String?,ctaText: freezed == ctaText ? _self.ctaText : ctaText // ignore: cast_nullable_to_non_nullable
+as String?,ctaLink: freezed == ctaLink ? _self.ctaLink : ctaLink // ignore: cast_nullable_to_non_nullable
+as String?,showFeaturedProjects: null == showFeaturedProjects ? _self.showFeaturedProjects : showFeaturedProjects // ignore: cast_nullable_to_non_nullable
+as bool,featuredTitle: freezed == featuredTitle ? _self.featuredTitle : featuredTitle // ignore: cast_nullable_to_non_nullable
+as String?,featuredCount: null == featuredCount ? _self.featuredCount : featuredCount // ignore: cast_nullable_to_non_nullable
+as int,illustrationUrl: freezed == illustrationUrl ? _self.illustrationUrl : illustrationUrl // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [HomeSettings].
+extension HomeSettingsPatterns on HomeSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _HomeSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _HomeSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _HomeSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _HomeSettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _HomeSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _HomeSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? heroTitle1Text,  String? heroTitle2Text,  String? ownerNameText,  String? heroMainImageUrl,  String? heroMainImageAlt,  String? ctaText,  String? ctaLink,  bool showFeaturedProjects,  String? featuredTitle,  int featuredCount,  String? illustrationUrl,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _HomeSettings() when $default != null:
+return $default(_that.id,_that.heroTitle1Text,_that.heroTitle2Text,_that.ownerNameText,_that.heroMainImageUrl,_that.heroMainImageAlt,_that.ctaText,_that.ctaLink,_that.showFeaturedProjects,_that.featuredTitle,_that.featuredCount,_that.illustrationUrl,_that.isActive);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? heroTitle1Text,  String? heroTitle2Text,  String? ownerNameText,  String? heroMainImageUrl,  String? heroMainImageAlt,  String? ctaText,  String? ctaLink,  bool showFeaturedProjects,  String? featuredTitle,  int featuredCount,  String? illustrationUrl,  bool isActive)  $default,) {final _that = this;
+switch (_that) {
+case _HomeSettings():
+return $default(_that.id,_that.heroTitle1Text,_that.heroTitle2Text,_that.ownerNameText,_that.heroMainImageUrl,_that.heroMainImageAlt,_that.ctaText,_that.ctaLink,_that.showFeaturedProjects,_that.featuredTitle,_that.featuredCount,_that.illustrationUrl,_that.isActive);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? heroTitle1Text,  String? heroTitle2Text,  String? ownerNameText,  String? heroMainImageUrl,  String? heroMainImageAlt,  String? ctaText,  String? ctaLink,  bool showFeaturedProjects,  String? featuredTitle,  int featuredCount,  String? illustrationUrl,  bool isActive)?  $default,) {final _that = this;
+switch (_that) {
+case _HomeSettings() when $default != null:
+return $default(_that.id,_that.heroTitle1Text,_that.heroTitle2Text,_that.ownerNameText,_that.heroMainImageUrl,_that.heroMainImageAlt,_that.ctaText,_that.ctaLink,_that.showFeaturedProjects,_that.featuredTitle,_that.featuredCount,_that.illustrationUrl,_that.isActive);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _HomeSettings implements HomeSettings {
+  const _HomeSettings({this.id, this.heroTitle1Text, this.heroTitle2Text, this.ownerNameText, this.heroMainImageUrl, this.heroMainImageAlt, this.ctaText, this.ctaLink, this.showFeaturedProjects = true, this.featuredTitle, this.featuredCount = 3, this.illustrationUrl, this.isActive = true});
+  factory _HomeSettings.fromJson(Map<String, dynamic> json) => _$HomeSettingsFromJson(json);
+
+@override final  String? id;
+@override final  String? heroTitle1Text;
+@override final  String? heroTitle2Text;
+@override final  String? ownerNameText;
+@override final  String? heroMainImageUrl;
+@override final  String? heroMainImageAlt;
+@override final  String? ctaText;
+@override final  String? ctaLink;
+@override@JsonKey() final  bool showFeaturedProjects;
+@override final  String? featuredTitle;
+@override@JsonKey() final  int featuredCount;
+@override final  String? illustrationUrl;
+@override@JsonKey() final  bool isActive;
+
+/// Create a copy of HomeSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$HomeSettingsCopyWith<_HomeSettings> get copyWith => __$HomeSettingsCopyWithImpl<_HomeSettings>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$HomeSettingsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.heroTitle1Text, heroTitle1Text) || other.heroTitle1Text == heroTitle1Text)&&(identical(other.heroTitle2Text, heroTitle2Text) || other.heroTitle2Text == heroTitle2Text)&&(identical(other.ownerNameText, ownerNameText) || other.ownerNameText == ownerNameText)&&(identical(other.heroMainImageUrl, heroMainImageUrl) || other.heroMainImageUrl == heroMainImageUrl)&&(identical(other.heroMainImageAlt, heroMainImageAlt) || other.heroMainImageAlt == heroMainImageAlt)&&(identical(other.ctaText, ctaText) || other.ctaText == ctaText)&&(identical(other.ctaLink, ctaLink) || other.ctaLink == ctaLink)&&(identical(other.showFeaturedProjects, showFeaturedProjects) || other.showFeaturedProjects == showFeaturedProjects)&&(identical(other.featuredTitle, featuredTitle) || other.featuredTitle == featuredTitle)&&(identical(other.featuredCount, featuredCount) || other.featuredCount == featuredCount)&&(identical(other.illustrationUrl, illustrationUrl) || other.illustrationUrl == illustrationUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,heroTitle1Text,heroTitle2Text,ownerNameText,heroMainImageUrl,heroMainImageAlt,ctaText,ctaLink,showFeaturedProjects,featuredTitle,featuredCount,illustrationUrl,isActive);
+
+@override
+String toString() {
+  return 'HomeSettings(id: $id, heroTitle1Text: $heroTitle1Text, heroTitle2Text: $heroTitle2Text, ownerNameText: $ownerNameText, heroMainImageUrl: $heroMainImageUrl, heroMainImageAlt: $heroMainImageAlt, ctaText: $ctaText, ctaLink: $ctaLink, showFeaturedProjects: $showFeaturedProjects, featuredTitle: $featuredTitle, featuredCount: $featuredCount, illustrationUrl: $illustrationUrl, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$HomeSettingsCopyWith<$Res> implements $HomeSettingsCopyWith<$Res> {
+  factory _$HomeSettingsCopyWith(_HomeSettings value, $Res Function(_HomeSettings) _then) = __$HomeSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? id, String? heroTitle1Text, String? heroTitle2Text, String? ownerNameText, String? heroMainImageUrl, String? heroMainImageAlt, String? ctaText, String? ctaLink, bool showFeaturedProjects, String? featuredTitle, int featuredCount, String? illustrationUrl, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class __$HomeSettingsCopyWithImpl<$Res>
+    implements _$HomeSettingsCopyWith<$Res> {
+  __$HomeSettingsCopyWithImpl(this._self, this._then);
+
+  final _HomeSettings _self;
+  final $Res Function(_HomeSettings) _then;
+
+/// Create a copy of HomeSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? heroTitle1Text = freezed,Object? heroTitle2Text = freezed,Object? ownerNameText = freezed,Object? heroMainImageUrl = freezed,Object? heroMainImageAlt = freezed,Object? ctaText = freezed,Object? ctaLink = freezed,Object? showFeaturedProjects = null,Object? featuredTitle = freezed,Object? featuredCount = null,Object? illustrationUrl = freezed,Object? isActive = null,}) {
+  return _then(_HomeSettings(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,heroTitle1Text: freezed == heroTitle1Text ? _self.heroTitle1Text : heroTitle1Text // ignore: cast_nullable_to_non_nullable
+as String?,heroTitle2Text: freezed == heroTitle2Text ? _self.heroTitle2Text : heroTitle2Text // ignore: cast_nullable_to_non_nullable
+as String?,ownerNameText: freezed == ownerNameText ? _self.ownerNameText : ownerNameText // ignore: cast_nullable_to_non_nullable
+as String?,heroMainImageUrl: freezed == heroMainImageUrl ? _self.heroMainImageUrl : heroMainImageUrl // ignore: cast_nullable_to_non_nullable
+as String?,heroMainImageAlt: freezed == heroMainImageAlt ? _self.heroMainImageAlt : heroMainImageAlt // ignore: cast_nullable_to_non_nullable
+as String?,ctaText: freezed == ctaText ? _self.ctaText : ctaText // ignore: cast_nullable_to_non_nullable
+as String?,ctaLink: freezed == ctaLink ? _self.ctaLink : ctaLink // ignore: cast_nullable_to_non_nullable
+as String?,showFeaturedProjects: null == showFeaturedProjects ? _self.showFeaturedProjects : showFeaturedProjects // ignore: cast_nullable_to_non_nullable
+as bool,featuredTitle: freezed == featuredTitle ? _self.featuredTitle : featuredTitle // ignore: cast_nullable_to_non_nullable
+as String?,featuredCount: null == featuredCount ? _self.featuredCount : featuredCount // ignore: cast_nullable_to_non_nullable
+as int,illustrationUrl: freezed == illustrationUrl ? _self.illustrationUrl : illustrationUrl // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$SocialLink {
 
  String get id; String get platform; String get url; String? get username; String? get icon; bool get isActive; int get sortOrder; DateTime? get createdAt; DateTime? get updatedAt;

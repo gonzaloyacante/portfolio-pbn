@@ -77,6 +77,23 @@ class SettingsRepository {
     return SiteSettings.fromJson(resp['data'] as Map<String, dynamic>);
   }
 
+  // ── Home ──────────────────────────────────────────────────────────────────
+
+  Future<HomeSettings> getHome() async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      '/api/admin/settings/home',
+    );
+    return HomeSettings.fromJson(resp['data'] as Map<String, dynamic>);
+  }
+
+  Future<HomeSettings> updateHome(Map<String, dynamic> data) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      '/api/admin/settings/home',
+      data: data,
+    );
+    return HomeSettings.fromJson(resp['data'] as Map<String, dynamic>);
+  }
+
   // ── Social Links ──────────────────────────────────────────────────────────
 
   Future<List<SocialLink>> getSocialLinks() async {

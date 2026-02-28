@@ -12,6 +12,12 @@ class SettingsPage extends StatelessWidget {
 
   static const _items = [
     _SettingsItem(
+      icon: Icons.home_outlined,
+      title: 'Página de inicio',
+      subtitle: 'Hero, imagen, CTA y proyectos destacados',
+      routeName: RouteNames.settingsHome,
+    ),
+    _SettingsItem(
       icon: Icons.face_outlined,
       title: 'Sobre mí',
       subtitle: 'Bio, habilidades, imagen de perfil',

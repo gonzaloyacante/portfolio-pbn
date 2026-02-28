@@ -4,6 +4,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/color_field.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -78,20 +79,13 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
         'scriptFont': _scriptFontCtrl.text.trim(),
       });
       ref.invalidate(themeSettingsProvider);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Tema guardado')));
-      }
+      if (mounted) AppSnackBar.success(context, 'Tema guardado correctamente');
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
+        AppSnackBar.error(
+          context,
+          'No se pudo guardar el tema. Inténtalo de nuevo.',
         );
       }
     } finally {

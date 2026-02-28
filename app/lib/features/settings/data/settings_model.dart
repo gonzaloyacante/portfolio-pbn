@@ -107,6 +107,30 @@ abstract class SiteSettings with _$SiteSettings {
       _$SiteSettingsFromJson(json);
 }
 
+// ── Home Settings ───────────────────────────────────────────────────────────
+
+@freezed
+abstract class HomeSettings with _$HomeSettings {
+  const factory HomeSettings({
+    String? id,
+    String? heroTitle1Text,
+    String? heroTitle2Text,
+    String? ownerNameText,
+    String? heroMainImageUrl,
+    String? heroMainImageAlt,
+    String? ctaText,
+    String? ctaLink,
+    @Default(true) bool showFeaturedProjects,
+    String? featuredTitle,
+    @Default(3) int featuredCount,
+    String? illustrationUrl,
+    @Default(true) bool isActive,
+  }) = _HomeSettings;
+
+  factory HomeSettings.fromJson(Map<String, dynamic> json) =>
+      _$HomeSettingsFromJson(json);
+}
+
 // ── Social Link ───────────────────────────────────────────────────────────────
 
 @freezed

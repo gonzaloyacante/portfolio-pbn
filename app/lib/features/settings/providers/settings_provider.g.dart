@@ -213,6 +213,45 @@ final class SiteSettingsProvider
 
 String _$siteSettingsHash() => r'980c784eca419f07af980f3c9283e1f215981674';
 
+@ProviderFor(homeSettings)
+final homeSettingsProvider = HomeSettingsProvider._();
+
+final class HomeSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<HomeSettings>,
+          HomeSettings,
+          FutureOr<HomeSettings>
+        >
+    with $FutureModifier<HomeSettings>, $FutureProvider<HomeSettings> {
+  HomeSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'homeSettingsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$homeSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<HomeSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<HomeSettings> create(Ref ref) {
+    return homeSettings(ref);
+  }
+}
+
+String _$homeSettingsHash() => r'e43afb06a4afc0d5de0c8f060d8e6db152e0771e';
+
 @ProviderFor(socialLinks)
 final socialLinksProvider = SocialLinksProvider._();
 
