@@ -48,10 +48,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
     super.dispose();
   }
 
-  List<LocationStat> get _geoLocs =>
-      widget.locations
-          .where((l) => l.latitude != null && l.longitude != null)
-          .toList();
+  List<LocationStat> get _geoLocs => widget.locations
+      .where((l) => l.latitude != null && l.longitude != null)
+      .toList();
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +61,12 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
     final geoLocs = _geoLocs;
     final allLocs = widget.locations;
 
-    final maxGeoCount =
-        geoLocs.isEmpty ? 1 : geoLocs.map((l) => l.count).reduce((a, b) => a > b ? a : b);
-    final maxAllCount =
-        allLocs.isEmpty ? 1 : allLocs.map((l) => l.count).reduce((a, b) => a > b ? a : b);
+    final maxGeoCount = geoLocs.isEmpty
+        ? 1
+        : geoLocs.map((l) => l.count).reduce((a, b) => a > b ? a : b);
+    final maxAllCount = allLocs.isEmpty
+        ? 1
+        : allLocs.map((l) => l.count).reduce((a, b) => a > b ? a : b);
 
     // Carto tiles — dark_matter_no_labels / positron_no_labels (sin API key)
     final tileUrl = isDark
@@ -133,8 +134,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                             final isSelected = _selectedIdx == idx;
 
                             final dotSize = 10.0 + ratio * 18.0;
-                            final pulseFactor =
-                                isSelected ? 1.0 : (0.7 + _pulseAnim.value * 0.3);
+                            final pulseFactor = isSelected
+                                ? 1.0
+                                : (0.7 + _pulseAnim.value * 0.3);
                             final haloSize = dotSize * 2.8 * pulseFactor;
 
                             final color = Color.lerp(
@@ -151,8 +153,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                   ? const Alignment(0, 0.5)
                                   : Alignment.center,
                               child: GestureDetector(
-                                onTap: () => setState(() =>
-                                    _selectedIdx = isSelected ? null : idx),
+                                onTap: () => setState(
+                                  () => _selectedIdx = isSelected ? null : idx,
+                                ),
                                 child: Stack(
                                   alignment: Alignment.center,
                                   clipBehavior: Clip.none,
@@ -164,7 +167,8 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: color.withAlpha(
-                                            (35 * pulseFactor).round()),
+                                          (35 * pulseFactor).round(),
+                                        ),
                                       ),
                                     ),
                                     // Punto sólido con glow
@@ -177,7 +181,8 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                         boxShadow: [
                                           BoxShadow(
                                             color: color.withAlpha(
-                                                isSelected ? 220 : 140),
+                                              isSelected ? 220 : 140,
+                                            ),
                                             blurRadius: isSelected ? 14 : 8,
                                             spreadRadius: isSelected ? 3 : 1,
                                           ),
@@ -189,23 +194,27 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                       Positioned(
                                         top: 0,
                                         child: Container(
-                                          constraints:
-                                              const BoxConstraints(maxWidth: 160),
+                                          constraints: const BoxConstraints(
+                                            maxWidth: 160,
+                                          ),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
                                           decoration: BoxDecoration(
                                             color: colorScheme.surface,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                             border: Border.all(
-                                              color:
-                                                  color.withAlpha(120),
+                                              color: color.withAlpha(120),
                                               width: 1.5,
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black
-                                                    .withAlpha(50),
+                                                color: Colors.black.withAlpha(
+                                                  50,
+                                                ),
                                                 blurRadius: 12,
                                                 offset: const Offset(0, 4),
                                               ),
@@ -214,19 +223,24 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon(Icons.location_on_rounded,
-                                                  size: 12, color: color),
+                                              Icon(
+                                                Icons.location_on_rounded,
+                                                size: 12,
+                                                color: color,
+                                              ),
                                               const SizedBox(width: 4),
                                               Flexible(
                                                 child: Text(
                                                   loc.label,
                                                   style: theme
-                                                      .textTheme.labelSmall
+                                                      .textTheme
+                                                      .labelSmall
                                                       ?.copyWith(
-                                                    fontWeight: FontWeight.bold,
-                                                    color:
-                                                        colorScheme.onSurface,
-                                                  ),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: colorScheme
+                                                            .onSurface,
+                                                      ),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                 ),
@@ -235,8 +249,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                               Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 5,
-                                                        vertical: 2),
+                                                      horizontal: 5,
+                                                      vertical: 2,
+                                                    ),
                                                 decoration: BoxDecoration(
                                                   color: color.withAlpha(40),
                                                   borderRadius:
@@ -245,11 +260,13 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                                 child: Text(
                                                   '${loc.count}',
                                                   style: theme
-                                                      .textTheme.labelSmall
+                                                      .textTheme
+                                                      .labelSmall
                                                       ?.copyWith(
-                                                    color: color,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
+                                                        color: color,
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                      ),
                                                 ),
                                               ),
                                             ],
@@ -279,7 +296,11 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
             // ── Cabecera ranking ───────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.base, AppSpacing.sm, AppSpacing.base, 4),
+                AppSpacing.base,
+                AppSpacing.sm,
+                AppSpacing.base,
+                4,
+              ),
               child: Text(
                 'PAÍSES DE ORIGEN',
                 style: theme.textTheme.labelSmall?.copyWith(
@@ -304,8 +325,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                 child: InkWell(
                   onTap: hasCoords
                       ? () {
-                          setState(() =>
-                              _selectedIdx = isSelected ? null : idx);
+                          setState(
+                            () => _selectedIdx = isSelected ? null : idx,
+                          );
                           if (!isSelected) {
                             _mapCtrl.move(
                               LatLng(loc.latitude!, loc.longitude!),
@@ -350,10 +372,10 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                             loc.label,
                                             style: theme.textTheme.bodyMedium
                                                 ?.copyWith(
-                                              fontWeight: isSelected
-                                                  ? FontWeight.bold
-                                                  : FontWeight.w500,
-                                            ),
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.bold
+                                                      : FontWeight.w500,
+                                                ),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -384,8 +406,8 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                 child: LinearProgressIndicator(
                                   value: progress,
                                   minHeight: 3,
-                                  backgroundColor:
-                                      colorScheme.primary.withAlpha(25),
+                                  backgroundColor: colorScheme.primary
+                                      .withAlpha(25),
                                   valueColor: AlwaysStoppedAnimation(
                                     isSelected
                                         ? colorScheme.primary
