@@ -6,6 +6,7 @@ import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_radius.dart';
 import 'widgets/page_views_chart.dart';
 import 'widgets/bookings_bar_chart.dart';
 import 'widgets/alerts_section.dart';
@@ -69,6 +70,12 @@ class _DashboardContent extends StatelessWidget {
 
     return CustomScrollView(
       slivers: [
+        // ── Bienvenida ────────────────────────────────────────────────────
+        SliverPadding(
+          padding: padding.copyWith(bottom: AppSpacing.md),
+          sliver: const SliverToBoxAdapter(child: _DashboardGreeting()),
+        ),
+
         // ── Sección: Alertas ─────────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(bottom: AppSpacing.sm),
@@ -541,6 +548,94 @@ class _TopRankingSection extends StatelessWidget {
             );
           }).toList(),
         ),
+      ),
+    );
+  }
+}
+
+// ── _DashboardGreeting ────────────────────────────────────────────────────────
+
+/// Banner de bienvenida con saludo horario y fecha actual en español.
+class _DashboardGreeting extends StatelessWidget {
+  const _DashboardGreeting();
+
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 13) return 'Buenos días';
+    if (hour < 20) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+
+  String _formattedDate() {
+    const months = [
+      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+    ];
+    const days = [
+      'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo',
+    ];
+    final now = DateTime.now();
+    return '${days[now.weekday - 1]} ${now.day} de ${months[now.month - 1]}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = colorScheme.primary;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [primary.withAlpha(80), colorScheme.secondary.withAlpha(50)]
+              : [primary.withAlpha(38), colorScheme.secondary.withAlpha(22)],
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.card),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.base,
+        vertical: AppSpacing.md,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_greeting()}, Paola 👋',
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formattedDate(),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withAlpha(160),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: primary.withAlpha(isDark ? 70 : 40),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            alignment: Alignment.center,
+            child: Icon(Icons.spa_outlined, color: primary, size: 28),
+          ),
+        ],
       ),
     );
   }
