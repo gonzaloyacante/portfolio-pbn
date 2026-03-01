@@ -83,7 +83,7 @@ export async function POST(req: Request, { params }: Params) {
     })
 
     try {
-      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(`${ROUTES.admin.projects}/${id}`)
       revalidateTag(CACHE_TAGS.projects, 'max')
     } catch (revalErr) {

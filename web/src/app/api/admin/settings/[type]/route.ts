@@ -97,11 +97,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         revalidateTag(CACHE_TAGS.homeSettings, 'max')
         break
       case 'about':
-        revalidatePath(ROUTES.public.about)
+        revalidatePath(ROUTES.public.about, 'layout')
         revalidateTag(CACHE_TAGS.aboutSettings, 'max')
         break
       case 'contact':
-        revalidatePath(ROUTES.public.contact)
+        revalidatePath(ROUTES.public.contact, 'layout')
         revalidateTag(CACHE_TAGS.contactSettings, 'max')
         break
       case 'theme':
@@ -114,17 +114,17 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         break
       case 'project':
         revalidatePath(ROUTES.home)
-        revalidatePath(ROUTES.public.projects)
+        revalidatePath(ROUTES.public.projects, 'layout')
         revalidatePath(ROUTES.admin.projects)
         revalidateTag(CACHE_TAGS.projectSettings, 'max')
         break
       case 'testimonial':
         revalidatePath(ROUTES.home)
-        revalidatePath(ROUTES.public.about)
+        revalidatePath(ROUTES.public.about, 'layout')
         revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
         break
       case 'category':
-        revalidatePath(ROUTES.public.projects)
+        revalidatePath(ROUTES.public.projects, 'layout')
         revalidatePath(ROUTES.admin.categories)
         revalidateTag(CACHE_TAGS.categorySettings, 'max')
         break

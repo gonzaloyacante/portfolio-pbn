@@ -125,10 +125,12 @@ export async function PATCH(req: Request, { params }: Params) {
     })
 
     try {
-      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.categories)
       revalidatePath(ROUTES.admin.projects)
       revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-patch] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),
@@ -166,10 +168,12 @@ export async function DELETE(req: Request, { params }: Params) {
     })
 
     try {
-      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.categories)
       revalidatePath(ROUTES.admin.projects)
       revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-delete] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),

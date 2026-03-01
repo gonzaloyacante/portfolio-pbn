@@ -2,7 +2,8 @@
 
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { z } from 'zod'
 import { requireAdmin } from '@/lib/security-server'
 import { ROUTES } from '@/config/routes'
@@ -49,9 +50,10 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
       )
     )
 
-    // Revalidate category page
-    revalidatePath(`${ROUTES.public.projects}/${category.slug}`)
+    // Revalidate category page and all its project subroutes
+    revalidatePath(`${ROUTES.public.projects}/${category.slug}`, 'layout')
     revalidatePath(ROUTES.admin.categories)
+    revalidateTag(CACHE_TAGS.projects, 'max')
 
     return { success: true }
   } catch (error) {
@@ -101,8 +103,9 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
     })
 
     // Revalidate
-    revalidatePath(`${ROUTES.public.projects}/${category.slug}`)
+    revalidatePath(`${ROUTES.public.projects}/${category.slug}`, 'layout')
     revalidatePath(ROUTES.admin.categories)
+    revalidateTag(CACHE_TAGS.projects, 'max')
 
     return { success: true }
   } catch (error) {

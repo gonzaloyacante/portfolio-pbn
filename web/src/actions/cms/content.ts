@@ -17,6 +17,8 @@ import { projectFormSchema, categorySchema } from '@/lib/validations'
 function _revalidatePublicContent() {
   // Full Route Cache: invalida /proyectos y TODAS sus subrutas dinámicas
   revalidatePath(ROUTES.public.projects, 'layout')
+  // También invalida la home ya que muestra FeaturedProjects
+  revalidatePath(ROUTES.home)
   // Data Cache: invalida las consultas cacheadas con unstable_cache
   revalidateTag(CACHE_TAGS.projects, 'max')
   revalidateTag(CACHE_TAGS.featuredProjects, 'max')

@@ -35,7 +35,7 @@ export async function DELETE(req: Request, { params }: Params) {
     // Eliminar de DB primero
     await prisma.projectImage.delete({ where: { id: imageId } })
 
-    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.public.projects, 'layout')
     revalidatePath(`${ROUTES.admin.projects}/${id}`)
     revalidateTag(CACHE_TAGS.projects, 'max')
 

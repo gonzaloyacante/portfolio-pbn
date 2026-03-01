@@ -244,7 +244,8 @@ export async function getProjectBySlug(slug: string) {
     [CACHE_TAGS.projectBySlug(slug)],
     {
       revalidate: CACHE_DURATIONS.MEDIUM,
-      tags: [CACHE_TAGS.projectBySlug(slug)],
+      // Also tagged with CACHE_TAGS.projects so that revalidateTag(projects) clears all per-slug caches
+      tags: [CACHE_TAGS.projectBySlug(slug), CACHE_TAGS.projects],
     }
   )()
 }
@@ -289,7 +290,7 @@ export async function getRelatedProjects(projectId: string, categoryId: string, 
  * Revalidar paths y tags de proyectos
  */
 export async function revalidateProjects() {
-  revalidatePath(ROUTES.public.projects)
+  revalidatePath(ROUTES.public.projects, 'layout')
   revalidatePath(ROUTES.home, 'layout')
   revalidateTag(CACHE_TAGS.projects, 'max')
   revalidateTag(CACHE_TAGS.featuredProjects, 'max')

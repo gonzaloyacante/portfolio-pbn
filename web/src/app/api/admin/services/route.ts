@@ -160,7 +160,7 @@ export async function POST(req: Request) {
 
     try {
       revalidatePath(ROUTES.admin.services)
-      revalidatePath(ROUTES.public.services)
+      revalidatePath(ROUTES.public.services, 'layout')
       revalidateTag(CACHE_TAGS.services, 'max')
     } catch (revalErr) {
       logger.warn('[admin-services-post] Revalidation failed (data saved)', {

@@ -133,9 +133,11 @@ export async function POST(req: Request) {
     })
 
     try {
-      revalidatePath(ROUTES.public.projects)
+      revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.categories)
       revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-categories-post] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),

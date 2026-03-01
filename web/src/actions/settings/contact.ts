@@ -118,7 +118,7 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
       })
     }
 
-    revalidatePath(ROUTES.public.contact)
+    revalidatePath(ROUTES.public.contact, 'layout')
     revalidateTag(CACHE_TAGS.contactSettings, 'max')
 
     return {

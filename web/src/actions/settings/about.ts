@@ -101,7 +101,7 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
     }
 
     // Revalidate Public Pages (both rewritten and canonical)
-    revalidatePath(ROUTES.public.about) // /sobre-mi
+    revalidatePath(ROUTES.public.about, 'layout') // /sobre-mi
     revalidatePath('/about') // Canonical Next.js route
 
     // Revalidate Admin Page

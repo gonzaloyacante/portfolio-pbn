@@ -152,7 +152,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
     try {
       revalidatePath(ROUTES.admin.services)
-      revalidatePath(ROUTES.public.services)
+      revalidatePath(ROUTES.public.services, 'layout')
       revalidateTag(CACHE_TAGS.services, 'max')
     } catch (revalErr) {
       logger.warn('[admin-service-patch] Revalidation failed (data saved)', {
@@ -192,7 +192,7 @@ export async function DELETE(req: Request, { params }: Params) {
 
     try {
       revalidatePath(ROUTES.admin.services)
-      revalidatePath(ROUTES.public.services)
+      revalidatePath(ROUTES.public.services, 'layout')
       revalidateTag(CACHE_TAGS.services, 'max')
     } catch (revalErr) {
       logger.warn('[admin-service-delete] Revalidation failed (data saved)', {

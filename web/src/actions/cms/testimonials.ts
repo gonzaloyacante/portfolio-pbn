@@ -62,7 +62,7 @@ export async function createTestimonial(formData: FormData) {
     })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.public.about, 'layout')
     revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial created: ${name}`)
     return { success: true }
@@ -197,7 +197,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
     })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.public.about, 'layout')
     revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial updated: ${id}`)
@@ -216,7 +216,7 @@ export async function deleteTestimonial(id: string) {
     await prisma.testimonial.delete({ where: { id } })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.public.about, 'layout')
     revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial deleted: ${id}`)
@@ -243,7 +243,7 @@ export async function toggleTestimonial(id: string) {
     })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.public.about, 'layout')
     revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial toggled: ${id} -> ${!testimonial.isActive}`)

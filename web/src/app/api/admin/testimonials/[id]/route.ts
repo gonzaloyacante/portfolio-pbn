@@ -141,7 +141,7 @@ export async function PATCH(req: Request, { params }: Params) {
     })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.public.about, 'layout')
     revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
 
@@ -175,7 +175,7 @@ export async function DELETE(req: Request, { params }: Params) {
     await prisma.testimonial.update({ where: { id }, data: { deletedAt: new Date() } })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.public.about, 'layout')
     revalidateTag(CACHE_TAGS.testimonials, 'max')
 
     return NextResponse.json({ success: true, message: 'Testimonio eliminado' })
