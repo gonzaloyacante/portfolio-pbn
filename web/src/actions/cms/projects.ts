@@ -112,78 +112,88 @@ export const getFeaturedProjects = unstable_cache(
 )
 
 /**
- * Obtener proyectos por categoría con paginación
+ * Obtener proyectos por categoría con paginación (cached)
  */
 export async function getProjectsByCategory(
   categorySlug: string,
   page: number = 1,
   limit: number = 12
 ) {
-  const skip = (page - 1) * limit
+  return unstable_cache(
+    async () => {
+      const skip = (page - 1) * limit
 
-  try {
-    const [projects, total] = await Promise.all([
-      prisma.project.findMany({
-        where: {
-          isActive: true,
-          isDeleted: false,
-          category: {
-            slug: categorySlug,
-          },
-        },
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          thumbnailUrl: true,
-          date: true,
-          category: {
-            select: {
-              name: true,
-              slug: true,
+      try {
+        const [projects, total] = await Promise.all([
+          prisma.project.findMany({
+            where: {
+              isActive: true,
+              isDeleted: false,
+              category: {
+                slug: categorySlug,
+              },
             },
-          },
-        },
-        orderBy: {
-          date: 'desc',
-        },
-        take: limit,
-        skip,
-      }),
-      prisma.project.count({
-        where: {
-          isActive: true,
-          isDeleted: false,
-          category: {
-            slug: categorySlug,
-          },
-        },
-      }),
-    ])
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              thumbnailUrl: true,
+              date: true,
+              category: {
+                select: {
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+            orderBy: {
+              date: 'desc',
+            },
+            take: limit,
+            skip,
+          }),
+          prisma.project.count({
+            where: {
+              isActive: true,
+              isDeleted: false,
+              category: {
+                slug: categorySlug,
+              },
+            },
+          }),
+        ])
 
-    return {
-      projects,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-        hasMore: skip + projects.length < total,
-      },
+        return {
+          projects,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+            hasMore: skip + projects.length < total,
+          },
+        }
+      } catch (error) {
+        logger.error('Error al obtener proyectos por categoría:', { error: error })
+        return {
+          projects: [],
+          pagination: {
+            page: 1,
+            limit,
+            total: 0,
+            totalPages: 0,
+            hasMore: false,
+          },
+        }
+      }
+    },
+    // Key includes slug + page so each combination has its own cache entry
+    [CACHE_TAGS.projects, `category-${categorySlug}-page-${page}`],
+    {
+      revalidate: CACHE_DURATIONS.MEDIUM,
+      tags: [CACHE_TAGS.projects, CACHE_TAGS.categories],
     }
-  } catch (error) {
-    logger.error('Error al obtener proyectos por categoría:', { error: error })
-    return {
-      projects: [],
-      pagination: {
-        page: 1,
-        limit,
-        total: 0,
-        totalPages: 0,
-        hasMore: false,
-      },
-    }
-  }
+  )()
 }
 
 /**
@@ -251,39 +261,48 @@ export async function getProjectBySlug(slug: string) {
 }
 
 /**
- * Obtener proyectos relacionados (misma categoría, excluir actual)
+ * Obtener proyectos relacionados (misma categoría, excluir actual) - cached
  */
 export async function getRelatedProjects(projectId: string, categoryId: string, limit: number = 3) {
-  try {
-    return await prisma.project.findMany({
-      where: {
-        isActive: true,
-        isDeleted: false,
-        categoryId,
-        id: {
-          not: projectId,
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        thumbnailUrl: true,
-        category: {
-          select: {
-            name: true,
+  return unstable_cache(
+    async () => {
+      try {
+        return await prisma.project.findMany({
+          where: {
+            isActive: true,
+            isDeleted: false,
+            categoryId,
+            id: {
+              not: projectId,
+            },
           },
-        },
-      },
-      orderBy: {
-        date: 'desc',
-      },
-      take: limit,
-    })
-  } catch (error) {
-    logger.error('Error al obtener proyectos relacionados:', { error: error })
-    return []
-  }
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            thumbnailUrl: true,
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+          orderBy: {
+            date: 'desc',
+          },
+          take: limit,
+        })
+      } catch (error) {
+        logger.error('Error al obtener proyectos relacionados:', { error: error })
+        return []
+      }
+    },
+    [CACHE_TAGS.projects, `related-${projectId}`],
+    {
+      revalidate: CACHE_DURATIONS.MEDIUM,
+      tags: [CACHE_TAGS.projects],
+    }
+  )()
 }
 
 /**
@@ -291,7 +310,7 @@ export async function getRelatedProjects(projectId: string, categoryId: string, 
  */
 export async function revalidateProjects() {
   revalidatePath(ROUTES.public.projects, 'layout')
-  revalidatePath(ROUTES.home, 'layout')
+  revalidatePath(ROUTES.home)
   revalidateTag(CACHE_TAGS.projects, 'max')
   revalidateTag(CACHE_TAGS.featuredProjects, 'max')
 }

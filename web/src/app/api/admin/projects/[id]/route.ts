@@ -155,7 +155,7 @@ export async function PATCH(req: Request, { params }: Params) {
       revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.projects)
       revalidatePath(`${ROUTES.admin.projects}/${id}`)
-      revalidatePath(ROUTES.home, 'layout')
+      revalidatePath(ROUTES.home)
       revalidateTag(CACHE_TAGS.projects, 'max')
       revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
@@ -204,7 +204,7 @@ export async function DELETE(req: Request, { params }: Params) {
       revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.projects)
       revalidatePath(ROUTES.admin.trash)
-      revalidatePath(ROUTES.home, 'layout')
+      revalidatePath(ROUTES.home)
       revalidateTag(CACHE_TAGS.projects, 'max')
       revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {

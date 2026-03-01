@@ -159,7 +159,8 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
 
     const settings = await _upsertSiteSettings(cleanData)
 
-    revalidatePath('/')
+    // site settings (page visibility) affect Navbar on ALL public pages via (public)/layout.tsx
+    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.siteSettings, 'max')
 
     return { success: true, settings, message: 'Configuración del sitio actualizada' }

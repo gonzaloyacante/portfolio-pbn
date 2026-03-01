@@ -101,15 +101,18 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         revalidateTag(CACHE_TAGS.aboutSettings, 'max')
         break
       case 'contact':
-        revalidatePath(ROUTES.public.contact, 'layout')
+        // contact settings (ownerName) render in Navbar on ALL public pages
+        revalidatePath('/', 'layout')
         revalidateTag(CACHE_TAGS.contactSettings, 'max')
         break
       case 'theme':
-        revalidatePath(ROUTES.home, 'layout')
+        // theme is consumed in root layout → must clear ALL routes
+        revalidatePath('/', 'layout')
         revalidateTag(CACHE_TAGS.themeSettings, 'max')
         break
       case 'site':
-        revalidatePath('/')
+        // page visibility is read in (public)/layout.tsx → all public pages affected
+        revalidatePath('/', 'layout')
         revalidateTag(CACHE_TAGS.siteSettings, 'max')
         break
       case 'project':

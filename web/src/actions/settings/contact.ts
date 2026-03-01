@@ -5,7 +5,6 @@ import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 
-import { ROUTES } from '@/config/routes'
 import { contactSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
@@ -118,7 +117,8 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
       })
     }
 
-    revalidatePath(ROUTES.public.contact, 'layout')
+    // contact settings affect Navbar (ownerName) on ALL public pages via (public)/layout.tsx
+    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.contactSettings, 'max')
 
     return {

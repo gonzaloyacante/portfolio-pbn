@@ -38,6 +38,7 @@ export async function DELETE(req: Request, { params }: Params) {
     revalidatePath(ROUTES.public.projects, 'layout')
     revalidatePath(`${ROUTES.admin.projects}/${id}`)
     revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
 
     // Eliminar de Cloudinary (no bloqueante — si falla no afecta la respuesta)
     if (image.publicId) {

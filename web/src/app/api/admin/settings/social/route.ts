@@ -67,7 +67,8 @@ export async function POST(req: Request) {
     }
     const link = await saveSocialLink(body)
 
-    revalidatePath(ROUTES.home, 'layout')
+    // social links only appear on /contacto page (not in any shared layout)
+    revalidatePath(ROUTES.public.contact)
     revalidateTag(CACHE_TAGS.socialLinks, 'max')
 
     return NextResponse.json({ success: true, data: link }, { status: 201 })

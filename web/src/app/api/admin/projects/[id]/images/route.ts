@@ -86,6 +86,7 @@ export async function POST(req: Request, { params }: Params) {
       revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(`${ROUTES.admin.projects}/${id}`)
       revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-project-images-post] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),
