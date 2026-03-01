@@ -49,7 +49,31 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   int _featuredCount = 3;
 
   @override
+  void initState() {
+    super.initState();
+    // Escuchamos cambios en los controllers para refrescar el live preview
+    for (final ctrl in [
+      _title1Ctrl,
+      _title2Ctrl,
+      _ownerNameCtrl,
+      _ctaTextCtrl,
+    ]) {
+      ctrl.addListener(_onPreviewChange);
+    }
+  }
+
+  void _onPreviewChange() => setState(() {});
+
+  @override
   void dispose() {
+    for (final ctrl in [
+      _title1Ctrl,
+      _title2Ctrl,
+      _ownerNameCtrl,
+      _ctaTextCtrl,
+    ]) {
+      ctrl.removeListener(_onPreviewChange);
+    }
     _title1Ctrl.dispose();
     _title2Ctrl.dispose();
     _ownerNameCtrl.dispose();
@@ -217,21 +241,61 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   Widget _buildForm(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);
+    final isExpanded = AppBreakpoints.isExpanded(context);
     final maxWidth = AppBreakpoints.value<double>(
       context,
       compact: double.infinity,
       medium: 760,
-      expanded: 960,
+      expanded: 1200,
     );
+
+    final formContent = _buildFormContent(context);
 
     return SingleChildScrollView(
       padding: padding,
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+          child: isExpanded
+              // ── Tablet: form izquierda + preview derecha ────────────
+              ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 58,
+                      child: Padding(
+                        padding: EdgeInsets.zero,
+                        child: formContent,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.xl),
+                    Expanded(
+                      flex: 42,
+                      child: _StickyPreviewColumn(
+                        preview: _buildHeroPreview(context),
+                      ),
+                    ),
+                  ],
+                )
+              // ── Mobile/medium: form + preview colapsable ────────────
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Preview colapsable en mobile
+                    _CollapsiblePreview(preview: _buildHeroPreview(context)),
+                    const SizedBox(height: AppSpacing.md),
+                    formContent,
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFormContent(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
               // ── Hero texts ───────────────────────────────────────────────
               SettingsFormCard(
                 title: 'Textos del Hero',
@@ -364,8 +428,294 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                 label: const Text('Guardar cambios'),
               ),
               const SizedBox(height: AppSpacing.base),
+        ],
+    );
+  }
+
+  // ── Hero Preview ──────────────────────────────────────────────────────────
+
+  Widget _buildHeroPreview(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final title1 =
+        _title1Ctrl.text.isNotEmpty ? _title1Ctrl.text : 'Título principal';
+    final title2 =
+        _title2Ctrl.text.isNotEmpty ? _title2Ctrl.text : 'Subtítulo';
+    final owner =
+        _ownerNameCtrl.text.isNotEmpty ? _ownerNameCtrl.text : 'Nombre artista';
+    final cta =
+        _ctaTextCtrl.text.isNotEmpty ? _ctaTextCtrl.text : 'Ver proyectos';
+    final hasPending = _pendingHeroImage != null;
+    final hasUrl = _heroImageCtrl.text.isNotEmpty;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.phonelink_outlined,
+                size: 16, color: colorScheme.primary),
+            const SizedBox(width: 6),
+            Text(
+              'Vista previa',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        // Phone frame
+        Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: colorScheme.outline.withAlpha(80),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(20),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
             ],
           ),
+          clipBehavior: Clip.antiAlias,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: AspectRatio(
+              aspectRatio: 9 / 16,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Imagen de fondo
+                  if (hasPending)
+                    Image.file(_pendingHeroImage!, fit: BoxFit.cover)
+                  else if (hasUrl)
+                    Image.network(
+                      _heroImageCtrl.text,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stack) =>
+                          _PreviewImagePlaceholder(color: colorScheme),
+                    )
+                  else
+                    _PreviewImagePlaceholder(color: colorScheme),
+
+                  // Gradiente oscuro en la parte inferior
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: const [0.35, 1.0],
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withAlpha(200),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Texto sobre la imagen
+                  Positioned(
+                    left: 20,
+                    right: 20,
+                    bottom: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          title1,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        Text(
+                          title2,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
+                            height: 1.1,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          owner,
+                          style: const TextStyle(
+                            color: Colors.white60,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // CTA
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primary,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            cta,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'Se actualiza en tiempo real mientras editas',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurface.withAlpha(100),
+                fontStyle: FontStyle.italic,
+              ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+}
+
+// ── _StickyPreviewColumn ──────────────────────────────────────────────────────
+
+/// Mantiene el preview visible mientras el usuario scrollea el formulario.
+class _StickyPreviewColumn extends StatelessWidget {
+  const _StickyPreviewColumn({required this.preview});
+  final Widget preview;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
+      child: preview,
+    );
+  }
+}
+
+// ── _CollapsiblePreview ───────────────────────────────────────────────────────
+
+/// Preview colapsable para mobile: por defecto expandida.
+class _CollapsiblePreview extends StatefulWidget {
+  const _CollapsiblePreview({required this.preview});
+  final Widget preview;
+
+  @override
+  State<_CollapsiblePreview> createState() => _CollapsiblePreviewState();
+}
+
+class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
+  bool _expanded = true;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      child: Container(
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            InkWell(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              onTap: () => setState(() => _expanded = !_expanded),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+                child: Row(
+                  children: [
+                    Icon(Icons.phonelink_outlined,
+                        size: 16, color: colorScheme.primary),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Vista previa del Hero',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const Spacer(),
+                    AnimatedRotation(
+                      turns: _expanded ? 0 : 0.5,
+                      duration: const Duration(milliseconds: 200),
+                      child: Icon(Icons.expand_less_rounded,
+                          color: colorScheme.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (_expanded)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                child: Center(
+                  child: SizedBox(
+                    width: 200,
+                    child: widget.preview,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── _PreviewImagePlaceholder ──────────────────────────────────────────────────
+
+class _PreviewImagePlaceholder extends StatelessWidget {
+  const _PreviewImagePlaceholder({required this.color});
+  final ColorScheme color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.primaryContainer,
+            color.secondaryContainer,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.image_outlined,
+          size: 48,
+          color: color.onPrimaryContainer.withAlpha(100),
         ),
       ),
     );
