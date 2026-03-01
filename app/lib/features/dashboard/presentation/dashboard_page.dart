@@ -101,7 +101,7 @@ class _DashboardContent extends StatelessWidget {
             compactCols: 2,
             mediumCols: 3,
             expandedCols: 4,
-            childAspectRatio: 1.45,
+            childAspectRatio: 1.1,
             children: [
               StatCard(
                 icon: Icons.photo_library_outlined,
@@ -152,9 +152,11 @@ class _DashboardContent extends StatelessWidget {
                 onTap: () => context.goNamed(RouteNames.calendar),
               ),
               StatCard(
-                icon: Icons.remove_red_eye_outlined,
-                label: 'Visitas (30d)',
-                value: _formatNumber(stats.pageViews30d),
+                icon: Icons.people_outline_rounded,
+                label: 'Visitantes únicos (30d)',
+                value: _formatNumber(stats.uniqueVisitors30d),
+                trend: '${_formatNumber(stats.pageViews30d)} páginas vistas',
+                trendPositive: true,
                 color: AppColors.success,
               ),
             ],
@@ -272,6 +274,7 @@ class _DashboardSkeleton extends StatelessWidget {
               child: SkeletonGridView(
                 itemCount: 7,
                 compactCols: 2,
+                hasImage: false,
                 childAspectRatio: 1.1,
               ),
             ),

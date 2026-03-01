@@ -126,15 +126,16 @@ class SkeletonGridCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hasImage) ...[
-            ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(AppRadius.card),
-                topRight: Radius.circular(AppRadius.card),
-              ),
-              child: Container(
-                height: 120,
-                width: double.infinity,
-                color: Colors.white,
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(AppRadius.card),
+                  topRight: Radius.circular(AppRadius.card),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
@@ -142,6 +143,7 @@ class SkeletonGridCard extends StatelessWidget {
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const ShimmerBox(width: double.infinity, height: 14),
                 const SizedBox(height: AppSpacing.xs + 2),

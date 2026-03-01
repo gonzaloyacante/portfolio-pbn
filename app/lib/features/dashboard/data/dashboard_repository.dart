@@ -40,7 +40,10 @@ abstract class DashboardStats with _$DashboardStats {
     @Default(0) int trashCount,
     @Default(0) int pageViews30d,
 
-    /// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N }
+    /// Visitantes únicos (sesiones distintas, sin contar cada página que navegan).
+    @Default(0) int uniqueVisitors30d,
+
+    /// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N, "unknown": N }
     @Default({}) Map<String, int> deviceUsage,
 
     /// Top países/ciudades por visitas (últimos 30 días).

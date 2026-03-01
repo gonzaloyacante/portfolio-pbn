@@ -30,6 +30,7 @@ export async function GET(req: Request) {
       pendingTestimonials,
       trashCount,
       pageViews30d,
+      uniqueVisitors30d,
       deviceUsageRaw,
       topCountriesRaw,
       topProjectsRaw,
@@ -54,6 +55,7 @@ export async function GET(req: Request) {
         prisma.contact.count({ where: { deletedAt: { not: null } } }),
         prisma.booking.count({ where: { deletedAt: { not: null } } }),
       ]).then((counts) => counts.reduce((a, b) => a + b, 0)),
+      // Total de páginas vistas (sin bots, últimos 30 días)
       prisma.analyticLog.count({
         where: {
           timestamp: { gte: thirtyDaysAgo },
@@ -61,14 +63,22 @@ export async function GET(req: Request) {
           isBot: false,
         },
       }),
-      // Uso por dispositivo (últimos 30 días)
+      // Visitantes únicos = sesiones únicas (isDuplicate:false = primer evento de cada sesión)
+      prisma.analyticLog.count({
+        where: {
+          timestamp: { gte: thirtyDaysAgo },
+          eventType: { endsWith: '_VIEW' },
+          isBot: false,
+          isDuplicate: false,
+        },
+      }),
+      // Uso por dispositivo (últimos 30 días) — incluye null como "unknown"
       prisma.analyticLog.groupBy({
         by: ['device'],
         where: {
           timestamp: { gte: thirtyDaysAgo },
           eventType: { endsWith: '_VIEW' },
           isBot: false,
-          device: { not: null },
         },
         _count: { _all: true },
       }),
@@ -100,9 +110,10 @@ export async function GET(req: Request) {
       }),
     ])
 
-    // Reducir deviceUsage a { mobile: N, desktop: N, tablet: N }
+    // Reducir deviceUsage: null device se contabiliza como 'unknown'
     const deviceUsage = deviceUsageRaw.reduce<Record<string, number>>((acc, row) => {
-      if (row.device) acc[row.device] = row._count._all
+      const key = row.device ?? 'unknown'
+      acc[key] = (acc[key] ?? 0) + row._count._all
       return acc
     }, {})
 
@@ -147,6 +158,7 @@ export async function GET(req: Request) {
         pendingTestimonials,
         trashCount,
         pageViews30d,
+        uniqueVisitors30d,
         deviceUsage,
         topLocations,
         topProjects,

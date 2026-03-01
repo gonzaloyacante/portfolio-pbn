@@ -65,6 +65,11 @@ const BOT_RE =
 // -----------------------------------------------
 // Record Event
 // -----------------------------------------------
+
+/** Ventana de sesión: si la misma IP aparece en menos de 30 minutos,
+ *  se considera la misma sesión (isDuplicate = true). */
+const SESSION_WINDOW_MS = 30 * 60 * 1000
+
 export async function recordAnalyticEvent(
   eventType: string,
   entityId?: string,
@@ -89,6 +94,35 @@ export async function recordAnalyticEvent(
     const isBot = BOT_RE.test(userAgent)
     const device = options?.device ?? detectDevice(userAgent)
 
+    // ── Deduplicación de sesión ───────────────────────────────────────────────
+    // Si la misma IP ya registró un evento en los últimos 30 min →
+    //   isDuplicate = true (misma sesión navegando entre páginas).
+    // Esto permite contar visitantes únicos filtrando isDuplicate:false.
+    let isDuplicate = options?.isDuplicate ?? false
+    let sessionIdToUse = options?.sessionId
+
+    // Solo deduplicar eventos de página (no acciones como CONTACT_SUBMIT)
+    if (!isDuplicate && !isBot && eventType.endsWith('_VIEW')) {
+      const windowStart = new Date(Date.now() - SESSION_WINDOW_MS)
+      const recentEvent = await prisma.analyticLog.findFirst({
+        where: {
+          ipAddress,
+          timestamp: { gte: windowStart },
+          isBot: false,
+        },
+        select: { sessionId: true },
+        orderBy: { timestamp: 'desc' },
+      })
+      if (recentEvent !== null) {
+        isDuplicate = true
+        // Heredar sessionId del primer evento de la sesión
+        if (!sessionIdToUse && recentEvent.sessionId) {
+          sessionIdToUse = recentEvent.sessionId
+        }
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     await prisma.analyticLog.create({
       data: {
         eventType,
@@ -104,8 +138,8 @@ export async function recordAnalyticEvent(
         longitude: lonRaw ? parseFloat(lonRaw) : undefined,
         device,
         isBot,
-        isDuplicate: options?.isDuplicate ?? false,
-        sessionId: options?.sessionId,
+        isDuplicate,
+        sessionId: sessionIdToUse,
         scrollDepth: options?.scrollDepth,
         timeOnPage: options?.timeOnPage,
         sessionDuration: options?.sessionDuration,

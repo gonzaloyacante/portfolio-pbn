@@ -33,6 +33,7 @@ _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
       pendingTestimonials: (json['pendingTestimonials'] as num?)?.toInt() ?? 0,
       trashCount: (json['trashCount'] as num?)?.toInt() ?? 0,
       pageViews30d: (json['pageViews30d'] as num?)?.toInt() ?? 0,
+      uniqueVisitors30d: (json['uniqueVisitors30d'] as num?)?.toInt() ?? 0,
       deviceUsage:
           (json['deviceUsage'] as Map<String, dynamic>?)?.map(
             (k, e) => MapEntry(k, (e as num).toInt()),
@@ -61,6 +62,7 @@ Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
       'pendingTestimonials': instance.pendingTestimonials,
       'trashCount': instance.trashCount,
       'pageViews30d': instance.pageViews30d,
+      'uniqueVisitors30d': instance.uniqueVisitors30d,
       'deviceUsage': instance.deviceUsage,
       'topLocations': instance.topLocations,
       'topProjects': instance.topProjects,
