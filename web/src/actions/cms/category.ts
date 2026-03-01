@@ -2,7 +2,8 @@
 
 import { prisma } from '@/lib/db'
 import { deleteCategory } from '@/actions/cms/content'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 
@@ -10,7 +11,7 @@ export async function deleteCategoryAction(categoryId: string): Promise<void> {
   await requireAdmin()
   await deleteCategory(categoryId)
   revalidatePath(ROUTES.admin.categories)
-  revalidatePath(ROUTES.public.projects)
+  // _revalidatePublicContent ya fue llamado dentro de deleteCategory
 }
 
 export async function reorderCategories(categoryIds: string[]): Promise<void> {
@@ -24,7 +25,9 @@ export async function reorderCategories(categoryIds: string[]): Promise<void> {
     )
   )
   revalidatePath(ROUTES.admin.categories)
-  revalidatePath(ROUTES.public.projects)
+  revalidatePath(ROUTES.public.projects, 'layout')
+  revalidateTag(CACHE_TAGS.categories, 'max')
+  revalidateTag(CACHE_TAGS.projects, 'max')
 }
 
 export async function getCategoryImages(categoryId: string) {

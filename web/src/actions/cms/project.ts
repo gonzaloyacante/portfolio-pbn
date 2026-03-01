@@ -2,7 +2,8 @@
 
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
@@ -27,6 +28,9 @@ export async function reorderProjects(projectIds: string[]): Promise<void> {
     )
   )
   revalidatePath(ROUTES.admin.projects)
+  revalidatePath(ROUTES.public.projects, 'layout')
+  revalidateTag(CACHE_TAGS.projects, 'max')
+  revalidateTag(CACHE_TAGS.categories, 'max')
 }
 
 /**
@@ -46,6 +50,9 @@ export async function setProjectThumbnail(
     })
     revalidatePath(`${ROUTES.admin.projects}/${projectId}/editar`)
     revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.public.projects, 'layout')
+    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     return { success: true }
   } catch (err) {
     logger.error('Error setting thumbnail:', { error: err })
@@ -64,6 +71,8 @@ export async function deleteProjectAction(projectId: string): Promise<void> {
     data: { isDeleted: true, deletedAt: new Date() },
   })
   revalidatePath(ROUTES.admin.projects)
+  revalidatePath(ROUTES.public.projects, 'layout')
+  revalidateTag(CACHE_TAGS.projects, 'max')
 }
 
 /**
@@ -89,7 +98,9 @@ export async function toggleProjectActive(projectId: string): Promise<ActionResu
     })
 
     revalidatePath(ROUTES.admin.projects)
-    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.public.projects, 'layout')
+    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     return { success: true }
   } catch (err) {
     logger.error('Error toggling project visibility:', { error: err })

@@ -217,6 +217,7 @@ export async function deleteTestimonial(id: string) {
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about)
+    revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
     logger.info(`Testimonial deleted: ${id}`)
     return { success: true }

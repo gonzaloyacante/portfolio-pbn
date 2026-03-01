@@ -4,6 +4,9 @@ import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
 
+// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
+export const revalidate = 0
+
 export const metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',
   description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
