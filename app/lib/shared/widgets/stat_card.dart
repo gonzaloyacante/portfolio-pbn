@@ -52,8 +52,9 @@ class StatCard extends StatelessWidget {
 
     // Fondo tintado: más intenso en dark, más suave en light
     final bgTint = isDark ? cardColor.withAlpha(55) : cardColor.withAlpha(26);
-    final iconBgTint =
-        isDark ? cardColor.withAlpha(90) : cardColor.withAlpha(45);
+    final iconBgTint = isDark
+        ? cardColor.withAlpha(90)
+        : cardColor.withAlpha(45);
 
     return Material(
       color: bgTint,
@@ -98,19 +99,22 @@ class StatCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
 
               // ── Valor numérico: heredada el color de la tarjeta ──────
-              Text(
-                value,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: (isExpanded
-                        ? textTheme.headlineMedium
-                        : textTheme.headlineSmall)
-                    ?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: cardColor,
-                      height: 1.0,
-                      letterSpacing: -0.5,
-                    ),
+              Flexible(
+                child: Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style:
+                      (isExpanded
+                              ? textTheme.headlineMedium
+                              : textTheme.headlineSmall)
+                          ?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: cardColor,
+                            height: 1.0,
+                            letterSpacing: -0.5,
+                          ),
+                ),
               ),
               const SizedBox(height: AppSpacing.xs),
 
@@ -129,10 +133,7 @@ class StatCard extends StatelessWidget {
               // ── Badge de tendencia ───────────────────────────────────
               if (trend != null) ...[
                 const SizedBox(height: AppSpacing.sm),
-                _TrendBadge(
-                  trend: trend!,
-                  isPositive: trendPositive ?? true,
-                ),
+                _TrendBadge(trend: trend!, isPositive: trendPositive ?? true),
               ],
             ],
           ),

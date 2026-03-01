@@ -53,7 +53,7 @@ final class SyncManagerProvider
   }
 }
 
-String _$syncManagerHash() => r'09bafdd21baf3a766c4d3d44e4b5aaab30375899';
+String _$syncManagerHash() => r'61c4e39fe4ea2f51a5e33ab3edb40bb4f431ee4d';
 
 /// Procesa la cola de operaciones pendientes cuando hay conectividad.
 ///

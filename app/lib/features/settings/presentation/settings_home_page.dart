@@ -296,139 +296,139 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-              // ── Hero texts ───────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Textos del Hero',
-                leadingIcon: Icons.title_rounded,
-                children: [
-                  TextFormField(
-                    controller: _title1Ctrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Título principal',
-                      hintText: 'Ej: "Make-up"',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _title2Ctrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Segundo título',
-                      hintText: 'Ej: "Artist"',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _ownerNameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre de la artista',
-                      hintText: 'Ej: "Paola Bolívar Nievas"',
-                      prefixIcon: Icon(Icons.person_outline),
-                    ),
-                  ),
-                ],
+        // ── Hero texts ───────────────────────────────────────────────
+        SettingsFormCard(
+          title: 'Textos del Hero',
+          leadingIcon: Icons.title_rounded,
+          children: [
+            TextFormField(
+              controller: _title1Ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Título principal',
+                hintText: 'Ej: "Make-up"',
+                prefixIcon: Icon(Icons.format_size),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _title2Ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Segundo título',
+                hintText: 'Ej: "Artist"',
+                prefixIcon: Icon(Icons.format_size),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _ownerNameCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Nombre de la artista',
+                hintText: 'Ej: "Paola Bolívar Nievas"',
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // ── Hero image ───────────────────────────────────────────────
+        SettingsFormCard(
+          title: 'Foto del Hero',
+          leadingIcon: Icons.image_outlined,
+          children: [
+            _HeroImagePicker(
+              imageUrl: _heroImageCtrl.text,
+              pendingFile: _pendingHeroImage,
+              onPick: _pickHeroImage,
+              onRemove: _removeHeroImage,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _heroImageAltCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Texto alternativo (accesibilidad)',
+                hintText: 'Ej: "Foto de Paola maquillando"',
+                prefixIcon: Icon(Icons.accessibility_new_outlined),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // ── CTA ──────────────────────────────────────────────────────
+        SettingsFormCard(
+          title: 'Botón de acción (CTA)',
+          leadingIcon: Icons.touch_app_outlined,
+          children: [
+            TextFormField(
+              controller: _ctaTextCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Texto del botón',
+                hintText: 'Ej: "Ver proyectos"',
+                prefixIcon: Icon(Icons.smart_button_outlined),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _ctaLinkCtrl,
+              keyboardType: TextInputType.url,
+              decoration: const InputDecoration(
+                labelText: 'Enlace destino',
+                hintText: 'Ej: "/proyectos"',
+                prefixIcon: Icon(Icons.link_outlined),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // ── Featured projects ─────────────────────────────────────
+        SettingsFormCard(
+          title: 'Proyectos destacados',
+          leadingIcon: Icons.star_outline_rounded,
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Mostrar sección de destacados'),
+              subtitle: const Text(
+                'Aparece debajo del Hero en la página de inicio',
+              ),
+              value: _showFeatured,
+              onChanged: (v) => setState(() => _showFeatured = v),
+            ),
+            if (_showFeatured) ...[
+              const Divider(height: AppSpacing.xl),
+              TextFormField(
+                controller: _featuredTitleCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Título de la sección',
+                  hintText: 'Ej: "Trabajos recientes"',
+                  prefixIcon: Icon(Icons.title_outlined),
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
-
-              // ── Hero image ───────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Foto del Hero',
-                leadingIcon: Icons.image_outlined,
-                children: [
-                  _HeroImagePicker(
-                    imageUrl: _heroImageCtrl.text,
-                    pendingFile: _pendingHeroImage,
-                    onPick: _pickHeroImage,
-                    onRemove: _removeHeroImage,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _heroImageAltCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Texto alternativo (accesibilidad)',
-                      hintText: 'Ej: "Foto de Paola maquillando"',
-                      prefixIcon: Icon(Icons.accessibility_new_outlined),
-                    ),
-                  ),
-                ],
+              _FeaturedCountPicker(
+                value: _featuredCount,
+                onChanged: (v) => setState(() => _featuredCount = v),
               ),
               const SizedBox(height: AppSpacing.md),
-
-              // ── CTA ──────────────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Botón de acción (CTA)',
-                leadingIcon: Icons.touch_app_outlined,
-                children: [
-                  TextFormField(
-                    controller: _ctaTextCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Texto del botón',
-                      hintText: 'Ej: "Ver proyectos"',
-                      prefixIcon: Icon(Icons.smart_button_outlined),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _ctaLinkCtrl,
-                    keyboardType: TextInputType.url,
-                    decoration: const InputDecoration(
-                      labelText: 'Enlace destino',
-                      hintText: 'Ej: "/proyectos"',
-                      prefixIcon: Icon(Icons.link_outlined),
-                    ),
-                  ),
-                ],
+              OutlinedButton.icon(
+                onPressed: () => context.pushNamed(RouteNames.projects),
+                icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                label: const Text('Ordenar proyectos →'),
               ),
-              const SizedBox(height: AppSpacing.md),
+            ],
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xl),
 
-              // ── Featured projects ─────────────────────────────────────
-              SettingsFormCard(
-                title: 'Proyectos destacados',
-                leadingIcon: Icons.star_outline_rounded,
-                children: [
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Mostrar sección de destacados'),
-                    subtitle: const Text(
-                      'Aparece debajo del Hero en la página de inicio',
-                    ),
-                    value: _showFeatured,
-                    onChanged: (v) => setState(() => _showFeatured = v),
-                  ),
-                  if (_showFeatured) ...[
-                    const Divider(height: AppSpacing.xl),
-                    TextFormField(
-                      controller: _featuredTitleCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Título de la sección',
-                        hintText: 'Ej: "Trabajos recientes"',
-                        prefixIcon: Icon(Icons.title_outlined),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    _FeaturedCountPicker(
-                      value: _featuredCount,
-                      onChanged: (v) => setState(() => _featuredCount = v),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    OutlinedButton.icon(
-                      onPressed: () => context.pushNamed(RouteNames.projects),
-                      icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                      label: const Text('Ordenar proyectos →'),
-                    ),
-                  ],
-                ],
-              ),
-              const SizedBox(height: AppSpacing.xl),
-
-              FilledButton.icon(
-                onPressed: _saving ? null : _save,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Guardar cambios'),
-              ),
-              const SizedBox(height: AppSpacing.base),
-        ],
+        FilledButton.icon(
+          onPressed: _saving ? null : _save,
+          icon: const Icon(Icons.save_outlined),
+          label: const Text('Guardar cambios'),
+        ),
+        const SizedBox(height: AppSpacing.base),
+      ],
     );
   }
 
@@ -436,14 +436,16 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   Widget _buildHeroPreview(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final title1 =
-        _title1Ctrl.text.isNotEmpty ? _title1Ctrl.text : 'Título principal';
-    final title2 =
-        _title2Ctrl.text.isNotEmpty ? _title2Ctrl.text : 'Subtítulo';
-    final owner =
-        _ownerNameCtrl.text.isNotEmpty ? _ownerNameCtrl.text : 'Nombre artista';
-    final cta =
-        _ctaTextCtrl.text.isNotEmpty ? _ctaTextCtrl.text : 'Ver proyectos';
+    final title1 = _title1Ctrl.text.isNotEmpty
+        ? _title1Ctrl.text
+        : 'Título principal';
+    final title2 = _title2Ctrl.text.isNotEmpty ? _title2Ctrl.text : 'Subtítulo';
+    final owner = _ownerNameCtrl.text.isNotEmpty
+        ? _ownerNameCtrl.text
+        : 'Nombre artista';
+    final cta = _ctaTextCtrl.text.isNotEmpty
+        ? _ctaTextCtrl.text
+        : 'Ver proyectos';
     final hasPending = _pendingHeroImage != null;
     final hasUrl = _heroImageCtrl.text.isNotEmpty;
 
@@ -452,15 +454,18 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
       children: [
         Row(
           children: [
-            Icon(Icons.phonelink_outlined,
-                size: 16, color: colorScheme.primary),
+            Icon(
+              Icons.phonelink_outlined,
+              size: 16,
+              color: colorScheme.primary,
+            ),
             const SizedBox(width: 6),
             Text(
               'Vista previa',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -562,7 +567,9 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                         // CTA
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 7),
+                            horizontal: 14,
+                            vertical: 7,
+                          ),
                           decoration: BoxDecoration(
                             color: colorScheme.primary,
                             borderRadius: BorderRadius.circular(20),
@@ -588,9 +595,9 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         Text(
           'Se actualiza en tiempo real mientras editas',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurface.withAlpha(100),
-                fontStyle: FontStyle.italic,
-              ),
+            color: colorScheme.onSurface.withAlpha(100),
+            fontStyle: FontStyle.italic,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -646,29 +653,38 @@ class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
           mainAxisSize: MainAxisSize.min,
           children: [
             InkWell(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
               onTap: () => setState(() => _expanded = !_expanded),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.base, vertical: AppSpacing.sm),
+                  horizontal: AppSpacing.base,
+                  vertical: AppSpacing.sm,
+                ),
                 child: Row(
                   children: [
-                    Icon(Icons.phonelink_outlined,
-                        size: 16, color: colorScheme.primary),
+                    Icon(
+                      Icons.phonelink_outlined,
+                      size: 16,
+                      color: colorScheme.primary,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       'Vista previa del Hero',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const Spacer(),
                     AnimatedRotation(
                       turns: _expanded ? 0 : 0.5,
                       duration: const Duration(milliseconds: 200),
-                      child: Icon(Icons.expand_less_rounded,
-                          color: colorScheme.onSurfaceVariant),
+                      child: Icon(
+                        Icons.expand_less_rounded,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -677,12 +693,11 @@ class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
             if (_expanded)
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
                 child: Center(
-                  child: SizedBox(
-                    width: 200,
-                    child: widget.preview,
-                  ),
+                  child: SizedBox(width: 200, child: widget.preview),
                 ),
               ),
           ],
@@ -705,10 +720,7 @@ class _PreviewImagePlaceholder extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            color.primaryContainer,
-            color.secondaryContainer,
-          ],
+          colors: [color.primaryContainer, color.secondaryContainer],
         ),
       ),
       child: Center(

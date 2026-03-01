@@ -313,7 +313,11 @@ class _ThemeColorPreview extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.palette_outlined, size: 16, color: colorScheme.primary),
+              Icon(
+                Icons.palette_outlined,
+                size: 16,
+                color: colorScheme.primary,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Vista previa del tema',
@@ -417,8 +421,7 @@ class _MiniThemeCard extends StatelessWidget {
                     color: primary.withAlpha(isDark ? 90 : 40),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Icon(Icons.photo_outlined,
-                      size: 12, color: primary),
+                  child: Icon(Icons.photo_outlined, size: 12, color: primary),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -476,10 +479,7 @@ class _Swatch extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.black.withAlpha(30),
-          width: 0.5,
-        ),
+        border: Border.all(color: Colors.black.withAlpha(30), width: 0.5),
       ),
     );
   }
@@ -497,10 +497,7 @@ class _SwatchOutlined extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.grey.withAlpha(100),
-          width: 1,
-        ),
+        border: Border.all(color: Colors.grey.withAlpha(100), width: 1),
       ),
     );
   }

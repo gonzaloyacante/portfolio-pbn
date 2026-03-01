@@ -1,9 +1,2 @@
-runtimes:
-    - dart@3.7.2
-    - go@1.22.3
-    - python@3.11.11
 tools:
-    - dartanalyzer@3.7.2
-    - revive@1.7.0
-    - semgrep@1.78.0
     - trivy@0.66.0

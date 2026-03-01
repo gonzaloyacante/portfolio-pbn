@@ -93,7 +93,7 @@ final class AuthNotifierProvider
   AuthNotifier create() => AuthNotifier();
 }
 
-String _$authNotifierHash() => r'42f46f9c7a5020482e7334ffcf5efe6ff115382e';
+String _$authNotifierHash() => r'533b396e3ed05c0ae3e7508c370974ede6672caa';
 
 /// Controla el estado de autenticación global de la app.
 ///

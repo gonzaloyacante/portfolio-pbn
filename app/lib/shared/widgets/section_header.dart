@@ -69,7 +69,10 @@ class SectionHeader extends StatelessWidget {
               ],
             ),
           ),
-          ?trailing,
+          if (trailing != null) ...[
+            const SizedBox(width: AppSpacing.base),
+            trailing!,
+          ],
         ],
       ),
     );
