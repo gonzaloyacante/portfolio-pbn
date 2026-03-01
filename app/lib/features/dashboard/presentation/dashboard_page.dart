@@ -7,10 +7,11 @@ import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_radius.dart';
-import 'widgets/page_views_chart.dart';
-import 'widgets/bookings_bar_chart.dart';
 import 'widgets/alerts_section.dart';
+import 'widgets/bookings_bar_chart.dart';
+import 'widgets/page_views_chart.dart';
 import 'widgets/quick_actions.dart';
+import 'widgets/visitors_map.dart';
 import '../../../shared/widgets/adaptive_grid.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -217,7 +218,7 @@ class _DashboardContent extends StatelessWidget {
           ),
         ],
 
-        // ── Sección: Top ubicaciones ──────────────────────────────────────
+        // ── Sección: Top ubicaciones + Mapa ─────────────────────────────────
         if (stats.topLocations.isNotEmpty) ...[
           SliverPadding(
             padding: padding.copyWith(
@@ -225,15 +226,13 @@ class _DashboardContent extends StatelessWidget {
               bottom: AppSpacing.sm,
             ),
             sliver: SliverToBoxAdapter(
-              child: SectionHeader(title: 'Top ubicaciones (30d)'),
+              child: SectionHeader(title: 'Visitantes por ubicación (30d)'),
             ),
           ),
           SliverPadding(
             padding: padding.copyWith(top: 0),
             sliver: SliverToBoxAdapter(
-              child: _TopRankingSection(
-                items: [for (final l in stats.topLocations) (l.label, l.count)],
-              ),
+              child: VisitorsMapWidget(locations: stats.topLocations),
             ),
           ),
         ],
