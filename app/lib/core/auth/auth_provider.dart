@@ -5,6 +5,7 @@ import '../api/api_exceptions.dart';
 import '../utils/app_logger.dart';
 import 'auth_repository.dart';
 import 'auth_state.dart';
+import 'session_signal.dart';
 import 'token_storage.dart';
 
 part 'auth_provider.g.dart';
@@ -36,6 +37,25 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   Future<AuthState> build() async {
     AppLogger.info('AuthNotifier: initializing...');
+
+    // Reaccionar a señales de expiración de sesión del AuthInterceptor.
+    // AuthInterceptor no puede importar auth_provider.dart directamente
+    // (dependencia circular):
+    //   auth_interceptor → auth_provider → auth_repository → api_client → auth_interceptor
+    // Cuando el refresh token falla, el interceptor incrementa sessionExpiredSignal.
+    // Aquí reaccionamos actualizando el estado → RouterNotifier redirige al login.
+    ref.listen<int>(
+      sessionExpiredSignal,
+      (prev, next) {
+        if (next > (prev ?? 0)) {
+          AppLogger.warn(
+            'AuthNotifier: session expired signal → transitioning to unauthenticated',
+          );
+          state = const AsyncData(AuthState.unauthenticated());
+        }
+      },
+    );
+
     return _restoreSession();
   }
 

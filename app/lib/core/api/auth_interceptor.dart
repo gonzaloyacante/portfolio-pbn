@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../auth/session_signal.dart';
 import '../auth/token_storage.dart';
 import '../config/env_config.dart';
-import '../router/route_names.dart';
 import '../utils/app_logger.dart';
 import 'api_exceptions.dart';
 import 'endpoints.dart';
@@ -209,12 +209,13 @@ class AuthInterceptor extends Interceptor {
     final storage = ref.read(tokenStorageProvider);
     await storage.clearAll();
 
-    // Navegar al login desde fuera del árbol de widgets usando GoRouter.
-    // Se usa el nombre de la ruta para no depender de context.
-    AppLogger.info('AuthInterceptor: redirecting to ${RouteNames.login}');
-    // La redirección real la maneja el guard del router al detectar
-    // que ya no hay sesión activa. Forzamos un rebuild invalidando el auth.
-    // (El authProvider escucha tokenStorage, así que se actualizará solo.)
+    AppLogger.info('AuthInterceptor: session cleared → signaling session expired');
+
+    // No podemos importar authProvider directamente (dependencia circular):
+    //   auth_interceptor → auth_provider → auth_repository → api_client → auth_interceptor
+    // En su lugar, incrementamos sessionExpiredSignal, que AuthNotifier escucha
+    // y convierte en AuthState.unauthenticated(), lo que hace que el router redirija al login.
+    ref.read(sessionExpiredSignal.notifier).increment();
   }
 
   void _rejectPendingWithError(DioException err) {
