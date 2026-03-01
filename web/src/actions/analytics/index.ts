@@ -82,12 +82,26 @@ export async function recordAnalyticEvent(
     const userAgent = headersList.get('user-agent') || 'unknown'
     const referer = headersList.get('referer') || null
 
-    // Vercel edge geo headers
-    const country = headersList.get('x-vercel-ip-country') || undefined
-    const city = headersList.get('x-vercel-ip-city') || undefined
-    const region = headersList.get('x-vercel-ip-country-region') || undefined
+    // Vercel edge geo headers (GeoIP — probabilístico, nivel ciudad)
+    const vercelCountry = headersList.get('x-vercel-ip-country') || undefined
+    const vercelCity = headersList.get('x-vercel-ip-city') || undefined
+    const vercelRegion = headersList.get('x-vercel-ip-country-region') || undefined
     const latRaw = headersList.get('x-vercel-ip-latitude')
     const lonRaw = headersList.get('x-vercel-ip-longitude')
+
+    // Coordenadas del cliente (precisas, con consentimiento explícito)
+    const clientGeo = options?.metadata?.geo as
+      | { latitude?: number; longitude?: number; accuracy?: number }
+      | undefined
+    const consentLevel = (options?.metadata?.consentLevel as string | undefined) ?? 'geoip'
+
+    // Preferir coordenadas del cliente sobre GeoIP cuando el consentimiento es preciso
+    const usePrecise = consentLevel === 'precise' && clientGeo?.latitude !== undefined
+    const country = vercelCountry
+    const city = vercelCity
+    const region = vercelRegion
+    const latitude = usePrecise ? clientGeo!.latitude : latRaw ? parseFloat(latRaw) : undefined
+    const longitude = usePrecise ? clientGeo!.longitude : lonRaw ? parseFloat(lonRaw) : undefined
 
     const distinctIp = rawIp.split(',')[0].trim()
     const ipAddress = anonymizeIp(distinctIp)
@@ -134,8 +148,8 @@ export async function recordAnalyticEvent(
         country,
         city,
         region,
-        latitude: latRaw ? parseFloat(latRaw) : undefined,
-        longitude: lonRaw ? parseFloat(lonRaw) : undefined,
+        latitude,
+        longitude,
         device,
         isBot,
         isDuplicate,
@@ -154,7 +168,9 @@ export async function recordAnalyticEvent(
         utmTerm: options?.stm?.term,
         utmContent: options?.stm?.content,
         loadTime: options?.performance?.loadTime,
-        eventData: options?.metadata ? JSON.parse(JSON.stringify(options.metadata)) : undefined,
+        eventData: options?.metadata
+          ? JSON.parse(JSON.stringify({ ...options.metadata, _consentLevel: consentLevel }))
+          : { _consentLevel: consentLevel },
       },
     })
     return { success: true }
@@ -213,16 +229,16 @@ export async function getAnalyticsDashboardData() {
         orderBy: { _count: { entityId: 'desc' } },
         take: 5,
       }),
-      // 6. Device groups
+      // 6. Device groups (por visitantes únicos: isDuplicate=false)
       prisma.analyticLog.groupBy({
         by: ['device'],
-        where: { ...where7d, isBot: false },
+        where: { ...where7d, isBot: false, isDuplicate: false },
         _count: { device: true },
       }),
       // 7. Top locations by city+country (not raw IPs)
       prisma.analyticLog.groupBy({
         by: ['city', 'country'],
-        where: { ...where7d, city: { not: null }, isBot: false },
+        where: { ...where7d, city: { not: null }, isBot: false, isDuplicate: false },
         _count: { city: true },
         orderBy: { _count: { city: 'desc' } },
         take: 8,

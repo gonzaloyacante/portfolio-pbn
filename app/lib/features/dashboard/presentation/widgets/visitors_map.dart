@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/utils/country_names.dart';
 import '../../data/dashboard_repository.dart';
 
 // ── VisitorsMapWidget ────────────────────────────────────────────────────────
@@ -68,10 +69,8 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
         ? 1
         : allLocs.map((l) => l.count).reduce((a, b) => a > b ? a : b);
 
-    // Carto tiles — dark_matter_no_labels / positron_no_labels (sin API key)
-    final tileUrl = isDark
-        ? 'https://{s}.basemaps.cartocdn.com/dark_matter_no_labels/{z}/{x}/{y}{r}.png'
-        : 'https://{s}.basemaps.cartocdn.com/positron_no_labels/{z}/{x}/{y}{r}.png';
+    // NOTE: previously we attempted Carto tiles; prefer using primary OSM
+    // layer with `tileBuilder` for dark mode to avoid retina/@2x 404s.
 
     return Card(
       elevation: 0,
@@ -103,185 +102,202 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                       ],
                     ),
                   )
-                : FlutterMap(
-                    mapController: _mapCtrl,
-                    options: MapOptions(
-                      initialCenter: const LatLng(20, 10),
-                      initialZoom: 1.8,
-                      minZoom: 1.0,
-                      maxZoom: 8.0,
-                      interactionOptions: const InteractionOptions(
-                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                      ),
-                      onTap: (_, _) => setState(() => _selectedIdx = null),
-                    ),
-                    children: [
-                      // ── Tile layer ──────────────────────────────────────
-                      TileLayer(
-                        urlTemplate: tileUrl,
-                        subdomains: const ['a', 'b', 'c'],
-                        userAgentPackageName: 'dev.portfoliopbn.app',
-                        retinaMode: true,
-                      ),
-                      // ── Markers con animación de pulso ──────────────────
-                      AnimatedBuilder(
-                        animation: _pulseAnim,
-                        builder: (context, _) => MarkerLayer(
-                          markers: geoLocs.asMap().entries.map((entry) {
-                            final idx = entry.key;
-                            final loc = entry.value;
-                            final ratio = loc.count / maxGeoCount;
-                            final isSelected = _selectedIdx == idx;
-
-                            final dotSize = 10.0 + ratio * 18.0;
-                            final pulseFactor = isSelected
-                                ? 1.0
-                                : (0.7 + _pulseAnim.value * 0.3);
-                            final haloSize = dotSize * 2.8 * pulseFactor;
-
-                            final color = Color.lerp(
-                              AppColors.darkPrimary,
-                              AppColors.lightPrimary,
-                              ratio,
-                            )!;
-
-                            return Marker(
-                              point: LatLng(loc.latitude!, loc.longitude!),
-                              width: dotSize * 4,
-                              height: dotSize * 4 + (isSelected ? 36 : 0),
-                              alignment: isSelected
-                                  ? const Alignment(0, 0.5)
-                                  : Alignment.center,
-                              child: GestureDetector(
-                                onTap: () => setState(
-                                  () => _selectedIdx = isSelected ? null : idx,
-                                ),
-                                child: Stack(
-                                  alignment: Alignment.center,
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    // Halo pulsante
-                                    Container(
-                                      width: haloSize,
-                                      height: haloSize,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: color.withAlpha(
-                                          (35 * pulseFactor).round(),
-                                        ),
-                                      ),
-                                    ),
-                                    // Punto sólido con glow
-                                    Container(
-                                      width: dotSize,
-                                      height: dotSize,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: color,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: color.withAlpha(
-                                              isSelected ? 220 : 140,
-                                            ),
-                                            blurRadius: isSelected ? 14 : 8,
-                                            spreadRadius: isSelected ? 3 : 1,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Tooltip al seleccionar
-                                    if (isSelected) ...[
-                                      Positioned(
-                                        top: 0,
-                                        child: Container(
-                                          constraints: const BoxConstraints(
-                                            maxWidth: 160,
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: colorScheme.surface,
-                                            borderRadius: BorderRadius.circular(
-                                              10,
-                                            ),
-                                            border: Border.all(
-                                              color: color.withAlpha(120),
-                                              width: 1.5,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withAlpha(
-                                                  50,
-                                                ),
-                                                blurRadius: 12,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.location_on_rounded,
-                                                size: 12,
-                                                color: color,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Flexible(
-                                                child: Text(
-                                                  loc.label,
-                                                  style: theme
-                                                      .textTheme
-                                                      .labelSmall
-                                                      ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: colorScheme
-                                                            .onSurface,
-                                                      ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 5,
-                                                      vertical: 2,
-                                                    ),
-                                                decoration: BoxDecoration(
-                                                  color: color.withAlpha(40),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                ),
-                                                child: Text(
-                                                  '${loc.count}',
-                                                  style: theme
-                                                      .textTheme
-                                                      .labelSmall
-                                                      ?.copyWith(
-                                                        color: color,
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                : ColoredBox(
+                    color: colorScheme.surfaceVariant,
+                    child: FlutterMap(
+                      mapController: _mapCtrl,
+                      options: MapOptions(
+                        initialCenter: const LatLng(20, 10),
+                        initialZoom: 1.8,
+                        minZoom: 1.0,
+                        maxZoom: 8.0,
+                        interactionOptions: const InteractionOptions(
+                          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                         ),
+                        onTap: (_, _) => setState(() => _selectedIdx = null),
                       ),
-                    ],
+                      children: [
+                        // ── Primary tile layer: OpenStreetMap (reliable public tiles)
+                        // Use a single, well-known provider to avoid 404/503 from
+                        // less-stable endpoints. Keep `retinaMode=false` to avoid
+                        // @2x suffixes which caused earlier 404s on some providers.
+                        TileLayer(
+                          urlTemplate:
+                              'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          subdomains: const ['a', 'b', 'c'],
+                          userAgentPackageName: 'dev.portfoliopbn.app',
+                          retinaMode: false,
+                          tileBuilder: isDark ? darkModeTileBuilder : null,
+                        ),
+
+                        // NOTE: If you later want theme-specific styling (dark map),
+                        // prefer a dedicated dark tile provider with an API key
+                        // or a cached proxy. For now OSM guarantees the map renders.
+                        // ── Markers con animación de pulso ──────────────────
+                        AnimatedBuilder(
+                          animation: _pulseAnim,
+                          builder: (context, _) => MarkerLayer(
+                            markers: geoLocs.asMap().entries.map((entry) {
+                              final idx = entry.key;
+                              final loc = entry.value;
+                              final ratio = loc.count / maxGeoCount;
+                              final isSelected = _selectedIdx == idx;
+
+                              final dotSize = 10.0 + ratio * 18.0;
+                              final pulseFactor = isSelected
+                                  ? 1.0
+                                  : (0.7 + _pulseAnim.value * 0.3);
+                              final haloSize = dotSize * 2.8 * pulseFactor;
+
+                              final color = Color.lerp(
+                                AppColors.darkPrimary,
+                                AppColors.lightPrimary,
+                                ratio,
+                              )!;
+
+                              return Marker(
+                                point: LatLng(loc.latitude!, loc.longitude!),
+                                width: dotSize * 4,
+                                height: dotSize * 4 + (isSelected ? 36 : 0),
+                                alignment: isSelected
+                                    ? const Alignment(0, 0.5)
+                                    : Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () => setState(
+                                    () =>
+                                        _selectedIdx = isSelected ? null : idx,
+                                  ),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      // Halo pulsante
+                                      Container(
+                                        width: haloSize,
+                                        height: haloSize,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: color.withAlpha(
+                                            (35 * pulseFactor).round(),
+                                          ),
+                                        ),
+                                      ),
+                                      // Punto sólido con glow
+                                      Container(
+                                        width: dotSize,
+                                        height: dotSize,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: color,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: color.withAlpha(
+                                                isSelected ? 220 : 140,
+                                              ),
+                                              blurRadius: isSelected ? 14 : 8,
+                                              spreadRadius: isSelected ? 3 : 1,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      // Tooltip al seleccionar
+                                      if (isSelected) ...[
+                                        Positioned(
+                                          top: 0,
+                                          child: Container(
+                                            constraints: const BoxConstraints(
+                                              maxWidth: 160,
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10,
+                                              vertical: 5,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: colorScheme.surface,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                color: color.withAlpha(120),
+                                                width: 1.5,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black.withAlpha(
+                                                    50,
+                                                  ),
+                                                  blurRadius: 12,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(
+                                                  Icons.location_on_rounded,
+                                                  size: 12,
+                                                  color: color,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Flexible(
+                                                  child: Text(
+                                                    getCountryDisplayName(
+                                                      loc.code,
+                                                      loc.label,
+                                                    ),
+                                                    style: theme
+                                                        .textTheme
+                                                        .labelSmall
+                                                        ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: colorScheme
+                                                              .onSurface,
+                                                        ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 5,
+                                                        vertical: 2,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color: color.withAlpha(40),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          6,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    '${loc.count}',
+                                                    style: theme
+                                                        .textTheme
+                                                        .labelSmall
+                                                        ?.copyWith(
+                                                          color: color,
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
           ),
 
@@ -369,7 +385,10 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                       children: [
                                         Flexible(
                                           child: Text(
-                                            loc.label,
+                                            getCountryDisplayName(
+                                              loc.code,
+                                              loc.label,
+                                            ),
                                             style: theme.textTheme.bodyMedium
                                                 ?.copyWith(
                                                   fontWeight: isSelected
@@ -415,6 +434,66 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                   ),
                                 ),
                               ),
+                              // ── Desglose de ciudades (si existen)
+                              if (loc.cities.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: loc.cities.take(5).map((city) {
+                                    return InkWell(
+                                      onTap:
+                                          city.latitude != null &&
+                                              city.longitude != null
+                                          ? () {
+                                              // Center map on city with closer zoom
+                                              _mapCtrl.move(
+                                                LatLng(
+                                                  city.latitude!,
+                                                  city.longitude!,
+                                                ),
+                                                8.0,
+                                              );
+                                              setState(
+                                                () => _selectedIdx = idx,
+                                              );
+                                            }
+                                          : null,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 2,
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                city.label,
+                                                style: theme.textTheme.bodySmall
+                                                    ?.copyWith(
+                                                      color: colorScheme
+                                                          .onSurface
+                                                          .withAlpha(160),
+                                                    ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                              '${city.count} • ${city.percent}%',
+                                              style: theme.textTheme.bodySmall
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: colorScheme.primary,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -426,6 +505,38 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
             }),
 
             const SizedBox(height: AppSpacing.sm),
+
+            // ── Nota de origen de datos ────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.base,
+                0,
+                AppSpacing.base,
+                AppSpacing.sm,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 11,
+                    color: colorScheme.onSurface.withAlpha(80),
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Ubicación estimada por IP (GeoIP). '
+                      'Para mayor precisión, el visitante debe aceptar '
+                      'la geolocalización en el banner de cookies del sitio.',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.onSurface.withAlpha(80),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ],
       ),

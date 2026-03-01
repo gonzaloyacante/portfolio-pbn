@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LocationStat {
 
- String get label; int get count; double? get latitude; double? get longitude;
+ String get label; int get count; String? get code; double? get latitude; double? get longitude; List<CityStat> get cities;
 /// Create a copy of LocationStat
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $LocationStatCopyWith<LocationStat> get copyWith => _$LocationStatCopyWithImpl<L
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LocationStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LocationStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.code, code) || other.code == code)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other.cities, cities));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,label,count,latitude,longitude);
+int get hashCode => Object.hash(runtimeType,label,count,code,latitude,longitude,const DeepCollectionEquality().hash(cities));
 
 @override
 String toString() {
-  return 'LocationStat(label: $label, count: $count, latitude: $latitude, longitude: $longitude)';
+  return 'LocationStat(label: $label, count: $count, code: $code, latitude: $latitude, longitude: $longitude, cities: $cities)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $LocationStatCopyWith<$Res>  {
   factory $LocationStatCopyWith(LocationStat value, $Res Function(LocationStat) _then) = _$LocationStatCopyWithImpl;
 @useResult
 $Res call({
- String label, int count, double? latitude, double? longitude
+ String label, int count, String? code, double? latitude, double? longitude, List<CityStat> cities
 });
 
 
@@ -65,13 +65,15 @@ class _$LocationStatCopyWithImpl<$Res>
 
 /// Create a copy of LocationStat
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? count = null,Object? latitude = freezed,Object? longitude = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? count = null,Object? code = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? cities = null,}) {
   return _then(_self.copyWith(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
-as int,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as int,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
-as double?,
+as double?,cities: null == cities ? _self.cities : cities // ignore: cast_nullable_to_non_nullable
+as List<CityStat>,
   ));
 }
 
@@ -156,10 +158,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  int count,  double? latitude,  double? longitude)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  int count,  String? code,  double? latitude,  double? longitude,  List<CityStat> cities)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LocationStat() when $default != null:
-return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
+return $default(_that.label,_that.count,_that.code,_that.latitude,_that.longitude,_that.cities);case _:
   return orElse();
 
 }
@@ -177,10 +179,10 @@ return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  int count,  double? latitude,  double? longitude)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  int count,  String? code,  double? latitude,  double? longitude,  List<CityStat> cities)  $default,) {final _that = this;
 switch (_that) {
 case _LocationStat():
-return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
+return $default(_that.label,_that.count,_that.code,_that.latitude,_that.longitude,_that.cities);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +199,10 @@ return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  int count,  double? latitude,  double? longitude)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  int count,  String? code,  double? latitude,  double? longitude,  List<CityStat> cities)?  $default,) {final _that = this;
 switch (_that) {
 case _LocationStat() when $default != null:
-return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
+return $default(_that.label,_that.count,_that.code,_that.latitude,_that.longitude,_that.cities);case _:
   return null;
 
 }
@@ -212,13 +214,21 @@ return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
 @JsonSerializable()
 
 class _LocationStat implements LocationStat {
-  const _LocationStat({required this.label, required this.count, this.latitude, this.longitude});
+  const _LocationStat({required this.label, required this.count, this.code, this.latitude, this.longitude, final  List<CityStat> cities = const []}): _cities = cities;
   factory _LocationStat.fromJson(Map<String, dynamic> json) => _$LocationStatFromJson(json);
 
 @override final  String label;
 @override final  int count;
+@override final  String? code;
 @override final  double? latitude;
 @override final  double? longitude;
+ final  List<CityStat> _cities;
+@override@JsonKey() List<CityStat> get cities {
+  if (_cities is EqualUnmodifiableListView) return _cities;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_cities);
+}
+
 
 /// Create a copy of LocationStat
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LocationStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LocationStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.code, code) || other.code == code)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude)&&const DeepCollectionEquality().equals(other._cities, _cities));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,label,count,latitude,longitude);
+int get hashCode => Object.hash(runtimeType,label,count,code,latitude,longitude,const DeepCollectionEquality().hash(_cities));
 
 @override
 String toString() {
-  return 'LocationStat(label: $label, count: $count, latitude: $latitude, longitude: $longitude)';
+  return 'LocationStat(label: $label, count: $count, code: $code, latitude: $latitude, longitude: $longitude, cities: $cities)';
 }
 
 
@@ -253,7 +263,7 @@ abstract mixin class _$LocationStatCopyWith<$Res> implements $LocationStatCopyWi
   factory _$LocationStatCopyWith(_LocationStat value, $Res Function(_LocationStat) _then) = __$LocationStatCopyWithImpl;
 @override @useResult
 $Res call({
- String label, int count, double? latitude, double? longitude
+ String label, int count, String? code, double? latitude, double? longitude, List<CityStat> cities
 });
 
 
@@ -270,10 +280,287 @@ class __$LocationStatCopyWithImpl<$Res>
 
 /// Create a copy of LocationStat
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? count = null,Object? latitude = freezed,Object? longitude = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? count = null,Object? code = freezed,Object? latitude = freezed,Object? longitude = freezed,Object? cities = null,}) {
   return _then(_LocationStat(
 label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as String,count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int,code: freezed == code ? _self.code : code // ignore: cast_nullable_to_non_nullable
+as String?,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
+as double?,cities: null == cities ? _self._cities : cities // ignore: cast_nullable_to_non_nullable
+as List<CityStat>,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$CityStat {
+
+ String get label; int get count; int get percent; double? get latitude; double? get longitude;
+/// Create a copy of CityStat
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CityStatCopyWith<CityStat> get copyWith => _$CityStatCopyWithImpl<CityStat>(this as CityStat, _$identity);
+
+  /// Serializes this CityStat to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CityStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.percent, percent) || other.percent == percent)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,label,count,percent,latitude,longitude);
+
+@override
+String toString() {
+  return 'CityStat(label: $label, count: $count, percent: $percent, latitude: $latitude, longitude: $longitude)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CityStatCopyWith<$Res>  {
+  factory $CityStatCopyWith(CityStat value, $Res Function(CityStat) _then) = _$CityStatCopyWithImpl;
+@useResult
+$Res call({
+ String label, int count, int percent, double? latitude, double? longitude
+});
+
+
+
+
+}
+/// @nodoc
+class _$CityStatCopyWithImpl<$Res>
+    implements $CityStatCopyWith<$Res> {
+  _$CityStatCopyWithImpl(this._self, this._then);
+
+  final CityStat _self;
+  final $Res Function(CityStat) _then;
+
+/// Create a copy of CityStat
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? count = null,Object? percent = null,Object? latitude = freezed,Object? longitude = freezed,}) {
+  return _then(_self.copyWith(
+label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int,percent: null == percent ? _self.percent : percent // ignore: cast_nullable_to_non_nullable
+as int,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
+as double?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [CityStat].
+extension CityStatPatterns on CityStat {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CityStat value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CityStat() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CityStat value)  $default,){
+final _that = this;
+switch (_that) {
+case _CityStat():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CityStat value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CityStat() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  int count,  int percent,  double? latitude,  double? longitude)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CityStat() when $default != null:
+return $default(_that.label,_that.count,_that.percent,_that.latitude,_that.longitude);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  int count,  int percent,  double? latitude,  double? longitude)  $default,) {final _that = this;
+switch (_that) {
+case _CityStat():
+return $default(_that.label,_that.count,_that.percent,_that.latitude,_that.longitude);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  int count,  int percent,  double? latitude,  double? longitude)?  $default,) {final _that = this;
+switch (_that) {
+case _CityStat() when $default != null:
+return $default(_that.label,_that.count,_that.percent,_that.latitude,_that.longitude);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _CityStat implements CityStat {
+  const _CityStat({required this.label, required this.count, this.percent = 0, this.latitude, this.longitude});
+  factory _CityStat.fromJson(Map<String, dynamic> json) => _$CityStatFromJson(json);
+
+@override final  String label;
+@override final  int count;
+@override@JsonKey() final  int percent;
+@override final  double? latitude;
+@override final  double? longitude;
+
+/// Create a copy of CityStat
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CityStatCopyWith<_CityStat> get copyWith => __$CityStatCopyWithImpl<_CityStat>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$CityStatToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CityStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.percent, percent) || other.percent == percent)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,label,count,percent,latitude,longitude);
+
+@override
+String toString() {
+  return 'CityStat(label: $label, count: $count, percent: $percent, latitude: $latitude, longitude: $longitude)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CityStatCopyWith<$Res> implements $CityStatCopyWith<$Res> {
+  factory _$CityStatCopyWith(_CityStat value, $Res Function(_CityStat) _then) = __$CityStatCopyWithImpl;
+@override @useResult
+$Res call({
+ String label, int count, int percent, double? latitude, double? longitude
+});
+
+
+
+
+}
+/// @nodoc
+class __$CityStatCopyWithImpl<$Res>
+    implements _$CityStatCopyWith<$Res> {
+  __$CityStatCopyWithImpl(this._self, this._then);
+
+  final _CityStat _self;
+  final $Res Function(_CityStat) _then;
+
+/// Create a copy of CityStat
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? count = null,Object? percent = null,Object? latitude = freezed,Object? longitude = freezed,}) {
+  return _then(_CityStat(
+label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int,percent: null == percent ? _self.percent : percent // ignore: cast_nullable_to_non_nullable
 as int,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
 as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
 as double?,

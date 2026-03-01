@@ -16,12 +16,30 @@ abstract class LocationStat with _$LocationStat {
   const factory LocationStat({
     required String label,
     required int count,
+    String? code,
     double? latitude,
     double? longitude,
+    @Default([]) List<CityStat> cities,
   }) = _LocationStat;
 
   factory LocationStat.fromJson(Map<String, dynamic> json) =>
       _$LocationStatFromJson(json);
+}
+
+// ── CityStat ───────────────────────────────────────────────────────────────
+
+@freezed
+abstract class CityStat with _$CityStat {
+  const factory CityStat({
+    required String label,
+    required int count,
+    @Default(0) int percent,
+    double? latitude,
+    double? longitude,
+  }) = _CityStat;
+
+  factory CityStat.fromJson(Map<String, dynamic> json) =>
+      _$CityStatFromJson(json);
 }
 
 // ── DashboardStats ────────────────────────────────────────────────────────────

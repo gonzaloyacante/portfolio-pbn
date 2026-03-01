@@ -72,28 +72,32 @@ export async function GET(req: Request) {
           isDuplicate: false,
         },
       }),
-      // Uso por dispositivo (últimos 30 días) — incluye null como "unknown"
+      // Contamos visitantes únicos por dispositivo (primer evento de sesión)
       prisma.analyticLog.groupBy({
         by: ['device'],
         where: {
           timestamp: { gte: thirtyDaysAgo },
           eventType: { endsWith: '_VIEW' },
           isBot: false,
+          isDuplicate: false,
         },
         _count: { _all: true },
       }),
       // Top países por visitas (últimos 30 días)
+      // Incluimos country NULL para contabilizar como 'unknown' y mostrar
+      // por qué la suma de países puede ser menor que el total de visitas.
       prisma.analyticLog.groupBy({
         by: ['country'],
         where: {
           timestamp: { gte: thirtyDaysAgo },
           eventType: { endsWith: '_VIEW' },
           isBot: false,
-          country: { not: null },
+          // Mostrar países según visitantes únicos (primer evento de sesión)
+          isDuplicate: false,
         },
         _count: { _all: true },
         orderBy: { _count: { id: 'desc' } },
-        take: 8,
+        take: 12,
       }),
       // Top proyectos vistos (últimos 30 días)
       prisma.analyticLog.groupBy({
@@ -117,18 +121,85 @@ export async function GET(req: Request) {
       return acc
     }, {})
 
-    // Resolver lat/lng representativo por país + nombre
+    // Resolver lat/lng representativo por país + nombre y desglose por ciudades
+    // Intl.DisplayNames may not exist in all runtimes. Create a typed constructor
+    // reference to avoid using `any` or `@ts-ignore` inline comments.
+    type DisplayNamesConstructor = new (
+      locales: string | string[],
+      options?: { type: 'region' }
+    ) => { of(code: string): string | undefined }
+
+    const DisplayNamesCtor = (
+      typeof Intl !== 'undefined'
+        ? (Intl as unknown as { DisplayNames?: DisplayNamesConstructor }).DisplayNames
+        : undefined
+    ) as DisplayNamesConstructor | undefined
+
+    const displayNames = DisplayNamesCtor ? new DisplayNamesCtor(['es'], { type: 'region' }) : null
+
     const topLocations = await Promise.all(
       topCountriesRaw.map(async ({ country, _count }) => {
+        const countryKey = country ?? 'unknown'
+
+        // Representative coordinates (si existen)
         const rep = await prisma.analyticLog.findFirst({
-          where: { country, latitude: { not: null }, longitude: { not: null } },
+          where: { country: country, latitude: { not: null }, longitude: { not: null } },
           select: { latitude: true, longitude: true },
         })
+
+        // Top ciudades dentro del país (últimos 30 días)
+        const citiesRaw = await prisma.analyticLog.groupBy({
+          by: ['city'],
+          where: {
+            timestamp: { gte: thirtyDaysAgo },
+            eventType: { endsWith: '_VIEW' },
+            isBot: false,
+            country: country,
+          },
+          _count: { _all: true },
+          orderBy: { _count: { id: 'desc' } },
+          take: 8,
+        })
+
+        const countryTotal = _count._all
+
+        // For each city, try to resolve a representative lat/lng
+        const cities = await Promise.all(
+          citiesRaw.map(async ({ city, _count: c }) => {
+            const cityName = city ?? 'unknown'
+            const repCity = await prisma.analyticLog.findFirst({
+              where: { country: country, city, latitude: { not: null }, longitude: { not: null } },
+              select: { latitude: true, longitude: true },
+            })
+            return {
+              label: cityName,
+              count: c._all,
+              percent: countryTotal > 0 ? Math.round((c._all / countryTotal) * 100) : 0,
+              latitude: repCity?.latitude ?? null,
+              longitude: repCity?.longitude ?? null,
+            }
+          })
+        )
+
+        // Resolve display name for country code, prefer Intl.DisplayNames when available
+        let displayName: string
+        if (country) {
+          if (displayNames) {
+            displayName = displayNames.of(country) || country
+          } else {
+            displayName = country
+          }
+        } else {
+          displayName = 'unknown'
+        }
+
         return {
-          label: country!,
-          count: _count._all,
+          code: countryKey,
+          label: displayName,
+          count: countryTotal,
           latitude: rep?.latitude ?? null,
           longitude: rep?.longitude ?? null,
+          cities,
         }
       })
     )

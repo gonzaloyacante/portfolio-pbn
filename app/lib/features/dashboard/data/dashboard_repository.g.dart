@@ -10,17 +10,41 @@ _LocationStat _$LocationStatFromJson(Map<String, dynamic> json) =>
     _LocationStat(
       label: json['label'] as String,
       count: (json['count'] as num).toInt(),
+      code: json['code'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
+      cities:
+          (json['cities'] as List<dynamic>?)
+              ?.map((e) => CityStat.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$LocationStatToJson(_LocationStat instance) =>
     <String, dynamic>{
       'label': instance.label,
       'count': instance.count,
+      'code': instance.code,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
+      'cities': instance.cities,
     };
+
+_CityStat _$CityStatFromJson(Map<String, dynamic> json) => _CityStat(
+  label: json['label'] as String,
+  count: (json['count'] as num).toInt(),
+  percent: (json['percent'] as num?)?.toInt() ?? 0,
+  latitude: (json['latitude'] as num?)?.toDouble(),
+  longitude: (json['longitude'] as num?)?.toDouble(),
+);
+
+Map<String, dynamic> _$CityStatToJson(_CityStat instance) => <String, dynamic>{
+  'label': instance.label,
+  'count': instance.count,
+  'percent': instance.percent,
+  'latitude': instance.latitude,
+  'longitude': instance.longitude,
+};
 
 _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
     _DashboardStats(
