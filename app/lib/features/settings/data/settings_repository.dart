@@ -98,9 +98,7 @@ class SettingsRepository {
   // ── Social Links ──────────────────────────────────────────────────────────
 
   Future<List<SocialLink>> getSocialLinks() async {
-    final resp = await _client.get<Map<String, dynamic>>(
-      Endpoints.socialLinks,
-    );
+    final resp = await _client.get<Map<String, dynamic>>(Endpoints.socialLinks);
     final list = resp['data'] as List<dynamic>;
     return list
         .map((e) => SocialLink.fromJson(e as Map<String, dynamic>))

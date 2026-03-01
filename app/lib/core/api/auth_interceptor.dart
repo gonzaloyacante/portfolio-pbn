@@ -209,7 +209,9 @@ class AuthInterceptor extends Interceptor {
     final storage = ref.read(tokenStorageProvider);
     await storage.clearAll();
 
-    AppLogger.info('AuthInterceptor: session cleared → signaling session expired');
+    AppLogger.info(
+      'AuthInterceptor: session cleared → signaling session expired',
+    );
 
     // No podemos importar authProvider directamente (dependencia circular):
     //   auth_interceptor → auth_provider → auth_repository → api_client → auth_interceptor
