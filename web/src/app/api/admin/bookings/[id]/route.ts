@@ -92,9 +92,21 @@ export async function PATCH(req: Request, { params }: Params) {
   try {
     const body = await req.json()
     const {
-      date, endDate, status, clientName, clientEmail, clientPhone,
-      clientNotes, guestCount, adminNotes, cancellationReason,
-      totalAmount, paidAmount, paymentStatus, paymentMethod, paymentRef,
+      date,
+      endDate,
+      status,
+      clientName,
+      clientEmail,
+      clientPhone,
+      clientNotes,
+      guestCount,
+      adminNotes,
+      cancellationReason,
+      totalAmount,
+      paidAmount,
+      paymentStatus,
+      paymentMethod,
+      paymentRef,
     } = body
 
     const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
@@ -126,7 +138,9 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(guestCount !== undefined && { guestCount }),
         ...(adminNotes !== undefined && { adminNotes }),
         ...(cancellationReason !== undefined && { cancellationReason }),
-        ...(totalAmount !== undefined && { totalAmount: totalAmount ? parseFloat(totalAmount) : null }),
+        ...(totalAmount !== undefined && {
+          totalAmount: totalAmount ? parseFloat(totalAmount) : null,
+        }),
         ...(paidAmount !== undefined && { paidAmount: paidAmount ? parseFloat(paidAmount) : null }),
         ...(paymentStatus !== undefined && { paymentStatus }),
         ...(paymentMethod !== undefined && { paymentMethod }),

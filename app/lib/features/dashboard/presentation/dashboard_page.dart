@@ -164,6 +164,71 @@ class _DashboardContent extends StatelessWidget {
           padding: padding.copyWith(top: 0),
           sliver: SliverToBoxAdapter(child: _DashboardCharts()),
         ),
+
+        // ── Sección: Dispositivos ─────────────────────────────────────────
+        if (stats.deviceUsage.isNotEmpty) ...[
+          SliverPadding(
+            padding: padding.copyWith(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.sm,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: SectionHeader(title: 'Dispositivos (30d)'),
+            ),
+          ),
+          SliverPadding(
+            padding: padding.copyWith(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: _DeviceUsageSection(
+                deviceUsage: stats.deviceUsage,
+                total: stats.pageViews30d,
+              ),
+            ),
+          ),
+        ],
+
+        // ── Sección: Top proyectos ────────────────────────────────────────
+        if (stats.topProjects.isNotEmpty) ...[
+          SliverPadding(
+            padding: padding.copyWith(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.sm,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: SectionHeader(title: 'Top proyectos (30d)'),
+            ),
+          ),
+          SliverPadding(
+            padding: padding.copyWith(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: _TopRankingSection(
+                items: [for (final p in stats.topProjects) (p.label, p.count)],
+              ),
+            ),
+          ),
+        ],
+
+        // ── Sección: Top ubicaciones ──────────────────────────────────────
+        if (stats.topLocations.isNotEmpty) ...[
+          SliverPadding(
+            padding: padding.copyWith(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.sm,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: SectionHeader(title: 'Top ubicaciones (30d)'),
+            ),
+          ),
+          SliverPadding(
+            padding: padding.copyWith(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: _TopRankingSection(
+                items: [for (final l in stats.topLocations) (l.label, l.count)],
+              ),
+            ),
+          ),
+        ],
+
         const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xxxl)),
       ],
     );
@@ -310,3 +375,173 @@ class _DashboardCharts extends ConsumerWidget {
 }
 
 // Chart widgets extracted to `widgets/` to keep this file small and maintainable.
+
+// ── _DeviceUsageSection ───────────────────────────────────────────────────────
+
+class _DeviceUsageSection extends StatelessWidget {
+  const _DeviceUsageSection({required this.deviceUsage, required this.total});
+
+  final Map<String, int> deviceUsage;
+  final int total;
+
+  static const _icons = {
+    'mobile': Icons.smartphone_outlined,
+    'tablet': Icons.tablet_outlined,
+    'desktop': Icons.computer_outlined,
+  };
+
+  static const _labels = {
+    'mobile': 'Móvil',
+    'tablet': 'Tablet',
+    'desktop': 'Escritorio',
+  };
+
+  static const _colors = {
+    'mobile': AppColors.lightPrimary,
+    'tablet': AppColors.warning,
+    'desktop': AppColors.success,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final safeTotal = total > 0 ? total : 1;
+
+    final sorted = deviceUsage.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.base),
+        child: Row(
+          children: sorted.map((entry) {
+            final pct = (entry.value / safeTotal * 100).round();
+            final color = _colors[entry.key] ?? AppColors.lightPrimary;
+            return Expanded(
+              child: Column(
+                children: [
+                  Icon(
+                    _icons[entry.key] ?? Icons.devices_outlined,
+                    color: color,
+                    size: 28,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$pct%',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                  Text(
+                    _labels[entry.key] ?? entry.key,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  Text(
+                    '${entry.value} visitas',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+// ── _TopRankingSection ────────────────────────────────────────────────────────
+
+class _TopRankingSection extends StatelessWidget {
+  const _TopRankingSection({required this.items});
+
+  final List<(String, int)> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final maxCount = items.isEmpty
+        ? 1
+        : items.map((e) => e.$2).reduce((a, b) => a > b ? a : b);
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.base,
+          vertical: AppSpacing.sm,
+        ),
+        child: Column(
+          children: items.asMap().entries.map((entry) {
+            final rank = entry.key + 1;
+            final (label, count) = entry.value;
+            final progress = count / maxCount;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    child: Text(
+                      '$rank',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                label,
+                                style: theme.textTheme.bodyMedium,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              '$count',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 4,
+                            backgroundColor: theme.colorScheme.primary
+                                .withOpacity(0.12),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}

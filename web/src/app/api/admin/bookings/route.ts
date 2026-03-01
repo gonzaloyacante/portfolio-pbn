@@ -55,12 +55,12 @@ export async function GET(req: Request) {
       }),
       ...(status && { status }),
       ...(serviceId && { serviceId }),
-      ...(dateFrom || dateTo) && {
+      ...((dateFrom || dateTo) && {
         date: {
           ...(dateFrom && { gte: new Date(dateFrom) }),
           ...(dateTo && { lte: new Date(dateTo) }),
         },
-      },
+      }),
     }
 
     const [bookings, total] = await Promise.all([
@@ -108,16 +108,25 @@ export async function POST(req: Request) {
   try {
     const body = await req.json()
     const {
-      date, endDate, clientName, clientEmail, clientPhone,
-      clientNotes, guestCount = 1, serviceId, adminNotes,
-      totalAmount, paymentStatus = 'PENDING', paymentMethod,
+      date,
+      endDate,
+      clientName,
+      clientEmail,
+      clientPhone,
+      clientNotes,
+      guestCount = 1,
+      serviceId,
+      adminNotes,
+      totalAmount,
+      paymentStatus = 'PENDING',
+      paymentMethod,
       status = 'PENDING',
     } = body
 
     if (!date || !clientName || !clientEmail || !serviceId) {
       return NextResponse.json(
         { success: false, error: 'Campos requeridos: date, clientName, clientEmail, serviceId' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -125,9 +134,16 @@ export async function POST(req: Request) {
       data: {
         date: new Date(date),
         endDate: endDate ? new Date(endDate) : null,
-        clientName, clientEmail, clientPhone, clientNotes,
-        guestCount, serviceId, adminNotes, status,
-        paymentStatus, paymentMethod,
+        clientName,
+        clientEmail,
+        clientPhone,
+        clientNotes,
+        guestCount,
+        serviceId,
+        adminNotes,
+        status,
+        paymentStatus,
+        paymentMethod,
         totalAmount: totalAmount ? parseFloat(totalAmount) : null,
       },
       select: BOOKING_SELECT,
@@ -135,10 +151,13 @@ export async function POST(req: Request) {
 
     revalidatePath(ROUTES.admin.calendar)
 
-    return NextResponse.json({
-      success: true,
-      data: { ...booking, totalAmount: booking.totalAmount?.toString() ?? null },
-    }, { status: 201 })
+    return NextResponse.json(
+      {
+        success: true,
+        data: { ...booking, totalAmount: booking.totalAmount?.toString() ?? null },
+      },
+      { status: 201 }
+    )
   } catch (err) {
     logger.error('[admin-bookings-post] Error', {
       error: err instanceof Error ? err.message : String(err),

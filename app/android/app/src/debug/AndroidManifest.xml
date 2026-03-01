@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
     <!-- The INTERNET permission is required for development. Specifically,
          the Flutter tool needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.
@@ -13,5 +14,11 @@
          Sin esto ambas apps muestran el mismo nombre "PBN Admin" en el launcher
          y el usuario no puede saber cuál es cuál.
          ───────────────────────────────────────────────────────────────────── -->
-    <application android:label="PBN Admin [DEV]" />
+     <!-- Debug manifest overrides the application label so the debug build
+           is shown as "PBN Admin [DEV]" on devices. Use tools:replace so
+           the manifest merger accepts this override when main/other
+           manifests also declare android:label. -->
+     <application
+          android:label="PBN Admin [DEV]"
+          tools:replace="android:label" />
 </manifest>

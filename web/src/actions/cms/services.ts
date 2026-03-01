@@ -69,7 +69,7 @@ export const getActiveServices = unstable_cache(
   async () => {
     try {
       const services = await prisma.service.findMany({
-        where: { isActive: true },
+        where: { isActive: true, deletedAt: null },
         orderBy: { sortOrder: 'asc' },
       })
       return services
@@ -88,8 +88,8 @@ export const getActiveServices = unstable_cache(
 export const getServiceBySlug = unstable_cache(
   async (slug: string) => {
     try {
-      const service = await prisma.service.findUnique({
-        where: { slug },
+      const service = await prisma.service.findFirst({
+        where: { slug, isActive: true, deletedAt: null },
       })
       return service
     } catch (error) {

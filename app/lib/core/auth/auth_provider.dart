@@ -5,6 +5,7 @@ import '../api/api_exceptions.dart';
 import '../utils/app_logger.dart';
 import 'auth_repository.dart';
 import 'auth_state.dart';
+import 'token_storage.dart';
 
 part 'auth_provider.g.dart';
 
@@ -125,6 +126,8 @@ class AuthNotifier extends _$AuthNotifier {
       );
       final user = await repo.getMe();
       AppLogger.info('AuthNotifier: session restored for ${user.email}');
+      // Cachear usuario para restauración offline.
+      await ref.read(tokenStorageProvider).saveUser(user);
       // Re-asociar usuario a Sentry al restaurar sesión.
       Sentry.configureScope(
         (scope) => scope.setUser(
@@ -137,11 +140,18 @@ class AuthNotifier extends _$AuthNotifier {
       // Los tokens ya fueron limpiados por el AuthInterceptor.
       return const AuthState.unauthenticated();
     } catch (e, st) {
-      // Manejar errores de red de forma no ruidosa (p. ej. modo offline)
+      // En modo offline: si hay usuario cacheado, mantener sesión activa.
       if (e is NetworkException) {
         AppLogger.warn(
-          'AuthNotifier: session restore failed — sin conectividad',
+          'AuthNotifier: session restore failed — sin conectividad. Intentando usuario cacheado.',
         );
+        final cachedUser = await ref.read(tokenStorageProvider).getUser();
+        if (cachedUser != null) {
+          AppLogger.info(
+            'AuthNotifier: sesión offline restaurada para ${cachedUser.email}',
+          );
+          return AuthState.authenticated(user: cachedUser);
+        }
       } else {
         AppLogger.error('AuthNotifier: session restore failed', e, st);
       }

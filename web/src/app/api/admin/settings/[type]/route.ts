@@ -51,10 +51,7 @@ async function upsertSettings(type: SettingsType, body: Record<string, unknown>)
 }
 
 // ── GET /api/admin/settings/[type] ────────────────────────────────────────────
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ type: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ type: string }> }) {
   const auth = await withAdminJwt(req)
   if (!auth.ok) return auth.response
 
@@ -78,10 +75,7 @@ export async function GET(
 }
 
 // ── PATCH /api/admin/settings/[type] ─────────────────────────────────────────
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ type: string }> }
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ type: string }> }) {
   const auth = await withAdminJwt(req)
   if (!auth.ok) return auth.response
 
@@ -145,4 +139,3 @@ export async function PATCH(
     )
   }
 }
-

@@ -98,9 +98,10 @@ export async function PATCH(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
 
-    const replyData = replyText && !existing.isReplied
-      ? { isReplied: true, repliedAt: new Date(), repliedBy: auth.payload?.email ?? 'admin' }
-      : {}
+    const replyData =
+      replyText && !existing.isReplied
+        ? { isReplied: true, repliedAt: new Date(), repliedBy: auth.payload?.email ?? 'admin' }
+        : {}
 
     const updated = await prisma.contact.update({
       where: { id },

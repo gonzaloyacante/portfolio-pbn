@@ -266,8 +266,10 @@ export default withSentryConfig(pwaConfig, {
     automaticVercelMonitors: true,
 
     // Automatically annotate React components to show their full name in breadcrumbs and session replay
+    // DISABLED: causes `useContext(null)` TypeError during static pre-rendering in Next.js 16 + React 19
+    // See: https://github.com/getsentry/sentry-javascript/issues/XXXX
     reactComponentAnnotation: {
-      enabled: true,
+      enabled: false,
     },
   },
 })

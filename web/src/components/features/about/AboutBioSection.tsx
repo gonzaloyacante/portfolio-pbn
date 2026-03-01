@@ -118,7 +118,11 @@ const IMAGE_SHAPES: Record<string, string | undefined> = {
   none: undefined,
 }
 
-export function AboutProfileImage({ profileImageUrl, profileImageAlt, shape }: AboutProfileImageProps) {
+export function AboutProfileImage({
+  profileImageUrl,
+  profileImageAlt,
+  shape,
+}: AboutProfileImageProps) {
   const shapeKey = shape ?? 'ellipse'
   const clipPath = IMAGE_SHAPES[shapeKey]
   const borderRadius = shapeKey === 'rounded' ? '2.5rem' : shapeKey === 'none' ? '0' : undefined

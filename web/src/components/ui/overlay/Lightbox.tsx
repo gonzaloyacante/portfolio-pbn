@@ -205,18 +205,15 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
     [zoom, pan]
   )
 
-  const handlePointerMove = useCallback(
-    (e: ReactPointerEvent) => {
-      if (!isDragging.current) return
-      const dx = e.clientX - dragStart.current.x
-      const dy = e.clientY - dragStart.current.y
-      if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
-        hasMoved.current = true
-      }
-      setPan({ x: panStart.current.x + dx, y: panStart.current.y + dy })
-    },
-    []
-  )
+  const handlePointerMove = useCallback((e: ReactPointerEvent) => {
+    if (!isDragging.current) return
+    const dx = e.clientX - dragStart.current.x
+    const dy = e.clientY - dragStart.current.y
+    if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
+      hasMoved.current = true
+    }
+    setPan({ x: panStart.current.x + dx, y: panStart.current.y + dy })
+  }, [])
 
   const handlePointerUp = useCallback(() => {
     isDragging.current = false
@@ -270,7 +267,7 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
         lastTap.current = 0
       } else {
         lastTap.current = now
-        // Single-click toggle zoom 1x ↔ 2x  
+        // Single-click toggle zoom 1x ↔ 2x
         if (zoom > MIN_ZOOM) resetTransform()
         else setZoom(2)
       }
@@ -415,7 +412,7 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
                 alt={currentImage.alt}
                 width={currentImage.width ?? 1600}
                 height={currentImage.height ?? 1200}
-                className="max-h-[calc(100dvh-100px)] w-auto select-none rounded-lg object-contain shadow-2xl"
+                className="max-h-[calc(100dvh-100px)] w-auto rounded-lg object-contain shadow-2xl select-none"
                 priority
                 variant="full"
               />

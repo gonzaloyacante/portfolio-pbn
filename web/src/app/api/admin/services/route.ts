@@ -125,9 +125,14 @@ export async function POST(req: Request) {
       )
     }
 
-    const existing = await prisma.service.findFirst({ where: { slug, deletedAt: null } })
+    // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
+    const existing = await prisma.service.findFirst({ where: { slug } })
     if (existing) {
-      return NextResponse.json({ success: false, error: 'El slug ya está en uso' }, { status: 409 })
+      const msg =
+        existing.deletedAt !== null
+          ? 'El slug ya está en uso por un servicio eliminado. Vacía la papelera o usa otro slug.'
+          : 'El slug ya está en uso'
+      return NextResponse.json({ success: false, error: msg }, { status: 409 })
     }
 
     const agg = await prisma.service.aggregate({ _max: { sortOrder: true } })

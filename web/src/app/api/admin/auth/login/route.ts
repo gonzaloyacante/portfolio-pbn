@@ -46,7 +46,10 @@ export async function POST(req: Request) {
     if (!rateCheck.allowed) {
       logger.warn(`[admin-login] Rate limit exceeded for ${email} from ${ipAddress}`)
       return NextResponse.json(
-        { success: false, error: `Demasiados intentos. Espera ${rateCheck.lockoutMinutes} minutos.` },
+        {
+          success: false,
+          error: `Demasiados intentos. Espera ${rateCheck.lockoutMinutes} minutos.`,
+        },
         { status: 429, headers: { 'Retry-After': String((rateCheck.lockoutMinutes ?? 15) * 60) } }
       )
     }
@@ -107,7 +110,7 @@ export async function POST(req: Request) {
       data: {
         token: crypto.randomUUID(),
         userId: user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 365 días para la app
         ipAddress,
         userAgent,
         device,

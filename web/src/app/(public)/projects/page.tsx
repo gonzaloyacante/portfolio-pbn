@@ -17,6 +17,8 @@ export default async function ProjectsPage() {
   const [categories, categorySettings] = await Promise.all([
     prisma.category.findMany({
       where: {
+        isActive: true,
+        deletedAt: null,
         projects: {
           some: { isActive: true, isDeleted: false },
         },

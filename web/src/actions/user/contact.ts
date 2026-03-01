@@ -40,8 +40,11 @@ async function getClientIp(): Promise<string> {
 /** Sanitizar texto para evitar XSS */
 function sanitizeText(text: string): string {
   return text
-    .replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;').replaceAll("'", '&#x27;').replaceAll('/', '&#x2F;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#x27;')
+    .replaceAll('/', '&#x2F;')
     .trim()
 }
 

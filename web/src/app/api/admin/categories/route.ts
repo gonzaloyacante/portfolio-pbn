@@ -103,10 +103,15 @@ export async function POST(req: Request) {
       )
     }
 
-    // Slug único
-    const existing = await prisma.category.findFirst({ where: { slug, deletedAt: null } })
+    // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
+    // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)
+    const existing = await prisma.category.findFirst({ where: { slug } })
     if (existing) {
-      return NextResponse.json({ success: false, error: 'El slug ya está en uso' }, { status: 409 })
+      const msg =
+        existing.deletedAt !== null
+          ? 'El slug ya está en uso por una categoría eliminada. Vacía la papelera o usa otro slug.'
+          : 'El slug ya está en uso'
+      return NextResponse.json({ success: false, error: msg }, { status: 409 })
     }
 
     // Calcular siguiente sortOrder

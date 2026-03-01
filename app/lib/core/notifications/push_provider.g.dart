@@ -60,6 +60,9 @@ String _$pushServiceHash() => r'b144a7c50304589ce14e07a2732188ea5958dfaa';
 /// - [unregister]: llama a POST /api/admin/push/unregister
 /// - Suscribe al stream [PushService.onTokenRefresh] para re-registrar
 ///   automáticamente cuando FCM rota el token.
+///
+/// IMPORTANTE: keepAlive=true para que no se destruya antes de completar
+/// el registro asíncrono.
 
 @ProviderFor(PushRegistrationNotifier)
 final pushRegistrationProvider = PushRegistrationNotifierProvider._();
@@ -70,6 +73,9 @@ final pushRegistrationProvider = PushRegistrationNotifierProvider._();
 /// - [unregister]: llama a POST /api/admin/push/unregister
 /// - Suscribe al stream [PushService.onTokenRefresh] para re-registrar
 ///   automáticamente cuando FCM rota el token.
+///
+/// IMPORTANTE: keepAlive=true para que no se destruya antes de completar
+/// el registro asíncrono.
 final class PushRegistrationNotifierProvider
     extends $NotifierProvider<PushRegistrationNotifier, String?> {
   /// Gestiona el registro/desregistro del token FCM en el backend.
@@ -78,13 +84,16 @@ final class PushRegistrationNotifierProvider
   /// - [unregister]: llama a POST /api/admin/push/unregister
   /// - Suscribe al stream [PushService.onTokenRefresh] para re-registrar
   ///   automáticamente cuando FCM rota el token.
+  ///
+  /// IMPORTANTE: keepAlive=true para que no se destruya antes de completar
+  /// el registro asíncrono.
   PushRegistrationNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'pushRegistrationProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -106,7 +115,7 @@ final class PushRegistrationNotifierProvider
 }
 
 String _$pushRegistrationNotifierHash() =>
-    r'5cd7b1ffaa8699794012e35cf70fc89ee0cad7ee';
+    r'47a0f61172572203352245e053f43a40597cfcf9';
 
 /// Gestiona el registro/desregistro del token FCM en el backend.
 ///
@@ -114,6 +123,9 @@ String _$pushRegistrationNotifierHash() =>
 /// - [unregister]: llama a POST /api/admin/push/unregister
 /// - Suscribe al stream [PushService.onTokenRefresh] para re-registrar
 ///   automáticamente cuando FCM rota el token.
+///
+/// IMPORTANTE: keepAlive=true para que no se destruya antes de completar
+/// el registro asíncrono.
 
 abstract class _$PushRegistrationNotifier extends $Notifier<String?> {
   String? build();

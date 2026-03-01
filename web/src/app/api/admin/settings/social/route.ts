@@ -45,7 +45,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ success: true, data: links })
   } catch (error) {
     logger.error('[settings/social] GET error', { error })
-    return NextResponse.json({ success: false, error: 'Error al obtener redes sociales' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: 'Error al obtener redes sociales' },
+      { status: 500 }
+    )
   }
 }
 
@@ -57,7 +60,10 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as SocialLinkBody
     if (!body.platform || !body.url) {
-      return NextResponse.json({ success: false, error: 'platform y url son obligatorios' }, { status: 400 })
+      return NextResponse.json(
+        { success: false, error: 'platform y url son obligatorios' },
+        { status: 400 }
+      )
     }
     const link = await saveSocialLink(body)
 
@@ -67,6 +73,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, data: link }, { status: 201 })
   } catch (error) {
     logger.error('[settings/social] POST error', { error })
-    return NextResponse.json({ success: false, error: 'Error al guardar red social' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: 'Error al guardar red social' },
+      { status: 500 }
+    )
   }
 }

@@ -86,7 +86,7 @@ export async function POST(req: Request) {
       data: {
         token: crypto.randomUUID(),
         userId: user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
+        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 365 días para la app
         ipAddress,
         userAgent,
         device: existing.device,

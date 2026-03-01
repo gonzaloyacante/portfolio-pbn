@@ -6,6 +6,22 @@ part of 'dashboard_repository.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_LocationStat _$LocationStatFromJson(Map<String, dynamic> json) =>
+    _LocationStat(
+      label: json['label'] as String,
+      count: (json['count'] as num).toInt(),
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
+    );
+
+Map<String, dynamic> _$LocationStatToJson(_LocationStat instance) =>
+    <String, dynamic>{
+      'label': instance.label,
+      'count': instance.count,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
+    };
+
 _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
     _DashboardStats(
       totalProjects: (json['totalProjects'] as num?)?.toInt() ?? 0,
@@ -17,6 +33,21 @@ _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
       pendingTestimonials: (json['pendingTestimonials'] as num?)?.toInt() ?? 0,
       trashCount: (json['trashCount'] as num?)?.toInt() ?? 0,
       pageViews30d: (json['pageViews30d'] as num?)?.toInt() ?? 0,
+      deviceUsage:
+          (json['deviceUsage'] as Map<String, dynamic>?)?.map(
+            (k, e) => MapEntry(k, (e as num).toInt()),
+          ) ??
+          const {},
+      topLocations:
+          (json['topLocations'] as List<dynamic>?)
+              ?.map((e) => LocationStat.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      topProjects:
+          (json['topProjects'] as List<dynamic>?)
+              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
@@ -30,6 +61,9 @@ Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
       'pendingTestimonials': instance.pendingTestimonials,
       'trashCount': instance.trashCount,
       'pageViews30d': instance.pageViews30d,
+      'deviceUsage': instance.deviceUsage,
+      'topLocations': instance.topLocations,
+      'topProjects': instance.topProjects,
     };
 
 _ChartDataPoint _$ChartDataPointFromJson(Map<String, dynamic> json) =>

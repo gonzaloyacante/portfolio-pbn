@@ -193,8 +193,8 @@ export async function getProjectBySlug(slug: string) {
   return unstable_cache(
     async () => {
       try {
-        return await prisma.project.findUnique({
-          where: { slug },
+        return await prisma.project.findFirst({
+          where: { slug, isActive: true, isDeleted: false },
           select: {
             id: true,
             title: true,

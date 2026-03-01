@@ -57,7 +57,8 @@ export async function createTestimonial(formData: FormData) {
 
   try {
     await prisma.testimonial.create({
-      data: { name, text, position, rating, isActive: true },
+      // Los testimonios creados por admin se aprueban automáticamente
+      data: { name, text, position, rating, isActive: true, status: 'APPROVED' },
     })
 
     revalidatePath(ROUTES.home)
@@ -259,7 +260,7 @@ export const getActiveTestimonials = unstable_cache(
   async (limit = 6) => {
     try {
       const testimonials = await prisma.testimonial.findMany({
-        where: { isActive: true, status: 'APPROVED' },
+        where: { isActive: true, status: 'APPROVED', deletedAt: null },
         orderBy: { createdAt: 'desc' },
         take: limit,
       })

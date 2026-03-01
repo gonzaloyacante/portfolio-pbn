@@ -30,6 +30,9 @@ export async function GET(req: Request) {
       pendingTestimonials,
       trashCount,
       pageViews30d,
+      deviceUsageRaw,
+      topCountriesRaw,
+      topProjectsRaw,
     ] = await Promise.all([
       prisma.project.count({ where: { deletedAt: null } }),
       prisma.category.count({ where: { deletedAt: null } }),
@@ -52,9 +55,85 @@ export async function GET(req: Request) {
         prisma.booking.count({ where: { deletedAt: { not: null } } }),
       ]).then((counts) => counts.reduce((a, b) => a + b, 0)),
       prisma.analyticLog.count({
-        where: { timestamp: { gte: thirtyDaysAgo } },
+        where: {
+          timestamp: { gte: thirtyDaysAgo },
+          eventType: { endsWith: '_VIEW' },
+          isBot: false,
+        },
+      }),
+      // Uso por dispositivo (últimos 30 días)
+      prisma.analyticLog.groupBy({
+        by: ['device'],
+        where: {
+          timestamp: { gte: thirtyDaysAgo },
+          eventType: { endsWith: '_VIEW' },
+          isBot: false,
+          device: { not: null },
+        },
+        _count: { _all: true },
+      }),
+      // Top países por visitas (últimos 30 días)
+      prisma.analyticLog.groupBy({
+        by: ['country'],
+        where: {
+          timestamp: { gte: thirtyDaysAgo },
+          eventType: { endsWith: '_VIEW' },
+          isBot: false,
+          country: { not: null },
+        },
+        _count: { _all: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 8,
+      }),
+      // Top proyectos vistos (últimos 30 días)
+      prisma.analyticLog.groupBy({
+        by: ['entityId'],
+        where: {
+          timestamp: { gte: thirtyDaysAgo },
+          entityType: 'project',
+          isBot: false,
+          entityId: { not: null },
+        },
+        _count: { _all: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 5,
       }),
     ])
+
+    // Reducir deviceUsage a { mobile: N, desktop: N, tablet: N }
+    const deviceUsage = deviceUsageRaw.reduce<Record<string, number>>((acc, row) => {
+      if (row.device) acc[row.device] = row._count._all
+      return acc
+    }, {})
+
+    // Resolver lat/lng representativo por país + nombre
+    const topLocations = await Promise.all(
+      topCountriesRaw.map(async ({ country, _count }) => {
+        const rep = await prisma.analyticLog.findFirst({
+          where: { country, latitude: { not: null }, longitude: { not: null } },
+          select: { latitude: true, longitude: true },
+        })
+        return {
+          label: country!,
+          count: _count._all,
+          latitude: rep?.latitude ?? null,
+          longitude: rep?.longitude ?? null,
+        }
+      })
+    )
+
+    // Resolver nombre de proyecto
+    const topProjects = await Promise.all(
+      topProjectsRaw.map(async ({ entityId, _count }) => {
+        const proj = entityId
+          ? await prisma.project.findUnique({
+              where: { id: entityId },
+              select: { title: true },
+            })
+          : null
+        return { label: proj?.title ?? entityId ?? 'Desconocido', count: _count._all }
+      })
+    )
 
     return NextResponse.json({
       success: true,
@@ -68,6 +147,9 @@ export async function GET(req: Request) {
         pendingTestimonials,
         trashCount,
         pageViews30d,
+        deviceUsage,
+        topLocations,
+        topProjects,
       },
     })
   } catch (err) {

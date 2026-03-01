@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../api/api_client.dart';
@@ -22,10 +24,18 @@ PushService pushService(Ref ref) => PushService();
 /// - [unregister]: llama a POST /api/admin/push/unregister
 /// - Suscribe al stream [PushService.onTokenRefresh] para re-registrar
 ///   automáticamente cuando FCM rota el token.
-@riverpod
+///
+/// IMPORTANTE: keepAlive=true para que no se destruya antes de completar
+/// el registro asíncrono.
+@Riverpod(keepAlive: true)
 class PushRegistrationNotifier extends _$PushRegistrationNotifier {
+  StreamSubscription<String>? _tokenRefreshSub;
+
   @override
   String? build() {
+    // Cancelar suscripción cuando el provider se destruye (aunque es keepAlive,
+    // puede ocurrir en logout explícito con ref.invalidate).
+    ref.onDispose(() => _tokenRefreshSub?.cancel());
     // Devuelve el token actual (null mientras no se haya registrado).
     return null;
   }
@@ -57,8 +67,9 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
       state = token;
 
       // Escuchar rotación de tokens y re-registrar automáticamente.
-      service.onTokenRefresh.listen((newToken) {
-        if (!ref.mounted) return;
+      // Guardamos la suscripción para cancelarla en dispose.
+      _tokenRefreshSub?.cancel();
+      _tokenRefreshSub = service.onTokenRefresh.listen((newToken) {
         AppLogger.info('PushRegistration: token rotado, re-registrando…');
         _sendTokenToBackend(newToken, service.platform).ignore();
         if (ref.mounted) state = newToken;
@@ -90,19 +101,40 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
   // ── private ────────────────────────────────────────────────────────────────
 
   Future<void> _sendTokenToBackend(String token, String platform) async {
-    try {
-      final client = ref.read(apiClientProvider);
-      await client.post<void>(
-        Endpoints.pushRegister,
-        data: {'token': token, 'platform': platform},
-      );
-      AppLogger.info('PushRegistration: token registrado en backend');
-    } on UnauthorizedException {
-      // La sesión expiró — no reintentar; el siguiente login re-registrará.
-      AppLogger.warn('PushRegistration: sesión expirada al registrar token');
-    } catch (e) {
-      AppLogger.warn('PushRegistration: error al enviar token al backend: $e');
+    const maxAttempts = 3;
+    const delays = [
+      Duration(seconds: 2),
+      Duration(seconds: 4),
+      Duration(seconds: 8),
+    ];
+
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        final client = ref.read(apiClientProvider);
+        await client.post<void>(
+          Endpoints.pushRegister,
+          data: {'token': token, 'platform': platform},
+        );
+        AppLogger.info(
+          'PushRegistration: token registrado en backend (intento $attempt)',
+        );
+        return;
+      } on UnauthorizedException {
+        // La sesión expiró — no reintentar; el siguiente login re-registrará.
+        AppLogger.warn('PushRegistration: sesión expirada al registrar token');
+        return;
+      } catch (e) {
+        AppLogger.warn(
+          'PushRegistration: error al enviar token (intento $attempt/$maxAttempts): $e',
+        );
+        if (attempt < maxAttempts) {
+          await Future<void>.delayed(delays[attempt - 1]);
+        }
+      }
     }
+    AppLogger.error(
+      'PushRegistration: falló registro de token tras $maxAttempts intentos',
+    );
   }
 }
 

@@ -48,7 +48,8 @@ export async function GET(req: Request) {
     const pageLogs = await prisma.analyticLog.findMany({
       where: {
         timestamp: { gte: sevenDaysAgo },
-        eventType: 'page_view',
+        eventType: { endsWith: '_VIEW' },
+        isBot: false,
       },
       select: { timestamp: true },
     })
@@ -67,11 +68,7 @@ export async function GET(req: Request) {
     })
 
     // ── Reservas mensuales (últimos 6 meses) ──────────────────────────────────
-    const sixMonthsAgo = new Date(
-      now.getFullYear(),
-      now.getMonth() - 5,
-      1
-    )
+    const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1)
 
     const bookings = await prisma.booking.findMany({
       where: { date: { gte: sixMonthsAgo }, deletedAt: null },

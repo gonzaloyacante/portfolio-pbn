@@ -90,16 +90,17 @@ export async function PATCH(req: Request, { params }: Params) {
       ogImage,
     } = body
 
-    // Slug único (excluye la categoría actual)
+    // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
       const existing = await prisma.category.findFirst({
-        where: { slug, deletedAt: null, NOT: { id } },
+        where: { slug, NOT: { id } },
       })
       if (existing) {
-        return NextResponse.json(
-          { success: false, error: 'El slug ya está en uso' },
-          { status: 409 }
-        )
+        const msg =
+          existing.deletedAt !== null
+            ? 'El slug ya está en uso por una categoría eliminada. Vacía la papelera o usa otro slug.'
+            : 'El slug ya está en uso'
+        return NextResponse.json({ success: false, error: msg }, { status: 409 })
       }
     }
 
@@ -155,9 +156,13 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
+    // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
+    const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
+
     await prisma.category.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
     })
 
     try {

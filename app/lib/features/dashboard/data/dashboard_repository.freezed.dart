@@ -13,9 +13,284 @@ part of 'dashboard_repository.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
+mixin _$LocationStat {
+
+ String get label; int get count; double? get latitude; double? get longitude;
+/// Create a copy of LocationStat
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$LocationStatCopyWith<LocationStat> get copyWith => _$LocationStatCopyWithImpl<LocationStat>(this as LocationStat, _$identity);
+
+  /// Serializes this LocationStat to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LocationStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,label,count,latitude,longitude);
+
+@override
+String toString() {
+  return 'LocationStat(label: $label, count: $count, latitude: $latitude, longitude: $longitude)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $LocationStatCopyWith<$Res>  {
+  factory $LocationStatCopyWith(LocationStat value, $Res Function(LocationStat) _then) = _$LocationStatCopyWithImpl;
+@useResult
+$Res call({
+ String label, int count, double? latitude, double? longitude
+});
+
+
+
+
+}
+/// @nodoc
+class _$LocationStatCopyWithImpl<$Res>
+    implements $LocationStatCopyWith<$Res> {
+  _$LocationStatCopyWithImpl(this._self, this._then);
+
+  final LocationStat _self;
+  final $Res Function(LocationStat) _then;
+
+/// Create a copy of LocationStat
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? label = null,Object? count = null,Object? latitude = freezed,Object? longitude = freezed,}) {
+  return _then(_self.copyWith(
+label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
+as double?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [LocationStat].
+extension LocationStatPatterns on LocationStat {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _LocationStat value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _LocationStat() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _LocationStat value)  $default,){
+final _that = this;
+switch (_that) {
+case _LocationStat():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _LocationStat value)?  $default,){
+final _that = this;
+switch (_that) {
+case _LocationStat() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String label,  int count,  double? latitude,  double? longitude)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _LocationStat() when $default != null:
+return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String label,  int count,  double? latitude,  double? longitude)  $default,) {final _that = this;
+switch (_that) {
+case _LocationStat():
+return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String label,  int count,  double? latitude,  double? longitude)?  $default,) {final _that = this;
+switch (_that) {
+case _LocationStat() when $default != null:
+return $default(_that.label,_that.count,_that.latitude,_that.longitude);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _LocationStat implements LocationStat {
+  const _LocationStat({required this.label, required this.count, this.latitude, this.longitude});
+  factory _LocationStat.fromJson(Map<String, dynamic> json) => _$LocationStatFromJson(json);
+
+@override final  String label;
+@override final  int count;
+@override final  double? latitude;
+@override final  double? longitude;
+
+/// Create a copy of LocationStat
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$LocationStatCopyWith<_LocationStat> get copyWith => __$LocationStatCopyWithImpl<_LocationStat>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$LocationStatToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LocationStat&&(identical(other.label, label) || other.label == label)&&(identical(other.count, count) || other.count == count)&&(identical(other.latitude, latitude) || other.latitude == latitude)&&(identical(other.longitude, longitude) || other.longitude == longitude));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,label,count,latitude,longitude);
+
+@override
+String toString() {
+  return 'LocationStat(label: $label, count: $count, latitude: $latitude, longitude: $longitude)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$LocationStatCopyWith<$Res> implements $LocationStatCopyWith<$Res> {
+  factory _$LocationStatCopyWith(_LocationStat value, $Res Function(_LocationStat) _then) = __$LocationStatCopyWithImpl;
+@override @useResult
+$Res call({
+ String label, int count, double? latitude, double? longitude
+});
+
+
+
+
+}
+/// @nodoc
+class __$LocationStatCopyWithImpl<$Res>
+    implements _$LocationStatCopyWith<$Res> {
+  __$LocationStatCopyWithImpl(this._self, this._then);
+
+  final _LocationStat _self;
+  final $Res Function(_LocationStat) _then;
+
+/// Create a copy of LocationStat
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? label = null,Object? count = null,Object? latitude = freezed,Object? longitude = freezed,}) {
+  return _then(_LocationStat(
+label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
+as String,count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int,latitude: freezed == latitude ? _self.latitude : latitude // ignore: cast_nullable_to_non_nullable
+as double?,longitude: freezed == longitude ? _self.longitude : longitude // ignore: cast_nullable_to_non_nullable
+as double?,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$DashboardStats {
 
- int get totalProjects; int get totalCategories; int get totalServices; int get totalTestimonials; int get newContacts; int get pendingBookings; int get pendingTestimonials; int get trashCount; int get pageViews30d;
+ int get totalProjects; int get totalCategories; int get totalServices; int get totalTestimonials; int get newContacts; int get pendingBookings; int get pendingTestimonials; int get trashCount; int get pageViews30d;/// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N }
+ Map<String, int> get deviceUsage;/// Top países/ciudades por visitas (últimos 30 días).
+ List<LocationStat> get topLocations;/// Top proyectos más vistos (últimos 30 días).
+ List<ChartDataPoint> get topProjects;
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +303,16 @@ $DashboardStatsCopyWith<DashboardStats> get copyWith => _$DashboardStatsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d)&&const DeepCollectionEquality().equals(other.deviceUsage, deviceUsage)&&const DeepCollectionEquality().equals(other.topLocations, topLocations)&&const DeepCollectionEquality().equals(other.topProjects, topProjects));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d);
+int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d,const DeepCollectionEquality().hash(deviceUsage),const DeepCollectionEquality().hash(topLocations),const DeepCollectionEquality().hash(topProjects));
 
 @override
 String toString() {
-  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d)';
+  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d, deviceUsage: $deviceUsage, topLocations: $topLocations, topProjects: $topProjects)';
 }
 
 
@@ -48,7 +323,7 @@ abstract mixin class $DashboardStatsCopyWith<$Res>  {
   factory $DashboardStatsCopyWith(DashboardStats value, $Res Function(DashboardStats) _then) = _$DashboardStatsCopyWithImpl;
 @useResult
 $Res call({
- int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d
+ int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d, Map<String, int> deviceUsage, List<LocationStat> topLocations, List<ChartDataPoint> topProjects
 });
 
 
@@ -65,7 +340,7 @@ class _$DashboardStatsCopyWithImpl<$Res>
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,Object? deviceUsage = null,Object? topLocations = null,Object? topProjects = null,}) {
   return _then(_self.copyWith(
 totalProjects: null == totalProjects ? _self.totalProjects : totalProjects // ignore: cast_nullable_to_non_nullable
 as int,totalCategories: null == totalCategories ? _self.totalCategories : totalCategories // ignore: cast_nullable_to_non_nullable
@@ -76,7 +351,10 @@ as int,pendingBookings: null == pendingBookings ? _self.pendingBookings : pendin
 as int,pendingTestimonials: null == pendingTestimonials ? _self.pendingTestimonials : pendingTestimonials // ignore: cast_nullable_to_non_nullable
 as int,trashCount: null == trashCount ? _self.trashCount : trashCount // ignore: cast_nullable_to_non_nullable
 as int,pageViews30d: null == pageViews30d ? _self.pageViews30d : pageViews30d // ignore: cast_nullable_to_non_nullable
-as int,
+as int,deviceUsage: null == deviceUsage ? _self.deviceUsage : deviceUsage // ignore: cast_nullable_to_non_nullable
+as Map<String, int>,topLocations: null == topLocations ? _self.topLocations : topLocations // ignore: cast_nullable_to_non_nullable
+as List<LocationStat>,topProjects: null == topProjects ? _self.topProjects : topProjects // ignore: cast_nullable_to_non_nullable
+as List<ChartDataPoint>,
   ));
 }
 
@@ -161,10 +439,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topProjects)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardStats() when $default != null:
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d);case _:
+return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.deviceUsage,_that.topLocations,_that.topProjects);case _:
   return orElse();
 
 }
@@ -182,10 +460,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topProjects)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardStats():
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d);case _:
+return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.deviceUsage,_that.topLocations,_that.topProjects);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +480,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topProjects)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardStats() when $default != null:
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d);case _:
+return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.deviceUsage,_that.topLocations,_that.topProjects);case _:
   return null;
 
 }
@@ -217,7 +495,7 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 @JsonSerializable()
 
 class _DashboardStats implements DashboardStats {
-  const _DashboardStats({this.totalProjects = 0, this.totalCategories = 0, this.totalServices = 0, this.totalTestimonials = 0, this.newContacts = 0, this.pendingBookings = 0, this.pendingTestimonials = 0, this.trashCount = 0, this.pageViews30d = 0});
+  const _DashboardStats({this.totalProjects = 0, this.totalCategories = 0, this.totalServices = 0, this.totalTestimonials = 0, this.newContacts = 0, this.pendingBookings = 0, this.pendingTestimonials = 0, this.trashCount = 0, this.pageViews30d = 0, final  Map<String, int> deviceUsage = const {}, final  List<LocationStat> topLocations = const [], final  List<ChartDataPoint> topProjects = const []}): _deviceUsage = deviceUsage,_topLocations = topLocations,_topProjects = topProjects;
   factory _DashboardStats.fromJson(Map<String, dynamic> json) => _$DashboardStatsFromJson(json);
 
 @override@JsonKey() final  int totalProjects;
@@ -229,6 +507,33 @@ class _DashboardStats implements DashboardStats {
 @override@JsonKey() final  int pendingTestimonials;
 @override@JsonKey() final  int trashCount;
 @override@JsonKey() final  int pageViews30d;
+/// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N }
+ final  Map<String, int> _deviceUsage;
+/// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N }
+@override@JsonKey() Map<String, int> get deviceUsage {
+  if (_deviceUsage is EqualUnmodifiableMapView) return _deviceUsage;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_deviceUsage);
+}
+
+/// Top países/ciudades por visitas (últimos 30 días).
+ final  List<LocationStat> _topLocations;
+/// Top países/ciudades por visitas (últimos 30 días).
+@override@JsonKey() List<LocationStat> get topLocations {
+  if (_topLocations is EqualUnmodifiableListView) return _topLocations;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_topLocations);
+}
+
+/// Top proyectos más vistos (últimos 30 días).
+ final  List<ChartDataPoint> _topProjects;
+/// Top proyectos más vistos (últimos 30 días).
+@override@JsonKey() List<ChartDataPoint> get topProjects {
+  if (_topProjects is EqualUnmodifiableListView) return _topProjects;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_topProjects);
+}
+
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
@@ -243,16 +548,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d)&&const DeepCollectionEquality().equals(other._deviceUsage, _deviceUsage)&&const DeepCollectionEquality().equals(other._topLocations, _topLocations)&&const DeepCollectionEquality().equals(other._topProjects, _topProjects));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d);
+int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d,const DeepCollectionEquality().hash(_deviceUsage),const DeepCollectionEquality().hash(_topLocations),const DeepCollectionEquality().hash(_topProjects));
 
 @override
 String toString() {
-  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d)';
+  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d, deviceUsage: $deviceUsage, topLocations: $topLocations, topProjects: $topProjects)';
 }
 
 
@@ -263,7 +568,7 @@ abstract mixin class _$DashboardStatsCopyWith<$Res> implements $DashboardStatsCo
   factory _$DashboardStatsCopyWith(_DashboardStats value, $Res Function(_DashboardStats) _then) = __$DashboardStatsCopyWithImpl;
 @override @useResult
 $Res call({
- int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d
+ int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d, Map<String, int> deviceUsage, List<LocationStat> topLocations, List<ChartDataPoint> topProjects
 });
 
 
@@ -280,7 +585,7 @@ class __$DashboardStatsCopyWithImpl<$Res>
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,Object? deviceUsage = null,Object? topLocations = null,Object? topProjects = null,}) {
   return _then(_DashboardStats(
 totalProjects: null == totalProjects ? _self.totalProjects : totalProjects // ignore: cast_nullable_to_non_nullable
 as int,totalCategories: null == totalCategories ? _self.totalCategories : totalCategories // ignore: cast_nullable_to_non_nullable
@@ -291,7 +596,10 @@ as int,pendingBookings: null == pendingBookings ? _self.pendingBookings : pendin
 as int,pendingTestimonials: null == pendingTestimonials ? _self.pendingTestimonials : pendingTestimonials // ignore: cast_nullable_to_non_nullable
 as int,trashCount: null == trashCount ? _self.trashCount : trashCount // ignore: cast_nullable_to_non_nullable
 as int,pageViews30d: null == pageViews30d ? _self.pageViews30d : pageViews30d // ignore: cast_nullable_to_non_nullable
-as int,
+as int,deviceUsage: null == deviceUsage ? _self._deviceUsage : deviceUsage // ignore: cast_nullable_to_non_nullable
+as Map<String, int>,topLocations: null == topLocations ? _self._topLocations : topLocations // ignore: cast_nullable_to_non_nullable
+as List<LocationStat>,topProjects: null == topProjects ? _self._topProjects : topProjects // ignore: cast_nullable_to_non_nullable
+as List<ChartDataPoint>,
   ));
 }
 

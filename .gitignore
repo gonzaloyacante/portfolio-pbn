@@ -144,6 +144,7 @@ Thumbs.db
 # ===================================================
 # PROJECT SPECIFIC / DOCUMENTATION / SCRIPTS
 # ===================================================
+# Ignore maintenance scripts directories (they contain local helpers/not intended for commit)
 /web/scripts/
 /web/docs/
 /docs/

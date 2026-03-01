@@ -8,6 +8,22 @@ import '../../../shared/models/api_response.dart';
 part 'dashboard_repository.freezed.dart';
 part 'dashboard_repository.g.dart';
 
+// ── LocationStat ──────────────────────────────────────────────────────────────
+
+/// Ubicación geográfica con conteo de visitas (para mapa y top países).
+@freezed
+abstract class LocationStat with _$LocationStat {
+  const factory LocationStat({
+    required String label,
+    required int count,
+    double? latitude,
+    double? longitude,
+  }) = _LocationStat;
+
+  factory LocationStat.fromJson(Map<String, dynamic> json) =>
+      _$LocationStatFromJson(json);
+}
+
 // ── DashboardStats ────────────────────────────────────────────────────────────
 
 /// Métricas globales del panel de administración.
@@ -23,6 +39,15 @@ abstract class DashboardStats with _$DashboardStats {
     @Default(0) int pendingTestimonials,
     @Default(0) int trashCount,
     @Default(0) int pageViews30d,
+
+    /// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N }
+    @Default({}) Map<String, int> deviceUsage,
+
+    /// Top países/ciudades por visitas (últimos 30 días).
+    @Default([]) List<LocationStat> topLocations,
+
+    /// Top proyectos más vistos (últimos 30 días).
+    @Default([]) List<ChartDataPoint> topProjects,
   }) = _DashboardStats;
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) =>

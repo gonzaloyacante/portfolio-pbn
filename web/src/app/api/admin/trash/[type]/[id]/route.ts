@@ -20,11 +20,43 @@ function getModel(type: TrashType): any {
   return (prisma as any)[type]
 }
 
+/** Deshace el mangle del slug aplicado en el soft-delete.
+ *  Si el slug original ya está en uso, devuelve un slug único agregando sufijo. */
+async function unmangleSlug(
+  model: ReturnType<typeof getModel>,
+  currentSlug: string,
+  currentId: string
+): Promise<string> {
+  // El mangle tiene el patrón: `<original>_deleted_<timestamp>`
+  const match = /^(.+)_deleted_\d+$/.exec(currentSlug)
+  if (!match) return currentSlug // No fue mangleado, devolver tal cual
+
+  const originalSlug = match[1]
+  const taken = await model.findFirst({ where: { slug: originalSlug, NOT: { id: currentId } } })
+  if (!taken) return originalSlug
+
+  // El slug original fue tomado por otro — intentar variante numérica
+  for (let i = 2; i <= 20; i++) {
+    const candidate = `${originalSlug}-${i}`
+    const takenAlt = await model.findFirst({ where: { slug: candidate, NOT: { id: currentId } } })
+    if (!takenAlt) return candidate
+  }
+  // Fallback: timestamp corto
+  return `${originalSlug}-${Date.now().toString(36)}`
+}
+
 async function restoreItem(type: TrashType, id: string) {
   const model = getModel(type)
   const item = await model.findFirst({ where: { id, deletedAt: { not: null } } })
   if (!item) return null
-  return model.update({ where: { id }, data: { deletedAt: null } })
+
+  // Para category y service aplicamos un-mangle del slug
+  const updateData: Record<string, unknown> = { deletedAt: null }
+  if ((type === 'category' || type === 'service') && item.slug) {
+    updateData.slug = await unmangleSlug(model, item.slug as string, id)
+  }
+
+  return model.update({ where: { id }, data: updateData })
 }
 
 async function purgeItem(type: TrashType, id: string) {

@@ -125,8 +125,17 @@ export async function withAdminJwt(
     return {
       ok: false,
       response: new Response(
-        JSON.stringify({ success: false, error: `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s` }),
-        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(rateResult.resetIn ?? 60) } }
+        JSON.stringify({
+          success: false,
+          error: `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s`,
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': String(rateResult.resetIn ?? 60),
+          },
+        }
       ),
     }
   }

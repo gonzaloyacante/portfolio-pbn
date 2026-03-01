@@ -104,6 +104,38 @@ export async function GET(req: Request) {
       )
     }
 
+    // Si la URL de descarga no es alcanzable (release antigua o asset borrado),
+    // ocultamos la release para evitar que la app intente descargar un asset 404.
+    const urlIsReachable = async (u: string) => {
+      try {
+        const head = await fetch(u, { method: 'HEAD', cache: 'no-store' })
+        if (head.ok) return true
+        const r = await fetch(u, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: { Range: 'bytes=0-0' },
+        })
+        return r.ok
+      } catch {
+        return false
+      }
+    }
+
+    if (!(await urlIsReachable(release.downloadUrl))) {
+      logger.warn('GET /api/admin/app/latest-release: release oculta — downloadUrl no alcanzable', {
+        downloadUrl: release.downloadUrl,
+      })
+      return NextResponse.json(
+        { success: true, data: null, updateAvailable: false },
+        {
+          status: 200,
+          headers: {
+            'Cache-Control': 'public, max-age=300, stale-while-revalidate=60',
+          },
+        }
+      )
+    }
+
     // Calcular si hay actualización disponible (para incluirlo en la respuesta)
     let updateAvailable = false
     let forceUpdate = false
@@ -203,6 +235,31 @@ export async function POST(req: Request) {
   // 3. Crear la release en la base de datos
   let release
   try {
+    // Verificar que la URL de descarga sea alcanzable (evitar releases con assets ausentes)
+    const urlIsReachable = async (u: string) => {
+      try {
+        // Intentar HEAD primero (rápido). Si falla, intentar GET con rango de 1 byte.
+        const head = await fetch(u, { method: 'HEAD', cache: 'no-store' })
+        if (head.ok) return true
+        const r = await fetch(u, {
+          method: 'GET',
+          cache: 'no-store',
+          headers: { Range: 'bytes=0-0' },
+        })
+        return r.ok
+      } catch {
+        return false
+      }
+    }
+
+    if (!(await urlIsReachable(downloadUrl))) {
+      logger.warn('POST /api/admin/app/latest-release: downloadUrl no alcanzable', { downloadUrl })
+      return NextResponse.json(
+        { success: false, error: 'downloadUrl no alcanzable' },
+        { status: 400 }
+      )
+    }
+
     release = await prisma.appRelease.create({
       data: {
         version,

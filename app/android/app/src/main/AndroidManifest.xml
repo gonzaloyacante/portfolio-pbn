@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ═══════════════════════════════════════════════════════════════════════
          PERMISOS DE RED
@@ -121,18 +122,20 @@
 
         <!-- ── Proveedor de archivos para open_file (in-app updates) ──── -->
         <!--
-            Requerido por open_file para compartir el APK descargado con el
-            instalador del sistema en Android 7+ vía content:// URI.
-            Authority: ${applicationId}.fileProvider
+            El plugin `open_file` espera un FileProvider personalizado y una
+            authority concreta: `${applicationId}.fileProvider.com.crazecoder.openfile`.
+            Declararlo así evita discrepancias entre manifests y la excepción
+            "Provider not found" al generar URIs para el APK descargado.
         -->
         <provider
-            android:name="com.crazecoder.openfile.utils.FileProvider"
-            android:authorities="${applicationId}.fileProvider"
+            android:name="com.crazecoder.openfile.FileProvider"
+            android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/open_file_paths" />
+                android:resource="@xml/open_file_paths"
+                tools:replace="android:resource" />
         </provider>
 
     </application>

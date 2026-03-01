@@ -80,7 +80,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'showContactPage': _showContact,
       });
       ref.invalidate(siteSettingsProvider);
-      setState(() => _populated = false);
       if (mounted) AppSnackBar.success(context, 'Configuración guardada');
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);

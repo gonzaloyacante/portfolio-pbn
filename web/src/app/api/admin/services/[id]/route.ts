@@ -109,13 +109,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
     if (slug) {
       const existing = await prisma.service.findFirst({
-        where: { slug, deletedAt: null, NOT: { id } },
+        where: { slug, NOT: { id } },
       })
       if (existing) {
-        return NextResponse.json(
-          { success: false, error: 'El slug ya está en uso' },
-          { status: 409 }
-        )
+        const msg =
+          existing.deletedAt !== null
+            ? 'El slug ya está en uso por un servicio eliminado. Vacía la papelera o usa otro slug.'
+            : 'El slug ya está en uso'
+        return NextResponse.json({ success: false, error: msg }, { status: 409 })
       }
     }
 
@@ -180,9 +181,13 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
+    // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
+    const svc = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = svc ? `${svc.slug}_deleted_${Date.now()}` : undefined
+
     await prisma.service.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
     })
 
     try {

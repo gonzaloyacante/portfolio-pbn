@@ -101,7 +101,9 @@ export async function PATCH(req: Request) {
     logger.info('[admin-me] Password changed', { userId })
     return NextResponse.json({ success: true, message: 'Contraseña actualizada' })
   } catch (err) {
-    logger.error('[admin-me PATCH] Error', { error: err instanceof Error ? err.message : String(err) })
+    logger.error('[admin-me PATCH] Error', {
+      error: err instanceof Error ? err.message : String(err),
+    })
     return NextResponse.json(
       { success: false, error: 'Error interno del servidor' },
       { status: 500 }

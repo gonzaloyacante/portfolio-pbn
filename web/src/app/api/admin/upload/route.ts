@@ -19,21 +19,21 @@ export async function POST(req: NextRequest) {
     if (!file) {
       return NextResponse.json(
         { success: false, error: 'No se proporcionó archivo' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (!file.type.startsWith('image/')) {
       return NextResponse.json(
         { success: false, error: 'El archivo debe ser una imagen' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
     if (file.size > MAX_SIZE_BYTES) {
       return NextResponse.json(
         { success: false, error: 'La imagen no debe superar 10 MB' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: 'Error al subir la imagen', details: String(error) },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -65,7 +65,7 @@ export async function DELETE(req: NextRequest) {
     if (!publicId) {
       return NextResponse.json(
         { success: false, error: 'No se proporcionó publicId' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -75,7 +75,7 @@ export async function DELETE(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       { success: false, error: 'Error al eliminar imagen', details: String(error) },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }

@@ -23,10 +23,7 @@ export async function POST(req: Request) {
     const { token, platform } = body
 
     if (!token || typeof token !== 'string' || token.trim().length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Token FCM requerido' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'Token FCM requerido' }, { status: 400 })
     }
 
     if (!platform || !['android', 'ios'].includes(platform)) {
