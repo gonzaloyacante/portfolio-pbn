@@ -8,6 +8,10 @@ import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../categories/providers/categories_provider.dart';
+import '../../projects/providers/projects_provider.dart';
+import '../../services/providers/services_provider.dart';
+import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
 import '../providers/trash_provider.dart';
 
@@ -56,6 +60,21 @@ class TrashPage extends ConsumerWidget {
     );
   }
 
+  /// Invalida el provider de lista correspondiente al tipo de elemento,
+  /// para que las listas reflejen la restauración o eliminación.
+  void _invalidateListByType(WidgetRef ref, String type) {
+    switch (type) {
+      case 'projects':
+        ref.invalidate(projectsListProvider);
+      case 'categories':
+        ref.invalidate(categoriesListProvider);
+      case 'services':
+        ref.invalidate(servicesListProvider);
+      case 'testimonials':
+        ref.invalidate(testimonialsListProvider);
+    }
+  }
+
   Future<void> _restore(
     BuildContext context,
     WidgetRef ref,
@@ -66,6 +85,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .restore(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
+      _invalidateListByType(ref, item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -102,6 +122,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .purge(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
+      _invalidateListByType(ref, item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
