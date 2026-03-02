@@ -166,7 +166,7 @@ async function sendToToken(
       android: {
         priority: 'high',
         notification: {
-          channel_id: 'admin_high',
+          channel_id: 'admins',
           notification_priority: 'PRIORITY_HIGH',
           default_sound: true,
           default_vibrate_timings: true,

@@ -76,7 +76,6 @@ android {
     // ── Tipos de build ────────────────────────────────────────────────────
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isDebuggable = true
             isMinifyEnabled = false
