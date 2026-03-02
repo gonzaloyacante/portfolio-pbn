@@ -89,15 +89,24 @@ App de administración nativa para Android/iOS. Replica las funciones del CMS we
 
 ### Distribución Firebase App Distribution
 
+Los scripts de distribución se encuentran en `app/scripts/` y son obligatorios. Hay dos scripts principales:
+
+- `distribute-dev.sh`: publica un APK debug en GitHub Releases con tag `app/vX.Y.Z-dev`, lo distribuye en Firebase App Distribution y notifica la API `/api/admin/app/latest-release`.
+- `distribute-prod.sh`: produce un APK release (ofuscado), crea una release en GitHub (tag `app/vX.Y.Z`), distribuye en Firebase App Distribution y notifica la API.
+
+Ambos scripts ejecutan los pasos completos sin opciones interactivas. Regla obligatoria: cada commit que afecte `app/` debe incluir un bump de versión en `app/pubspec.yaml` (ej.: `version: 1.2.3+4`).
+
+Comandos de ejemplo:
+
 ```bash
-# Primer uso — generar keystore de firma (solo una vez)
+# Generar keystore (solo una vez)
 bash app/scripts/setup_keystore.sh
 
-# Distribuir nueva versión al grupo admin
-bash app/scripts/distribute.sh
+# Distribución dev (ejecuta todos los pasos obligatorios)
+bash app/scripts/distribute-dev.sh
 
-# Con notas de versión personalizadas
-bash app/scripts/distribute.sh --release-notes "Descripción de cambios"
+# Distribución prod (ejecuta todos los pasos obligatorios)
+bash app/scripts/distribute-prod.sh
 ```
 
 ---
