@@ -203,7 +203,8 @@ class ApiClient {
       // Si T es void/dynamic o la respuesta es null (e.g. 204 No Content)
       if (body == null && null is T) return null as T;
       throw ParseException(
-        message: 'Respuesta inesperada: se esperaba $T, '
+        message:
+            'Respuesta inesperada: se esperaba $T, '
             'se recibió ${body.runtimeType}',
       );
     }
