@@ -8,7 +8,9 @@ import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../calendar/providers/calendar_provider.dart';
 import '../../categories/providers/categories_provider.dart';
+import '../../contacts/providers/contacts_provider.dart';
 import '../../projects/providers/projects_provider.dart';
 import '../../services/providers/services_provider.dart';
 import '../../testimonials/providers/testimonials_provider.dart';
@@ -72,6 +74,10 @@ class TrashPage extends ConsumerWidget {
         ref.invalidate(servicesListProvider);
       case 'testimonials':
         ref.invalidate(testimonialsListProvider);
+      case 'contacts':
+        ref.invalidate(contactsListProvider);
+      case 'bookings':
+        ref.invalidate(bookingsListProvider);
     }
   }
 

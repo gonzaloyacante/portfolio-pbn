@@ -62,8 +62,30 @@ export async function PATCH(req: Request) {
     const body = (await req.json()) as {
       currentPassword?: string
       newPassword?: string
+      name?: string
     }
 
+    // ── Profile update (name) ─────────────────────────────────────────────
+    if (body.name !== undefined && !body.currentPassword && !body.newPassword) {
+      const trimmedName = body.name.trim()
+      if (!trimmedName || trimmedName.length < 2) {
+        return NextResponse.json(
+          { success: false, error: 'El nombre debe tener al menos 2 caracteres' },
+          { status: 400 }
+        )
+      }
+
+      const updated = await prisma.user.update({
+        where: { id: userId },
+        data: { name: trimmedName },
+        select: { id: true, name: true, email: true, role: true, avatarUrl: true },
+      })
+
+      logger.info('[admin-me] Profile updated', { userId })
+      return NextResponse.json({ success: true, data: updated, message: 'Perfil actualizado' })
+    }
+
+    // ── Password change ───────────────────────────────────────────────────
     if (!body.currentPassword || !body.newPassword) {
       return NextResponse.json(
         { success: false, error: 'currentPassword y newPassword son requeridos' },

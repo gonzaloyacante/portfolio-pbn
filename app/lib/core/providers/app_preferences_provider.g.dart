@@ -165,3 +165,62 @@ abstract class _$ServicesViewMode extends $Notifier<ViewMode> {
     element.handleCreate(ref, build);
   }
 }
+
+/// Vista seleccionada para la lista de categorías (grid o list).
+
+@ProviderFor(CategoriesViewMode)
+final categoriesViewModeProvider = CategoriesViewModeProvider._();
+
+/// Vista seleccionada para la lista de categorías (grid o list).
+final class CategoriesViewModeProvider
+    extends $NotifierProvider<CategoriesViewMode, ViewMode> {
+  /// Vista seleccionada para la lista de categorías (grid o list).
+  CategoriesViewModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'categoriesViewModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$categoriesViewModeHash();
+
+  @$internal
+  @override
+  CategoriesViewMode create() => CategoriesViewMode();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ViewMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ViewMode>(value),
+    );
+  }
+}
+
+String _$categoriesViewModeHash() =>
+    r'2057b59614916296b847bcf60e682fc8238ac2d5';
+
+/// Vista seleccionada para la lista de categorías (grid o list).
+
+abstract class _$CategoriesViewMode extends $Notifier<ViewMode> {
+  ViewMode build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<ViewMode, ViewMode>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ViewMode, ViewMode>,
+              ViewMode,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

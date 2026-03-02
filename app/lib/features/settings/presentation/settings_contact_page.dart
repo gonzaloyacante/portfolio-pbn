@@ -11,6 +11,7 @@ import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/phone_input_field.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
@@ -182,23 +183,9 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _phoneCtrl,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'Teléfono',
-                      prefixIcon: Icon(Icons.phone_outlined),
-                    ),
-                  ),
+                  PhoneInputField(controller: _phoneCtrl, label: 'Teléfono'),
                   const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _whatsappCtrl,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                      labelText: 'WhatsApp',
-                      prefixIcon: Icon(Icons.chat_outlined),
-                    ),
-                  ),
+                  PhoneInputField(controller: _whatsappCtrl, label: 'WhatsApp'),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _locationCtrl,

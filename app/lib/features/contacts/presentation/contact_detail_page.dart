@@ -259,6 +259,30 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                   ),
                   const SizedBox(height: 16),
 
+                  // ── Preferencia de respuesta ───────────────────────────
+                  Text(
+                    'Preferencia de respuesta',
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        _responsePreferenceIcon(detail.responsePreference),
+                        size: 18,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _responsePreferenceLabel(detail.responsePreference),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
                   // ── Respuesta ──────────────────────────────────────────
                   Text('Respuesta', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
@@ -391,6 +415,18 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
         '${dt.month.toString().padLeft(2, '0')}/'
         '${dt.year}';
   }
+
+  String _responsePreferenceLabel(String pref) => switch (pref) {
+    'PHONE' => 'Teléfono',
+    'WHATSAPP' => 'WhatsApp',
+    _ => 'Email',
+  };
+
+  IconData _responsePreferenceIcon(String pref) => switch (pref) {
+    'PHONE' => Icons.phone_outlined,
+    'WHATSAPP' => Icons.chat_outlined,
+    _ => Icons.email_outlined,
+  };
 }
 
 // ── Sub-widgets ───────────────────────────────────────────────────────────────

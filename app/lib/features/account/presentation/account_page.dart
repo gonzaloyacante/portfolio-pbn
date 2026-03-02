@@ -223,15 +223,75 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
 // ── Subwidgets ─────────────────────────────────────────────────────────────────
 
-class _ProfileCard extends StatelessWidget {
+class _ProfileCard extends ConsumerStatefulWidget {
   const _ProfileCard({required this.user});
 
   final UserProfile? user;
 
   @override
+  ConsumerState<_ProfileCard> createState() => _ProfileCardState();
+}
+
+class _ProfileCardState extends ConsumerState<_ProfileCard> {
+  late final TextEditingController _nameCtrl;
+  bool _editing = false;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameCtrl = TextEditingController(text: widget.user?.name ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProfileCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_editing && widget.user?.name != oldWidget.user?.name) {
+      _nameCtrl.text = widget.user?.name ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveName() async {
+    final trimmed = _nameCtrl.text.trim();
+    if (trimmed.isEmpty || trimmed.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El nombre debe tener al menos 2 caracteres'),
+        ),
+      );
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await ref.read(accountRepositoryProvider).updateProfile(name: trimmed);
+      // Refrescar datos de usuario
+      ref.invalidate(authProvider);
+      if (!mounted) return;
+      setState(() => _editing = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo actualizar el nombre')),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final name = user?.name ?? '—';
-    final email = user?.email ?? '—';
+    final name = widget.user?.name ?? '—';
+    final email = widget.user?.email ?? '—';
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
@@ -254,17 +314,57 @@ class _ProfileCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  if (_editing) ...[
+                    TextField(
+                      controller: _nameCtrl,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre',
+                        isDense: true,
+                      ),
+                      onSubmitted: (_) => _saveName(),
                     ),
-                  ),
+                  ] else ...[
+                    Text(
+                      name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 4),
                   Text(email, style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
+            if (_saving)
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (_editing)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      _nameCtrl.text = widget.user?.name ?? '';
+                      setState(() => _editing = false);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: _saveName,
+                  ),
+                ],
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => setState(() => _editing = true),
+              ),
           ],
         ),
       ),

@@ -65,76 +65,81 @@ class StatCard extends StatelessWidget {
         splashColor: cardColor.withAlpha(40),
         highlightColor: cardColor.withAlpha(20),
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.base),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+          padding: EdgeInsets.all(
+            isExpanded ? AppSpacing.base : AppSpacing.sm + 2,
+          ),
+          child: Row(
             children: [
-              // ── Cabecera: icono + indicador de tap ───────────────────
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: iconBgTint,
-                      borderRadius: BorderRadius.circular(14),
+              // ── Icono circular ──────────────────────────────────────
+              Container(
+                width: isExpanded ? 48 : 40,
+                height: isExpanded ? 48 : 40,
+                decoration: BoxDecoration(
+                  color: iconBgTint,
+                  borderRadius: BorderRadius.circular(isExpanded ? 14 : 12),
+                ),
+                alignment: Alignment.center,
+                child: Icon(icon, color: cardColor, size: isExpanded ? 24 : 20),
+              ),
+              SizedBox(width: isExpanded ? AppSpacing.md : AppSpacing.sm),
+
+              // ── Contenido: valor + label + trend ────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Valor numérico
+                    Text(
+                      value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          (isExpanded
+                                  ? textTheme.titleLarge
+                                  : textTheme.titleMedium)
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: cardColor,
+                                height: 1.1,
+                                letterSpacing: -0.5,
+                              ),
                     ),
-                    alignment: Alignment.center,
-                    child: Icon(icon, color: cardColor, size: 24),
-                  ),
-                  const Spacer(),
-                  if (onTap != null && trend == null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        size: 13,
-                        color: cardColor.withAlpha(180),
+                    const SizedBox(height: 2),
+                    // Etiqueta descriptiva
+                    Text(
+                      label,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurface.withAlpha(160),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.1,
+                        fontSize: isExpanded ? null : 11,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Valor numérico: heredada el color de la tarjeta ──────
-              Flexible(
-                child: Text(
-                  value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style:
-                      (isExpanded
-                              ? textTheme.headlineMedium
-                              : textTheme.headlineSmall)
-                          ?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: cardColor,
-                            height: 1.0,
-                            letterSpacing: -0.5,
-                          ),
+                    // Badge de tendencia
+                    if (trend != null) ...[
+                      const SizedBox(height: 4),
+                      _TrendBadge(
+                        trend: trend!,
+                        isPositive: trendPositive ?? true,
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
 
-              // ── Etiqueta descriptiva ─────────────────────────────────
-              Text(
-                label,
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withAlpha(160),
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.1,
+              // ── Flecha si tiene onTap ───────────────────────────────
+              if (onTap != null && trend == null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 13,
+                    color: cardColor.withAlpha(180),
+                  ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              // ── Badge de tendencia ───────────────────────────────────
-              if (trend != null) ...[
-                const SizedBox(height: AppSpacing.sm),
-                _TrendBadge(trend: trend!, isPositive: trendPositive ?? true),
-              ],
             ],
           ),
         ),

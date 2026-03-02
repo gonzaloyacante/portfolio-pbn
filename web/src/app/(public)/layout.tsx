@@ -13,6 +13,18 @@ export default async function PublicLayout({ children }: { children: React.React
     getPageVisibility(),
   ])
 
+  // ── Maintenance mode: show minimal page for public visitors ─────────────
+  if (visibility.maintenanceMode) {
+    return (
+      <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-8 text-center">
+        <h1 className="font-heading text-3xl font-bold">Sitio en mantenimiento</h1>
+        <p className="text-muted-foreground mt-4 max-w-md text-lg">
+          Estamos realizando mejoras. Vuelve pronto.
+        </p>
+      </div>
+    )
+  }
+
   return (
     <>
       {/* SEO: Schema.org Structured Data */}

@@ -239,7 +239,17 @@ class _ServiceGridCard extends StatelessWidget {
                       color: color.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(Icons.design_services, color: color, size: 22),
+                    child: Center(
+                      child:
+                          item.iconName != null &&
+                              item.iconName!.runes.length <= 2
+                          ? Text(
+                              item.iconName!,
+                              style: const TextStyle(fontSize: 24, height: 1.2),
+                              textAlign: TextAlign.center,
+                            )
+                          : Icon(Icons.design_services, color: color, size: 22),
+                    ),
                   ),
                   const Spacer(),
                   PopupMenuButton<String>(
@@ -371,7 +381,16 @@ class _ServiceTile extends StatelessWidget {
                   color: color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(Icons.design_services, color: color, size: 22),
+                child: Center(
+                  child:
+                      item.iconName != null && item.iconName!.runes.length <= 2
+                      ? Text(
+                          item.iconName!,
+                          style: const TextStyle(fontSize: 24, height: 1.2),
+                          textAlign: TextAlign.center,
+                        )
+                      : Icon(Icons.design_services, color: color, size: 22),
+                ),
               ),
               const SizedBox(width: 12),
               // Content

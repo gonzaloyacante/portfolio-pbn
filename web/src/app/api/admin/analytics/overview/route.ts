@@ -166,7 +166,13 @@ export async function GET(req: Request) {
         // For each city, try to resolve a representative lat/lng
         const cities = await Promise.all(
           citiesRaw.map(async ({ city, _count: c }) => {
-            const cityName = city ?? 'unknown'
+            // Decode URI-encoded city names (e.g. "S%C3%A3o%20Paulo" → "São Paulo")
+            let cityName = city ?? 'unknown'
+            try {
+              cityName = decodeURIComponent(cityName)
+            } catch {
+              // Keep original if decoding fails
+            }
             const repCity = await prisma.analyticLog.findFirst({
               where: { country: country, city, latitude: { not: null }, longitude: { not: null } },
               select: { latitude: true, longitude: true },

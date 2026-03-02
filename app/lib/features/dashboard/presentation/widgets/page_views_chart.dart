@@ -9,6 +9,19 @@ class PageViewsChart extends StatelessWidget {
 
   final List<ChartDataPoint> data;
 
+  /// Calcula un intervalo "bonito" para el eje Y en función del valor máximo.
+  double _niceInterval(double maxVal) {
+    if (maxVal <= 0) return 1;
+    if (maxVal <= 5) return 1;
+    if (maxVal <= 20) return 5;
+    if (maxVal <= 50) return 10;
+    if (maxVal <= 100) return 25;
+    if (maxVal <= 500) return 50;
+    if (maxVal <= 1000) return 100;
+    if (maxVal <= 5000) return 500;
+    return 1000;
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -19,6 +32,12 @@ class PageViewsChart extends StatelessWidget {
     final spots = data.asMap().entries.map((e) {
       return FlSpot(e.key.toDouble(), e.value.count.toDouble());
     }).toList();
+
+    final maxCount = data.fold<double>(
+      0,
+      (prev, e) => e.count > prev ? e.count.toDouble() : prev,
+    );
+    final interval = _niceInterval(maxCount);
 
     return Card(
       elevation: 0,
@@ -32,7 +51,7 @@ class PageViewsChart extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Visitas diarias (7 días)',
+              'Visitas diarias (${data.length} días)',
               style: Theme.of(
                 context,
               ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -94,14 +113,14 @@ class PageViewsChart extends StatelessWidget {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
-                    horizontalInterval: 1,
+                    horizontalInterval: interval,
                     getDrawingHorizontalLine: (_) => FlLine(
                       color: scheme.outlineVariant.withValues(alpha: 0.28),
                       strokeWidth: 1,
                     ),
                   ),
                   borderData: FlBorderData(show: false),
-                  titlesData: _buildLineTitles(data, textStyle),
+                  titlesData: _buildLineTitles(data, textStyle, interval),
                 ),
               ),
             ),
@@ -114,6 +133,7 @@ class PageViewsChart extends StatelessWidget {
   FlTitlesData _buildLineTitles(
     List<ChartDataPoint> data,
     TextStyle? textStyle,
+    double interval,
   ) {
     return FlTitlesData(
       topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -121,9 +141,14 @@ class PageViewsChart extends StatelessWidget {
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
-          reservedSize: 34,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
+          reservedSize: 38,
+          interval: interval,
+          getTitlesWidget: (value, _) {
+            if (value == value.roundToDouble()) {
+              return Text(value.toInt().toString(), style: textStyle);
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
       bottomTitles: AxisTitles(

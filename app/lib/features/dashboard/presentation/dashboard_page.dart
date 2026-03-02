@@ -10,7 +10,6 @@ import '../../../core/theme/app_radius.dart';
 import 'widgets/alerts_section.dart';
 import 'widgets/bookings_bar_chart.dart';
 import 'widgets/page_views_chart.dart';
-import 'widgets/quick_actions.dart';
 import 'widgets/visitors_map.dart';
 import '../../../shared/widgets/adaptive_grid.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -83,12 +82,6 @@ class _DashboardContent extends StatelessWidget {
           sliver: SliverToBoxAdapter(child: AlertsSection(stats: stats)),
         ),
 
-        // ── Sección: Acciones rápidas ────────────────────────────────────
-        SliverPadding(
-          padding: padding.copyWith(top: 0, bottom: AppSpacing.md),
-          sliver: const SliverToBoxAdapter(child: QuickActions()),
-        ),
-
         // ── Sección: Resumen ─────────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(bottom: AppSpacing.sm),
@@ -100,9 +93,9 @@ class _DashboardContent extends StatelessWidget {
           padding: padding.copyWith(top: 0, bottom: 0),
           sliver: SliverAdaptiveGrid(
             compactCols: 2,
-            mediumCols: 3,
+            mediumCols: 2,
             expandedCols: 4,
-            childAspectRatio: 1.1,
+            childAspectRatio: 2.8,
             children: [
               StatCard(
                 icon: Icons.photo_library_outlined,
@@ -154,11 +147,18 @@ class _DashboardContent extends StatelessWidget {
               ),
               StatCard(
                 icon: Icons.people_outline_rounded,
-                label: 'Visitantes únicos (30d)',
+                label: 'Visitantes (30d)',
                 value: _formatNumber(stats.uniqueVisitors30d),
-                trend: '${_formatNumber(stats.pageViews30d)} páginas vistas',
+                trend: '${_formatNumber(stats.pageViews30d)} páginas',
                 trendPositive: true,
                 color: AppColors.success,
+              ),
+              StatCard(
+                icon: Icons.delete_outline_rounded,
+                label: 'Papelera',
+                value: stats.trashCount.toString(),
+                color: AppColors.destructive,
+                onTap: () => context.goNamed(RouteNames.trash),
               ),
             ],
           ),
@@ -271,10 +271,10 @@ class _DashboardSkeleton extends StatelessWidget {
             Padding(
               padding: padding.copyWith(top: 0, bottom: 0),
               child: SkeletonGridView(
-                itemCount: 7,
+                itemCount: 8,
                 compactCols: 2,
                 hasImage: false,
-                childAspectRatio: 1.1,
+                childAspectRatio: 2.8,
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -405,16 +405,18 @@ class _DeviceUsageSection extends StatelessWidget {
     'desktop': 'Escritorio',
   };
 
-  static const _colors = {
-    'mobile': AppColors.lightPrimary,
-    'tablet': AppColors.warning,
-    'desktop': AppColors.success,
-  };
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final safeTotal = total > 0 ? total : 1;
+
+    // Colores adaptativos al tema
+    final colors = {
+      'mobile': colorScheme.primary,
+      'tablet': AppColors.info,
+      'desktop': AppColors.success,
+    };
 
     final sorted = deviceUsage.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
@@ -427,7 +429,7 @@ class _DeviceUsageSection extends StatelessWidget {
         child: Row(
           children: sorted.map((entry) {
             final pct = (entry.value / safeTotal * 100).round();
-            final color = _colors[entry.key] ?? AppColors.lightPrimary;
+            final color = colors[entry.key] ?? colorScheme.primary;
             return Expanded(
               child: Column(
                 children: [

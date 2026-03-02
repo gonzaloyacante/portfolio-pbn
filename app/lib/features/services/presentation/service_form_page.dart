@@ -6,7 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
-import '../../../shared/widgets/color_field.dart';
+import '../../../shared/widgets/color_picker_field.dart';
+import '../../../shared/widgets/duration_picker_field.dart';
 import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -242,7 +243,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                   SizedBox(
                     width: 110,
                     child: DropdownButtonFormField<String>(
-                      initialValue: _priceLabel,
+                      value: _priceLabel,
                       decoration: const InputDecoration(labelText: 'Tipo'),
                       items: const [
                         DropdownMenuItem(value: 'desde', child: Text('desde')),
@@ -265,13 +266,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               const SizedBox(height: 16),
 
               // Duración
-              TextFormField(
-                controller: _durationCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Duración',
-                  hintText: 'ej. 2 horas, Todo el día',
-                ),
-              ),
+              DurationPickerField(controller: _durationCtrl, label: 'Duración'),
               const SizedBox(height: 16),
 
               // Ícono
@@ -284,10 +279,10 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
               const SizedBox(height: 16),
 
               // Color
-              ColorField(
+              ColorPickerField(
                 controller: _colorCtrl,
                 label: 'Color de marca',
-                helperText: 'Hex del color identificativo',
+                helperText: 'Color identificativo del servicio',
               ),
               const SizedBox(height: 16),
 

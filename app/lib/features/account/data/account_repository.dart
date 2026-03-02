@@ -16,4 +16,12 @@ class AccountRepository {
       data: {'currentPassword': currentPassword, 'newPassword': newPassword},
     );
   }
+
+  /// Actualiza el nombre del usuario autenticado.
+  Future<void> updateProfile({required String name}) async {
+    await _client.patch<Map<String, dynamic>>(
+      Endpoints.authMe,
+      data: {'name': name},
+    );
+  }
 }

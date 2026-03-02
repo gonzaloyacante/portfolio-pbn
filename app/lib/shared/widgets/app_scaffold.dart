@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +19,8 @@ class _NavItem {
     required this.selectedIcon,
     required this.label,
     this.isMainNav = false,
+    this.childRoutes = const [],
+    this.children = const [],
   });
 
   final String routeName;
@@ -27,6 +30,19 @@ class _NavItem {
 
   /// Si `true`, aparece en la barra de navegación inferior (móvil).
   final bool isMainNav;
+
+  /// Rutas hijas que activan el highlight del padre (ej. project-new → projects).
+  final List<String> childRoutes;
+
+  /// Sub-items de navegación anidada (se muestran expandibles en el drawer).
+  final List<_NavItem> children;
+
+  /// Devuelve `true` si este item o alguna subruta coincide con [currentRoute].
+  bool isActive(String currentRoute) {
+    if (routeName == currentRoute) return true;
+    if (childRoutes.contains(currentRoute)) return true;
+    return children.any((c) => c.routeName == currentRoute);
+  }
 }
 
 // ── Navigation Items ──────────────────────────────────────────────────────────
@@ -45,24 +61,28 @@ const List<_NavItem> _allNavItems = [
     selectedIcon: Icons.photo_library,
     label: 'Proyectos',
     isMainNav: true,
+    childRoutes: [RouteNames.projectNew, RouteNames.projectEdit],
   ),
   _NavItem(
     routeName: RouteNames.categories,
     icon: Icons.category_outlined,
     selectedIcon: Icons.category,
     label: 'Categorías',
+    childRoutes: [RouteNames.categoryNew, RouteNames.categoryEdit],
   ),
   _NavItem(
     routeName: RouteNames.services,
     icon: Icons.design_services_outlined,
     selectedIcon: Icons.design_services,
     label: 'Servicios',
+    childRoutes: [RouteNames.serviceNew, RouteNames.serviceEdit],
   ),
   _NavItem(
     routeName: RouteNames.testimonials,
     icon: Icons.star_outline,
     selectedIcon: Icons.star,
     label: 'Testimonios',
+    childRoutes: [RouteNames.testimonialNew, RouteNames.testimonialEdit],
   ),
   _NavItem(
     routeName: RouteNames.contacts,
@@ -70,6 +90,7 @@ const List<_NavItem> _allNavItems = [
     selectedIcon: Icons.mail,
     label: 'Contactos',
     isMainNav: true,
+    childRoutes: [RouteNames.contactDetail],
   ),
   _NavItem(
     routeName: RouteNames.calendar,
@@ -77,24 +98,63 @@ const List<_NavItem> _allNavItems = [
     selectedIcon: Icons.calendar_month,
     label: 'Agenda',
     isMainNav: true,
+    childRoutes: [RouteNames.bookingNew, RouteNames.bookingDetail],
   ),
   _NavItem(
     routeName: RouteNames.settings,
     icon: Icons.settings_outlined,
     selectedIcon: Icons.settings,
     label: 'Ajustes del Sitio',
-  ),
-  _NavItem(
-    routeName: RouteNames.appSettings,
-    icon: Icons.tune_outlined,
-    selectedIcon: Icons.tune,
-    label: 'Preferencias',
+    children: [
+      _NavItem(
+        routeName: RouteNames.settingsHome,
+        icon: Icons.home_outlined,
+        selectedIcon: Icons.home,
+        label: 'Inicio',
+      ),
+      _NavItem(
+        routeName: RouteNames.settingsAbout,
+        icon: Icons.person_outline,
+        selectedIcon: Icons.person,
+        label: 'Sobre mí',
+      ),
+      _NavItem(
+        routeName: RouteNames.settingsContact,
+        icon: Icons.contact_page_outlined,
+        selectedIcon: Icons.contact_page,
+        label: 'Contacto',
+      ),
+      _NavItem(
+        routeName: RouteNames.settingsTheme,
+        icon: Icons.palette_outlined,
+        selectedIcon: Icons.palette,
+        label: 'Tema',
+      ),
+      _NavItem(
+        routeName: RouteNames.settingsSite,
+        icon: Icons.language_outlined,
+        selectedIcon: Icons.language,
+        label: 'Sitio',
+      ),
+      _NavItem(
+        routeName: RouteNames.settingsSocial,
+        icon: Icons.share_outlined,
+        selectedIcon: Icons.share,
+        label: 'Redes Sociales',
+      ),
+    ],
   ),
   _NavItem(
     routeName: RouteNames.trash,
     icon: Icons.delete_outline,
     selectedIcon: Icons.delete,
     label: 'Papelera',
+  ),
+  _NavItem(
+    routeName: RouteNames.appSettings,
+    icon: Icons.tune_outlined,
+    selectedIcon: Icons.tune,
+    label: 'Preferencias',
   ),
   _NavItem(
     routeName: RouteNames.account,
@@ -140,8 +200,30 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentRoute = GoRouterState.of(context).name ?? '';
+    final isOnDashboard = currentRoute == RouteNames.dashboard;
+
+    Widget child;
     if (AppBreakpoints.isExpanded(context)) {
-      return _ExpandedScaffold(
+      child = _ExpandedScaffold(
+        title: title,
+        actions: actions,
+        floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: floatingActionButtonLocation,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        body: body,
+      );
+    } else if (AppBreakpoints.isMedium(context)) {
+      child = _MediumScaffold(
+        title: title,
+        actions: actions,
+        floatingActionButton: floatingActionButton,
+        floatingActionButtonLocation: floatingActionButtonLocation,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        body: body,
+      );
+    } else {
+      child = _CompactScaffold(
         title: title,
         actions: actions,
         floatingActionButton: floatingActionButton,
@@ -151,24 +233,37 @@ class AppScaffold extends StatelessWidget {
       );
     }
 
-    if (AppBreakpoints.isMedium(context)) {
-      return _MediumScaffold(
-        title: title,
-        actions: actions,
-        floatingActionButton: floatingActionButton,
-        floatingActionButtonLocation: floatingActionButtonLocation,
-        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        body: body,
-      );
-    }
-
-    return _CompactScaffold(
-      title: title,
-      actions: actions,
-      floatingActionButton: floatingActionButton,
-      floatingActionButtonLocation: floatingActionButtonLocation,
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      body: body,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop) return;
+        if (!isOnDashboard) {
+          context.goNamed(RouteNames.dashboard);
+          return;
+        }
+        // En dashboard → pedir confirmación para salir
+        final exit = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text('¿Salir de la app?'),
+            content: const Text('¿Deseas cerrar la aplicación?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text('Cancelar'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text('Salir'),
+              ),
+            ],
+          ),
+        );
+        if (exit ?? false) {
+          SystemNavigator.pop();
+        }
+      },
+      child: child,
     );
   }
 }
@@ -374,9 +469,9 @@ class _AppNavigationRail extends ConsumerWidget {
         RouteNames.calendar: stats.pendingBookings,
     };
 
-    // Índice activo entre todos los items
+    // Índice activo entre todos los items (soporta sub-rutas)
     final activeIndex = _allNavItems.indexWhere(
-      (item) => item.routeName == currentRoute,
+      (item) => item.isActive(currentRoute),
     );
 
     return NavigationRail(
@@ -500,7 +595,7 @@ class AppDrawer extends ConsumerWidget {
                   _SectionLabel(label: 'CONTENIDO'),
                   ..._buildItems(
                     context,
-                    items: _allNavItems.sublist(0, 8),
+                    items: _allNavItems.sublist(0, 9),
                     currentRoute: currentRoute,
                     isExpanded: isExpanded,
                     badgeCounts: badgeCounts,
@@ -509,7 +604,7 @@ class AppDrawer extends ConsumerWidget {
                   _SectionLabel(label: 'CONFIGURACIÓN'),
                   ..._buildItems(
                     context,
-                    items: _allNavItems.sublist(8),
+                    items: _allNavItems.sublist(9),
                     currentRoute: currentRoute,
                     isExpanded: isExpanded,
                     badgeCounts: badgeCounts,
@@ -535,7 +630,26 @@ class AppDrawer extends ConsumerWidget {
     required Map<String, int> badgeCounts,
   }) {
     return items.map((item) {
-      final isSelected = item.routeName == currentRoute;
+      final isSelected = item.isActive(currentRoute);
+
+      // Si tiene children → expandable group
+      if (item.children.isNotEmpty) {
+        return _DrawerExpandableItem(
+          item: item,
+          isSelected: isSelected,
+          isExpanded: isExpanded,
+          currentRoute: currentRoute,
+          onChildTap: (child) {
+            if (!isExpanded) Navigator.of(context).pop();
+            context.goNamed(child.routeName);
+          },
+          onTap: () {
+            if (!isExpanded) Navigator.of(context).pop();
+            context.goNamed(item.routeName);
+          },
+        );
+      }
+
       return _DrawerNavItem(
         item: item,
         isSelected: isSelected,
@@ -661,11 +775,167 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: Theme.of(context).colorScheme.outline,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+          color: Theme.of(context).colorScheme.primary,
           letterSpacing: 1.2,
         ),
       ),
+    );
+  }
+}
+
+class _DrawerExpandableItem extends StatefulWidget {
+  const _DrawerExpandableItem({
+    required this.item,
+    required this.isSelected,
+    required this.isExpanded,
+    required this.currentRoute,
+    required this.onChildTap,
+    required this.onTap,
+  });
+
+  final _NavItem item;
+  final bool isSelected;
+  final bool isExpanded;
+  final String currentRoute;
+  final void Function(_NavItem child) onChildTap;
+  final VoidCallback onTap;
+
+  @override
+  State<_DrawerExpandableItem> createState() => _DrawerExpandableItemState();
+}
+
+class _DrawerExpandableItemState extends State<_DrawerExpandableItem>
+    with SingleTickerProviderStateMixin {
+  late bool _expanded;
+  late AnimationController _iconCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _expanded = widget.isSelected;
+    _iconCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+      value: _expanded ? 1.0 : 0.0,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _DrawerExpandableItem old) {
+    super.didUpdateWidget(old);
+    if (widget.isSelected && !_expanded) {
+      _expanded = true;
+      _iconCtrl.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _iconCtrl.dispose();
+    super.dispose();
+  }
+
+  void _toggle() {
+    setState(() => _expanded = !_expanded);
+    if (_expanded) {
+      _iconCtrl.forward();
+    } else {
+      _iconCtrl.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          dense: true,
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+          selected: widget.isSelected,
+          selectedTileColor: colorScheme.primaryContainer.withValues(
+            alpha: 0.5,
+          ),
+          leading: Icon(
+            widget.isSelected ? widget.item.selectedIcon : widget.item.icon,
+            color: widget.isSelected
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant,
+            size: 22,
+          ),
+          title: Text(
+            widget.item.label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: widget.isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onSurface,
+              fontWeight: widget.isSelected
+                  ? FontWeight.w600
+                  : FontWeight.normal,
+            ),
+          ),
+          trailing: RotationTransition(
+            turns: Tween(begin: 0.0, end: 0.5).animate(
+              CurvedAnimation(parent: _iconCtrl, curve: Curves.easeInOut),
+            ),
+            child: Icon(
+              Icons.expand_more,
+              size: 20,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          onTap: _toggle,
+        ),
+        AnimatedCrossFade(
+          firstChild: const SizedBox.shrink(),
+          secondChild: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: widget.item.children.map((child) {
+                final childSelected = child.routeName == widget.currentRoute;
+                return ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -3),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.forTile,
+                  ),
+                  selected: childSelected,
+                  selectedTileColor: colorScheme.primaryContainer.withValues(
+                    alpha: 0.3,
+                  ),
+                  leading: Icon(
+                    childSelected ? child.selectedIcon : child.icon,
+                    color: childSelected
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
+                    size: 18,
+                  ),
+                  title: Text(
+                    child.label,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: childSelected
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
+                      fontWeight: childSelected
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  onTap: () => widget.onChildTap(child),
+                );
+              }).toList(),
+            ),
+          ),
+          crossFadeState: _expanded
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 200),
+        ),
+      ],
     );
   }
 }
@@ -715,7 +985,7 @@ class _DrawerNavItem extends StatelessWidget {
               ),
               child: Text(
                 badgeCount > 99 ? '99+' : badgeCount.toString(),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: colorScheme.onPrimary,
                   fontWeight: FontWeight.w600,
                   fontSize: 11,

@@ -11,6 +11,7 @@ import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../categories/providers/categories_provider.dart';
 import '../data/project_model.dart';
 import '../data/projects_repository.dart';
 import '../providers/projects_provider.dart';
@@ -263,12 +264,14 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         const SizedBox(height: 20),
         _titleField(),
         const SizedBox(height: 12),
+        _categoryField(),
+        const SizedBox(height: 12),
         _descriptionField(),
         const SizedBox(height: 12),
         _excerptField(),
         const SizedBox(height: 12),
         _clientDurationRow(),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         _featuredPinnedRow(),
         const SizedBox(height: 20),
         _gallerySection(),
@@ -308,8 +311,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
                 children: [
                   _titleField(),
                   const SizedBox(height: 12),
+                  _categoryField(),
+                  const SizedBox(height: 12),
                   _clientDurationRow(),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   _featuredPinnedRow(),
                 ],
               ),
@@ -397,25 +402,64 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     ],
   );
 
-  Widget _featuredPinnedRow() => Row(
+  Widget _categoryField() {
+    final categoriesAsync = ref.watch(categoriesListProvider());
+    return categoriesAsync.when(
+      loading: () => const LinearProgressIndicator(),
+      error: (_, _) => const Text('Error cargando categorías'),
+      data: (paginated) {
+        final categories = paginated.data;
+        return DropdownButtonFormField<String>(
+          value:
+              _data.categoryId.isNotEmpty &&
+                  categories.any((c) => c.id == _data.categoryId)
+              ? _data.categoryId
+              : null,
+          decoration: const InputDecoration(
+            labelText: 'Categoría *',
+            helperText: 'Categoría principal del proyecto',
+          ),
+          items: categories.map((c) {
+            return DropdownMenuItem(
+              value: c.id,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (c.iconName != null && c.iconName!.isNotEmpty) ...[
+                    Text(c.iconName!, style: const TextStyle(fontSize: 16)),
+                    const SizedBox(width: 8),
+                  ],
+                  Flexible(
+                    child: Text(c.name, overflow: TextOverflow.ellipsis),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: (v) => setState(() => _data.categoryId = v ?? ''),
+          onSaved: (v) => _data.categoryId = v ?? '',
+          validator: (v) =>
+              (v == null || v.isEmpty) ? 'Selecciona una categoría' : null,
+        );
+      },
+    );
+  }
+
+  Widget _featuredPinnedRow() => Column(
     children: [
-      Expanded(
-        child: SwitchListTile(
-          title: const Text('Destacado'),
-          subtitle: const Text('Aparece en galería principal'),
-          value: _data.isFeatured,
-          onChanged: (v) => setState(() => _data.isFeatured = v),
-          contentPadding: EdgeInsets.zero,
-        ),
+      SwitchListTile(
+        title: const Text('Destacado'),
+        subtitle: const Text('Aparece en galería principal'),
+        value: _data.isFeatured,
+        onChanged: (v) => setState(() => _data.isFeatured = v),
+        contentPadding: EdgeInsets.zero,
       ),
-      Expanded(
-        child: SwitchListTile(
-          title: const Text('Fijado'),
-          subtitle: const Text('Siempre al inicio'),
-          value: _data.isPinned,
-          onChanged: (v) => setState(() => _data.isPinned = v),
-          contentPadding: EdgeInsets.zero,
-        ),
+      SwitchListTile(
+        title: const Text('Fijado'),
+        subtitle: const Text('Siempre al inicio'),
+        value: _data.isPinned,
+        onChanged: (v) => setState(() => _data.isPinned = v),
+        contentPadding: EdgeInsets.zero,
       ),
     ],
   );

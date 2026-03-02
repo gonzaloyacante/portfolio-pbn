@@ -9,6 +9,17 @@ class BookingsBarChart extends StatelessWidget {
 
   final List<ChartDataPoint> data;
 
+  /// Calcula un intervalo "bonito" para el eje Y.
+  double _niceInterval(double maxVal) {
+    if (maxVal <= 0) return 1;
+    if (maxVal <= 5) return 1;
+    if (maxVal <= 20) return 5;
+    if (maxVal <= 50) return 10;
+    if (maxVal <= 100) return 25;
+    if (maxVal <= 500) return 50;
+    return 100;
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -42,7 +53,7 @@ class BookingsBarChart extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Reservas mensuales (6 meses)',
+              'Reservas mensuales (${data.length} meses)',
               style: Theme.of(
                 context,
               ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -73,6 +84,12 @@ class BookingsBarChart extends StatelessWidget {
                   gridData: FlGridData(
                     show: true,
                     drawVerticalLine: false,
+                    horizontalInterval: _niceInterval(
+                      data.fold<double>(
+                        0,
+                        (prev, e) => e.count > prev ? e.count.toDouble() : prev,
+                      ),
+                    ),
                     getDrawingHorizontalLine: (_) => FlLine(
                       color: scheme.outlineVariant.withValues(alpha: 0.28),
                       strokeWidth: 1,
@@ -98,9 +115,19 @@ class BookingsBarChart extends StatelessWidget {
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
-          reservedSize: 34,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
+          reservedSize: 38,
+          interval: _niceInterval(
+            data.fold<double>(
+              0,
+              (prev, e) => e.count > prev ? e.count.toDouble() : prev,
+            ),
+          ),
+          getTitlesWidget: (value, _) {
+            if (value == value.roundToDouble()) {
+              return Text(value.toInt().toString(), style: textStyle);
+            }
+            return const SizedBox.shrink();
+          },
         ),
       ),
       bottomTitles: AxisTitles(

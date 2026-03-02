@@ -53,6 +53,25 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
       .where((l) => l.latitude != null && l.longitude != null)
       .toList();
 
+  /// Calcula los bounds que contienen todos los marcadores geo.
+  LatLngBounds? get _geoBounds {
+    final locs = _geoLocs;
+    if (locs.length < 2) return null;
+    double minLat = 90, maxLat = -90, minLng = 180, maxLng = -180;
+    for (final loc in locs) {
+      if (loc.latitude! < minLat) minLat = loc.latitude!;
+      if (loc.latitude! > maxLat) maxLat = loc.latitude!;
+      if (loc.longitude! < minLng) minLng = loc.longitude!;
+      if (loc.longitude! > maxLng) maxLng = loc.longitude!;
+    }
+    // Añadir un padding visual
+    const pad = 5.0;
+    return LatLngBounds(
+      LatLng(minLat - pad, minLng - pad),
+      LatLng(maxLat + pad, maxLng + pad),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -103,12 +122,23 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                     ),
                   )
                 : ColoredBox(
-                    color: colorScheme.surfaceVariant,
+                    color: colorScheme.surface,
                     child: FlutterMap(
                       mapController: _mapCtrl,
                       options: MapOptions(
-                        initialCenter: const LatLng(20, 10),
-                        initialZoom: 1.8,
+                        initialCenter: _geoLocs.length == 1
+                            ? LatLng(
+                                _geoLocs.first.latitude!,
+                                _geoLocs.first.longitude!,
+                              )
+                            : const LatLng(20, 10),
+                        initialZoom: _geoLocs.length == 1 ? 4.0 : 1.8,
+                        initialCameraFit: _geoBounds != null
+                            ? CameraFit.bounds(
+                                bounds: _geoBounds!,
+                                padding: const EdgeInsets.all(32),
+                              )
+                            : null,
                         minZoom: 1.0,
                         maxZoom: 8.0,
                         interactionOptions: const InteractionOptions(
@@ -468,7 +498,7 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                city.label,
+                                                Uri.decodeComponent(city.label),
                                                 style: theme.textTheme.bodySmall
                                                     ?.copyWith(
                                                       color: colorScheme

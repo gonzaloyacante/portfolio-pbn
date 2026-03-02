@@ -7,7 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/color_field.dart';
+import '../../../shared/widgets/color_picker_field.dart';
 import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -232,10 +232,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               const SizedBox(height: 16),
 
               // Color
-              ColorField(
+              ColorPickerField(
                 controller: _colorCtrl,
                 label: 'Color de marca',
-                helperText: 'Hex del color identificativo',
+                helperText: 'Color identificativo de la categoría',
               ),
               const SizedBox(height: 16),
 

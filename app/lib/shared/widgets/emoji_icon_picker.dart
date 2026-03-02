@@ -125,6 +125,7 @@ class _EmojiPickerSheet extends StatefulWidget {
 class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
     with SingleTickerProviderStateMixin {
   late final TabController _tab;
+  String _search = '';
 
   @override
   void initState() {
@@ -138,9 +139,25 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
     super.dispose();
   }
 
+  /// Todos los emojis de todas las categorías, filtrados por búsqueda.
+  List<String> get _allFiltered {
+    final query = _search.toLowerCase();
+    final all = <String>[];
+    for (final cat in _categories) {
+      if (cat.name.toLowerCase().contains(query)) {
+        all.addAll(cat.emojis);
+      } else {
+        all.addAll(cat.emojis.where((e) => e.toLowerCase().contains(query)));
+      }
+    }
+    return all.toSet().toList(); // dedup
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final isSearching = _search.isNotEmpty;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.65,
       minChildSize: 0.4,
@@ -170,57 +187,109 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
-          // Tabs
-          TabBar(
-            controller: _tab,
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            tabs: _categories
-                .map((c) => Tab(text: '${c.icon} ${c.name}'))
-                .toList(),
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Buscar por categoría...',
+                prefixIcon: const Icon(Icons.search, size: 20),
+                isDense: true,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: scheme.outline.withValues(alpha: 0.3),
+                  ),
+                ),
+              ),
+              onChanged: (v) => setState(() => _search = v),
+            ),
           ),
+          const SizedBox(height: 4),
+          // Tabs (hidden during search)
+          if (!isSearching)
+            TabBar(
+              controller: _tab,
+              isScrollable: true,
+              tabAlignment: TabAlignment.start,
+              tabs: _categories
+                  .map((c) => Tab(text: '${c.icon} ${c.name}'))
+                  .toList(),
+            ),
           // Grid
           Expanded(
-            child: TabBarView(
-              controller: _tab,
-              children: _categories.map((cat) {
-                return GridView.builder(
-                  controller: scrollController,
-                  padding: const EdgeInsets.all(12),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 7,
-                    mainAxisSpacing: 4,
-                    crossAxisSpacing: 4,
-                    childAspectRatio: 1,
+            child: isSearching
+                ? _buildSearchResults(scrollController, scheme)
+                : TabBarView(
+                    controller: _tab,
+                    children: _categories.map((cat) {
+                      return _buildEmojiGrid(
+                        scrollController,
+                        cat.emojis,
+                        scheme,
+                      );
+                    }).toList(),
                   ),
-                  itemCount: cat.emojis.length,
-                  itemBuilder: (_, i) {
-                    final emoji = cat.emojis[i];
-                    final isSelected = emoji == widget.currentValue;
-                    return GestureDetector(
-                      onTap: () => widget.onSelected(emoji),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? scheme.primaryContainer
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            emoji,
-                            style: const TextStyle(fontSize: 22),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              }).toList(),
-            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSearchResults(
+    ScrollController scrollController,
+    ColorScheme scheme,
+  ) {
+    final results = _allFiltered;
+    if (results.isEmpty) {
+      return Center(
+        child: Text(
+          'No se encontraron emojis',
+          style: TextStyle(color: scheme.onSurfaceVariant),
+        ),
+      );
+    }
+    return _buildEmojiGrid(scrollController, results, scheme);
+  }
+
+  Widget _buildEmojiGrid(
+    ScrollController scrollController,
+    List<String> emojis,
+    ColorScheme scheme,
+  ) {
+    return GridView.builder(
+      controller: scrollController,
+      padding: const EdgeInsets.all(12),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 6,
+        mainAxisSpacing: 6,
+        crossAxisSpacing: 6,
+        childAspectRatio: 1,
+      ),
+      itemCount: emojis.length,
+      itemBuilder: (_, i) {
+        final emoji = emojis[i];
+        final isSelected = emoji == widget.currentValue;
+        return GestureDetector(
+          onTap: () => widget.onSelected(emoji),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isSelected ? scheme.primaryContainer : Colors.transparent,
+              borderRadius: BorderRadius.circular(10),
+              border: isSelected
+                  ? Border.all(color: scheme.primary.withAlpha(120), width: 1.5)
+                  : null,
+            ),
+            child: Center(
+              child: Text(emoji, style: const TextStyle(fontSize: 28)),
+            ),
+          ),
+        );
+      },
     );
   }
 }

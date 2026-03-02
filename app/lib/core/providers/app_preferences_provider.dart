@@ -8,6 +8,7 @@ part 'app_preferences_provider.g.dart';
 abstract class _PrefKeys {
   static const String projectsViewMode = 'pref_projects_view_mode';
   static const String servicesViewMode = 'pref_services_view_mode';
+  static const String categoriesViewMode = 'pref_categories_view_mode';
 }
 
 // ── ViewMode enum ─────────────────────────────────────────────────────────────
@@ -81,5 +82,39 @@ class ServicesViewMode extends _$ServicesViewMode {
     state = next;
     final prefs = await ref.read(sharedPreferencesProvider.future);
     await prefs.setString(_PrefKeys.servicesViewMode, next.name);
+  }
+}
+
+/// Vista seleccionada para la lista de categorías (grid o list).
+@riverpod
+class CategoriesViewMode extends _$CategoriesViewMode {
+  @override
+  ViewMode build() {
+    _load();
+    return ViewMode.grid;
+  }
+
+  Future<void> _load() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final stored = prefs.getString(_PrefKeys.categoriesViewMode);
+    if (stored != null) {
+      state = ViewMode.values.firstWhere(
+        (e) => e.name == stored,
+        orElse: () => ViewMode.grid,
+      );
+    }
+  }
+
+  Future<void> toggle() async {
+    final next = state == ViewMode.grid ? ViewMode.list : ViewMode.grid;
+    state = next;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_PrefKeys.categoriesViewMode, next.name);
+  }
+
+  Future<void> set(ViewMode mode) async {
+    state = mode;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_PrefKeys.categoriesViewMode, mode.name);
   }
 }

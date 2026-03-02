@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../services/providers/services_provider.dart';
 import '../data/booking_model.dart';
 import '../providers/calendar_provider.dart';
 
@@ -111,6 +112,49 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     }
   }
 
+  Widget _buildServiceSelector() {
+    final servicesAsync = ref.watch(servicesListProvider());
+    return servicesAsync.when(
+      loading: () => const LinearProgressIndicator(),
+      error: (e, _) => Text('Error al cargar servicios: $e'),
+      data: (paginated) {
+        final services = paginated.data;
+        if (services.isEmpty) {
+          return const Text('No hay servicios disponibles');
+        }
+        return DropdownButtonFormField<String>(
+          value: _serviceId,
+          decoration: const InputDecoration(
+            labelText: 'Servicio *',
+            hintText: 'Selecciona un servicio',
+          ),
+          isExpanded: true,
+          items: services
+              .map(
+                (s) => DropdownMenuItem(
+                  value: s.id,
+                  child: Row(
+                    children: [
+                      if (s.iconName != null &&
+                          s.iconName!.runes.length <= 2) ...[
+                        Text(s.iconName!, style: const TextStyle(fontSize: 18)),
+                        const SizedBox(width: 8),
+                      ],
+                      Flexible(
+                        child: Text(s.name, overflow: TextOverflow.ellipsis),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: (v) => setState(() => _serviceId = v),
+          validator: (v) => v == null ? 'Selecciona un servicio' : null,
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateLabel = _date == null
@@ -208,6 +252,29 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                   onTap: _pickDateTime,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              // ── Servicio ─────────────────────────────────────────────────
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Servicio',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildServiceSelector(),
+                    ],
                   ),
                 ),
               ),
