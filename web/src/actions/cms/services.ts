@@ -69,7 +69,7 @@ export const getActiveServices = unstable_cache(
   async () => {
     try {
       const services = await prisma.service.findMany({
-        where: { isActive: true },
+        where: { isActive: true, deletedAt: null },
         orderBy: { sortOrder: 'asc' },
       })
       return services
@@ -88,8 +88,8 @@ export const getActiveServices = unstable_cache(
 export const getServiceBySlug = unstable_cache(
   async (slug: string) => {
     try {
-      const service = await prisma.service.findUnique({
-        where: { slug },
+      const service = await prisma.service.findFirst({
+        where: { slug, isActive: true, deletedAt: null },
       })
       return service
     } catch (error) {
@@ -231,7 +231,7 @@ export async function createService(formData: FormData) {
     })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
+    revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service created: ${data.name}`)
     return { success: true }
@@ -351,7 +351,7 @@ export async function updateService(id: string, formData: FormData) {
     })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
+    revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service updated: ${id}`)
     return { success: true }
@@ -372,7 +372,7 @@ export async function deleteService(id: string) {
     await prisma.service.delete({ where: { id } })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
+    revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service deleted: ${id}`)
     return { success: true }
@@ -401,7 +401,7 @@ export async function toggleService(id: string) {
     })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
+    revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service toggled: ${id} -> ${!service.isActive}`)
     return { success: true, isActive: !service.isActive }
@@ -429,7 +429,7 @@ export async function reorderServices(orderedIds: string[]) {
     )
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services)
+    revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info('Services reordered')
     return { success: true }

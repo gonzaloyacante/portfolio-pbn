@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/utils/app_logger.dart';
@@ -90,7 +89,7 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
   /// Retorna `true` si se creó correctamente, `false` si no hay sesión activa.
   /// Lanza [Exception] si la API devuelve error.
   Future<bool> createEvent(GoogleCalendarEvent event) async {
-    final currentState = state.valueOrNull;
+    final currentState = state.whenOrNull(data: (v) => v);
     if (currentState is! GoogleAuthConnected) {
       AppLogger.warn('GoogleCalendarNotifier: createEvent sin sesión activa');
       return false;
@@ -101,3 +100,6 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
     return true;
   }
 }
+
+// Nota: el provider `googleCalendarProvider` es generado por `riverpod_generator`.
+// Se eliminó el alias manual para evitar definiciones duplicadas.

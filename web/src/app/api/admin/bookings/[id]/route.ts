@@ -4,8 +4,10 @@
  * DELETE /api/admin/bookings/[id]  — Soft delete
  */
 
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -90,9 +92,21 @@ export async function PATCH(req: Request, { params }: Params) {
   try {
     const body = await req.json()
     const {
-      date, endDate, status, clientName, clientEmail, clientPhone,
-      clientNotes, guestCount, adminNotes, cancellationReason,
-      totalAmount, paidAmount, paymentStatus, paymentMethod, paymentRef,
+      date,
+      endDate,
+      status,
+      clientName,
+      clientEmail,
+      clientPhone,
+      clientNotes,
+      guestCount,
+      adminNotes,
+      cancellationReason,
+      totalAmount,
+      paidAmount,
+      paymentStatus,
+      paymentMethod,
+      paymentRef,
     } = body
 
     const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
@@ -124,7 +138,9 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(guestCount !== undefined && { guestCount }),
         ...(adminNotes !== undefined && { adminNotes }),
         ...(cancellationReason !== undefined && { cancellationReason }),
-        ...(totalAmount !== undefined && { totalAmount: totalAmount ? parseFloat(totalAmount) : null }),
+        ...(totalAmount !== undefined && {
+          totalAmount: totalAmount ? parseFloat(totalAmount) : null,
+        }),
         ...(paidAmount !== undefined && { paidAmount: paidAmount ? parseFloat(paidAmount) : null }),
         ...(paymentStatus !== undefined && { paymentStatus }),
         ...(paymentMethod !== undefined && { paymentMethod }),
@@ -133,6 +149,8 @@ export async function PATCH(req: Request, { params }: Params) {
       },
       select: BOOKING_DETAIL_SELECT,
     })
+
+    revalidatePath(ROUTES.admin.calendar)
 
     return NextResponse.json({
       success: true,
@@ -166,6 +184,8 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     await prisma.booking.update({ where: { id }, data: { deletedAt: new Date() } })
+
+    revalidatePath(ROUTES.admin.calendar)
 
     return NextResponse.json({ success: true, message: 'Reserva eliminada' })
   } catch (err) {

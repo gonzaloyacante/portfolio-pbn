@@ -1,8 +1,21 @@
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import {
+  homeSettingsSchema,
+  aboutSettingsSchema,
+  contactSettingsSchema,
+  themeEditorSchema,
+  projectSettingsSchema,
+  testimonialSettingsSchema,
+  categorySettingsSchema,
+} from '@/lib/validations'
+import type { ZodSchema } from 'zod'
 
 // ── Mapa de tipo → modelo Prisma ──────────────────────────────────────────────
 const SETTINGS_MAP = {
@@ -17,6 +30,17 @@ const SETTINGS_MAP = {
 } as const
 
 type SettingsType = keyof typeof SETTINGS_MAP
+
+// Mapa de tipo → Zod schema (site no tiene schema propio, pasa sin validar)
+const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
+  home: homeSettingsSchema,
+  about: aboutSettingsSchema,
+  contact: contactSettingsSchema,
+  theme: themeEditorSchema,
+  project: projectSettingsSchema,
+  testimonial: testimonialSettingsSchema,
+  category: categorySettingsSchema,
+}
 
 // Campos que nunca se actualizan desde la app
 const FORBIDDEN_FIELDS = ['id', 'createdAt', 'updatedAt', 'isActive']
@@ -48,10 +72,7 @@ async function upsertSettings(type: SettingsType, body: Record<string, unknown>)
 }
 
 // ── GET /api/admin/settings/[type] ────────────────────────────────────────────
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ type: string }> }
-) {
+export async function GET(req: Request, { params }: { params: Promise<{ type: string }> }) {
   const auth = await withAdminJwt(req)
   if (!auth.ok) return auth.response
 
@@ -75,10 +96,7 @@ export async function GET(
 }
 
 // ── PATCH /api/admin/settings/[type] ─────────────────────────────────────────
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ type: string }> }
-) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ type: string }> }) {
   const auth = await withAdminJwt(req)
   if (!auth.ok) return auth.response
 
@@ -90,8 +108,71 @@ export async function PATCH(
     )
   }
   try {
-    const body = (await req.json()) as Record<string, unknown>
-    const settings = await upsertSettings(type, body)
+    const body = await req.json().catch(() => null)
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json(
+        { success: false, error: 'Body JSON inválido' },
+        { status: 400 }
+      )
+    }
+
+    // Validate with type-specific Zod schema when available
+    const schema = SETTINGS_SCHEMA_MAP[type]
+    if (schema) {
+      const parsed = schema.safeParse(body)
+      if (!parsed.success) {
+        return NextResponse.json(
+          { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+          { status: 400 }
+        )
+      }
+    }
+
+    const settings = await upsertSettings(type, body as Record<string, unknown>)
+
+    // Invalidate caches by settings type
+    switch (type) {
+      case 'home':
+        revalidatePath(ROUTES.home)
+        revalidateTag(CACHE_TAGS.homeSettings, 'max')
+        break
+      case 'about':
+        revalidatePath(ROUTES.public.about, 'layout')
+        revalidateTag(CACHE_TAGS.aboutSettings, 'max')
+        break
+      case 'contact':
+        // contact settings (ownerName) render in Navbar on ALL public pages
+        revalidatePath('/', 'layout')
+        revalidateTag(CACHE_TAGS.contactSettings, 'max')
+        break
+      case 'theme':
+        // theme is consumed in root layout → must clear ALL routes
+        revalidatePath('/', 'layout')
+        revalidateTag(CACHE_TAGS.themeSettings, 'max')
+        break
+      case 'site':
+        // page visibility is read in (public)/layout.tsx → all public pages affected
+        revalidatePath('/', 'layout')
+        revalidateTag(CACHE_TAGS.siteSettings, 'max')
+        break
+      case 'project':
+        revalidatePath(ROUTES.home)
+        revalidatePath(ROUTES.public.projects, 'layout')
+        revalidatePath(ROUTES.admin.projects)
+        revalidateTag(CACHE_TAGS.projectSettings, 'max')
+        break
+      case 'testimonial':
+        revalidatePath(ROUTES.home)
+        revalidatePath(ROUTES.public.about, 'layout')
+        revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
+        break
+      case 'category':
+        revalidatePath(ROUTES.public.projects, 'layout')
+        revalidatePath(ROUTES.admin.categories)
+        revalidateTag(CACHE_TAGS.categorySettings, 'max')
+        break
+    }
+
     return NextResponse.json({ success: true, data: settings })
   } catch (error) {
     logger.error(`[settings/${type}] PATCH error`, { error })
@@ -101,4 +182,3 @@ export async function PATCH(
     )
   }
 }
-

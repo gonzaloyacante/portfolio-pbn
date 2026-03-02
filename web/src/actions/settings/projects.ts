@@ -66,9 +66,8 @@ export async function updateProjectSettings(data: ProjectSettingsFormData) {
     }
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.projects)
+    revalidatePath(ROUTES.public.projects, 'layout')
     revalidatePath(ROUTES.admin.projects)
-    revalidatePath(ROUTES.home, 'layout')
     revalidateTag(CACHE_TAGS.projectSettings, 'max')
 
     return { success: true }

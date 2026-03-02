@@ -1,5 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import '../utils/app_logger.dart';
 
@@ -34,9 +36,25 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 /// final token = await service.getToken();
 /// ```
 class PushService {
-  PushService() : _messaging = FirebaseMessaging.instance;
+  PushService();
 
-  final FirebaseMessaging _messaging;
+  FirebaseMessaging? _messaging;
+
+  FirebaseMessaging? get _maybeMessaging {
+    try {
+      // Solo intentar obtener la instancia si Firebase ya fue inicializado.
+      if (Firebase.apps.isEmpty) return null;
+      _messaging ??= FirebaseMessaging.instance;
+      return _messaging;
+    } catch (e, st) {
+      AppLogger.debug(
+        'PushService: Firebase no disponible al pedir instancia',
+        e,
+        st,
+      );
+      return null;
+    }
+  }
 
   // ── init ───────────────────────────────────────────────────────────────────
 
@@ -46,8 +64,17 @@ class PushService {
   /// En iOS/macOS se muestra un diálogo de sistema.
   Future<void> init() async {
     try {
+      // Si Firebase no está inicializado, no podemos inicializar FCM ahora.
+      final messaging = _maybeMessaging;
+      if (messaging == null) {
+        AppLogger.warn(
+          'PushService: Firebase no inicializado — omitiendo init()',
+        );
+        return;
+      }
+
       // 1. Solicitar permisos (relevante en iOS/macOS)
-      final settings = await _messaging.requestPermission(
+      final settings = await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -62,12 +89,11 @@ class PushService {
       }
 
       // 2. Configurar presentación de notificaciones en foreground (iOS)
-      await FirebaseMessaging.instance
-          .setForegroundNotificationPresentationOptions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
       AppLogger.info(
         'PushService: inicializado correctamente '
@@ -86,13 +112,47 @@ class PushService {
   /// En web retorna el VAPID token; en móvil el FCM registration token.
   Future<String?> getToken() async {
     try {
-      final token = await _messaging.getToken();
+      final messaging = _maybeMessaging;
+      if (messaging == null) {
+        AppLogger.warn('PushService.getToken: Firebase no inicializado');
+        return null;
+      }
+
+      // Evitar intentar obtener el token en simuladores iOS/macOS donde
+      // APNS no devuelve un token real.
+      if ((defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS)) {
+        try {
+          final info = DeviceInfoPlugin();
+          final iosInfo = await info.iosInfo;
+          if (iosInfo.isPhysicalDevice == false) {
+            AppLogger.warn(
+              'PushService.getToken: iOS Simulator detectado — omitiendo getToken',
+            );
+            return null;
+          }
+        } catch (_) {
+          // Si no podemos detectar el dispositivo, continuar y dejar que
+          // la lógica de Firebase maneje el caso (se captura abajo).
+        }
+      }
+
+      final token = await messaging.getToken();
       if (token != null) {
         AppLogger.debug('PushService: token obtenido (${token.length} chars)');
       }
       return token;
     } catch (e, st) {
-      AppLogger.error('PushService: error al obtener token', e, st);
+      final msg = e.toString();
+      // Mensaje esperado en simuladores iOS/macOS cuando APNS aún no devuelve token.
+      if (msg.contains('APNS token has not been received') ||
+          msg.toLowerCase().contains('apns')) {
+        AppLogger.warn(
+          'PushService: APNS token no disponible (simulador/dispositivo) — omitido',
+        );
+      } else {
+        AppLogger.error('PushService: error al obtener token', e, st);
+      }
       return null;
     }
   }
@@ -113,5 +173,9 @@ class PushService {
   /// Stream que emite un nuevo token cuando FCM lo rota.
   ///
   /// Subscríbete en el provider para re-registrar el token rotado.
-  Stream<String> get onTokenRefresh => _messaging.onTokenRefresh;
+  Stream<String> get onTokenRefresh {
+    final messaging = _maybeMessaging;
+    if (messaging == null) return const Stream<String>.empty();
+    return messaging.onTokenRefresh;
+  }
 }

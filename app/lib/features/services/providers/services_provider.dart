@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/service_model.dart';
@@ -15,6 +14,7 @@ Future<PaginatedResponse<ServiceItem>> servicesList(
   bool? isActive,
   bool? isFeatured,
 }) async {
+  ref.keepAlive();
   final repo = ref.watch(servicesRepositoryProvider);
   return repo.getServices(
     page: page,
@@ -26,6 +26,7 @@ Future<PaginatedResponse<ServiceItem>> servicesList(
 
 @riverpod
 Future<ServiceDetail> serviceDetail(Ref ref, String id) async {
+  ref.keepAlive();
   final repo = ref.watch(servicesRepositoryProvider);
   return repo.getService(id);
 }

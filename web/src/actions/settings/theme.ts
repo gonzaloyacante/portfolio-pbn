@@ -5,7 +5,6 @@ import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 
-import { ROUTES } from '@/config/routes'
 import { themeEditorSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize, validateFontUrl, validateColor } from '@/lib/security-client'
@@ -263,7 +262,7 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
       })
     }
 
-    revalidatePath(ROUTES.home)
+    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.themeSettings, 'max')
 
     return {
@@ -287,6 +286,9 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
  * Reset theme to defaults
  */
 export async function resetThemeToDefaults() {
+  const user = await requireAdmin()
+  await checkSettingsRateLimit(user.id)
+
   try {
     // Delete existing standard theme settings
     await prisma.themeSettings.deleteMany({ where: { isActive: true } })
@@ -299,7 +301,7 @@ export async function resetThemeToDefaults() {
       },
     })
 
-    revalidatePath(ROUTES.home, 'layout')
+    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.themeSettings, 'max')
 
     return { success: true, message: 'Tema reseteado a valores por defecto' }

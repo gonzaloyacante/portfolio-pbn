@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:portfolio_pbn/core/api/api_client.dart';
@@ -11,7 +10,7 @@ part 'testimonials_provider.g.dart';
 
 // ── Repositorio ───────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 TestimonialsRepository testimonialsRepository(Ref ref) {
   return TestimonialsRepository(ref.watch(apiClientProvider));
 }
@@ -26,6 +25,7 @@ Future<PaginatedResponse<TestimonialItem>> testimonialsList(
   String? status,
   bool? isFeatured,
 }) async {
+  ref.keepAlive();
   return ref
       .watch(testimonialsRepositoryProvider)
       .getTestimonials(
@@ -40,5 +40,6 @@ Future<PaginatedResponse<TestimonialItem>> testimonialsList(
 
 @riverpod
 Future<TestimonialDetail> testimonialDetail(Ref ref, String id) async {
+  ref.keepAlive();
   return ref.watch(testimonialsRepositoryProvider).getTestimonial(id);
 }

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 
@@ -12,7 +14,11 @@ import 'api_exceptions.dart';
 class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    AppLogger.debug('[HTTP] → ${options.method} ${options.uri}');
+    // attach a lightweight requestId to correlate request/response logs
+    final requestId =
+        '${DateTime.now().microsecondsSinceEpoch}-${Random().nextInt(1 << 32)}';
+    options.extra['requestId'] = requestId;
+    AppLogger.debug('[HTTP] → $requestId ${options.method} ${options.uri}');
     return handler.next(options);
   }
 
@@ -21,17 +27,21 @@ class LoggingInterceptor extends Interceptor {
     Response<dynamic> response,
     ResponseInterceptorHandler handler,
   ) {
+    final rid = response.requestOptions.extra['requestId'] ?? '-';
     AppLogger.debug(
-      '[HTTP] ← ${response.statusCode} ${response.requestOptions.uri}',
+      '[HTTP] ← $rid ${response.statusCode} ${response.requestOptions.uri}',
     );
     return handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
+    final rid = err.requestOptions.extra['requestId'] ?? '-';
+    final body = err.response?.data;
     AppLogger.error(
-      '[HTTP] ✗ ${err.response?.statusCode ?? "no-response"} '
-      '${err.requestOptions.uri}: ${err.message}',
+      '[HTTP] ✗ $rid ${err.response?.statusCode ?? "no-response"} '
+      '${err.requestOptions.uri}: ${err.message}'
+      '${body != null ? "\n  body: $body" : ""}',
       err,
     );
     return handler.next(err);
@@ -48,8 +58,28 @@ class ConnectivityInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    final results = await Connectivity().checkConnectivity();
-    final isOffline = results.every((r) => r == ConnectivityResult.none);
+    // `checkConnectivity()` devuelve un `ConnectivityResult`.
+    // Comprobarlo explícitamente evita errores en simuladores/emuladores.
+    // `checkConnectivity()` puede devolver diferentes formas en plataformas
+    // antiguas o adaptaciones (ConnectivityResult o List<ConnectivityResult>).
+    // Normalizar a un único ConnectivityResult.
+    dynamic raw;
+    try {
+      raw = await Connectivity().checkConnectivity();
+    } catch (_) {
+      raw = ConnectivityResult.none;
+    }
+
+    late final ConnectivityResult normalized;
+    if (raw is List<ConnectivityResult> && raw.isNotEmpty) {
+      normalized = raw.first;
+    } else if (raw is ConnectivityResult) {
+      normalized = raw;
+    } else {
+      normalized = ConnectivityResult.none;
+    }
+
+    final isOffline = normalized == ConnectivityResult.none;
 
     if (isOffline) {
       AppLogger.warn('[HTTP] Request blocked: no network connectivity');

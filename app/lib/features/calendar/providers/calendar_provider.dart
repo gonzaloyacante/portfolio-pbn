@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:portfolio_pbn/core/api/api_client.dart';
@@ -11,7 +10,7 @@ part 'calendar_provider.g.dart';
 
 // ── Repositorio ───────────────────────────────────────────────────────────────
 
-@riverpod
+@Riverpod(keepAlive: true)
 BookingsRepository bookingsRepository(Ref ref) {
   return BookingsRepository(ref.watch(apiClientProvider));
 }
@@ -27,6 +26,7 @@ Future<PaginatedResponse<BookingItem>> bookingsList(
   DateTime? dateFrom,
   DateTime? dateTo,
 }) async {
+  ref.keepAlive();
   return ref
       .watch(bookingsRepositoryProvider)
       .getBookings(
@@ -42,5 +42,6 @@ Future<PaginatedResponse<BookingItem>> bookingsList(
 
 @riverpod
 Future<BookingDetail> bookingDetail(Ref ref, String id) async {
+  ref.keepAlive();
   return ref.watch(bookingsRepositoryProvider).getBooking(id);
 }

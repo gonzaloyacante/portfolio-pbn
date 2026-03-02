@@ -9,6 +9,9 @@ import { ArrowLeft, Calendar } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 
+// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
+export const revalidate = 0
+
 export async function generateStaticParams() {
   const projects = await prisma.project.findMany({
     where: { isActive: true, isDeleted: false },

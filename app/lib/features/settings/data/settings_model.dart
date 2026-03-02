@@ -8,7 +8,7 @@ part 'settings_model.g.dart';
 // ── About Settings ────────────────────────────────────────────────────────────
 
 @freezed
-class AboutSettings with _$AboutSettings {
+abstract class AboutSettings with _$AboutSettings {
   const factory AboutSettings({
     String? id,
     String? bioTitle,
@@ -32,7 +32,7 @@ class AboutSettings with _$AboutSettings {
 // ── Contact Settings ──────────────────────────────────────────────────────────
 
 @freezed
-class ContactSettings with _$ContactSettings {
+abstract class ContactSettings with _$ContactSettings {
   const factory ContactSettings({
     String? id,
     String? pageTitle,
@@ -55,7 +55,7 @@ class ContactSettings with _$ContactSettings {
 // ── Theme Settings ───────────────────────────────────────────────────────────
 
 @freezed
-class ThemeSettings with _$ThemeSettings {
+abstract class ThemeSettings with _$ThemeSettings {
   const factory ThemeSettings({
     String? id,
     @Default('#6c0a0a') String primaryColor,
@@ -81,7 +81,7 @@ class ThemeSettings with _$ThemeSettings {
 // ── Site Settings ─────────────────────────────────────────────────────────────
 
 @freezed
-class SiteSettings with _$SiteSettings {
+abstract class SiteSettings with _$SiteSettings {
   const factory SiteSettings({
     String? id,
     @Default('Paola Bolívar Nievas - Make-up Artist') String siteName,
@@ -107,10 +107,34 @@ class SiteSettings with _$SiteSettings {
       _$SiteSettingsFromJson(json);
 }
 
+// ── Home Settings ───────────────────────────────────────────────────────────
+
+@freezed
+abstract class HomeSettings with _$HomeSettings {
+  const factory HomeSettings({
+    String? id,
+    String? heroTitle1Text,
+    String? heroTitle2Text,
+    String? ownerNameText,
+    String? heroMainImageUrl,
+    String? heroMainImageAlt,
+    String? ctaText,
+    String? ctaLink,
+    @Default(true) bool showFeaturedProjects,
+    String? featuredTitle,
+    @Default(3) int featuredCount,
+    String? illustrationUrl,
+    @Default(true) bool isActive,
+  }) = _HomeSettings;
+
+  factory HomeSettings.fromJson(Map<String, dynamic> json) =>
+      _$HomeSettingsFromJson(json);
+}
+
 // ── Social Link ───────────────────────────────────────────────────────────────
 
 @freezed
-class SocialLink with _$SocialLink {
+abstract class SocialLink with _$SocialLink {
   const factory SocialLink({
     required String id,
     required String platform,

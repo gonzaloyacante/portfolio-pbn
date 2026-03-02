@@ -1,5 +1,10 @@
 'use client'
 
+// force-dynamic: framer-motion 12 (FadeIn/AnimatePresence) llama useContext
+// internamente durante el prerender estático de Next.js 16 cuando
+// ReactCurrentDispatcher.current es null. Forzar render dinámico lo evita.
+export const dynamic = 'force-dynamic'
+
 import { useState } from 'react'
 import Link from 'next/link'
 import { requestPasswordReset } from '@/actions/user/auth'

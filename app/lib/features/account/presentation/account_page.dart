@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/debug/debug_provider.dart';
 import '../../../core/notifications/push_provider.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../calendar/data/google_calendar_models.dart';
 import '../../calendar/providers/google_calendar_provider.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 import '../providers/account_provider.dart';
 
 class AccountPage extends ConsumerStatefulWidget {
@@ -69,141 +72,149 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
   Future<void> _logout() async {
     // Desregistrar token FCM antes de invalidar la sesión.
-    await ref.read(pushRegistrationNotifierProvider.notifier).unregister();
-    await ref.read(authNotifierProvider.notifier).logout();
+    await ref.read(pushRegistrationProvider.notifier).unregister();
+    await ref.read(authProvider.notifier).logout();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authAsync = ref.watch(authNotifierProvider);
-    final authState = authAsync.valueOrNull;
+    final authAsync = ref.watch(authProvider);
+    final authState = authAsync.whenOrNull(data: (v) => v);
     final user = authState is Authenticated ? authState.user : null;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final hPad = AppBreakpoints.pageMargin(context);
+    final isExpanded = AppBreakpoints.isExpanded(context);
+
     return LoadingOverlay(
       isLoading: _loading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
-          title: const Text('Mi cuenta'),
-        ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          children: [
-            // ── Perfil ────────────────────────────────────────────────────
-            _ProfileCard(user: user),
-            const SizedBox(height: 24),
-            // ── Cambiar contraseña ────────────────────────────────────────
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Cambiar contraseña',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 16),
-                      _PasswordField(
-                        controller: _currentPwCtrl,
-                        label: 'Contraseña actual',
-                        show: _showCurrent,
-                        onToggle: () =>
-                            setState(() => _showCurrent = !_showCurrent),
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Requerido' : null,
-                      ),
-                      const SizedBox(height: 12),
-                      _PasswordField(
-                        controller: _newPwCtrl,
-                        label: 'Nueva contraseña',
-                        show: _showNew,
-                        onToggle: () => setState(() => _showNew = !_showNew),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Requerido';
-                          if (v.length < 8) {
-                            return 'Mínimo 8 caracteres';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      _PasswordField(
-                        controller: _confirmPwCtrl,
-                        label: 'Confirmar nueva contraseña',
-                        show: _showConfirm,
-                        onToggle: () =>
-                            setState(() => _showConfirm = !_showConfirm),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Requerido';
-                          if (v != _newPwCtrl.text) {
-                            return 'Las contraseñas no coinciden';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton(
-                          onPressed: _changePassword,
-                          child: const Text('Actualizar contraseña'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      child: AppScaffold(
+        title: 'Mi cuenta',
+        body: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isExpanded ? 640.0 : double.infinity,
             ),
-            const SizedBox(height: 24),
-            // ── Google Calendar ───────────────────────────────────────────
-            _GoogleCalendarCard(),
-            const SizedBox(height: 12),
-            // ── Cerrar sesión ─────────────────────────────────────────────
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+            child: ListView(
+              padding: EdgeInsets.symmetric(
+                horizontal: hPad,
+                vertical: AppSpacing.xl,
               ),
-              child: ListTile(
-                leading: Icon(Icons.logout, color: colorScheme.error),
-                title: Text(
-                  'Cerrar sesión',
-                  style: TextStyle(
-                    color: colorScheme.error,
-                    fontWeight: FontWeight.w600,
+              children: [
+                // ── Perfil ────────────────────────────────────────────────────
+                _ProfileCard(user: user),
+                const SizedBox(height: 24),
+                // ── Cambiar contraseña ────────────────────────────────────────
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.forCard,
                   ),
-                ),
-                onTap: _logout,
-              ),
-            ),
-            const SizedBox(height: 24),
-            // ── Versión ───────────────────────────────────────────────────
-            ref
-                .watch(appBuildInfoProvider)
-                .when(
-                  data: (info) => Center(
-                    child: Text(
-                      'Versión ${info.fullVersion}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Cambiar contraseña',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 16),
+                          _PasswordField(
+                            controller: _currentPwCtrl,
+                            label: 'Contraseña actual',
+                            show: _showCurrent,
+                            onToggle: () =>
+                                setState(() => _showCurrent = !_showCurrent),
+                            validator: (v) =>
+                                (v == null || v.isEmpty) ? 'Requerido' : null,
+                          ),
+                          const SizedBox(height: 12),
+                          _PasswordField(
+                            controller: _newPwCtrl,
+                            label: 'Nueva contraseña',
+                            show: _showNew,
+                            onToggle: () =>
+                                setState(() => _showNew = !_showNew),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Requerido';
+                              if (v.length < 8) {
+                                return 'Mínimo 8 caracteres';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 12),
+                          _PasswordField(
+                            controller: _confirmPwCtrl,
+                            label: 'Confirmar nueva contraseña',
+                            show: _showConfirm,
+                            onToggle: () =>
+                                setState(() => _showConfirm = !_showConfirm),
+                            validator: (v) {
+                              if (v == null || v.isEmpty) return 'Requerido';
+                              if (v != _newPwCtrl.text) {
+                                return 'Las contraseñas no coinciden';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: _changePassword,
+                              child: const Text('Actualizar contraseña'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  loading: () => const SizedBox.shrink(),
-                  error: (_, _) => const SizedBox.shrink(),
                 ),
-          ],
+                const SizedBox(height: 24),
+                // ── Google Calendar ───────────────────────────────────────────
+                _GoogleCalendarCard(),
+                const SizedBox(height: 12),
+                // ── Cerrar sesión ─────────────────────────────────────────────
+                Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadius.forCard,
+                  ),
+                  child: ListTile(
+                    leading: Icon(Icons.logout, color: colorScheme.error),
+                    title: Text(
+                      'Cerrar sesión',
+                      style: TextStyle(
+                        color: colorScheme.error,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onTap: _logout,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                // ── Versión ───────────────────────────────────────────────────
+                ref
+                    .watch(appBuildInfoProvider)
+                    .when(
+                      data: (info) => Center(
+                        child: Text(
+                          'Versión ${info.fullVersion}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                      ),
+                      loading: () => const SizedBox.shrink(),
+                      error: (_, _) => const SizedBox.shrink(),
+                    ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -212,18 +223,78 @@ class _AccountPageState extends ConsumerState<AccountPage> {
 
 // ── Subwidgets ─────────────────────────────────────────────────────────────────
 
-class _ProfileCard extends StatelessWidget {
+class _ProfileCard extends ConsumerStatefulWidget {
   const _ProfileCard({required this.user});
 
   final UserProfile? user;
 
   @override
+  ConsumerState<_ProfileCard> createState() => _ProfileCardState();
+}
+
+class _ProfileCardState extends ConsumerState<_ProfileCard> {
+  late final TextEditingController _nameCtrl;
+  bool _editing = false;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameCtrl = TextEditingController(text: widget.user?.name ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProfileCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_editing && widget.user?.name != oldWidget.user?.name) {
+      _nameCtrl.text = widget.user?.name ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveName() async {
+    final trimmed = _nameCtrl.text.trim();
+    if (trimmed.isEmpty || trimmed.length < 2) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('El nombre debe tener al menos 2 caracteres'),
+        ),
+      );
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      await ref.read(accountRepositoryProvider).updateProfile(name: trimmed);
+      // Refrescar datos de usuario
+      ref.invalidate(authProvider);
+      if (!mounted) return;
+      setState(() => _editing = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo actualizar el nombre')),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final name = user?.name ?? '—';
-    final email = user?.email ?? '—';
+    final name = widget.user?.name ?? '—';
+    final email = widget.user?.email ?? '—';
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Row(
@@ -243,17 +314,57 @@ class _ProfileCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    name,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  if (_editing) ...[
+                    TextField(
+                      controller: _nameCtrl,
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre',
+                        isDense: true,
+                      ),
+                      onSubmitted: (_) => _saveName(),
                     ),
-                  ),
+                  ] else ...[
+                    Text(
+                      name,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 4),
                   Text(email, style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
+            if (_saving)
+              const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (_editing)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      _nameCtrl.text = widget.user?.name ?? '';
+                      setState(() => _editing = false);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.check),
+                    onPressed: _saveName,
+                  ),
+                ],
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => setState(() => _editing = true),
+              ),
           ],
         ),
       ),
@@ -300,7 +411,7 @@ class _PasswordField extends StatelessWidget {
 class _GoogleCalendarCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gcAsync = ref.watch(googleCalendarNotifierProvider);
+    final gcAsync = ref.watch(googleCalendarProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return gcAsync.when(
@@ -315,9 +426,7 @@ class _GoogleCalendarCard extends ConsumerWidget {
         };
 
         return Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
           child: ListTile(
             leading: const Icon(Icons.calendar_month_outlined),
             title: Text(
@@ -335,9 +444,8 @@ class _GoogleCalendarCard extends ConsumerWidget {
                   )
                 : isConnected
                 ? TextButton(
-                    onPressed: () => ref
-                        .read(googleCalendarNotifierProvider.notifier)
-                        .signOut(),
+                    onPressed: () =>
+                        ref.read(googleCalendarProvider.notifier).signOut(),
                     style: TextButton.styleFrom(
                       foregroundColor: colorScheme.error,
                     ),
@@ -346,9 +454,7 @@ class _GoogleCalendarCard extends ConsumerWidget {
                 : null,
             onTap: isConnected || isConnecting
                 ? null
-                : () => ref
-                      .read(googleCalendarNotifierProvider.notifier)
-                      .signIn(),
+                : () => ref.read(googleCalendarProvider.notifier).signIn(),
           ),
         );
       },

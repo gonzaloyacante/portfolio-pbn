@@ -1,4 +1,5 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../api/api_client.dart';
@@ -55,7 +56,10 @@ class AuthRepository {
     AppLogger.info('AuthRepository: login attempt for $email');
 
     final payload = <String, dynamic>{'email': email, 'password': password};
-    if (fcmToken != null) payload['pushToken'] = fcmToken;
+    if (fcmToken != null) {
+      payload['pushToken'] = fcmToken;
+      payload['device'] = Platform.isIOS ? 'ios' : 'android';
+    }
 
     final raw = await _api.post<Map<String, dynamic>>(
       Endpoints.authLogin,

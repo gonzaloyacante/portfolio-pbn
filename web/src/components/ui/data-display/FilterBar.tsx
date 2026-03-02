@@ -17,18 +17,19 @@ interface FilterBarProps {
   filteredCount: number
 }
 
-export default function FilterBar({
-  categories,
-  selectedCategory,
-  onCategoryChange,
-  searchTerm,
-  onSearchChange,
-  showActive,
-  onActiveChange,
-  onClearFilters,
-  totalCount,
-  filteredCount,
-}: FilterBarProps) {
+export default function FilterBar(props: FilterBarProps) {
+  const {
+    categories,
+    selectedCategory,
+    onCategoryChange,
+    searchTerm,
+    onSearchChange,
+    showActive,
+    onActiveChange,
+    onClearFilters,
+    totalCount,
+    filteredCount,
+  } = props
   const [isOpen, setIsOpen] = useState(false)
 
   const hasActiveFilters = useMemo(() => {

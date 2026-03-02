@@ -4,14 +4,7 @@ import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 
-const TRASH_TYPES = [
-  'project',
-  'category',
-  'service',
-  'testimonial',
-  'contact',
-  'booking',
-] as const
+const TRASH_TYPES = ['project', 'category', 'service', 'testimonial', 'contact', 'booking'] as const
 
 type TrashType = (typeof TRASH_TYPES)[number]
 
@@ -49,14 +42,10 @@ export async function GET(req: Request) {
     const url = new URL(req.url)
     const typeFilter = url.searchParams.get('type') as TrashType | null
 
-    const types = typeFilter && TRASH_TYPES.includes(typeFilter)
-      ? [typeFilter]
-      : [...TRASH_TYPES]
+    const types = typeFilter && TRASH_TYPES.includes(typeFilter) ? [typeFilter] : [...TRASH_TYPES]
 
     const results = await Promise.all(types.map(fetchDeletedByType))
-    const grouped = Object.fromEntries(
-      types.map((type, i) => [type, results[i]])
-    )
+    const grouped = Object.fromEntries(types.map((type, i) => [type, results[i]]))
     const total = results.reduce((sum, items) => sum + items.length, 0)
 
     return NextResponse.json({ success: true, data: grouped, total })

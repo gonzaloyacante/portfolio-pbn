@@ -3,6 +3,7 @@
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { headers } from 'next/headers'
+import { requireAdmin } from '@/lib/security-server'
 
 // -----------------------------------------------
 // Types
@@ -65,6 +66,11 @@ const BOT_RE =
 // -----------------------------------------------
 // Record Event
 // -----------------------------------------------
+
+/** Ventana de sesión: si la misma IP aparece en menos de 30 minutos,
+ *  se considera la misma sesión (isDuplicate = true). */
+const SESSION_WINDOW_MS = 30 * 60 * 1000
+
 export async function recordAnalyticEvent(
   eventType: string,
   entityId?: string,
@@ -77,17 +83,60 @@ export async function recordAnalyticEvent(
     const userAgent = headersList.get('user-agent') || 'unknown'
     const referer = headersList.get('referer') || null
 
-    // Vercel edge geo headers
-    const country = headersList.get('x-vercel-ip-country') || undefined
-    const city = headersList.get('x-vercel-ip-city') || undefined
-    const region = headersList.get('x-vercel-ip-country-region') || undefined
+    // Vercel edge geo headers (GeoIP — probabilístico, nivel ciudad)
+    const vercelCountry = headersList.get('x-vercel-ip-country') || undefined
+    const vercelCity = headersList.get('x-vercel-ip-city') || undefined
+    const vercelRegion = headersList.get('x-vercel-ip-country-region') || undefined
     const latRaw = headersList.get('x-vercel-ip-latitude')
     const lonRaw = headersList.get('x-vercel-ip-longitude')
+
+    // Coordenadas del cliente (precisas, con consentimiento explícito)
+    const clientGeo = options?.metadata?.geo as
+      | { latitude?: number; longitude?: number; accuracy?: number }
+      | undefined
+    const consentLevel = (options?.metadata?.consentLevel as string | undefined) ?? 'geoip'
+
+    // Preferir coordenadas del cliente sobre GeoIP cuando el consentimiento es preciso
+    const usePrecise = consentLevel === 'precise' && clientGeo?.latitude !== undefined
+    const country = vercelCountry
+    const city = vercelCity
+    const region = vercelRegion
+    const latitude = usePrecise ? clientGeo!.latitude : latRaw ? parseFloat(latRaw) : undefined
+    const longitude = usePrecise ? clientGeo!.longitude : lonRaw ? parseFloat(lonRaw) : undefined
 
     const distinctIp = rawIp.split(',')[0].trim()
     const ipAddress = anonymizeIp(distinctIp)
     const isBot = BOT_RE.test(userAgent)
     const device = options?.device ?? detectDevice(userAgent)
+
+    // ── Deduplicación de sesión ───────────────────────────────────────────────
+    // Si la misma IP ya registró un evento en los últimos 30 min →
+    //   isDuplicate = true (misma sesión navegando entre páginas).
+    // Esto permite contar visitantes únicos filtrando isDuplicate:false.
+    let isDuplicate = options?.isDuplicate ?? false
+    let sessionIdToUse = options?.sessionId
+
+    // Solo deduplicar eventos de página (no acciones como CONTACT_SUBMIT)
+    if (!isDuplicate && !isBot && eventType.endsWith('_VIEW')) {
+      const windowStart = new Date(Date.now() - SESSION_WINDOW_MS)
+      const recentEvent = await prisma.analyticLog.findFirst({
+        where: {
+          ipAddress,
+          timestamp: { gte: windowStart },
+          isBot: false,
+        },
+        select: { sessionId: true },
+        orderBy: { timestamp: 'desc' },
+      })
+      if (recentEvent !== null) {
+        isDuplicate = true
+        // Heredar sessionId del primer evento de la sesión
+        if (!sessionIdToUse && recentEvent.sessionId) {
+          sessionIdToUse = recentEvent.sessionId
+        }
+      }
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     await prisma.analyticLog.create({
       data: {
@@ -100,12 +149,12 @@ export async function recordAnalyticEvent(
         country,
         city,
         region,
-        latitude: latRaw ? parseFloat(latRaw) : undefined,
-        longitude: lonRaw ? parseFloat(lonRaw) : undefined,
+        latitude,
+        longitude,
         device,
         isBot,
-        isDuplicate: options?.isDuplicate ?? false,
-        sessionId: options?.sessionId,
+        isDuplicate,
+        sessionId: sessionIdToUse,
         scrollDepth: options?.scrollDepth,
         timeOnPage: options?.timeOnPage,
         sessionDuration: options?.sessionDuration,
@@ -120,7 +169,9 @@ export async function recordAnalyticEvent(
         utmTerm: options?.stm?.term,
         utmContent: options?.stm?.content,
         loadTime: options?.performance?.loadTime,
-        eventData: options?.metadata ? JSON.parse(JSON.stringify(options.metadata)) : undefined,
+        eventData: options?.metadata
+          ? JSON.parse(JSON.stringify({ ...options.metadata, _consentLevel: consentLevel }))
+          : { _consentLevel: consentLevel },
       },
     })
     return { success: true }
@@ -134,6 +185,8 @@ export async function recordAnalyticEvent(
 // Dashboard Data (7-day summary) — all queries in parallel
 // -----------------------------------------------
 export async function getAnalyticsDashboardData() {
+  await requireAdmin()
+
   try {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
@@ -179,16 +232,16 @@ export async function getAnalyticsDashboardData() {
         orderBy: { _count: { entityId: 'desc' } },
         take: 5,
       }),
-      // 6. Device groups
+      // 6. Device groups (por visitantes únicos: isDuplicate=false)
       prisma.analyticLog.groupBy({
         by: ['device'],
-        where: { ...where7d, isBot: false },
+        where: { ...where7d, isBot: false, isDuplicate: false },
         _count: { device: true },
       }),
       // 7. Top locations by city+country (not raw IPs)
       prisma.analyticLog.groupBy({
         by: ['city', 'country'],
-        where: { ...where7d, city: { not: null }, isBot: false },
+        where: { ...where7d, city: { not: null }, isBot: false, isDuplicate: false },
         _count: { city: true },
         orderBy: { _count: { city: 'desc' } },
         take: 8,
@@ -250,6 +303,8 @@ export async function getAnalyticsDashboardData() {
 // Extended Analytics (for world map + vitals)
 // -----------------------------------------------
 export async function getExtendedAnalyticsData(days = 30) {
+  await requireAdmin()
+
   try {
     const since = new Date()
     since.setDate(since.getDate() - days)

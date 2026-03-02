@@ -13,6 +13,9 @@ class Endpoints {
   static const String projects = '/api/admin/projects';
   static String project(String id) => '/api/admin/projects/$id';
   static const String projectsReorder = '/api/admin/projects/reorder';
+  static String projectImages(String id) => '/api/admin/projects/$id/images';
+  static String projectImage(String id, String imageId) =>
+      '/api/admin/projects/$id/images/$imageId';
 
   // ── Categorías ────────────────────────────────────────────────────────────
   static const String categories = '/api/admin/categories';
@@ -60,4 +63,9 @@ class Endpoints {
   // ── Upload ────────────────────────────────────────────────────────────────
   /// Endpoint autenticado con JWT Flutter para subir imágenes.
   static const String adminUpload = '/api/admin/upload';
+
+  // ── App Updates (in-app update check) ────────────────────────────────────
+  /// GET público: retorna la última release de la app Flutter.
+  /// Query params opcionales: ?version=1.0.0&versionCode=1
+  static const String appLatestRelease = '/api/admin/app/latest-release';
 }

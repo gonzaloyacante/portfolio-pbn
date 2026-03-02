@@ -3,11 +3,15 @@
  * POST  /api/admin/categories  — Crear categoría
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { categoryApiSchema } from '@/lib/validations'
 
 const CATEGORY_SELECT = {
   id: true,
@@ -90,20 +94,27 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
-    const { name, slug, description, thumbnailUrl, iconName, color, isActive = true } = body
+    const body = await req.json().catch(() => null)
+    const parsed = categoryApiSchema.safeParse(body)
 
-    if (!name || !slug) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Campos requeridos: name, slug' },
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
         { status: 400 }
       )
     }
 
-    // Slug único
-    const existing = await prisma.category.findFirst({ where: { slug, deletedAt: null } })
+    const { name, slug, description, thumbnailUrl, iconName, color, isActive = true } = parsed.data
+
+    // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
+    // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)
+    const existing = await prisma.category.findFirst({ where: { slug } })
     if (existing) {
-      return NextResponse.json({ success: false, error: 'El slug ya está en uso' }, { status: 409 })
+      const msg =
+        existing.deletedAt !== null
+          ? 'El slug ya está en uso por una categoría eliminada. Vacía la papelera o usa otro slug.'
+          : 'El slug ya está en uso'
+      return NextResponse.json({ success: false, error: msg }, { status: 409 })
     }
 
     // Calcular siguiente sortOrder
@@ -124,11 +135,26 @@ export async function POST(req: Request) {
       select: CATEGORY_SELECT,
     })
 
+    try {
+      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.admin.categories)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-categories-post] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
+
     return NextResponse.json({ success: true, data: category }, { status: 201 })
   } catch (err) {
     logger.error('[admin-categories-post] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

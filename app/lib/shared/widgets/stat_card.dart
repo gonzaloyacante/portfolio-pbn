@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/app_breakpoints.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_spacing.dart';
+
 // ── StatCard ──────────────────────────────────────────────────────────────────
 
-/// Tarjeta de estadística para el Dashboard.
+/// Tarjeta de estadística para el Dashboard — responsive, con identidad visual.
 ///
-/// Muestra un valor numérico con icono, etiqueta y variación opcional.
+/// El fondo usa un tinte suave del color de la tarjeta, el icono aparece
+/// prominente y el valor numérico hereda el color para dar jerarquía visual.
 ///
 /// Uso:
 /// ```dart
@@ -41,56 +47,99 @@ class StatCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final cardColor = color ?? colorScheme.primary;
+    final isExpanded = AppBreakpoints.isExpanded(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Card(
+    // Fondo tintado: más intenso en dark, más suave en light
+    final bgTint = isDark ? cardColor.withAlpha(55) : cardColor.withAlpha(26);
+    final iconBgTint = isDark
+        ? cardColor.withAlpha(90)
+        : cardColor.withAlpha(45);
+
+    return Material(
+      color: bgTint,
+      borderRadius: BorderRadius.circular(AppRadius.card),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
+        splashColor: cardColor.withAlpha(40),
+        highlightColor: cardColor.withAlpha(20),
         child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: EdgeInsets.all(
+            isExpanded ? AppSpacing.base : AppSpacing.sm + 2,
+          ),
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: cardColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
+              // ── Icono circular ──────────────────────────────────────
+              Container(
+                width: isExpanded ? 48 : 40,
+                height: isExpanded ? 48 : 40,
+                decoration: BoxDecoration(
+                  color: iconBgTint,
+                  borderRadius: BorderRadius.circular(isExpanded ? 14 : 12),
+                ),
+                alignment: Alignment.center,
+                child: Icon(icon, color: cardColor, size: isExpanded ? 24 : 20),
+              ),
+              SizedBox(width: isExpanded ? AppSpacing.md : AppSpacing.sm),
+
+              // ── Contenido: valor + label + trend ────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Valor numérico
+                    Text(
+                      value,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          (isExpanded
+                                  ? textTheme.titleLarge
+                                  : textTheme.titleMedium)
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: cardColor,
+                                height: 1.1,
+                                letterSpacing: -0.5,
+                              ),
                     ),
-                    child: Icon(icon, color: cardColor, size: 22),
+                    const SizedBox(height: 2),
+                    // Etiqueta descriptiva
+                    Text(
+                      label,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurface.withAlpha(160),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.1,
+                        fontSize: isExpanded ? null : 11,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    // Badge de tendencia
+                    if (trend != null) ...[
+                      const SizedBox(height: 4),
+                      _TrendBadge(
+                        trend: trend!,
+                        isPositive: trendPositive ?? true,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // ── Flecha si tiene onTap ───────────────────────────────
+              if (onTap != null && trend == null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 13,
+                    color: cardColor.withAlpha(180),
                   ),
-                  const Spacer(),
-                  if (trend != null)
-                    _TrendBadge(
-                      trend: trend!,
-                      isPositive: trendPositive ?? true,
-                    )
-                  else if (onTap != null)
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 12,
-                      color: colorScheme.outline.withValues(alpha: 0.5),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Text(
-                value,
-                style: textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface,
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                style: textTheme.bodySmall?.copyWith(
-                  color: colorScheme.outline,
-                ),
-              ),
             ],
           ),
         ),
@@ -109,15 +158,17 @@ class _TrendBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isPositive
-        ? const Color(0xFF10B981) // success
-        : const Color(0xFFEF4444); // destructive
+    final color = isPositive ? AppColors.success : AppColors.destructive;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
+        color: color.withAlpha(28),
+        borderRadius: AppRadius.forChip,
+        border: Border.all(color: color.withAlpha(70), width: 0.8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -126,15 +177,15 @@ class _TrendBadge extends StatelessWidget {
             isPositive
                 ? Icons.trending_up_rounded
                 : Icons.trending_down_rounded,
-            size: 14,
+            size: 13,
             color: color,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: AppSpacing.xs),
           Text(
             trend,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: color,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],

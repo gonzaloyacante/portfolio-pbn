@@ -12,40 +12,53 @@ interface CookieConsentProps {
 /**
  * Banner de Consentimiento de Cookies (GDPR Compliant)
  *
- * Bloquea scripts de terceros (Google Analytics) hasta que el usuario acepte.
- * Guarda preferencias en localStorage.
+ * Guarda preferencias en localStorage:
+ * - `cookie-consent`: 'all' | 'necessary' | 'custom'
+ * - `cookie-consent-date`: ISO timestamp
+ * - `geo-consent`: 'granted' | 'denied'   ← consentimiento de geolocalización
  *
- * @example
- * <CookieConsent
- *   onAcceptAll={() => initializeAnalytics()}
- *   onAcceptNecessary={() => console.log('Solo cookies esenciales')}
- * />
+ * Con `cookie-consent === 'all'` → `geo-consent` se establece como 'granted'.
+ * Con `cookie-consent === 'necessary'` → `geo-consent` se establece como 'denied'.
+ * Con `cookie-consent === 'custom'` → el usuario elige individualmente.
  */
 export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: CookieConsentProps) {
   const [showBanner, setShowBanner] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true)
+  const [geoEnabled, setGeoEnabled] = useState(true)
 
   useEffect(() => {
-    // Verificar si el usuario ya dio su consentimiento
     const consent = localStorage.getItem('cookie-consent')
     if (!consent) {
-      // Mostrar banner después de 1 segundo (mejor UX)
       setTimeout(() => setShowBanner(true), 1000)
     }
   }, [])
 
-  const handleAcceptAll = () => {
-    localStorage.setItem('cookie-consent', 'all')
-    localStorage.setItem('cookie-consent-date', new Date().toISOString())
+  const saveAndClose = (cookieConsent: 'all' | 'necessary' | 'custom', geoConsent: boolean) => {
+    const now = new Date().toISOString()
+    localStorage.setItem('cookie-consent', cookieConsent)
+    localStorage.setItem('cookie-consent-date', now)
+    localStorage.setItem('geo-consent', geoConsent ? 'granted' : 'denied')
     setShowBanner(false)
+  }
+
+  const handleAcceptAll = () => {
+    saveAndClose('all', true)
     onAcceptAll?.()
   }
 
   const handleAcceptNecessary = () => {
-    localStorage.setItem('cookie-consent', 'necessary')
-    localStorage.setItem('cookie-consent-date', new Date().toISOString())
-    setShowBanner(false)
+    saveAndClose('necessary', false)
     onAcceptNecessary?.()
+  }
+
+  const handleSaveCustom = () => {
+    saveAndClose('custom', geoEnabled)
+    if (analyticsEnabled) {
+      onAcceptAll?.()
+    } else {
+      onAcceptNecessary?.()
+    }
   }
 
   if (!showBanner) return null
@@ -91,34 +104,93 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="bg-muted mt-4 space-y-3 rounded-2xl p-4 text-sm">
-                        <div className="flex items-start gap-3">
-                          <div className="bg-success mt-0.5 h-2 w-2 rounded-full shadow-sm" />
-                          <div>
-                            <strong className="text-foreground block font-semibold">
-                              Esenciales (Necesarias)
-                            </strong>
-                            <span className="text-muted-foreground">
-                              Indispensables para el funcionamiento del sitio (preferencias de tema,
-                              seguridad y carrito). No se pueden desactivar.
-                            </span>
+                      <div className="bg-muted mt-4 space-y-4 rounded-2xl p-4 text-sm">
+                        {/* Esenciales — no toggle */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <div className="bg-success mt-0.5 h-2 w-2 shrink-0 rounded-full shadow-sm" />
+                            <div>
+                              <strong className="text-foreground block font-semibold">
+                                Esenciales (Necesarias)
+                              </strong>
+                              <span className="text-muted-foreground">
+                                Preferencias de tema, seguridad de sesión. No se pueden desactivar.
+                              </span>
+                            </div>
                           </div>
+                          <span className="text-muted-foreground shrink-0 text-xs font-medium">
+                            Siempre activas
+                          </span>
                         </div>
 
-                        <div className="flex items-start gap-3">
-                          <div className="bg-info mt-0.5 h-2 w-2 rounded-full shadow-sm" />
-                          <div>
-                            <strong className="text-foreground block font-semibold">
-                              Analíticas (Opcionales)
-                            </strong>
-                            <span className="text-muted-foreground">
-                              Nos ayudan a entender cómo usas la web para mejorarla (Google
-                              Analytics). Los datos son anónimos.
-                            </span>
+                        {/* Analíticas — toggle */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <div className="bg-primary/60 mt-0.5 h-2 w-2 shrink-0 rounded-full shadow-sm" />
+                            <div>
+                              <strong className="text-foreground block font-semibold">
+                                Analíticas (Opcionales)
+                              </strong>
+                              <span className="text-muted-foreground">
+                                Nos ayudan a entender cómo usas la web (datos anónimos).
+                              </span>
+                            </div>
                           </div>
+                          <button
+                            role="switch"
+                            aria-checked={analyticsEnabled}
+                            onClick={() => setAnalyticsEnabled((v) => !v)}
+                            className={`focus-visible:ring-primary relative h-6 w-11 shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 ${
+                              analyticsEnabled ? 'bg-primary' : 'bg-muted-foreground/40'
+                            }`}
+                          >
+                            <span
+                              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                                analyticsEnabled ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
                         </div>
 
-                        <p className="border-border text-muted-foreground mt-4 border-t pt-3 text-xs">
+                        {/* Geolocalización — toggle */}
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3">
+                            <div className="bg-warning/80 mt-0.5 h-2 w-2 shrink-0 rounded-full shadow-sm" />
+                            <div>
+                              <strong className="text-foreground block font-semibold">
+                                Geolocalización (Opcional)
+                              </strong>
+                              <span className="text-muted-foreground">
+                                Permite conocer tu ubicación aproximada para estadísticas de
+                                visitas. Los datos son agregados, nunca rastreos individuales.
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            role="switch"
+                            aria-checked={geoEnabled}
+                            onClick={() => setGeoEnabled((v) => !v)}
+                            className={`focus-visible:ring-primary relative h-6 w-11 shrink-0 rounded-full transition-colors focus:outline-none focus-visible:ring-2 ${
+                              geoEnabled ? 'bg-primary' : 'bg-muted-foreground/40'
+                            }`}
+                          >
+                            <span
+                              className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                                geoEnabled ? 'translate-x-5' : 'translate-x-0'
+                              }`}
+                            />
+                          </button>
+                        </div>
+
+                        {/* Guardar configuración personalizada */}
+                        <button
+                          onClick={handleSaveCustom}
+                          className="border-border text-foreground hover:bg-muted w-full rounded-xl border px-4 py-2 text-xs font-semibold transition-colors"
+                        >
+                          Guardar esta configuración
+                        </button>
+
+                        <p className="border-border text-muted-foreground border-t pt-3 text-xs">
                           Para más información, consulta nuestra{' '}
                           <a
                             href={ROUTES.public.privacy}

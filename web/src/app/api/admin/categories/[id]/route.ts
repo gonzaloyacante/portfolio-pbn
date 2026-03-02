@@ -4,8 +4,11 @@
  * DELETE /api/admin/categories/[id]  — Soft delete
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -87,16 +90,17 @@ export async function PATCH(req: Request, { params }: Params) {
       ogImage,
     } = body
 
-    // Slug único (excluye la categoría actual)
+    // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
       const existing = await prisma.category.findFirst({
-        where: { slug, deletedAt: null, NOT: { id } },
+        where: { slug, NOT: { id } },
       })
       if (existing) {
-        return NextResponse.json(
-          { success: false, error: 'El slug ya está en uso' },
-          { status: 409 }
-        )
+        const msg =
+          existing.deletedAt !== null
+            ? 'El slug ya está en uso por una categoría eliminada. Vacía la papelera o usa otro slug.'
+            : 'El slug ya está en uso'
+        return NextResponse.json({ success: false, error: msg }, { status: 409 })
       }
     }
 
@@ -120,12 +124,28 @@ export async function PATCH(req: Request, { params }: Params) {
       select: CATEGORY_FULL_SELECT,
     })
 
+    try {
+      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.admin.projects)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-category-patch] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
+
     return NextResponse.json({ success: true, data: category })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }
 
@@ -138,16 +158,36 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
+    // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
+    const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
+
     await prisma.category.update({
       where: { id },
-      data: { deletedAt: new Date() },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
     })
+
+    try {
+      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.admin.projects)
+      revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-category-delete] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
 
     return NextResponse.json({ success: true, message: 'Categoría eliminada' })
   } catch (err) {
     logger.error('[admin-category-delete] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

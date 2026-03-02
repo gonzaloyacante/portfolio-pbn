@@ -68,6 +68,37 @@ function markPageTrackedInSession(pageKey: string): void {
   }
 }
 
+// ── Geo consent helpers ──────────────────────────────────────────────────────
+
+function getGeoConsent(): 'granted' | 'denied' | 'unknown' {
+  if (typeof window === 'undefined') return 'unknown'
+  try {
+    const v = localStorage.getItem('geo-consent')
+    if (v === 'granted') return 'granted'
+    if (v === 'denied') return 'denied'
+    return 'unknown'
+  } catch {
+    return 'unknown'
+  }
+}
+
+/**
+ * Intenta obtener las coordenadas del navegador si el usuario dio consentimiento.
+ * Resuelve con null en cualquier error o si no hay consentimiento.
+ */
+function tryGetBrowserCoords(): Promise<GeolocationCoordinates | null> {
+  if (typeof window === 'undefined' || !('geolocation' in navigator)) {
+    return Promise.resolve(null)
+  }
+  return new Promise((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => resolve(pos.coords),
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 5 * 60 * 1000 }
+    )
+  })
+}
+
 // ── Advanced Tracker ─────────────────────────────────────────────────────────
 
 export default function AnalyticsTracker({
@@ -93,12 +124,41 @@ export default function AnalyticsTracker({
       markPageTrackedInSession(pageKey)
       trackedRef.current = true
 
+      const geoConsent = getGeoConsent()
+
       const options: RecordEventOptions = {
         sessionId,
-        metadata: { url: window.location.href, referrer: document.referrer || undefined },
+        metadata: {
+          url: window.location.href,
+          referrer: document.referrer || undefined,
+          consentLevel:
+            geoConsent === 'granted' ? 'precise' : geoConsent === 'denied' ? 'denied' : 'geoip',
+        },
       }
 
       recordAnalyticEvent(eventType, entityId, entityType, options).catch(() => {})
+
+      // Si el usuario consintió geolocalización precisa, intentar obtener coords
+      // y enviar un evento de enriquecimiento geo (no bloquea el tracking principal).
+      if (geoConsent === 'granted') {
+        tryGetBrowserCoords().then((coords) => {
+          if (coords) {
+            recordAnalyticEvent(ANALYTIC_EVENTS.PAGE_VIEW, entityId, entityType, {
+              sessionId,
+              isDuplicate: true, // enriquecimiento, no nueva visita
+              metadata: {
+                url: window.location.href,
+                consentLevel: 'precise',
+                geo: {
+                  latitude: coords.latitude,
+                  longitude: coords.longitude,
+                  accuracy: Math.round(coords.accuracy),
+                },
+              },
+            }).catch(() => {})
+          }
+        })
+      }
     }
 
     // ── Scroll depth tracking ────────────────────────────────────────────

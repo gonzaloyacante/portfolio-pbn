@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -12,12 +16,42 @@ class SettingsSocialPage extends ConsumerWidget {
   const SettingsSocialPage({super.key});
 
   static const _kPlatforms = [
-    ('Instagram', 'instagram', Icons.photo_camera_outlined),
-    ('TikTok', 'tiktok', Icons.music_note_outlined),
-    ('YouTube', 'youtube', Icons.play_circle_outlined),
-    ('WhatsApp', 'whatsapp', Icons.chat_outlined),
-    ('LinkedIn', 'linkedin', Icons.work_outline),
-    ('Facebook', 'facebook', Icons.facebook_outlined),
+    (
+      'Instagram',
+      'instagram',
+      Icons.photo_camera_outlined,
+      'https://instagram.com/tu_usuario',
+    ),
+    (
+      'TikTok',
+      'tiktok',
+      Icons.music_note_outlined,
+      'https://tiktok.com/@tu_usuario',
+    ),
+    (
+      'YouTube',
+      'youtube',
+      Icons.play_circle_outlined,
+      'https://youtube.com/@tu_canal',
+    ),
+    (
+      'WhatsApp',
+      'whatsapp',
+      Icons.chat_outlined,
+      'https://wa.me/549XXXXXXXXXX',
+    ),
+    (
+      'LinkedIn',
+      'linkedin',
+      Icons.work_outline,
+      'https://linkedin.com/in/tu_perfil',
+    ),
+    (
+      'Facebook',
+      'facebook',
+      Icons.facebook_outlined,
+      'https://facebook.com/tu_pagina',
+    ),
   ];
 
   @override
@@ -26,22 +60,16 @@ class SettingsSocialPage extends ConsumerWidget {
 
     return AppScaffold(
       title: 'Redes Sociales',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.refresh),
-          onPressed: () => ref.invalidate(socialLinksProvider),
-        ),
-      ],
       body: async.when(
         loading: () => ListView.separated(
-          padding: const EdgeInsets.all(16),
+          padding: AppBreakpoints.pagePadding(context),
           itemCount: _kPlatforms.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (_, _) => ShimmerLoader(
             child: ShimmerBox(
               width: double.infinity,
               height: 72,
-              borderRadius: 20,
+              borderRadius: AppRadius.card,
             ),
           ),
         ),
@@ -50,9 +78,9 @@ class SettingsSocialPage extends ConsumerWidget {
           onRetry: () => ref.invalidate(socialLinksProvider),
         ),
         data: (links) => ListView.separated(
-          padding: const EdgeInsets.all(16),
+          padding: AppBreakpoints.pagePadding(context),
           itemCount: _kPlatforms.length,
-          separatorBuilder: (_, _) => const SizedBox(height: 8),
+          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
           itemBuilder: (_, i) {
             final platform = _kPlatforms[i];
             final existing = links.where((l) => l.platform == platform.$2);
@@ -62,6 +90,7 @@ class SettingsSocialPage extends ConsumerWidget {
               platform: platform.$1,
               platformId: platform.$2,
               icon: platform.$3,
+              urlHint: platform.$4,
               link: link,
               onSaved: () => ref.invalidate(socialLinksProvider),
             );
@@ -79,6 +108,7 @@ class _SocialLinkTile extends ConsumerStatefulWidget {
     required this.platform,
     required this.platformId,
     required this.icon,
+    required this.urlHint,
     this.link,
     required this.onSaved,
   });
@@ -86,6 +116,7 @@ class _SocialLinkTile extends ConsumerStatefulWidget {
   final String platform;
   final String platformId;
   final IconData icon;
+  final String urlHint;
   final SocialLink? link;
   final VoidCallback onSaved;
 
@@ -131,20 +162,12 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
       widget.onSaved();
       if (mounted) {
         setState(() => _expanded = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${widget.platform} guardado')));
+        AppSnackBar.success(context, '${widget.platform} guardado');
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -206,7 +229,12 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
           ),
           if (_expanded)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.base,
+                0,
+                AppSpacing.base,
+                AppSpacing.base,
+              ),
               child: Column(
                 children: [
                   const Divider(),
@@ -215,21 +243,24 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                     keyboardType: TextInputType.url,
                     decoration: InputDecoration(
                       labelText: 'URL de ${widget.platform}',
-                      hintText: 'https://',
+                      hintText: widget.urlHint,
+                      helperText: 'Enlace completo al perfil',
                       prefixIcon: const Icon(Icons.link),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   TextFormField(
                     controller: _usernameCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Usuario / handle',
+                      helperText: 'Se muestra como texto del enlace',
                       prefixIcon: Icon(Icons.alternate_email),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.sm),
                   SwitchListTile(
                     title: const Text('Activo'),
+                    subtitle: const Text('Visible en el portfolio público'),
                     value: _isActive,
                     onChanged: (v) => setState(() => _isActive = v),
                     contentPadding: EdgeInsets.zero,

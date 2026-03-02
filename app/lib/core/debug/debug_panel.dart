@@ -38,8 +38,8 @@ class DebugPanel extends ConsumerStatefulWidget {
   const DebugPanel({super.key});
 
   /// Mostrar el panel como bottom sheet.
-  static void show(BuildContext context) {
-    showModalBottomSheet<void>(
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -90,7 +90,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
   Future<void> _clearTokens() async {
     try {
       await ref.read(tokenStorageProvider).clearAll();
-      ref.invalidate(authNotifierProvider);
+      ref.invalidate(authProvider);
       AppLogger.warn('[Debug] Tokens eliminados — forzando logout');
       if (mounted) _showSnack('⚠️ Tokens eliminados. Se cerrará la sesión.');
     } catch (e) {
@@ -105,7 +105,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
       final db = ref.read(appDatabaseProvider);
       await db.close();
       final dbDir = await getApplicationDocumentsDirectory();
-      final dbFile = File('${dbDir.path}/pbn_admin.db');
+      final dbFile = File('${dbDir.path}/portfolio_pbn.db');
       if (dbFile.existsSync()) {
         await dbFile.delete();
         AppLogger.warn('[Debug] Base de datos local eliminada');
@@ -155,7 +155,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
   @override
   Widget build(BuildContext context) {
     final buildInfoAsync = ref.watch(appBuildInfoProvider);
-    final authAsync = ref.watch(authNotifierProvider);
+    final authAsync = ref.watch(authProvider);
     final pendingSync = ref.watch(pendingSyncCountProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -245,6 +245,8 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                     onClearCache: _clearCache,
                     onClearDatabase: _clearDatabase,
                     onOpenLogs: () {
+                      // Navigator.push used intentionally — debug-only page
+                      // not registered in GoRouter (excluded from production).
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => const DebugLogPage(),
@@ -302,8 +304,8 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
 
   @override
   Widget build(BuildContext context) {
-    final serverState = ref.watch(serverUrlProvider);
-    final notifier = ref.read(serverUrlProvider.notifier);
+    final serverState = ref.watch<ServerUrlState>(serverUrlProvider);
+    final notifier = ref.read<ServerUrlNotifier>(serverUrlProvider.notifier);
     final scheme = Theme.of(context).colorScheme;
 
     return _DebugCard(

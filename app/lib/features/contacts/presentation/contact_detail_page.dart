@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
+import '../../../core/utils/date_utils.dart';
 
 class ContactDetailPage extends ConsumerStatefulWidget {
   const ContactDetailPage({super.key, required this.contactId});
@@ -92,7 +94,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
           title: const Text('Detalle del contacto'),
         ),
         body: async.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
+          loading: () => const _ContactDetailSkeleton(),
           error: (e, _) => Center(child: Text('Error: $e')),
           data: (detail) {
             _populate(detail);
@@ -103,6 +105,10 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                 children: [
                   // ── Cabecera ────────────────────────────────────────────
                   Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -110,13 +116,24 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                         children: [
                           Row(
                             children: [
-                              CircleAvatar(
-                                radius: 24,
-                                child: Text(
-                                  detail.name.isNotEmpty
-                                      ? detail.name[0].toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(fontSize: 20),
+                              Container(
+                                width: 56,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withValues(alpha: 0.12),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    detail.name.isNotEmpty
+                                        ? detail.name[0].toUpperCase()
+                                        : '?',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontSize: 20,
+                                    ),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 12),
@@ -131,17 +148,40 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                     ),
+                                    const SizedBox(height: 4),
                                     Text(
                                       detail.email,
                                       style: theme.textTheme.bodySmall,
                                     ),
-                                    if (detail.phone != null)
+                                    if (detail.phone != null) ...[
+                                      const SizedBox(height: 4),
                                       Text(
                                         detail.phone!,
                                         style: theme.textTheme.bodySmall,
                                       ),
+                                    ],
                                   ],
                                 ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    AppDateUtils.toRelative(detail.createdAt),
+                                    style: theme.textTheme.labelSmall,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      _StatusChip(
+                                        label: _statusLabel(detail.status),
+                                        color: _statusColor(detail.status),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      _PriorityChip(priority: detail.priority),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -154,22 +194,6 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                               ),
                             ),
                           ],
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              _StatusChip(
-                                label: _statusLabel(detail.status),
-                                color: _statusColor(detail.status),
-                              ),
-                              const SizedBox(width: 8),
-                              _PriorityChip(priority: detail.priority),
-                              const Spacer(),
-                              Text(
-                                _formatDate(detail.createdAt),
-                                style: theme.textTheme.labelSmall,
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -179,10 +203,23 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                   // ── Mensaje ─────────────────────────────────────────────
                   Text('Mensaje', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(detail.message),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceVariant.withValues(
+                        alpha: 0.03,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: theme.colorScheme.outline.withValues(
+                          alpha: 0.06,
+                        ),
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: SelectableText(
+                      detail.message,
+                      style: theme.textTheme.bodyMedium,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -222,6 +259,30 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                           selected: detail.priority == p,
                           onSelected: (_) => _save(priority: p),
                         ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+
+                  // ── Preferencia de respuesta ───────────────────────────
+                  Text(
+                    'Preferencia de respuesta',
+                    style: theme.textTheme.titleSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        _responsePreferenceIcon(detail.responsePreference),
+                        size: 18,
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _responsePreferenceLabel(detail.responsePreference),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -358,6 +419,18 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
         '${dt.month.toString().padLeft(2, '0')}/'
         '${dt.year}';
   }
+
+  String _responsePreferenceLabel(String pref) => switch (pref) {
+    'PHONE' => 'Teléfono',
+    'WHATSAPP' => 'WhatsApp',
+    _ => 'Email',
+  };
+
+  IconData _responsePreferenceIcon(String pref) => switch (pref) {
+    'PHONE' => Icons.phone_outlined,
+    'WHATSAPP' => Icons.chat_outlined,
+    _ => Icons.email_outlined,
+  };
 }
 
 // ── Sub-widgets ───────────────────────────────────────────────────────────────
@@ -434,6 +507,35 @@ class _TrackingRow extends StatelessWidget {
             child: Text(value, style: Theme.of(context).textTheme.bodySmall),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ContactDetailSkeleton extends StatelessWidget {
+  const _ContactDetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoader(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header card
+            ShimmerBox(width: double.infinity, height: 160, borderRadius: 16),
+            const SizedBox(height: 16),
+            // Message card
+            ShimmerBox(width: double.infinity, height: 120, borderRadius: 16),
+            const SizedBox(height: 16),
+            // Reply card
+            ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
+            const SizedBox(height: 16),
+            // Notes card
+            ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
+          ],
+        ),
       ),
     );
   }

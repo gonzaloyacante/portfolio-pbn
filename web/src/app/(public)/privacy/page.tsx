@@ -67,7 +67,20 @@ export default async function PrivacyPage() {
             </li>
             <li>
               <strong>Dirección IP:</strong> Automáticamente registrada con fines de seguridad y
-              prevención de spam.
+              prevención de spam. La IP se <strong>anonimiza</strong> antes de almacenarse (se
+              elimina el último octeto en IPv4 o el último grupo en IPv6).
+            </li>
+            <li>
+              <strong>Datos de ubicación aproximada (GeoIP):</strong> A partir de la dirección IP
+              anonimizada, podemos inferir el país y la región de origen de la visita. Esto es un
+              proceso automático basado en bases de datos de geolocalización, sin precisión exacta
+              de su ubicación real.
+            </li>
+            <li>
+              <strong>Ubicación precisa del navegador (opcional, con consentimiento):</strong> Si
+              acepta la categoría &ldquo;Geolocalización&rdquo; en el banner de cookies, podemos
+              obtener su posición GPS aproximada directamente del navegador para mejorar las
+              estadísticas de visitantes. Puede revocar este permiso en cualquier momento.
             </li>
           </ul>
         </section>
@@ -228,16 +241,94 @@ export default async function PrivacyPage() {
               sitio (autenticación, preferencias de tema). No se pueden desactivar.
             </li>
             <li>
-              <strong>Cookies analíticas (opcionales):</strong> Google Analytics para analizar el
-              comportamiento de los usuarios. Solo se activan si acepta &quot;Cookies
-              Analíticas&quot; en el banner.
+              <strong>Cookies analíticas (opcionales):</strong> Analítica de comportamiento de
+              usuarios. Solo se activan si acepta &quot;Analíticas&quot; en el banner.
+            </li>
+            <li>
+              <strong>Consentimiento de geolocalización (opcional):</strong> Si acepta
+              &quot;Geolocalización&quot; en el banner, el sitio puede solicitar al navegador su
+              posición GPS para mejorar la precisión de las estadísticas de visitas. Este permiso es
+              independiente del resto de cookies y se puede revocar en cualquier momento (ver
+              sección 9).
             </li>
           </ul>
         </section>
 
+        {/* Geolocalización */}
+        <section>
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+            9. Geolocalización y Datos de Ubicación
+          </h2>
+          <p className="mb-4 leading-relaxed">
+            Este sitio web puede recopilar datos de ubicación a través de dos mecanismos con
+            diferentes niveles de precisión y base legal:
+          </p>
+
+          <div className="space-y-4">
+            <div className="bg-muted/50 rounded-2xl p-4">
+              <h3 className="text-foreground mb-2 font-semibold">
+                📍 Geolocalización por IP (GeoIP) — Automática
+              </h3>
+              <p className="text-sm leading-relaxed">
+                A través de la dirección IP anonimizada (sin el último octeto), inferimos el{' '}
+                <strong>país y la región</strong> de origen de cada visita. Este proceso es
+                automático, no identifica a personas físicas y se basa en bases de datos públicas de
+                geolocalización mantenidas por Vercel (proveedor de hosting). La precisión es
+                típicamente a nivel de ciudad grande o región; no es exacta ni rastreable a una
+                persona concreta.
+              </p>
+              <p className="text-muted-foreground mt-2 text-xs">
+                Base legal: <strong>Interés legítimo</strong> (Art. 6.1.f RGPD) para estadísticas
+                agregadas de audiencia.
+              </p>
+            </div>
+
+            <div className="bg-muted/50 rounded-2xl p-4">
+              <h3 className="text-foreground mb-2 font-semibold">
+                🎯 Geolocalización Precisa del Navegador — Con Consentimiento Explícito
+              </h3>
+              <p className="text-sm leading-relaxed">
+                Si usted acepta la categoría &quot;Geolocalización&quot; en el banner de cookies, el
+                navegador le solicitará permiso para acceder a su posición GPS. Dicha posición se
+                usa <strong>únicamente para estadísticas agregadas</strong> de visitantes en el
+                panel de administración (ej: &quot;X visitantes desde Granada&quot;). Los datos se
+                almacenan con una precisión reducida (redondeada a ~1 km) y nunca se usan para
+                identificar individuos ni para rastreo persistente.
+              </p>
+              <p className="text-muted-foreground mt-2 text-xs">
+                Base legal: <strong>Consentimiento explícito</strong> (Art. 6.1.a RGPD). Puede
+                revocar este permiso en cualquier momento.
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-primary/5 border-primary/20 mt-4 rounded-2xl border p-4">
+            <h3 className="text-foreground mb-2 font-semibold">
+              ¿Cómo revocar el permiso de geolocalización?
+            </h3>
+            <ol className="text-muted-foreground list-decimal space-y-1 pl-4 text-sm">
+              <li>
+                <strong>En el navegador:</strong> Accede a los ajustes de permisos del sitio (icono
+                de candado en la barra de direcciones) → &quot;Ubicación&quot; → Bloquear.
+              </li>
+              <li>
+                <strong>En el banner de cookies:</strong> Haz clic en &quot;Configurar cookies&quot;
+                en el pie de página → desactiva &quot;Geolocalización&quot; → &quot;Guardar
+                configuración&quot;.
+              </li>
+              <li>
+                <strong>Manualmente:</strong> Elimina la clave <code>geo-consent</code> de
+                localStorage en las herramientas de desarrollo del navegador.
+              </li>
+            </ol>
+          </div>
+        </section>
+
         {/* Seguridad */}
         <section>
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">9. Seguridad de los Datos</h2>
+          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+            10. Seguridad de los Datos
+          </h2>
           <p className="leading-relaxed">
             Hemos implementado medidas técnicas y organizativas adecuadas para proteger sus datos
             personales contra acceso no autorizado, pérdida, alteración o divulgación. Estas medidas
@@ -255,7 +346,7 @@ export default async function PrivacyPage() {
         {/* Modificaciones */}
         <section>
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
-            10. Modificaciones de la Política de Privacidad
+            11. Modificaciones de la Política de Privacidad
           </h2>
           <p className="leading-relaxed">
             Nos reservamos el derecho de modificar esta Política de Privacidad en cualquier momento.

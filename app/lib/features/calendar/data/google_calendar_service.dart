@@ -17,10 +17,7 @@ import 'google_calendar_models.dart';
 /// El token OAuth es gestionado internamente por el package `google_sign_in`
 /// (refresh automático), no se almacena manualmente.
 class GoogleCalendarService {
-  GoogleCalendarService()
-    : _googleSignIn = GoogleSignIn(
-        scopes: [gcal.CalendarApi.calendarEventsScope],
-      );
+  GoogleCalendarService() : _googleSignIn = GoogleSignIn.instance;
 
   final GoogleSignIn _googleSignIn;
 
@@ -32,11 +29,10 @@ class GoogleCalendarService {
   /// Retorna `true` si el usuario completa el proceso correctamente.
   Future<bool> signIn() async {
     try {
-      final account = await _googleSignIn.signIn();
-      if (account == null) {
-        AppLogger.info('GoogleCalendarService: usuario canceló el login');
-        return false;
-      }
+      // Interactive authenticate: may throw a GoogleSignInException on failure.
+      final account = await _googleSignIn.authenticate(
+        scopeHint: [gcal.CalendarApi.calendarEventsScope],
+      );
       AppLogger.info('GoogleCalendarService: conectado como ${account.email}');
       return true;
     } catch (e, st) {
@@ -63,7 +59,8 @@ class GoogleCalendarService {
   Future<bool> isSignedIn() async {
     try {
       // Intenta reconectar en silencio si ya estaba autenticado antes.
-      final account = await _googleSignIn.signInSilently();
+      final account = await _googleSignIn.attemptLightweightAuthentication();
+      // attemptLightweightAuthentication may return null if no silent session.
       return account != null;
     } catch (_) {
       return false;
@@ -74,12 +71,9 @@ class GoogleCalendarService {
 
   /// Retorna el email de la cuenta Google conectada, o `null` si no hay sesión.
   Future<String?> getConnectedEmail() async {
-    final account = _googleSignIn.currentUser;
-    if (account != null) return account.email;
-
     try {
-      final silent = await _googleSignIn.signInSilently();
-      return silent?.email;
+      final account = await _googleSignIn.attemptLightweightAuthentication();
+      return account?.email;
     } catch (_) {
       return null;
     }
@@ -92,12 +86,26 @@ class GoogleCalendarService {
   /// Lanza [Exception] si el usuario no está autenticado en Google o si
   /// la API de Calendar devuelve un error.
   Future<void> createEvent(GoogleCalendarEvent event) async {
-    final authClient = await _googleSignIn.authenticatedClient();
-    if (authClient == null) {
+    // Obtain a signed-in account (silent attempt). If none, signal the caller.
+    final account = await _googleSignIn.attemptLightweightAuthentication();
+    if (account == null) {
       throw Exception(
         'No hay cuenta Google conectada. Conecta tu cuenta primero.',
       );
     }
+
+    // Request client authorization tokens for the required scopes.
+    final clientAuth = await account.authorizationClient.authorizationForScopes(
+      [gcal.CalendarApi.calendarEventsScope],
+    );
+
+    if (clientAuth == null) {
+      throw Exception('No se pudo obtener autorización para Google Calendar.');
+    }
+
+    final authClient = clientAuth.authClient(
+      scopes: [gcal.CalendarApi.calendarEventsScope],
+    );
 
     try {
       final calendarApi = gcal.CalendarApi(authClient);

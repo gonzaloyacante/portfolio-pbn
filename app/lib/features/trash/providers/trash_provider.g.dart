@@ -6,41 +6,88 @@ part of 'trash_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trashRepositoryHash() => r'5bfe44f213f7b8caee90d762f69ac79c44f8b69d';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [trashRepository].
 @ProviderFor(trashRepository)
-final trashRepositoryProvider = AutoDisposeProvider<TrashRepository>.internal(
-  trashRepository,
-  name: r'trashRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$trashRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final trashRepositoryProvider = TrashRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TrashRepositoryRef = AutoDisposeProviderRef<TrashRepository>;
-String _$trashItemsHash() => r'd54a128858e219aee4b3486ac2eff78b72f2f12f';
+final class TrashRepositoryProvider
+    extends
+        $FunctionalProvider<TrashRepository, TrashRepository, TrashRepository>
+    with $Provider<TrashRepository> {
+  TrashRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'trashRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
-/// See also [trashItems].
-@ProviderFor(trashItems)
-final trashItemsProvider =
-    AutoDisposeFutureProvider<Map<String, List<TrashItem>>>.internal(
-      trashItems,
-      name: r'trashItemsProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$trashItemsHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
+  @override
+  String debugGetCreateSourceHash() => _$trashRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<TrashRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  TrashRepository create(Ref ref) {
+    return trashRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TrashRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TrashRepository>(value),
     );
+  }
+}
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TrashItemsRef =
-    AutoDisposeFutureProviderRef<Map<String, List<TrashItem>>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+String _$trashRepositoryHash() => r'eb6e4903b4a5298babbc425a71e0c5a731e45230';
+
+@ProviderFor(trashItems)
+final trashItemsProvider = TrashItemsProvider._();
+
+final class TrashItemsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Map<String, List<TrashItem>>>,
+          Map<String, List<TrashItem>>,
+          FutureOr<Map<String, List<TrashItem>>>
+        >
+    with
+        $FutureModifier<Map<String, List<TrashItem>>>,
+        $FutureProvider<Map<String, List<TrashItem>>> {
+  TrashItemsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'trashItemsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$trashItemsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<Map<String, List<TrashItem>>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Map<String, List<TrashItem>>> create(Ref ref) {
+    return trashItems(ref);
+  }
+}
+
+String _$trashItemsHash() => r'71732119b561c56236941e793e7353f5ee02ec62';

@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import ThemeToggle from '@/components/layout/ThemeToggle'
-import LanguageToggle from '@/components/layout/LanguageToggle'
 import { ROUTES } from '@/config/routes'
 import type { PageVisibility } from '@/actions/settings/site'
 
@@ -97,7 +96,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
           {/* Theme Toggle + Language Toggle */}
           <div className="ml-4 flex items-center gap-2">
             <ThemeToggle />
-            <LanguageToggle />
+            {/* <LanguageToggle /> */}
           </div>
         </div>
       </div>

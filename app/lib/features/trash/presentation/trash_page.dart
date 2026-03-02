@@ -1,13 +1,19 @@
 // ignore_for_file: use_null_aware_elements
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../../../shared/widgets/app_scaffold.dart';
 import 'package:intl/intl.dart';
 
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../calendar/providers/calendar_provider.dart';
+import '../../categories/providers/categories_provider.dart';
+import '../../contacts/providers/contacts_provider.dart';
+import '../../projects/providers/projects_provider.dart';
+import '../../services/providers/services_provider.dart';
+import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
 import '../providers/trash_provider.dart';
 
@@ -20,15 +26,8 @@ class TrashPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final trashAsync = ref.watch(trashItemsProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-          tooltip: 'Volver',
-        ),
-        title: const Text('Papelera'),
-      ),
+    return AppScaffold(
+      title: 'Papelera',
       body: trashAsync.when(
         loading: () => const _TrashShimmer(),
         error: (e, _) => ErrorState(
@@ -63,6 +62,25 @@ class TrashPage extends ConsumerWidget {
     );
   }
 
+  /// Invalida el provider de lista correspondiente al tipo de elemento,
+  /// para que las listas reflejen la restauración o eliminación.
+  void _invalidateListByType(WidgetRef ref, String type) {
+    switch (type) {
+      case 'projects':
+        ref.invalidate(projectsListProvider);
+      case 'categories':
+        ref.invalidate(categoriesListProvider);
+      case 'services':
+        ref.invalidate(servicesListProvider);
+      case 'testimonials':
+        ref.invalidate(testimonialsListProvider);
+      case 'contacts':
+        ref.invalidate(contactsListProvider);
+      case 'bookings':
+        ref.invalidate(bookingsListProvider);
+    }
+  }
+
   Future<void> _restore(
     BuildContext context,
     WidgetRef ref,
@@ -73,6 +91,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .restore(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
+      _invalidateListByType(ref, item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -109,6 +128,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .purge(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
+      _invalidateListByType(ref, item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -233,18 +253,20 @@ class _TrashShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(
-          6,
-          (_) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 72,
-              borderRadius: 16,
+    return ShimmerLoader(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+            6,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: ShimmerBox(
+                width: double.infinity,
+                height: 72,
+                borderRadius: 16,
+              ),
             ),
           ),
         ),

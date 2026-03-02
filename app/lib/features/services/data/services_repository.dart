@@ -1,5 +1,4 @@
 // ignore_for_file: use_null_aware_elements
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/api/api_client.dart';
@@ -111,7 +110,7 @@ class ServicesRepository {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 ServicesRepository servicesRepository(Ref ref) {
   final client = ref.watch(apiClientProvider);
   return ServicesRepository(client);

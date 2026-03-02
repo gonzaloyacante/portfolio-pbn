@@ -4,16 +4,21 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/router/route_names.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_filter_chips.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/app_search_bar.dart';
 import '../../../shared/widgets/fade_slide_in.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../core/utils/date_utils.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
-
-const _kStatuses = ['NEW', 'IN_PROGRESS', 'REPLIED', 'CLOSED', 'SPAM'];
 
 class ContactsListPage extends ConsumerStatefulWidget {
   const ContactsListPage({super.key});
@@ -71,9 +76,9 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
 
   Color _priorityColor(BuildContext context, String priority) =>
       switch (priority) {
-        'URGENT' => Colors.red,
-        'HIGH' => Colors.orange,
-        'LOW' => Colors.grey,
+        'URGENT' => AppColors.priorityHigh,
+        'HIGH' => AppColors.priorityMedium,
+        'LOW' => AppColors.priorityLow,
         _ => Theme.of(context).colorScheme.secondary,
       };
 
@@ -102,69 +107,51 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
         unreadOnly: _unreadOnly ? true : null,
       ),
     );
+    final hPad = AppBreakpoints.pageMargin(context);
+
+    // Opciones de filtro: null=Todos, 'UNREAD'=No leídos, valores de _kStatuses
+    final selectedChip = _unreadOnly ? 'UNREAD' : _statusFilter;
+    const filterOptions = <String?>[
+      null,
+      'UNREAD',
+      'NEW',
+      'IN_PROGRESS',
+      'REPLIED',
+      'CLOSED',
+      'SPAM',
+    ];
 
     return AppScaffold(
       title: 'Contactos',
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.base, hPad, 0),
             child: Column(
               children: [
-                SearchBar(
+                AppSearchBar(
+                  hint: 'Buscar por nombre, email…',
                   controller: _searchController,
-                  hintText: 'Buscar por nombre, email…',
-                  leading: const Icon(Icons.search_rounded),
-                  trailing: [
-                    if (_search.isNotEmpty)
-                      IconButton(
-                        icon: const Icon(Icons.clear_rounded),
-                        onPressed: () {
-                          _searchController.clear();
-                          _onSearch('');
-                        },
-                      ),
-                  ],
                   onChanged: _onSearch,
-                  elevation: const WidgetStatePropertyAll(0),
                 ),
-                const SizedBox(height: 10),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      _FilterChip(
-                        label: 'Todos',
-                        selected: _statusFilter == null && !_unreadOnly,
-                        onTap: () => setState(() {
-                          _statusFilter = null;
-                          _unreadOnly = false;
-                        }),
-                      ),
-                      const SizedBox(width: 8),
-                      _FilterChip(
-                        label: 'No leídos',
-                        selected: _unreadOnly,
-                        onTap: () => setState(() {
-                          _unreadOnly = !_unreadOnly;
-                          _statusFilter = null;
-                        }),
-                        icon: Icons.mark_email_unread_outlined,
-                      ),
-                      const SizedBox(width: 8),
-                      for (final s in _kStatuses) ...[
-                        _FilterChip(
-                          label: _statusLabel(s),
-                          selected: _statusFilter == s,
-                          onTap: () => setState(() {
-                            _statusFilter = s;
-                            _unreadOnly = false;
-                          }),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ],
-                  ),
+                const SizedBox(height: AppSpacing.sm),
+                AppFilterChips<String?>(
+                  options: filterOptions,
+                  selected: selectedChip,
+                  labelBuilder: (s) => switch (s) {
+                    null => 'Todos',
+                    'UNREAD' => 'No leídos',
+                    _ => _statusLabel(s),
+                  },
+                  onSelected: (s) => setState(() {
+                    if (s == 'UNREAD') {
+                      _unreadOnly = true;
+                      _statusFilter = null;
+                    } else {
+                      _unreadOnly = false;
+                      _statusFilter = s;
+                    }
+                  }),
                 ),
               ],
             ),
@@ -187,7 +174,7 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                       onRefresh: () async =>
                           ref.invalidate(contactsListProvider),
                       child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: EdgeInsets.symmetric(horizontal: hPad),
                         itemCount: paginated.data.length,
                         separatorBuilder: (_, _) => const SizedBox(height: 6),
                         itemBuilder: (ctx, i) {
@@ -214,55 +201,6 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
   }
 }
 
-// ── Filter chip ───────────────────────────────────────────────────────────────
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-    this.icon,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-  final IconData? icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Theme.of(context).colorScheme.primary;
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: selected ? color : color.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 14, color: selected ? Colors.white : color),
-              const SizedBox(width: 4),
-            ],
-            Text(
-              label,
-              style: TextStyle(
-                color: selected ? Colors.white : color,
-                fontWeight: FontWeight.w600,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // ── Tile ──────────────────────────────────────────────────────────────────────
 
 class _ContactTile extends StatelessWidget {
@@ -281,90 +219,152 @@ class _ContactTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final unread = !item.isRead;
 
     return Card(
-      child: ListTile(
-        leading: Stack(
-          children: [
-            CircleAvatar(
-              backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-              child: Icon(statusIcon, color: theme.colorScheme.primary),
-            ),
-            if (unread)
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.error,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: theme.scaffoldBackgroundColor,
-                      width: 1.5,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                item.name,
-                style: TextStyle(
-                  fontWeight: unread ? FontWeight.bold : FontWeight.w500,
-                ),
-              ),
-            ),
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: priorityColor,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(item.email, style: theme.textTheme.bodySmall),
-            if (item.subject != null)
-              Text(
-                item.subject!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall,
-              ),
-          ],
-        ),
-        trailing: PopupMenuButton<String>(
-          itemBuilder: (_) => [
-            const PopupMenuItem(value: 'view', child: Text('Ver detalle')),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Text('Eliminar', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-          onSelected: (action) {
-            if (action == 'view') {
-              context.pushNamed(
-                RouteNames.contactDetail,
-                pathParameters: {'id': item.id},
-              );
-            } else if (action == 'delete') {
-              onDelete(context, item);
-            }
-          },
-        ),
+      margin: EdgeInsets.zero,
+      elevation: unread ? 2 : 0,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+      color: unread ? scheme.surfaceVariant.withValues(alpha: 0.03) : null,
+      child: InkWell(
+        borderRadius: AppRadius.forTile,
         onTap: () => context.pushNamed(
           RouteNames.contactDetail,
           pathParameters: {'id': item.id},
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Avatar with unread dot
+              Stack(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.primary.withValues(
+                        alpha: unread ? 0.15 : 0.07,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      statusIcon,
+                      color: unread ? scheme.primary : scheme.outline,
+                      size: 20,
+                    ),
+                  ),
+                  if (unread)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: scheme.error,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: scheme.surface, width: 1.5),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(width: 12),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: unread
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          AppDateUtils.toRelative(item.createdAt),
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: scheme.outline,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      item.email,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.outline,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (item.subject != null && item.subject!.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        item.subject!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: unread
+                              ? scheme.onSurface
+                              : scheme.onSurfaceVariant,
+                          fontWeight: unread
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Menu
+              PopupMenuButton<String>(
+                iconSize: 20,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 20,
+                  color: scheme.outline,
+                ),
+                itemBuilder: (_) => [
+                  const PopupMenuItem(
+                    value: 'view',
+                    child: Text('Ver detalle'),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Text(
+                      'Eliminar',
+                      style: TextStyle(color: AppColors.destructive),
+                    ),
+                  ),
+                ],
+                onSelected: (action) {
+                  if (action == 'view') {
+                    context.pushNamed(
+                      RouteNames.contactDetail,
+                      pathParameters: {'id': item.id},
+                    );
+                  } else if (action == 'delete') {
+                    onDelete(context, item);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -378,12 +378,37 @@ class _ContactsSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      itemCount: 10,
-      separatorBuilder: (_, _) => const SizedBox(height: 6),
-      itemBuilder: (_, _) =>
-          ShimmerBox(width: double.infinity, height: 72, borderRadius: 12),
+    return ShimmerLoader(
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
+        itemCount: 8,
+        separatorBuilder: (_, _) => const SizedBox(height: 6),
+        itemBuilder: (_, _) => Card(
+          margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+          child: const Padding(
+            padding: EdgeInsets.fromLTRB(14, 12, 14, 12),
+            child: Row(
+              children: [
+                ShimmerBox(width: 44, height: 44, borderRadius: 14),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ShimmerBox(width: double.infinity, height: 13),
+                      SizedBox(height: 6),
+                      ShimmerBox(width: 160, height: 11),
+                      SizedBox(height: 5),
+                      ShimmerBox(width: 220, height: 11),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

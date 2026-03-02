@@ -5,6 +5,8 @@ import '../api/api_exceptions.dart';
 import '../utils/app_logger.dart';
 import 'auth_repository.dart';
 import 'auth_state.dart';
+import 'session_signal.dart';
+import 'token_storage.dart';
 
 part 'auth_provider.g.dart';
 
@@ -35,6 +37,22 @@ class AuthNotifier extends _$AuthNotifier {
   @override
   Future<AuthState> build() async {
     AppLogger.info('AuthNotifier: initializing...');
+
+    // Reaccionar a señales de expiración de sesión del AuthInterceptor.
+    // AuthInterceptor no puede importar auth_provider.dart directamente
+    // (dependencia circular):
+    //   auth_interceptor → auth_provider → auth_repository → api_client → auth_interceptor
+    // Cuando el refresh token falla, el interceptor incrementa sessionExpiredSignal.
+    // Aquí reaccionamos actualizando el estado → RouterNotifier redirige al login.
+    ref.listen<int>(sessionExpiredSignal, (prev, next) {
+      if (next > (prev ?? 0)) {
+        AppLogger.warn(
+          'AuthNotifier: session expired signal → transitioning to unauthenticated',
+        );
+        state = const AsyncData(AuthState.unauthenticated());
+      }
+    });
+
     return _restoreSession();
   }
 
@@ -125,6 +143,8 @@ class AuthNotifier extends _$AuthNotifier {
       );
       final user = await repo.getMe();
       AppLogger.info('AuthNotifier: session restored for ${user.email}');
+      // Cachear usuario para restauración offline.
+      await ref.read(tokenStorageProvider).saveUser(user);
       // Re-asociar usuario a Sentry al restaurar sesión.
       Sentry.configureScope(
         (scope) => scope.setUser(
@@ -136,9 +156,26 @@ class AuthNotifier extends _$AuthNotifier {
       AppLogger.warn('AuthNotifier: stored session expired → unauthenticated');
       // Los tokens ya fueron limpiados por el AuthInterceptor.
       return const AuthState.unauthenticated();
-    } catch (e) {
-      AppLogger.error('AuthNotifier: session restore failed', e);
+    } catch (e, st) {
+      // En modo offline: si hay usuario cacheado, mantener sesión activa.
+      if (e is NetworkException) {
+        AppLogger.warn(
+          'AuthNotifier: session restore failed — sin conectividad. Intentando usuario cacheado.',
+        );
+        final cachedUser = await ref.read(tokenStorageProvider).getUser();
+        if (cachedUser != null) {
+          AppLogger.info(
+            'AuthNotifier: sesión offline restaurada para ${cachedUser.email}',
+          );
+          return AuthState.authenticated(user: cachedUser);
+        }
+      } else {
+        AppLogger.error('AuthNotifier: session restore failed', e, st);
+      }
       return const AuthState.unauthenticated();
     }
   }
 }
+
+// Nota: el provider `authProvider` es generado por `riverpod_generator`.
+// Antes se usaba un alias manual; se eliminó para evitar definiciones duplicadas.

@@ -373,6 +373,84 @@ flutter run               # Desarrollo local
 - Distribución Android: Firebase App Distribution (test) → Play Store (prod)
 - Distribución iOS: TestFlight (test) → App Store (prod)
 
+### Distribución Android — Workflow Automatizado
+
+> **La AI DEBE seguir este procedimiento exacto cada vez que distribuya la app Android.**
+
+#### Mecanismo de distribución (2 canales simultáneos)
+
+| Canal | Herramienta | Propósito |
+|-------|-------------|-----------|
+| **GitHub Releases** | `gh` CLI | Hospedaje APK gratuito y permanente. URL estable calculada automáticamente. |
+| **Firebase App Distribution** | `firebase-tools` | Email de notificación a testers. |
+| **API in-app update** | `curl` + backend | Notificación FCM push + diálogo de descarga dentro de la app. |
+
+#### Ejecutar distribución
+
+> ⚠️ **Los scripts son OBLIGATORIOS y no aceptan flags.** Cada ejecución ejecuta todos los pasos sin excepción.
+
+```bash
+# Distribución DESARROLLO (APK debug, prerelease)
+# Desde la raíz del monorepo:
+bash app/scripts/distribute-dev.sh
+
+# Distribución PRODUCCIÓN (APK release, obfuscated)
+bash app/scripts/distribute-prod.sh
+```
+
+**Ambos scripts calculan automáticamente:**
+- Versión y versionCode desde `app/pubspec.yaml`
+- Tag dev: `app/v{VERSION}-dev` / Tag prod: `app/v{VERSION}`
+- Nombre del APK: `portfolio-pbn-admin-v{VERSION}-debug.apk` o `-release.apk`
+- URL de descarga desde la API de GitHub Releases
+- `DEPLOY_SECRET_TOKEN` auto-leído de `web/.env`
+
+#### Primera configuración (solo una vez)
+
+```bash
+# 1. Keystore Android
+bash app/scripts/setup_keystore.sh
+
+# 2. Firebase CLI
+npm install -g firebase-tools && firebase login
+
+# 3. GitHub CLI
+brew install gh && gh auth login
+```
+
+**Variables de entorno requeridas:**
+
+| Variable | Dónde | Descripción |
+|----------|-------|-------------|
+| `DEPLOY_SECRET_TOKEN` | `web/.env` y **Vercel** | Generado con `openssl rand -hex 32`. Autenticación del POST al backend. |
+
+> ⚠️ IMPORTANTE: `DEPLOY_SECRET_TOKEN` debe estar en **dos lugares**:
+> 1. `web/.env` (ya configurado)
+> 2. **Vercel** → Settings → Environment Variables (el usuario debe hacerlo manualmente)
+
+#### Generar nuevo DEPLOY_SECRET_TOKEN (si se necesita rotar)
+
+```bash
+# La AI debe ejecutar esto automáticamente, nunca pedir al usuario que lo genere:
+NEW_TOKEN=$(openssl rand -hex 32)
+echo "DEPLOY_SECRET_TOKEN=\"$NEW_TOKEN\"" >> web/.env
+echo "Añadir también en Vercel -> Settings -> Environment Variables:"
+echo "  DEPLOY_SECRET_TOKEN = $NEW_TOKEN"
+```
+
+#### Flujo obligatorio de los scripts de distribución
+
+Ambos scripts ejecutan **todos** estos pasos sin excepción (ninguno es opcional):
+
+```
+1/4  flutter pub get + flutter build apk (debug o release --obfuscate)
+2/4  gh release create/upload → GitHub Releases (prerelease dev o release prod)
+3/4  firebase appdistribution:distribute → email a testers vía Firebase
+4/4  POST /api/admin/app/latest-release → crea AppRelease en DB + envía FCM push in-app
+```
+
+> Si `firebase` CLI, `FIREBASE_APP_ID` o `FIREBASE_TOKEN` no están disponibles → el script **falla** con error. No omite pasos.
+
 ### Anti-Patrones App
 
 - ❌ Usar `print()` (usar `AppLogger`)
@@ -446,4 +524,5 @@ Al terminar cada fase de implementación:
   - `feat(api): add JWT auth endpoints for Flutter admin app`
   - `feat(app): implement Phase 0 - project structure and dependencies`
   - `feat(app): add Google Calendar integration to bookings`
+- **Requisito OBLIGATORIO:** Cada commit que afecte `app/` debe incluir un aumento de versión en `app/pubspec.yaml` (ej.: `version: X.Y.Z+N`). Esto es indispensable para que los scripts de distribución detecten builds nuevas y las notificaciones in-app funcionen. Sin bump de versión, la app no detecta actualizaciones.
 

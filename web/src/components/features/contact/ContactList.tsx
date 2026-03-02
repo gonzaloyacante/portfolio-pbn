@@ -254,7 +254,7 @@ export default function ContactList({ contacts }: ContactListProps) {
                 <button
                   onClick={() => handleMarkAsReplied(selectedContact.id)}
                   disabled={isLoading}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground w-full rounded-xl px-6 py-4 font-bold shadow-lg transition-all hover:translate-y-[-2px] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground w-full rounded-xl px-6 py-4 font-bold shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {isLoading ? 'Guardando...' : 'Marcar como respondido'}
                 </button>

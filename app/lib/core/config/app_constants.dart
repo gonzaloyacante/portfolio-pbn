@@ -43,4 +43,10 @@ class AppConstants {
   // ── Animaciones ───────────────────────────────────────────────────────────
   static const Duration defaultTransition = Duration(milliseconds: 500);
   static const Duration shortTransition = Duration(milliseconds: 200);
+
+  // ── Información de contacto / soporte ─────────────────────────────────────
+  static const String supportEmail = 'hola@paolabolivar.es';
+  static const String siteUrl = 'www.paolabolivar.es';
+  static const String ownerFullName = 'Paola Bolívar Nievas';
+  static const String appName = 'Portfolio PBN — Admin';
 }

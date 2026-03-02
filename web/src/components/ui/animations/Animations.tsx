@@ -1,12 +1,23 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence, Variants } from 'framer-motion'
 import { ReactNode } from 'react'
 
 /**
- * FadeIn Component
- * Simple fade-in animation for elements when they enter the viewport
+ * Hook that returns true only after the component has mounted on the client.
+ * Used to prevent framer-motion 12's motion.* components from calling useContext
+ * during Next.js 16 SSR (where ReactCurrentDispatcher.current can be null).
  */
+function useIsMounted(): boolean {
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setIsMounted(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
+  return isMounted
+}
+
 /**
  * FadeIn Component
  * Simple fade-in animation for elements when they enter the viewport
@@ -24,7 +35,9 @@ export function FadeIn({
   duration?: number
   disabled?: boolean
 }) {
-  if (disabled) return <div className={className}>{children}</div>
+  const isMounted = useIsMounted()
+
+  if (disabled || !isMounted) return <div className={className}>{children}</div>
 
   return (
     <motion.div
@@ -58,7 +71,9 @@ export function SlideIn({
   duration?: number
   disabled?: boolean
 }) {
-  if (disabled) return <div className={className}>{children}</div>
+  const isMounted = useIsMounted()
+
+  if (disabled || !isMounted) return <div className={className}>{children}</div>
 
   const directions = {
     left: { x: -50, y: 0 },
@@ -97,7 +112,9 @@ export function ScaleIn({
   className?: string
   disabled?: boolean
 }) {
-  if (disabled) return <div className={className}>{children}</div>
+  const isMounted = useIsMounted()
+
+  if (disabled || !isMounted) return <div className={className}>{children}</div>
 
   return (
     <motion.div
@@ -125,6 +142,10 @@ export function StaggerChildren({
   className?: string
   staggerDelay?: number
 }) {
+  const isMounted = useIsMounted()
+
+  if (!isMounted) return <div className={className}>{children}</div>
+
   return (
     <motion.div
       initial="hidden"

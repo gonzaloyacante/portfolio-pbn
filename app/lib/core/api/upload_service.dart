@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
+import '../api/api_exceptions.dart';
 import '../api/endpoints.dart';
 import '../utils/app_logger.dart';
 
@@ -46,11 +47,49 @@ class UploadService {
 
     final url = response['url'] as String?;
     if (url == null || url.isEmpty) {
-      throw Exception('El servidor no devolvió una URL de imagen');
+      throw const ParseException(
+        message: 'El servidor no devolvió una URL de imagen',
+      );
     }
 
     AppLogger.info('UploadService: upload successful → $url');
     return url;
+  }
+
+  // ── Upload con metadatos ──────────────────────────────────────────────────
+
+  /// Sube [file] y devuelve `({url, publicId})` para asociar al backend.
+  Future<({String url, String publicId})> uploadImageFull(
+    File file, {
+    String folder = 'portfolio',
+    void Function(int sent, int total)? onProgress,
+  }) async {
+    AppLogger.info('UploadService: uploading (full) ${file.path}');
+
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        file.path,
+        filename: file.path.split('/').last,
+      ),
+      'folder': folder,
+    });
+
+    final response = await _client.upload<Map<String, dynamic>>(
+      Endpoints.adminUpload,
+      formData,
+      onProgress: onProgress,
+    );
+
+    final url = response['url'] as String?;
+    final publicId = response['publicId'] as String?;
+    if (url == null || url.isEmpty) {
+      throw const ParseException(
+        message: 'El servidor no devolvió una URL de imagen',
+      );
+    }
+
+    AppLogger.info('UploadService: upload (full) successful → $url');
+    return (url: url, publicId: publicId ?? '');
   }
 
   // ── Delete ─────────────────────────────────────────────────────────────────

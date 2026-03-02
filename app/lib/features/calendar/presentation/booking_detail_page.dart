@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/utils/currency_helper.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -242,14 +243,14 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
                 icon: Icons.euro_outlined,
                 label: 'Total',
                 value: detail.totalAmount != null
-                    ? '€${detail.totalAmount}'
+                    ? '${currencySymbol(null)}${detail.totalAmount}'
                     : '—',
               ),
               _InfoRow(
                 icon: Icons.paid_outlined,
                 label: 'Pagado',
                 value: detail.paidAmount != null
-                    ? '€${detail.paidAmount}'
+                    ? '${currencySymbol(null)}${detail.paidAmount}'
                     : '—',
               ),
               _InfoRow(
@@ -482,7 +483,7 @@ class _GoogleCalendarSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gcAsync = ref.watch(googleCalendarNotifierProvider);
+    final gcAsync = ref.watch(googleCalendarProvider);
 
     return gcAsync.when(
       loading: () => const SizedBox.shrink(),
@@ -519,9 +520,11 @@ class _GoogleCalendarSection extends ConsumerWidget {
   ) async {
     if (!isConnected) {
       // Conectar cuenta Google primero.
-      await ref.read(googleCalendarNotifierProvider.notifier).signIn();
+      await ref.read(googleCalendarProvider.notifier).signIn();
 
-      final newState = ref.read(googleCalendarNotifierProvider).valueOrNull;
+      final newState = ref
+          .read(googleCalendarProvider)
+          .whenOrNull(data: (v) => v);
       if (newState is! GoogleAuthConnected || !context.mounted) return;
     }
 
@@ -549,7 +552,7 @@ class _GoogleCalendarSection extends ConsumerWidget {
 
     try {
       final created = await ref
-          .read(googleCalendarNotifierProvider.notifier)
+          .read(googleCalendarProvider.notifier)
           .createEvent(event);
 
       if (!context.mounted) return;

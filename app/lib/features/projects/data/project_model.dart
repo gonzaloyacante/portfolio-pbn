@@ -7,7 +7,7 @@ part 'project_model.g.dart';
 // ── ProjectCategory ───────────────────────────────────────────────────────────
 
 @freezed
-class ProjectCategory with _$ProjectCategory {
+abstract class ProjectCategory with _$ProjectCategory {
   const factory ProjectCategory({
     required String id,
     required String name,
@@ -21,7 +21,7 @@ class ProjectCategory with _$ProjectCategory {
 // ── ProjectImage ──────────────────────────────────────────────────────────────
 
 @freezed
-class ProjectImage with _$ProjectImage {
+abstract class ProjectImage with _$ProjectImage {
   const factory ProjectImage({
     required String id,
     @JsonKey(name: 'url') required String imageUrl,
@@ -37,7 +37,7 @@ class ProjectImage with _$ProjectImage {
 
 /// Modelo ligero para la lista de proyectos.
 @freezed
-class ProjectListItem with _$ProjectListItem {
+abstract class ProjectListItem with _$ProjectListItem {
   const factory ProjectListItem({
     required String id,
     required String title,
@@ -63,7 +63,7 @@ class ProjectListItem with _$ProjectListItem {
 
 /// Modelo completo para la vista/edición de proyecto.
 @freezed
-class ProjectDetail with _$ProjectDetail {
+abstract class ProjectDetail with _$ProjectDetail {
   const factory ProjectDetail({
     required String id,
     required String title,

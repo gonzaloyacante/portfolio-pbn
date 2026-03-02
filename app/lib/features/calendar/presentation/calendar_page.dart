@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../shared/widgets/app_filter_chips.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -97,103 +101,160 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
 
     final selected = _selectedDay ?? _focusedDay;
     final dayItems = dayBookings(selected);
+    final hPad = AppBreakpoints.pageMargin(context);
+    final isExpanded = AppBreakpoints.isExpanded(context);
+
+    const filterOptions = <String?>[
+      null,
+      'PENDING',
+      'CONFIRMED',
+      'COMPLETED',
+      'CANCELLED',
+    ];
+    final filterBar = AppFilterChips<String?>(
+      options: filterOptions,
+      selected: _statusFilter,
+      labelBuilder: (s) => switch (s) {
+        null => 'Todos',
+        'PENDING' => 'Pendiente',
+        'CONFIRMED' => 'Confirmado',
+        'COMPLETED' => 'Completado',
+        'CANCELLED' => 'Cancelado',
+        _ => s,
+      },
+      onSelected: (s) => setState(() => _statusFilter = s),
+    );
+
+    final calendarCard = Card(
+      margin: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.xs),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+      child: TableCalendar<BookingItem>(
+        locale: 'es_ES',
+        firstDay: DateTime(2020),
+        lastDay: DateTime(2030),
+        focusedDay: _focusedDay,
+        selectedDayPredicate: (d) =>
+            _selectedDay != null && isSameDay(d, _selectedDay!),
+        onDaySelected: (selected, focused) {
+          setState(() {
+            _selectedDay = selected;
+            _focusedDay = focused;
+          });
+        },
+        onPageChanged: (focused) {
+          setState(() {
+            _focusedDay = focused;
+            _selectedDay = null;
+          });
+          ref.invalidate(bookingsListProvider);
+        },
+        eventLoader: dayBookings,
+        calendarStyle: CalendarStyle(
+          markerDecoration: BoxDecoration(
+            color: colorScheme.primary,
+            shape: BoxShape.circle,
+          ),
+          selectedDecoration: BoxDecoration(
+            color: colorScheme.primary,
+            shape: BoxShape.circle,
+          ),
+          todayDecoration: BoxDecoration(
+            color: colorScheme.primary.withValues(alpha: 0.35),
+            shape: BoxShape.circle,
+          ),
+          outsideDaysVisible: false,
+        ),
+        headerStyle: const HeaderStyle(
+          formatButtonVisible: false,
+          titleCentered: true,
+          leftChevronIcon: Icon(Icons.chevron_left_rounded),
+          rightChevronIcon: Icon(Icons.chevron_right_rounded),
+        ),
+      ),
+    );
+
+    final dayHeader = Padding(
+      padding: EdgeInsets.symmetric(horizontal: hPad),
+      child: Row(
+        children: [
+          Text(
+            _dayLabel(selected),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(width: 8),
+          if (!loading)
+            Text(
+              '${dayItems.length} reserva${dayItems.length == 1 ? '' : 's'}',
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: colorScheme.outline),
+            ),
+        ],
+      ),
+    );
+    final dayListContent = loading
+        ? _buildShimmer(hPad)
+        : dayItems.isEmpty
+        ? _EmptyDay()
+        : ListView.separated(
+            padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
+            itemCount: dayItems.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            itemBuilder: (_, i) => _BookingCard(dayItems[i]),
+          );
+
+    if (isExpanded) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 360,
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(hPad, AppSpacing.sm, hPad, 0),
+                  child: filterBar,
+                ),
+                calendarCard,
+              ],
+            ),
+          ),
+          const VerticalDivider(width: 1, thickness: 1),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: AppSpacing.base),
+                dayHeader,
+                const SizedBox(height: AppSpacing.sm),
+                Expanded(child: dayListContent),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
 
     return Column(
       children: [
-        // ── Filtro de estado ─────────────────────────────────────────────────
-        _StatusFilterBar(
-          current: _statusFilter,
-          onSelected: (s) => setState(() => _statusFilter = s),
-        ),
-        // ── Calendario ───────────────────────────────────────────────────────
-        Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: TableCalendar<BookingItem>(
-            locale: 'es_ES',
-            firstDay: DateTime(2020),
-            lastDay: DateTime(2030),
-            focusedDay: _focusedDay,
-            selectedDayPredicate: (d) =>
-                _selectedDay != null && isSameDay(d, _selectedDay!),
-            onDaySelected: (selected, focused) {
-              setState(() {
-                _selectedDay = selected;
-                _focusedDay = focused;
-              });
-            },
-            onPageChanged: (focused) {
-              setState(() {
-                _focusedDay = focused;
-                _selectedDay = null;
-              });
-              ref.invalidate(bookingsListProvider);
-            },
-            eventLoader: dayBookings,
-            calendarStyle: CalendarStyle(
-              markerDecoration: BoxDecoration(
-                color: colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-              selectedDecoration: BoxDecoration(
-                color: colorScheme.primary,
-                shape: BoxShape.circle,
-              ),
-              todayDecoration: BoxDecoration(
-                color: colorScheme.primary.withValues(alpha: 0.35),
-                shape: BoxShape.circle,
-              ),
-            ),
-            headerStyle: const HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-            ),
-          ),
-        ),
-        // ── Lista del día seleccionado ────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              Text(
-                _dayLabel(selected),
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 8),
-              if (!loading)
-                Text(
-                  '${dayItems.length} reserva${dayItems.length == 1 ? '' : 's'}',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: colorScheme.outline),
-                ),
-            ],
-          ),
+          padding: EdgeInsets.fromLTRB(hPad, AppSpacing.sm, hPad, 0),
+          child: filterBar,
         ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: loading
-              ? _buildShimmer()
-              : dayItems.isEmpty
-              ? _EmptyDay()
-              : ListView.separated(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-                  itemCount: dayItems.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 8),
-                  itemBuilder: (_, i) => _BookingCard(dayItems[i]),
-                ),
-        ),
+        calendarCard,
+        const SizedBox(height: AppSpacing.sm),
+        dayHeader,
+        const SizedBox(height: AppSpacing.sm),
+        Expanded(child: dayListContent),
       ],
     );
   }
 
-  Widget _buildShimmer() {
+  Widget _buildShimmer(double hPad) {
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
       itemCount: 3,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (_, _) => ShimmerLoader(
@@ -222,46 +283,6 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   }
 }
 
-// ── Filtro de estado ──────────────────────────────────────────────────────────
-
-class _StatusFilterBar extends StatelessWidget {
-  const _StatusFilterBar({required this.current, required this.onSelected});
-
-  final String? current;
-  final ValueChanged<String?> onSelected;
-
-  static const _options = [
-    ('Todos', null),
-    ('Pendiente', 'PENDING'),
-    ('Confirmado', 'CONFIRMED'),
-    ('Completado', 'COMPLETED'),
-    ('Cancelado', 'CANCELLED'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 44,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        children: _options
-            .map(
-              (o) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(o.$1),
-                  selected: current == o.$2,
-                  onSelected: (_) => onSelected(o.$2),
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    );
-  }
-}
-
 // ── Tarjeta de reserva ────────────────────────────────────────────────────────
 
 class _BookingCard extends ConsumerWidget {
@@ -279,42 +300,101 @@ class _BookingCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final timeStr =
         '${booking.date.hour.toString().padLeft(2, '0')}:'
         '${booking.date.minute.toString().padLeft(2, '0')}';
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
-          child: Text(
-            timeStr,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        title: Text(
-          booking.clientName,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          booking.service?.name ?? 'Sin servicio',
-          style: theme.textTheme.bodySmall,
-        ),
-        trailing: StatusBadge(
-          status: _toAppStatus(booking.status),
-          compact: true,
-        ),
+      margin: EdgeInsets.zero,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+      child: InkWell(
+        borderRadius: AppRadius.forTile,
         onTap: () => context.pushNamed(
           RouteNames.bookingDetail,
           pathParameters: {'id': booking.id},
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+          child: Row(
+            children: [
+              // ── Time badge ──────────────────────────────────
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  timeStr,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // ── Info ────────────────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            booking.clientName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        StatusBadge(
+                          status: _toAppStatus(booking.status),
+                          compact: true,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.spa_outlined,
+                          size: 13,
+                          color: colorScheme.outline,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            booking.service?.name ?? 'Sin servicio',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.outline,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              // ── Chevron ─────────────────────────────────────
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: colorScheme.outline,
+              ),
+            ],
+          ),
         ),
       ),
     );

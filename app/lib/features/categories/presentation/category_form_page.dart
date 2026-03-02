@@ -6,31 +6,54 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/color_picker_field.dart';
+import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
-// Patrones de slug compilados una sola vez
-// ignore: deprecated_member_use
-final _reAccentA = RegExp(r'[áàâä]');
-// ignore: deprecated_member_use
-final _reAccentE = RegExp(r'[éèêë]');
-// ignore: deprecated_member_use
-final _reAccentI = RegExp(r'[íìîï]');
-// ignore: deprecated_member_use
-final _reAccentO = RegExp(r'[óòôö]');
-// ignore: deprecated_member_use
-final _reAccentU = RegExp(r'[úùûü]');
-// ignore: deprecated_member_use
-final _reNyeN = RegExp(r'[ñ]');
-// ignore: deprecated_member_use
-final _reNonSlugChars = RegExp(r'[^a-z0-9\s-]');
-// ignore: deprecated_member_use
-final _reWhitespace = RegExp(r'\s+');
-// ignore: deprecated_member_use
-final _reSlugValid = RegExp(r'^[a-z0-9-]+$');
+// ── Slug helpers ──────────────────────────────────────────────────────────────
+
+/// Convierte un nombre legible en un slug URL-safe sin dependencias de RegExp
+/// a nivel de módulo (evita DEPRECATED_MEMBER_USE de dartanalyzer).
+String _toSlug(String input) {
+  // Mapa de reemplazos de acentos → ascii
+  const accents = <String, String>{
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ñ': 'n',
+  };
+  var s = input.toLowerCase();
+  for (final entry in accents.entries) {
+    s = s.replaceAll(entry.key, entry.value);
+  }
+  // Remover no-slug, normalizar espacios → guión
+  // ignore: deprecated_member_use
+  s = s.replaceAll(RegExp(r'[^a-z0-9\s-]'), '').trim();
+  // ignore: deprecated_member_use
+  return s.replaceAll(RegExp(r'\s+'), '-');
+}
 
 class CategoryFormPage extends ConsumerStatefulWidget {
   const CategoryFormPage({super.key, this.categoryId});
@@ -50,6 +73,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   File? _pendingThumbnail;
   final _iconCtrl = TextEditingController();
   final _colorCtrl = TextEditingController();
+  String? _selectedIcon;
 
   bool _isActive = true;
   bool _loading = false;
@@ -85,23 +109,15 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _thumbnailCtrl.text = detail.thumbnailUrl ?? '';
     _iconCtrl.text = detail.iconName ?? '';
     _colorCtrl.text = detail.color ?? '';
-    setState(() => _isActive = detail.isActive);
+    setState(() {
+      _isActive = detail.isActive;
+      _selectedIcon = detail.iconName;
+    });
   }
 
   void _autoSlug(String name) {
     if (_isEdit) return;
-    final slug = name
-        .toLowerCase()
-        .replaceAll(_reAccentA, 'a')
-        .replaceAll(_reAccentE, 'e')
-        .replaceAll(_reAccentI, 'i')
-        .replaceAll(_reAccentO, 'o')
-        .replaceAll(_reAccentU, 'u')
-        .replaceAll(_reNyeN, 'n')
-        .replaceAll(_reNonSlugChars, '')
-        .trim()
-        .replaceAll(_reWhitespace, '-');
-    _slugCtrl.text = slug;
+    _slugCtrl.text = _toSlug(name);
   }
 
   Future<void> _submit() async {
@@ -127,7 +143,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
             ? null
             : _thumbnailCtrl.text.trim(),
-        iconName: _iconCtrl.text.trim().isEmpty ? null : _iconCtrl.text.trim(),
+        iconName: (_selectedIcon?.isEmpty ?? true) ? null : _selectedIcon,
         color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
         isActive: _isActive,
       );
@@ -164,24 +180,17 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       detailAsync.whenData(_populateForm);
     }
 
-    return LoadingOverlay(
-      isLoading: _loading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
-          title: Text(_isEdit ? 'Editar categoría' : 'Nueva categoría'),
-          actions: [
-            TextButton(
-              onPressed: _loading ? null : _submit,
-              child: const Text('Guardar'),
-            ),
-          ],
+    return AppScaffold(
+      title: _isEdit ? 'Editar categoría' : 'Nueva categoría',
+      actions: [
+        TextButton(
+          onPressed: _loading ? null : _submit,
+          child: const Text('Guardar'),
         ),
-        body: Form(
+      ],
+      body: LoadingOverlay(
+        isLoading: _loading,
+        child: Form(
           key: _formKey,
           child: ListView(
             padding: const EdgeInsets.all(16),
@@ -192,6 +201,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                 decoration: const InputDecoration(
                   labelText: 'Nombre *',
                   hintText: 'ej. Fotografía',
+                  helperText: 'Nombre público de la categoría',
                 ),
                 textCapitalization: TextCapitalization.words,
                 onChanged: _autoSlug,
@@ -200,53 +210,32 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Slug
-              TextFormField(
-                controller: _slugCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Slug *',
-                  hintText: 'ej. fotografia',
-                  prefixText: '/',
-                ),
-                validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Slug requerido';
-                  if (!_reSlugValid.hasMatch(v.trim())) {
-                    return 'Solo letras minúsculas, números y guiones';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-
               // Descripción
               TextFormField(
                 controller: _descriptionCtrl,
                 decoration: const InputDecoration(
                   labelText: 'Descripción',
-                  hintText: 'Descripción de la categoría',
+                  hintText: 'Breve descripción de esta categoría',
+                  helperText: 'Se muestra en la página de la categoría',
                 ),
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
 
               // Ícono
-              TextFormField(
-                controller: _iconCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre de ícono',
-                  hintText: 'ej. camera, paintbrush',
-                ),
+              EmojiIconPicker(
+                value: _selectedIcon,
+                onChanged: (v) => setState(() => _selectedIcon = v),
+                label: 'Ícono de la categoría',
+                hint: 'Toca para elegir un emoji',
               ),
               const SizedBox(height: 16),
 
               // Color
-              TextFormField(
+              ColorPickerField(
                 controller: _colorCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Color de marca',
-                  hintText: 'ej. #6C0A0A',
-                  prefixIcon: Icon(Icons.color_lens_outlined),
-                ),
+                label: 'Color de marca',
+                helperText: 'Color identificativo de la categoría',
               ),
               const SizedBox(height: 16),
 

@@ -2,20 +2,45 @@
 
 import { prisma } from '@/lib/db'
 import { uploadImage, deleteImage } from '@/lib/cloudinary'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { projectFormSchema, categorySchema } from '@/lib/validations'
 
-// --- Projects ---
+/**
+ * Invalida toda la caché pública relacionada con proyectos y categorías.
+ * Debe llamarse después de cualquier mutación que afecte contenido público.
+ */
+function _revalidatePublicContent() {
+  // Full Route Cache: invalida /proyectos y TODAS sus subrutas dinámicas
+  revalidatePath(ROUTES.public.projects, 'layout')
+  // También invalida la home ya que muestra FeaturedProjects
+  revalidatePath(ROUTES.home)
+  // Data Cache: invalida las consultas cacheadas con unstable_cache
+  revalidateTag(CACHE_TAGS.projects, 'max')
+  revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+  revalidateTag(CACHE_TAGS.categories, 'max')
+}
 
-export async function uploadImageAndCreateProject(formData: FormData) {
-  await requireAdmin()
-  await checkApiRateLimit()
+// ── Private helpers ───────────────────────────────────────────────────────────
 
-  const rawData = {
+type _ImageEntry = { url: string; publicId: string; order: number }
+
+/** Splits a comma-separated field into a trimmed, non-empty string array. */
+function _splitCsv(value: string | null | undefined): string[] {
+  if (!value) return []
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
+/** Extracts all raw project fields from a FormData. */
+function _readProjectFormData(formData: FormData) {
+  return {
     title: formData.get('title'),
     description: formData.get('description'),
     categoryId: formData.get('categoryId'),
@@ -34,8 +59,45 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     isFeatured: formData.get('isFeatured'),
     isPinned: formData.get('isPinned'),
   }
+}
 
-  const validation = projectFormSchema.safeParse(rawData)
+/**
+ * Collects images from FormData into ordered entries.
+ * Handles pre-uploaded URL strings and raw File objects.
+ */
+async function _processFormImages(formData: FormData, startOrder = 0): Promise<_ImageEntry[]> {
+  const imageInputs = formData.getAll('images')
+  const publicIdInputs = formData.getAll('images_public_id')
+  const result: _ImageEntry[] = []
+
+  const urlInputs = imageInputs.filter(
+    (item): item is string => typeof item === 'string' && item !== ''
+  )
+  urlInputs.forEach((url, i) => {
+    result.push({ url, publicId: (publicIdInputs[i] as string) || '', order: startOrder + i })
+  })
+
+  const files = imageInputs.filter((item): item is File => item instanceof File && item.size > 0)
+  if (files.length > 0) {
+    const uploaded = await Promise.all(
+      files.map(async (file, i) => {
+        const { url, publicId } = await uploadImage(file)
+        return { url, publicId, order: startOrder + result.length + i }
+      })
+    )
+    result.push(...uploaded)
+  }
+
+  return result
+}
+
+// --- Projects ---
+
+export async function uploadImageAndCreateProject(formData: FormData) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
+  const validation = projectFormSchema.safeParse(_readProjectFormData(formData))
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
@@ -43,59 +105,12 @@ export async function uploadImageAndCreateProject(formData: FormData) {
   const data = validation.data
   const { title, description, categoryId, date } = data
 
-  // Handle images: could be Files (unused input) or Strings (hidden input URLs)
-  const imageInputs = formData.getAll('images')
-  const publicIdInputs = formData.getAll('images_public_id')
-
-  const validImages: { url: string; publicId: string; order: number }[] = []
-
-  // 1. Process pre-uploaded images (Strings)
-  const urlInputs = imageInputs.filter(
-    (item): item is string => typeof item === 'string' && item !== ''
-  )
-
-  if (urlInputs.length > 0) {
-    urlInputs.forEach((url, index) => {
-      const publicId = (publicIdInputs[index] as string) || ''
-      validImages.push({ url, publicId, order: index })
-    })
-  }
-
-  // 2. Process raw files (if any - fallback)
-  const fileInputs = imageInputs.filter(
-    (item): item is File => item instanceof File && item.size > 0
-  )
-
-  if (fileInputs.length > 0) {
-    const uploaded = await Promise.all(
-      fileInputs.map(async (file, index) => {
-        const { url, publicId } = await uploadImage(file)
-        return { url, publicId, order: validImages.length + index }
-      })
-    )
-    validImages.push(...uploaded)
-  }
-
+  const validImages = await _processFormImages(formData)
   if (validImages.length === 0) {
     return { success: false, error: 'Se requieren imágenes' }
   }
 
   try {
-    // Parse tags and keywords
-    const tagList = data.tags
-      ? data.tags
-          .split(',')
-          .map((t) => t.trim())
-          .filter(Boolean)
-      : []
-    const keywordList = data.metaKeywords
-      ? data.metaKeywords
-          .split(',')
-          .map((k) => k.trim())
-          .filter(Boolean)
-      : []
-
-    // 2. Create Project in DB
     await prisma.project.create({
       data: {
         title,
@@ -107,16 +122,15 @@ export async function uploadImageAndCreateProject(formData: FormData) {
         date: date ? new Date(date) : new Date(),
         thumbnailUrl: validImages[0]?.url || '',
         categoryId,
-        // New fields
         excerpt: data.excerpt,
         videoUrl: data.videoUrl,
         duration: data.duration,
         client: data.client,
         location: data.location,
-        tags: tagList,
+        tags: _splitCsv(data.tags),
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription,
-        metaKeywords: keywordList,
+        metaKeywords: _splitCsv(data.metaKeywords),
         canonicalUrl: data.canonicalUrl,
         layout: data.layout || 'grid',
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
@@ -131,7 +145,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
       },
     })
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     logger.info(`Project created: ${title}`)
     return { success: true }
@@ -155,7 +169,7 @@ export async function deleteProject(id: string) {
       },
     })
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     revalidatePath(ROUTES.admin.trash)
     logger.info(`Project soft deleted: ${id}`)
@@ -179,7 +193,7 @@ export async function restoreProject(id: string) {
       },
     })
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     revalidatePath(ROUTES.admin.trash)
     logger.info(`Project restored: ${id}`)
@@ -208,7 +222,7 @@ export async function permanentlyDeleteProject(id: string) {
     // Delete from DB
     await prisma.project.delete({ where: { id } })
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     logger.info(`Project permanently deleted: ${id}`)
     return { success: true, message: 'Proyecto eliminado permanentemente' }
@@ -222,27 +236,7 @@ export async function updateProject(id: string, formData: FormData) {
   await requireAdmin()
   await checkApiRateLimit()
 
-  const rawData = {
-    title: formData.get('title'),
-    description: formData.get('description'),
-    categoryId: formData.get('categoryId'),
-    date: formData.get('date'),
-    excerpt: formData.get('excerpt'),
-    videoUrl: formData.get('videoUrl'),
-    duration: formData.get('duration'),
-    client: formData.get('client'),
-    location: formData.get('location'),
-    tags: formData.get('tags'),
-    metaTitle: formData.get('metaTitle'),
-    metaDescription: formData.get('metaDescription'),
-    metaKeywords: formData.get('metaKeywords'),
-    canonicalUrl: formData.get('canonicalUrl'),
-    layout: formData.get('layout'),
-    isFeatured: formData.get('isFeatured'),
-    isPinned: formData.get('isPinned'),
-  }
-
-  const validation = projectFormSchema.safeParse(rawData)
+  const validation = projectFormSchema.safeParse(_readProjectFormData(formData))
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
@@ -252,21 +246,7 @@ export async function updateProject(id: string, formData: FormData) {
   const newFiles = formData.getAll('newImages') as File[]
 
   try {
-    // Parse tags and keywords
-    const tagList = data.tags
-      ? data.tags
-          .split(',')
-          .map((t) => t.trim())
-          .filter(Boolean)
-      : []
-    const keywordList = data.metaKeywords
-      ? data.metaKeywords
-          .split(',')
-          .map((k) => k.trim())
-          .filter(Boolean)
-      : []
-
-    // 1. Update basic info
+    // 1. Update core project fields
     await prisma.project.update({
       where: { id },
       data: {
@@ -274,16 +254,15 @@ export async function updateProject(id: string, formData: FormData) {
         description: description || '',
         date: date ? new Date(date) : undefined,
         categoryId,
-        // New fields
         excerpt: data.excerpt,
         videoUrl: data.videoUrl,
         duration: data.duration,
         client: data.client,
         location: data.location,
-        tags: tagList,
+        tags: _splitCsv(data.tags),
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription,
-        metaKeywords: keywordList,
+        metaKeywords: _splitCsv(data.metaKeywords),
         canonicalUrl: data.canonicalUrl,
         layout: data.layout,
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
@@ -291,54 +270,28 @@ export async function updateProject(id: string, formData: FormData) {
       },
     })
 
-    // 2. Upload new images if any
+    // 2. Append new images (pre-uploaded URLs via _processFormImages + legacy raw files)
+    const currentCount = await prisma.projectImage.count({ where: { projectId: id } })
+    const newImages = await _processFormImages(formData, currentCount)
 
-    // Process pre-uploaded images (Strings)
-    const imageInputs = formData.getAll('images')
-    const publicIdInputs = formData.getAll('images_public_id')
-
-    const validImages: { url: string; publicId: string; order: number }[] = []
-
-    const urlInputs = imageInputs.filter(
-      (item): item is string => typeof item === 'string' && item !== ''
-    )
-
-    if (urlInputs.length > 0) {
-      const currentImagesCount = await prisma.projectImage.count({ where: { projectId: id } })
-
-      urlInputs.forEach((url, index) => {
-        const publicId = (publicIdInputs[index] as string) || ''
-        validImages.push({ url, publicId, order: currentImagesCount + index })
-      })
-    }
-
-    // Process raw files (if any - fallback)
     if (newFiles.length > 0 && newFiles[0].size > 0) {
-      const currentImagesCount = await prisma.projectImage.count({ where: { projectId: id } })
-      // Adjust index to account for urlInputs
-      const startIndex = currentImagesCount + validImages.length
-
+      const offset = currentCount + newImages.length
       const uploaded = await Promise.all(
-        newFiles.map(async (file, index) => {
+        newFiles.map(async (file, i) => {
           const { url, publicId } = await uploadImage(file)
-          return { url, publicId, order: startIndex + index }
+          return { url, publicId, order: offset + i }
         })
       )
-      validImages.push(...uploaded)
+      newImages.push(...uploaded)
     }
 
-    if (validImages.length > 0) {
+    if (newImages.length > 0) {
       await prisma.projectImage.createMany({
-        data: validImages.map((img) => ({
-          url: img.url,
-          publicId: img.publicId,
-          order: img.order,
-          projectId: id,
-        })),
+        data: newImages.map((img) => ({ ...img, projectId: id })),
       })
     }
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(`${ROUTES.admin.projects}/${id}`)
     revalidatePath(ROUTES.admin.projects)
     logger.info(`Project updated: ${id}`)
@@ -366,7 +319,7 @@ export async function reorderProjectImages(
       )
     )
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(`${ROUTES.admin.projects}/${projectId}`)
     logger.info(`Images reordered for project: ${projectId}`)
     return { success: true }
@@ -387,7 +340,7 @@ export async function deleteProjectImage(imageId: string) {
     await deleteImage(image.publicId)
     await prisma.projectImage.delete({ where: { id: imageId } })
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     logger.info(`Image deleted: ${imageId}`)
     return { success: true }
   } catch (error) {
@@ -433,7 +386,7 @@ export async function createCategory(formData: FormData) {
       },
     })
 
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category created: ${data.name}`)
     return { success: true }
@@ -465,8 +418,9 @@ export async function updateCategory(id: string, formData: FormData) {
       where: { id },
       data: { name, slug, description, coverImageUrl },
     })
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.admin.categories)
     logger.info(`Category updated: ${id}`)
     return { success: true }
   } catch (error) {
@@ -492,8 +446,9 @@ export async function deleteCategory(id: string) {
     }
 
     await prisma.category.delete({ where: { id } })
-    revalidatePath(ROUTES.public.projects)
+    _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
+    revalidatePath(ROUTES.admin.categories)
     logger.info(`Category deleted: ${id}`)
     return { success: true }
   } catch (error) {

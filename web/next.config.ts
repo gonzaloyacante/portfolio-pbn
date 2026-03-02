@@ -237,7 +237,7 @@ export default withSentryConfig(pwaConfig, {
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
   org: 'gonzaloyacante',
-  project: 'portfolio-pbn',
+  project: 'portfolio-pbn-web',
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
@@ -266,8 +266,10 @@ export default withSentryConfig(pwaConfig, {
     automaticVercelMonitors: true,
 
     // Automatically annotate React components to show their full name in breadcrumbs and session replay
+    // DISABLED: causes `useContext(null)` TypeError during static pre-rendering in Next.js 16 + React 19
+    // See: https://github.com/getsentry/sentry-javascript/issues/XXXX
     reactComponentAnnotation: {
-      enabled: true,
+      enabled: false,
     },
   },
 })

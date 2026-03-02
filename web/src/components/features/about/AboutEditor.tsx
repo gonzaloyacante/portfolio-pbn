@@ -43,9 +43,9 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   const skillsRaw = useWatch({ control, name: 'skills' })
   const certificationsRaw = useWatch({ control, name: 'certifications' })
 
-  // Helper for array fields (comma separated)
-  const skillsString = skillsRaw?.join(', ') || ''
-  const certificationsString = certificationsRaw?.join(', ') || ''
+  // Helper for array fields (one per line)
+  const skillsString = skillsRaw?.join('\n') || ''
+  const certificationsString = certificationsRaw?.join('\n') || ''
 
   const onSubmit = async (data: AboutSettingsFormData) => {
     try {
@@ -126,14 +126,14 @@ export function AboutEditor({ settings }: AboutEditorProps) {
         <h2 className="mb-4 text-lg font-semibold">Habilidades y Formación</h2>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Habilidades (separadas por coma)</label>
+            <label className="text-sm font-medium">Habilidades (una por línea)</label>
             <textarea
               defaultValue={skillsString}
               onChange={(e) =>
                 setValue(
                   'skills',
                   e.target.value
-                    .split(',')
+                    .split(/\r?\n/) // one skill per line
                     .map((s) => s.trim())
                     .filter(Boolean)
                 )
@@ -142,19 +142,25 @@ export function AboutEditor({ settings }: AboutEditorProps) {
               rows={4}
             />
             <p className="text-muted-foreground text-xs">
-              Ej: Maquillaje social, FX, Caracterización
+              Ej:
+              <br />
+              Maquillaje social
+              <br />
+              FX
+              <br />
+              Caracterización
             </p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Certificaciones (separadas por coma)</label>
+            <label className="text-sm font-medium">Certificaciones (una por línea)</label>
             <textarea
               defaultValue={certificationsString}
               onChange={(e) =>
                 setValue(
                   'certifications',
                   e.target.value
-                    .split(',')
+                    .split(/\r?\n/) // one certification per line
                     .map((s) => s.trim())
                     .filter(Boolean)
                 )
@@ -163,17 +169,15 @@ export function AboutEditor({ settings }: AboutEditorProps) {
               rows={4}
             />
             <p className="text-muted-foreground text-xs">
-              Ej: Master en Maquillaje 2023, Curso FX Avanzado
+              Ej:
+              <br />
+              Master en Maquillaje 2023
+              <br />
+              Curso FX Avanzado
             </p>
           </div>
         </div>
-        <div className="mt-4 w-1/3">
-          <Input
-            type="number"
-            label="Años de Experiencia"
-            {...register('yearsExperience', { valueAsNumber: true })}
-          />
-        </div>
+        {/* yearsExperience removed from admin editor (not shown publicly) */}
       </div>
 
       <div className="flex justify-end border-t pt-6">

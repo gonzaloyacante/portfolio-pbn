@@ -102,7 +102,8 @@ export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?:
       create: createInput,
     })
 
-    revalidatePath(ROUTES.home, 'layout')
+    // social links only appear on /contacto page (not in any shared layout)
+    revalidatePath(ROUTES.public.contact)
     revalidateTag(CACHE_TAGS.socialLinks, 'max')
 
     return {
@@ -134,7 +135,8 @@ export async function deleteSocialLink(id: string) {
     await checkSettingsRateLimit(user.id as string)
 
     await prisma.socialLink.delete({ where: { id } })
-    revalidatePath(ROUTES.home, 'layout')
+    // social links only appear on /contacto page (not in any shared layout)
+    revalidatePath(ROUTES.public.contact)
     revalidateTag(CACHE_TAGS.socialLinks, 'max')
     return { success: true, message: 'Enlace social eliminado' }
   } catch (error) {

@@ -3,11 +3,15 @@
  * POST /api/admin/projects  — Crear proyecto
  */
 
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { projectApiSchema } from '@/lib/validations'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -97,10 +101,18 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = projectApiSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+
     const {
       title,
-      slug,
       description,
       excerpt,
       thumbnailUrl,
@@ -116,13 +128,16 @@ export async function POST(req: Request) {
       categoryId,
       isFeatured = false,
       isPinned = false,
-    } = body
+    } = parsed.data
 
-    if (!title || !slug || !description || !thumbnailUrl || !categoryId || !date) {
+    // Generar slug a partir del title
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+    if (!title || !description || !thumbnailUrl || !categoryId || !date) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Campos requeridos: title, slug, description, thumbnailUrl, categoryId, date',
+          error: 'Campos requeridos: title, description, thumbnailUrl, categoryId, date',
         },
         { status: 400 }
       )
@@ -166,11 +181,26 @@ export async function POST(req: Request) {
       select: PROJECT_SELECT,
     })
 
+    try {
+      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.admin.projects)
+      revalidatePath(ROUTES.home)
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+    } catch (revalErr) {
+      logger.warn('[admin-projects-create] Revalidation failed (data saved)', {
+        error: revalErr instanceof Error ? revalErr.message : String(revalErr),
+      })
+    }
+
     return NextResponse.json({ success: true, data: project }, { status: 201 })
   } catch (err) {
     logger.error('[admin-projects-create] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
-    return NextResponse.json({ success: false, error: 'Error interno' }, { status: 500 })
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { status: 500 }
+    )
   }
 }

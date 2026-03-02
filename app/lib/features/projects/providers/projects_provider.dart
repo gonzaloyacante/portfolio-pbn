@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../shared/models/paginated_response.dart';
@@ -17,6 +16,7 @@ Future<PaginatedResponse<ProjectListItem>> projectsList(
   String? search,
   String? categoryId,
 }) {
+  ref.keepAlive();
   return ref
       .watch(projectsRepositoryProvider)
       .getProjects(page: page, search: search, categoryId: categoryId);
@@ -27,5 +27,6 @@ Future<PaginatedResponse<ProjectListItem>> projectsList(
 /// Detalle completo de un proyecto.
 @riverpod
 Future<ProjectDetail> projectDetail(Ref ref, String id) {
+  ref.keepAlive();
   return ref.watch(projectsRepositoryProvider).getProject(id);
 }

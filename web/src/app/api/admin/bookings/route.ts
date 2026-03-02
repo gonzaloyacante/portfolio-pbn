@@ -3,11 +3,14 @@
  * POST /api/admin/bookings  — Crear reserva manual
  */
 
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { bookingApiSchema } from '@/lib/validations'
 
 const BOOKING_SELECT = {
   id: true,
@@ -53,12 +56,12 @@ export async function GET(req: Request) {
       }),
       ...(status && { status }),
       ...(serviceId && { serviceId }),
-      ...(dateFrom || dateTo) && {
+      ...((dateFrom || dateTo) && {
         date: {
           ...(dateFrom && { gte: new Date(dateFrom) }),
           ...(dateTo && { lte: new Date(dateTo) }),
         },
-      },
+      }),
     }
 
     const [bookings, total] = await Promise.all([
@@ -104,37 +107,58 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
-    const {
-      date, endDate, clientName, clientEmail, clientPhone,
-      clientNotes, guestCount = 1, serviceId, adminNotes,
-      totalAmount, paymentStatus = 'PENDING', paymentMethod,
-      status = 'PENDING',
-    } = body
-
-    if (!date || !clientName || !clientEmail || !serviceId) {
+    const body = await req.json().catch(() => null)
+    const parsed = bookingApiSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Campos requeridos: date, clientName, clientEmail, serviceId' },
-        { status: 400 },
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
       )
     }
+    const {
+      date,
+      endDate,
+      clientName,
+      clientEmail,
+      clientPhone,
+      clientNotes,
+      guestCount = 1,
+      serviceId,
+      adminNotes,
+      totalAmount,
+      paymentStatus = 'PENDING',
+      paymentMethod,
+      status = 'PENDING',
+    } = parsed.data
 
     const booking = await prisma.booking.create({
       data: {
         date: new Date(date),
         endDate: endDate ? new Date(endDate) : null,
-        clientName, clientEmail, clientPhone, clientNotes,
-        guestCount, serviceId, adminNotes, status,
-        paymentStatus, paymentMethod,
-        totalAmount: totalAmount ? parseFloat(totalAmount) : null,
+        clientName,
+        clientEmail,
+        clientPhone,
+        clientNotes,
+        guestCount,
+        serviceId,
+        adminNotes,
+        status,
+        paymentStatus,
+        paymentMethod,
+        totalAmount: totalAmount ?? null,
       },
       select: BOOKING_SELECT,
     })
 
-    return NextResponse.json({
-      success: true,
-      data: { ...booking, totalAmount: booking.totalAmount?.toString() ?? null },
-    }, { status: 201 })
+    revalidatePath(ROUTES.admin.calendar)
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: { ...booking, totalAmount: booking.totalAmount?.toString() ?? null },
+      },
+      { status: 201 }
+    )
   } catch (err) {
     logger.error('[admin-bookings-post] Error', {
       error: err instanceof Error ? err.message : String(err),

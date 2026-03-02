@@ -26,6 +26,8 @@ const eslintConfig = defineConfig([
       "postcss.config.mjs",
       "tailwind.config.ts",
       "prisma.config.ts",
+      // Sentry configs — process.env es reemplazado por Next.js en build time
+      "src/sentry.*.config.ts",
     ],
     languageOptions: {
       globals: {

@@ -26,12 +26,14 @@ const adminApiLimiter = createRateLimiter(RATE_LIMITS.API)
 export interface AdminTokenPayload extends JWTPayload {
   userId: string
   role: string
+  email?: string
   type: 'access'
 }
 
 export interface SignTokenOptions {
   userId: string
   role: string
+  email?: string
 }
 
 // ── Constantes ────────────────────────────────────────────────────────────────
@@ -60,6 +62,7 @@ export async function signAccessToken(options: SignTokenOptions): Promise<string
   return new SignJWT({
     userId: options.userId,
     role: options.role,
+    ...(options.email && { email: options.email }),
     type: 'access' as const,
   })
     .setProtectedHeader({ alg: 'HS256' })
@@ -125,8 +128,17 @@ export async function withAdminJwt(
     return {
       ok: false,
       response: new Response(
-        JSON.stringify({ success: false, error: `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s` }),
-        { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': String(rateResult.resetIn ?? 60) } }
+        JSON.stringify({
+          success: false,
+          error: `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s`,
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': String(rateResult.resetIn ?? 60),
+          },
+        }
       ),
     }
   }

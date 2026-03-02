@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ═══════════════════════════════════════════════════════════════════════
          PERMISOS DE RED
@@ -19,6 +20,13 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Lanzar actividad desde el background (tap en notificación) -->
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         PERMISOS DE ACTUALIZACIONES IN-APP
+         ═══════════════════════════════════════════════════════════════════ -->
+    <!-- Android 8+ (API 26+): permiso para instalar APKs desde la propia app -->
+    <!-- El usuario deberá activar "Instalar apps desconocidas" para esta app  -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════
          PERMISOS DE CÁMARA E IMÁGENES (image_picker / image_cropper)
@@ -110,6 +118,24 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/cropper_file_paths" />
+        </provider>
+
+        <!-- ── Proveedor de archivos para open_file (in-app updates) ──── -->
+        <!--
+            El plugin `open_file` espera un FileProvider personalizado y una
+            authority concreta: `${applicationId}.fileProvider.com.crazecoder.openfile`.
+            Declararlo así evita discrepancias entre manifests y la excepción
+            "Provider not found" al generar URIs para el APK descargado.
+        -->
+        <provider
+            android:name="com.crazecoder.openfile.FileProvider"
+            android:authorities="${applicationId}.fileProvider.com.crazecoder.openfile"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/open_file_paths"
+                tools:replace="android:resource" />
         </provider>
 
     </application>

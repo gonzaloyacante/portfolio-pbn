@@ -6,36 +6,34 @@ part of 'booking_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$BookingServiceImpl _$$BookingServiceImplFromJson(Map<String, dynamic> json) =>
-    _$BookingServiceImpl(name: json['name'] as String);
+_BookingService _$BookingServiceFromJson(Map<String, dynamic> json) =>
+    _BookingService(name: json['name'] as String);
 
-Map<String, dynamic> _$$BookingServiceImplToJson(
-  _$BookingServiceImpl instance,
-) => <String, dynamic>{'name': instance.name};
+Map<String, dynamic> _$BookingServiceToJson(_BookingService instance) =>
+    <String, dynamic>{'name': instance.name};
 
-_$BookingItemImpl _$$BookingItemImplFromJson(Map<String, dynamic> json) =>
-    _$BookingItemImpl(
-      id: json['id'] as String,
-      date: DateTime.parse(json['date'] as String),
-      endDate: json['endDate'] == null
-          ? null
-          : DateTime.parse(json['endDate'] as String),
-      status: json['status'] as String? ?? 'PENDING',
-      clientName: json['clientName'] as String,
-      clientEmail: json['clientEmail'] as String,
-      clientPhone: json['clientPhone'] as String?,
-      guestCount: (json['guestCount'] as num?)?.toInt(),
-      totalAmount: json['totalAmount'] as String?,
-      paymentStatus: json['paymentStatus'] as String?,
-      serviceId: json['serviceId'] as String,
-      service: json['service'] == null
-          ? null
-          : BookingService.fromJson(json['service'] as Map<String, dynamic>),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-    );
+_BookingItem _$BookingItemFromJson(Map<String, dynamic> json) => _BookingItem(
+  id: json['id'] as String,
+  date: DateTime.parse(json['date'] as String),
+  endDate: json['endDate'] == null
+      ? null
+      : DateTime.parse(json['endDate'] as String),
+  status: json['status'] as String? ?? 'PENDING',
+  clientName: json['clientName'] as String,
+  clientEmail: json['clientEmail'] as String,
+  clientPhone: json['clientPhone'] as String?,
+  guestCount: (json['guestCount'] as num?)?.toInt(),
+  totalAmount: json['totalAmount'] as String?,
+  paymentStatus: json['paymentStatus'] as String?,
+  serviceId: json['serviceId'] as String,
+  service: json['service'] == null
+      ? null
+      : BookingService.fromJson(json['service'] as Map<String, dynamic>),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: DateTime.parse(json['updatedAt'] as String),
+);
 
-Map<String, dynamic> _$$BookingItemImplToJson(_$BookingItemImpl instance) =>
+Map<String, dynamic> _$BookingItemToJson(_BookingItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'date': instance.date.toIso8601String(),
@@ -53,8 +51,8 @@ Map<String, dynamic> _$$BookingItemImplToJson(_$BookingItemImpl instance) =>
       'updatedAt': instance.updatedAt.toIso8601String(),
     };
 
-_$BookingDetailImpl _$$BookingDetailImplFromJson(Map<String, dynamic> json) =>
-    _$BookingDetailImpl(
+_BookingDetail _$BookingDetailFromJson(Map<String, dynamic> json) =>
+    _BookingDetail(
       id: json['id'] as String,
       date: DateTime.parse(json['date'] as String),
       endDate: json['endDate'] == null
@@ -96,7 +94,7 @@ _$BookingDetailImpl _$$BookingDetailImplFromJson(Map<String, dynamic> json) =>
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$$BookingDetailImplToJson(_$BookingDetailImpl instance) =>
+Map<String, dynamic> _$BookingDetailToJson(_BookingDetail instance) =>
     <String, dynamic>{
       'id': instance.id,
       'date': instance.date.toIso8601String(),

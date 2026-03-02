@@ -1,5 +1,4 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../utils/app_logger.dart';
@@ -13,9 +12,17 @@ part 'connectivity_provider.g.dart';
 @riverpod
 Stream<ConnectivityResult> connectivity(Ref ref) {
   AppLogger.debug('ConnectivityProvider: listening to network changes');
-  return Connectivity().onConnectivityChanged.map(
-    (results) => results.isNotEmpty ? results.first : ConnectivityResult.none,
-  );
+  // Normalize events: some platform versions may emit a List<ConnectivityResult>
+  // while others emit a single ConnectivityResult. Map to a canonical
+  // ConnectivityResult for downstream consumers.
+  // The `connectivity_plus` package may provide a stream of
+  // `List<ConnectivityResult>` on some platforms; treat the event as a
+  // `List<ConnectivityResult>` and map to a single `ConnectivityResult`.
+  return Connectivity().onConnectivityChanged.map((
+    List<ConnectivityResult> event,
+  ) {
+    return event.isNotEmpty ? event.first : ConnectivityResult.none;
+  });
 }
 
 // ── isOnlineProvider ──────────────────────────────────────────────────────────
@@ -26,7 +33,7 @@ Stream<ConnectivityResult> connectivity(Ref ref) {
 /// Esto evita bloquear la UI en el arranque por razones de red.
 @riverpod
 bool isOnline(Ref ref) {
-  final status = ref.watch(connectivityProvider).valueOrNull;
+  final status = ref.watch(connectivityProvider).whenOrNull(data: (v) => v);
   // Mientras no haya dato, asumir online (optimista).
   if (status == null) return true;
   return status != ConnectivityResult.none;

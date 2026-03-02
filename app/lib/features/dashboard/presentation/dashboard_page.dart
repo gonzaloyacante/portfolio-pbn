@@ -1,12 +1,22 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/auth/auth_provider.dart';
+import '../../../core/auth/auth_state.dart';
 import '../../../core/router/route_names.dart';
+import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_radius.dart';
+import 'widgets/alerts_section.dart';
+import 'widgets/bookings_bar_chart.dart';
+import 'widgets/page_views_chart.dart';
+import 'widgets/visitors_map.dart';
+import '../../../shared/widgets/adaptive_grid.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../../shared/widgets/stat_card.dart';
 import '../data/dashboard_repository.dart';
@@ -58,26 +68,36 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final padding = AppBreakpoints.pagePadding(context);
+
     return CustomScrollView(
       slivers: [
+        // ── Bienvenida ────────────────────────────────────────────────────
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+          padding: padding.copyWith(bottom: AppSpacing.md),
+          sliver: const SliverToBoxAdapter(child: _DashboardGreeting()),
+        ),
+
+        // ── Sección: Alertas ─────────────────────────────────────────────
+        SliverPadding(
+          padding: padding.copyWith(bottom: AppSpacing.sm),
+          sliver: SliverToBoxAdapter(child: AlertsSection(stats: stats)),
+        ),
+
+        // ── Sección: Resumen ─────────────────────────────────────────────
+        SliverPadding(
+          padding: padding.copyWith(bottom: AppSpacing.sm),
           sliver: SliverToBoxAdapter(
-            child: Text(
-              'Resumen general',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
+            child: SectionHeader(title: 'Resumen general'),
           ),
         ),
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          sliver: SliverGrid.count(
-            crossAxisCount: _gridColumns(context),
-            childAspectRatio: 1.6,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
+          padding: padding.copyWith(top: 0, bottom: 0),
+          sliver: SliverAdaptiveGrid(
+            compactCols: 2,
+            mediumCols: 2,
+            expandedCols: 4,
+            childAspectRatio: 2.8,
             children: [
               StatCard(
                 icon: Icons.photo_library_outlined,
@@ -90,14 +110,14 @@ class _DashboardContent extends StatelessWidget {
                 icon: Icons.category_outlined,
                 label: 'Categorías',
                 value: stats.totalCategories.toString(),
-                color: const Color(0xFF7C3AED),
+                color: AppColors.categoriesColor,
                 onTap: () => context.goNamed(RouteNames.categories),
               ),
               StatCard(
                 icon: Icons.design_services_outlined,
                 label: 'Servicios',
                 value: stats.totalServices.toString(),
-                color: const Color(0xFF0891B2),
+                color: AppColors.servicesColor,
                 onTap: () => context.goNamed(RouteNames.services),
               ),
               StatCard(
@@ -128,42 +148,100 @@ class _DashboardContent extends StatelessWidget {
                 onTap: () => context.goNamed(RouteNames.calendar),
               ),
               StatCard(
-                icon: Icons.remove_red_eye_outlined,
-                label: 'Visitas (30d)',
-                value: _formatNumber(stats.pageViews30d),
-                color: const Color(0xFF059669),
+                icon: Icons.people_outline_rounded,
+                label: 'Visitantes (30d)',
+                value: _formatNumber(stats.uniqueVisitors30d),
+                trend: '${_formatNumber(stats.pageViews30d)} páginas',
+                trendPositive: true,
+                color: AppColors.success,
+              ),
+              StatCard(
+                icon: Icons.delete_outline_rounded,
+                label: 'Papelera',
+                value: stats.trashCount.toString(),
+                color: AppColors.destructive,
+                onTap: () => context.goNamed(RouteNames.trash),
               ),
             ],
           ),
         ),
-        const SliverPadding(padding: EdgeInsets.only(bottom: 4)),
+        const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.md)),
 
-        // ── Sección de tendencias ────────────────────────────────────────
+        // ── Sección: Tendencias ──────────────────────────────────────────
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          sliver: SliverToBoxAdapter(
-            child: Text(
-              'Tendencias',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
+          padding: padding.copyWith(bottom: AppSpacing.sm),
+          sliver: SliverToBoxAdapter(child: SectionHeader(title: 'Tendencias')),
         ),
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: padding.copyWith(top: 0),
           sliver: SliverToBoxAdapter(child: _DashboardCharts()),
         ),
-        const SliverPadding(padding: EdgeInsets.only(bottom: 32)),
+
+        // ── Sección: Dispositivos ─────────────────────────────────────────
+        if (stats.deviceUsage.isNotEmpty) ...[
+          SliverPadding(
+            padding: padding.copyWith(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.sm,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: SectionHeader(title: 'Dispositivos (30d)'),
+            ),
+          ),
+          SliverPadding(
+            padding: padding.copyWith(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: _DeviceUsageSection(
+                deviceUsage: stats.deviceUsage,
+                total: stats.pageViews30d,
+              ),
+            ),
+          ),
+        ],
+
+        // ── Sección: Top proyectos ────────────────────────────────────────
+        if (stats.topProjects.isNotEmpty) ...[
+          SliverPadding(
+            padding: padding.copyWith(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.sm,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: SectionHeader(title: 'Top proyectos (30d)'),
+            ),
+          ),
+          SliverPadding(
+            padding: padding.copyWith(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: _TopRankingSection(
+                items: [for (final p in stats.topProjects) (p.label, p.count)],
+              ),
+            ),
+          ),
+        ],
+
+        // ── Sección: Top ubicaciones + Mapa ─────────────────────────────────
+        if (stats.topLocations.isNotEmpty) ...[
+          SliverPadding(
+            padding: padding.copyWith(
+              top: AppSpacing.lg,
+              bottom: AppSpacing.sm,
+            ),
+            sliver: SliverToBoxAdapter(
+              child: SectionHeader(title: 'Visitantes por ubicación (30d)'),
+            ),
+          ),
+          SliverPadding(
+            padding: padding.copyWith(top: 0),
+            sliver: SliverToBoxAdapter(
+              child: VisitorsMapWidget(locations: stats.topLocations),
+            ),
+          ),
+        ],
+
+        const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xxxl)),
       ],
     );
-  }
-
-  int _gridColumns(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width >= 1200) return 4;
-    if (width >= 800) return 3;
-    return 2;
   }
 
   String _formatNumber(int n) {
@@ -180,20 +258,51 @@ class _DashboardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-      child: GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 1.6,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        children: List.generate(
-          6,
-          (_) => ShimmerBox(
-            width: double.infinity,
-            height: double.infinity,
-            borderRadius: 16,
-          ),
+    final padding = AppBreakpoints.pagePadding(context);
+
+    return ShimmerLoader(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: padding.copyWith(bottom: AppSpacing.sm),
+              child: ShimmerBox(width: 160, height: 18, borderRadius: 6),
+            ),
+            Padding(
+              padding: padding.copyWith(top: 0, bottom: 0),
+              child: SkeletonGridView(
+                itemCount: 8,
+                compactCols: 2,
+                hasImage: false,
+                childAspectRatio: 2.8,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            Padding(
+              padding: padding.copyWith(bottom: AppSpacing.sm),
+              child: ShimmerBox(width: 120, height: 18, borderRadius: 6),
+            ),
+            Padding(
+              padding: padding.copyWith(top: 0),
+              child: Column(
+                children: [
+                  ShimmerBox(
+                    width: double.infinity,
+                    height: 180,
+                    borderRadius: 16,
+                  ),
+                  const SizedBox(height: AppSpacing.base),
+                  ShimmerBox(
+                    width: double.infinity,
+                    height: 180,
+                    borderRadius: 16,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -206,292 +315,360 @@ class _DashboardSkeleton extends StatelessWidget {
 /// Muestra:
 /// - Visitas diarias de los últimos 7 días (LineChart).
 /// - Reservas mensuales de los últimos 6 meses (BarChart).
+/// En pantallas expanded (≥840px), los gráficos se muestran lado a lado.
 class _DashboardCharts extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chartsAsync = ref.watch(dashboardChartsProvider);
+    final isExpanded = AppBreakpoints.isExpanded(context);
 
     return chartsAsync.when(
-      loading: () => _buildSkeleton(),
+      loading: () => _buildSkeleton(isExpanded),
       error: (_, _) => const SizedBox.shrink(),
-      data: (charts) => Column(
-        children: [
-          _PageViewsChart(data: charts.dailyPageViews),
-          const SizedBox(height: 16),
-          _BookingsBarChart(data: charts.monthlyBookings),
-        ],
-      ),
+      data: (charts) {
+        final pageViewsChart = PageViewsChart(data: charts.dailyPageViews);
+        final bookingsChart = BookingsBarChart(data: charts.monthlyBookings);
+
+        if (isExpanded) {
+          return IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: pageViewsChart),
+                const SizedBox(width: AppSpacing.base),
+                Expanded(child: bookingsChart),
+              ],
+            ),
+          );
+        }
+
+        return Column(
+          children: [
+            pageViewsChart,
+            const SizedBox(height: AppSpacing.base),
+            bookingsChart,
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildSkeleton() {
+  Widget _buildSkeleton(bool isExpanded) {
+    if (isExpanded) {
+      return Row(
+        children: [
+          Expanded(
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 180,
+              borderRadius: 16,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.base),
+          Expanded(
+            child: ShimmerBox(
+              width: double.infinity,
+              height: 180,
+              borderRadius: 16,
+            ),
+          ),
+        ],
+      );
+    }
     return Column(
       children: [
         ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.base),
         ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
       ],
     );
   }
 }
 
-// ── _PageViewsChart ────────────────────────────────────────────────────────────
+// Chart widgets extracted to `widgets/` to keep this file small and maintainable.
 
-class _PageViewsChart extends StatelessWidget {
-  const _PageViewsChart({required this.data});
+// ── _DeviceUsageSection ───────────────────────────────────────────────────────
 
-  final List<ChartDataPoint> data;
+class _DeviceUsageSection extends StatelessWidget {
+  const _DeviceUsageSection({required this.deviceUsage, required this.total});
+
+  final Map<String, int> deviceUsage;
+  final int total;
+
+  static const _icons = {
+    'mobile': Icons.smartphone_outlined,
+    'tablet': Icons.tablet_outlined,
+    'desktop': Icons.computer_outlined,
+  };
+
+  static const _labels = {
+    'mobile': 'Móvil',
+    'tablet': 'Tablet',
+    'desktop': 'Escritorio',
+  };
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 9);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final safeTotal = total > 0 ? total : 1;
 
-    final spots = data.asMap().entries.map((e) {
-      return FlSpot(e.key.toDouble(), e.value.count.toDouble());
-    }).toList();
+    // Colores adaptativos al tema
+    final colors = {
+      'mobile': colorScheme.primary,
+      'tablet': AppColors.info,
+      'desktop': AppColors.success,
+    };
+
+    final sorted = deviceUsage.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
 
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Visitas diarias (7 días)',
-              style: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 160,
-              child: LineChart(
-                LineChartData(
-                  lineTouchData: LineTouchData(
-                    handleBuiltInTouches: true,
-                    touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (_) =>
-                          scheme.inverseSurface.withValues(alpha: 0.9),
-                      getTooltipItems: (spots) => spots
-                          .map(
-                            (s) => LineTooltipItem(
-                              '${s.y.toInt()} visitas',
-                              TextStyle(
-                                color: scheme.onInverseSurface,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          )
-                          .toList(),
+        padding: const EdgeInsets.all(AppSpacing.base),
+        child: Row(
+          children: sorted.map((entry) {
+            final pct = (entry.value / safeTotal * 100).round();
+            final color = colors[entry.key] ?? colorScheme.primary;
+            return Expanded(
+              child: Column(
+                children: [
+                  Icon(
+                    _icons[entry.key] ?? Icons.devices_outlined,
+                    color: color,
+                    size: 28,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$pct%',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: color,
                     ),
                   ),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: spots.isEmpty ? [const FlSpot(0, 0)] : spots,
-                      isCurved: true,
-                      curveSmoothness: 0.35,
-                      color: AppColors.lightPrimary,
-                      barWidth: 2.5,
-                      dotData: FlDotData(
-                        show: true,
-                        getDotPainter: (spot, _, _, _) => FlDotCirclePainter(
-                          radius: 3,
-                          color: AppColors.lightPrimary,
-                          strokeWidth: 1.5,
-                          strokeColor: Colors.white,
-                        ),
-                      ),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            AppColors.lightPrimary.withValues(alpha: 0.18),
-                            AppColors.lightPrimary.withValues(alpha: 0.0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    horizontalInterval: 1,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: scheme.outlineVariant.withValues(alpha: 0.3),
-                      strokeWidth: 1,
+                  Text(
+                    _labels[entry.key] ?? entry.key,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  Text(
+                    '${entry.value} visitas',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
-                  borderData: FlBorderData(show: false),
-                  titlesData: _buildLineTitles(data, textStyle),
-                ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  FlTitlesData _buildLineTitles(
-    List<ChartDataPoint> data,
-    TextStyle? textStyle,
-  ) {
-    return FlTitlesData(
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 28,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
-        ),
-      ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          interval: 1,
-          reservedSize: 24,
-          getTitlesWidget: (value, _) {
-            final idx = value.toInt();
-            if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(data[idx].label, style: textStyle),
             );
-          },
+          }).toList(),
         ),
       ),
     );
   }
 }
 
-// ── _BookingsBarChart ──────────────────────────────────────────────────────────
+// ── _TopRankingSection ────────────────────────────────────────────────────────
 
-class _BookingsBarChart extends StatelessWidget {
-  const _BookingsBarChart({required this.data});
+class _TopRankingSection extends StatelessWidget {
+  const _TopRankingSection({required this.items});
 
-  final List<ChartDataPoint> data;
+  final List<(String, int)> items;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textStyle = Theme.of(
-      context,
-    ).textTheme.labelSmall?.copyWith(color: scheme.outline, fontSize: 9);
-
-    final barGroups = data.asMap().entries.map((e) {
-      return BarChartGroupData(
-        x: e.key,
-        barRods: [
-          BarChartRodData(
-            toY: e.value.count.toDouble(),
-            color: AppColors.darkPrimary,
-            width: 16,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-          ),
-        ],
-      );
-    }).toList();
+    final theme = Theme.of(context);
+    final maxCount = items.isEmpty
+        ? 1
+        : items.map((e) => e.$2).reduce((a, b) => a > b ? a : b);
 
     return Card(
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3)),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.base,
+          vertical: AppSpacing.sm,
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Reservas mensuales (6 meses)',
-              style: Theme.of(
-                context,
-              ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 160,
-              child: BarChart(
-                BarChartData(
-                  barTouchData: BarTouchData(
-                    handleBuiltInTouches: true,
-                    touchTooltipData: BarTouchTooltipData(
-                      getTooltipColor: (_) =>
-                          scheme.inverseSurface.withValues(alpha: 0.9),
-                      getTooltipItem: (group, groupIndex, rod, rodIndex) =>
-                          BarTooltipItem(
-                            '${rod.toY.toInt()} reservas',
-                            TextStyle(
-                              color: scheme.onInverseSurface,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+          children: items.asMap().entries.map((entry) {
+            final rank = entry.key + 1;
+            final (label, count) = entry.value;
+            final progress = count / maxCount;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 24,
+                    child: Text(
+                      '$rank',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.4,
+                        ),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                label,
+                                style: theme.textTheme.bodyMedium,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              '$count',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: progress,
+                            minHeight: 4,
+                            backgroundColor: theme.colorScheme.primary
+                                .withValues(alpha: 0.12),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              theme.colorScheme.primary,
                             ),
                           ),
+                        ),
+                      ],
                     ),
                   ),
-                  barGroups: barGroups,
-                  borderData: FlBorderData(show: false),
-                  gridData: FlGridData(
-                    show: true,
-                    drawVerticalLine: false,
-                    getDrawingHorizontalLine: (_) => FlLine(
-                      color: scheme.outlineVariant.withValues(alpha: 0.3),
-                      strokeWidth: 1,
-                    ),
-                  ),
-                  titlesData: _buildBarTitles(data, textStyle),
-                ),
+                ],
               ),
-            ),
-          ],
+            );
+          }).toList(),
         ),
       ),
     );
   }
+}
 
-  FlTitlesData _buildBarTitles(
-    List<ChartDataPoint> data,
-    TextStyle? textStyle,
-  ) {
-    return FlTitlesData(
-      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 28,
-          getTitlesWidget: (value, _) =>
-              Text(value.toInt().toString(), style: textStyle),
+// ── _DashboardGreeting ────────────────────────────────────────────────────────
+
+/// Banner de bienvenida con saludo horario y fecha actual en español.
+///
+/// Lee el nombre del usuario autenticado para personalizar el greeting.
+class _DashboardGreeting extends ConsumerWidget {
+  const _DashboardGreeting();
+
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 13) return 'Buenos días';
+    if (hour < 20) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+
+  String _formattedDate() {
+    const months = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ];
+    const days = [
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+      'Domingo',
+    ];
+    final now = DateTime.now();
+    return '${days[now.weekday - 1]} ${now.day} de ${months[now.month - 1]}';
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primary = colorScheme.primary;
+
+    // Extraer nombre del usuario autenticado
+    final authState = ref.watch(authProvider).value;
+    final userName = switch (authState) {
+      Authenticated(:final user) => user.name.split(' ').first,
+      _ => '',
+    };
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [primary.withAlpha(80), colorScheme.secondary.withAlpha(50)]
+              : [primary.withAlpha(38), colorScheme.secondary.withAlpha(22)],
         ),
+        borderRadius: BorderRadius.circular(AppRadius.card),
       ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          interval: 1,
-          reservedSize: 24,
-          getTitlesWidget: (value, _) {
-            final idx = value.toInt();
-            if (idx < 0 || idx >= data.length) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(data[idx].label, style: textStyle),
-            );
-          },
-        ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.base,
+        vertical: AppSpacing.md,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${_greeting()}${userName.isNotEmpty ? ', $userName' : ''} 👋',
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: colorScheme.onSurface,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formattedDate(),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withAlpha(160),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: primary.withAlpha(isDark ? 70 : 40),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            alignment: Alignment.center,
+            child: Icon(Icons.spa_outlined, color: primary, size: 28),
+          ),
+        ],
       ),
     );
   }

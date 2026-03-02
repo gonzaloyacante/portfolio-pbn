@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Rutas de archivos para el FileProvider de open_file (in-app updates).
+
+  Necesario para compartir el APK descargado con el instalador del sistema
+  en Android 7+ usando un URI de contenido seguro (content://)
+  en lugar de un path de archivo directo (file://).
+
+  La app guarda el APK en:
+    getExternalStorageDirectory()/updates/app-X.Y.Z-N.apk
+  que se corresponde con <external-files-path path="." />.
+
+  Autoridad del proveedor: ${applicationId}.fileProvider
+  (configurada en AndroidManifest.xml)
+-->
+<paths>
+    <!-- Directorio de archivos externos de la app (Android 10+ scope storage) -->
+    <!-- Cubre: /sdcard/Android/data/<app_id>/files/**                         -->
+    <external-files-path name="update_apk_external_files" path="." />
+    <!-- Directorio de archivos internos (fallback) -->
+    <files-path name="update_apk_internal_files" path="." />
+    <!-- Caché (fallback adicional) -->
+    <cache-path name="update_apk_cache" path="." />
+</paths>

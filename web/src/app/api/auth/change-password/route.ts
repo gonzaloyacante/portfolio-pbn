@@ -6,23 +6,17 @@ import { getToken } from 'next-auth/jwt'
 import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 
+async function _resolveUserEmail(req: NextRequest): Promise<string | null> {
+  const session = await getServerSession(authOptions)
+  if (session?.user?.email) return session.user.email
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  return token?.email ?? null
+}
+
 export async function POST(req: NextRequest) {
   try {
-    // 1. Intentar obtener sesión completa (Server-side)
-    const session = await getServerSession(authOptions)
-    let isAuthenticated = !!session?.user?.email
-    let userEmail = session?.user?.email
-
-    // 2. Fallback: Verificar Token JWT directamente
-    if (!isAuthenticated) {
-      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-      if (token?.email) {
-        isAuthenticated = true
-        userEmail = token.email
-      }
-    }
-
-    if (!isAuthenticated || !userEmail) {
+    const userEmail = await _resolveUserEmail(req)
+    if (!userEmail) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -39,30 +33,20 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Buscar usuario
-    const user = await prisma.user.findUnique({
-      where: { email: userEmail as string },
-    })
+    const user = await prisma.user.findUnique({ where: { email: userEmail } })
 
     if (!user?.password) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    // Verificar contraseña actual
     const isValid = await bcrypt.compare(currentPassword, user.password)
 
     if (!isValid) {
       return NextResponse.json({ error: 'Contraseña actual incorrecta' }, { status: 400 })
     }
 
-    // Hash nueva contraseña
     const hashedPassword = await bcrypt.hash(newPassword, 12)
-
-    // Actualizar contraseña
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { password: hashedPassword },
-    })
+    await prisma.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
 
     return NextResponse.json({ success: true })
   } catch (error) {

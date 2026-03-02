@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -91,10 +90,10 @@ class SyncQueueRepository {
 
   /// Incrementa el contador de intentos de una operación.
   Future<void> incrementAttempts(String id) async {
-    await (_db.update(
-      _db.syncOperationsTable,
-    )..where((t) => t.id.equals(id))).write(
-      SyncOperationsTableCompanion(lastAttemptAt: Value(DateTime.now())),
+    // Incrementar attempts + actualizar lastAttemptAt en un solo paso via SQL.
+    await _db.customStatement(
+      'UPDATE sync_operations_table SET attempts = attempts + 1, last_attempt_at = ? WHERE id = ?',
+      [DateTime.now().millisecondsSinceEpoch ~/ 1000, id],
     );
 
     // Marcar como fallida si supera el máximo de intentos.

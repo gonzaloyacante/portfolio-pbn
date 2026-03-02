@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../api/api_client.dart';
@@ -70,15 +69,24 @@ class SyncManager extends _$SyncManager {
     AppLogger.info('SyncManager: processing ${pending.length} operations');
     state = SyncStatus.syncing;
 
-    try {
-      for (final operation in pending) {
+    int failed = 0;
+
+    for (final operation in pending) {
+      try {
         await _processOperation(operation, queue);
+      } catch (_) {
+        failed++;
+        // Continuar con la siguiente operación aunque esta haya fallado.
+        // El error ya fue logueado dentro de _processOperation.
       }
+    }
+
+    if (failed > 0) {
+      AppLogger.warn('SyncManager: sync completed with $failed failure(s)');
+      state = SyncStatus.error;
+    } else {
       AppLogger.info('SyncManager: queue processed successfully');
       state = SyncStatus.idle;
-    } catch (e) {
-      AppLogger.error('SyncManager: sync failed', e);
-      state = SyncStatus.error;
     }
   }
 

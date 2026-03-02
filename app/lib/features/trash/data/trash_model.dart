@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'trash_model.freezed.dart';
 
 @freezed
-class TrashItem with _$TrashItem {
+abstract class TrashItem with _$TrashItem {
   const factory TrashItem({
     required String id,
     required String type,

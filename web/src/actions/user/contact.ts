@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { contactFormSchema } from '@/lib/validations'
 import { emailService } from '@/lib/email-service'
+import { sendPushToAdmins } from '@/lib/push-service'
 import { z } from 'zod'
 import { ROUTES } from '@/config/routes'
 import { createRateLimiter } from '@/lib/rate-limit'
@@ -36,16 +37,14 @@ async function getClientIp(): Promise<string> {
   return realIp || cfConnectingIp || 'unknown'
 }
 
-/**
- * Sanitizar texto para evitar XSS
- */
+/** Sanitizar texto para evitar XSS */
 function sanitizeText(text: string): string {
   return text
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#x27;')
+    .replaceAll('/', '&#x2F;')
     .trim()
 }
 
@@ -72,6 +71,7 @@ export async function sendContactEmail(formData: FormData) {
     const newContact = await persistContact(sanitized, meta)
     await trackContactAnalytics(newContact.id, sanitized, meta.referrer)
     await notifyAdminOfContact(sanitized)
+    void notifyPushNewContact(newContact.id, sanitized)
 
     return { success: true, message: '¡Mensaje enviado! Te responderemos pronto.' }
   } catch (error) {
@@ -151,6 +151,18 @@ async function notifyAdminOfContact(sanitized: SanitizedData) {
   } catch (emailError) {
     logger.error('Error enviando notificación de email:', { error: emailError })
   }
+}
+
+async function notifyPushNewContact(contactId: string, sanitized: SanitizedData) {
+  const preview =
+    sanitized.message.length > 80 ? `${sanitized.message.substring(0, 80)}…` : sanitized.message
+  await sendPushToAdmins({
+    title: '📬 Nuevo mensaje de contacto',
+    body: `${sanitized.name}: "${preview}"`,
+    type: 'contact',
+    id: contactId,
+    screen: 'contacts',
+  })
 }
 
 // Admin actions

@@ -69,21 +69,13 @@ if [ "${SKIP_APP}" != "1" ]; then
   echo "\n📱 Comprobaciones para 'app'..."
   if [ -f "app/pubspec.yaml" ]; then
     if command -v dart >/dev/null 2>&1; then
-      echo "🔸 Dart format + analyze (app)"
-      if ! (cd app && dart format --output=none --set-exit-if-changed .); then
-        echo "❌ Dart format changed files in app/ — run 'dart format .'"
-        exit 1
-      fi
+      echo "🔸 Dart analyze (app) — formateo ya se ejecutó en pre-commit"
       if ! (cd app && dart analyze); then
         echo "❌ Dart analyze found issues in app/"
         exit 1
       fi
     elif command -v flutter >/dev/null 2>&1; then
-      echo "🔸 Flutter format + analyze (app)"
-      if ! (cd app && flutter format .); then
-        echo "❌ Flutter format failed in app/"
-        exit 1
-      fi
+      echo "🔸 Flutter analyze (app) — formateo ya se ejecutó en pre-commit"
       if ! (cd app && flutter analyze); then
         echo "❌ Flutter analyze found issues in app/"
         exit 1

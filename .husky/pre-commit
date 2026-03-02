@@ -111,7 +111,7 @@ if [ -f "web/package.json" ]; then
 fi
 echo ""
 
-echo "📱 [7/7] Flutter/Dart: Formato y análisis en 'app' si existe (puede ser pesado)..."
+echo "📱 [7/7] Flutter/Dart: Formato (auto-fix + re-stage) y análisis en 'app' si existe..."
 if [ -f "app/pubspec.yaml" ]; then
   if [ "${SKIP_APP}" = "1" ]; then
     echo "⚡ SKIP_APP activo: saltando checks de app"
@@ -119,20 +119,24 @@ if [ -f "app/pubspec.yaml" ]; then
     # Preferir dart si está disponible, fallback a flutter
     if command -v dart >/dev/null 2>&1; then
       echo "🔧 Usando 'dart' para formateo y análisis en app/"
-      if ! (cd app && dart format --output=none --set-exit-if-changed .); then
-        echo "❌ Formateo Dart fallido (app). Ejecutá 'dart format .' y corregí los archivos."
-        exit 1
-      fi
+      # Auto-format: corrige archivos y los re-stagea automáticamente
+      echo "  → Formateando archivos Dart..."
+      (cd app && dart format .)
+      echo "  → Re-stageando archivos formateados..."
+      git add app/
+      echo "  → Ejecutando dart analyze..."
       if ! (cd app && dart analyze); then
         echo "❌ Dart analyze encontró problemas en app/."
         exit 1
       fi
     elif command -v flutter >/dev/null 2>&1; then
       echo "🔧 Usando 'flutter' para formateo y análisis en app/"
-      if ! (cd app && flutter format .); then
-        echo "❌ Formateo Flutter fallido (app). Ejecutá 'flutter format .' y corregí los archivos."
-        exit 1
-      fi
+      # Auto-format: corrige archivos y los re-stagea automáticamente
+      echo "  → Formateando archivos Dart..."
+      (cd app && flutter format .)
+      echo "  → Re-stageando archivos formateados..."
+      git add app/
+      echo "  → Ejecutando flutter analyze..."
       if ! (cd app && flutter analyze); then
         echo "❌ Flutter analyze encontró problemas en app/."
         exit 1

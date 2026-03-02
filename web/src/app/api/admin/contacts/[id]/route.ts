@@ -4,11 +4,14 @@
  * DELETE /api/admin/contacts/[id]  — Soft delete
  */
 
+import { revalidatePath } from 'next/cache'
 import { NextResponse } from 'next/server'
 
+import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { contactUpdateApiSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -88,17 +91,25 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const body = await req.json()
-    const { status, priority, assignedTo, isRead, replyText, adminNote, tags } = body
+    const body = await req.json().catch(() => null)
+    const parsed = contactUpdateApiSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+    const { status, priority, assignedTo, isRead, replyText, adminNote, tags } = parsed.data
 
     const existing = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
 
-    const replyData = replyText && !existing.isReplied
-      ? { isReplied: true, repliedAt: new Date(), repliedBy: auth.payload?.email ?? 'admin' }
-      : {}
+    const replyData =
+      replyText && !existing.isReplied
+        ? { isReplied: true, repliedAt: new Date(), repliedBy: auth.payload?.email ?? 'admin' }
+        : {}
 
     const updated = await prisma.contact.update({
       where: { id },
@@ -114,6 +125,8 @@ export async function PATCH(req: Request, { params }: Params) {
       },
       select: CONTACT_DETAIL_SELECT,
     })
+
+    revalidatePath(ROUTES.admin.contacts)
 
     return NextResponse.json({ success: true, data: updated })
   } catch (err) {
@@ -140,6 +153,8 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     await prisma.contact.update({ where: { id }, data: { deletedAt: new Date() } })
+
+    revalidatePath(ROUTES.admin.contacts)
 
     return NextResponse.json({ success: true, message: 'Contacto eliminado' })
   } catch (err) {

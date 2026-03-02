@@ -4,6 +4,9 @@ import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
 
+// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
+export const revalidate = 0
+
 export const metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',
   description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
@@ -17,6 +20,8 @@ export default async function ProjectsPage() {
   const [categories, categorySettings] = await Promise.all([
     prisma.category.findMany({
       where: {
+        isActive: true,
+        deletedAt: null,
         projects: {
           some: { isActive: true, isDeleted: false },
         },
@@ -73,7 +78,7 @@ export default async function ProjectsPage() {
                 <FadeIn key={category.id}>
                   <Link
                     href={`/proyectos/${category.slug}`}
-                    className="group relative block aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
+                    className="group relative block aspect-4/5 w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
                   >
                     {/* Background Image */}
                     {thumbnailUrl ? (
@@ -87,7 +92,7 @@ export default async function ProjectsPage() {
                           priority={category.sortOrder <= 4}
                         />
                         {/* Overlay Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
                       </>
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-(--card-bg)">

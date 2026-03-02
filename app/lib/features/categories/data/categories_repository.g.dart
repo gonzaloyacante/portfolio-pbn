@@ -6,24 +6,53 @@ part of 'categories_repository.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$categoriesRepositoryHash() =>
-    r'9caae8531a6ae1f6217c329ad2ff634c50944b36';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [categoriesRepository].
 @ProviderFor(categoriesRepository)
-final categoriesRepositoryProvider =
-    AutoDisposeProvider<CategoriesRepository>.internal(
-      categoriesRepository,
-      name: r'categoriesRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$categoriesRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final categoriesRepositoryProvider = CategoriesRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef CategoriesRepositoryRef = AutoDisposeProviderRef<CategoriesRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class CategoriesRepositoryProvider
+    extends
+        $FunctionalProvider<
+          CategoriesRepository,
+          CategoriesRepository,
+          CategoriesRepository
+        >
+    with $Provider<CategoriesRepository> {
+  CategoriesRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'categoriesRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$categoriesRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<CategoriesRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  CategoriesRepository create(Ref ref) {
+    return categoriesRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CategoriesRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CategoriesRepository>(value),
+    );
+  }
+}
+
+String _$categoriesRepositoryHash() =>
+    r'39b88c79c86a20bf55a21eacc814f992719571ff';

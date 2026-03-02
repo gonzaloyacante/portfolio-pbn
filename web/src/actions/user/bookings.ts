@@ -5,7 +5,10 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
+import { sendPushToAdmins } from '@/lib/push-service'
 import { ROUTES } from '@/config/routes'
+import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 const BookingSchema = z.object({
   date: z.string().transform((str) => new Date(str)), // Input as ISO string
@@ -18,6 +21,8 @@ const BookingSchema = z.object({
 })
 
 export async function createBooking(formData: FormData) {
+  await checkApiRateLimit()
+
   const rawData = {
     date: formData.get('date'),
     clientName: formData.get('clientName'),
@@ -35,7 +40,7 @@ export async function createBooking(formData: FormData) {
   const data = validation.data
 
   try {
-    await prisma.booking.create({
+    const booking = await prisma.booking.create({
       data: {
         date: data.date,
         clientName: data.clientName,
@@ -45,6 +50,7 @@ export async function createBooking(formData: FormData) {
         clientNotes: data.notes,
         status: 'PENDING',
       },
+      include: { service: { select: { name: true } } },
     })
 
     // Send Email Notification to Admin & Client
@@ -67,6 +73,20 @@ export async function createBooking(formData: FormData) {
       // Don't fail the written booking, just log error
     })
 
+    // Push notification to all admin devices (fire-and-forget)
+    const dateStr = data.date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
+    void sendPushToAdmins({
+      title: '📅 Nueva reserva',
+      body: `${data.clientName} — ${booking.service?.name ?? 'Servicio'} · ${dateStr}`,
+      type: 'booking',
+      id: booking.id,
+      screen: 'calendar',
+    })
+
     revalidatePath(ROUTES.admin.calendar)
     return { success: true }
   } catch (error) {
@@ -76,6 +96,8 @@ export async function createBooking(formData: FormData) {
 }
 
 export async function getBookingsByRange(start: Date, end: Date) {
+  await requireAdmin()
+
   try {
     return await prisma.booking.findMany({
       where: {
@@ -101,6 +123,9 @@ export async function updateBookingStatus(
   id: string,
   status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
 ) {
+  await requireAdmin()
+  await checkApiRateLimit()
+
   try {
     await prisma.booking.update({
       where: { id },

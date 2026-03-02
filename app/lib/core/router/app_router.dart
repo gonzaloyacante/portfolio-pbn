@@ -6,6 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../features/app_settings/presentation/app_settings_page.dart';
 import '../../features/account/presentation/account_page.dart';
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/auth/presentation/splash_page.dart';
 import '../../features/help/presentation/help_page.dart';
 import '../../features/trash/presentation/trash_page.dart';
 import '../../features/categories/presentation/categories_list_page.dart';
@@ -18,6 +19,7 @@ import '../../features/calendar/presentation/booking_form_page.dart';
 import '../../features/calendar/presentation/calendar_page.dart';
 import '../../features/contacts/presentation/contact_detail_page.dart';
 import '../../features/contacts/presentation/contacts_list_page.dart';
+import '../../features/settings/presentation/settings_home_page.dart';
 import '../../features/settings/presentation/settings_about_page.dart';
 import '../../features/settings/presentation/settings_contact_page.dart';
 import '../../features/settings/presentation/settings_page.dart';
@@ -40,6 +42,10 @@ final GlobalKey<NavigatorState> routerNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'rootNavigator',
 );
 
+/// Señal que indica si la animación de splash terminó. El router espera
+/// a que sea true antes de redirigir desde la ruta de splash.
+final ValueNotifier<bool> splashAnimationFinished = ValueNotifier<bool>(false);
+
 /// Instancia global del router. GoRouter escucha [RouterNotifier] para
 /// reevaluar las redirecciones cada vez que cambia el estado de autenticación.
 final routerProvider = Provider<GoRouter>((ref) {
@@ -48,7 +54,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     navigatorKey: routerNavigatorKey,
-    initialLocation: RoutePaths.login,
+    initialLocation: RoutePaths.splash,
     debugLogDiagnostics: false,
     observers: [SentryNavigatorObserver()],
     refreshListenable: notifier,
@@ -65,11 +71,13 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// que reevalúe el guard de redirección.
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(this._ref) {
-    // Escuchar al authNotifierProvider y notificar al router ante cualquier cambio.
+    // Escuchar al authProvider y notificar al router ante cualquier cambio.
     _subscription = _ref.listen<AsyncValue<AuthState>>(
-      authNotifierProvider,
+      authProvider,
       (_, _) => notifyListeners(),
     );
+    // Escuchar la señal de animación del splash para forzar reevaluación
+    splashAnimationFinished.addListener(notifyListeners);
   }
 
   final Ref _ref;
@@ -78,6 +86,7 @@ class RouterNotifier extends ChangeNotifier {
   @override
   void dispose() {
     _subscription.close();
+    splashAnimationFinished.removeListener(notifyListeners);
     super.dispose();
   }
 
@@ -89,13 +98,18 @@ class RouterNotifier extends ChangeNotifier {
   /// - Autenticado + en login → /dashboard
   /// - No autenticado + fuera de login → /login
   String? redirect(BuildContext context, GoRouterState state) {
-    final authAsync = _ref.read(authNotifierProvider);
+    final authAsync = _ref.read(authProvider);
     final isLoginRoute = state.matchedLocation == RoutePaths.login;
+    final isSplashRoute = state.matchedLocation == RoutePaths.splash;
 
     // Mientras se restaura la sesión → no interrumpir.
     if (authAsync.isLoading) return null;
 
-    final authState = authAsync.valueOrNull;
+    // Si todavía no terminó la animación del splash y estamos en la ruta
+    // splash, esperar antes de redirigir.
+    if (!splashAnimationFinished.value && isSplashRoute) return null;
+
+    final authState = authAsync.whenOrNull(data: (v) => v);
 
     // Estado de error o no autenticado → ir al login si no está ya ahí.
     if (authState == null ||
@@ -107,9 +121,9 @@ class RouterNotifier extends ChangeNotifier {
     // Autenticando → sin redirigir (mostrar estado transitorio en login).
     if (authState is Authenticating) return null;
 
-    // Autenticado → si está en login, ir al dashboard.
+    // Autenticado → si está en login o en splash, ir al dashboard.
     if (authState is Authenticated) {
-      return isLoginRoute ? RoutePaths.dashboard : null;
+      return (isLoginRoute || isSplashRoute) ? RoutePaths.dashboard : null;
     }
 
     return null;
@@ -133,6 +147,11 @@ CustomTransitionPage<void> _fadePage({
 // ── Rutas ─────────────────────────────────────────────────────────────────────
 
 final List<RouteBase> _routes = [
+  GoRoute(
+    path: RoutePaths.splash,
+    name: RouteNames.splash,
+    builder: (context, state) => const SplashPage(),
+  ),
   GoRoute(
     path: RoutePaths.login,
     name: RouteNames.login,
@@ -269,6 +288,12 @@ final List<RouteBase> _routes = [
     name: RouteNames.settings,
     pageBuilder: (context, state) =>
         _fadePage(state: state, child: const SettingsPage()),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsHome,
+    name: RouteNames.settingsHome,
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const SettingsHomePage()),
   ),
   GoRoute(
     path: RoutePaths.settingsAbout,

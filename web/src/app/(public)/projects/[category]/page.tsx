@@ -9,6 +9,9 @@ import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 
+// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
+export const revalidate = 0
+
 export async function generateStaticParams() {
   const categories = await prisma.category.findMany({
     where: { isActive: true, deletedAt: null },
