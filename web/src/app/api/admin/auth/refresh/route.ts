@@ -10,6 +10,8 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { signAccessToken } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/rate-limit-config'
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -17,10 +19,32 @@ const refreshSchema = z.object({
   refreshToken: z.string().min(1),
 })
 
+// ── Rate limiter para refresh (10 req/min por IP) ─────────────────────────────
+const refreshLimiter = createRateLimiter({
+  ...RATE_LIMITS.API,
+  id: 'auth_refresh',
+  limit: 10,
+  errorMessage: 'Demasiadas solicitudes de refresh. Intenta de nuevo más tarde.',
+})
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function POST(req: Request) {
   try {
+    // Rate limiting por IP
+    const forwardedFor = req.headers.get('x-forwarded-for')
+    const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : 'unknown-ip'
+    const rateResult = await refreshLimiter.check(clientIp)
+    if (!rateResult.allowed) {
+      return NextResponse.json(
+        { success: false, error: rateResult.resetIn
+          ? `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s`
+          : 'Demasiadas solicitudes' },
+        { status: 429, headers: { 'Retry-After': String(rateResult.resetIn ?? 60) } }
+      )
+    }
+    refreshLimiter.record(clientIp, { route: '/api/admin/auth/refresh' }).catch(() => {})
+
     const body = await req.json().catch(() => null)
     const parsed = refreshSchema.safeParse(body)
 
@@ -86,7 +110,7 @@ export async function POST(req: Request) {
       data: {
         token: crypto.randomUUID(),
         userId: user.id,
-        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 365 días para la app
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
         ipAddress,
         userAgent,
         device: existing.device,
@@ -100,7 +124,7 @@ export async function POST(req: Request) {
     })
 
     // 6. Generar nuevo access token
-    const accessToken = await signAccessToken({ userId: user.id, role: user.role })
+    const accessToken = await signAccessToken({ userId: user.id, role: user.role, email: user.email })
 
     // 7. Actualizar lastUsedAt del nuevo token
     await prisma.refreshToken.update({

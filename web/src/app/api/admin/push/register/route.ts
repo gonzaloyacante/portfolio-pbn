@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { pushRegisterSchema } from '@/lib/validations'
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 
@@ -19,19 +20,17 @@ export async function POST(req: Request) {
   const { userId } = auth.payload
 
   try {
-    const body = (await req.json()) as { token?: string; platform?: string }
-    const { token, platform } = body
+    const body = await req.json().catch(() => null)
+    const parsed = pushRegisterSchema.safeParse(body)
 
-    if (!token || typeof token !== 'string' || token.trim().length === 0) {
-      return NextResponse.json({ success: false, error: 'Token FCM requerido' }, { status: 400 })
-    }
-
-    if (!platform || !['android', 'ios'].includes(platform)) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Platform debe ser "android" o "ios"' },
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
         { status: 400 }
       )
     }
+
+    const { token, platform } = parsed.data
 
     // Upsert: crea o actualiza el token para este usuario/dispositivo.
     await prisma.pushToken.upsert({

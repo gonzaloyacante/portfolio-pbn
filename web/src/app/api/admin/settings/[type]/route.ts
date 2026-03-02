@@ -6,6 +6,16 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import {
+  homeSettingsSchema,
+  aboutSettingsSchema,
+  contactSettingsSchema,
+  themeEditorSchema,
+  projectSettingsSchema,
+  testimonialSettingsSchema,
+  categorySettingsSchema,
+} from '@/lib/validations'
+import type { ZodSchema } from 'zod'
 
 // ── Mapa de tipo → modelo Prisma ──────────────────────────────────────────────
 const SETTINGS_MAP = {
@@ -20,6 +30,17 @@ const SETTINGS_MAP = {
 } as const
 
 type SettingsType = keyof typeof SETTINGS_MAP
+
+// Mapa de tipo → Zod schema (site no tiene schema propio, pasa sin validar)
+const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
+  home: homeSettingsSchema,
+  about: aboutSettingsSchema,
+  contact: contactSettingsSchema,
+  theme: themeEditorSchema,
+  project: projectSettingsSchema,
+  testimonial: testimonialSettingsSchema,
+  category: categorySettingsSchema,
+}
 
 // Campos que nunca se actualizan desde la app
 const FORBIDDEN_FIELDS = ['id', 'createdAt', 'updatedAt', 'isActive']
@@ -87,8 +108,27 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
     )
   }
   try {
-    const body = (await req.json()) as Record<string, unknown>
-    const settings = await upsertSettings(type, body)
+    const body = await req.json().catch(() => null)
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json(
+        { success: false, error: 'Body JSON inválido' },
+        { status: 400 }
+      )
+    }
+
+    // Validate with type-specific Zod schema when available
+    const schema = SETTINGS_SCHEMA_MAP[type]
+    if (schema) {
+      const parsed = schema.safeParse(body)
+      if (!parsed.success) {
+        return NextResponse.json(
+          { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+          { status: 400 }
+        )
+      }
+    }
+
+    const settings = await upsertSettings(type, body as Record<string, unknown>)
 
     // Invalidate caches by settings type
     switch (type) {

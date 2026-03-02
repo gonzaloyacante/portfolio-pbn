@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { pushUnregisterSchema } from '@/lib/validations'
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 
@@ -18,12 +19,17 @@ export async function POST(req: Request) {
   const { userId } = auth.payload
 
   try {
-    const body = (await req.json()) as { token?: string }
-    const { token } = body
+    const body = await req.json().catch(() => null)
+    const parsed = pushUnregisterSchema.safeParse(body)
 
-    if (!token || typeof token !== 'string' || token.trim().length === 0) {
-      return NextResponse.json({ success: false, error: 'Token FCM requerido' }, { status: 400 })
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
     }
+
+    const { token } = parsed.data
 
     // Solo desactiva — no borra para mantener historial.
     const updated = await prisma.pushToken.updateMany({

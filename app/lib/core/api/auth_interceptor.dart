@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../auth/session_signal.dart';
 import '../auth/token_storage.dart';
-import '../config/env_config.dart';
 import '../utils/app_logger.dart';
 import 'api_exceptions.dart';
 import 'endpoints.dart';
@@ -245,9 +244,12 @@ class AuthInterceptor extends Interceptor {
   }
 
   Dio _buildRefreshDio() {
+    // Usar la misma baseUrl que el Dio principal para respetar
+    // el servidor seleccionado en el debug switcher.
+    final baseUrl = dio.options.baseUrl;
     return Dio(
       BaseOptions(
-        baseUrl: EnvConfig.apiBaseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {'Content-Type': 'application/json'},

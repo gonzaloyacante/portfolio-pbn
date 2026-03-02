@@ -11,6 +11,7 @@ import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { contactUpdateApiSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -90,8 +91,15 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const body = await req.json()
-    const { status, priority, assignedTo, isRead, replyText, adminNote, tags } = body
+    const body = await req.json().catch(() => null)
+    const parsed = contactUpdateApiSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+    const { status, priority, assignedTo, isRead, replyText, adminNote, tags } = parsed.data
 
     const existing = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {

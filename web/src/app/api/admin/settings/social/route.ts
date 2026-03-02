@@ -6,15 +6,10 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { socialLinkApiSchema } from '@/lib/validations'
+import type { z } from 'zod'
 
-type SocialLinkBody = {
-  platform: string
-  url: string
-  username?: string
-  icon?: string
-  isActive?: boolean
-  sortOrder?: number
-}
+type SocialLinkBody = z.infer<typeof socialLinkApiSchema>
 
 function buildSocialData(body: SocialLinkBody) {
   return {
@@ -58,14 +53,15 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = (await req.json()) as SocialLinkBody
-    if (!body.platform || !body.url) {
+    const body = await req.json().catch(() => null)
+    const parsed = socialLinkApiSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'platform y url son obligatorios' },
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
         { status: 400 }
       )
     }
-    const link = await saveSocialLink(body)
+    const link = await saveSocialLink(parsed.data)
 
     // social links only appear on /contacto page (not in any shared layout)
     revalidatePath(ROUTES.public.contact)

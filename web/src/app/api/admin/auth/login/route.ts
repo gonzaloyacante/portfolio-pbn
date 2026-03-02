@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Generar tokens
-    const accessToken = await signAccessToken({ userId: user.id, role: user.role })
+    const accessToken = await signAccessToken({ userId: user.id, role: user.role, email: user.email })
 
     const refreshToken = await prisma.refreshToken.create({
       data: {

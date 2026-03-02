@@ -11,6 +11,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { projectApiSchema } from '@/lib/validations'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -100,10 +101,18 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = projectApiSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+
     const {
       title,
-      slug,
       description,
       excerpt,
       thumbnailUrl,
@@ -119,13 +128,16 @@ export async function POST(req: Request) {
       categoryId,
       isFeatured = false,
       isPinned = false,
-    } = body
+    } = parsed.data
 
-    if (!title || !slug || !description || !thumbnailUrl || !categoryId || !date) {
+    // Generar slug a partir del title
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+    if (!title || !description || !thumbnailUrl || !categoryId || !date) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Campos requeridos: title, slug, description, thumbnailUrl, categoryId, date',
+          error: 'Campos requeridos: title, description, thumbnailUrl, categoryId, date',
         },
         { status: 400 }
       )

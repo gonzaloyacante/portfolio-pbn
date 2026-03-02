@@ -11,6 +11,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { testimonialApiSchema } from '@/lib/validations'
 
 const TESTIMONIAL_SELECT = {
   id: true,
@@ -99,7 +100,16 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = testimonialApiSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+
     const {
       name,
       text,
@@ -117,13 +127,9 @@ export async function POST(req: Request) {
       projectId,
       status = 'PENDING',
       isActive = true,
-    } = body
-
-    if (!name || !text) {
-      return NextResponse.json(
-        { success: false, error: 'Campos requeridos: name, text' },
-        { status: 400 }
-      )
+    } = parsed.data as typeof parsed.data & {
+      rating?: number; verified?: boolean; featured?: boolean;
+      status?: string; isActive?: boolean
     }
 
     const agg = await prisma.testimonial.aggregate({ _max: { sortOrder: true } })

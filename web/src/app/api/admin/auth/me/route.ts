@@ -10,6 +10,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { authMeUpdateSchema } from '@/lib/validations'
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 
@@ -59,25 +60,22 @@ export async function PATCH(req: Request) {
 
   try {
     const { userId } = auth.payload
-    const body = (await req.json()) as {
-      currentPassword?: string
-      newPassword?: string
-      name?: string
+    const body = await req.json().catch(() => null)
+    const parsed = authMeUpdateSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
     }
 
-    // ── Profile update (name) ─────────────────────────────────────────────
-    if (body.name !== undefined && !body.currentPassword && !body.newPassword) {
-      const trimmedName = body.name.trim()
-      if (!trimmedName || trimmedName.length < 2) {
-        return NextResponse.json(
-          { success: false, error: 'El nombre debe tener al menos 2 caracteres' },
-          { status: 400 }
-        )
-      }
+    const { currentPassword, newPassword, name } = parsed.data
 
+    // ── Profile update (name) ─────────────────────────────────────────────
+    if (name !== undefined && !currentPassword && !newPassword) {
       const updated = await prisma.user.update({
         where: { id: userId },
-        data: { name: trimmedName },
+        data: { name: name.trim() },
         select: { id: true, name: true, email: true, role: true, avatarUrl: true },
       })
 
@@ -86,14 +84,14 @@ export async function PATCH(req: Request) {
     }
 
     // ── Password change ───────────────────────────────────────────────────
-    if (!body.currentPassword || !body.newPassword) {
+    if (!currentPassword || !newPassword) {
       return NextResponse.json(
         { success: false, error: 'currentPassword y newPassword son requeridos' },
         { status: 400 }
       )
     }
 
-    if (body.newPassword.length < 8) {
+    if (newPassword.length < 8) {
       return NextResponse.json(
         { success: false, error: 'La nueva contraseña debe tener al menos 8 caracteres' },
         { status: 400 }
@@ -109,7 +107,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: false, error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    const isValid = await bcrypt.compare(body.currentPassword, user.password ?? '')
+    const isValid = await bcrypt.compare(currentPassword, user.password ?? '')
     if (!isValid) {
       return NextResponse.json(
         { success: false, error: 'Contraseña actual incorrecta' },
@@ -117,7 +115,7 @@ export async function PATCH(req: Request) {
       )
     }
 
-    const hashed = await bcrypt.hash(body.newPassword, 12)
+    const hashed = await bcrypt.hash(newPassword, 12)
     await prisma.user.update({ where: { id: userId }, data: { password: hashed } })
 
     logger.info('[admin-me] Password changed', { userId })

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_constants.dart';
 import '../../../core/debug/debug_provider.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../shared/widgets/app_scaffold.dart';
@@ -27,12 +28,12 @@ class HelpPage extends ConsumerWidget {
             icon: Icons.info_outline,
             title: 'Acerca de la app',
             children: [
-              const _HelpItem(label: 'Nombre', value: 'Portfolio PBN — Admin'),
+              const _HelpItem(label: 'Nombre', value: AppConstants.appName),
               _HelpItem(label: 'Versión', value: version),
               const _HelpItem(
                 label: 'Descripción',
                 value:
-                    'Panel de administración de Paola Bolívar Nievas. '
+                    'Panel de administración de ${AppConstants.ownerFullName}. '
                     'Gestiona proyectos, servicios, testimonios, '
                     'contactos, reservas y configuración del sitio.',
               ),
@@ -111,8 +112,8 @@ class HelpPage extends ConsumerWidget {
             icon: Icons.support_agent_outlined,
             title: 'Soporte',
             children: [
-              _HelpItem(label: 'Email', value: 'hola@paolabolivar.es'),
-              _HelpItem(label: 'Sitio web', value: 'www.paolabolivar.es'),
+              _HelpItem(label: 'Email', value: AppConstants.supportEmail),
+              _HelpItem(label: 'Sitio web', value: AppConstants.siteUrl),
             ],
           ),
         ],

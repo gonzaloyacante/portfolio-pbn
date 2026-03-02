@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/auth/auth_provider.dart';
+import '../../../core/auth/auth_state.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
@@ -562,7 +564,9 @@ class _TopRankingSection extends StatelessWidget {
 // ── _DashboardGreeting ────────────────────────────────────────────────────────
 
 /// Banner de bienvenida con saludo horario y fecha actual en español.
-class _DashboardGreeting extends StatelessWidget {
+///
+/// Lee el nombre del usuario autenticado para personalizar el greeting.
+class _DashboardGreeting extends ConsumerWidget {
   const _DashboardGreeting();
 
   String _greeting() {
@@ -601,11 +605,18 @@ class _DashboardGreeting extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primary = colorScheme.primary;
+
+    // Extraer nombre del usuario autenticado
+    final authState = ref.watch(authProvider).value;
+    final userName = switch (authState) {
+      Authenticated(:final user) => user.name.split(' ').first,
+      _ => '',
+    };
 
     return Container(
       decoration: BoxDecoration(
@@ -629,7 +640,7 @@ class _DashboardGreeting extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${_greeting()}, Paola 👋',
+                  '${_greeting()}${userName.isNotEmpty ? ', $userName' : ''} 👋',
                   style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: colorScheme.onSurface,

@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db'
 type AppReleaseDeleteManyArgs = Parameters<typeof prisma.appRelease.deleteMany>[0]
 type WhereType = AppReleaseDeleteManyArgs extends { where?: infer W } ? W : never
 import { logger } from '@/lib/logger'
+import { appReleaseDeleteSchema } from '@/lib/validations'
 
 function validateDeployToken(req: Request): boolean {
   const secret = process.env.DEPLOY_SECRET_TOKEN
@@ -28,25 +29,16 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: 'No autorizado' }, { status: 401 })
   }
 
-  let body: Record<string, unknown>
-  try {
-    body = (await req.json()) as Record<string, unknown>
-  } catch {
-    return NextResponse.json({ success: false, error: 'Body JSON inválido' }, { status: 400 })
-  }
-
-  const { id, version, downloadUrl } = body as {
-    id?: string
-    version?: string
-    downloadUrl?: string
-  }
-
-  if (!id && !version && !downloadUrl) {
+  const body = await req.json().catch(() => null)
+  const parsed = appReleaseDeleteSchema.safeParse(body)
+  if (!parsed.success) {
     return NextResponse.json(
-      { success: false, error: 'Se requiere id, version o downloadUrl' },
+      { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
       { status: 400 }
     )
   }
+
+  const { id, version, downloadUrl } = parsed.data
 
   // Construir cláusulas OR de forma explícita y luego castear a la forma
   // esperada por Prisma sin usar `any`.

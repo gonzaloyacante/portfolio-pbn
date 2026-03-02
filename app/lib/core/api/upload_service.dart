@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
+import '../api/api_exceptions.dart';
 import '../api/endpoints.dart';
 import '../utils/app_logger.dart';
 
@@ -46,7 +47,9 @@ class UploadService {
 
     final url = response['url'] as String?;
     if (url == null || url.isEmpty) {
-      throw Exception('El servidor no devolvió una URL de imagen');
+      throw const ParseException(
+        message: 'El servidor no devolvió una URL de imagen',
+      );
     }
 
     AppLogger.info('UploadService: upload successful → $url');
@@ -80,7 +83,9 @@ class UploadService {
     final url = response['url'] as String?;
     final publicId = response['publicId'] as String?;
     if (url == null || url.isEmpty) {
-      throw Exception('El servidor no devolvió una URL de imagen');
+      throw const ParseException(
+        message: 'El servidor no devolvió una URL de imagen',
+      );
     }
 
     AppLogger.info('UploadService: upload (full) successful → $url');

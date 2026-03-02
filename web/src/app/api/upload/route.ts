@@ -4,6 +4,7 @@ import { uploadImage, deleteImage } from '@/lib/cloudinary'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { uploadDeleteSchema } from '@/lib/validations'
 
 import { getToken } from 'next-auth/jwt'
 
@@ -94,11 +95,16 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
-    const { publicId } = await req.json()
-
-    if (!publicId) {
-      return NextResponse.json({ error: 'No se proporcionó publicId' }, { status: 400 })
+    const body = await req.json().catch(() => null)
+    const parsed = uploadDeleteSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
     }
+
+    const { publicId } = parsed.data
 
     await deleteImage(publicId)
 

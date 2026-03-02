@@ -199,7 +199,13 @@ class ApiClient {
     final body = response.data;
 
     if (status >= 200 && status < 300) {
-      return body as T;
+      if (body is T) return body;
+      // Si T es void/dynamic o la respuesta es null (e.g. 204 No Content)
+      if (body == null && null is T) return null as T;
+      throw ParseException(
+        message: 'Respuesta inesperada: se esperaba $T, '
+            'se recibió ${body.runtimeType}',
+      );
     }
 
     // Extraer mensaje de error del body si viene en formato { success, error }

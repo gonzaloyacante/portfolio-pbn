@@ -21,6 +21,7 @@ import { revalidatePath } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { logger } from '@/lib/logger'
 import { sendPushToAdmins } from '@/lib/push-service'
+import { appReleaseApiSchema } from '@/lib/validations'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -185,11 +186,13 @@ export async function POST(req: Request) {
   }
 
   // 2. Parsear y validar body
-  let body: Record<string, unknown>
-  try {
-    body = (await req.json()) as Record<string, unknown>
-  } catch {
-    return NextResponse.json({ success: false, error: 'Body JSON inválido' }, { status: 400 })
+  const body = await req.json().catch(() => null)
+  const parsed = appReleaseApiSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json(
+      { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+      { status: 400 }
+    )
   }
 
   const {
@@ -201,36 +204,7 @@ export async function POST(req: Request) {
     mandatory,
     minVersion,
     fileSizeBytes,
-  } = body as {
-    version?: string
-    versionCode?: number
-    releaseNotes?: string
-    downloadUrl?: string
-    checksumSha256?: string
-    mandatory?: boolean
-    minVersion?: string
-    fileSizeBytes?: number
-  }
-
-  // Campos requeridos
-  if (!version || typeof version !== 'string') {
-    return NextResponse.json({ success: false, error: 'version requerida' }, { status: 400 })
-  }
-  if (!versionCode || typeof versionCode !== 'number' || versionCode <= 0) {
-    return NextResponse.json(
-      { success: false, error: 'versionCode requerido (entero > 0)' },
-      { status: 400 }
-    )
-  }
-  if (!downloadUrl || typeof downloadUrl !== 'string' || !downloadUrl.startsWith('https://')) {
-    return NextResponse.json(
-      { success: false, error: 'downloadUrl requerida y debe ser HTTPS' },
-      { status: 400 }
-    )
-  }
-  if (!releaseNotes || typeof releaseNotes !== 'string') {
-    return NextResponse.json({ success: false, error: 'releaseNotes requerido' }, { status: 400 })
-  }
+  } = parsed.data
 
   // 3. Crear la release en la base de datos
   let release

@@ -310,6 +310,28 @@ export const projectFormSchema = z.object({
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>
 
+// Project API schema (receives arrays for tags/metaKeywords, proper booleans)
+export const projectApiSchema = z.object({
+  title: z.string().min(3).max(200),
+  description: z.string().optional().nullable(),
+  categoryId: z.string().min(1, 'Categoría requerida'),
+  date: z.string(),
+  thumbnailUrl: z.string().optional().nullable(),
+  excerpt: z.string().optional().nullable(),
+  videoUrl: z.string().optional().nullable(),
+  duration: z.string().optional().nullable(),
+  client: z.string().optional().nullable(),
+  location: z.string().optional().nullable(),
+  tags: z.array(z.string()).optional(),
+  metaTitle: z.string().optional().nullable(),
+  metaDescription: z.string().optional().nullable(),
+  metaKeywords: z.array(z.string()).optional(),
+  canonicalUrl: z.string().optional().nullable(),
+  layout: z.string().optional().nullable(),
+  isFeatured: z.boolean().optional(),
+  isPinned: z.boolean().optional(),
+})
+
 // Category
 export const categorySchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio'),
@@ -327,4 +349,162 @@ export const categorySchema = z.object({
 export const loginSchema = z.object({
   email: z.email(),
   password: z.string().min(1),
+})
+
+// ============================================
+// API ADMIN SCHEMAS (for route handler validation)
+// ============================================
+
+// ── Push Notifications ──────────────────────────────────────────────────────
+
+export const pushRegisterSchema = z.object({
+  token: z.string().min(1, 'Token requerido'),
+  platform: z.enum(['android', 'ios'], { message: 'Plataforma debe ser android o ios' }),
+})
+
+export const pushUnregisterSchema = z.object({
+  token: z.string().min(1, 'Token requerido'),
+})
+
+// ── Services ────────────────────────────────────────────────────────────────
+
+export const serviceApiSchema = z.object({
+  name: z.string().min(1, 'El nombre es obligatorio'),
+  slug: z.string().min(1, 'El slug es obligatorio').regex(/^[a-z0-9-]+$/, 'Slug inválido'),
+  description: z.string().optional().nullable(),
+  shortDesc: z.string().optional().nullable(),
+  price: z.number().optional().nullable(),
+  priceLabel: z.string().optional().nullable(),
+  currency: z.string().optional().nullable(),
+  duration: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+  iconName: z.string().optional().nullable(),
+  color: z.string().optional().nullable(),
+  isActive: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
+})
+
+// ── Category (API — extends base categorySchema) ────────────────────────────
+
+export const categoryApiSchema = categorySchema.extend({
+  iconName: z.string().optional().nullable(),
+  color: z.string().optional().nullable(),
+  isActive: z.boolean().optional(),
+})
+
+// ── Testimonials (API — extends base) ───────────────────────────────────────
+
+export const testimonialApiSchema = z.object({
+  name: z.string().min(1, 'El nombre es obligatorio'),
+  text: z.string().min(1, 'El texto es obligatorio'),
+  excerpt: z.string().optional().nullable(),
+  position: z.string().optional().nullable(),
+  company: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  website: z.string().optional().nullable(),
+  avatarUrl: z.string().optional().nullable(),
+  rating: z.number().min(1).max(5).optional(),
+  verified: z.boolean().optional(),
+  featured: z.boolean().optional(),
+  source: z.string().optional().nullable(),
+  projectId: z.string().optional().nullable(),
+  status: z.enum(['PENDING', 'APPROVED', 'REJECTED']).optional(),
+  isActive: z.boolean().optional(),
+})
+
+// ── Bookings ────────────────────────────────────────────────────────────────
+
+export const bookingApiSchema = z.object({
+  date: z.string().min(1, 'La fecha es obligatoria'),
+  endDate: z.string().optional().nullable(),
+  clientName: z.string().min(1, 'El nombre del cliente es obligatorio'),
+  clientEmail: z.string().email('Email inválido'),
+  clientPhone: z.string().optional().nullable(),
+  clientNotes: z.string().optional().nullable(),
+  guestCount: z.number().optional().nullable(),
+  serviceId: z.string().min(1, 'El servicio es obligatorio'),
+  adminNotes: z.string().optional().nullable(),
+  totalAmount: z.number().optional().nullable(),
+  paymentStatus: z.string().optional().nullable(),
+  paymentMethod: z.string().optional().nullable(),
+  status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW']).optional(),
+})
+
+// ── Contacts update ─────────────────────────────────────────────────────────
+
+export const contactUpdateApiSchema = z.object({
+  status: z.enum(['PENDING', 'READ', 'REPLIED', 'ARCHIVED']).optional(),
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']).optional(),
+  assignedTo: z.string().optional().nullable().transform((v) => v ?? undefined),
+  isRead: z.boolean().optional(),
+  replyText: z.string().optional().nullable().transform((v) => v ?? undefined),
+  adminNote: z.string().optional().nullable().transform((v) => v ?? undefined),
+  tags: z.array(z.string()).optional(),
+})
+
+// ── Social Links ────────────────────────────────────────────────────────────
+
+export const socialLinkApiSchema = z.object({
+  platform: z.string().min(1, 'Plataforma obligatoria'),
+  url: z.string().url('URL inválida'),
+  username: z.string().optional(),
+  icon: z.string().optional(),
+  isActive: z.boolean().optional(),
+  sortOrder: z.number().optional(),
+})
+
+// ── Auth /me update ─────────────────────────────────────────────────────────
+
+export const authMeUpdateSchema = z.object({
+  currentPassword: z.string().optional(),
+  newPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),
+  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
+}).refine(
+  (data) => {
+    // If newPassword is set, currentPassword must also be set
+    if (data.newPassword && !data.currentPassword) return false
+    return true
+  },
+  { message: 'Debes indicar la contraseña actual para cambiarla', path: ['currentPassword'] }
+)
+
+// ── Reorder ─────────────────────────────────────────────────────────────────
+
+export const reorderSchema = z.object({
+  items: z.array(z.object({
+    id: z.string().min(1),
+    sortOrder: z.number().int(),
+  })).min(1, 'Se requiere al menos un elemento'),
+})
+
+// ── App Release ─────────────────────────────────────────────────────────────
+
+export const appReleaseApiSchema = z.object({
+  version: z.string().min(1, 'La versión es obligatoria'),
+  versionCode: z.number().int().positive(),
+  releaseNotes: z.string().min(1, 'releaseNotes es obligatorio'),
+  downloadUrl: z.string().url('URL de descarga inválida').refine(
+    (u) => u.startsWith('https://'),
+    'La URL de descarga debe ser HTTPS'
+  ),
+  checksumSha256: z.string().optional().nullable(),
+  mandatory: z.boolean().optional(),
+  minVersion: z.string().optional().nullable(),
+  fileSizeBytes: z.number().int().positive().optional().nullable(),
+})
+
+export const appReleaseDeleteSchema = z.object({
+  id: z.string().optional(),
+  version: z.string().optional(),
+  downloadUrl: z.string().optional(),
+}).refine(
+  (data) => data.id || data.version || data.downloadUrl,
+  { message: 'Se requiere al menos un identificador (id, version o downloadUrl)' }
+)
+
+// ── Upload ──────────────────────────────────────────────────────────────────
+
+export const uploadDeleteSchema = z.object({
+  publicId: z.string().min(1, 'publicId es requerido'),
 })

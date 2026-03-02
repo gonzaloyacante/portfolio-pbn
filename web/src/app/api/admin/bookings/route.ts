@@ -10,6 +10,7 @@ import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { bookingApiSchema } from '@/lib/validations'
 
 const BOOKING_SELECT = {
   id: true,
@@ -106,7 +107,14 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = bookingApiSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       date,
       endDate,
@@ -121,14 +129,7 @@ export async function POST(req: Request) {
       paymentStatus = 'PENDING',
       paymentMethod,
       status = 'PENDING',
-    } = body
-
-    if (!date || !clientName || !clientEmail || !serviceId) {
-      return NextResponse.json(
-        { success: false, error: 'Campos requeridos: date, clientName, clientEmail, serviceId' },
-        { status: 400 }
-      )
-    }
+    } = parsed.data
 
     const booking = await prisma.booking.create({
       data: {
@@ -144,7 +145,7 @@ export async function POST(req: Request) {
         status,
         paymentStatus,
         paymentMethod,
-        totalAmount: totalAmount ? parseFloat(totalAmount) : null,
+        totalAmount: totalAmount ?? null,
       },
       select: BOOKING_SELECT,
     })

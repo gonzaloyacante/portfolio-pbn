@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -428,10 +429,22 @@ class _TestimonialTile extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: item.avatarUrl != null
-          ? Image.network(
-              item.avatarUrl!,
+          ? CachedNetworkImage(
+              imageUrl: item.avatarUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => _initialsWidget(colorScheme),
+              width: 46,
+              height: 46,
+              placeholder: (_, _) => Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: colorScheme.primary.withValues(alpha: 0.4),
+                  ),
+                ),
+              ),
+              errorWidget: (_, _, _) => _initialsWidget(colorScheme),
             )
           : _initialsWidget(colorScheme),
     );

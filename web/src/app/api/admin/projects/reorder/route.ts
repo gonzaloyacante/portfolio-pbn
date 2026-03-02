@@ -12,20 +12,24 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { reorderSchema } from '@/lib/validations'
 
 export async function POST(req: Request) {
   const auth = await withAdminJwt(req)
   if (!auth.ok) return auth.response
 
   try {
-    const { items } = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = reorderSchema.safeParse(body)
 
-    if (!Array.isArray(items) || items.length === 0) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'items debe ser un array no vacío' },
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
         { status: 400 }
       )
     }
+
+    const { items } = parsed.data
 
     await prisma.$transaction(
       items.map(({ id, sortOrder }: { id: string; sortOrder: number }) =>

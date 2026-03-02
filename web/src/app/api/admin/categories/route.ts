@@ -11,6 +11,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { categoryApiSchema } from '@/lib/validations'
 
 const CATEGORY_SELECT = {
   id: true,
@@ -93,15 +94,17 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
-    const { name, slug, description, thumbnailUrl, iconName, color, isActive = true } = body
+    const body = await req.json().catch(() => null)
+    const parsed = categoryApiSchema.safeParse(body)
 
-    if (!name || !slug) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Campos requeridos: name, slug' },
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
         { status: 400 }
       )
     }
+
+    const { name, slug, description, thumbnailUrl, iconName, color, isActive = true } = parsed.data
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)

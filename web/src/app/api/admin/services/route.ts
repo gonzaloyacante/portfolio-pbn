@@ -11,6 +11,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { serviceApiSchema } from '@/lib/validations'
 
 const SERVICE_SELECT = {
   id: true,
@@ -101,7 +102,16 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = serviceApiSchema.safeParse(body)
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
+
     const {
       name,
       slug,
@@ -116,14 +126,7 @@ export async function POST(req: Request) {
       color,
       isActive = true,
       isFeatured = false,
-    } = body
-
-    if (!name || !slug) {
-      return NextResponse.json(
-        { success: false, error: 'Campos requeridos: name, slug' },
-        { status: 400 }
-      )
-    }
+    } = parsed.data as typeof parsed.data & { priceLabel?: string; currency?: string }
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     const existing = await prisma.service.findFirst({ where: { slug } })
@@ -144,7 +147,7 @@ export async function POST(req: Request) {
         slug,
         description,
         shortDesc,
-        price: price ? parseFloat(price) : null,
+        price: price ?? null,
         priceLabel,
         currency,
         duration,
