@@ -204,12 +204,55 @@ class NotificationHandler {
     final type = data['type'] as String?;
 
     // ── Caso especial: actualización in-app ───────────────────────────────
-    // Para app_update no mostramos notificación del sistema en foreground:
-    // mostramos el diálogo directamente en la UI.
+    // Para app_update mostramos PRIMERO la notificación del sistema en foreground
+    // (banner/sonido) y luego el diálogo en la UI, para que el usuario vea ambos.
     if (type == 'app_update') {
       AppLogger.info(
-        'NotificationHandler[fg]: mensaje app_update recibido → mostrando diálogo',
+        'NotificationHandler[fg]: mensaje app_update recibido → notificación + diálogo',
       );
+      final updateTitle = notification.title ?? 'Nueva versión disponible';
+      final updateBody = notification.body ?? '';
+      final updatePayload = jsonEncode({
+        'screen': data['screen'],
+        'id': data['id'],
+        'type': type,
+      });
+      _localNotif
+          .show(
+            id: message.hashCode & 0x7FFFFFFF,
+            title: updateTitle,
+            body: updateBody,
+            notificationDetails: NotificationDetails(
+              android: AndroidNotificationDetails(
+                _kChannelId,
+                _kChannelName,
+                channelDescription: _kChannelDesc,
+                importance: Importance.max,
+                priority: Priority.high,
+                showWhen: true,
+                enableVibration: true,
+                playSound: true,
+                icon: '@mipmap/ic_launcher',
+                styleInformation: BigTextStyleInformation(
+                  updateBody,
+                  contentTitle: updateTitle,
+                ),
+              ),
+              iOS: const DarwinNotificationDetails(
+                presentAlert: true,
+                presentBadge: true,
+                presentSound: true,
+              ),
+            ),
+            payload: updatePayload,
+          )
+          .catchError(
+            (Object e) => AppLogger.error(
+              'NotificationHandler: error al mostrar notificación app_update',
+              e,
+            ),
+          );
+      // También mostrar el diálogo directamente en la UI
       _handleAppUpdateData(data);
       return;
     }
