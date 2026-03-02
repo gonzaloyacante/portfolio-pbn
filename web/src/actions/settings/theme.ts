@@ -286,6 +286,9 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
  * Reset theme to defaults
  */
 export async function resetThemeToDefaults() {
+  const user = await requireAdmin()
+  await checkSettingsRateLimit(user.id)
+
   try {
     // Delete existing standard theme settings
     await prisma.themeSettings.deleteMany({ where: { isActive: true } })

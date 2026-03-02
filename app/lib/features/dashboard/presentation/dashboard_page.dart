@@ -453,7 +453,7 @@ class _DeviceUsageSection extends StatelessWidget {
                   Text(
                     '${entry.value} visitas',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -502,7 +502,9 @@ class _TopRankingSection extends StatelessWidget {
                     child: Text(
                       '$rank',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.4),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.4,
+                        ),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -538,7 +540,7 @@ class _TopRankingSection extends StatelessWidget {
                             value: progress,
                             minHeight: 4,
                             backgroundColor: theme.colorScheme.primary
-                                .withOpacity(0.12),
+                                .withValues(alpha: 0.12),
                             valueColor: AlwaysStoppedAnimation<Color>(
                               theme.colorScheme.primary,
                             ),

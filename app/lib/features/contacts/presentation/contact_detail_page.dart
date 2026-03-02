@@ -122,7 +122,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                                 decoration: BoxDecoration(
                                   color: Theme.of(
                                     context,
-                                  ).colorScheme.primary.withOpacity(0.12),
+                                  ).colorScheme.primary.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Center(
@@ -206,10 +206,14 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant.withOpacity(0.03),
+                      color: theme.colorScheme.surfaceVariant.withValues(
+                        alpha: 0.03,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: theme.colorScheme.outline.withOpacity(0.06),
+                        color: theme.colorScheme.outline.withValues(
+                          alpha: 0.06,
+                        ),
                       ),
                     ),
                     padding: const EdgeInsets.all(16),

@@ -226,7 +226,7 @@ class _ContactTile extends StatelessWidget {
       margin: EdgeInsets.zero,
       elevation: unread ? 2 : 0,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
-      color: unread ? scheme.surfaceVariant.withOpacity(0.03) : null,
+      color: unread ? scheme.surfaceVariant.withValues(alpha: 0.03) : null,
       child: InkWell(
         borderRadius: AppRadius.forTile,
         onTap: () => context.pushNamed(

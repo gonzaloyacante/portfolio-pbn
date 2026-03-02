@@ -19,6 +19,7 @@ abstract final class AppRadius {
   static const double lg = 16;
   static const double xl = 20;
   static const double xxl = 28;
+  static const double xxxl = 40;
   static const double full = 50;
 
   // ── Semánticos ───────────────────────────────────────────────────────────
@@ -28,8 +29,8 @@ abstract final class AppRadius {
   /// Tiles de lista y contenedores pequeños.
   static const double tile = lg;
 
-  /// Tarjetas estándar.
-  static const double card = xl;
+  /// Tarjetas estándar (= rounded-[2.5rem] de la web).
+  static const double card = xxxl;
 
   /// Diálogos y bottom sheets.
   static const double dialog = xxl;

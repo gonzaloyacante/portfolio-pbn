@@ -6,6 +6,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { z } from 'zod'
 import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { ROUTES } from '@/config/routes'
 
 // Validation Schema
@@ -24,8 +25,9 @@ const updateGalleryOrderSchema = z.object({
  */
 export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGalleryOrderSchema>) {
   try {
-    // Security: Require admin
+    // Security: Require admin + rate limit
     await requireAdmin()
+    await checkApiRateLimit()
 
     // Validate input
     const validated = updateGalleryOrderSchema.parse(input)
@@ -72,8 +74,9 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
  */
 export async function resetCategoryGalleryOrder(categoryId: string) {
   try {
-    // Security: Require admin
+    // Security: Require admin + rate limit
     await requireAdmin()
+    await checkApiRateLimit()
 
     // Verify category exists
     const category = await prisma.category.findUnique({

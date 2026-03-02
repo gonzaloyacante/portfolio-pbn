@@ -6,9 +6,11 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 export async function deleteCategoryAction(categoryId: string): Promise<void> {
   await requireAdmin()
+  await checkApiRateLimit()
   await deleteCategory(categoryId)
   revalidatePath(ROUTES.admin.categories)
   // _revalidatePublicContent ya fue llamado dentro de deleteCategory
@@ -16,6 +18,7 @@ export async function deleteCategoryAction(categoryId: string): Promise<void> {
 
 export async function reorderCategories(categoryIds: string[]): Promise<void> {
   await requireAdmin()
+  await checkApiRateLimit()
   await Promise.all(
     categoryIds.map((id, index) =>
       prisma.category.update({

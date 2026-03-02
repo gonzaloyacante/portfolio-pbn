@@ -105,7 +105,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
       final db = ref.read(appDatabaseProvider);
       await db.close();
       final dbDir = await getApplicationDocumentsDirectory();
-      final dbFile = File('${dbDir.path}/pbn_admin.db');
+      final dbFile = File('${dbDir.path}/portfolio_pbn.db');
       if (dbFile.existsSync()) {
         await dbFile.delete();
         AppLogger.warn('[Debug] Base de datos local eliminada');
@@ -245,6 +245,8 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                     onClearCache: _clearCache,
                     onClearDatabase: _clearDatabase,
                     onOpenLogs: () {
+                      // Navigator.push used intentionally — debug-only page
+                      // not registered in GoRouter (excluded from production).
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => const DebugLogPage(),

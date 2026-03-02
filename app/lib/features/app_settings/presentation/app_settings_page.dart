@@ -236,6 +236,8 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                     Icons.chevron_right,
                     color: colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
+                  // Navigator.push used intentionally — debug-only page
+                  // not registered in GoRouter (excluded from production).
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => const DebugLogPage(),

@@ -322,7 +322,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
             Text('Moderación', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              initialValue: _status,
+              value: _status,
               decoration: const InputDecoration(labelText: 'Estado'),
               items: const [
                 DropdownMenuItem(value: 'PENDING', child: Text('Pendiente')),

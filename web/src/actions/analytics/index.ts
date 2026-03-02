@@ -3,6 +3,7 @@
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { headers } from 'next/headers'
+import { requireAdmin } from '@/lib/security-server'
 
 // -----------------------------------------------
 // Types
@@ -184,6 +185,8 @@ export async function recordAnalyticEvent(
 // Dashboard Data (7-day summary) — all queries in parallel
 // -----------------------------------------------
 export async function getAnalyticsDashboardData() {
+  await requireAdmin()
+
   try {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
@@ -300,6 +303,8 @@ export async function getAnalyticsDashboardData() {
 // Extended Analytics (for world map + vitals)
 // -----------------------------------------------
 export async function getExtendedAnalyticsData(days = 30) {
+  await requireAdmin()
+
   try {
     const since = new Date()
     since.setDate(since.getDate() - days)
