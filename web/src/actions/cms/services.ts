@@ -369,12 +369,18 @@ export async function deleteService(id: string) {
   await checkApiRateLimit()
 
   try {
-    await prisma.service.delete({ where: { id } })
+    // Soft delete: marcar como eliminado y liberar slug único para reutilización
+    const svc = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = svc ? `${svc.slug}_deleted_${Date.now()}` : undefined
+    await prisma.service.update({
+      where: { id },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
+    })
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
-    logger.info(`Service deleted: ${id}`)
+    logger.info(`Service soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
     logger.error('Error deleting service:', { error })

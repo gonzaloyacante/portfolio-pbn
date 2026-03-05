@@ -98,9 +98,8 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
                 ? Icons.view_list_rounded
                 : Icons.grid_view_rounded,
           ),
-          tooltip: viewMode == ViewMode.grid
-              ? 'Vista lista'
-              : 'Vista cuadrícula',
+          tooltip:
+              viewMode == ViewMode.grid ? 'Vista lista' : 'Vista cuadrícula',
           onPressed: () => ref.read(projectsViewModeProvider.notifier).toggle(),
         ),
         IconButton(
@@ -401,34 +400,34 @@ class _ProjectTile extends StatelessWidget {
                   width: 90,
                   child:
                       item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: item.thumbnailUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (_, _) => Container(
-                            color: scheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.image_outlined,
-                              color: scheme.outlineVariant,
-                              size: 28,
+                          ? CachedNetworkImage(
+                              imageUrl: item.thumbnailUrl!,
+                              fit: BoxFit.cover,
+                              placeholder: (_, _) => Container(
+                                color: scheme.surfaceContainerHighest,
+                                child: Icon(
+                                  Icons.image_outlined,
+                                  color: scheme.outlineVariant,
+                                  size: 28,
+                                ),
+                              ),
+                              errorWidget: (_, _, _) => Container(
+                                color: scheme.surfaceContainerHighest,
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  color: scheme.outlineVariant,
+                                  size: 28,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              color: scheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.photo_library_outlined,
+                                color: scheme.outlineVariant,
+                                size: 28,
+                              ),
                             ),
-                          ),
-                          errorWidget: (_, _, _) => Container(
-                            color: scheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              color: scheme.outlineVariant,
-                              size: 28,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.photo_library_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
-                        ),
                 ),
                 // Info
                 Expanded(

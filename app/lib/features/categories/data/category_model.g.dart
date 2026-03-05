@@ -52,8 +52,7 @@ _CategoryDetail _$CategoryDetailFromJson(Map<String, dynamic> json) =>
       color: json['color'] as String?,
       metaTitle: json['metaTitle'] as String?,
       metaDescription: json['metaDescription'] as String?,
-      metaKeywords:
-          (json['metaKeywords'] as List<dynamic>?)
+      metaKeywords: (json['metaKeywords'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],

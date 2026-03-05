@@ -11,6 +11,7 @@ import CategoriesContent from './CategoriesContent'
 export default async function CategoriesPage() {
   const [categories, settings] = await Promise.all([
     prisma.category.findMany({
+      where: { deletedAt: null },
       include: {
         projects: {
           where: { isActive: true, isDeleted: false },
@@ -68,7 +69,7 @@ export default async function CategoriesPage() {
               },
             ]}
           />
-          <Link href={`${ROUTES.admin.categories}/new`}>
+          <Link href={ROUTES.admin.newCategory}>
             <Button className="gap-2">
               <Plus size={16} />
               Nueva Categoría

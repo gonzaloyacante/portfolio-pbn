@@ -23,7 +23,9 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
       },
     }),
     prisma.category.findMany({
+      where: { isActive: true, deletedAt: null },
       orderBy: { name: 'asc' },
+      select: { id: true, name: true, slug: true },
     }),
   ])
 

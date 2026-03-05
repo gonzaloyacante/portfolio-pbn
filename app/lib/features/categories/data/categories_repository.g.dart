@@ -12,24 +12,20 @@ part of 'categories_repository.dart';
 @ProviderFor(categoriesRepository)
 final categoriesRepositoryProvider = CategoriesRepositoryProvider._();
 
-final class CategoriesRepositoryProvider
-    extends
-        $FunctionalProvider<
-          CategoriesRepository,
-          CategoriesRepository,
-          CategoriesRepository
-        >
-    with $Provider<CategoriesRepository> {
+final class CategoriesRepositoryProvider extends $FunctionalProvider<
+    CategoriesRepository,
+    CategoriesRepository,
+    CategoriesRepository> with $Provider<CategoriesRepository> {
   CategoriesRepositoryProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'categoriesRepositoryProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+      : super(
+          from: null,
+          argument: null,
+          retry: null,
+          name: r'categoriesRepositoryProvider',
+          isAutoDispose: false,
+          dependencies: null,
+          $allTransitiveDependencies: null,
+        );
 
   @override
   String debugGetCreateSourceHash() => _$categoriesRepositoryHash();
@@ -38,7 +34,8 @@ final class CategoriesRepositoryProvider
   @override
   $ProviderElement<CategoriesRepository> $createElement(
     $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
+  ) =>
+      $ProviderElement(pointer);
 
   @override
   CategoriesRepository create(Ref ref) {

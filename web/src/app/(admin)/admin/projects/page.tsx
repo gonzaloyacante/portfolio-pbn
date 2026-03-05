@@ -18,6 +18,7 @@ export default async function ProjectsManagementPage() {
       orderBy: { sortOrder: 'asc' }, // Prioritize manual order
     }),
     prisma.category.findMany({
+      where: { deletedAt: null, isActive: true },
       orderBy: { name: 'asc' },
       select: { id: true, name: true },
     }),
@@ -54,7 +55,7 @@ export default async function ProjectsManagementPage() {
           ]}
         />
 
-        <Link href={`${ROUTES.admin.projects}/nuevo`}>
+        <Link href={ROUTES.admin.newProject}>
           <Button size="lg" className="shadow-lg transition-transform hover:scale-105">
             ✨ Crear Nuevo Proyecto
           </Button>

@@ -54,6 +54,16 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   // Galería de imágenes
   List<ProjectImage> _existingImages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Para proyectos nuevos, la fecha por defecto es hoy
+    if (!widget.isEditing) {
+      _data.date = DateTime.now();
+    }
+  }
+
   final List<File> _pendingNewImages = [];
   final Set<String> _removedImageIds = {};
 
@@ -271,6 +281,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         _excerptField(),
         const SizedBox(height: 12),
         _clientDurationRow(),
+        const SizedBox(height: 12),
+        _dateField(),
         const SizedBox(height: 16),
         _featuredPinnedRow(),
         const SizedBox(height: 20),
@@ -314,6 +326,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
                   _categoryField(),
                   const SizedBox(height: 12),
                   _clientDurationRow(),
+                  const SizedBox(height: 12),
+                  _dateField(),
                   const SizedBox(height: 16),
                   _featuredPinnedRow(),
                 ],
@@ -332,86 +346,147 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   // ── Campos individuales ───────────────────────────────────────────────────
 
   Widget _imageField() => _ImageField(
-    label: 'Imagen de portada',
-    currentImageUrl: _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
-    onImageSelected: (file) => setState(() => _pendingCoverImage = file),
-  );
+        label: 'Imagen de portada',
+        currentImageUrl:
+            _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
+        onImageSelected: (file) => setState(() => _pendingCoverImage = file),
+      );
 
   Widget _titleField() => TextFormField(
-    initialValue: _data.title,
-    decoration: const InputDecoration(
-      labelText: 'Título *',
-      helperText: 'Nombre del proyecto en el portfolio',
-    ),
-    textInputAction: TextInputAction.next,
-    onChanged: _autoSlug,
-    onSaved: (v) => _data.title = v?.trim() ?? '',
-    validator: (v) =>
-        (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
-  );
+        initialValue: _data.title,
+        decoration: const InputDecoration(
+          labelText: 'Título *',
+          helperText: 'Nombre del proyecto en el portfolio',
+        ),
+        textInputAction: TextInputAction.next,
+        onChanged: _autoSlug,
+        onSaved: (v) => _data.title = v?.trim() ?? '',
+        validator: (v) =>
+            (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
+      );
 
   Widget _descriptionField() => TextFormField(
-    initialValue: _data.description,
-    maxLines: 5,
-    decoration: const InputDecoration(
-      labelText: 'Descripción *',
-      alignLabelWithHint: true,
-      helperText: 'Texto completo visible en la página del proyecto',
-    ),
-    onSaved: (v) => _data.description = v?.trim() ?? '',
-    validator: (v) =>
-        (v == null || v.trim().isEmpty) ? 'La descripción es requerida' : null,
-  );
+        initialValue: _data.description,
+        maxLines: 5,
+        decoration: const InputDecoration(
+          labelText: 'Descripción *',
+          alignLabelWithHint: true,
+          helperText: 'Texto completo visible en la página del proyecto',
+        ),
+        onSaved: (v) => _data.description = v?.trim() ?? '',
+        validator: (v) => (v == null || v.trim().isEmpty)
+            ? 'La descripción es requerida'
+            : null,
+      );
 
   Widget _excerptField() => TextFormField(
-    initialValue: _data.excerpt,
-    maxLines: 2,
-    decoration: const InputDecoration(
-      labelText: 'Extracto (opcional)',
-      alignLabelWithHint: true,
-      helperText: 'Resumen corto para listados y tarjetas',
-    ),
-    onSaved: (v) =>
-        _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-  );
+        initialValue: _data.excerpt,
+        maxLines: 2,
+        decoration: const InputDecoration(
+          labelText: 'Extracto (opcional)',
+          alignLabelWithHint: true,
+          helperText: 'Resumen corto para listados y tarjetas',
+        ),
+        onSaved: (v) =>
+            _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+      );
 
   Widget _clientDurationRow() => Row(
-    children: [
-      Expanded(
-        child: TextFormField(
-          initialValue: _data.client,
-          decoration: const InputDecoration(labelText: 'Cliente'),
-          textInputAction: TextInputAction.next,
-          onSaved: (v) =>
-              _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-        ),
-      ),
-      const SizedBox(width: 12),
-      Expanded(
-        child: TextFormField(
-          initialValue: _data.duration,
-          decoration: const InputDecoration(
-            labelText: 'Duración',
-            hintText: '2 semanas',
+        children: [
+          Expanded(
+            child: TextFormField(
+              initialValue: _data.client,
+              decoration: const InputDecoration(labelText: 'Cliente'),
+              textInputAction: TextInputAction.next,
+              onSaved: (v) =>
+                  _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+            ),
           ),
-          textInputAction: TextInputAction.next,
-          onSaved: (v) =>
-              _data.duration = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-        ),
-      ),
-    ],
-  );
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextFormField(
+              initialValue: _data.duration,
+              decoration: const InputDecoration(
+                labelText: 'Duración',
+                hintText: '2 semanas',
+              ),
+              textInputAction: TextInputAction.next,
+              onSaved: (v) => _data.duration =
+                  (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+            ),
+          ),
+        ],
+      );
+
+  Widget _dateField() => Builder(
+        builder: (context) {
+          final d = _data.date ?? DateTime.now();
+          final label =
+              '${d.day.toString().padLeft(2, '0')} / ${d.month.toString().padLeft(2, '0')} / ${d.year}';
+          return InkWell(
+            onTap: () async {
+              final picked = await showDatePicker(
+                context: context,
+                initialDate: _data.date ?? DateTime.now(),
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+              );
+              if (picked != null) setState(() => _data.date = picked);
+            },
+            borderRadius: BorderRadius.circular(4),
+            child: InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'Fecha del proyecto',
+                helperText: 'Fecha en que se realizó el trabajo',
+                suffixIcon: Icon(Icons.calendar_today_outlined, size: 20),
+              ),
+              child: Text(label),
+            ),
+          );
+        },
+      );
 
   Widget _categoryField() {
     final categoriesAsync = ref.watch(categoriesListProvider());
     return categoriesAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (_, _) => const Text('Error cargando categorías'),
+      error: (_, _) => const Text('Error cargando categórías'),
       data: (paginated) {
         final categories = paginated.data;
+        if (categories.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context)
+                  .colorScheme
+                  .errorContainer
+                  .withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color:
+                    Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text(
+                    'No hay categorías disponibles. Crea una en la sección de Categorías antes de crear un proyecto.',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
         return DropdownButtonFormField<String>(
-          value:
-              _data.categoryId.isNotEmpty &&
+          value: _data.categoryId.isNotEmpty &&
                   categories.any((c) => c.id == _data.categoryId)
               ? _data.categoryId
               : null,
@@ -446,23 +521,23 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   Widget _featuredPinnedRow() => Column(
-    children: [
-      SwitchListTile(
-        title: const Text('Destacado'),
-        subtitle: const Text('Aparece en galería principal'),
-        value: _data.isFeatured,
-        onChanged: (v) => setState(() => _data.isFeatured = v),
-        contentPadding: EdgeInsets.zero,
-      ),
-      SwitchListTile(
-        title: const Text('Fijado'),
-        subtitle: const Text('Siempre al inicio'),
-        value: _data.isPinned,
-        onChanged: (v) => setState(() => _data.isPinned = v),
-        contentPadding: EdgeInsets.zero,
-      ),
-    ],
-  );
+        children: [
+          SwitchListTile(
+            title: const Text('Destacado'),
+            subtitle: const Text('Aparece en galería principal'),
+            value: _data.isFeatured,
+            onChanged: (v) => setState(() => _data.isFeatured = v),
+            contentPadding: EdgeInsets.zero,
+          ),
+          SwitchListTile(
+            title: const Text('Fijado'),
+            subtitle: const Text('Siempre al inicio'),
+            value: _data.isPinned,
+            onChanged: (v) => setState(() => _data.isPinned = v),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ],
+      );
 
   Widget _gallerySection() {
     final theme = Theme.of(context);
@@ -530,14 +605,14 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   Widget _submitButton() => SizedBox(
-    width: double.infinity,
-    child: FilledButton.icon(
-      onPressed: _isLoading ? null : _submit,
-      icon: Icon(widget.isEditing ? Icons.save_rounded : Icons.add_rounded),
-      label: Text(widget.isEditing ? 'Guardar cambios' : 'Crear proyecto'),
-      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-    ),
-  );
+        width: double.infinity,
+        child: FilledButton.icon(
+          onPressed: _isLoading ? null : _submit,
+          icon: Icon(widget.isEditing ? Icons.save_rounded : Icons.add_rounded),
+          label: Text(widget.isEditing ? 'Guardar cambios' : 'Crear proyecto'),
+          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+        ),
+      );
 }
 
 // ── Widgets auxiliares ────────────────────────────────────────────────────────
@@ -574,12 +649,12 @@ class _InlineError extends StatelessWidget {
 /// Miniatura de galería (red o archivo local) con botón de eliminar.
 class _GalleryThumb extends StatelessWidget {
   const _GalleryThumb.network({required String url, required this.onRemove})
-    : _url = url,
-      _file = null;
+      : _url = url,
+        _file = null;
 
   const _GalleryThumb.file({required File file, required this.onRemove})
-    : _url = null,
-      _file = file;
+      : _url = null,
+        _file = file;
 
   final String? _url;
   final File? _file;

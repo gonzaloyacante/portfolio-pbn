@@ -150,7 +150,7 @@ const nextConfig: NextConfig = {
 
       // Testimonios
       { source: '/admin/testimonios', destination: '/admin/testimonials' },
-      // (Si tuvieras /new o /edit, agregarlos aquí)
+      { source: '/admin/testimonios/:id/editar', destination: '/admin/testimonials/:id/edit' },
 
       // Contactos (Mensajes)
       { source: '/admin/contactos', destination: '/admin/contacts' },

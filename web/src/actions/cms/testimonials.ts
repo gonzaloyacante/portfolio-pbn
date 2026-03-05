@@ -213,13 +213,16 @@ export async function deleteTestimonial(id: string) {
   await checkApiRateLimit()
 
   try {
-    await prisma.testimonial.delete({ where: { id } })
+    await prisma.testimonial.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    })
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about, 'layout')
     revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
-    logger.info(`Testimonial deleted: ${id}`)
+    logger.info(`Testimonial soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
     logger.error('Error deleting testimonial:', { error })

@@ -4,9 +4,9 @@ import TestimonialEditForm from '@/components/features/testimonials/TestimonialE
 import { Section } from '@/components/layout'
 
 interface EditTestimonialPageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditTestimonialPage({ params }: EditTestimonialPageProps) {

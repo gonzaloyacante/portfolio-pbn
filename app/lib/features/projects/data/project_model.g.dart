@@ -89,11 +89,10 @@ _ProjectDetail _$ProjectDetailFromJson(Map<String, dynamic> json) =>
       location: json['location'] as String?,
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-          const [],
+              const [],
       metaTitle: json['metaTitle'] as String?,
       metaDescription: json['metaDescription'] as String?,
-      metaKeywords:
-          (json['metaKeywords'] as List<dynamic>?)
+      metaKeywords: (json['metaKeywords'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
@@ -111,8 +110,7 @@ _ProjectDetail _$ProjectDetailFromJson(Map<String, dynamic> json) =>
       category: ProjectCategory.fromJson(
         json['category'] as Map<String, dynamic>,
       ),
-      images:
-          (json['images'] as List<dynamic>?)
+      images: (json['images'] as List<dynamic>?)
               ?.map((e) => ProjectImage.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],

@@ -130,18 +130,22 @@ export async function POST(req: Request) {
       isPinned = false,
     } = parsed.data
 
-    // Generar slug a partir del title
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-
-    if (!title || !description || !thumbnailUrl || !categoryId || !date) {
+    // Validar campos requeridos (thumbnailUrl puede ser vacío y será añadido luego)
+    if (!title || !categoryId) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Campos requeridos: title, description, thumbnailUrl, categoryId, date',
-        },
+        { success: false, error: 'Campos requeridos: title, categoryId' },
         { status: 400 }
       )
     }
+
+    // Generar slug a partir del title
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+
+    // Date: usar la provista o default a hoy
+    const resolvedDate = date ?? new Date().toISOString()
 
     const existing = await prisma.project.findUnique({ where: { slug } })
     if (existing) {
@@ -160,11 +164,11 @@ export async function POST(req: Request) {
       data: {
         title,
         slug,
-        description,
+        description: description ?? '',
         excerpt,
-        thumbnailUrl,
+        thumbnailUrl: thumbnailUrl ?? '',
         videoUrl,
-        date: new Date(date),
+        date: new Date(resolvedDate),
         duration,
         client,
         location,

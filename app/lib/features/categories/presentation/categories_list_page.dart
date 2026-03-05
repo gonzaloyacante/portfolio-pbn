@@ -20,6 +20,8 @@ import '../../../shared/widgets/status_badge.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
+import '../../settings/data/settings_model.dart';
+import '../../settings/providers/settings_provider.dart';
 
 class CategoriesListPage extends ConsumerStatefulWidget {
   const CategoriesListPage({super.key});
@@ -74,6 +76,30 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
     }
   }
 
+  Future<void> _showSettingsDialog(BuildContext context) async {
+    CategoryDisplaySettings current;
+    try {
+      current = await ref.read(categoryDisplaySettingsProvider.future);
+    } catch (_) {
+      current = const CategoryDisplaySettings();
+    }
+    if (!context.mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (ctx) => _CategorySettingsDialog(
+        initial: current,
+        onSave: (updated) async {
+          await ref.read(settingsRepositoryProvider).updateCategorySettings({
+            'showDescription': updated.showDescription,
+            'showProjectCount': updated.showProjectCount,
+            'gridColumns': updated.gridColumns,
+          });
+          ref.invalidate(categoryDisplaySettingsProvider);
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(
@@ -85,6 +111,11 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
     return AppScaffold(
       title: 'Categorías',
       actions: [
+        IconButton(
+          icon: const Icon(Icons.tune_rounded),
+          tooltip: 'Configurar visualización',
+          onPressed: () => _showSettingsDialog(context),
+        ),
         IconButton(
           icon: Icon(
             viewMode == ViewMode.grid
@@ -217,22 +248,22 @@ class _CategoryGridCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
-                  child:
-                      item.iconName != null && item.iconName!.runes.length <= 2
+                  child: item.iconName != null &&
+                          item.iconName!.runes.length <= 2
                       ? Text(
                           item.iconName!,
                           style: const TextStyle(fontSize: 28, height: 1.2),
                           textAlign: TextAlign.center,
                         )
                       : item.name.isNotEmpty
-                      ? Text(
-                          item.name[0].toUpperCase(),
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        )
-                      : Icon(Icons.category, color: color, size: 26),
+                          ? Text(
+                              item.name[0].toUpperCase(),
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                color: color,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          : Icon(Icons.category, color: color, size: 26),
                 ),
               ),
               const SizedBox(height: 10),
@@ -311,14 +342,14 @@ class _CategoryTile extends StatelessWidget {
                 child: Center(
                   child: item.iconName != null
                       ? item.iconName!.runes.length <= 2
-                            ? Text(
-                                item.iconName!,
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  height: 1.2,
-                                ),
-                                textAlign: TextAlign.center,
-                              )
-                            : Icon(Icons.category, color: color, size: 22)
+                          ? Text(
+                              item.iconName!,
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                height: 1.2,
+                              ),
+                              textAlign: TextAlign.center,
+                            )
+                          : Icon(Icons.category, color: color, size: 22)
                       : Text(
                           item.name.isNotEmpty
                               ? item.name[0].toUpperCase()
@@ -473,6 +504,123 @@ class _CategoriesSkeleton extends StatelessWidget {
           borderRadius: 12,
         ),
       ),
+    );
+  }
+}
+
+// ── Settings Dialog ───────────────────────────────────────────────────────────
+
+class _CategorySettingsDialog extends StatefulWidget {
+  const _CategorySettingsDialog({
+    required this.initial,
+    required this.onSave,
+  });
+
+  final CategoryDisplaySettings initial;
+  final Future<void> Function(CategoryDisplaySettings) onSave;
+
+  @override
+  State<_CategorySettingsDialog> createState() =>
+      _CategorySettingsDialogState();
+}
+
+class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
+  late bool _showDescription;
+  late bool _showProjectCount;
+  late int _gridColumns;
+  bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showDescription = widget.initial.showDescription;
+    _showProjectCount = widget.initial.showProjectCount;
+    _gridColumns = widget.initial.gridColumns;
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      await widget.onSave(
+        CategoryDisplaySettings(
+          showDescription: _showDescription,
+          showProjectCount: _showProjectCount,
+          gridColumns: _gridColumns,
+        ),
+      );
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudieron guardar los cambios')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Visualizaci\u00f3n de categor\u00edas'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SwitchListTile(
+            title: const Text('Mostrar descripci\u00f3n'),
+            subtitle:
+                const Text('Muestra el texto descriptivo en cada tarjeta'),
+            value: _showDescription,
+            onChanged: (v) => setState(() => _showDescription = v),
+          ),
+          SwitchListTile(
+            title: const Text('Mostrar cantidad de proyectos'),
+            subtitle:
+                const Text('N\u00famero de proyectos en cada categor\u00eda'),
+            value: _showProjectCount,
+            onChanged: (v) => setState(() => _showProjectCount = v),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Columnas en el grid',
+                  style: TextStyle(fontSize: 14),
+                ),
+              ),
+              DropdownButton<int>(
+                value: _gridColumns,
+                items: [1, 2, 3, 4, 5]
+                    .map(
+                      (n) => DropdownMenuItem(value: n, child: Text('$n')),
+                    )
+                    .toList(),
+                onChanged: (v) {
+                  if (v != null) setState(() => _gridColumns = v);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _saving ? null : () => Navigator.of(context).pop(),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          onPressed: _saving ? null : _save,
+          child: _saving
+              ? const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Guardar'),
+        ),
+      ],
     );
   }
 }

@@ -17,7 +17,7 @@ type ProjectWithRelations = Project & {
 
 interface ProjectEditFormProps {
   project: ProjectWithRelations
-  categories: Category[]
+  categories: Pick<Category, 'id' | 'name'>[]
 }
 
 export default function ProjectEditForm({ project, categories }: ProjectEditFormProps) {

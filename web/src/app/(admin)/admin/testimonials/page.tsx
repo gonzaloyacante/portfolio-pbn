@@ -4,9 +4,11 @@ import { Button, Card, Badge } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { Section } from '@/components/layout'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 export default async function TestimonialsPage() {
   const testimonials = await prisma.testimonial.findMany({
+    where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },
   })
 
@@ -102,7 +104,7 @@ export default async function TestimonialsPage() {
 
                 <div className="flex items-center gap-2 self-end md:self-start">
                   {/* Edit */}
-                  <Link href={`/admin/testimonials/${t.id}/edit`}>
+                  <Link href={ROUTES.admin.editTestimonial(t.id)}>
                     <Button
                       variant="outline"
                       size="sm"

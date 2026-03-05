@@ -7,8 +7,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/color_picker_field.dart';
-import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
@@ -71,9 +69,6 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   final _descriptionCtrl = TextEditingController();
   final _thumbnailCtrl = TextEditingController();
   File? _pendingThumbnail;
-  final _iconCtrl = TextEditingController();
-  final _colorCtrl = TextEditingController();
-  String? _selectedIcon;
 
   bool _isActive = true;
   bool _loading = false;
@@ -95,8 +90,6 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _slugCtrl.dispose();
     _descriptionCtrl.dispose();
     _thumbnailCtrl.dispose();
-    _iconCtrl.dispose();
-    _colorCtrl.dispose();
     super.dispose();
   }
 
@@ -107,11 +100,8 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _slugCtrl.text = detail.slug;
     _descriptionCtrl.text = detail.description ?? '';
     _thumbnailCtrl.text = detail.thumbnailUrl ?? '';
-    _iconCtrl.text = detail.iconName ?? '';
-    _colorCtrl.text = detail.color ?? '';
     setState(() {
       _isActive = detail.isActive;
-      _selectedIcon = detail.iconName;
     });
   }
 
@@ -143,8 +133,8 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
             ? null
             : _thumbnailCtrl.text.trim(),
-        iconName: (_selectedIcon?.isEmpty ?? true) ? null : _selectedIcon,
-        color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
+        iconName: null,
+        color: null,
         isActive: _isActive,
       );
 
@@ -222,29 +212,11 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               ),
               const SizedBox(height: 16),
 
-              // Ícono
-              EmojiIconPicker(
-                value: _selectedIcon,
-                onChanged: (v) => setState(() => _selectedIcon = v),
-                label: 'Ícono de la categoría',
-                hint: 'Toca para elegir un emoji',
-              ),
-              const SizedBox(height: 16),
-
-              // Color
-              ColorPickerField(
-                controller: _colorCtrl,
-                label: 'Color de marca',
-                helperText: 'Color identificativo de la categoría',
-              ),
-              const SizedBox(height: 16),
-
               // Thumbnail
               ImageUploadWidget(
                 label: 'Imagen de portada',
-                currentImageUrl: _thumbnailCtrl.text.isNotEmpty
-                    ? _thumbnailCtrl.text
-                    : null,
+                currentImageUrl:
+                    _thumbnailCtrl.text.isNotEmpty ? _thumbnailCtrl.text : null,
                 onImageSelected: (file) {
                   setState(() => _pendingThumbnail = file);
                 },

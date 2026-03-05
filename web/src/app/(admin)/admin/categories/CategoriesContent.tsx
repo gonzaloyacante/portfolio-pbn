@@ -95,7 +95,7 @@ export default function CategoriesContent({
                   Ver
                 </Button>
               </Link>
-              <Link href={`${ROUTES.admin.categories}/${category.id}/edit`} className="flex-1">
+              <Link href={ROUTES.admin.editCategory(category.id)} className="flex-1">
                 <Button size="sm" className="w-full gap-2">
                   <Pencil size={14} />
                   Editar
@@ -172,7 +172,7 @@ export default function CategoriesContent({
               <ExternalLink size={16} />
             </Button>
           </Link>
-          <Link href={`${ROUTES.admin.categories}/${category.id}/edit`}>
+          <Link href={ROUTES.admin.editCategory(category.id)}>
             <Button variant="ghost" size="sm" aria-label={`Editar categoría ${category.name}`}>
               <Pencil size={16} />
             </Button>
@@ -222,7 +222,7 @@ export default function CategoriesContent({
               <p className="text-muted-foreground mb-6">
                 Crea tu primera categoría para organizar tus proyectos
               </p>
-              <Link href={`${ROUTES.admin.categories}/new`}>
+              <Link href={ROUTES.admin.newCategory}>
                 <Button className="gap-2">
                   <Plus size={16} />
                   Nueva Categoría

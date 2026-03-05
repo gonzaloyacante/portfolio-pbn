@@ -436,16 +436,13 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   Widget _buildHeroPreview(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final title1 = _title1Ctrl.text.isNotEmpty
-        ? _title1Ctrl.text
-        : 'Título principal';
+    final title1 =
+        _title1Ctrl.text.isNotEmpty ? _title1Ctrl.text : 'Título principal';
     final title2 = _title2Ctrl.text.isNotEmpty ? _title2Ctrl.text : 'Subtítulo';
-    final owner = _ownerNameCtrl.text.isNotEmpty
-        ? _ownerNameCtrl.text
-        : 'Nombre artista';
-    final cta = _ctaTextCtrl.text.isNotEmpty
-        ? _ctaTextCtrl.text
-        : 'Ver proyectos';
+    final owner =
+        _ownerNameCtrl.text.isNotEmpty ? _ownerNameCtrl.text : 'Nombre artista';
+    final cta =
+        _ctaTextCtrl.text.isNotEmpty ? _ctaTextCtrl.text : 'Ver proyectos';
     final hasPending = _pendingHeroImage != null;
     final hasUrl = _heroImageCtrl.text.isNotEmpty;
 
@@ -463,9 +460,9 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
             Text(
               'Vista previa',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
           ],
         ),
@@ -595,9 +592,9 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         Text(
           'Se actualiza en tiempo real mientras editas',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurface.withAlpha(100),
-            fontStyle: FontStyle.italic,
-          ),
+                color: colorScheme.onSurface.withAlpha(100),
+                fontStyle: FontStyle.italic,
+              ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -673,9 +670,9 @@ class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
                     Text(
                       'Vista previa del Hero',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                     const Spacer(),
                     AnimatedRotation(

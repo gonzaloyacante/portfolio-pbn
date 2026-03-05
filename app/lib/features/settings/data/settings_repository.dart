@@ -95,6 +95,29 @@ class SettingsRepository {
     return HomeSettings.fromJson(resp['data'] as Map<String, dynamic>);
   }
 
+  // ── Category Display Settings ───────────────────────────────────────────────
+
+  Future<CategoryDisplaySettings> getCategorySettings() async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.settingsSection('category'),
+    );
+    return CategoryDisplaySettings.fromJson(
+      resp['data'] as Map<String, dynamic>,
+    );
+  }
+
+  Future<CategoryDisplaySettings> updateCategorySettings(
+    Map<String, dynamic> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.settingsSection('category'),
+      data: data,
+    );
+    return CategoryDisplaySettings.fromJson(
+      resp['data'] as Map<String, dynamic>,
+    );
+  }
+
   // ── Social Links ──────────────────────────────────────────────────────────
 
   Future<List<SocialLink>> getSocialLinks() async {

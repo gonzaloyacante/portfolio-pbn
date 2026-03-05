@@ -434,9 +434,9 @@ export async function deleteCategory(id: string) {
   await checkApiRateLimit()
 
   try {
-    // Verificar que no tenga proyectos antes de eliminar (evitar cascade destructivo)
+    // Verificar que no tenga proyectos activos antes de eliminar
     const projectCount = await prisma.project.count({
-      where: { categoryId: id },
+      where: { categoryId: id, isDeleted: false },
     })
     if (projectCount > 0) {
       return {
@@ -445,11 +445,17 @@ export async function deleteCategory(id: string) {
       }
     }
 
-    await prisma.category.delete({ where: { id } })
+    // Soft delete: marcar como eliminada y liberar slug único para reutilización
+    const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
+    await prisma.category.update({
+      where: { id },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
+    })
     _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     revalidatePath(ROUTES.admin.categories)
-    logger.info(`Category deleted: ${id}`)
+    logger.info(`Category soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
     logger.error('Error deleting category:', { error })
