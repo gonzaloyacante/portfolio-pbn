@@ -15,10 +15,13 @@ final projectsListProvider = ProjectsListFamily._();
 
 /// Lista paginada de proyectos con parámetros de filtro.
 
-final class ProjectsListProvider extends $FunctionalProvider<
-        AsyncValue<PaginatedResponse<ProjectListItem>>,
-        PaginatedResponse<ProjectListItem>,
-        FutureOr<PaginatedResponse<ProjectListItem>>>
+final class ProjectsListProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaginatedResponse<ProjectListItem>>,
+          PaginatedResponse<ProjectListItem>,
+          FutureOr<PaginatedResponse<ProjectListItem>>
+        >
     with
         $FutureModifier<PaginatedResponse<ProjectListItem>>,
         $FutureProvider<PaginatedResponse<ProjectListItem>> {
@@ -27,12 +30,12 @@ final class ProjectsListProvider extends $FunctionalProvider<
     required ProjectsListFamily super.from,
     required ({int page, String? search, String? categoryId}) super.argument,
   }) : super(
-          retry: null,
-          name: r'projectsListProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+         retry: null,
+         name: r'projectsListProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$projectsListHash();
@@ -48,8 +51,7 @@ final class ProjectsListProvider extends $FunctionalProvider<
   @override
   $FutureProviderElement<PaginatedResponse<ProjectListItem>> $createElement(
     $ProviderPointer pointer,
-  ) =>
-      $FutureProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<ProjectListItem>> create(Ref ref) {
@@ -80,16 +82,18 @@ String _$projectsListHash() => r'ae9f45d6d89a5d1be14ac07feced4ff7775377e8';
 
 final class ProjectsListFamily extends $Family
     with
-        $FunctionalFamilyOverride<FutureOr<PaginatedResponse<ProjectListItem>>,
-            ({int page, String? search, String? categoryId})> {
+        $FunctionalFamilyOverride<
+          FutureOr<PaginatedResponse<ProjectListItem>>,
+          ({int page, String? search, String? categoryId})
+        > {
   ProjectsListFamily._()
-      : super(
-          retry: null,
-          name: r'projectsListProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'projectsListProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Lista paginada de proyectos con parámetros de filtro.
 
@@ -97,11 +101,10 @@ final class ProjectsListFamily extends $Family
     int page = 1,
     String? search,
     String? categoryId,
-  }) =>
-      ProjectsListProvider._(
-        argument: (page: page, search: search, categoryId: categoryId),
-        from: this,
-      );
+  }) => ProjectsListProvider._(
+    argument: (page: page, search: search, categoryId: categoryId),
+    from: this,
+  );
 
   @override
   String toString() => r'projectsListProvider';
@@ -114,20 +117,25 @@ final projectDetailProvider = ProjectDetailFamily._();
 
 /// Detalle completo de un proyecto.
 
-final class ProjectDetailProvider extends $FunctionalProvider<
-        AsyncValue<ProjectDetail>, ProjectDetail, FutureOr<ProjectDetail>>
+final class ProjectDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ProjectDetail>,
+          ProjectDetail,
+          FutureOr<ProjectDetail>
+        >
     with $FutureModifier<ProjectDetail>, $FutureProvider<ProjectDetail> {
   /// Detalle completo de un proyecto.
   ProjectDetailProvider._({
     required ProjectDetailFamily super.from,
     required String super.argument,
   }) : super(
-          retry: null,
-          name: r'projectDetailProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+         retry: null,
+         name: r'projectDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$projectDetailHash();
@@ -143,8 +151,7 @@ final class ProjectDetailProvider extends $FunctionalProvider<
   @override
   $FutureProviderElement<ProjectDetail> $createElement(
     $ProviderPointer pointer,
-  ) =>
-      $FutureProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<ProjectDetail> create(Ref ref) {
@@ -170,13 +177,13 @@ String _$projectDetailHash() => r'a1e09389fe7f889b20c846ce7f46a81abe459ef5';
 final class ProjectDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<ProjectDetail>, String> {
   ProjectDetailFamily._()
-      : super(
-          retry: null,
-          name: r'projectDetailProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'projectDetailProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   /// Detalle completo de un proyecto.
 

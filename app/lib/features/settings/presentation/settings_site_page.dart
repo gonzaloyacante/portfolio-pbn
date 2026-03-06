@@ -215,8 +215,8 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                       Text(
                         'Visibilidad de páginas',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       SwitchListTile(
                         title: const Text('Sobre mí'),
@@ -269,9 +269,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                           const SizedBox(width: 8),
                           Text(
                             'Modo mantenimiento',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
+                            style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           const Spacer(),

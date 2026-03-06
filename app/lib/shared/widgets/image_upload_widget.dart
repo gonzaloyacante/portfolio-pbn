@@ -144,13 +144,15 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
 
     try {
       final picker = ImagePicker();
+      // imageQuality is intentionally omitted here: image_cropper will apply
+      // compressQuality (85) in its own pipeline, avoiding a double-compression
+      // step that can fail on HEIC / cloud-backed gallery images on Android.
       final picked = await picker.pickImage(
         source: source == ImagePickerSource.gallery
             ? ImageSource.gallery
             : ImageSource.camera,
         maxWidth: widget.maxWidth.toDouble(),
         maxHeight: widget.maxHeight.toDouble(),
-        imageQuality: AppConstants.imageQuality,
       );
 
       if (picked == null || !mounted) return;

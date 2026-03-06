@@ -17,11 +17,13 @@ _AboutSettings _$AboutSettingsFromJson(Map<String, dynamic> json) =>
       profileImageShape: json['profileImageShape'] as String?,
       illustrationUrl: json['illustrationUrl'] as String?,
       illustrationAlt: json['illustrationAlt'] as String?,
-      skills: (json['skills'] as List<dynamic>?)
+      skills:
+          (json['skills'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      certifications: (json['certifications'] as List<dynamic>?)
+      certifications:
+          (json['certifications'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           const [],
@@ -119,7 +121,8 @@ Map<String, dynamic> _$ThemeSettingsToJson(_ThemeSettings instance) =>
 _SiteSettings _$SiteSettingsFromJson(Map<String, dynamic> json) =>
     _SiteSettings(
       id: json['id'] as String?,
-      siteName: json['siteName'] as String? ??
+      siteName:
+          json['siteName'] as String? ??
           'Paola Bolívar Nievas - Make-up Artist',
       siteTagline: json['siteTagline'] as String?,
       logoUrl: json['logoUrl'] as String?,
@@ -197,39 +200,37 @@ Map<String, dynamic> _$HomeSettingsToJson(_HomeSettings instance) =>
 
 _CategoryDisplaySettings _$CategoryDisplaySettingsFromJson(
   Map<String, dynamic> json,
-) =>
-    _CategoryDisplaySettings(
-      id: json['id'] as String?,
-      showDescription: json['showDescription'] as bool? ?? true,
-      showProjectCount: json['showProjectCount'] as bool? ?? true,
-      gridColumns: (json['gridColumns'] as num?)?.toInt() ?? 4,
-    );
+) => _CategoryDisplaySettings(
+  id: json['id'] as String?,
+  showDescription: json['showDescription'] as bool? ?? true,
+  showProjectCount: json['showProjectCount'] as bool? ?? true,
+  gridColumns: (json['gridColumns'] as num?)?.toInt() ?? 4,
+);
 
 Map<String, dynamic> _$CategoryDisplaySettingsToJson(
   _CategoryDisplaySettings instance,
-) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'showDescription': instance.showDescription,
-      'showProjectCount': instance.showProjectCount,
-      'gridColumns': instance.gridColumns,
-    };
+) => <String, dynamic>{
+  'id': instance.id,
+  'showDescription': instance.showDescription,
+  'showProjectCount': instance.showProjectCount,
+  'gridColumns': instance.gridColumns,
+};
 
 _SocialLink _$SocialLinkFromJson(Map<String, dynamic> json) => _SocialLink(
-      id: json['id'] as String,
-      platform: json['platform'] as String,
-      url: json['url'] as String,
-      username: json['username'] as String?,
-      icon: json['icon'] as String?,
-      isActive: json['isActive'] as bool? ?? true,
-      sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
-      createdAt: json['createdAt'] == null
-          ? null
-          : DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
-    );
+  id: json['id'] as String,
+  platform: json['platform'] as String,
+  url: json['url'] as String,
+  username: json['username'] as String?,
+  icon: json['icon'] as String?,
+  isActive: json['isActive'] as bool? ?? true,
+  sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
+  createdAt: json['createdAt'] == null
+      ? null
+      : DateTime.parse(json['createdAt'] as String),
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String),
+);
 
 Map<String, dynamic> _$SocialLinkToJson(_SocialLink instance) =>
     <String, dynamic>{

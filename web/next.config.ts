@@ -147,6 +147,7 @@ const nextConfig: NextConfig = {
       { source: '/admin/categorias', destination: '/admin/categories' },
       { source: '/admin/categorias/nueva', destination: '/admin/categories/new' },
       { source: '/admin/categorias/:id/editar', destination: '/admin/categories/:id/edit' },
+      { source: '/admin/categorias/:id/galeria', destination: '/admin/categories/:id/gallery' },
 
       // Testimonios
       { source: '/admin/testimonios', destination: '/admin/testimonials' },

@@ -16,6 +16,7 @@ export const ROUTES = {
     categories: '/admin/categorias',
     newCategory: '/admin/categorias/nueva',
     editCategory: (id: string) => `/admin/categorias/${id}/editar` as const,
+    categoryGallery: (id: string) => `/admin/categorias/${id}/galeria` as const,
     services: '/admin/servicios',
     newService: '/admin/servicios/nuevo',
     testimonials: '/admin/testimonios',

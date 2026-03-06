@@ -8,7 +8,7 @@ import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
-import { Plus, ExternalLink, Pencil, Trash2 } from 'lucide-react'
+import { Plus, ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
 import type { Category } from '@/generated/prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
@@ -101,6 +101,12 @@ export default function CategoriesContent({
                   Editar
                 </Button>
               </Link>
+              <Link href={ROUTES.admin.categoryGallery(category.id)} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full gap-2">
+                  <Images size={14} />
+                  Galería
+                </Button>
+              </Link>
               <form action={deleteCategoryAction.bind(null, category.id)}>
                 <Button
                   variant="destructive"
@@ -175,6 +181,11 @@ export default function CategoriesContent({
           <Link href={ROUTES.admin.editCategory(category.id)}>
             <Button variant="ghost" size="sm" aria-label={`Editar categoría ${category.name}`}>
               <Pencil size={16} />
+            </Button>
+          </Link>
+          <Link href={ROUTES.admin.categoryGallery(category.id)}>
+            <Button variant="ghost" size="sm" aria-label={`Ver galería de ${category.name}`}>
+              <Images size={16} />
             </Button>
           </Link>
           <form action={deleteCategoryAction.bind(null, category.id)}>

@@ -41,12 +41,12 @@ class ProjectsRepository {
 
     final apiResponse =
         ApiResponse<PaginatedResponse<ProjectListItem>>.fromJson(
-      resp,
-      (json) => PaginatedResponse<ProjectListItem>.fromJson(
-        json as Map<String, dynamic>,
-        (item) => ProjectListItem.fromJson(item as Map<String, dynamic>),
-      ),
-    );
+          resp,
+          (json) => PaginatedResponse<ProjectListItem>.fromJson(
+            json as Map<String, dynamic>,
+            (item) => ProjectListItem.fromJson(item as Map<String, dynamic>),
+          ),
+        );
 
     if (!apiResponse.success || apiResponse.data == null) {
       throw Exception(apiResponse.error ?? 'Error al obtener proyectos');
@@ -123,8 +123,9 @@ class ProjectsRepository {
     final resp = await _client.post<Map<String, dynamic>>(
       Endpoints.projectsReorder,
       data: {
-        'items':
-            items.map((e) => {'id': e.id, 'sortOrder': e.sortOrder}).toList(),
+        'items': items
+            .map((e) => {'id': e.id, 'sortOrder': e.sortOrder})
+            .toList(),
       },
     );
     final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});

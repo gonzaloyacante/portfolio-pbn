@@ -81,12 +81,12 @@ class CategoryFormData {
   });
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'slug': slug,
-        if (description != null) 'description': description,
-        if (thumbnailUrl != null) 'thumbnailUrl': thumbnailUrl,
-        if (iconName != null) 'iconName': iconName,
-        if (color != null) 'color': color,
-        'isActive': isActive,
-      };
+    'name': name,
+    'slug': slug,
+    if (description != null) 'description': description,
+    if (thumbnailUrl != null) 'thumbnailUrl': thumbnailUrl,
+    if (iconName != null) 'iconName': iconName,
+    if (color != null) 'color': color,
+    'isActive': isActive,
+  };
 }

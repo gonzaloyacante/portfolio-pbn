@@ -79,18 +79,30 @@ export default async function CategoryProjectsPage({
 
   const showTitles = settings?.showCardTitles ?? true
 
-  // Flatten images for the gallery
-  const allImages = category.projects.flatMap((project) =>
-    project.images.map((img) => ({
-      id: img.id,
-      url: img.url,
-      alt: img.alt || project.title,
-      title: project.title,
-      projectSlug: project.slug,
-      width: img.width,
-      height: img.height,
-    }))
-  )
+  // Flatten images and sort globally by categoryGalleryOrder.
+  // Images with a manual cross-project order come first (ascending);
+  // the rest fall back to the per-project `order` field.
+  const allImages = category.projects
+    .flatMap((project) =>
+      project.images.map((img) => ({
+        id: img.id,
+        url: img.url,
+        alt: img.alt || project.title,
+        title: project.title,
+        projectSlug: project.slug,
+        width: img.width,
+        height: img.height,
+        _catOrder: img.categoryGalleryOrder,
+        _order: img.order,
+      }))
+    )
+    .sort((a, b) => {
+      if (a._catOrder != null && b._catOrder != null) return a._catOrder - b._catOrder
+      if (a._catOrder != null) return -1
+      if (b._catOrder != null) return 1
+      return (a._order ?? 0) - (b._order ?? 0)
+    })
+    .map(({ _catOrder: _c, _order: _o, ...img }) => img)
 
   return (
     <section className="bg-background w-full transition-colors duration-500">

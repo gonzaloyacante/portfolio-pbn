@@ -11,6 +11,7 @@ import '../../../core/api/upload_service.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -105,33 +106,40 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   // ── Image picker ─────────────────────────────────────────────────────────
 
   Future<void> _pickHeroImage() async {
-    final picker = ImagePicker();
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
+    try {
+      final picker = ImagePicker();
+      final primaryColor = Theme.of(context).colorScheme.primary;
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
 
-    final cropped = await ImageCropper().cropImage(
-      sourcePath: picked.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Recortar imagen hero',
-          toolbarColor: primaryColor,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
-        ),
-        IOSUiSettings(title: 'Recortar imagen hero'),
-      ],
-    );
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        compressQuality: 85,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Recortar imagen hero',
+            toolbarColor: primaryColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Recortar imagen hero'),
+        ],
+      );
 
-    if (cropped != null) {
-      setState(() {
-        _pendingHeroImage = File(cropped.path);
-        _heroImageCtrl.text = cropped.path;
-      });
+      if (cropped != null) {
+        setState(() {
+          _pendingHeroImage = File(cropped.path);
+          _heroImageCtrl.text = cropped.path;
+        });
+      }
+    } catch (e) {
+      AppLogger.error('SettingsHomePage: error picking hero image', e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+        );
+      }
     }
   }
 
@@ -436,13 +444,16 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   Widget _buildHeroPreview(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final title1 =
-        _title1Ctrl.text.isNotEmpty ? _title1Ctrl.text : 'Título principal';
+    final title1 = _title1Ctrl.text.isNotEmpty
+        ? _title1Ctrl.text
+        : 'Título principal';
     final title2 = _title2Ctrl.text.isNotEmpty ? _title2Ctrl.text : 'Subtítulo';
-    final owner =
-        _ownerNameCtrl.text.isNotEmpty ? _ownerNameCtrl.text : 'Nombre artista';
-    final cta =
-        _ctaTextCtrl.text.isNotEmpty ? _ctaTextCtrl.text : 'Ver proyectos';
+    final owner = _ownerNameCtrl.text.isNotEmpty
+        ? _ownerNameCtrl.text
+        : 'Nombre artista';
+    final cta = _ctaTextCtrl.text.isNotEmpty
+        ? _ctaTextCtrl.text
+        : 'Ver proyectos';
     final hasPending = _pendingHeroImage != null;
     final hasUrl = _heroImageCtrl.text.isNotEmpty;
 
@@ -460,9 +471,9 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
             Text(
               'Vista previa',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -592,9 +603,9 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         Text(
           'Se actualiza en tiempo real mientras editas',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurface.withAlpha(100),
-                fontStyle: FontStyle.italic,
-              ),
+            color: colorScheme.onSurface.withAlpha(100),
+            fontStyle: FontStyle.italic,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -670,9 +681,9 @@ class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
                     Text(
                       'Vista previa del Hero',
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const Spacer(),
                     AnimatedRotation(

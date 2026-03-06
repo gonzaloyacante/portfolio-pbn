@@ -12,10 +12,13 @@ part of 'categories_provider.dart';
 @ProviderFor(categoriesList)
 final categoriesListProvider = CategoriesListFamily._();
 
-final class CategoriesListProvider extends $FunctionalProvider<
-        AsyncValue<PaginatedResponse<CategoryItem>>,
-        PaginatedResponse<CategoryItem>,
-        FutureOr<PaginatedResponse<CategoryItem>>>
+final class CategoriesListProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<PaginatedResponse<CategoryItem>>,
+          PaginatedResponse<CategoryItem>,
+          FutureOr<PaginatedResponse<CategoryItem>>
+        >
     with
         $FutureModifier<PaginatedResponse<CategoryItem>>,
         $FutureProvider<PaginatedResponse<CategoryItem>> {
@@ -23,12 +26,12 @@ final class CategoriesListProvider extends $FunctionalProvider<
     required CategoriesListFamily super.from,
     required ({int page, String? search, bool? isActive}) super.argument,
   }) : super(
-          retry: null,
-          name: r'categoriesListProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+         retry: null,
+         name: r'categoriesListProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$categoriesListHash();
@@ -44,8 +47,7 @@ final class CategoriesListProvider extends $FunctionalProvider<
   @override
   $FutureProviderElement<PaginatedResponse<CategoryItem>> $createElement(
     $ProviderPointer pointer,
-  ) =>
-      $FutureProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<PaginatedResponse<CategoryItem>> create(Ref ref) {
@@ -74,16 +76,18 @@ String _$categoriesListHash() => r'98604930e606ad6531606b3b6282ecb3a8137860';
 
 final class CategoriesListFamily extends $Family
     with
-        $FunctionalFamilyOverride<FutureOr<PaginatedResponse<CategoryItem>>,
-            ({int page, String? search, bool? isActive})> {
+        $FunctionalFamilyOverride<
+          FutureOr<PaginatedResponse<CategoryItem>>,
+          ({int page, String? search, bool? isActive})
+        > {
   CategoriesListFamily._()
-      : super(
-          retry: null,
-          name: r'categoriesListProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'categoriesListProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   CategoriesListProvider call({int page = 1, String? search, bool? isActive}) =>
       CategoriesListProvider._(
@@ -98,19 +102,24 @@ final class CategoriesListFamily extends $Family
 @ProviderFor(categoryDetail)
 final categoryDetailProvider = CategoryDetailFamily._();
 
-final class CategoryDetailProvider extends $FunctionalProvider<
-        AsyncValue<CategoryDetail>, CategoryDetail, FutureOr<CategoryDetail>>
+final class CategoryDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<CategoryDetail>,
+          CategoryDetail,
+          FutureOr<CategoryDetail>
+        >
     with $FutureModifier<CategoryDetail>, $FutureProvider<CategoryDetail> {
   CategoryDetailProvider._({
     required CategoryDetailFamily super.from,
     required String super.argument,
   }) : super(
-          retry: null,
-          name: r'categoryDetailProvider',
-          isAutoDispose: true,
-          dependencies: null,
-          $allTransitiveDependencies: null,
-        );
+         retry: null,
+         name: r'categoryDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$categoryDetailHash();
@@ -126,8 +135,7 @@ final class CategoryDetailProvider extends $FunctionalProvider<
   @override
   $FutureProviderElement<CategoryDetail> $createElement(
     $ProviderPointer pointer,
-  ) =>
-      $FutureProviderElement(pointer);
+  ) => $FutureProviderElement(pointer);
 
   @override
   FutureOr<CategoryDetail> create(Ref ref) {
@@ -151,13 +159,13 @@ String _$categoryDetailHash() => r'0a492c1cae400a1f15eeec0a58d6195f9d1b845f';
 final class CategoryDetailFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<CategoryDetail>, String> {
   CategoryDetailFamily._()
-      : super(
-          retry: null,
-          name: r'categoryDetailProvider',
-          dependencies: null,
-          $allTransitiveDependencies: null,
-          isAutoDispose: true,
-        );
+    : super(
+        retry: null,
+        name: r'categoryDetailProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
   CategoryDetailProvider call(String id) =>
       CategoryDetailProvider._(argument: id, from: this);

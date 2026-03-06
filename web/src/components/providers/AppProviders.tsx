@@ -21,7 +21,7 @@ interface AppProvidersProps {
 export default function AppProviders({ children, themeValues }: AppProvidersProps) {
   return (
     <SessionProvider>
-      <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+      <NextThemesProvider attribute="class" defaultTheme="light" enableSystem={false}>
         <SWRConfig value={swrConfig}>
           <AnalyticsProvider>
             <CustomThemeProvider themeValues={themeValues}>

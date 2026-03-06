@@ -14,337 +14,417 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$PaginatedResponse<T> {
+  List<T> get data;
+  PaginationMeta get pagination;
 
- List<T> get data; PaginationMeta get pagination;
-/// Create a copy of PaginatedResponse
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$PaginatedResponseCopyWith<T, PaginatedResponse<T>> get copyWith => _$PaginatedResponseCopyWithImpl<T, PaginatedResponse<T>>(this as PaginatedResponse<T>, _$identity);
+  /// Create a copy of PaginatedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PaginatedResponseCopyWith<T, PaginatedResponse<T>> get copyWith =>
+      _$PaginatedResponseCopyWithImpl<T, PaginatedResponse<T>>(
+          this as PaginatedResponse<T>, _$identity);
 
   /// Serializes this PaginatedResponse to a JSON map.
   Map<String, dynamic> toJson(Object? Function(T) toJsonT);
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PaginatedResponse<T> &&
+            const DeepCollectionEquality().equals(other.data, data) &&
+            (identical(other.pagination, pagination) ||
+                other.pagination == pagination));
+  }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginatedResponse<T>&&const DeepCollectionEquality().equals(other.data, data)&&(identical(other.pagination, pagination) || other.pagination == pagination));
-}
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(data), pagination);
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data),pagination);
-
-@override
-String toString() {
-  return 'PaginatedResponse<$T>(data: $data, pagination: $pagination)';
-}
-
-
+  @override
+  String toString() {
+    return 'PaginatedResponse<$T>(data: $data, pagination: $pagination)';
+  }
 }
 
 /// @nodoc
-abstract mixin class $PaginatedResponseCopyWith<T,$Res>  {
-  factory $PaginatedResponseCopyWith(PaginatedResponse<T> value, $Res Function(PaginatedResponse<T>) _then) = _$PaginatedResponseCopyWithImpl;
-@useResult
-$Res call({
- List<T> data, PaginationMeta pagination
-});
+abstract mixin class $PaginatedResponseCopyWith<T, $Res> {
+  factory $PaginatedResponseCopyWith(PaginatedResponse<T> value,
+          $Res Function(PaginatedResponse<T>) _then) =
+      _$PaginatedResponseCopyWithImpl;
+  @useResult
+  $Res call({List<T> data, PaginationMeta pagination});
 
-
-$PaginationMetaCopyWith<$Res> get pagination;
-
+  $PaginationMetaCopyWith<$Res> get pagination;
 }
+
 /// @nodoc
-class _$PaginatedResponseCopyWithImpl<T,$Res>
+class _$PaginatedResponseCopyWithImpl<T, $Res>
     implements $PaginatedResponseCopyWith<T, $Res> {
   _$PaginatedResponseCopyWithImpl(this._self, this._then);
 
   final PaginatedResponse<T> _self;
   final $Res Function(PaginatedResponse<T>) _then;
 
-/// Create a copy of PaginatedResponse
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? data = null,Object? pagination = null,}) {
-  return _then(_self.copyWith(
-data: null == data ? _self.data : data // ignore: cast_nullable_to_non_nullable
-as List<T>,pagination: null == pagination ? _self.pagination : pagination // ignore: cast_nullable_to_non_nullable
-as PaginationMeta,
-  ));
-}
-/// Create a copy of PaginatedResponse
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PaginationMetaCopyWith<$Res> get pagination {
-  
-  return $PaginationMetaCopyWith<$Res>(_self.pagination, (value) {
-    return _then(_self.copyWith(pagination: value));
-  });
-}
-}
+  /// Create a copy of PaginatedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? data = null,
+    Object? pagination = null,
+  }) {
+    return _then(_self.copyWith(
+      data: null == data
+          ? _self.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<T>,
+      pagination: null == pagination
+          ? _self.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as PaginationMeta,
+    ));
+  }
 
+  /// Create a copy of PaginatedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PaginationMetaCopyWith<$Res> get pagination {
+    return $PaginationMetaCopyWith<$Res>(_self.pagination, (value) {
+      return _then(_self.copyWith(pagination: value));
+    });
+  }
+}
 
 /// Adds pattern-matching-related methods to [PaginatedResponse].
 extension PaginatedResponsePatterns<T> on PaginatedResponse<T> {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PaginatedResponse<T> value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _PaginatedResponse() when $default != null:
-return $default(_that);case _:
-  return orElse();
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PaginatedResponse<T> value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PaginatedResponse() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
 
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PaginatedResponse<T> value)  $default,){
-final _that = this;
-switch (_that) {
-case _PaginatedResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PaginatedResponse<T> value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginatedResponse():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
 
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PaginatedResponse<T> value)?  $default,){
-final _that = this;
-switch (_that) {
-case _PaginatedResponse() when $default != null:
-return $default(_that);case _:
-  return null;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PaginatedResponse<T> value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginatedResponse() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
 
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<T> data,  PaginationMeta pagination)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _PaginatedResponse() when $default != null:
-return $default(_that.data,_that.pagination);case _:
-  return orElse();
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(List<T> data, PaginationMeta pagination)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PaginatedResponse() when $default != null:
+        return $default(_that.data, _that.pagination);
+      case _:
+        return orElse();
+    }
+  }
 
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<T> data,  PaginationMeta pagination)  $default,) {final _that = this;
-switch (_that) {
-case _PaginatedResponse():
-return $default(_that.data,_that.pagination);case _:
-  throw StateError('Unexpected subclass');
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(List<T> data, PaginationMeta pagination) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginatedResponse():
+        return $default(_that.data, _that.pagination);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
 
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<T> data,  PaginationMeta pagination)?  $default,) {final _that = this;
-switch (_that) {
-case _PaginatedResponse() when $default != null:
-return $default(_that.data,_that.pagination);case _:
-  return null;
-
-}
-}
-
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(List<T> data, PaginationMeta pagination)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginatedResponse() when $default != null:
+        return $default(_that.data, _that.pagination);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
 @JsonSerializable(genericArgumentFactories: true)
-
 class _PaginatedResponse<T> implements PaginatedResponse<T> {
-  const _PaginatedResponse({required final  List<T> data, required this.pagination}): _data = data;
-  factory _PaginatedResponse.fromJson(Map<String, dynamic> json,T Function(Object?) fromJsonT) => _$PaginatedResponseFromJson(json,fromJsonT);
+  const _PaginatedResponse(
+      {required final List<T> data, required this.pagination})
+      : _data = data;
+  factory _PaginatedResponse.fromJson(
+          Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
+      _$PaginatedResponseFromJson(json, fromJsonT);
 
- final  List<T> _data;
-@override List<T> get data {
-  if (_data is EqualUnmodifiableListView) return _data;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_data);
-}
+  final List<T> _data;
+  @override
+  List<T> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
 
-@override final  PaginationMeta pagination;
+  @override
+  final PaginationMeta pagination;
 
-/// Create a copy of PaginatedResponse
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$PaginatedResponseCopyWith<T, _PaginatedResponse<T>> get copyWith => __$PaginatedResponseCopyWithImpl<T, _PaginatedResponse<T>>(this, _$identity);
+  /// Create a copy of PaginatedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PaginatedResponseCopyWith<T, _PaginatedResponse<T>> get copyWith =>
+      __$PaginatedResponseCopyWithImpl<T, _PaginatedResponse<T>>(
+          this, _$identity);
 
-@override
-Map<String, dynamic> toJson(Object? Function(T) toJsonT) {
-  return _$PaginatedResponseToJson<T>(this, toJsonT);
-}
+  @override
+  Map<String, dynamic> toJson(Object? Function(T) toJsonT) {
+    return _$PaginatedResponseToJson<T>(this, toJsonT);
+  }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaginatedResponse<T>&&const DeepCollectionEquality().equals(other._data, _data)&&(identical(other.pagination, pagination) || other.pagination == pagination));
-}
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _PaginatedResponse<T> &&
+            const DeepCollectionEquality().equals(other._data, _data) &&
+            (identical(other.pagination, pagination) ||
+                other.pagination == pagination));
+  }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_data),pagination);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_data), pagination);
 
-@override
-String toString() {
-  return 'PaginatedResponse<$T>(data: $data, pagination: $pagination)';
-}
-
-
+  @override
+  String toString() {
+    return 'PaginatedResponse<$T>(data: $data, pagination: $pagination)';
+  }
 }
 
 /// @nodoc
-abstract mixin class _$PaginatedResponseCopyWith<T,$Res> implements $PaginatedResponseCopyWith<T, $Res> {
-  factory _$PaginatedResponseCopyWith(_PaginatedResponse<T> value, $Res Function(_PaginatedResponse<T>) _then) = __$PaginatedResponseCopyWithImpl;
-@override @useResult
-$Res call({
- List<T> data, PaginationMeta pagination
-});
+abstract mixin class _$PaginatedResponseCopyWith<T, $Res>
+    implements $PaginatedResponseCopyWith<T, $Res> {
+  factory _$PaginatedResponseCopyWith(_PaginatedResponse<T> value,
+          $Res Function(_PaginatedResponse<T>) _then) =
+      __$PaginatedResponseCopyWithImpl;
+  @override
+  @useResult
+  $Res call({List<T> data, PaginationMeta pagination});
 
-
-@override $PaginationMetaCopyWith<$Res> get pagination;
-
+  @override
+  $PaginationMetaCopyWith<$Res> get pagination;
 }
+
 /// @nodoc
-class __$PaginatedResponseCopyWithImpl<T,$Res>
+class __$PaginatedResponseCopyWithImpl<T, $Res>
     implements _$PaginatedResponseCopyWith<T, $Res> {
   __$PaginatedResponseCopyWithImpl(this._self, this._then);
 
   final _PaginatedResponse<T> _self;
   final $Res Function(_PaginatedResponse<T>) _then;
 
-/// Create a copy of PaginatedResponse
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? data = null,Object? pagination = null,}) {
-  return _then(_PaginatedResponse<T>(
-data: null == data ? _self._data : data // ignore: cast_nullable_to_non_nullable
-as List<T>,pagination: null == pagination ? _self.pagination : pagination // ignore: cast_nullable_to_non_nullable
-as PaginationMeta,
-  ));
-}
+  /// Create a copy of PaginatedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? data = null,
+    Object? pagination = null,
+  }) {
+    return _then(_PaginatedResponse<T>(
+      data: null == data
+          ? _self._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<T>,
+      pagination: null == pagination
+          ? _self.pagination
+          : pagination // ignore: cast_nullable_to_non_nullable
+              as PaginationMeta,
+    ));
+  }
 
-/// Create a copy of PaginatedResponse
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$PaginationMetaCopyWith<$Res> get pagination {
-  
-  return $PaginationMetaCopyWith<$Res>(_self.pagination, (value) {
-    return _then(_self.copyWith(pagination: value));
-  });
+  /// Create a copy of PaginatedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PaginationMetaCopyWith<$Res> get pagination {
+    return $PaginationMetaCopyWith<$Res>(_self.pagination, (value) {
+      return _then(_self.copyWith(pagination: value));
+    });
+  }
 }
-}
-
 
 /// @nodoc
 mixin _$PaginationMeta {
+  int get page;
+  int get limit;
+  int get total;
+  int get totalPages;
+  bool get hasNext;
+  bool get hasPrev;
 
- int get page; int get limit; int get total; int get totalPages; bool get hasNext; bool get hasPrev;
-/// Create a copy of PaginationMeta
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$PaginationMetaCopyWith<PaginationMeta> get copyWith => _$PaginationMetaCopyWithImpl<PaginationMeta>(this as PaginationMeta, _$identity);
+  /// Create a copy of PaginationMeta
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $PaginationMetaCopyWith<PaginationMeta> get copyWith =>
+      _$PaginationMetaCopyWithImpl<PaginationMeta>(
+          this as PaginationMeta, _$identity);
 
   /// Serializes this PaginationMeta to a JSON map.
   Map<String, dynamic> toJson();
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is PaginationMeta &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.totalPages, totalPages) ||
+                other.totalPages == totalPages) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext) &&
+            (identical(other.hasPrev, hasPrev) || other.hasPrev == hasPrev));
+  }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PaginationMeta&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.total, total) || other.total == total)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext)&&(identical(other.hasPrev, hasPrev) || other.hasPrev == hasPrev));
-}
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, page, limit, total, totalPages, hasNext, hasPrev);
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,page,limit,total,totalPages,hasNext,hasPrev);
-
-@override
-String toString() {
-  return 'PaginationMeta(page: $page, limit: $limit, total: $total, totalPages: $totalPages, hasNext: $hasNext, hasPrev: $hasPrev)';
-}
-
-
+  @override
+  String toString() {
+    return 'PaginationMeta(page: $page, limit: $limit, total: $total, totalPages: $totalPages, hasNext: $hasNext, hasPrev: $hasPrev)';
+  }
 }
 
 /// @nodoc
-abstract mixin class $PaginationMetaCopyWith<$Res>  {
-  factory $PaginationMetaCopyWith(PaginationMeta value, $Res Function(PaginationMeta) _then) = _$PaginationMetaCopyWithImpl;
-@useResult
-$Res call({
- int page, int limit, int total, int totalPages, bool hasNext, bool hasPrev
-});
-
-
-
-
+abstract mixin class $PaginationMetaCopyWith<$Res> {
+  factory $PaginationMetaCopyWith(
+          PaginationMeta value, $Res Function(PaginationMeta) _then) =
+      _$PaginationMetaCopyWithImpl;
+  @useResult
+  $Res call(
+      {int page,
+      int limit,
+      int total,
+      int totalPages,
+      bool hasNext,
+      bool hasPrev});
 }
+
 /// @nodoc
 class _$PaginationMetaCopyWithImpl<$Res>
     implements $PaginationMetaCopyWith<$Res> {
@@ -353,207 +433,298 @@ class _$PaginationMetaCopyWithImpl<$Res>
   final PaginationMeta _self;
   final $Res Function(PaginationMeta) _then;
 
-/// Create a copy of PaginationMeta
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? page = null,Object? limit = null,Object? total = null,Object? totalPages = null,Object? hasNext = null,Object? hasPrev = null,}) {
-  return _then(_self.copyWith(
-page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
-as int,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
-as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
-as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
-as bool,hasPrev: null == hasPrev ? _self.hasPrev : hasPrev // ignore: cast_nullable_to_non_nullable
-as bool,
-  ));
+  /// Create a copy of PaginationMeta
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? page = null,
+    Object? limit = null,
+    Object? total = null,
+    Object? totalPages = null,
+    Object? hasNext = null,
+    Object? hasPrev = null,
+  }) {
+    return _then(_self.copyWith(
+      page: null == page
+          ? _self.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
+      limit: null == limit
+          ? _self.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int,
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalPages: null == totalPages
+          ? _self.totalPages
+          : totalPages // ignore: cast_nullable_to_non_nullable
+              as int,
+      hasNext: null == hasNext
+          ? _self.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasPrev: null == hasPrev
+          ? _self.hasPrev
+          : hasPrev // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
-
-}
-
 
 /// Adds pattern-matching-related methods to [PaginationMeta].
 extension PaginationMetaPatterns on PaginationMeta {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
+  /// A variant of `map` that fallback to returning `orElse`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _PaginationMeta value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _PaginationMeta() when $default != null:
-return $default(_that);case _:
-  return orElse();
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>(
+    TResult Function(_PaginationMeta value)? $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PaginationMeta() when $default != null:
+        return $default(_that);
+      case _:
+        return orElse();
+    }
+  }
 
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// Callbacks receives the raw object, upcasted.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case final Subclass2 value:
+  ///     return ...;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _PaginationMeta value)  $default,){
-final _that = this;
-switch (_that) {
-case _PaginationMeta():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>(
+    TResult Function(_PaginationMeta value) $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginationMeta():
+        return $default(_that);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
 
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
+  /// A variant of `map` that fallback to returning `null`.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case final Subclass value:
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _PaginationMeta value)?  $default,){
-final _that = this;
-switch (_that) {
-case _PaginationMeta() when $default != null:
-return $default(_that);case _:
-  return null;
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>(
+    TResult? Function(_PaginationMeta value)? $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginationMeta() when $default != null:
+        return $default(_that);
+      case _:
+        return null;
+    }
+  }
 
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
+  /// A variant of `when` that fallback to an `orElse` callback.
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return orElse();
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int page,  int limit,  int total,  int totalPages,  bool hasNext,  bool hasPrev)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _PaginationMeta() when $default != null:
-return $default(_that.page,_that.limit,_that.total,_that.totalPages,_that.hasNext,_that.hasPrev);case _:
-  return orElse();
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>(
+    TResult Function(int page, int limit, int total, int totalPages,
+            bool hasNext, bool hasPrev)?
+        $default, {
+    required TResult orElse(),
+  }) {
+    final _that = this;
+    switch (_that) {
+      case _PaginationMeta() when $default != null:
+        return $default(_that.page, _that.limit, _that.total, _that.totalPages,
+            _that.hasNext, _that.hasPrev);
+      case _:
+        return orElse();
+    }
+  }
 
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
+  /// A `switch`-like method, using callbacks.
+  ///
+  /// As opposed to `map`, this offers destructuring.
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case Subclass2(:final field2):
+  ///     return ...;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int page,  int limit,  int total,  int totalPages,  bool hasNext,  bool hasPrev)  $default,) {final _that = this;
-switch (_that) {
-case _PaginationMeta():
-return $default(_that.page,_that.limit,_that.total,_that.totalPages,_that.hasNext,_that.hasPrev);case _:
-  throw StateError('Unexpected subclass');
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>(
+    TResult Function(int page, int limit, int total, int totalPages,
+            bool hasNext, bool hasPrev)
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginationMeta():
+        return $default(_that.page, _that.limit, _that.total, _that.totalPages,
+            _that.hasNext, _that.hasPrev);
+      case _:
+        throw StateError('Unexpected subclass');
+    }
+  }
 
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
+  /// A variant of `when` that fallback to returning `null`
+  ///
+  /// It is equivalent to doing:
+  /// ```dart
+  /// switch (sealedClass) {
+  ///   case Subclass(:final field):
+  ///     return ...;
+  ///   case _:
+  ///     return null;
+  /// }
+  /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int page,  int limit,  int total,  int totalPages,  bool hasNext,  bool hasPrev)?  $default,) {final _that = this;
-switch (_that) {
-case _PaginationMeta() when $default != null:
-return $default(_that.page,_that.limit,_that.total,_that.totalPages,_that.hasNext,_that.hasPrev);case _:
-  return null;
-
-}
-}
-
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>(
+    TResult? Function(int page, int limit, int total, int totalPages,
+            bool hasNext, bool hasPrev)?
+        $default,
+  ) {
+    final _that = this;
+    switch (_that) {
+      case _PaginationMeta() when $default != null:
+        return $default(_that.page, _that.limit, _that.total, _that.totalPages,
+            _that.hasNext, _that.hasPrev);
+      case _:
+        return null;
+    }
+  }
 }
 
 /// @nodoc
 @JsonSerializable()
-
 class _PaginationMeta implements PaginationMeta {
-  const _PaginationMeta({required this.page, required this.limit, required this.total, required this.totalPages, this.hasNext = false, this.hasPrev = false});
-  factory _PaginationMeta.fromJson(Map<String, dynamic> json) => _$PaginationMetaFromJson(json);
+  const _PaginationMeta(
+      {required this.page,
+      required this.limit,
+      required this.total,
+      required this.totalPages,
+      this.hasNext = false,
+      this.hasPrev = false});
+  factory _PaginationMeta.fromJson(Map<String, dynamic> json) =>
+      _$PaginationMetaFromJson(json);
 
-@override final  int page;
-@override final  int limit;
-@override final  int total;
-@override final  int totalPages;
-@override@JsonKey() final  bool hasNext;
-@override@JsonKey() final  bool hasPrev;
+  @override
+  final int page;
+  @override
+  final int limit;
+  @override
+  final int total;
+  @override
+  final int totalPages;
+  @override
+  @JsonKey()
+  final bool hasNext;
+  @override
+  @JsonKey()
+  final bool hasPrev;
 
-/// Create a copy of PaginationMeta
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$PaginationMetaCopyWith<_PaginationMeta> get copyWith => __$PaginationMetaCopyWithImpl<_PaginationMeta>(this, _$identity);
+  /// Create a copy of PaginationMeta
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$PaginationMetaCopyWith<_PaginationMeta> get copyWith =>
+      __$PaginationMetaCopyWithImpl<_PaginationMeta>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$PaginationMetaToJson(this, );
-}
+  @override
+  Map<String, dynamic> toJson() {
+    return _$PaginationMetaToJson(
+      this,
+    );
+  }
 
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PaginationMeta&&(identical(other.page, page) || other.page == page)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.total, total) || other.total == total)&&(identical(other.totalPages, totalPages) || other.totalPages == totalPages)&&(identical(other.hasNext, hasNext) || other.hasNext == hasNext)&&(identical(other.hasPrev, hasPrev) || other.hasPrev == hasPrev));
-}
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _PaginationMeta &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.totalPages, totalPages) ||
+                other.totalPages == totalPages) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext) &&
+            (identical(other.hasPrev, hasPrev) || other.hasPrev == hasPrev));
+  }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
-@override
-int get hashCode => Object.hash(runtimeType,page,limit,total,totalPages,hasNext,hasPrev);
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, page, limit, total, totalPages, hasNext, hasPrev);
 
-@override
-String toString() {
-  return 'PaginationMeta(page: $page, limit: $limit, total: $total, totalPages: $totalPages, hasNext: $hasNext, hasPrev: $hasPrev)';
-}
-
-
+  @override
+  String toString() {
+    return 'PaginationMeta(page: $page, limit: $limit, total: $total, totalPages: $totalPages, hasNext: $hasNext, hasPrev: $hasPrev)';
+  }
 }
 
 /// @nodoc
-abstract mixin class _$PaginationMetaCopyWith<$Res> implements $PaginationMetaCopyWith<$Res> {
-  factory _$PaginationMetaCopyWith(_PaginationMeta value, $Res Function(_PaginationMeta) _then) = __$PaginationMetaCopyWithImpl;
-@override @useResult
-$Res call({
- int page, int limit, int total, int totalPages, bool hasNext, bool hasPrev
-});
-
-
-
-
+abstract mixin class _$PaginationMetaCopyWith<$Res>
+    implements $PaginationMetaCopyWith<$Res> {
+  factory _$PaginationMetaCopyWith(
+          _PaginationMeta value, $Res Function(_PaginationMeta) _then) =
+      __$PaginationMetaCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {int page,
+      int limit,
+      int total,
+      int totalPages,
+      bool hasNext,
+      bool hasPrev});
 }
+
 /// @nodoc
 class __$PaginationMetaCopyWithImpl<$Res>
     implements _$PaginationMetaCopyWith<$Res> {
@@ -562,21 +733,45 @@ class __$PaginationMetaCopyWithImpl<$Res>
   final _PaginationMeta _self;
   final $Res Function(_PaginationMeta) _then;
 
-/// Create a copy of PaginationMeta
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? page = null,Object? limit = null,Object? total = null,Object? totalPages = null,Object? hasNext = null,Object? hasPrev = null,}) {
-  return _then(_PaginationMeta(
-page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,limit: null == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
-as int,total: null == total ? _self.total : total // ignore: cast_nullable_to_non_nullable
-as int,totalPages: null == totalPages ? _self.totalPages : totalPages // ignore: cast_nullable_to_non_nullable
-as int,hasNext: null == hasNext ? _self.hasNext : hasNext // ignore: cast_nullable_to_non_nullable
-as bool,hasPrev: null == hasPrev ? _self.hasPrev : hasPrev // ignore: cast_nullable_to_non_nullable
-as bool,
-  ));
-}
-
-
+  /// Create a copy of PaginationMeta
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? page = null,
+    Object? limit = null,
+    Object? total = null,
+    Object? totalPages = null,
+    Object? hasNext = null,
+    Object? hasPrev = null,
+  }) {
+    return _then(_PaginationMeta(
+      page: null == page
+          ? _self.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
+      limit: null == limit
+          ? _self.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int,
+      total: null == total
+          ? _self.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalPages: null == totalPages
+          ? _self.totalPages
+          : totalPages // ignore: cast_nullable_to_non_nullable
+              as int,
+      hasNext: null == hasNext
+          ? _self.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasPrev: null == hasPrev
+          ? _self.hasPrev
+          : hasPrev // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
 
 // dart format on

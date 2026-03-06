@@ -140,21 +140,21 @@ class ProjectFormData {
   bool isPinned;
 
   Map<String, dynamic> toJson() => {
-        'title': title,
-        'slug': slug,
-        'description': description,
-        if (excerpt != null) 'excerpt': excerpt,
-        'thumbnailUrl': thumbnailUrl,
-        if (videoUrl != null) 'videoUrl': videoUrl,
-        if (date != null) 'date': date!.toIso8601String(),
-        if (duration != null) 'duration': duration,
-        if (client != null) 'client': client,
-        if (location != null) 'location': location,
-        'tags': tags,
-        if (metaTitle != null) 'metaTitle': metaTitle,
-        if (metaDescription != null) 'metaDescription': metaDescription,
-        'categoryId': categoryId,
-        'isFeatured': isFeatured,
-        'isPinned': isPinned,
-      };
+    'title': title,
+    'slug': slug,
+    'description': description,
+    if (excerpt != null) 'excerpt': excerpt,
+    'thumbnailUrl': thumbnailUrl,
+    if (videoUrl != null) 'videoUrl': videoUrl,
+    if (date != null) 'date': date!.toIso8601String(),
+    if (duration != null) 'duration': duration,
+    if (client != null) 'client': client,
+    if (location != null) 'location': location,
+    'tags': tags,
+    if (metaTitle != null) 'metaTitle': metaTitle,
+    if (metaDescription != null) 'metaDescription': metaDescription,
+    'categoryId': categoryId,
+    'isFeatured': isFeatured,
+    'isPinned': isPinned,
+  };
 }

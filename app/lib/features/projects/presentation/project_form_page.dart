@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
@@ -142,13 +143,22 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   Future<void> _pickGalleryImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
-    setState(() => _pendingNewImages.add(File(picked.path)));
+    try {
+      final picker = ImagePicker();
+      // imageQuality is intentionally omitted: the upload service compresses
+      // before sending to Cloudinary, and omitting it avoids native crashes
+      // on HEIC / cloud-backed gallery photos on Android 13+.
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
+      setState(() => _pendingNewImages.add(File(picked.path)));
+    } catch (e) {
+      AppLogger.error('ProjectFormPage: error picking gallery image', e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+        );
+      }
+    }
   }
 
   Future<void> _submit() async {
@@ -346,105 +356,103 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   // ── Campos individuales ───────────────────────────────────────────────────
 
   Widget _imageField() => _ImageField(
-        label: 'Imagen de portada',
-        currentImageUrl:
-            _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
-        onImageSelected: (file) => setState(() => _pendingCoverImage = file),
-      );
+    label: 'Imagen de portada',
+    currentImageUrl: _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
+    onImageSelected: (file) => setState(() => _pendingCoverImage = file),
+  );
 
   Widget _titleField() => TextFormField(
-        initialValue: _data.title,
-        decoration: const InputDecoration(
-          labelText: 'Título *',
-          helperText: 'Nombre del proyecto en el portfolio',
-        ),
-        textInputAction: TextInputAction.next,
-        onChanged: _autoSlug,
-        onSaved: (v) => _data.title = v?.trim() ?? '',
-        validator: (v) =>
-            (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
-      );
+    initialValue: _data.title,
+    decoration: const InputDecoration(
+      labelText: 'Título *',
+      helperText: 'Nombre del proyecto en el portfolio',
+    ),
+    textInputAction: TextInputAction.next,
+    onChanged: _autoSlug,
+    onSaved: (v) => _data.title = v?.trim() ?? '',
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'El título es requerido' : null,
+  );
 
   Widget _descriptionField() => TextFormField(
-        initialValue: _data.description,
-        maxLines: 5,
-        decoration: const InputDecoration(
-          labelText: 'Descripción *',
-          alignLabelWithHint: true,
-          helperText: 'Texto completo visible en la página del proyecto',
-        ),
-        onSaved: (v) => _data.description = v?.trim() ?? '',
-        validator: (v) => (v == null || v.trim().isEmpty)
-            ? 'La descripción es requerida'
-            : null,
-      );
+    initialValue: _data.description,
+    maxLines: 5,
+    decoration: const InputDecoration(
+      labelText: 'Descripción *',
+      alignLabelWithHint: true,
+      helperText: 'Texto completo visible en la página del proyecto',
+    ),
+    onSaved: (v) => _data.description = v?.trim() ?? '',
+    validator: (v) =>
+        (v == null || v.trim().isEmpty) ? 'La descripción es requerida' : null,
+  );
 
   Widget _excerptField() => TextFormField(
-        initialValue: _data.excerpt,
-        maxLines: 2,
-        decoration: const InputDecoration(
-          labelText: 'Extracto (opcional)',
-          alignLabelWithHint: true,
-          helperText: 'Resumen corto para listados y tarjetas',
-        ),
-        onSaved: (v) =>
-            _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-      );
+    initialValue: _data.excerpt,
+    maxLines: 2,
+    decoration: const InputDecoration(
+      labelText: 'Extracto (opcional)',
+      alignLabelWithHint: true,
+      helperText: 'Resumen corto para listados y tarjetas',
+    ),
+    onSaved: (v) =>
+        _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+  );
 
   Widget _clientDurationRow() => Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              initialValue: _data.client,
-              decoration: const InputDecoration(labelText: 'Cliente'),
-              textInputAction: TextInputAction.next,
-              onSaved: (v) =>
-                  _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-            ),
+    children: [
+      Expanded(
+        child: TextFormField(
+          initialValue: _data.client,
+          decoration: const InputDecoration(labelText: 'Cliente'),
+          textInputAction: TextInputAction.next,
+          onSaved: (v) =>
+              _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+        ),
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: TextFormField(
+          initialValue: _data.duration,
+          decoration: const InputDecoration(
+            labelText: 'Duración',
+            hintText: '2 semanas',
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: TextFormField(
-              initialValue: _data.duration,
-              decoration: const InputDecoration(
-                labelText: 'Duración',
-                hintText: '2 semanas',
-              ),
-              textInputAction: TextInputAction.next,
-              onSaved: (v) => _data.duration =
-                  (v?.trim().isEmpty ?? true) ? null : v!.trim(),
-            ),
-          ),
-        ],
-      );
+          textInputAction: TextInputAction.next,
+          onSaved: (v) =>
+              _data.duration = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
+        ),
+      ),
+    ],
+  );
 
   Widget _dateField() => Builder(
-        builder: (context) {
-          final d = _data.date ?? DateTime.now();
-          final label =
-              '${d.day.toString().padLeft(2, '0')} / ${d.month.toString().padLeft(2, '0')} / ${d.year}';
-          return InkWell(
-            onTap: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: _data.date ?? DateTime.now(),
-                firstDate: DateTime(2000),
-                lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
-              );
-              if (picked != null) setState(() => _data.date = picked);
-            },
-            borderRadius: BorderRadius.circular(4),
-            child: InputDecorator(
-              decoration: const InputDecoration(
-                labelText: 'Fecha del proyecto',
-                helperText: 'Fecha en que se realizó el trabajo',
-                suffixIcon: Icon(Icons.calendar_today_outlined, size: 20),
-              ),
-              child: Text(label),
-            ),
+    builder: (context) {
+      final d = _data.date ?? DateTime.now();
+      final label =
+          '${d.day.toString().padLeft(2, '0')} / ${d.month.toString().padLeft(2, '0')} / ${d.year}';
+      return InkWell(
+        onTap: () async {
+          final picked = await showDatePicker(
+            context: context,
+            initialDate: _data.date ?? DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
           );
+          if (picked != null) setState(() => _data.date = picked);
         },
+        borderRadius: BorderRadius.circular(4),
+        child: InputDecorator(
+          decoration: const InputDecoration(
+            labelText: 'Fecha del proyecto',
+            helperText: 'Fecha en que se realizó el trabajo',
+            suffixIcon: Icon(Icons.calendar_today_outlined, size: 20),
+          ),
+          child: Text(label),
+        ),
       );
+    },
+  );
 
   Widget _categoryField() {
     final categoriesAsync = ref.watch(categoriesListProvider());
@@ -457,14 +465,14 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           return Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .errorContainer
-                  .withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.errorContainer.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color:
-                    Theme.of(context).colorScheme.error.withValues(alpha: 0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.error.withValues(alpha: 0.5),
               ),
             ),
             child: Row(
@@ -486,7 +494,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           );
         }
         return DropdownButtonFormField<String>(
-          value: _data.categoryId.isNotEmpty &&
+          value:
+              _data.categoryId.isNotEmpty &&
                   categories.any((c) => c.id == _data.categoryId)
               ? _data.categoryId
               : null,
@@ -521,23 +530,23 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   Widget _featuredPinnedRow() => Column(
-        children: [
-          SwitchListTile(
-            title: const Text('Destacado'),
-            subtitle: const Text('Aparece en galería principal'),
-            value: _data.isFeatured,
-            onChanged: (v) => setState(() => _data.isFeatured = v),
-            contentPadding: EdgeInsets.zero,
-          ),
-          SwitchListTile(
-            title: const Text('Fijado'),
-            subtitle: const Text('Siempre al inicio'),
-            value: _data.isPinned,
-            onChanged: (v) => setState(() => _data.isPinned = v),
-            contentPadding: EdgeInsets.zero,
-          ),
-        ],
-      );
+    children: [
+      SwitchListTile(
+        title: const Text('Destacado'),
+        subtitle: const Text('Aparece en galería principal'),
+        value: _data.isFeatured,
+        onChanged: (v) => setState(() => _data.isFeatured = v),
+        contentPadding: EdgeInsets.zero,
+      ),
+      SwitchListTile(
+        title: const Text('Fijado'),
+        subtitle: const Text('Siempre al inicio'),
+        value: _data.isPinned,
+        onChanged: (v) => setState(() => _data.isPinned = v),
+        contentPadding: EdgeInsets.zero,
+      ),
+    ],
+  );
 
   Widget _gallerySection() {
     final theme = Theme.of(context);
@@ -605,14 +614,14 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   Widget _submitButton() => SizedBox(
-        width: double.infinity,
-        child: FilledButton.icon(
-          onPressed: _isLoading ? null : _submit,
-          icon: Icon(widget.isEditing ? Icons.save_rounded : Icons.add_rounded),
-          label: Text(widget.isEditing ? 'Guardar cambios' : 'Crear proyecto'),
-          style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-        ),
-      );
+    width: double.infinity,
+    child: FilledButton.icon(
+      onPressed: _isLoading ? null : _submit,
+      icon: Icon(widget.isEditing ? Icons.save_rounded : Icons.add_rounded),
+      label: Text(widget.isEditing ? 'Guardar cambios' : 'Crear proyecto'),
+      style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+    ),
+  );
 }
 
 // ── Widgets auxiliares ────────────────────────────────────────────────────────
@@ -649,12 +658,12 @@ class _InlineError extends StatelessWidget {
 /// Miniatura de galería (red o archivo local) con botón de eliminar.
 class _GalleryThumb extends StatelessWidget {
   const _GalleryThumb.network({required String url, required this.onRemove})
-      : _url = url,
-        _file = null;
+    : _url = url,
+      _file = null;
 
   const _GalleryThumb.file({required File file, required this.onRemove})
-      : _url = null,
-        _file = file;
+    : _url = null,
+      _file = file;
 
   final String? _url;
   final File? _file;
@@ -807,10 +816,19 @@ class _ImageField extends StatelessWidget {
       ),
     );
     if (source == null) return;
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, imageQuality: 85);
-    if (picked == null) return;
-    onImageSelected(File(picked.path));
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: source);
+      if (picked == null) return;
+      onImageSelected(File(picked.path));
+    } catch (e) {
+      AppLogger.error('ProjectFormPage: error picking cover image', e);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+        );
+      }
+    }
   }
 
   @override

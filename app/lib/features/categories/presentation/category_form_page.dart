@@ -215,8 +215,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               // Thumbnail
               ImageUploadWidget(
                 label: 'Imagen de portada',
-                currentImageUrl:
-                    _thumbnailCtrl.text.isNotEmpty ? _thumbnailCtrl.text : null,
+                currentImageUrl: _thumbnailCtrl.text.isNotEmpty
+                    ? _thumbnailCtrl.text
+                    : null,
                 onImageSelected: (file) {
                   setState(() => _pendingThumbnail = file);
                 },

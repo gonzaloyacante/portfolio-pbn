@@ -1,5 +1,4 @@
 import Navbar from '@/components/layout/Navbar'
-import Footer from '@/components/layout/Footer'
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransitionWrapper from '@/components/layout/PageTransitionWrapper'
 import { getThemeSettings } from '@/actions/settings/theme'
@@ -52,7 +51,6 @@ export default async function PublicLayout({ children }: { children: React.React
         <main id="main-content" className="flex-1" tabIndex={-1}>
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
         </main>
-        <Footer ownerName={contactSettings?.ownerName} />
       </div>
     </>
   )

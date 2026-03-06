@@ -248,22 +248,22 @@ class _CategoryGridCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
-                  child: item.iconName != null &&
-                          item.iconName!.runes.length <= 2
+                  child:
+                      item.iconName != null && item.iconName!.runes.length <= 2
                       ? Text(
                           item.iconName!,
                           style: const TextStyle(fontSize: 28, height: 1.2),
                           textAlign: TextAlign.center,
                         )
                       : item.name.isNotEmpty
-                          ? Text(
-                              item.name[0].toUpperCase(),
-                              style: theme.textTheme.headlineSmall?.copyWith(
-                                color: color,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            )
-                          : Icon(Icons.category, color: color, size: 26),
+                      ? Text(
+                          item.name[0].toUpperCase(),
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: color,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        )
+                      : Icon(Icons.category, color: color, size: 26),
                 ),
               ),
               const SizedBox(height: 10),
@@ -342,14 +342,14 @@ class _CategoryTile extends StatelessWidget {
                 child: Center(
                   child: item.iconName != null
                       ? item.iconName!.runes.length <= 2
-                          ? Text(
-                              item.iconName!,
-                              style: theme.textTheme.titleLarge?.copyWith(
-                                height: 1.2,
-                              ),
-                              textAlign: TextAlign.center,
-                            )
-                          : Icon(Icons.category, color: color, size: 22)
+                            ? Text(
+                                item.iconName!,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  height: 1.2,
+                                ),
+                                textAlign: TextAlign.center,
+                              )
+                            : Icon(Icons.category, color: color, size: 22)
                       : Text(
                           item.name.isNotEmpty
                               ? item.name[0].toUpperCase()
@@ -511,10 +511,7 @@ class _CategoriesSkeleton extends StatelessWidget {
 // ── Settings Dialog ───────────────────────────────────────────────────────────
 
 class _CategorySettingsDialog extends StatefulWidget {
-  const _CategorySettingsDialog({
-    required this.initial,
-    required this.onSave,
-  });
+  const _CategorySettingsDialog({required this.initial, required this.onSave});
 
   final CategoryDisplaySettings initial;
   final Future<void> Function(CategoryDisplaySettings) onSave;
@@ -569,15 +566,17 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
         children: [
           SwitchListTile(
             title: const Text('Mostrar descripci\u00f3n'),
-            subtitle:
-                const Text('Muestra el texto descriptivo en cada tarjeta'),
+            subtitle: const Text(
+              'Muestra el texto descriptivo en cada tarjeta',
+            ),
             value: _showDescription,
             onChanged: (v) => setState(() => _showDescription = v),
           ),
           SwitchListTile(
             title: const Text('Mostrar cantidad de proyectos'),
-            subtitle:
-                const Text('N\u00famero de proyectos en cada categor\u00eda'),
+            subtitle: const Text(
+              'N\u00famero de proyectos en cada categor\u00eda',
+            ),
             value: _showProjectCount,
             onChanged: (v) => setState(() => _showProjectCount = v),
           ),
@@ -593,9 +592,7 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
               DropdownButton<int>(
                 value: _gridColumns,
                 items: [1, 2, 3, 4, 5]
-                    .map(
-                      (n) => DropdownMenuItem(value: n, child: Text('$n')),
-                    )
+                    .map((n) => DropdownMenuItem(value: n, child: Text('$n')))
                     .toList(),
                 onChanged: (v) {
                   if (v != null) setState(() => _gridColumns = v);
