@@ -213,7 +213,8 @@ class _ImagePreview extends StatelessWidget {
           Image.network(
             url!,
             fit: BoxFit.cover,
-            errorBuilder: (_, _, _) => const Icon(Icons.broken_image),
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.broken_image),
           ),
         // Overlay con botón de eliminar
         if (onRemove != null)

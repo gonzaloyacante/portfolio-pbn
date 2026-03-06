@@ -458,7 +458,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     final categoriesAsync = ref.watch(categoriesListProvider());
     return categoriesAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (err, _) => const Text('Error cargando categórías'),
+      error: (err, _) => const Text('Error cargando categorías'),
       data: (paginated) {
         final categories = paginated.data;
         if (categories.isEmpty) {
