@@ -74,7 +74,7 @@ export default async function NewProjectPage() {
           </div>
           <FormField label="Descripción" name="description" type="textarea" rows={4} />
           <FormField label="Fecha" name="date" type="date" placeholder="YYYY-MM-DD" />
-          <ImageUpload name="images" label="Imágenes del proyecto" multiple />
+          <ImageUpload name="images" label="Imágenes del proyecto" multiple mode="gallery" />
 
           <div className="border-border flex justify-end gap-4 border-t pt-4">
             <Button type="submit" size="lg">

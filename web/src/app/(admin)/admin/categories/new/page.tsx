@@ -89,6 +89,7 @@ export default function NewCategoryPage() {
               name="coverImageUrl"
               label="Imagen de Portada (Opcional)"
               folder="categories"
+              mode="single"
             />
           </div>
 

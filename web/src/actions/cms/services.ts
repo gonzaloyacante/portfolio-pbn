@@ -186,12 +186,16 @@ export async function createService(formData: FormData) {
       if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
     } catch {}
 
-    const galleryList = data.galleryUrls
-      ? data.galleryUrls
-          .split(',')
-          .map((u) => u.trim())
-          .filter(Boolean)
-      : []
+    // Prefer multiple inputs `galleryUrls` (from ImageUpload hidden inputs). Fallback to CSV string.
+    const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
+    const galleryList = rawGalleryInputs.length
+      ? rawGalleryInputs.map((u) => u.trim())
+      : data.galleryUrls
+        ? data.galleryUrls
+            .split(',')
+            .map((u) => u.trim())
+            .filter(Boolean)
+        : []
     const keywordList = data.metaKeywords
       ? data.metaKeywords
           .split(',')
@@ -214,7 +218,7 @@ export async function createService(formData: FormData) {
         isAvailable: data.isAvailable,
         maxBookingsPerDay: data.maxBookingsPerDay,
         advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || null,
+        imageUrl: data.imageUrl || galleryList[0] || null,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
         iconName: data.iconName || null,
@@ -305,12 +309,15 @@ export async function updateService(id: string, formData: FormData) {
       if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
     } catch {}
 
-    const galleryList = data.galleryUrls
-      ? data.galleryUrls
-          .split(',')
-          .map((u) => u.trim())
-          .filter(Boolean)
-      : []
+    const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
+    const galleryList = rawGalleryInputs.length
+      ? rawGalleryInputs.map((u) => u.trim())
+      : data.galleryUrls
+        ? data.galleryUrls
+            .split(',')
+            .map((u) => u.trim())
+            .filter(Boolean)
+        : []
     const keywordList = data.metaKeywords
       ? data.metaKeywords
           .split(',')
@@ -334,7 +341,7 @@ export async function updateService(id: string, formData: FormData) {
         isAvailable: data.isAvailable,
         maxBookingsPerDay: data.maxBookingsPerDay,
         advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || null,
+        imageUrl: data.imageUrl || galleryList[0] || null,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
         iconName: data.iconName || null,

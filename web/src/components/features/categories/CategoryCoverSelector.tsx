@@ -137,6 +137,7 @@ export default function CategoryCoverSelector({
               label="Subir Imagen de Portada"
               folder="categories"
               maxFiles={1}
+              mode="single"
               onChange={(urls) => {
                 if (urls.length > 0) handleSelect(urls[0])
               }}

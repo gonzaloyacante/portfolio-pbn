@@ -114,10 +114,12 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
           <div className="space-y-2">
             <label className="text-sm font-medium">Imagen Principal</label>
             <ImageUpload
-              name="imageUrl"
-              label="Subir Imagen"
+              name="galleryUrls"
+              label="Galería de Imágenes"
               folder="services"
-              value={service?.imageUrl ? [service.imageUrl] : []}
+              value={service?.galleryUrls || []}
+              multiple
+              mode="gallery"
             />
           </div>
           <FormField
@@ -246,11 +248,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
           defaultValue={service?.videoUrl || ''}
           placeholder="https://youtube.com..."
         />
-        <FormField
-          label="Galería (URLs sep. por coma)"
-          name="galleryUrls"
-          defaultValue={service?.galleryUrls?.join(', ') || ''}
-        />
+        {/* Gallery is handled via ImageUpload (galleryUrls) */}
         <FormField
           label="Requisitos para el Cliente"
           name="requirements"

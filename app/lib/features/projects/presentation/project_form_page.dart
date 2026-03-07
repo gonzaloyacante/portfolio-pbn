@@ -51,7 +51,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   final _data = ProjectFormData();
   bool _isLoading = false;
   String? _errorMsg;
-  File? _pendingCoverImage;
+  int? _pendingCoverIndex;
 
   // Galería de imágenes
   List<ProjectImage> _existingImages = [];
@@ -67,6 +67,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   final List<File> _pendingNewImages = [];
   final Set<String> _removedImageIds = {};
+
+  /// Imágenes pre-subidas (antes de crear el proyecto) guardadas como mapas
+  /// {'url': url, 'publicId': publicId}
+  final List<Map<String, String>> _preuploadedImages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -173,13 +177,28 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     });
 
     try {
-      // 1. Subir imagen de portada si se seleccionó una nueva.
-      if (_pendingCoverImage != null) {
-        final uploadSvc = ref.read(uploadServiceProvider);
-        _data.thumbnailUrl = await uploadSvc.uploadImage(
-          _pendingCoverImage!,
-          folder: 'portfolio/projects',
-        );
+      // 1. Si el usuario seleccionó una imagen de la galería como miniatura
+      // (pendiente), subimos esa imagen primero para obtener url + publicId
+      // y setear `thumbnailUrl` antes de crear/actualizar el proyecto.
+      final uploadSvc = ref.read(uploadServiceProvider);
+      if (_pendingCoverIndex != null) {
+        // Si la miniatura escogida es una imagen nueva pendiente
+        if (_pendingCoverIndex! < _pendingNewImages.length) {
+          final file = _pendingNewImages.removeAt(_pendingCoverIndex!);
+          final result = await uploadSvc.uploadImageFull(
+            file,
+            folder: 'portfolio/projects/gallery',
+          );
+          _data.thumbnailUrl = result.url;
+          _preuploadedImages.add({
+            'url': result.url,
+            'publicId': result.publicId,
+          });
+        } else {
+          // Si la miniatura escogida es una imagen ya existente, ya debe
+          // existir en _existingImages; cubrimos ese caso abajo antes del
+          // update/create si es necesario.
+        }
       }
 
       final repo = ref.read(projectsRepositoryProvider);
@@ -202,9 +221,19 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         await repo.removeProjectImage(projectId, imageId);
       }
 
-      // 3. Subir e indexar nuevas imágenes de galería.
+      // 3. Añadir a la galería las imágenes ya pre-subidas (si las hay)
+      for (int i = 0; i < _preuploadedImages.length; i++) {
+        final img = _preuploadedImages[i];
+        await repo.addProjectImage(
+          projectId,
+          url: img['url']!,
+          publicId: img['publicId']!,
+          order: _existingImages.length + i,
+        );
+      }
+
+      // 4. Subir e indexar las nuevas imágenes restantes de la galería.
       if (_pendingNewImages.isNotEmpty) {
-        final uploadSvc = ref.read(uploadServiceProvider);
         for (int i = 0; i < _pendingNewImages.length; i++) {
           final result = await uploadSvc.uploadImageFull(
             _pendingNewImages[i],
@@ -214,7 +243,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
             projectId,
             url: result.url,
             publicId: result.publicId,
-            order: _existingImages.length + i,
+            order: _existingImages.length + _preuploadedImages.length + i,
           );
         }
       }
@@ -281,7 +310,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           _InlineError(message: _errorMsg!),
           const SizedBox(height: 16),
         ],
-        _imageField(),
+        _gallerySection(),
         const SizedBox(height: 20),
         _titleField(),
         const SizedBox(height: 12),
@@ -319,8 +348,6 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _imageField(),
-                  const SizedBox(height: 16),
                   _descriptionField(),
                   const SizedBox(height: 12),
                   _excerptField(),
@@ -356,11 +383,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   // ── Campos individuales ───────────────────────────────────────────────────
 
-  Widget _imageField() => _ImageField(
-    label: 'Imagen de portada',
-    currentImageUrl: _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
-    onImageSelected: (file) => setState(() => _pendingCoverImage = file),
-  );
+  // Nota: el campo de portada grande fue eliminado en favor de la galería.
 
   Widget _titleField() => TextFormField(
     initialValue: _data.title,
@@ -596,6 +619,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
                     _removedImageIds.add(img.id);
                     _existingImages.removeAt(index);
                   }),
+                  onSetCover: () => setState(() {
+                    _data.thumbnailUrl = img.imageUrl;
+                    _pendingCoverIndex = null;
+                  }),
+                  isCover: _data.thumbnailUrl == img.imageUrl,
                 );
               }
 
@@ -606,6 +634,11 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
                   file: _pendingNewImages[pi],
                   onRemove: () =>
                       setState(() => _pendingNewImages.removeAt(pi)),
+                  onSetCover: () => setState(() {
+                    _pendingCoverIndex = pi;
+                    _data.thumbnailUrl = '';
+                  }),
+                  isCover: _pendingCoverIndex == pi,
                 );
               }
 
@@ -665,17 +698,27 @@ class _InlineError extends StatelessWidget {
 
 /// Miniatura de galería (red o archivo local) con botón de eliminar.
 class _GalleryThumb extends StatelessWidget {
-  const _GalleryThumb.network({required String url, required this.onRemove})
-    : _url = url,
-      _file = null;
+  const _GalleryThumb.network({
+    required String url,
+    required this.onRemove,
+    this.onSetCover,
+    this.isCover = false,
+  }) : _url = url,
+       _file = null;
 
-  const _GalleryThumb.file({required File file, required this.onRemove})
-    : _url = null,
-      _file = file;
+  const _GalleryThumb.file({
+    required File file,
+    required this.onRemove,
+    this.onSetCover,
+    this.isCover = false,
+  }) : _url = null,
+       _file = file;
 
   final String? _url;
   final File? _file;
   final VoidCallback onRemove;
+  final VoidCallback? onSetCover;
+  final bool isCover;
 
   @override
   Widget build(BuildContext context) {
@@ -704,6 +747,30 @@ class _GalleryThumb extends StatelessWidget {
     return Stack(
       children: [
         ClipRRect(borderRadius: BorderRadius.circular(10), child: img),
+        // Botón para marcar como miniatura
+        if (onSetCover != null)
+          Positioned(
+            top: 3,
+            left: 3,
+            child: GestureDetector(
+              onTap: onSetCover,
+              child: Container(
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: isCover
+                      ? Colors.amber
+                      : Colors.black.withValues(alpha: 0.55),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isCover ? Icons.star : Icons.star_border,
+                  size: 14,
+                  color: isCover ? Colors.black : Colors.white,
+                ),
+              ),
+            ),
+          ),
         Positioned(
           top: 3,
           right: 3,
@@ -790,89 +857,4 @@ class _CountBadge extends StatelessWidget {
   }
 }
 
-/// Widget para seleccionar imagen de portada (cover).
-class _ImageField extends StatelessWidget {
-  const _ImageField({
-    required this.label,
-    this.currentImageUrl,
-    required this.onImageSelected,
-  });
-
-  final String label;
-  final String? currentImageUrl;
-  final void Function(File) onImageSelected;
-
-  Future<void> _pick(BuildContext context) async {
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Galería'),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Cámara'),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (source == null) return;
-    try {
-      final picker = ImagePicker();
-      final picked = await picker.pickImage(source: source);
-      if (picked == null) return;
-      onImageSelected(File(picked.path));
-    } catch (e) {
-      AppLogger.error('ProjectFormPage: error picking cover image', e);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
-        );
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () => _pick(context),
-      child: Container(
-        height: 160,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: scheme.outlineVariant),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: currentImageUrl != null
-            ? CachedNetworkImage(
-                imageUrl: currentImageUrl!,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator.adaptive()),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    size: 40,
-                    color: scheme.primary,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(label, style: TextStyle(color: scheme.outline)),
-                ],
-              ),
-      ),
-    );
-  }
-}
+// La selección de portada ahora se realiza marcando una miniatura en la galería.
