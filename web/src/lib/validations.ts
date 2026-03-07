@@ -306,6 +306,7 @@ export const projectFormSchema = z.object({
   layout: z.string().optional().nullable(),
   isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(), // Handle boolean or string 'on'/'true'
   isPinned: z.union([z.boolean(), z.string()]).optional().nullable(),
+  isActive: z.union([z.boolean(), z.string()]).optional().nullable(),
 })
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>

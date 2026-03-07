@@ -58,6 +58,7 @@ function _readProjectFormData(formData: FormData) {
     layout: formData.get('layout'),
     isFeatured: formData.get('isFeatured'),
     isPinned: formData.get('isPinned'),
+    isActive: formData.get('isActive'),
   }
 }
 
@@ -135,6 +136,10 @@ export async function uploadImageAndCreateProject(formData: FormData) {
         layout: data.layout || 'grid',
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
         isPinned: data.isPinned === 'true' || data.isPinned === 'on',
+        isActive:
+          data.isActive === undefined
+            ? true
+            : data.isActive === 'true' || data.isActive === 'on' || data.isActive === true,
         images: {
           create: validImages.map((img) => ({
             url: img.url,
@@ -267,6 +272,10 @@ export async function updateProject(id: string, formData: FormData) {
         layout: data.layout,
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
         isPinned: data.isPinned === 'true' || data.isPinned === 'on',
+        isActive:
+          data.isActive === undefined
+            ? undefined
+            : data.isActive === 'true' || data.isActive === 'on' || data.isActive === true,
       },
     })
 

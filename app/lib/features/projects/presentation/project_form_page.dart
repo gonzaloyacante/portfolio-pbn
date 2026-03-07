@@ -122,6 +122,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       _data.categoryId = project.categoryId;
       _data.isFeatured = project.isFeatured;
       _data.isPinned = project.isPinned;
+      _data.isActive = project.isActive;
       // Cargar galería existente (solo una vez)
       _existingImages = project.images.toList();
     }
@@ -543,6 +544,13 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         subtitle: const Text('Siempre al inicio'),
         value: _data.isPinned,
         onChanged: (v) => setState(() => _data.isPinned = v),
+        contentPadding: EdgeInsets.zero,
+      ),
+      SwitchListTile(
+        title: const Text('Activo'),
+        subtitle: const Text('Visibilidad pública del proyecto'),
+        value: _data.isActive,
+        onChanged: (v) => setState(() => _data.isActive = v),
         contentPadding: EdgeInsets.zero,
       ),
     ],

@@ -120,6 +120,7 @@ class ProjectFormData {
     this.categoryId = '',
     this.isFeatured = false,
     this.isPinned = false,
+    this.isActive = true,
   });
 
   String title;
@@ -138,6 +139,7 @@ class ProjectFormData {
   String categoryId;
   bool isFeatured;
   bool isPinned;
+  bool isActive;
 
   Map<String, dynamic> toJson() => {
     'title': title,
@@ -156,5 +158,6 @@ class ProjectFormData {
     'categoryId': categoryId,
     'isFeatured': isFeatured,
     'isPinned': isPinned,
+    'isActive': isActive,
   };
 }

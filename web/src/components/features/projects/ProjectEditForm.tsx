@@ -30,6 +30,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     description: string
     date: string
     newImages: never[]
+    isActive?: boolean
   }
 
   const {
@@ -42,6 +43,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
       categoryId: project.categoryId,
       description: project.description || '',
       date: project.date ? new Date(project.date).toISOString().split('T')[0] : '',
+      isActive: project.isActive,
       newImages: [],
     },
   })
@@ -71,6 +73,9 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
       formData.append('images', img.url)
       formData.append('images_public_id', img.publicId)
     })
+
+    // Append active flag
+    formData.append('isActive', data.isActive ? 'on' : 'off')
 
     try {
       const result = await updateProject(project.id, formData)
@@ -184,6 +189,17 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
           placeholder="Descripción completa del proyecto..."
         />
         <SmartField label="Fecha" {...register('date')} type="date" />
+        <div className="flex items-center gap-3">
+          <input
+            id="isActive"
+            type="checkbox"
+            {...register('isActive')}
+            className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+          />
+          <label htmlFor="isActive" className="text-sm font-medium text-(--foreground)">
+            Activo
+          </label>
+        </div>
       </div>
 
       {/* 2. Galería */}
