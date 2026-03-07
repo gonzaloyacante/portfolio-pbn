@@ -525,6 +525,7 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
   late bool _showDescription;
   late bool _showProjectCount;
   late int _gridColumns;
+  late bool _isActive;
   bool _saving = false;
 
   @override
@@ -533,6 +534,7 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
     _showDescription = widget.initial.showDescription;
     _showProjectCount = widget.initial.showProjectCount;
     _gridColumns = widget.initial.gridColumns;
+    _isActive = widget.initial.isActive;
   }
 
   Future<void> _save() async {
@@ -543,6 +545,7 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
           showDescription: _showDescription,
           showProjectCount: _showProjectCount,
           gridColumns: _gridColumns,
+          isActive: _isActive,
         ),
       );
       if (mounted) Navigator.of(context).pop();
@@ -564,6 +567,14 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          SwitchListTile(
+            title: const Text('Secci\u00f3n activa'),
+            subtitle: const Text(
+              'Controla si la categor\u00eda se muestra p\u00fablicamente',
+            ),
+            value: _isActive,
+            onChanged: (v) => setState(() => _isActive = v),
+          ),
           SwitchListTile(
             title: const Text('Mostrar descripci\u00f3n'),
             subtitle: const Text(

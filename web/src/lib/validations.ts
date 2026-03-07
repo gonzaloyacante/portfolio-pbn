@@ -275,6 +275,7 @@ export const categorySettingsSchema = z.object({
   showDescription: z.boolean().default(true),
   showProjectCount: z.boolean().default(true),
   gridColumns: z.number().min(1).max(5).default(4),
+  isActive: z.boolean().default(true),
 })
 
 export type CategorySettingsFormData = z.infer<typeof categorySettingsSchema>

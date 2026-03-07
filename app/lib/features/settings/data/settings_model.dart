@@ -140,6 +140,7 @@ abstract class CategoryDisplaySettings with _$CategoryDisplaySettings {
     @Default(true) bool showDescription,
     @Default(true) bool showProjectCount,
     @Default(4) int gridColumns,
+    @Default(true) bool isActive,
   }) = _CategoryDisplaySettings;
 
   factory CategoryDisplaySettings.fromJson(Map<String, dynamic> json) =>

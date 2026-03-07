@@ -54,6 +54,12 @@ export default async function CategoriesPage() {
                 type: 'boolean',
               },
               {
+                key: 'isActive',
+                label: 'Activo',
+                description: 'Habilitar sección de categorías (mostrar/ocultar)',
+                type: 'boolean',
+              },
+              {
                 key: 'showDescription',
                 label: 'Mostrar Descripción',
                 description: 'Descripción de la categoría',

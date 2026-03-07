@@ -205,6 +205,7 @@ _CategoryDisplaySettings _$CategoryDisplaySettingsFromJson(
   showDescription: json['showDescription'] as bool? ?? true,
   showProjectCount: json['showProjectCount'] as bool? ?? true,
   gridColumns: (json['gridColumns'] as num?)?.toInt() ?? 4,
+  isActive: json['isActive'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$CategoryDisplaySettingsToJson(
@@ -214,6 +215,7 @@ Map<String, dynamic> _$CategoryDisplaySettingsToJson(
   'showDescription': instance.showDescription,
   'showProjectCount': instance.showProjectCount,
   'gridColumns': instance.gridColumns,
+  'isActive': instance.isActive,
 };
 
 _SocialLink _$SocialLinkFromJson(Map<String, dynamic> json) => _SocialLink(

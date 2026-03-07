@@ -292,7 +292,7 @@ final class CategoryDisplaySettingsProvider
 }
 
 String _$categoryDisplaySettingsHash() =>
-    r'a8b3c2d1e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9';
+    r'8dd6f06133622d4889f6aeda58a77c0310503a66';
 
 @ProviderFor(socialLinks)
 final socialLinksProvider = SocialLinksProvider._();
