@@ -32,11 +32,9 @@ const TESTIMONIAL_DETAIL_SELECT = {
   source: true,
   projectId: true,
   status: true,
-  moderatedBy: true,
   moderatedAt: true,
   isActive: true,
   sortOrder: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -110,10 +108,7 @@ export async function PATCH(req: Request, { params }: Params) {
       )
     }
 
-    const moderationData =
-      status && status !== existing.status
-        ? { moderatedBy: auth.payload?.email ?? 'admin', moderatedAt: new Date() }
-        : {}
+    const moderationData = status && status !== existing.status ? { moderatedAt: new Date() } : {}
 
     const updated = await prisma.testimonial.update({
       where: { id },

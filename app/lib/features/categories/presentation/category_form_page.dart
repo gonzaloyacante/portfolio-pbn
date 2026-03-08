@@ -133,8 +133,6 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
             ? null
             : _thumbnailCtrl.text.trim(),
-        iconName: null,
-        color: null,
         isActive: _isActive,
       );
 

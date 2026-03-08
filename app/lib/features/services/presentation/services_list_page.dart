@@ -203,12 +203,7 @@ class _ServiceGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final color = item.color != null
-        ? Color(
-            int.tryParse('0xFF${item.color!.replaceFirst('#', '')}') ??
-                0xFF6C0A0A,
-          )
-        : scheme.primary;
+    final color = scheme.primary;
 
     final priceText = item.price != null
         ? '${currencySymbol(item.currency)}${item.price}'
@@ -240,15 +235,11 @@ class _ServiceGridCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                     ),
                     child: Center(
-                      child:
-                          item.iconName != null &&
-                              item.iconName!.runes.length <= 2
-                          ? Text(
-                              item.iconName!,
-                              style: const TextStyle(fontSize: 24, height: 1.2),
-                              textAlign: TextAlign.center,
-                            )
-                          : Icon(Icons.design_services, color: color, size: 22),
+                      child: Icon(
+                        Icons.design_services,
+                        color: color,
+                        size: 22,
+                      ),
                     ),
                   ),
                   const Spacer(),
@@ -348,12 +339,7 @@ class _ServiceTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final color = item.color != null
-        ? Color(
-            int.tryParse('0xFF${item.color!.replaceFirst('#', '')}') ??
-                0xFF6C0A0A,
-          )
-        : scheme.primary;
+    final color = scheme.primary;
 
     final priceText = item.price != null
         ? '${item.priceLabel ?? 'desde'} ${currencySymbol(item.currency)}${item.price}'
@@ -382,14 +368,7 @@ class _ServiceTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(
-                  child:
-                      item.iconName != null && item.iconName!.runes.length <= 2
-                      ? Text(
-                          item.iconName!,
-                          style: const TextStyle(fontSize: 24, height: 1.2),
-                          textAlign: TextAlign.center,
-                        )
-                      : Icon(Icons.design_services, color: color, size: 22),
+                  child: Icon(Icons.design_services, color: color, size: 22),
                 ),
               ),
               const SizedBox(width: 12),

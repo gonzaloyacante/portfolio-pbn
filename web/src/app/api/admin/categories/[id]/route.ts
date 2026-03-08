@@ -22,18 +22,15 @@ const CATEGORY_FULL_SELECT = {
   description: true,
   thumbnailUrl: true,
   coverImageUrl: true,
-  iconName: true,
-  color: true,
   metaTitle: true,
   metaDescription: true,
   metaKeywords: true,
   ogImage: true,
   sortOrder: true,
   isActive: true,
-  projectCount: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
+  _count: { select: { projects: { where: { deletedAt: null } } } },
 }
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -56,7 +53,8 @@ export async function GET(req: Request, { params }: Params) {
       )
     }
 
-    return NextResponse.json({ success: true, data: category })
+    const { _count, ...cat } = category
+    return NextResponse.json({ success: true, data: { ...cat, projectCount: _count.projects } })
   } catch (err) {
     logger.error('[admin-category-get] Error', {
       error: err instanceof Error ? err.message : String(err),
@@ -80,8 +78,6 @@ export async function PATCH(req: Request, { params }: Params) {
       description,
       thumbnailUrl,
       coverImageUrl,
-      iconName,
-      color,
       isActive,
       sortOrder,
       metaTitle,
@@ -112,8 +108,6 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(description !== undefined && { description }),
         ...(thumbnailUrl !== undefined && { thumbnailUrl }),
         ...(coverImageUrl !== undefined && { coverImageUrl }),
-        ...(iconName !== undefined && { iconName }),
-        ...(color !== undefined && { color }),
         ...(isActive !== undefined && { isActive }),
         ...(sortOrder !== undefined && { sortOrder }),
         ...(metaTitle !== undefined && { metaTitle }),
@@ -137,7 +131,8 @@ export async function PATCH(req: Request, { params }: Params) {
       })
     }
 
-    return NextResponse.json({ success: true, data: category })
+    const { _count, ...cat } = category
+    return NextResponse.json({ success: true, data: { ...cat, projectCount: _count.projects } })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
       error: err instanceof Error ? err.message : String(err),

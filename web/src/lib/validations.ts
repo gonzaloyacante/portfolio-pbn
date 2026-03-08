@@ -383,8 +383,6 @@ export const serviceApiSchema = z.object({
   currency: z.string().optional().nullable(),
   duration: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
-  iconName: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
 })
@@ -392,8 +390,6 @@ export const serviceApiSchema = z.object({
 // ── Category (API — extends base categorySchema) ────────────────────────────
 
 export const categoryApiSchema = categorySchema.extend({
-  iconName: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
 })
 

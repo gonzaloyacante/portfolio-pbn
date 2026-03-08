@@ -218,12 +218,7 @@ class _CategoryGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final color = item.color != null
-        ? Color(
-            int.tryParse('0xFF${item.color!.replaceFirst('#', '')}') ??
-                0xFF6C0A0A,
-          )
-        : scheme.primary;
+    final color = scheme.primary;
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -248,14 +243,7 @@ class _CategoryGridCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Center(
-                  child:
-                      item.iconName != null && item.iconName!.runes.length <= 2
-                      ? Text(
-                          item.iconName!,
-                          style: const TextStyle(fontSize: 28, height: 1.2),
-                          textAlign: TextAlign.center,
-                        )
-                      : item.name.isNotEmpty
+                  child: item.name.isNotEmpty
                       ? Text(
                           item.name[0].toUpperCase(),
                           style: theme.textTheme.headlineSmall?.copyWith(
@@ -310,12 +298,7 @@ class _CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final color = item.color != null
-        ? Color(
-            int.tryParse('0xFF${item.color!.replaceFirst('#', '')}') ??
-                0xFF6C0A0A,
-          )
-        : scheme.primary;
+    final color = scheme.primary;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -340,25 +323,13 @@ class _CategoryTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Center(
-                  child: item.iconName != null
-                      ? item.iconName!.runes.length <= 2
-                            ? Text(
-                                item.iconName!,
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  height: 1.2,
-                                ),
-                                textAlign: TextAlign.center,
-                              )
-                            : Icon(Icons.category, color: color, size: 22)
-                      : Text(
-                          item.name.isNotEmpty
-                              ? item.name[0].toUpperCase()
-                              : '?',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                  child: Text(
+                    item.name.isNotEmpty ? item.name[0].toUpperCase() : '?',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),

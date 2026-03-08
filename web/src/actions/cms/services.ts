@@ -40,8 +40,6 @@ const ServiceSchema = z.object({
   imageUrl: z.string().url().optional().or(z.literal('')),
   galleryUrls: z.string().optional(), // Comma separated URLs
   videoUrl: z.string().url().optional().or(z.literal('')),
-  iconName: z.string().optional(),
-  color: z.string().optional(), // Brand color
 
   // Display
   isActive: z.boolean().default(true),
@@ -151,8 +149,6 @@ export async function createService(formData: FormData) {
     imageUrl: formData.get('imageUrl'),
     galleryUrls: formData.get('galleryUrls'),
     videoUrl: formData.get('videoUrl'),
-    iconName: formData.get('iconName'),
-    color: formData.get('color'),
     // Display
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
@@ -221,8 +217,6 @@ export async function createService(formData: FormData) {
         imageUrl: data.imageUrl || galleryList[0] || null,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
-        iconName: data.iconName || null,
-        color: data.color || null,
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
@@ -344,8 +338,6 @@ export async function updateService(id: string, formData: FormData) {
         imageUrl: data.imageUrl || galleryList[0] || null,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
-        iconName: data.iconName || null,
-        color: data.color || null,
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,

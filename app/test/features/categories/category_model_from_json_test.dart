@@ -53,24 +53,12 @@ void main() {
       () => expect(CategoryItem.fromJson(base).projectCount, 0),
     );
     test(
-      'viewCount defaults to 0',
-      () => expect(CategoryItem.fromJson(base).viewCount, 0),
-    );
-    test(
       'description is null',
       () => expect(CategoryItem.fromJson(base).description, isNull),
     );
     test(
       'thumbnailUrl is null',
       () => expect(CategoryItem.fromJson(base).thumbnailUrl, isNull),
-    );
-    test(
-      'iconName is null',
-      () => expect(CategoryItem.fromJson(base).iconName, isNull),
-    );
-    test(
-      'color is null',
-      () => expect(CategoryItem.fromJson(base).color, isNull),
     );
   });
 
@@ -81,8 +69,6 @@ void main() {
       'slug': 'maternidad',
       'description': 'Sesiones de maternidad',
       'thumbnailUrl': 'https://x.com/thumb.jpg',
-      'iconName': 'baby',
-      'color': '#FFD700',
       'sortOrder': 5,
       'isActive': false,
       'projectCount': 12,
@@ -106,14 +92,6 @@ void main() {
       ),
     );
     test(
-      'parses iconName',
-      () => expect(CategoryItem.fromJson(full()).iconName, 'baby'),
-    );
-    test(
-      'parses color',
-      () => expect(CategoryItem.fromJson(full()).color, '#FFD700'),
-    );
-    test(
       'parses sortOrder',
       () => expect(CategoryItem.fromJson(full()).sortOrder, 5),
     );
@@ -124,10 +102,6 @@ void main() {
     test(
       'parses projectCount',
       () => expect(CategoryItem.fromJson(full()).projectCount, 12),
-    );
-    test(
-      'parses viewCount',
-      () => expect(CategoryItem.fromJson(full()).viewCount, 340),
     );
   });
 
@@ -293,18 +267,6 @@ void main() {
       final j = CategoryFormData(name: 'T', slug: 't').toJson();
       expect(j.containsKey('description'), isFalse);
       expect(j.containsKey('thumbnailUrl'), isFalse);
-      expect(j.containsKey('iconName'), isFalse);
-      expect(j.containsKey('color'), isFalse);
-    });
-    test('optional fields present when set', () {
-      final j = CategoryFormData(
-        name: 'T',
-        slug: 't',
-        color: '#f00',
-        iconName: 'star',
-      ).toJson();
-      expect(j['color'], '#f00');
-      expect(j['iconName'], 'star');
     });
   });
 }

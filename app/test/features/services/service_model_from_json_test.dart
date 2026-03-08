@@ -61,14 +61,6 @@ void main() {
       () => expect(ServiceItem.fromJson(base).sortOrder, 0),
     );
     test(
-      'bookingCount defaults to 0',
-      () => expect(ServiceItem.fromJson(base).bookingCount, 0),
-    );
-    test(
-      'viewCount defaults to 0',
-      () => expect(ServiceItem.fromJson(base).viewCount, 0),
-    );
-    test(
       'shortDesc is null',
       () => expect(ServiceItem.fromJson(base).shortDesc, isNull),
     );
@@ -88,14 +80,6 @@ void main() {
       'imageUrl is null',
       () => expect(ServiceItem.fromJson(base).imageUrl, isNull),
     );
-    test(
-      'iconName is null',
-      () => expect(ServiceItem.fromJson(base).iconName, isNull),
-    );
-    test(
-      'color is null',
-      () => expect(ServiceItem.fromJson(base).color, isNull),
-    );
   });
 
   group('ServiceItem.fromJson — optional fields', () {
@@ -109,14 +93,10 @@ void main() {
       'currency': 'USD',
       'duration': '2 horas',
       'imageUrl': 'https://x.com/img.jpg',
-      'iconName': 'brush',
-      'color': '#FF5733',
       'isActive': false,
       'isFeatured': true,
       'isAvailable': false,
       'sortOrder': 3,
-      'bookingCount': 12,
-      'viewCount': 100,
       'createdAt': '2024-02-01T00:00:00Z',
       'updatedAt': '2024-02-15T00:00:00Z',
     };
@@ -150,14 +130,6 @@ void main() {
       ),
     );
     test(
-      'parses iconName',
-      () => expect(ServiceItem.fromJson(full()).iconName, 'brush'),
-    );
-    test(
-      'parses color',
-      () => expect(ServiceItem.fromJson(full()).color, '#FF5733'),
-    );
-    test(
       'parses isActive = false',
       () => expect(ServiceItem.fromJson(full()).isActive, isFalse),
     );
@@ -172,14 +144,6 @@ void main() {
     test(
       'parses sortOrder',
       () => expect(ServiceItem.fromJson(full()).sortOrder, 3),
-    );
-    test(
-      'parses bookingCount',
-      () => expect(ServiceItem.fromJson(full()).bookingCount, 12),
-    );
-    test(
-      'parses viewCount',
-      () => expect(ServiceItem.fromJson(full()).viewCount, 100),
     );
   });
 

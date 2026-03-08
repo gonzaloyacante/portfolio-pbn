@@ -530,18 +530,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           items: categories.map((c) {
             return DropdownMenuItem(
               value: c.id,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (c.iconName != null && c.iconName!.isNotEmpty) ...[
-                    Text(c.iconName!, style: const TextStyle(fontSize: 16)),
-                    const SizedBox(width: 8),
-                  ],
-                  Flexible(
-                    child: Text(c.name, overflow: TextOverflow.ellipsis),
-                  ),
-                ],
-              ),
+              child: Text(c.name, overflow: TextOverflow.ellipsis),
             );
           }).toList(),
           onChanged: (v) => setState(() => _data.categoryId = v ?? ''),

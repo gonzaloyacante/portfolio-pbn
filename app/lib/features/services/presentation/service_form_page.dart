@@ -6,9 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
-import '../../../shared/widgets/color_picker_field.dart';
 import '../../../shared/widgets/duration_picker_field.dart';
-import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/service_model.dart';
@@ -40,9 +38,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   final _durationCtrl = TextEditingController();
   final _imageCtrl = TextEditingController();
   File? _pendingImage;
-  final _colorCtrl = TextEditingController();
-  String? _selectedIcon;
-
   String _priceLabel = 'desde';
   String _currency = 'ARS';
   bool _isActive = true;
@@ -62,7 +57,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       _priceCtrl,
       _durationCtrl,
       _imageCtrl,
-      _colorCtrl,
     ]) {
       ctrl.dispose();
     }
@@ -79,8 +73,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     _priceCtrl.text = detail.price ?? '';
     _durationCtrl.text = detail.duration ?? '';
     _imageCtrl.text = detail.imageUrl ?? '';
-    _selectedIcon = detail.iconName;
-    _colorCtrl.text = detail.color ?? '';
     setState(() {
       _priceLabel = detail.priceLabel ?? 'desde';
       _currency = detail.currency;
@@ -130,8 +122,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
         imageUrl: _imageCtrl.text.trim().isEmpty
             ? null
             : _imageCtrl.text.trim(),
-        iconName: _selectedIcon,
-        color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
         isActive: _isActive,
         isFeatured: _isFeatured,
       );
@@ -267,23 +257,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
 
               // Duración
               DurationPickerField(controller: _durationCtrl, label: 'Duración'),
-              const SizedBox(height: 16),
-
-              // Ícono
-              EmojiIconPicker(
-                value: _selectedIcon,
-                onChanged: (v) => setState(() => _selectedIcon = v),
-                label: 'Ícono del servicio',
-                hint: 'Toca para elegir un emoji',
-              ),
-              const SizedBox(height: 16),
-
-              // Color
-              ColorPickerField(
-                controller: _colorCtrl,
-                label: 'Color de marca',
-                helperText: 'Color identificativo del servicio',
-              ),
               const SizedBox(height: 16),
 
               // Imagen del servicio

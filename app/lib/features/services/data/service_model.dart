@@ -19,14 +19,10 @@ abstract class ServiceItem with _$ServiceItem {
     @Default('EUR') String currency,
     String? duration,
     String? imageUrl,
-    String? iconName,
-    String? color,
     @Default(true) bool isActive,
     @Default(false) bool isFeatured,
     @Default(true) bool isAvailable,
     @Default(0) int sortOrder,
-    @Default(0) int bookingCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _ServiceItem;
@@ -52,8 +48,6 @@ abstract class ServiceDetail with _$ServiceDetail {
     String? duration,
     int? durationMinutes,
     String? imageUrl,
-    String? iconName,
-    String? color,
     @Default(true) bool isActive,
     @Default(false) bool isFeatured,
     @Default(true) bool isAvailable,
@@ -65,8 +59,6 @@ abstract class ServiceDetail with _$ServiceDetail {
     @Default([]) List<String> metaKeywords,
     String? requirements,
     String? cancellationPolicy,
-    @Default(0) int bookingCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _ServiceDetail;
@@ -87,8 +79,6 @@ class ServiceFormData {
   final String currency;
   final String? duration;
   final String? imageUrl;
-  final String? iconName;
-  final String? color;
   final bool isActive;
   final bool isFeatured;
 
@@ -102,8 +92,6 @@ class ServiceFormData {
     this.currency = 'EUR',
     this.duration,
     this.imageUrl,
-    this.iconName,
-    this.color,
     this.isActive = true,
     this.isFeatured = false,
   });
@@ -118,8 +106,6 @@ class ServiceFormData {
     'currency': currency,
     if (duration != null) 'duration': duration,
     if (imageUrl != null) 'imageUrl': imageUrl,
-    if (iconName != null) 'iconName': iconName,
-    if (color != null) 'color': color,
     'isActive': isActive,
     'isFeatured': isFeatured,
   };

@@ -122,12 +122,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
               mode="gallery"
             />
           </div>
-          <FormField
-            label="Icono (Lucide name)"
-            name="iconName"
-            defaultValue={service?.iconName || ''}
-            placeholder="sparkles"
-          />
         </div>
         <div className="bg-muted/20 flex items-center gap-6 rounded-lg p-4">
           <label className="flex cursor-pointer items-center gap-2">
@@ -235,13 +229,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
 
       {/* --- DETAILS --- */}
       <div className={activeTab === 'details' ? 'block space-y-4' : 'hidden'}>
-        <FormField
-          label="Color de Marca (Hex)"
-          name="color"
-          defaultValue={service?.color || ''}
-          // eslint-disable-next-line no-restricted-syntax -- placeholder is descriptive text for user, not a system color
-          placeholder="#ff00ff"
-        />
         <FormField
           label="Video URL"
           name="videoUrl"

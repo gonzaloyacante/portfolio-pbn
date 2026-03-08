@@ -20,14 +20,11 @@ const CATEGORY_SELECT = {
   description: true,
   thumbnailUrl: true,
   coverImageUrl: true,
-  iconName: true,
-  color: true,
   sortOrder: true,
   isActive: true,
-  projectCount: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
+  _count: { select: { projects: { where: { deletedAt: null } } } },
 } as const
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -66,10 +63,15 @@ export async function GET(req: Request) {
       prisma.category.count({ where }),
     ])
 
+    const mapped = categories.map(({ _count, ...cat }) => ({
+      ...cat,
+      projectCount: _count.projects,
+    }))
+
     return NextResponse.json({
       success: true,
       data: {
-        data: categories,
+        data: mapped,
         pagination: {
           page,
           limit,
@@ -105,16 +107,7 @@ export async function POST(req: Request) {
       )
     }
 
-    const {
-      name,
-      slug,
-      description,
-      thumbnailUrl,
-      coverImageUrl,
-      iconName,
-      color,
-      isActive = true,
-    } = parsed.data
+    const { name, slug, description, thumbnailUrl, coverImageUrl, isActive = true } = parsed.data
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)
@@ -138,8 +131,6 @@ export async function POST(req: Request) {
         description,
         thumbnailUrl,
         coverImageUrl,
-        iconName,
-        color,
         isActive,
         sortOrder: nextOrder,
       },

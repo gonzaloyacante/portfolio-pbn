@@ -3,8 +3,7 @@ import { getContactSettings } from '@/actions/settings/contact'
 import { Metadata } from 'next'
 import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/ui'
 import Link from 'next/link'
-import { MessageCircle, type LucideIcon } from 'lucide-react'
-import * as icons from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
 
 export const metadata: Metadata = {
@@ -27,20 +26,6 @@ export const metadata: Metadata = {
     description:
       'Maquillaje profesional en Málaga: novias, editoriales, caracterización y eventos.',
   },
-}
-
-// Type-safe icon lookup using LucideIcon type
-function getIconComponent(iconName?: string | null): LucideIcon | null {
-  if (!iconName) return null
-  // Convert to PascalCase (e.g., "sparkles" -> "Sparkles")
-  const pascalCase = iconName.charAt(0).toUpperCase() + iconName.slice(1)
-  // Access the icon from the icons module with proper type guard
-  const icon = icons[pascalCase as keyof typeof icons]
-  // Verify it's a valid component (function) not a type or other export
-  if (typeof icon === 'function') {
-    return icon as LucideIcon
-  }
-  return null
 }
 
 export default async function ServicesPage() {
@@ -87,7 +72,6 @@ export default async function ServicesPage() {
         ) : (
           <StaggerChildren className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => {
-              const IconComponent = getIconComponent(service.iconName)
               return (
                 <ScaleIn key={service.id}>
                   <article className="border-border bg-card group relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -106,8 +90,6 @@ export default async function ServicesPage() {
                             height={300}
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
-                        ) : IconComponent ? (
-                          <IconComponent className="text-muted-foreground/30 h-24 w-24" />
                         ) : (
                           <span className="text-6xl opacity-30">💄</span>
                         )}

@@ -133,18 +133,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
               .map(
                 (s) => DropdownMenuItem(
                   value: s.id,
-                  child: Row(
-                    children: [
-                      if (s.iconName != null &&
-                          s.iconName!.runes.length <= 2) ...[
-                        Text(s.iconName!, style: const TextStyle(fontSize: 18)),
-                        const SizedBox(width: 8),
-                      ],
-                      Flexible(
-                        child: Text(s.name, overflow: TextOverflow.ellipsis),
-                      ),
-                    ],
-                  ),
+                  child: Text(s.name, overflow: TextOverflow.ellipsis),
                 ),
               )
               .toList(),

@@ -192,7 +192,6 @@ export async function updateTestimonial(id: string, formData: FormData) {
         status: data.status,
         moderationNote: data.moderationNote,
         moderatedAt: new Date(),
-        moderatedBy: session?.user?.id || 'system',
       },
     })
 

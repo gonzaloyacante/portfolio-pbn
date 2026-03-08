@@ -123,7 +123,6 @@ async function persistContact(
     data: {
       ...sanitized,
       ipAddress: meta.ipAddress,
-      userAgent: meta.userAgent,
       referrer: meta.referrer,
     },
   })

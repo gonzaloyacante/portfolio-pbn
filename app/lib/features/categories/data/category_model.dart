@@ -15,12 +15,9 @@ abstract class CategoryItem with _$CategoryItem {
     required String slug,
     String? description,
     String? thumbnailUrl,
-    String? iconName,
-    String? color,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
     @Default(0) int projectCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _CategoryItem;
@@ -41,8 +38,6 @@ abstract class CategoryDetail with _$CategoryDetail {
     String? description,
     String? thumbnailUrl,
     String? coverImageUrl,
-    String? iconName,
-    String? color,
     String? metaTitle,
     String? metaDescription,
     @Default([]) List<String> metaKeywords,
@@ -50,7 +45,6 @@ abstract class CategoryDetail with _$CategoryDetail {
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
     @Default(0) int projectCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _CategoryDetail;
@@ -66,8 +60,6 @@ class CategoryFormData {
   final String slug;
   final String? description;
   final String? thumbnailUrl;
-  final String? iconName;
-  final String? color;
   final bool isActive;
 
   const CategoryFormData({
@@ -75,8 +67,6 @@ class CategoryFormData {
     required this.slug,
     this.description,
     this.thumbnailUrl,
-    this.iconName,
-    this.color,
     this.isActive = true,
   });
 
@@ -85,8 +75,6 @@ class CategoryFormData {
     'slug': slug,
     if (description != null) 'description': description,
     if (thumbnailUrl != null) 'thumbnailUrl': thumbnailUrl,
-    if (iconName != null) 'iconName': iconName,
-    if (color != null) 'color': color,
     'isActive': isActive,
   };
 }
