@@ -64,10 +64,11 @@ export default async function CategoryGalleryPage({ params }: { params: Promise<
       if (b.categoryGalleryOrder != null) return 1
       return (a._order ?? 0) - (b._order ?? 0)
     })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _order, ...img }) => img)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl">
       <CategoryGalleryEditor
         categoryId={category.id}
         categoryName={category.name}

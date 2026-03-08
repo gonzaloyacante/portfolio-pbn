@@ -138,7 +138,7 @@ export default async function ContactPage() {
           <div className="mb-8 space-y-4 text-left font-sans text-lg">
             {contactSettings?.email && (
               <a
-                href={`mailto:${contactSettings.email} `}
+                href={`mailto:${contactSettings.email}`}
                 className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
               >
                 <Mail className="h-6 w-6" />
@@ -147,7 +147,7 @@ export default async function ContactPage() {
             )}
             {contactSettings?.phone && (
               <a
-                href={`tel:${contactSettings.phone.replace(/\s+/g, '')} `}
+                href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
                 className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
               >
                 <Phone className="h-6 w-6" />

@@ -17,7 +17,7 @@ export default async function NewProjectPage() {
   // Sin categorías activas → mostrar estado vacío con CTA
   if (categories.length === 0) {
     return (
-      <div className="mx-auto max-w-4xl space-y-8 p-6">
+      <div className="mx-auto max-w-4xl space-y-8">
         <PageHeader
           title="✨ Crear Nuevo Proyecto"
           description="Sube las fotos y añade los detalles de tu nuevo proyecto"
@@ -45,7 +45,7 @@ export default async function NewProjectPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-6">
+    <div className="mx-auto max-w-4xl space-y-8">
       <PageHeader
         title="✨ Crear Nuevo Proyecto"
         description="Sube las fotos y añade los detalles de tu nuevo proyecto"

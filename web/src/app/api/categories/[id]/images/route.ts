@@ -2,7 +2,6 @@ import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { requireAdmin } from '@/lib/security-server'
-import type { Project, ProjectImage } from '@/generated/prisma/client'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -65,6 +64,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return (a._order ?? 0) - (b._order ?? 0)
     })
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const images = imagesFlat.map(({ _catOrder: _c, _order: _o, ...rest }) => rest)
 
     return NextResponse.json({ success: true, images })

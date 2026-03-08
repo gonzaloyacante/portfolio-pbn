@@ -62,7 +62,7 @@ export async function POST(req: Request, { params }: Params) {
     let image
     try {
       if (isCover) {
-        const [_, createdImage, __] = await prisma.$transaction([
+        const [, createdImage] = await prisma.$transaction([
           prisma.projectImage.updateMany({
             where: { projectId: id, isCover: true },
             data: { isCover: false },
@@ -87,7 +87,7 @@ export async function POST(req: Request, { params }: Params) {
         ])
         image = createdImage
       } else if (!project.thumbnailUrl) {
-        const [createdImage, _] = await prisma.$transaction([
+        const [createdImage] = await prisma.$transaction([
           prisma.projectImage.create({
             data: {
               projectId: id,

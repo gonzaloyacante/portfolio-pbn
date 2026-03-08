@@ -102,6 +102,7 @@ export default async function CategoryProjectsPage({
       if (b._catOrder != null) return 1
       return (a._order ?? 0) - (b._order ?? 0)
     })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(({ _catOrder: _c, _order: _o, ...img }) => img)
 
   return (

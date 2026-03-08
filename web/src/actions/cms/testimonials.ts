@@ -8,7 +8,6 @@ import { headers } from 'next/headers'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
 import { ROUTES } from '@/config/routes'
-import { auth } from '@/lib/auth'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
@@ -173,7 +172,7 @@ export async function updateTestimonial(id: string, formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
   const data = validation.data
-  const session = await auth()
+  await requireAdmin()
 
   try {
     await prisma.testimonial.update({

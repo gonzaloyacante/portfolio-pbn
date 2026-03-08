@@ -10,7 +10,7 @@ export default async function ServicesPage() {
   })
 
   return (
-    <div className="mx-auto max-w-5xl p-6">
+    <div className="mx-auto max-w-5xl">
       <ServiceManager initialServices={services} />
     </div>
   )

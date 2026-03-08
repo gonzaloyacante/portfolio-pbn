@@ -22,7 +22,9 @@ export default function GlobalError({
           justifyContent: 'center',
           minHeight: '100vh',
           fontFamily: 'system-ui, sans-serif',
+          /* eslint-disable-next-line no-restricted-syntax */
           backgroundColor: '#fff8fc',
+          /* eslint-disable-next-line no-restricted-syntax */
           color: '#1a050a',
           gap: '1rem',
           padding: '2rem',
@@ -30,13 +32,19 @@ export default function GlobalError({
         }}
       >
         <h1 style={{ fontSize: '2rem', fontWeight: 700 }}>Algo salió mal</h1>
-        <p style={{ color: '#6b7280' }}>
+        <p
+          style={{
+            /* eslint-disable-next-line no-restricted-syntax */
+            color: '#6b7280',
+          }}
+        >
           Un error inesperado ocurrió. Por favor inténtalo de nuevo.
         </p>
         <button
           onClick={() => reset()}
           style={{
             padding: '0.75rem 1.5rem',
+            /* eslint-disable-next-line no-restricted-syntax */
             backgroundColor: '#6c0a0a',
             color: 'white',
             border: 'none',

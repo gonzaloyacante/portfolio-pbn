@@ -26,7 +26,7 @@ export default async function ProjectsManagementPage() {
   ])
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 p-6">
+    <div className="mx-auto max-w-6xl space-y-8">
       <PageHeader
         title="🎨 Gestión de Proyectos"
         description="Crea, edita y organiza tus proyectos de portfolio"

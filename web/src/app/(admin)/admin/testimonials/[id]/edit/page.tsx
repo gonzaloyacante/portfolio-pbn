@@ -21,7 +21,7 @@ export default async function EditTestimonialPage({ params }: EditTestimonialPag
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-6">
+    <div className="mx-auto max-w-4xl">
       <Section title={`Editar Testimonio: ${testimonial.name}`}>
         <TestimonialEditForm testimonial={testimonial} />
       </Section>
