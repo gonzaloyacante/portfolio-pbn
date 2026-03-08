@@ -32,8 +32,29 @@ export async function DELETE(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Imagen no encontrada' }, { status: 404 })
     }
 
-    // Eliminar de DB primero
+    // Eliminar de DB
     await prisma.projectImage.delete({ where: { id: imageId } })
+
+    // Recomputar thumbnail del proyecto: si la imagen borrada era la miniatura,
+    // elegir la siguiente imagen (preferir isCover, luego menor order)
+    try {
+      const nextImage = await prisma.projectImage.findFirst({
+        where: { projectId: id },
+        orderBy: [{ isCover: 'desc' as const }, { order: 'asc' as const }],
+        select: { url: true, isCover: true },
+      })
+
+      if (nextImage) {
+        await prisma.project.update({ where: { id }, data: { thumbnailUrl: nextImage.url } })
+      } else {
+        // Project thumbnail is stored as an empty string when not set
+        await prisma.project.update({ where: { id }, data: { thumbnailUrl: '' } })
+      }
+    } catch (updateErr) {
+      logger.warn('[admin-project-images-delete] Could not recompute project.thumbnailUrl', {
+        error: updateErr instanceof Error ? updateErr.message : String(updateErr),
+      })
+    }
 
     revalidatePath(ROUTES.public.projects, 'layout')
     revalidatePath(`${ROUTES.admin.projects}/${id}`)
