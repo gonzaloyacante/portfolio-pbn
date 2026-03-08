@@ -1,7 +1,7 @@
 import { getActiveServices } from '@/actions/cms/services'
 import { getContactSettings } from '@/actions/settings/contact'
 import { Metadata } from 'next'
-import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/ui'
+import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage, Button } from '@/components/ui'
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
@@ -143,23 +143,28 @@ export default async function ServicesPage() {
                       {/* CTA Buttons */}
                       <div className="mt-auto flex flex-col gap-3">
                         {whatsappLink && (
-                          <Link
-                            href={`${whatsappLink}&text=${encodeURIComponent(`¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold transition-all duration-300 hover:shadow-lg"
+                          <Button
+                            asChild
+                            className="w-full rounded-xl py-3 font-semibold hover:shadow-lg"
                           >
-                            <MessageCircle className="h-5 w-5" />
-                            Reservar por WhatsApp
-                          </Link>
+                            <Link
+                              href={`${whatsappLink}&text=${encodeURIComponent(`¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <MessageCircle className="h-5 w-5" />
+                              Reservar por WhatsApp
+                            </Link>
+                          </Button>
                         )}
 
-                        <Link
-                          href={`/servicios/${service.slug}`}
-                          className="border-input text-foreground hover:bg-muted flex items-center justify-center gap-2 rounded-xl border px-4 py-3 font-semibold transition-all duration-300"
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full rounded-xl py-3 font-semibold"
                         >
-                          Ver Detalles & Precios
-                        </Link>
+                          <Link href={`/servicios/${service.slug}`}>Ver Detalles & Precios</Link>
+                        </Button>
                       </div>
                     </div>
                   </article>
@@ -179,15 +184,15 @@ export default async function ServicesPage() {
               <p className="text-muted-foreground mb-6">
                 Contáctame para servicios personalizados o paquetes especiales.
               </p>
-              <Link
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-green-500 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-600 hover:shadow-lg"
+              <Button
+                asChild
+                className="rounded-xl bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600 hover:shadow-lg"
               >
-                <MessageCircle className="h-5 w-5" />
-                Escribirme por WhatsApp
-              </Link>
+                <Link href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-5 w-5" />
+                  Escribirme por WhatsApp
+                </Link>
+              </Button>
             </div>
           </FadeIn>
         )}

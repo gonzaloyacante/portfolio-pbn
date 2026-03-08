@@ -1,5 +1,6 @@
 import { getContacts } from '@/actions/user/contact'
 import ContactList from '@/components/features/contact/ContactList'
+import { Button } from '@/components/ui'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 
@@ -17,12 +18,9 @@ export default async function AdminContactsPage() {
         </div>
 
         <div className="flex items-center gap-4">
-          <Link
-            href={ROUTES.admin.contactSettings}
-            className="border-input hover:bg-accent rounded-lg border px-4 py-2 text-sm font-medium"
-          >
-            Configurar
-          </Link>
+          <Button asChild variant="outline" size="sm">
+            <Link href={ROUTES.admin.contactSettings}>Configurar</Link>
+          </Button>
           <div className="bg-primary text-primary-foreground rounded-2xl px-6 py-4 shadow-lg">
             <p className="text-xs font-bold tracking-wider uppercase opacity-80">Total</p>
             <p className="text-3xl leading-none font-bold">{contacts.length}</p>
