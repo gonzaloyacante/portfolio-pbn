@@ -2,7 +2,7 @@ import { logger } from '@/lib/logger'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Server-side only (not exposed to client)
   api_key: process.env.CLOUDINARY_API_KEY, // Server-side only
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
