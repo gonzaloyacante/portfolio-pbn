@@ -11,8 +11,9 @@ export default function ToastProvider() {
       toastOptions={{
         duration: 4000,
         style: {
-          background: '#fff',
-          color: '#333',
+          background: 'var(--card)',
+          color: 'var(--foreground)',
+          border: '1px solid var(--border)',
         },
         success: {
           iconTheme: {
