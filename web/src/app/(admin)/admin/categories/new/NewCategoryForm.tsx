@@ -16,6 +16,18 @@ export function NewCategoryForm() {
     e.preventDefault()
     setError(null)
     const formData = new FormData(e.currentTarget)
+    // Auto-generate slug if not provided (hide slug input from UI)
+    const name = (formData.get('name') as string) || ''
+    if (!formData.get('slug') && name) {
+      const slug = name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/(^-|-$)/g, '')
+      formData.set('slug', slug)
+    }
     startTransition(async () => {
       const result = await createCategory(formData)
       if (result.success) {
@@ -49,23 +61,8 @@ export function NewCategoryForm() {
           />
         </div>
 
-        {/* Slug */}
-        <div className="space-y-2">
-          <label htmlFor="slug" className="text-foreground text-sm font-medium">
-            Slug (URL) *
-          </label>
-          <Input
-            id="slug"
-            name="slug"
-            placeholder="ej: fx, maquillaje-social"
-            required
-            pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-            className="w-full font-mono text-sm"
-          />
-          <p className="text-muted-foreground text-xs">
-            Solo minúsculas, números y guiones. Ej: maquillaje-social
-          </p>
-        </div>
+        {/* Slug is auto-generated from Name (hidden from the form) */}
+        <input type="hidden" name="slug" />
 
         {/* Description */}
         <div className="space-y-2">

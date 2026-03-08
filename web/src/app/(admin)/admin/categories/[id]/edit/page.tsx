@@ -74,24 +74,8 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
             />
           </div>
 
-          {/* Slug */}
-          <div className="space-y-2">
-            <label htmlFor="slug" className="text-foreground text-sm font-medium">
-              Slug (URL) *
-            </label>
-            <Input
-              id="slug"
-              name="slug"
-              defaultValue={category.slug}
-              placeholder="ej: fx, maquillaje-social"
-              required
-              pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-              className="w-full font-mono text-sm"
-            />
-            <p className="text-xs text-yellow-600 dark:text-yellow-500">
-              ⚠️ Cambiar el slug puede romper enlaces existentes
-            </p>
-          </div>
+          {/* Slug: hidden from UI to avoid accidental edits. Preserved in form data. */}
+          <input type="hidden" name="slug" defaultValue={category.slug} />
 
           {/* Description */}
           <div className="space-y-2">
