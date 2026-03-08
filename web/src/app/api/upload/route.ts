@@ -69,7 +69,10 @@ export async function POST(req: NextRequest) {
     }
     logger.error('Error uploading image:', { error: error })
     return NextResponse.json(
-      { error: 'Error al subir la imagen', details: String(error) },
+      {
+        error: 'Error al subir la imagen',
+        ...(process.env.NODE_ENV !== 'production' && { details: String(error) }),
+      },
       { status: 500 }
     )
   }

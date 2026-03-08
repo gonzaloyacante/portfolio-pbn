@@ -46,7 +46,11 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Error al subir la imagen', details: String(error) },
+      {
+        success: false,
+        error: 'Error al subir la imagen',
+        ...(process.env.NODE_ENV !== 'production' && { details: String(error) }),
+      },
       { status: 500 }
     )
   }
@@ -74,7 +78,11 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Error al eliminar imagen', details: String(error) },
+      {
+        success: false,
+        error: 'Error al eliminar imagen',
+        ...(process.env.NODE_ENV !== 'production' && { details: String(error) }),
+      },
       { status: 500 }
     )
   }
