@@ -38,7 +38,9 @@ export default function CategoriesContent({
     errorMessage: TOAST_MESSAGES.categories.reorder.error,
   })
   const renderCategoryItem = (category: CategoryWithCount, isDragging: boolean) => {
-    const thumbnailUrl = category.projects[0]?.thumbnailUrl
+    // Priority: explicit category cover → category thumbnail → first project thumbnail → empty
+    const thumbnailUrl =
+      category.coverImageUrl || category.thumbnailUrl || category.projects[0]?.thumbnailUrl
 
     if (view === 'grid') {
       return (

@@ -343,13 +343,28 @@ export async function deleteProjectImage(imageId: string) {
   await checkApiRateLimit()
 
   try {
-    const image = await prisma.projectImage.findUnique({ where: { id: imageId } })
+    const image = await prisma.projectImage.findUnique({
+      where: { id: imageId },
+      select: { publicId: true, url: true, projectId: true },
+    })
     if (!image) throw new Error('Image not found')
 
     await deleteImage(image.publicId)
     await prisma.projectImage.delete({ where: { id: imageId } })
 
+    // Recompute thumbnailUrl: use first remaining image or clear it
+    const firstRemaining = await prisma.projectImage.findFirst({
+      where: { projectId: image.projectId },
+      orderBy: { order: 'asc' },
+      select: { url: true },
+    })
+    await prisma.project.update({
+      where: { id: image.projectId },
+      data: { thumbnailUrl: firstRemaining?.url ?? '' },
+    })
+
     _revalidatePublicContent()
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Image deleted: ${imageId}`)
     return { success: true }
   } catch (error) {
@@ -364,12 +379,17 @@ export async function createCategory(formData: FormData) {
   await requireAdmin()
   await checkApiRateLimit()
 
+  // File inputs (even empty ones) send File objects via native form submit.
+  // Filter them out — only accept string URLs from hidden inputs.
+  const _toStringOrNull = (v: FormDataEntryValue | null): string | null =>
+    typeof v === 'string' && v !== '' ? v : null
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
-    coverImageUrl: formData.get('coverImageUrl'),
-    thumbnailUrl: formData.get('thumbnailUrl'),
+    coverImageUrl: _toStringOrNull(formData.get('coverImageUrl')),
+    thumbnailUrl: _toStringOrNull(formData.get('thumbnailUrl')),
   }
 
   const validation = categorySchema.safeParse(rawData)
@@ -425,7 +445,7 @@ export async function updateCategory(id: string, formData: FormData) {
   try {
     await prisma.category.update({
       where: { id },
-      data: { name, slug, description, coverImageUrl },
+      data: { name, slug, description, coverImageUrl: coverImageUrl || null },
     })
     _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)

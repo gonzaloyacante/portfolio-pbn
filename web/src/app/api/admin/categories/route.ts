@@ -19,6 +19,7 @@ const CATEGORY_SELECT = {
   slug: true,
   description: true,
   thumbnailUrl: true,
+  coverImageUrl: true,
   iconName: true,
   color: true,
   sortOrder: true,
@@ -104,7 +105,16 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, slug, description, thumbnailUrl, iconName, color, isActive = true } = parsed.data
+    const {
+      name,
+      slug,
+      description,
+      thumbnailUrl,
+      coverImageUrl,
+      iconName,
+      color,
+      isActive = true,
+    } = parsed.data
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)
@@ -127,6 +137,7 @@ export async function POST(req: Request) {
         slug,
         description,
         thumbnailUrl,
+        coverImageUrl,
         iconName,
         color,
         isActive,

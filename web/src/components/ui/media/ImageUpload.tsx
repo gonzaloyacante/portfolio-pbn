@@ -338,7 +338,6 @@ function DropZone({
         </div>
         <input
           id={`file-upload-${name}`}
-          name={name}
           type="file"
           className="hidden"
           multiple={multiple}
@@ -424,7 +423,6 @@ function SingleImagePreview({
       </div>
       <input
         id={`file-upload-${name}`}
-        name={name}
         type="file"
         className="hidden"
         multiple={multiple}
