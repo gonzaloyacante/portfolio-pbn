@@ -624,8 +624,14 @@ class _DashboardGreeting extends ConsumerWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [primary.withAlpha(80), colorScheme.secondary.withAlpha(50)]
-              : [primary.withAlpha(38), colorScheme.secondary.withAlpha(22)],
+              ? [
+                  primary.withValues(alpha: 80 / 255),
+                  colorScheme.secondary.withValues(alpha: 50 / 255),
+                ]
+              : [
+                  primary.withValues(alpha: 38 / 255),
+                  colorScheme.secondary.withValues(alpha: 22 / 255),
+                ],
         ),
         borderRadius: BorderRadius.circular(AppRadius.card),
       ),
@@ -651,7 +657,7 @@ class _DashboardGreeting extends ConsumerWidget {
                 Text(
                   _formattedDate(),
                   style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withAlpha(160),
+                    color: colorScheme.onSurface.withValues(alpha: 160 / 255),
                   ),
                 ),
               ],
@@ -662,7 +668,7 @@ class _DashboardGreeting extends ConsumerWidget {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: primary.withAlpha(isDark ? 70 : 40),
+              color: primary.withValues(alpha: (isDark ? 70 : 40) / 255),
               borderRadius: BorderRadius.circular(16),
             ),
             alignment: Alignment.center,

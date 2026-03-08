@@ -19,8 +19,8 @@ class AppTypography {
         ? AppColors.lightForeground
         : AppColors.darkForeground;
     final mutedColor = brightness == Brightness.light
-        ? AppColors.lightForeground.withAlpha(153) // ~60%
-        : AppColors.darkForeground.withAlpha(153);
+        ? AppColors.lightForeground.withValues(alpha: 153 / 255) // ~60%
+        : AppColors.darkForeground.withValues(alpha: 153 / 255);
 
     return TextTheme(
       // Display — Great Vibes para títulos decorativos

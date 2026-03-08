@@ -51,10 +51,12 @@ class StatCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Fondo tintado: más intenso en dark, más suave en light
-    final bgTint = isDark ? cardColor.withAlpha(55) : cardColor.withAlpha(26);
+    final bgTint = isDark
+        ? cardColor.withValues(alpha: 55 / 255)
+        : cardColor.withValues(alpha: 26 / 255);
     final iconBgTint = isDark
-        ? cardColor.withAlpha(90)
-        : cardColor.withAlpha(45);
+        ? cardColor.withValues(alpha: 90 / 255)
+        : cardColor.withValues(alpha: 45 / 255);
 
     return Material(
       color: bgTint,
@@ -62,8 +64,8 @@ class StatCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        splashColor: cardColor.withAlpha(40),
-        highlightColor: cardColor.withAlpha(20),
+        splashColor: cardColor.withValues(alpha: 40 / 255),
+        highlightColor: cardColor.withValues(alpha: 20 / 255),
         child: Padding(
           padding: EdgeInsets.all(
             isExpanded ? AppSpacing.base : AppSpacing.sm + 2,
@@ -110,7 +112,9 @@ class StatCard extends StatelessWidget {
                     Text(
                       label,
                       style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface.withAlpha(160),
+                        color: colorScheme.onSurface.withValues(
+                          alpha: 160 / 255,
+                        ),
                         fontWeight: FontWeight.w500,
                         letterSpacing: 0.1,
                         fontSize: isExpanded ? null : 11,
@@ -137,7 +141,7 @@ class StatCard extends StatelessWidget {
                   child: Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 13,
-                    color: cardColor.withAlpha(180),
+                    color: cardColor.withValues(alpha: 180 / 255),
                   ),
                 ),
             ],
@@ -166,9 +170,12 @@ class _TrendBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: color.withAlpha(28),
+        color: color.withValues(alpha: 28 / 255),
         borderRadius: AppRadius.forChip,
-        border: Border.all(color: color.withAlpha(70), width: 0.8),
+        border: Border.all(
+          color: color.withValues(alpha: 70 / 255),
+          width: 0.8,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

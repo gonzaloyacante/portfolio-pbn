@@ -484,12 +484,12 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: colorScheme.outline.withAlpha(80),
+              color: colorScheme.outline.withValues(alpha: 80 / 255),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(20),
+                color: Colors.black.withValues(alpha: 20 / 255),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -526,7 +526,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                           stops: const [0.35, 1.0],
                           colors: [
                             Colors.transparent,
-                            Colors.black.withAlpha(200),
+                            Colors.black.withValues(alpha: 200 / 255),
                           ],
                         ),
                       ),
@@ -603,7 +603,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         Text(
           'Se actualiza en tiempo real mientras editas',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurface.withAlpha(100),
+            color: colorScheme.onSurface.withValues(alpha: 100 / 255),
             fontStyle: FontStyle.italic,
           ),
           textAlign: TextAlign.center,
@@ -654,7 +654,9 @@ class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 80 / 255),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -735,7 +737,7 @@ class _PreviewImagePlaceholder extends StatelessWidget {
         child: Icon(
           Icons.image_outlined,
           size: 48,
-          color: color.onPrimaryContainer.withAlpha(100),
+          color: color.onPrimaryContainer.withValues(alpha: 100 / 255),
         ),
       ),
     );

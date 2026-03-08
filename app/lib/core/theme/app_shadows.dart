@@ -14,7 +14,9 @@ abstract final class AppShadows {
     final isDark = brightness == Brightness.dark;
     return [
       BoxShadow(
-        color: isDark ? Colors.black.withAlpha(40) : Colors.black.withAlpha(10),
+        color: isDark
+            ? Colors.black.withValues(alpha: 40 / 255)
+            : Colors.black.withValues(alpha: 10 / 255),
         blurRadius: 4,
         offset: const Offset(0, 1),
       ),
@@ -25,12 +27,16 @@ abstract final class AppShadows {
     final isDark = brightness == Brightness.dark;
     return [
       BoxShadow(
-        color: isDark ? Colors.black.withAlpha(60) : Colors.black.withAlpha(15),
+        color: isDark
+            ? Colors.black.withValues(alpha: 60 / 255)
+            : Colors.black.withValues(alpha: 15 / 255),
         blurRadius: 8,
         offset: const Offset(0, 2),
       ),
       BoxShadow(
-        color: isDark ? Colors.black.withAlpha(30) : Colors.black.withAlpha(8),
+        color: isDark
+            ? Colors.black.withValues(alpha: 30 / 255)
+            : Colors.black.withValues(alpha: 8 / 255),
         blurRadius: 4,
         offset: const Offset(0, 1),
       ),
@@ -41,12 +47,16 @@ abstract final class AppShadows {
     final isDark = brightness == Brightness.dark;
     return [
       BoxShadow(
-        color: isDark ? Colors.black.withAlpha(80) : Colors.black.withAlpha(20),
+        color: isDark
+            ? Colors.black.withValues(alpha: 80 / 255)
+            : Colors.black.withValues(alpha: 20 / 255),
         blurRadius: 16,
         offset: const Offset(0, 4),
       ),
       BoxShadow(
-        color: isDark ? Colors.black.withAlpha(40) : Colors.black.withAlpha(10),
+        color: isDark
+            ? Colors.black.withValues(alpha: 40 / 255)
+            : Colors.black.withValues(alpha: 10 / 255),
         blurRadius: 8,
         offset: const Offset(0, 2),
       ),
@@ -59,8 +69,8 @@ abstract final class AppShadows {
     return [
       BoxShadow(
         color: isDark
-            ? Colors.black.withAlpha(100)
-            : Colors.black.withAlpha(25),
+            ? Colors.black.withValues(alpha: 100 / 255)
+            : Colors.black.withValues(alpha: 25 / 255),
         blurRadius: 24,
         offset: const Offset(0, 8),
       ),

@@ -305,7 +305,9 @@ class _ThemeColorPreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 80 / 255),
+        ),
       ),
       padding: const EdgeInsets.all(AppSpacing.base),
       child: Column(
@@ -384,7 +386,7 @@ class _MiniThemeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 60 : 18),
+            color: Colors.black.withValues(alpha: (isDark ? 60 : 18) / 255),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -407,8 +409,8 @@ class _MiniThemeCard extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withAlpha(12)
-                  : Colors.white.withAlpha(230),
+                  ? Colors.white.withValues(alpha: 12 / 255)
+                  : Colors.white.withValues(alpha: 230 / 255),
               borderRadius: BorderRadius.circular(8),
             ),
             padding: const EdgeInsets.all(6),
@@ -418,7 +420,7 @@ class _MiniThemeCard extends StatelessWidget {
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: primary.withAlpha(isDark ? 90 : 40),
+                    color: primary.withValues(alpha: (isDark ? 90 : 40) / 255),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Icon(Icons.photo_outlined, size: 12, color: primary),
@@ -431,7 +433,7 @@ class _MiniThemeCard extends StatelessWidget {
                       Container(
                         height: 5,
                         decoration: BoxDecoration(
-                          color: textColor.withAlpha(180),
+                          color: textColor.withValues(alpha: 180 / 255),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -479,7 +481,10 @@ class _Swatch extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.black.withAlpha(30), width: 0.5),
+        border: Border.all(
+          color: Colors.black.withValues(alpha: 30 / 255),
+          width: 0.5,
+        ),
       ),
     );
   }
@@ -497,7 +502,10 @@ class _SwatchOutlined extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.withAlpha(100), width: 1),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 100 / 255),
+          width: 1,
+        ),
       ),
     );
   }

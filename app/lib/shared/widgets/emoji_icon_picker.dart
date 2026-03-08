@@ -281,7 +281,10 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
               color: isSelected ? scheme.primaryContainer : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
               border: isSelected
-                  ? Border.all(color: scheme.primary.withAlpha(120), width: 1.5)
+                  ? Border.all(
+                      color: scheme.primary.withValues(alpha: 120 / 255),
+                      width: 1.5,
+                    )
                   : null,
             ),
             child: Center(

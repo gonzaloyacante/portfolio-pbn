@@ -62,7 +62,7 @@ class SectionHeader extends StatelessWidget {
                   Text(
                     subtitle,
                     style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withAlpha(140),
+                      color: colorScheme.onSurface.withValues(alpha: 140 / 255),
                     ),
                   ),
                 ],

@@ -106,7 +106,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
           hintText: widget.hint,
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: colorScheme.onSurface.withAlpha(120),
+            color: colorScheme.onSurface.withValues(alpha: 120 / 255),
             size: 20,
           ),
           suffixIcon: _hasText
@@ -114,7 +114,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
                   onPressed: _clear,
                   icon: Icon(
                     Icons.close_rounded,
-                    color: colorScheme.onSurface.withAlpha(160),
+                    color: colorScheme.onSurface.withValues(alpha: 160 / 255),
                     size: 18,
                   ),
                   padding: EdgeInsets.zero,
@@ -130,11 +130,15 @@ class _AppSearchBarState extends State<AppSearchBar> {
           ),
           border: OutlineInputBorder(
             borderRadius: AppRadius.forChip,
-            borderSide: BorderSide(color: colorScheme.outline.withAlpha(120)),
+            borderSide: BorderSide(
+              color: colorScheme.outline.withValues(alpha: 120 / 255),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: AppRadius.forChip,
-            borderSide: BorderSide(color: colorScheme.outline.withAlpha(80)),
+            borderSide: BorderSide(
+              color: colorScheme.outline.withValues(alpha: 80 / 255),
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: AppRadius.forChip,

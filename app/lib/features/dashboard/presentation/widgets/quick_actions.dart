@@ -65,7 +65,9 @@ class _QuickActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? color.withAlpha(65) : color.withAlpha(30);
+    final bg = isDark
+        ? color.withValues(alpha: 65 / 255)
+        : color.withValues(alpha: 30 / 255);
 
     return GestureDetector(
       onTap: onTap,
@@ -79,7 +81,7 @@ class _QuickActionButton extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(AppRadius.card),
           border: Border.all(
-            color: color.withAlpha(isDark ? 100 : 60),
+            color: color.withValues(alpha: (isDark ? 100 : 60) / 255),
             width: 1,
           ),
         ),
