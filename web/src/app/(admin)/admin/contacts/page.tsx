@@ -10,8 +10,8 @@ export default async function AdminContactsPage() {
     <div className="space-y-8">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-foreground text-3xl font-bold">Mensajes de Contacto</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="font-script text-primary text-4xl">📧 Mensajes de Contacto</h1>
+          <p className="text-muted-foreground mt-1">
             Gestiona los mensajes recibidos de los visitantes
           </p>
         </div>

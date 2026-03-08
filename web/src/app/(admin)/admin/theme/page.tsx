@@ -11,10 +11,8 @@ export default async function TemaPage() {
   const settings = await getThemeSettings()
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <Suspense fallback={<div>Cargando configuración de tema...</div>}>
-        <ThemeEditor initialData={settings} />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div>Cargando configuración de tema...</div>}>
+      <ThemeEditor initialData={settings} />
+    </Suspense>
   )
 }

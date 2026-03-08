@@ -54,8 +54,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-foreground text-3xl font-bold">Gestión de Servicios</h1>
+      <div className="flex justify-end">
         <Button onClick={handleCreate} className="gap-2">
           <Plus size={18} />
           Nuevo Servicio
