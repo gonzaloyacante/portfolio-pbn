@@ -104,13 +104,17 @@ export async function POST(req: Request) {
     }
 
     // 4. Generar tokens
-    const accessToken = await signAccessToken({ userId: user.id, role: user.role, email: user.email })
+    const accessToken = await signAccessToken({
+      userId: user.id,
+      role: user.role,
+      email: user.email,
+    })
 
     const refreshToken = await prisma.refreshToken.create({
       data: {
         token: crypto.randomUUID(),
         userId: user.id,
-        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 365 días para la app
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días (spec AGENTS.md)
         ipAddress,
         userAgent,
         device,
