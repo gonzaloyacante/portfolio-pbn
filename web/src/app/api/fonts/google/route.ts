@@ -63,14 +63,7 @@ export async function GET() {
       const errorText = await response.text()
       logger.error('Google Fonts API error', { status: response.status, details: errorText })
 
-      return NextResponse.json(
-        {
-          error: 'Google Fonts API request failed',
-          status: response.status,
-          details: errorText,
-        },
-        { status: response.status }
-      )
+      return NextResponse.json({ error: 'Error al obtener las fuentes de Google' }, { status: 502 })
     }
 
     const data: GoogleFontsResponse = await response.json()
@@ -87,12 +80,6 @@ export async function GET() {
     return NextResponse.json({ fonts, count: fonts.length })
   } catch (error) {
     logger.error('Error fetching Google Fonts:', { error: error })
-    return NextResponse.json(
-      {
-        error: 'Failed to fetch Google Fonts',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }
