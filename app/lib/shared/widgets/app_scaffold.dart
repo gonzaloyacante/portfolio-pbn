@@ -676,16 +676,6 @@ class _DrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primary.withValues(alpha: 0.12),
-            colorScheme.primary.withValues(alpha: 0.04),
-          ],
-        ),
-      ),
       padding: EdgeInsets.fromLTRB(
         AppSpacing.base,
         AppSpacing.xl + MediaQuery.of(context).padding.top,

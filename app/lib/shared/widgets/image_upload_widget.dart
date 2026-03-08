@@ -5,6 +5,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/config/app_constants.dart';
+import '../../core/theme/app_breakpoints.dart';
 import '../../core/utils/app_logger.dart';
 
 // ── ImagePickerSource ─────────────────────────────────────────────────────────
@@ -38,7 +39,7 @@ class ImageUploadWidget extends StatefulWidget {
     this.maxHeight = 1080,
     required this.onImageSelected,
     this.onImageRemoved,
-    this.height = 200,
+    this.height = 360,
   });
 
   final String? currentImageUrl;
@@ -55,15 +56,58 @@ class ImageUploadWidget extends StatefulWidget {
   State<ImageUploadWidget> createState() => _ImageUploadWidgetState();
 }
 
-class _ImageUploadWidgetState extends State<ImageUploadWidget> {
+class _ImageUploadWidgetState extends State<ImageUploadWidget>
+    with SingleTickerProviderStateMixin {
   File? _selectedFile;
   bool _isProcessing = false;
+
+  late AnimationController _animController;
+  late Animation<double> _buttonsAnim;
+
+  bool get _hasImage => _selectedFile != null || widget.currentImageUrl != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      duration: const Duration(milliseconds: 350),
+      vsync: this,
+    );
+    _buttonsAnim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeInOut,
+    );
+    // Estado inicial sin animar
+    if (_hasImage) _animController.value = 1.0;
+  }
+
+  @override
+  void didUpdateWidget(covariant ImageUploadWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.currentImageUrl != widget.currentImageUrl) {
+      _syncAnimation();
+    }
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  void _syncAnimation() {
+    if (_hasImage) {
+      _animController.forward();
+    } else {
+      _animController.reverse();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final hasImage = _selectedFile != null || widget.currentImageUrl != null;
+    final isMobile = AppBreakpoints.isMobile(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,37 +119,248 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
           ),
           const SizedBox(height: 8),
         ],
+        if (isMobile)
+          _buildMobileLayout(colorScheme)
+        else
+          _buildTabletLayout(colorScheme),
+      ],
+    );
+  }
+
+  Widget _buildTabletLayout(ColorScheme colorScheme) {
+    return SizedBox(
+      height: widget.height,
+      width: double.infinity,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: AnimatedBuilder(
+          animation: _buttonsAnim,
+          builder: (context, _) {
+            final p = _buttonsAnim.value;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRect(
+                  child: SizedBox(
+                    width: 100.0 * p,
+                    child: Opacity(
+                      opacity: p,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _isProcessing
+                                  ? null
+                                  : _showSourcePicker,
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size.zero,
+                                padding: EdgeInsets.zero,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: SizedBox.expand(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.edit_outlined, size: 20),
+                                    SizedBox(height: 6),
+                                    Text(
+                                      'Editar',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: _isProcessing ? null : _handleRemove,
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: Size.zero,
+                                padding: EdgeInsets.zero,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                side: BorderSide(color: colorScheme.outline),
+                                foregroundColor: colorScheme.onSurface,
+                              ),
+                              child: SizedBox.expand(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    Icon(Icons.close, size: 20),
+                                    SizedBox(height: 6),
+                                    Text(
+                                      'Quitar',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12.0 * p),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: !_hasImage && !_isProcessing
+                        ? _showSourcePicker
+                        : null,
+                    child: Container(
+                      height: double.infinity,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: colorScheme.outline.withOpacity(0.3),
+                        ),
+                        color: colorScheme.surfaceContainerHighest,
+                      ),
+                      child: _isProcessing
+                          ? const Center(child: CircularProgressIndicator())
+                          : _hasImage
+                          ? _ImagePreview(
+                              file: _selectedFile,
+                              url: widget.currentImageUrl,
+                              onRemove: null,
+                              onEdit: null,
+                            )
+                          : _EmptyPreview(
+                              hint: 'Toca para añadir una imagen',
+                              colorScheme: colorScheme,
+                            ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileLayout(ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
         GestureDetector(
-          onTap: _isProcessing ? null : _showSourcePicker,
+          onTap: !_hasImage && !_isProcessing ? _showSourcePicker : null,
           child: Container(
             height: widget.height,
-            width: double.infinity,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: colorScheme.outline.withValues(alpha: 0.3),
-              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: colorScheme.outline.withOpacity(0.3)),
               color: colorScheme.surfaceContainerHighest,
             ),
             child: _isProcessing
                 ? const Center(child: CircularProgressIndicator())
-                : hasImage
+                : _hasImage
                 ? _ImagePreview(
                     file: _selectedFile,
                     url: widget.currentImageUrl,
-                    onRemove: widget.onImageRemoved != null
-                        ? () {
-                            setState(() => _selectedFile = null);
-                            widget.onImageRemoved!();
-                          }
-                        : null,
+                    onRemove: null,
+                    onEdit: null,
                   )
-                : _EmptyPreview(hint: widget.hint, colorScheme: colorScheme),
+                : _EmptyPreview(
+                    hint: 'Toca para añadir una imagen',
+                    colorScheme: colorScheme,
+                  ),
           ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeInOut,
+          child: _hasImage
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 52,
+                          child: ElevatedButton(
+                            onPressed: _isProcessing ? null : _showSourcePicker,
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size.zero,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.edit_outlined, size: 18),
+                                SizedBox(width: 6),
+                                Text('Editar', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: SizedBox(
+                          height: 52,
+                          child: OutlinedButton(
+                            onPressed: _isProcessing ? null : _handleRemove,
+                            style: OutlinedButton.styleFrom(
+                              minimumSize: Size.zero,
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              side: BorderSide(color: colorScheme.outline),
+                              foregroundColor: colorScheme.onSurface,
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.close, size: 18),
+                                SizedBox(width: 6),
+                                Text('Quitar', style: TextStyle(fontSize: 13)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );
+  }
+
+  void _handleRemove() {
+    final hadLocal = _selectedFile != null;
+    if (hadLocal) {
+      setState(() => _selectedFile = null);
+      _syncAnimation();
+    }
+    if (widget.onImageRemoved != null) {
+      widget.onImageRemoved!();
+    } else if (!hadLocal && widget.currentImageUrl != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Para eliminar esta imagen, borra la URL en el formulario o proporciona onImageRemoved.',
+            ),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _showSourcePicker() async {
@@ -179,6 +434,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
 
       final file = File(cropped.path);
       setState(() => _selectedFile = file);
+      _syncAnimation(); // Animar aparición de botones
       widget.onImageSelected(file);
     } catch (e) {
       AppLogger.error('ImageUploadWidget: error picking image', e);
@@ -196,77 +452,112 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget> {
 // ── _ImagePreview ─────────────────────────────────────────────────────────────
 
 class _ImagePreview extends StatelessWidget {
-  const _ImagePreview({this.file, this.url, this.onRemove});
+  const _ImagePreview({this.file, this.url, this.onRemove, this.onEdit});
 
   final File? file;
   final String? url;
   final VoidCallback? onRemove;
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        if (file != null)
-          Image.file(file!, fit: BoxFit.cover)
-        else if (url != null)
-          Image.network(
-            url!,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) =>
-                const Icon(Icons.broken_image),
-          ),
-        // Overlay con botón de eliminar
-        if (onRemove != null)
-          Positioned(
-            top: 8,
-            right: 8,
-            child: Material(
-              color: Colors.black.withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(20),
-              child: IconButton(
-                onPressed: onRemove,
-                icon: const Icon(Icons.close, color: Colors.white, size: 18),
-                tooltip: 'Quitar imagen',
-                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                padding: const EdgeInsets.all(6),
-              ),
-            ),
-          ),
-        // Overlay semitransparente con icono de editar
-        Positioned.fill(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {},
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  color: Colors.black.withValues(alpha: 0.3),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.edit_outlined, color: Colors.white, size: 14),
-                      SizedBox(width: 4),
-                      Text(
-                        'Cambiar',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+    if (file != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: _AdaptiveImage.file(file!),
+      );
+    }
+    if (url != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: _AdaptiveImage.network(url!),
+      );
+    }
+    return const SizedBox.shrink();
+  }
+}
+
+// Widget que elige el BoxFit según la orientación real de la imagen.
+class _AdaptiveImage extends StatefulWidget {
+  const _AdaptiveImage.file(this.file) : url = null;
+  const _AdaptiveImage.network(this.url) : file = null;
+
+  final File? file;
+  final String? url;
+
+  @override
+  State<_AdaptiveImage> createState() => _AdaptiveImageState();
+}
+
+class _AdaptiveImageState extends State<_AdaptiveImage> {
+  ImageStream? _stream;
+  ImageInfo? _info;
+  ImageStreamListener? _listener;
+
+  ImageProvider get _provider {
+    if (widget.file != null) return FileImage(widget.file!);
+    return NetworkImage(widget.url!);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _resolve();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AdaptiveImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.file?.path != widget.file?.path ||
+        oldWidget.url != widget.url) {
+      _resolve();
+    }
+  }
+
+  void _resolve() {
+    if (_stream != null && _listener != null) {
+      _stream!.removeListener(_listener!);
+    }
+    final stream = _provider.resolve(const ImageConfiguration());
+    _stream = stream;
+    _listener = ImageStreamListener(_handleImage, onError: (_, _) {});
+    stream.addListener(_listener!);
+  }
+
+  void _handleImage(ImageInfo info, bool syncCall) {
+    if (!mounted) return;
+    setState(() => _info = info);
+  }
+
+  @override
+  void dispose() {
+    if (_stream != null && _listener != null) {
+      _stream!.removeListener(_listener!);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final fit = _chooseFit();
+    return Image(
+      image: _provider,
+      fit: fit,
+      width: double.infinity,
+      height: double.infinity,
+      alignment: Alignment.center,
+      errorBuilder: (context, error, stackTrace) =>
+          const Icon(Icons.broken_image),
     );
+  }
+
+  BoxFit _chooseFit() {
+    if (_info == null) return BoxFit.contain; // fallback while loading
+    final w = _info!.image.width.toDouble();
+    final h = _info!.image.height.toDouble();
+    // Si la imagen es más alta que ancha (retrato), mostrar completa (contain)
+    // Si es más ancha (paisaje), rellenar el ancho (cover) para aprovechar el espacio
+    return h > w ? BoxFit.contain : BoxFit.cover;
   }
 }
 
@@ -280,23 +571,26 @@ class _EmptyPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.add_photo_alternate_outlined,
-          size: 48,
-          color: colorScheme.outline,
-        ),
-        const SizedBox(height: 12),
-        Text(
-          hint,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: colorScheme.outline),
-          textAlign: TextAlign.center,
-        ),
-      ],
+    final displayColor = colorScheme.onSurface.withOpacity(0.65);
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.add_photo_alternate_outlined,
+            size: 48,
+            color: displayColor,
+          ),
+          const SizedBox(height: 12),
+          Text(
+            hint,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: displayColor),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -84,20 +85,78 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
       current = const CategoryDisplaySettings();
     }
     if (!context.mounted) return;
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => _CategorySettingsDialog(
-        initial: current,
-        onSave: (updated) async {
-          await ref.read(settingsRepositoryProvider).updateCategorySettings({
-            'showDescription': updated.showDescription,
-            'showProjectCount': updated.showProjectCount,
-            'gridColumns': updated.gridColumns,
-          });
-          ref.invalidate(categoryDisplaySettingsProvider);
+
+    final isMobile = AppBreakpoints.isMobile(context);
+
+    if (isMobile) {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (ctx) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            ),
+            child: DraggableScrollableSheet(
+              initialChildSize: 0.7,
+              minChildSize: 0.4,
+              maxChildSize: 0.95,
+              expand: false,
+              builder: (_, controller) {
+                return SingleChildScrollView(
+                  controller: controller,
+                  child: _CategorySettingsDialog(
+                    initial: current,
+                    fullWidth: true,
+                    onSave: (updated) async {
+                      await ref
+                          .read(settingsRepositoryProvider)
+                          .updateCategorySettings({
+                            'showDescription': updated.showDescription,
+                            'showProjectCount': updated.showProjectCount,
+                            'gridColumns': updated.gridColumns,
+                          });
+                      ref.invalidate(categoryDisplaySettingsProvider);
+                    },
+                  ),
+                );
+              },
+            ),
+          );
         },
-      ),
-    );
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) {
+          final screenW = MediaQuery.of(ctx).size.width;
+          final maxW = screenW * 0.92;
+          final dialogW = maxW > 760 ? 760.0 : maxW;
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: dialogW),
+              child: _CategorySettingsDialog(
+                initial: current,
+                onSave: (updated) async {
+                  await ref
+                      .read(settingsRepositoryProvider)
+                      .updateCategorySettings({
+                        'showDescription': updated.showDescription,
+                        'showProjectCount': updated.showProjectCount,
+                        'gridColumns': updated.gridColumns,
+                      });
+                  ref.invalidate(categoryDisplaySettingsProvider);
+                },
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -218,68 +277,108 @@ class _CategoryGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final color = scheme.primary;
-
     return Card(
+      margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: InkWell(
-        borderRadius: AppRadius.forCard,
         onTap: () => context.pushNamed(
           RouteNames.categoryEdit,
           pathParameters: {'id': item.id},
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(14),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Center(
-                  child: item.name.isNotEmpty
-                      ? Text(
-                          item.name[0].toUpperCase(),
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.w700,
+        child: Stack(
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Thumbnail (fixed height to avoid collapsing when image missing)
+                SizedBox(
+                  height: 100,
+                  width: double.infinity,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(8),
+                    ),
+                    child:
+                        item.thumbnailUrl != null &&
+                            item.thumbnailUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: item.thumbnailUrl!,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: scheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.image_outlined,
+                                color: scheme.outlineVariant,
+                                size: 36,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              color: scheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                color: scheme.outlineVariant,
+                                size: 36,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            color: scheme.surfaceContainerHighest,
+                            child: Center(
+                              child: Icon(
+                                Icons.photo_library_outlined,
+                                color: scheme.outlineVariant,
+                                size: 36,
+                              ),
+                            ),
                           ),
-                        )
-                      : Icon(Icons.category, color: color, size: 26),
+                  ),
+                ),
+                // Info
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.name,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${item.projectCount} proyecto${item.projectCount == 1 ? '' : 's'}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            // Status badge top-right with solid background for readability
+            Positioned(
+              top: 8,
+              right: 8,
+              child: Container(
+                padding: EdgeInsets.zero,
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: StatusBadge(
+                  status: item.isActive ? AppStatus.active : AppStatus.inactive,
+                  small: true,
                 ),
               ),
-              const SizedBox(height: 10),
-              // Name
-              Text(
-                item.name,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              // Project count
-              Text(
-                '${item.projectCount} proyecto${item.projectCount == 1 ? '' : 's'}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: scheme.outline,
-                ),
-              ),
-              const SizedBox(height: 6),
-              // Status
-              StatusBadge(
-                status: item.isActive ? AppStatus.active : AppStatus.inactive,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -298,158 +397,177 @@ class _CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final color = scheme.primary;
 
     return Card(
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       child: InkWell(
-        borderRadius: AppRadius.forTile,
         onTap: () => context.pushNamed(
           RouteNames.categoryEdit,
           pathParameters: {'id': item.id},
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
-          child: Row(
-            children: [
-              // Icon
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 88),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Thumbnail (like projects list)
+                SizedBox(
+                  width: 90,
+                  child:
+                      item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: item.thumbnailUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: scheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.image_outlined,
+                              color: scheme.outlineVariant,
+                              size: 28,
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: scheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              color: scheme.outlineVariant,
+                              size: 28,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: scheme.surfaceContainerHighest,
+                          child: Icon(
+                            Icons.photo_library_outlined,
+                            color: scheme.outlineVariant,
+                            size: 28,
+                          ),
+                        ),
                 ),
-                child: Center(
-                  child: Text(
-                    item.name.isNotEmpty ? item.name[0].toUpperCase() : '?',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w700,
+                // Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.name,
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            StatusBadge(
+                              small: true,
+                              status: item.isActive
+                                  ? AppStatus.active
+                                  : AppStatus.inactive,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.link_rounded,
+                              size: 13,
+                              color: scheme.onSurface,
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                '/${item.slug}',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: scheme.onSurface,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(
+                              Icons.photo_library_outlined,
+                              size: 13,
+                              color: scheme.onSurface,
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              '${item.projectCount}',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              // Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item.name,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                // Menu
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.more_vert_rounded,
+                    size: 20,
+                    color: scheme.outline,
+                  ),
+                  onSelected: (action) {
+                    if (action == 'edit') {
+                      context.pushNamed(
+                        RouteNames.categoryEdit,
+                        pathParameters: {'id': item.id},
+                      );
+                    } else if (action == 'delete') {
+                      onDelete(context, item);
+                    }
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.edit_outlined,
+                            size: 18,
+                            color: scheme.onSurface,
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        StatusBadge(
-                          status: item.isActive
-                              ? AppStatus.active
-                              : AppStatus.inactive,
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          const Text('Editar'),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.link_rounded,
-                          size: 13,
-                          color: scheme.outline,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            '/${item.slug}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.outline,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.delete_outline,
+                            size: 18,
+                            color: AppColors.destructive,
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          Icons.photo_library_outlined,
-                          size: 13,
-                          color: scheme.outline,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          '${item.projectCount}',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.outline,
-                            fontWeight: FontWeight.w600,
+                          SizedBox(width: 10),
+                          Text(
+                            'Eliminar',
+                            style: TextStyle(color: AppColors.destructive),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-              // Menu
-              PopupMenuButton<String>(
-                iconSize: 20,
-                padding: EdgeInsets.zero,
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  size: 20,
-                  color: scheme.outline,
-                ),
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.edit_outlined,
-                          size: 18,
-                          color: scheme.onSurface,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text('Editar'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: AppColors.destructive,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Eliminar',
-                          style: TextStyle(color: AppColors.destructive),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                onSelected: (action) {
-                  if (action == 'edit') {
-                    context.pushNamed(
-                      RouteNames.categoryEdit,
-                      pathParameters: {'id': item.id},
-                    );
-                  } else if (action == 'delete') {
-                    onDelete(context, item);
-                  }
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -482,10 +600,15 @@ class _CategoriesSkeleton extends StatelessWidget {
 // ── Settings Dialog ───────────────────────────────────────────────────────────
 
 class _CategorySettingsDialog extends StatefulWidget {
-  const _CategorySettingsDialog({required this.initial, required this.onSave});
+  const _CategorySettingsDialog({
+    required this.initial,
+    required this.onSave,
+    this.fullWidth = false,
+  });
 
   final CategoryDisplaySettings initial;
   final Future<void> Function(CategoryDisplaySettings) onSave;
+  final bool fullWidth;
 
   @override
   State<_CategorySettingsDialog> createState() =>
@@ -533,7 +656,26 @@ class _CategorySettingsDialogState extends State<_CategorySettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    // Reduce padding when shown as fullWidth (bottom sheet on mobile)
+    final inset = widget.fullWidth
+        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 10)
+        : null;
+    final contentPadding = widget.fullWidth
+        ? const EdgeInsets.symmetric(horizontal: 8)
+        : null;
+
     return AlertDialog(
+      insetPadding: inset,
+      titlePadding: widget.fullWidth
+          ? const EdgeInsets.fromLTRB(16, 18, 16, 0)
+          : null,
+      contentPadding: contentPadding,
+      actionsPadding: widget.fullWidth
+          ? const EdgeInsets.fromLTRB(8, 4, 12, 12)
+          : null,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(widget.fullWidth ? 12 : 20),
+      ),
       title: const Text('Visualizaci\u00f3n de categor\u00edas'),
       content: Column(
         mainAxisSize: MainAxisSize.min,

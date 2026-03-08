@@ -68,6 +68,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   final _slugCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
   final _thumbnailCtrl = TextEditingController();
+  // Key para medir la posición del widget de imagen y calcular altura restante
+  final _imageSlotKey = GlobalKey();
+  double? _calculatedImageHeight;
   File? _pendingThumbnail;
 
   bool _isActive = true;
@@ -168,6 +171,31 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       detailAsync.whenData(_populateForm);
     }
 
+    final media = MediaQuery.of(context);
+    const appBarApprox = 100.0;
+    final fallbackHeight =
+        (media.size.height -
+                media.padding.top -
+                media.padding.bottom -
+                appBarApprox)
+            .clamp(200.0, 1200.0);
+    final imageHeight = _calculatedImageHeight ?? fallbackHeight;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _imageSlotKey.currentContext;
+      if (ctx == null) return;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null || !box.attached) return;
+      final dy = box.localToGlobal(Offset.zero).dy;
+      final usable =
+          media.size.height - media.padding.bottom - dy - appBarApprox;
+      final newH = usable.clamp(200.0, 1200.0);
+      if ((_calculatedImageHeight == null) ||
+          ((_calculatedImageHeight! - newH).abs() > 1.0)) {
+        setState(() => _calculatedImageHeight = newH);
+      }
+    });
+
     return AppScaffold(
       title: _isEdit ? 'Editar categoría' : 'Nueva categoría',
       actions: [
@@ -183,60 +211,127 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // Nombre
-              TextFormField(
-                controller: _nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre *',
-                  hintText: 'ej. Fotografía',
-                  helperText: 'Nombre público de la categoría',
-                ),
-                textCapitalization: TextCapitalization.words,
-                onChanged: _autoSlug,
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
-              ),
-              const SizedBox(height: 16),
+              // Nombre + Switch + Descripción (responsivo)
+              Builder(
+                builder: (ctx) {
+                  final colorScheme = Theme.of(ctx).colorScheme;
+                  final isTablet = media.size.width >= 600;
 
-              // Descripción
-              TextFormField(
-                controller: _descriptionCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción',
-                  hintText: 'Breve descripción de esta categoría',
-                  helperText: 'Se muestra en la página de la categoría',
-                ),
-                maxLines: 3,
+                  final nameField = TextFormField(
+                    controller: _nameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre *',
+                      hintText: 'ej. Fotografía',
+                      helperText: 'Nombre público de la categoría',
+                    ),
+                    textCapitalization: TextCapitalization.words,
+                    onChanged: _autoSlug,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Nombre requerido'
+                        : null,
+                  );
+
+                  final switchTile = Container(
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.outline.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: SwitchListTile(
+                      title: const Text('Categoría activa'),
+                      subtitle: const Text('Visible en el portfolio'),
+                      value: _isActive,
+                      onChanged: (v) => setState(() => _isActive = v),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                      controlAffinity: ListTileControlAffinity.trailing,
+                    ),
+                  );
+
+                  if (isTablet) {
+                    return IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                nameField,
+                                const SizedBox(height: 8),
+                                switchTile,
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _descriptionCtrl,
+                              decoration: const InputDecoration(
+                                labelText: 'Descripción',
+                                hintText: 'Breve descripción de esta categoría',
+                                helperText:
+                                    'Se muestra en la página de la categoría',
+                              ),
+                              maxLines: null,
+                              expands: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // Mobile: apilado
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      nameField,
+                      const SizedBox(height: 8),
+                      switchTile,
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _descriptionCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Descripción',
+                          hintText: 'Breve descripción de esta categoría',
+                          helperText: 'Se muestra en la página de la categoría',
+                        ),
+                        maxLines: 3,
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 16),
 
               // Thumbnail
-              ImageUploadWidget(
-                label: 'Imagen de portada',
-                currentImageUrl: _thumbnailCtrl.text.isNotEmpty
-                    ? _thumbnailCtrl.text
-                    : null,
-                onImageSelected: (file) {
-                  setState(() => _pendingThumbnail = file);
-                },
-                onImageRemoved: () {
-                  setState(() {
-                    _pendingThumbnail = null;
-                    _thumbnailCtrl.clear();
-                  });
-                },
-                height: 160,
+              // Wrapper con key para medir su posición en pantalla
+              Container(
+                key: _imageSlotKey,
+                child: ImageUploadWidget(
+                  label: 'Imagen de portada',
+                  currentImageUrl: _thumbnailCtrl.text.isNotEmpty
+                      ? _thumbnailCtrl.text
+                      : null,
+                  onImageSelected: (file) {
+                    setState(() => _pendingThumbnail = file);
+                  },
+                  onImageRemoved: () {
+                    setState(() {
+                      _pendingThumbnail = null;
+                      _thumbnailCtrl.clear();
+                    });
+                  },
+                  height: imageHeight,
+                ),
               ),
-              const SizedBox(height: 16),
 
-              // Estado activo
-              SwitchListTile(
-                title: const Text('Categoría activa'),
-                subtitle: const Text('Visible en el portfolio'),
-                value: _isActive,
-                onChanged: (v) => setState(() => _isActive = v),
-              ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               FilledButton(
                 onPressed: _loading ? null : _submit,
