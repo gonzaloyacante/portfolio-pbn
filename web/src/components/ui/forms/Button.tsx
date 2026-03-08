@@ -77,6 +77,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       const child = children as React.ReactElement<Record<string, unknown>>
       return React.cloneElement(child, {
         className: cn(child.props.className as string, combinedClassName),
+        style: props.style
+          ? { ...((child.props.style as React.CSSProperties) ?? {}), ...props.style }
+          : child.props.style,
         'aria-disabled': props.disabled ? 'true' : undefined,
         ...('onClick' in child.props ? {} : { onClick: props.onClick }),
       })

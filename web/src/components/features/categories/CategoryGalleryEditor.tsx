@@ -232,12 +232,12 @@ export default function CategoryGalleryEditor({
         <span className="mb-4 text-6xl">🖼️</span>
         <h3 className="text-foreground mb-2 text-2xl font-bold">Sin imágenes</h3>
         <p className="text-muted-foreground">Esta categoría no tiene imágenes en sus proyectos.</p>
-        <Link href={ROUTES.admin.categories} className="mt-6">
-          <Button variant="outline" className="gap-2">
+        <Button asChild variant="outline" className="mt-6 gap-2">
+          <Link href={ROUTES.admin.categories}>
             <ArrowLeft size={16} />
             Volver a Categorías
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
     )
   }
@@ -250,12 +250,12 @@ export default function CategoryGalleryEditor({
       {/* ── Toolbar ── */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <Link href={ROUTES.admin.categories}>
-            <Button variant="ghost" size="sm" className="gap-2">
+          <Button asChild variant="ghost" size="sm" className="gap-2">
+            <Link href={ROUTES.admin.categories}>
               <ArrowLeft size={16} />
               Categorías
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <div>
             <h1 className="text-foreground text-2xl font-bold">{categoryName}</h1>
             <p className="text-muted-foreground text-sm">

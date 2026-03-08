@@ -107,16 +107,15 @@ export default async function TestimonialsPage() {
 
                 <div className="flex items-center gap-2 self-end md:self-start">
                   {/* Edit */}
-                  <Link href={ROUTES.admin.editTestimonial(t.id)}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="px-3"
-                      aria-label={`Editar testimonio de ${t.name}`}
-                    >
-                      ✏️
-                    </Button>
-                  </Link>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="px-3"
+                    aria-label={`Editar testimonio de ${t.name}`}
+                  >
+                    <Link href={ROUTES.admin.editTestimonial(t.id)}>✏️</Link>
+                  </Button>
 
                   {/* Toggle Active/Inactive */}
                   <form

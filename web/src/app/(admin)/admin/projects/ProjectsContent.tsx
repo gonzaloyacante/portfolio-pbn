@@ -133,24 +133,25 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
 
             {/* Actions */}
             <div className="border-border mt-2 flex gap-2 border-t pt-3">
-              <Link href={`/admin/proyectos/${project.id}/editar`} className="flex-1">
-                <Button size="sm" variant="primary" className="w-full">
+              <Button asChild size="sm" variant="primary" className="flex-1">
+                <Link href={`/admin/proyectos/${project.id}/editar`}>
                   <Pencil size={14} className="mr-1.5" /> Editar
-                </Button>
-              </Link>
-              <Link
-                href={`/proyectos/${project.category.slug}/${project.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                </Link>
+              </Button>
+              <Button
+                asChild
+                size="sm"
+                variant="ghost"
+                aria-label={`Ver proyecto ${project.title} en público`}
               >
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  aria-label={`Ver proyecto ${project.title} en público`}
+                <Link
+                  href={`/proyectos/${project.category.slug}/${project.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <Eye size={14} />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <Button
                 size="sm"
                 variant="destructive"
@@ -209,30 +210,32 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <Link href={`/admin/proyectos/${project.id}/editar`}>
-            <Button
-              size="sm"
-              variant="ghost"
-              aria-label={`Editar proyecto ${project.title}`}
-              title="Editar"
-            >
-              <Pencil size={16} />
-            </Button>
-          </Link>
-          <Link
-            href={`/proyectos/${project.category.slug}/${project.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Button
+            asChild
+            size="sm"
+            variant="ghost"
+            aria-label={`Editar proyecto ${project.title}`}
+            title="Editar"
           >
-            <Button
-              size="sm"
-              variant="ghost"
-              aria-label={`Ver proyecto ${project.title} en público`}
-              title="Ver público"
+            <Link href={`/admin/proyectos/${project.id}/editar`}>
+              <Pencil size={16} />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            size="sm"
+            variant="ghost"
+            aria-label={`Ver proyecto ${project.title} en público`}
+            title="Ver público"
+          >
+            <Link
+              href={`/proyectos/${project.category.slug}/${project.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <Eye size={16} />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <Button
             size="sm"
             variant="ghost"

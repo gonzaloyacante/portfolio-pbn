@@ -33,12 +33,12 @@ export default async function NewProjectPage() {
               primero y luego vuelve aquí.
             </p>
           </div>
-          <Link href={ROUTES.admin.newCategory}>
-            <Button className="gap-2">
+          <Button asChild className="gap-2">
+            <Link href={ROUTES.admin.newCategory}>
               <Plus size={16} />
               Crear primera categoría
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </Card>
       </div>
     )

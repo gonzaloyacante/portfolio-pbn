@@ -86,29 +86,28 @@ export default function CategoriesContent({
 
             {/* Actions */}
             <div className="border-border mt-auto flex gap-2 border-t pt-4">
-              <Link
-                href={`${ROUTES.public.projects}/${category.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1"
-              >
-                <Button variant="outline" size="sm" className="w-full gap-2">
+              <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
+                <Link
+                  href={`${ROUTES.public.projects}/${category.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <ExternalLink size={14} />
                   Ver
-                </Button>
-              </Link>
-              <Link href={ROUTES.admin.editCategory(category.id)} className="flex-1">
-                <Button size="sm" className="w-full gap-2">
+                </Link>
+              </Button>
+              <Button asChild size="sm" className="flex-1 gap-2">
+                <Link href={ROUTES.admin.editCategory(category.id)}>
                   <Pencil size={14} />
                   Editar
-                </Button>
-              </Link>
-              <Link href={ROUTES.admin.categoryGallery(category.id)} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full gap-2">
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
+                <Link href={ROUTES.admin.categoryGallery(category.id)}>
                   <Images size={14} />
                   Galería
-                </Button>
-              </Link>
+                </Link>
+              </Button>
               <form action={deleteCategoryAction.bind(null, category.id)}>
                 <Button
                   variant="destructive"
@@ -167,29 +166,35 @@ export default function CategoriesContent({
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          <Link
-            href={`${ROUTES.public.projects}/${category.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            aria-label={`Ver categoría ${category.name} en público`}
           >
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label={`Ver categoría ${category.name} en público`}
+            <Link
+              href={`${ROUTES.public.projects}/${category.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <ExternalLink size={16} />
-            </Button>
-          </Link>
-          <Link href={ROUTES.admin.editCategory(category.id)}>
-            <Button variant="ghost" size="sm" aria-label={`Editar categoría ${category.name}`}>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            aria-label={`Editar categoría ${category.name}`}
+          >
+            <Link href={ROUTES.admin.editCategory(category.id)}>
               <Pencil size={16} />
-            </Button>
-          </Link>
-          <Link href={ROUTES.admin.categoryGallery(category.id)}>
-            <Button variant="ghost" size="sm" aria-label={`Ver galería de ${category.name}`}>
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" aria-label={`Ver galería de ${category.name}`}>
+            <Link href={ROUTES.admin.categoryGallery(category.id)}>
               <Images size={16} />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <form action={deleteCategoryAction.bind(null, category.id)}>
             <Button
               variant="ghost"
@@ -235,12 +240,12 @@ export default function CategoriesContent({
               <p className="text-muted-foreground mb-6">
                 Crea tu primera categoría para organizar tus proyectos
               </p>
-              <Link href={ROUTES.admin.newCategory}>
-                <Button className="gap-2">
+              <Button asChild className="gap-2">
+                <Link href={ROUTES.admin.newCategory}>
                   <Plus size={16} />
                   Nueva Categoría
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </Card>
           )}
         </motion.div>

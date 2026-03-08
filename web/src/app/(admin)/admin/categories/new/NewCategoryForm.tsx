@@ -93,11 +93,21 @@ export function NewCategoryForm() {
 
         {/* Actions */}
         <div className="border-border flex gap-3 border-t pt-6">
-          <Link href={ROUTES.admin.categories} className="flex-1">
-            <Button type="button" variant="ghost" className="w-full" disabled={isPending}>
+          <Button
+            asChild
+            type="button"
+            variant="ghost"
+            className="w-full flex-1"
+            disabled={isPending}
+          >
+            <Link
+              href={ROUTES.admin.categories}
+              aria-disabled={isPending || undefined}
+              style={isPending ? { pointerEvents: 'none' } : undefined}
+            >
               Cancelar
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <Button type="submit" className="flex-1" disabled={isPending}>
             {isPending ? 'Creando...' : 'Crear Categoría'}
           </Button>

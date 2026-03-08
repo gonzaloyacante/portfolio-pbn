@@ -41,12 +41,12 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
     <div className="mx-auto max-w-2xl space-y-8">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Link href={ROUTES.admin.categories}>
-            <Button variant="ghost" size="sm" className="gap-2">
+          <Button asChild variant="ghost" size="sm" className="gap-2">
+            <Link href={ROUTES.admin.categories}>
               <ArrowLeft size={16} />
               Volver
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <PageHeader
             title={`✏️ Editar: ${category.name}`}
             description={`${category._count.projects} proyecto${category._count.projects !== 1 ? 's' : ''} en esta categoría`}
@@ -129,11 +129,9 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
 
           {/* Actions */}
           <div className="border-border flex gap-3 border-t pt-6">
-            <Link href={ROUTES.admin.categories} className="flex-1">
-              <Button type="button" variant="ghost" className="w-full">
-                Cancelar
-              </Button>
-            </Link>
+            <Button asChild type="button" variant="ghost" className="w-full flex-1">
+              <Link href={ROUTES.admin.categories}>Cancelar</Link>
+            </Button>
             <Button type="submit" className="flex-1">
               Guardar Cambios
             </Button>

@@ -75,12 +75,12 @@ export default async function CategoriesPage() {
               },
             ]}
           />
-          <Link href={ROUTES.admin.newCategory}>
-            <Button className="gap-2">
+          <Button asChild className="gap-2">
+            <Link href={ROUTES.admin.newCategory}>
               <Plus size={16} />
               Nueva Categoría
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
 

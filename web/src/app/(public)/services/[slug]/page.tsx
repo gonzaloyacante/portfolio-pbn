@@ -246,24 +246,22 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             </p>
 
             <div className="flex flex-col gap-3">
-              <Link href={`/contacto?subject=Reserva ${service.name}`} className="w-full">
-                <Button size="lg" className="w-full">
-                  Agendar Cita
-                </Button>
-              </Link>
-              <Link
-                href={
-                  contactSettings?.whatsapp
-                    ? `https://wa.me/${contactSettings.whatsapp.replace(/\D/g, '')}?text=Hola, info sobre ${service.name}`
-                    : `/contacto?subject=Consulta sobre ${service.name}`
-                }
-                target={contactSettings?.whatsapp ? '_blank' : undefined}
-                rel={contactSettings?.whatsapp ? 'noopener noreferrer' : undefined}
-              >
-                <Button variant="outline" size="lg" className="w-full">
+              <Button asChild size="lg" className="w-full">
+                <Link href={`/contacto?subject=Reserva ${service.name}`}>Agendar Cita</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="w-full">
+                <Link
+                  href={
+                    contactSettings?.whatsapp
+                      ? `https://wa.me/${contactSettings.whatsapp.replace(/\D/g, '')}?text=Hola, info sobre ${service.name}`
+                      : `/contacto?subject=Consulta sobre ${service.name}`
+                  }
+                  target={contactSettings?.whatsapp ? '_blank' : undefined}
+                  rel={contactSettings?.whatsapp ? 'noopener noreferrer' : undefined}
+                >
                   Consultar por WhatsApp
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
 
             <div className="border-border text-muted-foreground mt-6 border-t pt-6 text-xs">

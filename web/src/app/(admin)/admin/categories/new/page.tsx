@@ -14,12 +14,12 @@ export default function NewCategoryPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       <div className="flex items-center gap-4">
-        <Link href={ROUTES.admin.categories}>
-          <Button variant="ghost" size="sm" className="gap-2">
+        <Button asChild variant="ghost" size="sm" className="gap-2">
+          <Link href={ROUTES.admin.categories}>
             <ArrowLeft size={16} />
             Volver
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <PageHeader
           title="📁 Nueva Categoría"
           description="Crea una nueva categoría para organizar tus proyectos"

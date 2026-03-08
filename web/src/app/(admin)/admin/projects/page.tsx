@@ -55,11 +55,9 @@ export default async function ProjectsManagementPage() {
           ]}
         />
 
-        <Link href={ROUTES.admin.newProject}>
-          <Button size="lg" className="shadow-lg transition-transform hover:scale-105">
-            ✨ Crear Nuevo Proyecto
-          </Button>
-        </Link>
+        <Button asChild size="lg" className="shadow-lg transition-transform hover:scale-105">
+          <Link href={ROUTES.admin.newProject}>✨ Crear Nuevo Proyecto</Link>
+        </Button>
       </div>
 
       <Section title={`Proyectos (${projects.length})`}>
