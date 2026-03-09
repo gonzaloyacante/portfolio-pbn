@@ -6,6 +6,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // JitPack required for some plugin native artifacts (ucrop)
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
