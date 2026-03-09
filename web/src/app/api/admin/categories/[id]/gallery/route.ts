@@ -38,7 +38,8 @@ export async function GET(req: Request, { params }: Params) {
     }
 
     // Obtener todos los ProjectImage de los proyectos de esta categoría,
-    // ordenados primero por categoryGalleryOrder (nulls al final), luego por createdAt
+    // ordenados primero por categoryGalleryOrder (nulls al final), luego por order
+    // (mismo criterio que la galería pública y el endpoint /api/categories/[id]/images)
     const images = await prisma.projectImage.findMany({
       where: {
         project: {
@@ -57,7 +58,7 @@ export async function GET(req: Request, { params }: Params) {
         isCover: true,
         isHero: true,
         categoryGalleryOrder: true,
-        createdAt: true,
+        order: true,
         project: {
           select: {
             id: true,
@@ -69,7 +70,8 @@ export async function GET(req: Request, { params }: Params) {
       orderBy: [
         // Nulls al final: imágenes con orden asignado primero
         { categoryGalleryOrder: { sort: 'asc', nulls: 'last' } },
-        { createdAt: 'asc' },
+        // Fallback: orden dentro del proyecto (igual que la galería pública)
+        { order: 'asc' },
       ],
     })
 

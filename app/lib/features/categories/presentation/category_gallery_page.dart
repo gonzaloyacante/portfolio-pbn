@@ -19,6 +19,10 @@ final _categoryGalleryProvider =
           ref.read(categoriesRepositoryProvider).getCategoryGallery(categoryId),
     );
 
+// ── Enum ──────────────────────────────────────────────────────────────────────
+
+enum _ViewMode { list, grid }
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 class CategoryGalleryPage extends ConsumerStatefulWidget {
@@ -42,6 +46,12 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   bool _dirty = false;
   bool _saving = false;
 
+  /// Vista activa: lista o cuadrícula masonry.
+  _ViewMode _viewMode = _ViewMode.list;
+
+  /// ID del ítem actualmente arrastrado en la vista de cuadrícula.
+  String? _draggingId;
+
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(_categoryGalleryProvider(widget.categoryId));
@@ -49,6 +59,22 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     return AppScaffold(
       title: 'Galería — ${widget.categoryName}',
       actions: [
+        // Toggle lista / cuadrícula
+        IconButton(
+          icon: Icon(
+            _viewMode == _ViewMode.list
+                ? Icons.grid_view_rounded
+                : Icons.list_rounded,
+          ),
+          tooltip: _viewMode == _ViewMode.list
+              ? 'Vista en cuadrícula'
+              : 'Vista en lista',
+          onPressed: () => setState(
+            () => _viewMode = _viewMode == _ViewMode.list
+                ? _ViewMode.grid
+                : _ViewMode.list,
+          ),
+        ),
         if (_dirty)
           TextButton.icon(
             onPressed: _saving ? null : _saveOrder,
@@ -108,73 +134,227 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             );
           }
 
-          return Column(
-            children: [
-              // Instrucción
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.base,
-                  AppSpacing.base,
-                  AppSpacing.base,
-                  0,
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.primaryContainer.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.drag_indicator_rounded,
-                        size: 18,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Mantené presionado y arrastrá para reordenar. '
-                          'Los cambios se guardan solo al presionar "Guardar orden".',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              // Lista reordenable
-              Expanded(
-                child: ReorderableListView.builder(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.base,
-                    vertical: 4,
-                  ),
-                  itemCount: _items!.length,
-                  onReorder: _onReorder,
-                  itemBuilder: (context, index) {
-                    final img = _items![index];
-                    return _GalleryTile(
-                      key: ValueKey(img.id),
-                      item: img,
-                      index: index,
-                      total: _items!.length,
-                    );
-                  },
-                ),
-              ),
-            ],
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) =>
+                FadeTransition(opacity: animation, child: child),
+            child: _viewMode == _ViewMode.list
+                ? _buildListView(context)
+                : _buildGridView(context),
           );
         },
       ),
     );
   }
+
+  // ── Vista lista ─────────────────────────────────────────────────────────────
+
+  Widget _buildListView(BuildContext context) {
+    return Column(
+      key: const ValueKey('list'),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.base,
+            AppSpacing.base,
+            AppSpacing.base,
+            0,
+          ),
+          child: _InstructionBanner(
+            icon: Icons.drag_indicator_rounded,
+            text:
+                'Mantené presionado y arrastrá para reordenar. '
+                'Los cambios se guardan solo al presionar "Guardar orden".',
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: ReorderableListView.builder(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.base,
+              vertical: 4,
+            ),
+            itemCount: _items!.length,
+            onReorder: _onReorder,
+            itemBuilder: (context, index) {
+              final img = _items![index];
+              return _GalleryTile(
+                key: ValueKey(img.id),
+                item: img,
+                index: index,
+                total: _items!.length,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Vista cuadrícula masonry ────────────────────────────────────────────────
+
+  Widget _buildGridView(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final columnCount = screenWidth >= 600 ? 3 : 2;
+    const gap = 8.0;
+    const padding = AppSpacing.base;
+    final colWidth =
+        (screenWidth - padding * 2 - gap * (columnCount - 1)) / columnCount;
+
+    // Distribución shortest-column (idéntico al algoritmo de la web)
+    final columns = List.generate(columnCount, (_) => <int>[]);
+    final colHeights = List.filled(columnCount, 0.0);
+
+    for (var i = 0; i < _items!.length; i++) {
+      final img = _items![i];
+      final aspectH =
+          (img.height != null && img.width != null && img.width! > 0)
+          ? img.height! / img.width!
+          : 1.2;
+      final imgHeight = colWidth * aspectH;
+      var shortest = 0;
+      for (var c = 1; c < columnCount; c++) {
+        if (colHeights[c] < colHeights[shortest]) shortest = c;
+      }
+      columns[shortest].add(i);
+      colHeights[shortest] += imgHeight + gap;
+    }
+
+    return Column(
+      key: const ValueKey('grid'),
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.base,
+            AppSpacing.base,
+            AppSpacing.base,
+            0,
+          ),
+          child: _InstructionBanner(
+            icon: Icons.touch_app_rounded,
+            text:
+                'Mantené presionado y arrastrá para reordenar las fotos. '
+                'Los cambios se guardan solo al presionar "Guardar orden".',
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(padding, 0, padding, padding),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(columnCount, (colIdx) {
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: colIdx == 0 ? 0 : gap / 2,
+                      right: colIdx == columnCount - 1 ? 0 : gap / 2,
+                    ),
+                    child: Column(
+                      children: columns[colIdx]
+                          .map(
+                            (itemIdx) =>
+                                _buildDraggableTile(context, itemIdx, colWidth),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDraggableTile(BuildContext context, int index, double colWidth) {
+    final img = _items![index];
+    final scheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: DragTarget<String>(
+        onWillAcceptWithDetails: (details) => details.data != img.id,
+        onAcceptWithDetails: (details) {
+          final fromIdx = _items!.indexWhere((i) => i.id == details.data);
+          final toIdx = _items!.indexOf(img);
+          if (fromIdx != -1 && toIdx != -1 && fromIdx != toIdx) {
+            _swapItems(fromIdx, toIdx);
+          }
+        },
+        builder: (context, candidateData, _) {
+          final isHovered = candidateData.isNotEmpty;
+          final isDraggingThis = _draggingId == img.id;
+
+          return AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: isHovered
+                  ? Border.all(color: scheme.primary, width: 2.5)
+                  : null,
+              boxShadow: isDraggingThis
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+            ),
+            child: LongPressDraggable<String>(
+              data: img.id,
+              hapticFeedbackOnStart: true,
+              onDragStarted: () => setState(() => _draggingId = img.id),
+              onDragEnd: (_) => setState(() => _draggingId = null),
+              onDraggableCanceled: (_, _) => setState(() => _draggingId = null),
+              feedback: SizedBox(
+                width: colWidth,
+                child: Transform.rotate(
+                  angle: 0.04,
+                  child: Material(
+                    elevation: 12,
+                    borderRadius: BorderRadius.circular(12),
+                    clipBehavior: Clip.antiAlias,
+                    child: Opacity(opacity: 0.9, child: _GridTile(item: img)),
+                  ),
+                ),
+              ),
+              childWhenDragging: Opacity(
+                opacity: 0.25,
+                child: _GridTile(item: img),
+              ),
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 150),
+                opacity: isDraggingThis ? 0.25 : 1.0,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: _GridTile(item: img),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ── Helpers de arrastre (grid) ───────────────────────────────────────────────
+
+  void _swapItems(int fromIdx, int toIdx) {
+    setState(() {
+      final item = _items!.removeAt(fromIdx);
+      _items!.insert(toIdx, item);
+      _dirty = true;
+    });
+  }
+
+  // ── Reordenar / guardar / restablecer ────────────────────────────────────────
 
   void _onReorder(int oldIndex, int newIndex) {
     setState(() {
@@ -285,7 +465,37 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   }
 }
 
-// ── Tile ──────────────────────────────────────────────────────────────────────
+// ── Banner de instrucción (reutilizable entre vistas) ─────────────────────────
+
+class _InstructionBanner extends StatelessWidget {
+  const _InstructionBanner({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: scheme.primary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(text, style: Theme.of(context).textTheme.bodySmall),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Tile lista ────────────────────────────────────────────────────────────────
 
 class _GalleryTile extends StatelessWidget {
   const _GalleryTile({
@@ -412,6 +622,87 @@ class _GalleryTile extends StatelessWidget {
               Icons.drag_handle_rounded,
               color: scheme.onSurface.withValues(alpha: 0.3),
               size: 22,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Tile cuadrícula (masonry) ─────────────────────────────────────────────────
+
+class _GridTile extends StatelessWidget {
+  const _GridTile({required this.item});
+
+  final GalleryImageItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    // Relación de aspecto real de la imagen; fallback 4:5
+    final aspectRatio =
+        (item.width != null && item.height != null && item.height! > 0)
+        ? item.width! / item.height!
+        : 0.8;
+
+    return AspectRatio(
+      aspectRatio: aspectRatio,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Imagen
+          CachedNetworkImage(
+            imageUrl: item.thumbnailUrl,
+            fit: BoxFit.cover,
+            placeholder: (_, _) => Container(
+              color: scheme.surfaceContainerHighest,
+              child: Icon(
+                Icons.image_outlined,
+                color: scheme.outlineVariant,
+                size: 32,
+              ),
+            ),
+            errorWidget: (_, _, _) => Container(
+              color: scheme.surfaceContainerHighest,
+              child: Icon(
+                Icons.broken_image_outlined,
+                color: scheme.outlineVariant,
+                size: 32,
+              ),
+            ),
+          ),
+          // Badges de portada / hero
+          if (item.isCover || item.isHero)
+            Positioned(
+              bottom: 4,
+              left: 4,
+              child: Wrap(
+                spacing: 3,
+                children: [
+                  if (item.isCover)
+                    _Badge(label: 'Portada', color: scheme.primary),
+                  if (item.isHero)
+                    _Badge(label: 'Hero', color: scheme.tertiary),
+                ],
+              ),
+            ),
+          // Indicador de drag (ícono leve en la esquina)
+          Positioned(
+            top: 4,
+            right: 4,
+            child: Container(
+              padding: const EdgeInsets.all(3),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Icon(
+                Icons.drag_indicator_rounded,
+                size: 14,
+                color: Colors.white,
+              ),
             ),
           ),
         ],
