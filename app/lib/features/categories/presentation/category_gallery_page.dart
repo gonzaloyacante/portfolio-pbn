@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -203,23 +204,11 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     final colWidth =
         (screenWidth - padding * 2 - gap * (columnCount - 1)) / columnCount;
 
-    // Distribución shortest-column (idéntico al algoritmo de la web)
+    // Distribución round-robin (secuencial): posición 0→col0, 1→col1, 2→col2...
+    // Garantiza que el orden visual izquierda→derecha coincide con el orden asignado.
     final columns = List.generate(columnCount, (_) => <int>[]);
-    final colHeights = List.filled(columnCount, 0.0);
-
     for (var i = 0; i < _items!.length; i++) {
-      final img = _items![i];
-      final aspectH =
-          (img.height != null && img.width != null && img.width! > 0)
-          ? img.height! / img.width!
-          : 1.2;
-      final imgHeight = colWidth * aspectH;
-      var shortest = 0;
-      for (var c = 1; c < columnCount; c++) {
-        if (colHeights[c] < colHeights[shortest]) shortest = c;
-      }
-      columns[shortest].add(i);
-      colHeights[shortest] += imgHeight + gap;
+      columns[i % columnCount].add(i);
     }
 
     return Column(
@@ -255,8 +244,12 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                     child: Column(
                       children: columns[colIdx]
                           .map(
-                            (itemIdx) =>
-                                _buildDraggableTile(context, itemIdx, colWidth),
+                            (itemIdx) => _buildDraggableTile(
+                              context,
+                              itemIdx,
+                              colWidth,
+                              itemIdx + 1,
+                            ),
                           )
                           .toList(),
                     ),
@@ -270,9 +263,18 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     );
   }
 
-  Widget _buildDraggableTile(BuildContext context, int index, double colWidth) {
+  Widget _buildDraggableTile(
+    BuildContext context,
+    int index,
+    double colWidth,
+    int position,
+  ) {
     final img = _items![index];
     final scheme = Theme.of(context).colorScheme;
+    final aspectRatio =
+        (img.width != null && img.height != null && img.height! > 0)
+        ? img.width! / img.height!
+        : 0.8;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -290,20 +292,28 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           final isDraggingThis = _draggingId == img.id;
 
           return AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
+            duration: const Duration(milliseconds: 150),
             curve: Curves.easeOut,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: AppRadius.asRounded(AppRadius.md),
               border: isHovered
-                  ? Border.all(color: scheme.primary, width: 2.5)
+                  ? Border.all(color: scheme.primary, width: 3)
                   : null,
-              boxShadow: isDraggingThis
+              boxShadow: isHovered
+                  ? [
+                      BoxShadow(
+                        color: scheme.primary.withValues(alpha: 0.35),
+                        blurRadius: 18,
+                        spreadRadius: 2,
+                      ),
+                    ]
+                  : isDraggingThis
                   ? null
                   : [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
                       ),
                     ],
             ),
@@ -313,29 +323,71 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
               onDragStarted: () => setState(() => _draggingId = img.id),
               onDragEnd: (_) => setState(() => _draggingId = null),
               onDraggableCanceled: (_, _) => setState(() => _draggingId = null),
-              feedback: SizedBox(
-                width: colWidth,
-                child: Transform.rotate(
-                  angle: 0.04,
+              feedback: Transform.rotate(
+                angle: 0.07,
+                child: SizedBox(
+                  width: colWidth * 1.05,
                   child: Material(
-                    elevation: 12,
-                    borderRadius: BorderRadius.circular(12),
+                    elevation: 24,
+                    borderRadius: AppRadius.asRounded(AppRadius.md),
                     clipBehavior: Clip.antiAlias,
-                    child: Opacity(opacity: 0.9, child: _GridTile(item: img)),
+                    child: Stack(
+                      children: [
+                        _GridTile(item: img, position: position),
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.3),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Center(
+                          child: Icon(
+                            Icons.open_with_rounded,
+                            color: Colors.white,
+                            size: 30,
+                            shadows: [
+                              Shadow(blurRadius: 8, color: Colors.black),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              childWhenDragging: Opacity(
-                opacity: 0.25,
-                child: _GridTile(item: img),
-              ),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 150),
-                opacity: isDraggingThis ? 0.25 : 1.0,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: _GridTile(item: img),
+              childWhenDragging: ClipRRect(
+                borderRadius: AppRadius.asRounded(AppRadius.md),
+                child: AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: scheme.primary.withValues(alpha: 0.06),
+                      border: Border.all(
+                        color: scheme.primary.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.swap_vert_rounded,
+                        color: scheme.primary.withValues(alpha: 0.5),
+                        size: 32,
+                      ),
+                    ),
+                  ),
                 ),
+              ),
+              child: ClipRRect(
+                borderRadius: AppRadius.asRounded(AppRadius.md),
+                child: _GridTile(item: img, position: position),
               ),
             ),
           );
@@ -380,12 +432,10 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           .read(categoriesRepositoryProvider)
           .updateGalleryOrder(widget.categoryId, orderItems);
 
-      // Refrescar desde el backend para sincronizar
+      // El orden en _items ya es el correcto; solo limpiamos el flag.
+      // Invalidamos el caché para que otras pantallas obtengan datos frescos.
       ref.invalidate(_categoryGalleryProvider(widget.categoryId));
-      setState(() {
-        _dirty = false;
-        _items = null; // se reiniializará desde el backend
-      });
+      setState(() => _dirty = false);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -412,7 +462,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       builder: (ctx) => AlertDialog(
         title: const Text('Restablecer orden'),
         content: const Text(
-          '¿Restablecer el orden predeterminado (por fecha de carga)?'
+          '¿Restablecer al orden predeterminado (por orden dentro del proyecto)?'
           '\nSe perderá el orden personalizado.',
         ),
         actions: [
@@ -442,9 +492,13 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           .updateGalleryOrder(widget.categoryId, []);
 
       ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+      final fresh = await ref.read(
+        _categoryGalleryProvider(widget.categoryId).future,
+      );
+      if (!mounted) return;
       setState(() {
         _dirty = false;
-        _items = null;
+        _items = List.of(fresh);
       });
 
       if (mounted) {
@@ -633,9 +687,10 @@ class _GalleryTile extends StatelessWidget {
 // ── Tile cuadrícula (masonry) ─────────────────────────────────────────────────
 
 class _GridTile extends StatelessWidget {
-  const _GridTile({required this.item});
+  const _GridTile({required this.item, this.position});
 
   final GalleryImageItem item;
+  final int? position;
 
   @override
   Widget build(BuildContext context) {
@@ -676,8 +731,8 @@ class _GridTile extends StatelessWidget {
           // Badges de portada / hero
           if (item.isCover || item.isHero)
             Positioned(
-              bottom: 4,
-              left: 4,
+              bottom: 6,
+              left: 6,
               child: Wrap(
                 spacing: 3,
                 children: [
@@ -688,23 +743,28 @@ class _GridTile extends StatelessWidget {
                 ],
               ),
             ),
-          // Indicador de drag (ícono leve en la esquina)
-          Positioned(
-            top: 4,
-            right: 4,
-            child: Container(
-              padding: const EdgeInsets.all(3),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.35),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Icon(
-                Icons.drag_indicator_rounded,
-                size: 14,
-                color: Colors.white,
+          // Número de posición en el orden guardado
+          if (position != null)
+            Positioned(
+              top: 6,
+              right: 6,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  '#$position',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

@@ -407,188 +407,186 @@ class _CategoryTile extends StatelessWidget {
           RouteNames.categoryEdit,
           pathParameters: {'id': item.id},
         ),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 88),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Thumbnail (like projects list)
-                SizedBox(
-                  width: 90,
-                  child:
-                      item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: item.thumbnailUrl!,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: scheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.image_outlined,
-                              color: scheme.outlineVariant,
-                              size: 28,
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: scheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              color: scheme.outlineVariant,
-                              size: 28,
-                            ),
-                          ),
-                        )
-                      : Container(
+        child: SizedBox(
+          height: 80,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Thumbnail — tamaño fijo para no expandir el tile
+              SizedBox(
+                width: 80,
+                child:
+                    item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: item.thumbnailUrl!,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
                           color: scheme.surfaceContainerHighest,
                           child: Icon(
-                            Icons.photo_library_outlined,
+                            Icons.image_outlined,
                             color: scheme.outlineVariant,
                             size: 28,
                           ),
                         ),
-                ),
-                // Content
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                item.name,
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            StatusBadge(
-                              small: true,
-                              status: item.isActive
-                                  ? AppStatus.active
-                                  : AppStatus.inactive,
-                            ),
-                          ],
+                        errorWidget: (context, url, error) => Container(
+                          color: scheme.surfaceContainerHighest,
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            color: scheme.outlineVariant,
+                            size: 28,
+                          ),
                         ),
-                        const SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.link_rounded,
-                              size: 13,
-                              color: scheme.onSurface,
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: Text(
-                                '/${item.slug}',
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: scheme.onSurface,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                      )
+                    : Container(
+                        color: scheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.photo_library_outlined,
+                          color: scheme.outlineVariant,
+                          size: 28,
+                        ),
+                      ),
+              ),
+              // Content
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.name,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              Icons.photo_library_outlined,
-                              size: 13,
-                              color: scheme.onSurface,
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              '${item.projectCount}',
+                          ),
+                          const SizedBox(width: 4),
+                          StatusBadge(
+                            small: true,
+                            status: item.isActive
+                                ? AppStatus.active
+                                : AppStatus.inactive,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.link_rounded,
+                            size: 13,
+                            color: scheme.onSurface,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              '/${item.slug}',
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: scheme.onSurface,
-                                fontWeight: FontWeight.w600,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                          ],
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.photo_library_outlined,
+                            size: 13,
+                            color: scheme.onSurface,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            '${item.projectCount}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Menu
+              PopupMenuButton<String>(
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  size: 20,
+                  color: scheme.outline,
+                ),
+                onSelected: (action) {
+                  if (action == 'edit') {
+                    context.pushNamed(
+                      RouteNames.categoryEdit,
+                      pathParameters: {'id': item.id},
+                    );
+                  } else if (action == 'gallery') {
+                    context.pushNamed(
+                      RouteNames.categoryGallery,
+                      pathParameters: {'id': item.id},
+                      queryParameters: {'name': item.name},
+                    );
+                  } else if (action == 'delete') {
+                    onDelete(context, item);
+                  }
+                },
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit_outlined,
+                          size: 18,
+                          color: scheme.onSurface,
                         ),
+                        const SizedBox(width: 10),
+                        const Text('Editar'),
                       ],
                     ),
                   ),
-                ),
-                // Menu
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert_rounded,
-                    size: 20,
-                    color: scheme.outline,
-                  ),
-                  onSelected: (action) {
-                    if (action == 'edit') {
-                      context.pushNamed(
-                        RouteNames.categoryEdit,
-                        pathParameters: {'id': item.id},
-                      );
-                    } else if (action == 'gallery') {
-                      context.pushNamed(
-                        RouteNames.categoryGallery,
-                        pathParameters: {'id': item.id},
-                        queryParameters: {'name': item.name},
-                      );
-                    } else if (action == 'delete') {
-                      onDelete(context, item);
-                    }
-                  },
-                  itemBuilder: (_) => [
+                  if (item.projectCount > 0)
                     PopupMenuItem(
-                      value: 'edit',
+                      value: 'gallery',
                       child: Row(
                         children: [
                           Icon(
-                            Icons.edit_outlined,
+                            Icons.photo_library_outlined,
                             size: 18,
                             color: scheme.onSurface,
                           ),
                           const SizedBox(width: 10),
-                          const Text('Editar'),
+                          const Text('Ver galería'),
                         ],
                       ),
                     ),
-                    if (item.projectCount > 0)
-                      PopupMenuItem(
-                        value: 'gallery',
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.photo_library_outlined,
-                              size: 18,
-                              color: scheme.onSurface,
-                            ),
-                            const SizedBox(width: 10),
-                            const Text('Ver galería'),
-                          ],
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.delete_outline,
+                          size: 18,
+                          color: AppColors.destructive,
                         ),
-                      ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            size: 18,
-                            color: AppColors.destructive,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            'Eliminar',
-                            style: TextStyle(color: AppColors.destructive),
-                          ),
-                        ],
-                      ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Eliminar',
+                          style: TextStyle(color: AppColors.destructive),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
