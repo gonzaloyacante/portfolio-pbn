@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
@@ -67,7 +69,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   final _nameCtrl = TextEditingController();
   final _slugCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
-  final _thumbnailCtrl = TextEditingController();
+  final _coverImageCtrl = TextEditingController();
   // Key para medir la posición del widget de imagen y calcular altura restante
   final _imageSlotKey = GlobalKey();
   double? _calculatedImageHeight;
@@ -92,7 +94,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _nameCtrl.dispose();
     _slugCtrl.dispose();
     _descriptionCtrl.dispose();
-    _thumbnailCtrl.dispose();
+    _coverImageCtrl.dispose();
     super.dispose();
   }
 
@@ -102,7 +104,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;
     _descriptionCtrl.text = detail.description ?? '';
-    _thumbnailCtrl.text = detail.thumbnailUrl ?? '';
+    // Usar coverImageUrl si existe; si no, thumbnailUrl como fallback para
+    // categorías creadas antes del sistema de imagen dual.
+    _coverImageCtrl.text = detail.coverImageUrl ?? detail.thumbnailUrl ?? '';
     setState(() {
       _isActive = detail.isActive;
     });
@@ -113,6 +117,114 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _slugCtrl.text = _toSlug(name);
   }
 
+  Future<void> _pickFromGallery() async {
+    if (!_isEdit) return;
+    try {
+      final images = await ref
+          .read(categoriesRepositoryProvider)
+          .getCategoryGallery(widget.categoryId!);
+      if (!mounted) return;
+      if (images.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No hay imágenes en la galería de proyectos de esta categoría.',
+            ),
+          ),
+        );
+        return;
+      }
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) {
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.6,
+            maxChildSize: 0.9,
+            builder: (_, scrollCtrl) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Seleccionar de la galería',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.of(ctx).pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: GridView.builder(
+                      controller: scrollCtrl,
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                          ),
+                      itemCount: images.length,
+                      itemBuilder: (_, i) {
+                        final img = images[i];
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _coverImageCtrl.text = img.url;
+                              _pendingThumbnail = null;
+                            });
+                            Navigator.of(ctx).pop();
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: CachedNetworkImage(
+                              imageUrl: img.thumbnailUrl,
+                              fit: BoxFit.cover,
+                              placeholder: (ctx2, url) =>
+                                  const ColoredBox(color: Color(0xFFE5E5E5)),
+                              errorWidget: (ctx2, url, err) => const Icon(
+                                Icons.broken_image,
+                                color: Color(0xFF9E9E9E),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo cargar la galería. Inténtalo de nuevo.'),
+          ),
+        );
+      }
+    }
+  }
+
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
@@ -120,10 +232,11 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       // Subir imagen si se seleccionó una nueva.
       if (_pendingThumbnail != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _thumbnailCtrl.text = await uploadSvc.uploadImage(
+        final result = await uploadSvc.uploadImageFull(
           _pendingThumbnail!,
           folder: 'portfolio/categories',
         );
+        _coverImageCtrl.text = result.url;
       }
 
       final repo = ref.read(categoriesRepositoryProvider);
@@ -133,9 +246,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         description: _descriptionCtrl.text.trim().isEmpty
             ? null
             : _descriptionCtrl.text.trim(),
-        thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
+        coverImageUrl: _coverImageCtrl.text.trim().isEmpty
             ? null
-            : _thumbnailCtrl.text.trim(),
+            : _coverImageCtrl.text.trim(),
         isActive: _isActive,
       );
 
@@ -315,8 +428,8 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                 key: _imageSlotKey,
                 child: ImageUploadWidget(
                   label: 'Imagen de portada',
-                  currentImageUrl: _thumbnailCtrl.text.isNotEmpty
-                      ? _thumbnailCtrl.text
+                  currentImageUrl: _coverImageCtrl.text.isNotEmpty
+                      ? _coverImageCtrl.text
                       : null,
                   onImageSelected: (file) {
                     setState(() => _pendingThumbnail = file);
@@ -324,12 +437,24 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                   onImageRemoved: () {
                     setState(() {
                       _pendingThumbnail = null;
-                      _thumbnailCtrl.clear();
+                      _coverImageCtrl.clear();
                     });
                   },
                   height: imageHeight,
                 ),
               ),
+
+              if (_isEdit) ...[
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.photo_library_outlined, size: 18),
+                  label: const Text('Seleccionar de la galería'),
+                  onPressed: _loading ? null : _pickFromGallery,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 44),
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 24),
 

@@ -8,15 +8,56 @@ cloudinary.config({
   secure: true,
 })
 
+// ── Transformaciones de URL ───────────────────────────────────────────────────
+
 /**
- * Subir imagen a Cloudinary
- * @param file - Archivo de imagen
- * @param folder - Carpeta en Cloudinary (default: 'portfolio')
+ * Genera la URL de thumbnail a partir de la URL original de Cloudinary.
+ *
+ * El thumbnail usa transformaciones on-the-fly de Cloudinary (sin re-subir):
+ * - c_fill: recorte inteligente centrado
+ * - w_800, h_600: tamaño para listas / cards (cubre pantallas retina 2×)
+ * - q_auto: calidad automática (equilibrio velocidad/visual)
+ * - f_auto: formato moderno automático (WebP, AVIF según el browser)
+ *
+ * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
+ */
+export function generateThumbnailUrl(originalUrl: string): string {
+  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
+  const THUMB_TRANSFORM = 'c_fill,w_800,h_600,q_auto,f_auto'
+  return originalUrl.replace('/image/upload/', `/image/upload/${THUMB_TRANSFORM}/`)
+}
+
+/**
+ * Genera la URL de cover (alta calidad) a partir de la URL original.
+ *
+ * Aplica sólo q_auto:best y f_auto: preserva la resolución 4K original
+ * y convierte al formato más eficiente que soporta el browser.
+ *
+ * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
+ */
+export function generateCoverUrl(originalUrl: string): string {
+  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
+  const COVER_TRANSFORM = 'q_auto:best,f_auto'
+  return originalUrl.replace('/image/upload/', `/image/upload/${COVER_TRANSFORM}/`)
+}
+
+// ── Subida ────────────────────────────────────────────────────────────────────
+
+/**
+ * Subir imagen a Cloudinary conservando la calidad original.
+ *
+ * No se aplican transformaciones al archivo almacenado: Cloudinary guarda
+ * la imagen tal como se sube. Las variantes optimizadas se generan
+ * dinámicamente vía URL (generateThumbnailUrl / generateCoverUrl).
+ *
+ * @returns url           – URL original (sin transformaciones)
+ * @returns thumbnailUrl  – URL con transformación de thumbnail (on-the-fly)
+ * @returns publicId      – Public ID en Cloudinary
  */
 export const uploadImage = async (
   file: File,
   folder: string = 'portfolio'
-): Promise<{ url: string; publicId: string }> => {
+): Promise<{ url: string; thumbnailUrl: string; publicId: string }> => {
   const arrayBuffer = await file.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
@@ -30,13 +71,16 @@ export const uploadImage = async (
         {
           folder: `${rootFolder}/${folder}`,
           resource_type: 'image',
-          transformation: [{ quality: 'auto:best' }, { fetch_format: 'auto' }],
+          // Sin transformation: se preserva el archivo original (4K, FullHD, etc.)
+          // Las variantes se generan dinámicamente vía URL de Cloudinary.
         },
         (error, result) => {
           if (error) return reject(error)
           if (!result) return reject(new Error('No result from Cloudinary'))
+          const url = result.secure_url
           resolve({
-            url: result.secure_url,
+            url,
+            thumbnailUrl: generateThumbnailUrl(url),
             publicId: result.public_id,
           })
         }

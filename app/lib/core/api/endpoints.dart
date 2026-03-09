@@ -20,6 +20,8 @@ class Endpoints {
   // ── Categorías ────────────────────────────────────────────────────────────
   static const String categories = '/api/admin/categories';
   static String category(String id) => '/api/admin/categories/$id';
+  static String categoryGallery(String id) =>
+      '/api/admin/categories/$id/gallery';
 
   // ── Servicios ─────────────────────────────────────────────────────────────
   static const String services = '/api/admin/services';

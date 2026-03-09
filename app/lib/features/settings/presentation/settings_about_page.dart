@@ -134,10 +134,11 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
     try {
       if (_pendingProfileImage != null) {
         final svc = ref.read(uploadServiceProvider);
-        _profileImageCtrl.text = await svc.uploadImage(
+        final result = await svc.uploadImageFull(
           _pendingProfileImage!,
           folder: 'portfolio/about',
         );
+        _profileImageCtrl.text = result.url;
       }
 
       await ref.read(settingsRepositoryProvider).updateAbout({

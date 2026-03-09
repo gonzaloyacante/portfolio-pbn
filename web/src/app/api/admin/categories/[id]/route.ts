@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -100,13 +101,21 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     }
 
+    // Si se actualiza coverImageUrl sin thumbnailUrl explícito → regenerar thumbnail.
+    const resolvedThumbnailUrl =
+      thumbnailUrl !== undefined
+        ? thumbnailUrl
+        : coverImageUrl !== undefined
+          ? generateThumbnailUrl(coverImageUrl)
+          : undefined
+
     const category = await prisma.category.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
         ...(slug !== undefined && { slug }),
         ...(description !== undefined && { description }),
-        ...(thumbnailUrl !== undefined && { thumbnailUrl }),
+        ...(resolvedThumbnailUrl !== undefined && { thumbnailUrl: resolvedThumbnailUrl }),
         ...(coverImageUrl !== undefined && { coverImageUrl }),
         ...(isActive !== undefined && { isActive }),
         ...(sortOrder !== undefined && { sortOrder }),

@@ -5,7 +5,7 @@ import { uploadImage, deleteImage } from '@/lib/cloudinary'
 // ── POST /api/admin/upload ────────────────────────────────────────────────────
 // Sube una imagen a Cloudinary con autenticación JWT Flutter.
 
-const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10 MB
+const MAX_SIZE_BYTES = 50 * 1024 * 1024 // 50 MB — soporta fotos 4K (~30 MB JPEG q:100)
 
 export async function POST(req: NextRequest) {
   const auth = await withAdminJwt(req)
@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       url: result.url,
+      thumbnailUrl: result.thumbnailUrl,
       publicId: result.publicId,
     })
   } catch (error) {

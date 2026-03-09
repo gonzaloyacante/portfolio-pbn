@@ -158,10 +158,11 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     try {
       if (_pendingHeroImage != null) {
         final svc = ref.read(uploadServiceProvider);
-        _heroImageCtrl.text = await svc.uploadImage(
+        final result = await svc.uploadImageFull(
           _pendingHeroImage!,
           folder: 'portfolio/home',
         );
+        _heroImageCtrl.text = result.url;
         _pendingHeroImage = null;
       }
 

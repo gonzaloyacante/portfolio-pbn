@@ -612,4 +612,306 @@ as String,
 
 }
 
+
+/// @nodoc
+mixin _$GalleryImageItem {
+
+ String get id; String get url; String get thumbnailUrl; String? get publicId; String? get alt; String? get caption; int? get width; int? get height; bool get isCover; bool get isHero; int? get categoryGalleryOrder; String get projectId; String get projectTitle; String get projectSlug;
+/// Create a copy of GalleryImageItem
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$GalleryImageItemCopyWith<GalleryImageItem> get copyWith => _$GalleryImageItemCopyWithImpl<GalleryImageItem>(this as GalleryImageItem, _$identity);
+
+  /// Serializes this GalleryImageItem to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.alt, alt) || other.alt == alt)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.isCover, isCover) || other.isCover == isCover)&&(identical(other.isHero, isHero) || other.isHero == isHero)&&(identical(other.categoryGalleryOrder, categoryGalleryOrder) || other.categoryGalleryOrder == categoryGalleryOrder)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.projectTitle, projectTitle) || other.projectTitle == projectTitle)&&(identical(other.projectSlug, projectSlug) || other.projectSlug == projectSlug));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,url,thumbnailUrl,publicId,alt,caption,width,height,isCover,isHero,categoryGalleryOrder,projectId,projectTitle,projectSlug);
+
+@override
+String toString() {
+  return 'GalleryImageItem(id: $id, url: $url, thumbnailUrl: $thumbnailUrl, publicId: $publicId, alt: $alt, caption: $caption, width: $width, height: $height, isCover: $isCover, isHero: $isHero, categoryGalleryOrder: $categoryGalleryOrder, projectId: $projectId, projectTitle: $projectTitle, projectSlug: $projectSlug)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $GalleryImageItemCopyWith<$Res>  {
+  factory $GalleryImageItemCopyWith(GalleryImageItem value, $Res Function(GalleryImageItem) _then) = _$GalleryImageItemCopyWithImpl;
+@useResult
+$Res call({
+ String id, String url, String thumbnailUrl, String? publicId, String? alt, String? caption, int? width, int? height, bool isCover, bool isHero, int? categoryGalleryOrder, String projectId, String projectTitle, String projectSlug
+});
+
+
+
+
+}
+/// @nodoc
+class _$GalleryImageItemCopyWithImpl<$Res>
+    implements $GalleryImageItemCopyWith<$Res> {
+  _$GalleryImageItemCopyWithImpl(this._self, this._then);
+
+  final GalleryImageItem _self;
+  final $Res Function(GalleryImageItem) _then;
+
+/// Create a copy of GalleryImageItem
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? url = null,Object? thumbnailUrl = null,Object? publicId = freezed,Object? alt = freezed,Object? caption = freezed,Object? width = freezed,Object? height = freezed,Object? isCover = null,Object? isHero = null,Object? categoryGalleryOrder = freezed,Object? projectId = null,Object? projectTitle = null,Object? projectSlug = null,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+as String,publicId: freezed == publicId ? _self.publicId : publicId // ignore: cast_nullable_to_non_nullable
+as String?,alt: freezed == alt ? _self.alt : alt // ignore: cast_nullable_to_non_nullable
+as String?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
+as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
+as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
+as int?,isCover: null == isCover ? _self.isCover : isCover // ignore: cast_nullable_to_non_nullable
+as bool,isHero: null == isHero ? _self.isHero : isHero // ignore: cast_nullable_to_non_nullable
+as bool,categoryGalleryOrder: freezed == categoryGalleryOrder ? _self.categoryGalleryOrder : categoryGalleryOrder // ignore: cast_nullable_to_non_nullable
+as int?,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as String,projectTitle: null == projectTitle ? _self.projectTitle : projectTitle // ignore: cast_nullable_to_non_nullable
+as String,projectSlug: null == projectSlug ? _self.projectSlug : projectSlug // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [GalleryImageItem].
+extension GalleryImageItemPatterns on GalleryImageItem {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _GalleryImageItem value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _GalleryImageItem() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _GalleryImageItem value)  $default,){
+final _that = this;
+switch (_that) {
+case _GalleryImageItem():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _GalleryImageItem value)?  $default,){
+final _that = this;
+switch (_that) {
+case _GalleryImageItem() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String url,  String thumbnailUrl,  String? publicId,  String? alt,  String? caption,  int? width,  int? height,  bool isCover,  bool isHero,  int? categoryGalleryOrder,  String projectId,  String projectTitle,  String projectSlug)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _GalleryImageItem() when $default != null:
+return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_that.caption,_that.width,_that.height,_that.isCover,_that.isHero,_that.categoryGalleryOrder,_that.projectId,_that.projectTitle,_that.projectSlug);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String url,  String thumbnailUrl,  String? publicId,  String? alt,  String? caption,  int? width,  int? height,  bool isCover,  bool isHero,  int? categoryGalleryOrder,  String projectId,  String projectTitle,  String projectSlug)  $default,) {final _that = this;
+switch (_that) {
+case _GalleryImageItem():
+return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_that.caption,_that.width,_that.height,_that.isCover,_that.isHero,_that.categoryGalleryOrder,_that.projectId,_that.projectTitle,_that.projectSlug);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String url,  String thumbnailUrl,  String? publicId,  String? alt,  String? caption,  int? width,  int? height,  bool isCover,  bool isHero,  int? categoryGalleryOrder,  String projectId,  String projectTitle,  String projectSlug)?  $default,) {final _that = this;
+switch (_that) {
+case _GalleryImageItem() when $default != null:
+return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_that.caption,_that.width,_that.height,_that.isCover,_that.isHero,_that.categoryGalleryOrder,_that.projectId,_that.projectTitle,_that.projectSlug);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _GalleryImageItem implements GalleryImageItem {
+  const _GalleryImageItem({required this.id, required this.url, required this.thumbnailUrl, this.publicId, this.alt, this.caption, this.width, this.height, this.isCover = false, this.isHero = false, this.categoryGalleryOrder, required this.projectId, required this.projectTitle, required this.projectSlug});
+  factory _GalleryImageItem.fromJson(Map<String, dynamic> json) => _$GalleryImageItemFromJson(json);
+
+@override final  String id;
+@override final  String url;
+@override final  String thumbnailUrl;
+@override final  String? publicId;
+@override final  String? alt;
+@override final  String? caption;
+@override final  int? width;
+@override final  int? height;
+@override@JsonKey() final  bool isCover;
+@override@JsonKey() final  bool isHero;
+@override final  int? categoryGalleryOrder;
+@override final  String projectId;
+@override final  String projectTitle;
+@override final  String projectSlug;
+
+/// Create a copy of GalleryImageItem
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$GalleryImageItemCopyWith<_GalleryImageItem> get copyWith => __$GalleryImageItemCopyWithImpl<_GalleryImageItem>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$GalleryImageItemToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.alt, alt) || other.alt == alt)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.isCover, isCover) || other.isCover == isCover)&&(identical(other.isHero, isHero) || other.isHero == isHero)&&(identical(other.categoryGalleryOrder, categoryGalleryOrder) || other.categoryGalleryOrder == categoryGalleryOrder)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.projectTitle, projectTitle) || other.projectTitle == projectTitle)&&(identical(other.projectSlug, projectSlug) || other.projectSlug == projectSlug));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,url,thumbnailUrl,publicId,alt,caption,width,height,isCover,isHero,categoryGalleryOrder,projectId,projectTitle,projectSlug);
+
+@override
+String toString() {
+  return 'GalleryImageItem(id: $id, url: $url, thumbnailUrl: $thumbnailUrl, publicId: $publicId, alt: $alt, caption: $caption, width: $width, height: $height, isCover: $isCover, isHero: $isHero, categoryGalleryOrder: $categoryGalleryOrder, projectId: $projectId, projectTitle: $projectTitle, projectSlug: $projectSlug)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$GalleryImageItemCopyWith<$Res> implements $GalleryImageItemCopyWith<$Res> {
+  factory _$GalleryImageItemCopyWith(_GalleryImageItem value, $Res Function(_GalleryImageItem) _then) = __$GalleryImageItemCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String url, String thumbnailUrl, String? publicId, String? alt, String? caption, int? width, int? height, bool isCover, bool isHero, int? categoryGalleryOrder, String projectId, String projectTitle, String projectSlug
+});
+
+
+
+
+}
+/// @nodoc
+class __$GalleryImageItemCopyWithImpl<$Res>
+    implements _$GalleryImageItemCopyWith<$Res> {
+  __$GalleryImageItemCopyWithImpl(this._self, this._then);
+
+  final _GalleryImageItem _self;
+  final $Res Function(_GalleryImageItem) _then;
+
+/// Create a copy of GalleryImageItem
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? url = null,Object? thumbnailUrl = null,Object? publicId = freezed,Object? alt = freezed,Object? caption = freezed,Object? width = freezed,Object? height = freezed,Object? isCover = null,Object? isHero = null,Object? categoryGalleryOrder = freezed,Object? projectId = null,Object? projectTitle = null,Object? projectSlug = null,}) {
+  return _then(_GalleryImageItem(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
+as String,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
+as String,publicId: freezed == publicId ? _self.publicId : publicId // ignore: cast_nullable_to_non_nullable
+as String?,alt: freezed == alt ? _self.alt : alt // ignore: cast_nullable_to_non_nullable
+as String?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
+as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
+as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
+as int?,isCover: null == isCover ? _self.isCover : isCover // ignore: cast_nullable_to_non_nullable
+as bool,isHero: null == isHero ? _self.isHero : isHero // ignore: cast_nullable_to_non_nullable
+as bool,categoryGalleryOrder: freezed == categoryGalleryOrder ? _self.categoryGalleryOrder : categoryGalleryOrder // ignore: cast_nullable_to_non_nullable
+as int?,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as String,projectTitle: null == projectTitle ? _self.projectTitle : projectTitle // ignore: cast_nullable_to_non_nullable
+as String,projectSlug: null == projectSlug ? _self.projectSlug : projectSlug // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
 // dart format on

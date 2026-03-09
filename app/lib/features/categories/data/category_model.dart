@@ -59,14 +59,17 @@ class CategoryFormData {
   final String name;
   final String slug;
   final String? description;
-  final String? thumbnailUrl;
+
+  /// URL original (alta calidad) subida por el usuario.
+  /// El backend genera automáticamente thumbnailUrl a partir de este campo.
+  final String? coverImageUrl;
   final bool isActive;
 
   const CategoryFormData({
     required this.name,
     required this.slug,
     this.description,
-    this.thumbnailUrl,
+    this.coverImageUrl,
     this.isActive = true,
   });
 
@@ -74,7 +77,34 @@ class CategoryFormData {
     'name': name,
     'slug': slug,
     if (description != null) 'description': description,
-    if (thumbnailUrl != null) 'thumbnailUrl': thumbnailUrl,
+    if (coverImageUrl != null) 'coverImageUrl': coverImageUrl,
     'isActive': isActive,
   };
+}
+
+// ── GalleryImageItem ────────────────────────────────────────────────────────────
+
+/// Imagen de un proyecto que pertenece a la galería de su categoría.
+/// El campo [categoryGalleryOrder] es independiente del orden dentro del proyecto.
+@freezed
+abstract class GalleryImageItem with _$GalleryImageItem {
+  const factory GalleryImageItem({
+    required String id,
+    required String url,
+    required String thumbnailUrl,
+    String? publicId,
+    String? alt,
+    String? caption,
+    int? width,
+    int? height,
+    @Default(false) bool isCover,
+    @Default(false) bool isHero,
+    int? categoryGalleryOrder,
+    required String projectId,
+    required String projectTitle,
+    required String projectSlug,
+  }) = _GalleryImageItem;
+
+  factory GalleryImageItem.fromJson(Map<String, dynamic> json) =>
+      _$GalleryImageItemFromJson(json);
 }

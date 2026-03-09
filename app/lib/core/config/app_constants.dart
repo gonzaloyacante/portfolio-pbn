@@ -20,9 +20,9 @@ class AppConstants {
   static const int maxPageSize = 100;
 
   // ── Imágenes ──────────────────────────────────────────────────────────────
-  static const int imageQuality = 85;
-  static const int maxImageWidth = 1920;
-  static const int maxImageHeight = 1920;
+  static const int imageQuality = 100;
+  // Sin límite de dimensiones — se sube el original tal como está.
+  // UCrop y image_picker reciben null = sin restricción de tamaño.
 
   // ── Sync offline ─────────────────────────────────────────────────────────
   static const Duration syncRetryDelay = Duration(seconds: 5);

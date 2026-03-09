@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -72,7 +73,10 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        data: services,
+        data: services.map((s) => ({
+          ...s,
+          thumbnailUrl: s.imageUrl ? generateThumbnailUrl(s.imageUrl) : null,
+        })),
         pagination: {
           page,
           limit,

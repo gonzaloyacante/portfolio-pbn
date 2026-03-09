@@ -75,3 +75,39 @@ Map<String, dynamic> _$CategoryDetailToJson(_CategoryDetail instance) =>
       'createdAt': instance.createdAt,
       'updatedAt': instance.updatedAt,
     };
+
+_GalleryImageItem _$GalleryImageItemFromJson(Map<String, dynamic> json) =>
+    _GalleryImageItem(
+      id: json['id'] as String,
+      url: json['url'] as String,
+      thumbnailUrl: json['thumbnailUrl'] as String,
+      publicId: json['publicId'] as String?,
+      alt: json['alt'] as String?,
+      caption: json['caption'] as String?,
+      width: (json['width'] as num?)?.toInt(),
+      height: (json['height'] as num?)?.toInt(),
+      isCover: json['isCover'] as bool? ?? false,
+      isHero: json['isHero'] as bool? ?? false,
+      categoryGalleryOrder: (json['categoryGalleryOrder'] as num?)?.toInt(),
+      projectId: json['projectId'] as String,
+      projectTitle: json['projectTitle'] as String,
+      projectSlug: json['projectSlug'] as String,
+    );
+
+Map<String, dynamic> _$GalleryImageItemToJson(_GalleryImageItem instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'url': instance.url,
+      'thumbnailUrl': instance.thumbnailUrl,
+      'publicId': instance.publicId,
+      'alt': instance.alt,
+      'caption': instance.caption,
+      'width': instance.width,
+      'height': instance.height,
+      'isCover': instance.isCover,
+      'isHero': instance.isHero,
+      'categoryGalleryOrder': instance.categoryGalleryOrder,
+      'projectId': instance.projectId,
+      'projectTitle': instance.projectTitle,
+      'projectSlug': instance.projectSlug,
+    };

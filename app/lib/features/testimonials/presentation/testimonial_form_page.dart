@@ -95,10 +95,11 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       // Subir avatar si se seleccionó uno nuevo.
       if (_pendingAvatar != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _avatarCtrl.text = await uploadSvc.uploadImage(
+        final result = await uploadSvc.uploadImageFull(
           _pendingAvatar!,
           folder: 'portfolio/testimonials',
         );
+        _avatarCtrl.text = result.url;
       }
 
       final data = TestimonialFormData(

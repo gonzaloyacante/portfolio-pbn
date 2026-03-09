@@ -19,6 +19,7 @@ class RouteNames {
   static const String categories = 'categories';
   static const String categoryNew = 'category-new';
   static const String categoryEdit = 'category-edit';
+  static const String categoryGallery = 'category-gallery';
 
   // ── Servicios ─────────────────────────────────────────────────────────────
   static const String services = 'services';
@@ -74,6 +75,7 @@ class RoutePaths {
   static const String categories = '/categories';
   static const String categoryNew = '/categories/new';
   static const String categoryEdit = '/categories/:id/edit';
+  static const String categoryGallery = '/categories/:id/gallery';
   static const String services = '/services';
   static const String serviceNew = '/services/new';
   static const String serviceEdit = '/services/:id/edit';

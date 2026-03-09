@@ -97,10 +97,11 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       // Subir imagen si se seleccionó una nueva.
       if (_pendingImage != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _imageCtrl.text = await uploadSvc.uploadImage(
+        final result = await uploadSvc.uploadImageFull(
           _pendingImage!,
           folder: 'portfolio/services',
         );
+        _imageCtrl.text = result.url;
       }
 
       final repo = ref.read(servicesRepositoryProvider);

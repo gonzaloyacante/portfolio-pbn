@@ -528,6 +528,12 @@ class _CategoryTile extends StatelessWidget {
                         RouteNames.categoryEdit,
                         pathParameters: {'id': item.id},
                       );
+                    } else if (action == 'gallery') {
+                      context.pushNamed(
+                        RouteNames.categoryGallery,
+                        pathParameters: {'id': item.id},
+                        queryParameters: {'name': item.name},
+                      );
                     } else if (action == 'delete') {
                       onDelete(context, item);
                     }
@@ -547,6 +553,21 @@ class _CategoryTile extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (item.projectCount > 0)
+                      PopupMenuItem(
+                        value: 'gallery',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.photo_library_outlined,
+                              size: 18,
+                              color: scheme.onSurface,
+                            ),
+                            const SizedBox(width: 10),
+                            const Text('Ver galería'),
+                          ],
+                        ),
+                      ),
                     PopupMenuItem(
                       value: 'delete',
                       child: Row(

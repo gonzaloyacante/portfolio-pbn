@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -60,7 +61,13 @@ export async function GET(req: Request, { params }: Params) {
       )
     }
 
-    return NextResponse.json({ success: true, data: testimonial })
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...testimonial,
+        thumbnailUrl: testimonial.avatarUrl ? generateThumbnailUrl(testimonial.avatarUrl) : null,
+      },
+    })
   } catch (err) {
     logger.error('[admin-testimonial-get] Error', {
       id,

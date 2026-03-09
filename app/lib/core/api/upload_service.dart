@@ -13,7 +13,7 @@ import '../utils/app_logger.dart';
 /// Servicio para subir imágenes a Cloudinary via el backend.
 ///
 /// Usa el endpoint autenticado `/api/admin/upload` con JWT Flutter.
-/// La imagen se comprime a calidad 85% antes de ser enviada por el widget.
+/// La imagen se sube en calidad original (sin compresión previa).
 class UploadService {
   const UploadService(this._client);
 
@@ -58,8 +58,13 @@ class UploadService {
 
   // ── Upload con metadatos ──────────────────────────────────────────────────
 
-  /// Sube [file] y devuelve `({url, publicId})` para asociar al backend.
-  Future<({String url, String publicId})> uploadImageFull(
+  /// Sube [file] y devuelve `({url, thumbnailUrl, publicId})`.
+  ///
+  /// - [url]: URL original (calidad máxima, sin transformaciones).
+  /// - [thumbnailUrl]: URL optimizada de Cloudinary (800×600, q_auto, f_auto),
+  ///   generada on-the-fly sin re-subir la imagen.
+  /// - [publicId]: ID en Cloudinary para eliminar o asociar al backend.
+  Future<({String url, String thumbnailUrl, String publicId})> uploadImageFull(
     File file, {
     String folder = 'portfolio',
     void Function(int sent, int total)? onProgress,
@@ -82,6 +87,7 @@ class UploadService {
 
     final url = response['url'] as String?;
     final publicId = response['publicId'] as String?;
+    final thumbnailUrl = response['thumbnailUrl'] as String?;
     if (url == null || url.isEmpty) {
       throw const ParseException(
         message: 'El servidor no devolvió una URL de imagen',
@@ -89,7 +95,11 @@ class UploadService {
     }
 
     AppLogger.info('UploadService: upload (full) successful → $url');
-    return (url: url, publicId: publicId ?? '');
+    return (
+      url: url,
+      thumbnailUrl: thumbnailUrl ?? url,
+      publicId: publicId ?? '',
+    );
   }
 
   // ── Delete ─────────────────────────────────────────────────────────────────

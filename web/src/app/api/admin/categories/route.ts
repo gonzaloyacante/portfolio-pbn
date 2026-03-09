@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -107,7 +108,12 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, slug, description, thumbnailUrl, coverImageUrl, isActive = true } = parsed.data
+    const { name, slug, description, isActive = true } = parsed.data
+    // Si sólo se proporciona coverImageUrl, generar thumbnailUrl automáticamente.
+    // Si sólo se proporciona thumbnailUrl, usarlo como coverImageUrl también.
+    const coverImageUrl = parsed.data.coverImageUrl ?? parsed.data.thumbnailUrl ?? undefined
+    const thumbnailUrl =
+      parsed.data.thumbnailUrl ?? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : undefined)
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)

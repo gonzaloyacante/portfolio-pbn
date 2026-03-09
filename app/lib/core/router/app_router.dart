@@ -11,6 +11,7 @@ import '../../features/help/presentation/help_page.dart';
 import '../../features/trash/presentation/trash_page.dart';
 import '../../features/categories/presentation/categories_list_page.dart';
 import '../../features/categories/presentation/category_form_page.dart';
+import '../../features/categories/presentation/category_gallery_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/projects/presentation/project_form_page.dart';
 import '../../features/projects/presentation/projects_list_page.dart';
@@ -202,6 +203,17 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => _fadePage(
       state: state,
       child: CategoryFormPage(categoryId: state.pathParameters['id']),
+    ),
+  ),
+  GoRoute(
+    path: RoutePaths.categoryGallery,
+    name: RouteNames.categoryGallery,
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: CategoryGalleryPage(
+        categoryId: state.pathParameters['id']!,
+        categoryName: state.uri.queryParameters['name'] ?? 'Galería',
+      ),
     ),
   ),
   // ── Servicios ────────────────────────────────────────────────────────────

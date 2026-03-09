@@ -9,6 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -59,7 +60,13 @@ export async function GET(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Servicio no encontrado' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true, data: service })
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...service,
+        thumbnailUrl: service.imageUrl ? generateThumbnailUrl(service.imageUrl) : null,
+      },
+    })
   } catch (err) {
     logger.error('[admin-service-get] Error', {
       error: err instanceof Error ? err.message : String(err),

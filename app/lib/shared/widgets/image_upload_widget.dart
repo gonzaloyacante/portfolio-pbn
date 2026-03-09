@@ -35,8 +35,8 @@ class ImageUploadWidget extends StatefulWidget {
     this.label = 'Seleccionar imagen',
     this.hint = 'Toca para cambiar la imagen',
     this.aspectRatio,
-    this.maxWidth = 1920,
-    this.maxHeight = 1080,
+    this.maxWidth, // null = sin límite de dimensión
+    this.maxHeight, // null = sin límite de dimensión
     required this.onImageSelected,
     this.onImageRemoved,
     this.height = 360,
@@ -46,8 +46,8 @@ class ImageUploadWidget extends StatefulWidget {
   final String label;
   final String hint;
   final CropAspectRatio? aspectRatio;
-  final int maxWidth;
-  final int maxHeight;
+  final int? maxWidth;
+  final int? maxHeight;
   final void Function(File file) onImageSelected;
   final VoidCallback? onImageRemoved;
   final double height;
@@ -406,8 +406,8 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
         source: source == ImagePickerSource.gallery
             ? ImageSource.gallery
             : ImageSource.camera,
-        maxWidth: widget.maxWidth.toDouble(),
-        maxHeight: widget.maxHeight.toDouble(),
+        maxWidth: widget.maxWidth?.toDouble(),
+        maxHeight: widget.maxHeight?.toDouble(),
       );
 
       if (picked == null || !mounted) return;
