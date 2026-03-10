@@ -10,13 +10,36 @@ class SettingsRepository {
 
   final ApiClient _client;
 
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  /// Extrae el campo `data` como [Map] y lanza si `success` es false o si
+  /// `data` es null (evita _CastError silencioso en respuestas de error).
+  Map<String, dynamic> _dataMap(Map<String, dynamic> resp) {
+    final success = resp['success'] as bool? ?? false;
+    final data = resp['data'];
+    if (!success || data == null) {
+      throw Exception(resp['error']?.toString() ?? 'Error de servidor');
+    }
+    return data as Map<String, dynamic>;
+  }
+
+  /// Extrae el campo `data` como [List] con las mismas garantías que [_dataMap].
+  List<dynamic> _dataList(Map<String, dynamic> resp) {
+    final success = resp['success'] as bool? ?? false;
+    final data = resp['data'];
+    if (!success || data == null) {
+      throw Exception(resp['error']?.toString() ?? 'Error de servidor');
+    }
+    return data as List<dynamic>;
+  }
+
   // ── About ─────────────────────────────────────────────────────────────────
 
   Future<AboutSettings> getAbout() async {
     final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.settingsSection('about'),
     );
-    return AboutSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return AboutSettings.fromJson(_dataMap(resp));
   }
 
   Future<AboutSettings> updateAbout(Map<String, dynamic> data) async {
@@ -24,7 +47,7 @@ class SettingsRepository {
       Endpoints.settingsSection('about'),
       data: data,
     );
-    return AboutSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return AboutSettings.fromJson(_dataMap(resp));
   }
 
   // ── Contact ───────────────────────────────────────────────────────────────
@@ -33,7 +56,7 @@ class SettingsRepository {
     final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.settingsSection('contact'),
     );
-    return ContactSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return ContactSettings.fromJson(_dataMap(resp));
   }
 
   Future<ContactSettings> updateContact(Map<String, dynamic> data) async {
@@ -41,7 +64,7 @@ class SettingsRepository {
       Endpoints.settingsSection('contact'),
       data: data,
     );
-    return ContactSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return ContactSettings.fromJson(_dataMap(resp));
   }
 
   // ── Theme ─────────────────────────────────────────────────────────────────
@@ -50,7 +73,7 @@ class SettingsRepository {
     final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.settingsSection('theme'),
     );
-    return ThemeSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return ThemeSettings.fromJson(_dataMap(resp));
   }
 
   Future<ThemeSettings> updateTheme(Map<String, dynamic> data) async {
@@ -58,7 +81,7 @@ class SettingsRepository {
       Endpoints.settingsSection('theme'),
       data: data,
     );
-    return ThemeSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return ThemeSettings.fromJson(_dataMap(resp));
   }
 
   // ── Site ──────────────────────────────────────────────────────────────────
@@ -67,7 +90,7 @@ class SettingsRepository {
     final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.settingsSection('site'),
     );
-    return SiteSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return SiteSettings.fromJson(_dataMap(resp));
   }
 
   Future<SiteSettings> updateSite(Map<String, dynamic> data) async {
@@ -75,7 +98,7 @@ class SettingsRepository {
       Endpoints.settingsSection('site'),
       data: data,
     );
-    return SiteSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return SiteSettings.fromJson(_dataMap(resp));
   }
 
   // ── Home ──────────────────────────────────────────────────────────────────
@@ -84,7 +107,7 @@ class SettingsRepository {
     final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.settingsSection('home'),
     );
-    return HomeSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return HomeSettings.fromJson(_dataMap(resp));
   }
 
   Future<HomeSettings> updateHome(Map<String, dynamic> data) async {
@@ -92,7 +115,7 @@ class SettingsRepository {
       Endpoints.settingsSection('home'),
       data: data,
     );
-    return HomeSettings.fromJson(resp['data'] as Map<String, dynamic>);
+    return HomeSettings.fromJson(_dataMap(resp));
   }
 
   // ── Category Display Settings ───────────────────────────────────────────────
@@ -101,9 +124,7 @@ class SettingsRepository {
     final resp = await _client.get<Map<String, dynamic>>(
       Endpoints.settingsSection('category'),
     );
-    return CategoryDisplaySettings.fromJson(
-      resp['data'] as Map<String, dynamic>,
-    );
+    return CategoryDisplaySettings.fromJson(_dataMap(resp));
   }
 
   Future<CategoryDisplaySettings> updateCategorySettings(
@@ -113,16 +134,14 @@ class SettingsRepository {
       Endpoints.settingsSection('category'),
       data: data,
     );
-    return CategoryDisplaySettings.fromJson(
-      resp['data'] as Map<String, dynamic>,
-    );
+    return CategoryDisplaySettings.fromJson(_dataMap(resp));
   }
 
   // ── Social Links ──────────────────────────────────────────────────────────
 
   Future<List<SocialLink>> getSocialLinks() async {
     final resp = await _client.get<Map<String, dynamic>>(Endpoints.socialLinks);
-    final list = resp['data'] as List<dynamic>;
+    final list = _dataList(resp);
     return list
         .map((e) => SocialLink.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -133,6 +152,6 @@ class SettingsRepository {
       Endpoints.socialLinks,
       data: data,
     );
-    return SocialLink.fromJson(resp['data'] as Map<String, dynamic>);
+    return SocialLink.fromJson(_dataMap(resp));
   }
 }

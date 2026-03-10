@@ -68,24 +68,15 @@ _BookingDetail _$BookingDetailFromJson(Map<String, dynamic> json) =>
       confirmedAt: json['confirmedAt'] == null
           ? null
           : DateTime.parse(json['confirmedAt'] as String),
-      confirmedBy: json['confirmedBy'] as String?,
       cancelledAt: json['cancelledAt'] == null
           ? null
           : DateTime.parse(json['cancelledAt'] as String),
-      cancelledBy: json['cancelledBy'] as String?,
       cancellationReason: json['cancellationReason'] as String?,
       totalAmount: json['totalAmount'] as String?,
       paidAmount: json['paidAmount'] as String?,
       paymentStatus: json['paymentStatus'] as String?,
       paymentMethod: json['paymentMethod'] as String?,
       paymentRef: json['paymentRef'] as String?,
-      reminderSentAt: json['reminderSentAt'] == null
-          ? null
-          : DateTime.parse(json['reminderSentAt'] as String),
-      reminderCount: (json['reminderCount'] as num?)?.toInt() ?? 0,
-      feedbackSent: json['feedbackSent'] as bool? ?? false,
-      feedbackRating: (json['feedbackRating'] as num?)?.toInt(),
-      feedbackText: json['feedbackText'] as String?,
       serviceId: json['serviceId'] as String,
       service: json['service'] == null
           ? null
@@ -107,20 +98,13 @@ Map<String, dynamic> _$BookingDetailToJson(_BookingDetail instance) =>
       'guestCount': instance.guestCount,
       'adminNotes': instance.adminNotes,
       'confirmedAt': instance.confirmedAt?.toIso8601String(),
-      'confirmedBy': instance.confirmedBy,
       'cancelledAt': instance.cancelledAt?.toIso8601String(),
-      'cancelledBy': instance.cancelledBy,
       'cancellationReason': instance.cancellationReason,
       'totalAmount': instance.totalAmount,
       'paidAmount': instance.paidAmount,
       'paymentStatus': instance.paymentStatus,
       'paymentMethod': instance.paymentMethod,
       'paymentRef': instance.paymentRef,
-      'reminderSentAt': instance.reminderSentAt?.toIso8601String(),
-      'reminderCount': instance.reminderCount,
-      'feedbackSent': instance.feedbackSent,
-      'feedbackRating': instance.feedbackRating,
-      'feedbackText': instance.feedbackText,
       'serviceId': instance.serviceId,
       'service': instance.service,
       'createdAt': instance.createdAt.toIso8601String(),

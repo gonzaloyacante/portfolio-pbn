@@ -197,32 +197,6 @@ void main() {
       expect(detail.guestCount, 1);
     });
 
-    test('reminderCount defaults to 0', () {
-      final detail = BookingDetail(
-        id: 'd1',
-        date: testDate,
-        clientName: 'X',
-        clientEmail: 'x@x.com',
-        serviceId: 's1',
-        createdAt: testCreated,
-        updatedAt: testCreated,
-      );
-      expect(detail.reminderCount, 0);
-    });
-
-    test('feedbackSent defaults to false', () {
-      final detail = BookingDetail(
-        id: 'd1',
-        date: testDate,
-        clientName: 'X',
-        clientEmail: 'x@x.com',
-        serviceId: 's1',
-        createdAt: testCreated,
-        updatedAt: testCreated,
-      );
-      expect(detail.feedbackSent, false);
-    });
-
     test('optional audit fields default to null', () {
       final detail = BookingDetail(
         id: 'd1',
@@ -234,13 +208,9 @@ void main() {
         updatedAt: testCreated,
       );
       expect(detail.confirmedAt, isNull);
-      expect(detail.confirmedBy, isNull);
       expect(detail.cancelledAt, isNull);
-      expect(detail.cancelledBy, isNull);
       expect(detail.cancellationReason, isNull);
       expect(detail.paymentRef, isNull);
-      expect(detail.feedbackRating, isNull);
-      expect(detail.feedbackText, isNull);
     });
 
     test('two identical instances are equal (Freezed)', () {

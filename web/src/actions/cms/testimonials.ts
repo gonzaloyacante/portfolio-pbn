@@ -10,10 +10,11 @@ import { emailService } from '@/lib/email-service'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/rate-limit-config'
 
-// Rate limiting cache (simple in-memory, for production use Redis)
-const recentSubmissions = new Map<string, number>()
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
+// Rate limiter para el formulario público de testimonios
+const publicTestimonialLimiter = createRateLimiter(RATE_LIMITS.TESTIMONIAL)
 
 import { z } from 'zod'
 
@@ -71,14 +72,6 @@ export async function createTestimonial(formData: FormData) {
   }
 }
 
-function cleanOldRateLimitEntries(now: number) {
-  for (const [key, time] of recentSubmissions.entries()) {
-    if (now - time > RATE_LIMIT_WINDOW) {
-      recentSubmissions.delete(key)
-    }
-  }
-}
-
 /**
  * Create testimonial from public form (goes to moderation)
  */
@@ -98,11 +91,10 @@ export async function submitPublicTestimonial(formData: FormData) {
 
   const headersList = await headers()
   const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown'
-  const now = Date.now()
-  const lastSubmission = recentSubmissions.get(ip)
 
-  if (lastSubmission && now - lastSubmission < RATE_LIMIT_WINDOW) {
-    const minutesLeft = Math.ceil((RATE_LIMIT_WINDOW - (now - lastSubmission)) / 60000)
+  const rateCheck = await publicTestimonialLimiter.check(ip)
+  if (!rateCheck.allowed) {
+    const minutesLeft = Math.ceil((rateCheck.resetIn ?? 900) / 60)
     return {
       success: false,
       error: `Por favor espera ${minutesLeft} minutos antes de enviar otro testimonio`,
@@ -120,8 +112,7 @@ export async function submitPublicTestimonial(formData: FormData) {
       },
     })
 
-    recentSubmissions.set(ip, now)
-    cleanOldRateLimitEntries(now)
+    await publicTestimonialLimiter.record(ip)
 
     // 📧 NOTIFICAR AL ADMIN
     try {
@@ -172,7 +163,6 @@ export async function updateTestimonial(id: string, formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
   const data = validation.data
-  await requireAdmin()
 
   try {
     await prisma.testimonial.update({

@@ -266,8 +266,6 @@ export async function updateService(id: string, formData: FormData) {
     imageUrl: formData.get('imageUrl'),
     galleryUrls: formData.get('galleryUrls'),
     videoUrl: formData.get('videoUrl'),
-    iconName: formData.get('iconName'),
-    color: formData.get('color'),
     // Display
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',

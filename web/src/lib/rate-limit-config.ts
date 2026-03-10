@@ -35,6 +35,14 @@ export const RATE_LIMITS = {
       'Has enviado demasiados mensajes recientemente. Por favor, espera unos minutos antes de intentar de nuevo.',
   } as RateLimitConfig,
 
+  /** Testimonial form submissions (public) */
+  TESTIMONIAL: {
+    id: 'testimonial',
+    limit: 1,
+    window: 15 * 60 * 1000, // 15 minutes
+    errorMessage: 'Por favor espera 15 minutos antes de enviar otro testimonio.',
+  } as RateLimitConfig,
+
   /** API general (for public endpoints) */
   API: {
     id: 'api',

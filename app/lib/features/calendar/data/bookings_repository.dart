@@ -39,6 +39,9 @@ class BookingsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al obtener reservas');
+    }
     return PaginatedResponse<BookingItem>.fromJson(
       apiResp.data!,
       (e) => BookingItem.fromJson(e as Map<String, dynamic>),
@@ -53,6 +56,9 @@ class BookingsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Reserva no encontrada');
+    }
     return BookingDetail.fromJson(apiResp.data!);
   }
 
@@ -67,6 +73,9 @@ class BookingsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al crear reserva');
+    }
     return BookingDetail.fromJson(apiResp.data!);
   }
 
@@ -84,6 +93,9 @@ class BookingsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al actualizar reserva');
+    }
     return BookingDetail.fromJson(apiResp.data!);
   }
 

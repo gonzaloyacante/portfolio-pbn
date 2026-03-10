@@ -176,6 +176,7 @@ export async function getContacts() {
 
 export async function getUnreadContactsCount() {
   await requireAdmin()
+  await checkApiRateLimit()
 
   return await prisma.contact.count({
     where: { isRead: false },
@@ -188,7 +189,7 @@ export async function markContactAsRead(id: string) {
 
   await prisma.contact.update({
     where: { id },
-    data: { isRead: true },
+    data: { isRead: true, readAt: new Date() },
   })
   revalidatePath(ROUTES.admin.contacts)
 }
@@ -201,7 +202,9 @@ export async function markContactAsReplied(id: string, adminNote?: string) {
     where: { id },
     data: {
       isReplied: true,
+      repliedAt: new Date(),
       isRead: true,
+      readAt: new Date(),
       adminNote,
     },
   })
@@ -212,8 +215,9 @@ export async function deleteContact(id: string) {
   await requireAdmin()
   await checkApiRateLimit()
 
-  await prisma.contact.delete({
+  await prisma.contact.update({
     where: { id },
+    data: { deletedAt: new Date() },
   })
   revalidatePath(ROUTES.admin.contacts)
 }

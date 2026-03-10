@@ -37,6 +37,9 @@ class ContactsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al obtener contactos');
+    }
     return PaginatedResponse<ContactItem>.fromJson(
       apiResp.data!,
       (e) => ContactItem.fromJson(e as Map<String, dynamic>),
@@ -51,6 +54,9 @@ class ContactsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Contacto no encontrado');
+    }
     return ContactDetail.fromJson(apiResp.data!);
   }
 
@@ -68,6 +74,9 @@ class ContactsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al actualizar contacto');
+    }
     return ContactDetail.fromJson(apiResp.data!);
   }
 
