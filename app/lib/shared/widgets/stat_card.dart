@@ -32,6 +32,8 @@ class StatCard extends StatelessWidget {
     this.trendPositive,
     this.onTap,
     this.color,
+    this.valueSuffix,
+    this.valueSuffixIcon,
   });
 
   final IconData icon;
@@ -41,6 +43,8 @@ class StatCard extends StatelessWidget {
   final bool? trendPositive;
   final VoidCallback? onTap;
   final Color? color;
+  final String? valueSuffix;
+  final IconData? valueSuffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -91,23 +95,67 @@ class StatCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Valor numérico
-                    Text(
-                      value,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          (isExpanded
-                                  ? textTheme.titleLarge
-                                  : textTheme.titleMedium)
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: cardColor,
-                                height: 1.1,
-                                letterSpacing: -0.5,
-                              ),
+                    // Valor numérico (con sufijo opcional para pendientes)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            value,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style:
+                                (isExpanded
+                                        ? textTheme.titleLarge
+                                        : textTheme.titleMedium)
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                      color: cardColor,
+                                      height: 1.1,
+                                      letterSpacing: -0.5,
+                                    ),
+                          ),
+                        ),
+                        if (valueSuffix != null) ...[
+                          const SizedBox(width: AppSpacing.sm),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.sm,
+                              vertical: AppSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.onSurface
+                                  .withValues(alpha: 12 / 255),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (valueSuffixIcon != null) ...[
+                                  Icon(
+                                    valueSuffixIcon,
+                                    size: 14,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                ],
+                                Text(
+                                  valueSuffix!,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                    const SizedBox(height: 2),
                     // Etiqueta descriptiva
                     Text(
                       label,
@@ -117,7 +165,7 @@ class StatCard extends StatelessWidget {
                         ),
                         fontWeight: FontWeight.w500,
                         letterSpacing: 0.1,
-                        fontSize: isExpanded ? null : 11,
+                        fontSize: isExpanded ? null : 12,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

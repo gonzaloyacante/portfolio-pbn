@@ -8,8 +8,8 @@ import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_radius.dart';
-import 'widgets/alerts_section.dart';
+// app_radius no es usado aquí; import eliminado
+// alerts_section removed: alerts are integrated in StatCard
 import 'widgets/bookings_bar_chart.dart';
 import 'widgets/page_views_chart.dart';
 import 'widgets/visitors_map.dart';
@@ -74,30 +74,17 @@ class _DashboardContent extends StatelessWidget {
       slivers: [
         // ── Bienvenida ────────────────────────────────────────────────────
         SliverPadding(
-          padding: padding.copyWith(bottom: AppSpacing.md),
+          padding: padding.copyWith(bottom: AppSpacing.sm),
           sliver: const SliverToBoxAdapter(child: _DashboardGreeting()),
         ),
 
-        // ── Sección: Alertas ─────────────────────────────────────────────
-        SliverPadding(
-          padding: padding.copyWith(bottom: AppSpacing.sm),
-          sliver: SliverToBoxAdapter(child: AlertsSection(stats: stats)),
-        ),
-
-        // ── Sección: Resumen ─────────────────────────────────────────────
-        SliverPadding(
-          padding: padding.copyWith(bottom: AppSpacing.sm),
-          sliver: SliverToBoxAdapter(
-            child: SectionHeader(title: 'Resumen general'),
-          ),
-        ),
         SliverPadding(
           padding: padding.copyWith(top: 0, bottom: 0),
           sliver: SliverAdaptiveGrid(
             compactCols: 2,
             mediumCols: 2,
             expandedCols: 4,
-            childAspectRatio: 2.8,
+            childAspectRatio: 2.6,
             children: [
               StatCard(
                 icon: Icons.photo_library_outlined,
@@ -124,6 +111,12 @@ class _DashboardContent extends StatelessWidget {
                 icon: Icons.format_quote_outlined,
                 label: 'Testimonios',
                 value: stats.totalTestimonials.toString(),
+                valueSuffix: stats.pendingTestimonials > 0
+                    ? stats.pendingTestimonials.toString()
+                    : null,
+                valueSuffixIcon: stats.pendingTestimonials > 0
+                    ? Icons.schedule
+                    : null,
                 color: AppColors.success,
                 onTap: () => context.goNamed(RouteNames.testimonials),
               ),
@@ -151,7 +144,7 @@ class _DashboardContent extends StatelessWidget {
                 icon: Icons.people_outline_rounded,
                 label: 'Visitantes (30d)',
                 value: _formatNumber(stats.uniqueVisitors30d),
-                trend: '${_formatNumber(stats.pageViews30d)} páginas',
+                // trend: '${_formatNumber(stats.pageViews30d)} páginas',
                 trendPositive: true,
                 color: AppColors.success,
               ),
@@ -165,11 +158,9 @@ class _DashboardContent extends StatelessWidget {
             ],
           ),
         ),
-        const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.md)),
-
         // ── Sección: Tendencias ──────────────────────────────────────────
         SliverPadding(
-          padding: padding.copyWith(bottom: AppSpacing.sm),
+          padding: padding.copyWith(top: 0, bottom: AppSpacing.sm),
           sliver: SliverToBoxAdapter(child: SectionHeader(title: 'Tendencias')),
         ),
         SliverPadding(
@@ -618,23 +609,7 @@ class _DashboardGreeting extends ConsumerWidget {
       _ => '',
     };
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [
-                  primary.withValues(alpha: 80 / 255),
-                  colorScheme.secondary.withValues(alpha: 50 / 255),
-                ]
-              : [
-                  primary.withValues(alpha: 38 / 255),
-                  colorScheme.secondary.withValues(alpha: 22 / 255),
-                ],
-        ),
-        borderRadius: BorderRadius.circular(AppRadius.card),
-      ),
+    return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.base,
         vertical: AppSpacing.md,
