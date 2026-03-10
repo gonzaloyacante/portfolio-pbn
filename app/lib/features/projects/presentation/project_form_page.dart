@@ -10,6 +10,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../categories/providers/categories_provider.dart';
@@ -85,8 +86,30 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               tooltip: 'Volver',
             ),
             title: const Text('Editar proyecto'),
+            actions: [
+              IconButton(
+                tooltip: 'Reintentar',
+                icon: const Icon(Icons.refresh_rounded),
+                onPressed: () =>
+                    ref.invalidate(projectDetailProvider(widget.projectId!)),
+              ),
+            ],
           ),
-          body: const SkeletonListView(itemCount: 6),
+          body: Column(
+            children: [
+              const SizedBox(height: 16),
+              const Expanded(child: SkeletonListView(itemCount: 6)),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextButton.icon(
+                  onPressed: () =>
+                      ref.invalidate(projectDetailProvider(widget.projectId!)),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Reintentar'),
+                ),
+              ),
+            ],
+          ),
         ),
         error: (err, _) => Scaffold(
           appBar: AppBar(
@@ -96,8 +119,20 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               tooltip: 'Volver',
             ),
             title: const Text('Error'),
+            actions: [
+              IconButton(
+                tooltip: 'Reintentar',
+                icon: const Icon(Icons.refresh_rounded),
+                onPressed: () =>
+                    ref.invalidate(projectDetailProvider(widget.projectId!)),
+              ),
+            ],
           ),
-          body: ErrorState(message: err.toString()),
+          body: ErrorState(
+            message: err.toString(),
+            onRetry: () =>
+                ref.invalidate(projectDetailProvider(widget.projectId!)),
+          ),
         ),
         data: (project) {
           _populateForm(project);
@@ -260,6 +295,43 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     }
   }
 
+  Future<void> _confirmAndDelete() async {
+    if (!widget.isEditing || widget.projectId == null) return;
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: 'Eliminar proyecto',
+      message: '¿Eliminar "${_data.title}"? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      isDestructive: true,
+      icon: Icons.delete_forever_outlined,
+    );
+    if (!confirmed) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMsg = null;
+    });
+
+    try {
+      await ref
+          .read(projectsRepositoryProvider)
+          .deleteProject(widget.projectId!);
+      ref.invalidate(projectsListProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('"${_data.title}" eliminado')));
+      context.pop();
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        setState(() => _errorMsg = 'No se pudo eliminar el proyecto.');
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
   Widget _buildForm(BuildContext context) {
     return LoadingOverlay(
       isLoading: _isLoading,
@@ -272,6 +344,12 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           ),
           title: Text(widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto'),
           actions: [
+            if (widget.isEditing)
+              IconButton(
+                tooltip: 'Eliminar',
+                icon: const Icon(Icons.delete_outline),
+                onPressed: _isLoading ? null : _confirmAndDelete,
+              ),
             TextButton.icon(
               onPressed: _isLoading ? null : _submit,
               icon: const Icon(Icons.check_rounded),

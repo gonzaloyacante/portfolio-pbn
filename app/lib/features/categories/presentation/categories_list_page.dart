@@ -519,7 +519,7 @@ class _CategoryTile extends StatelessWidget {
                 icon: Icon(
                   Icons.more_vert_rounded,
                   size: 20,
-                  color: scheme.outline,
+                  color: scheme.onSurface,
                 ),
                 onSelected: (action) {
                   if (action == 'edit') {

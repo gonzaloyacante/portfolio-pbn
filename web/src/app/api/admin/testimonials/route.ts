@@ -28,7 +28,6 @@ const TESTIMONIAL_SELECT = {
   status: true,
   isActive: true,
   sortOrder: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
 } as const

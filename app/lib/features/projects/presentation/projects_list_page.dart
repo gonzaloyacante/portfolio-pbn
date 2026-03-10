@@ -335,139 +335,181 @@ class _ProjectGridCard extends StatelessWidget {
           RouteNames.projectEdit,
           pathParameters: {'id': item.id},
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            // Thumbnail
-            Expanded(
-              child: item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: item.thumbnailUrl!,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 36,
-                        ),
-                      ),
-                      errorWidget: (_, _, _) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 36,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: scheme.surfaceContainerHighest,
-                      child: Center(
-                        child: Icon(
-                          Icons.photo_library_outlined,
-                          color: scheme.outlineVariant,
-                          size: 36,
-                        ),
-                      ),
-                    ),
-            ),
-            // Info
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 8, 4, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Image area with overlayed vertical chips (top-right)
+                SizedBox(
+                  height: 140,
+                  width: double.infinity,
+                  child: Stack(
                     children: [
-                      if (item.isPinned)
-                        Padding(
-                          padding: const EdgeInsets.only(right: 3),
-                          child: Icon(
-                            Icons.push_pin_rounded,
-                            size: 12,
-                            color: scheme.primary,
-                          ),
-                        ),
-                      Expanded(
-                        child: Text(
-                          item.title,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.more_vert_rounded,
-                          size: 16,
-                          color: scheme.outline,
-                        ),
-                        itemBuilder: (_) => const [
-                          PopupMenuItem(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit_outlined, size: 18),
-                                SizedBox(width: 10),
-                                Text('Editar'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 'delete',
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.delete_outline,
-                                  size: 18,
-                                  color: AppColors.destructive,
-                                ),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Eliminar',
-                                  style: TextStyle(
-                                    color: AppColors.destructive,
+                      Positioned.fill(
+                        child:
+                            item.thumbnailUrl != null &&
+                                item.thumbnailUrl!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: item.thumbnailUrl!,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: scheme.surfaceContainerHighest,
+                                  child: Icon(
+                                    Icons.image_outlined,
+                                    color: scheme.outlineVariant,
+                                    size: 36,
                                   ),
                                 ),
-                              ],
+                                errorWidget: (context, url, error) => Container(
+                                  color: scheme.surfaceContainerHighest,
+                                  child: Icon(
+                                    Icons.broken_image_outlined,
+                                    color: scheme.outlineVariant,
+                                    size: 36,
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                color: scheme.surfaceContainerHighest,
+                                child: Center(
+                                  child: Icon(
+                                    Icons.photo_library_outlined,
+                                    color: scheme.outlineVariant,
+                                    size: 36,
+                                  ),
+                                ),
+                              ),
+                      ),
+                      // Vertical chips column (top-right) with solid background and shadow for legibility
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            if (item.isPinned)
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 6),
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : scheme.surface,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: Icon(
+                                    Icons.push_pin_rounded,
+                                    size: 14,
+                                    color: scheme.primary,
+                                  ),
+                                ),
+                              ),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 6),
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? Colors.white
+                                    : scheme.surface,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.06),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: StatusBadge(
+                                status: item.isActive
+                                    ? AppStatus.active
+                                    : AppStatus.inactive,
+                                small: true,
+                              ),
+                            ),
+                            if (item.isFeatured)
+                              Container(
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : scheme.surface,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.06),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: StatusBadge(
+                                  status: AppStatus.featured,
+                                  small: true,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Info area below image
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 8, 4, 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.title,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.w700,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          // menu moved to overlay
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.category.name,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: scheme.onSurface,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
-                        onSelected: (val) {
-                          if (val == 'edit') {
-                            context.pushNamed(
-                              RouteNames.projectEdit,
-                              pathParameters: {'id': item.id},
-                            );
-                          } else if (val == 'delete') {
-                            onDelete(item.id, item.title);
-                          }
-                        },
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      StatusBadge(
-                        status: item.isActive
-                            ? AppStatus.active
-                            : AppStatus.inactive,
-                        small: true,
-                      ),
-                      if (item.isFeatured) ...[
-                        const SizedBox(width: 4),
-                        StatusBadge(status: AppStatus.featured, small: true),
-                      ],
-                    ],
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+            const SizedBox.shrink(),
           ],
         ),
       ),
@@ -497,174 +539,184 @@ class _ProjectTile extends StatelessWidget {
           RouteNames.projectEdit,
           pathParameters: {'id': item.id},
         ),
-        child: SizedBox(
-          height: 80,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Thumbnail — tamaño fijo para no expandir el tile
-              SizedBox(
-                width: 80,
-                child:
-                    item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: item.thumbnailUrl!,
-                        fit: BoxFit.cover,
-                        placeholder: (_, _) => Container(
-                          color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.image_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
-                        ),
-                        errorWidget: (_, _, _) => Container(
-                          color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
-                        ),
-                      )
-                    : Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.photo_library_outlined,
-                          color: scheme.outlineVariant,
-                          size: 28,
-                        ),
-                      ),
-              ),
-              // Info
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Title row
-                      Row(
-                        children: [
-                          if (item.isPinned)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 4),
+        child: Stack(
+          children: [
+            SizedBox(
+              height: 90,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Thumbnail — tamaño fijo para no expandir el tile
+                  SizedBox(
+                    width: 80,
+                    child:
+                        item.thumbnailUrl != null &&
+                            item.thumbnailUrl!.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: item.thumbnailUrl!,
+                            fit: BoxFit.cover,
+                            placeholder: (_, _) => Container(
+                              color: scheme.surfaceContainerHighest,
                               child: Icon(
-                                Icons.push_pin_rounded,
-                                size: 13,
-                                color: scheme.primary,
+                                Icons.image_outlined,
+                                color: scheme.outlineVariant,
+                                size: 28,
                               ),
                             ),
-                          Expanded(
-                            child: Text(
-                              item.title,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
+                            errorWidget: (_, _, _) => Container(
+                              color: scheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                color: scheme.outlineVariant,
+                                size: 28,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
+                          )
+                        : Container(
+                            color: scheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.photo_library_outlined,
+                              color: scheme.outlineVariant,
+                              size: 28,
+                            ),
+                          ),
+                  ),
+                  // Info
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(14, 8, 4, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Title row
+                          Row(
+                            children: [
+                              if (item.isPinned)
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 4),
+                                  child: Icon(
+                                    Icons.push_pin_rounded,
+                                    size: 13,
+                                    color: scheme.primary,
+                                  ),
+                                ),
+                              Expanded(
+                                child: Text(
+                                  item.title,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          // Category
+                          Row(
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                margin: const EdgeInsets.only(right: 5),
+                                decoration: BoxDecoration(
+                                  color: scheme.primary.withValues(alpha: 0.6),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.category.name,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: scheme.onSurface,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              StatusBadge(
+                                status: item.isActive
+                                    ? AppStatus.active
+                                    : AppStatus.inactive,
+                                small: true,
+                              ),
+                              if (item.isFeatured) ...[
+                                const SizedBox(width: 6),
+                                StatusBadge(
+                                  status: AppStatus.featured,
+                                  small: true,
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),
-                      const SizedBox(height: 3),
-                      // Category
-                      Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            margin: const EdgeInsets.only(right: 5),
-                            decoration: BoxDecoration(
-                              color: scheme.primary.withValues(alpha: 0.6),
-                              shape: BoxShape.circle,
+                    ),
+                  ),
+                  // Actions button (original location)
+                  PopupMenuButton<String>(
+                    icon: Icon(
+                      Icons.more_vert_rounded,
+                      size: 20,
+                      color: scheme.onSurface,
+                    ),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        context.pushNamed(
+                          RouteNames.projectEdit,
+                          pathParameters: {'id': item.id},
+                        );
+                      } else if (value == 'delete') {
+                        onDelete(item.id, item.title);
+                      }
+                    },
+                    itemBuilder: (_) => [
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.edit_outlined,
+                              size: 18,
+                              color: scheme.onSurface,
                             ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              item.category.name,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.outline,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Status badges
-                      Row(
-                        children: [
-                          StatusBadge(
-                            status: item.isActive
-                                ? AppStatus.active
-                                : AppStatus.inactive,
-                          ),
-                          if (item.isFeatured) ...[
-                            const SizedBox(width: 6),
-                            StatusBadge(status: AppStatus.featured),
+                            const SizedBox(width: 10),
+                            const Text('Editar'),
                           ],
-                        ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 'delete',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete_outline,
+                              size: 18,
+                              color: AppColors.destructive,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Eliminar',
+                              style: TextStyle(color: AppColors.destructive),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              // Actions button
-              PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  size: 20,
-                  color: scheme.outline,
-                ),
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    context.pushNamed(
-                      RouteNames.projectEdit,
-                      pathParameters: {'id': item.id},
-                    );
-                  } else if (value == 'delete') {
-                    onDelete(item.id, item.title);
-                  }
-                },
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.edit_outlined,
-                          size: 18,
-                          color: scheme.onSurface,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text('Editar'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: AppColors.destructive,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Eliminar',
-                          style: TextStyle(color: AppColors.destructive),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
-            ],
-          ),
+            ),
+
+            // Positioned badges top-left
+          ],
         ),
       ),
     );

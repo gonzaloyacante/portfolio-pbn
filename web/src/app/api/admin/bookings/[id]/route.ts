@@ -26,20 +26,13 @@ const BOOKING_DETAIL_SELECT = {
   guestCount: true,
   adminNotes: true,
   confirmedAt: true,
-  confirmedBy: true,
   cancelledAt: true,
-  cancelledBy: true,
   cancellationReason: true,
   totalAmount: true,
   paidAmount: true,
   paymentStatus: true,
   paymentMethod: true,
   paymentRef: true,
-  reminderSentAt: true,
-  reminderCount: true,
-  feedbackSent: true,
-  feedbackRating: true,
-  feedbackText: true,
   serviceId: true,
   service: { select: { name: true, slug: true } },
   createdAt: true,
@@ -118,10 +111,8 @@ export async function PATCH(req: Request, { params }: Params) {
     if (status && status !== existing.status) {
       if (status === 'CONFIRMED') {
         statusData.confirmedAt = new Date()
-        statusData.confirmedBy = auth.payload?.email ?? 'admin'
       } else if (status === 'CANCELLED') {
         statusData.cancelledAt = new Date()
-        statusData.cancelledBy = 'admin'
       }
     }
 

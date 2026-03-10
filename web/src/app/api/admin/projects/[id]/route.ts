@@ -38,7 +38,6 @@ const PROJECT_FULL_SELECT = {
   isPinned: true,
   isActive: true,
   viewCount: true,
-  likeCount: true,
   publishedAt: true,
   createdAt: true,
   updatedAt: true,
