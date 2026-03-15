@@ -211,7 +211,8 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: _buildShimmer,
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(homeSettingsProvider),
@@ -227,26 +228,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   // ── Shimmer ───────────────────────────────────────────────────────────────
 
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      children: List.generate(
-        4,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 80,
-              borderRadius: 20,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ── Form ──────────────────────────────────────────────────────────────────
+  // ── Form ─────────────────────────────────────────────────────────────────-
 
   Widget _buildForm(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);

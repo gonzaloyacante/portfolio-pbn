@@ -251,6 +251,14 @@ class _DashboardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);
+    final cols = AppBreakpoints.gridColumns(
+      context,
+      compact: 2,
+      medium: 4,
+      expanded: 4,
+    );
+    final gutter = AppBreakpoints.gutter(context);
+    final margin = AppBreakpoints.pageMargin(context);
 
     return ShimmerLoader(
       child: SingleChildScrollView(
@@ -258,40 +266,44 @@ class _DashboardSkeleton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Encabezado de sección — stats
             Padding(
               padding: padding.copyWith(bottom: AppSpacing.sm),
-              child: ShimmerBox(width: 160, height: 18, borderRadius: 6),
+              child: const ShimmerBox(width: 160, height: 18, borderRadius: 6),
             ),
+            // Grid de stat cards
             Padding(
-              padding: padding.copyWith(top: 0, bottom: 0),
-              child: SkeletonGridView(
+              padding: EdgeInsets.fromLTRB(margin, 0, margin, 0),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: cols,
+                  mainAxisSpacing: gutter,
+                  crossAxisSpacing: gutter,
+                  childAspectRatio: 2.6,
+                ),
                 itemCount: 8,
-                compactCols: 2,
-                hasImage: false,
-                childAspectRatio: 2.8,
+                itemBuilder: (_, _) => const SkeletonStatCard(),
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
+            // Encabezado de sección — ranking
             Padding(
               padding: padding.copyWith(bottom: AppSpacing.sm),
-              child: ShimmerBox(width: 120, height: 18, borderRadius: 6),
+              child: const ShimmerBox(width: 120, height: 18, borderRadius: 6),
             ),
+            // Ranking items
             Padding(
               padding: padding.copyWith(top: 0),
               child: Column(
-                children: [
-                  ShimmerBox(
-                    width: double.infinity,
-                    height: 180,
-                    borderRadius: 16,
+                children: List.generate(
+                  5,
+                  (_) => const Padding(
+                    padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: SkeletonRankingItem(),
                   ),
-                  const SizedBox(height: AppSpacing.base),
-                  ShimmerBox(
-                    width: double.infinity,
-                    height: 180,
-                    borderRadius: 16,
-                  ),
-                ],
+                ),
               ),
             ),
           ],

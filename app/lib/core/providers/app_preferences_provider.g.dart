@@ -224,3 +224,121 @@ abstract class _$CategoriesViewMode extends $Notifier<ViewMode> {
     element.handleCreate(ref, build);
   }
 }
+
+/// Vista seleccionada para la galería de proyectos de una categoría (grid o list).
+
+@ProviderFor(CategoryGalleryViewMode)
+final categoryGalleryViewModeProvider = CategoryGalleryViewModeProvider._();
+
+/// Vista seleccionada para la galería de proyectos de una categoría (grid o list).
+final class CategoryGalleryViewModeProvider
+    extends $NotifierProvider<CategoryGalleryViewMode, ViewMode> {
+  /// Vista seleccionada para la galería de proyectos de una categoría (grid o list).
+  CategoryGalleryViewModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'categoryGalleryViewModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$categoryGalleryViewModeHash();
+
+  @$internal
+  @override
+  CategoryGalleryViewMode create() => CategoryGalleryViewMode();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ViewMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ViewMode>(value),
+    );
+  }
+}
+
+String _$categoryGalleryViewModeHash() =>
+    r'dadc16b272fc42df2efdc36b64e9a7dc457ab4e4';
+
+/// Vista seleccionada para la galería de proyectos de una categoría (grid o list).
+
+abstract class _$CategoryGalleryViewMode extends $Notifier<ViewMode> {
+  ViewMode build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<ViewMode, ViewMode>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ViewMode, ViewMode>,
+              ViewMode,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Vista seleccionada para la lista de testimonios (grid o list).
+
+@ProviderFor(TestimonialsViewMode)
+final testimonialsViewModeProvider = TestimonialsViewModeProvider._();
+
+/// Vista seleccionada para la lista de testimonios (grid o list).
+final class TestimonialsViewModeProvider
+    extends $NotifierProvider<TestimonialsViewMode, ViewMode> {
+  /// Vista seleccionada para la lista de testimonios (grid o list).
+  TestimonialsViewModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'testimonialsViewModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$testimonialsViewModeHash();
+
+  @$internal
+  @override
+  TestimonialsViewMode create() => TestimonialsViewMode();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ViewMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ViewMode>(value),
+    );
+  }
+}
+
+String _$testimonialsViewModeHash() =>
+    r'98202ae2bfa45e03ef507e73153cd3bfb6c214a6';
+
+/// Vista seleccionada para la lista de testimonios (grid o list).
+
+abstract class _$TestimonialsViewMode extends $Notifier<ViewMode> {
+  ViewMode build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<ViewMode, ViewMode>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ViewMode, ViewMode>,
+              ViewMode,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

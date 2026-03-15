@@ -199,7 +199,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
       ),
     );
     final dayListContent = loading
-        ? _buildShimmer(hPad)
+        ? const SkeletonCalendarList()
         : dayItems.isEmpty
         ? _EmptyDay()
         : ListView.separated(
@@ -253,17 +253,6 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         const SizedBox(height: AppSpacing.sm),
         Expanded(child: dayListContent),
       ],
-    );
-  }
-
-  Widget _buildShimmer(double hPad) {
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
-      itemCount: 3,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemBuilder: (_, _) => ShimmerLoader(
-        child: ShimmerBox(width: double.infinity, height: 80, borderRadius: 20),
-      ),
     );
   }
 

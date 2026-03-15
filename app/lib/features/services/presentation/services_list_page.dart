@@ -119,7 +119,9 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
           ),
           Expanded(
             child: async.when(
-              loading: () => const _ServicesSkeleton(),
+              loading: () => viewMode == ViewMode.grid
+                  ? const SkeletonServicesGrid()
+                  : const SkeletonServicesList(),
               error: (e, _) => ErrorState(
                 message: e.toString(),
                 onRetry: () => ref.invalidate(servicesListProvider),
@@ -459,28 +461,6 @@ class _ServiceTile extends StatelessWidget {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-
-class _ServicesSkeleton extends StatelessWidget {
-  const _ServicesSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
-        itemCount: 6,
-        separatorBuilder: (_, _) => const SizedBox(height: 8),
-        itemBuilder: (_, _) => const ShimmerBox(
-          width: double.infinity,
-          height: 72,
-          borderRadius: 12,
-        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/providers/app_preferences_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -20,10 +21,6 @@ final _categoryGalleryProvider =
       (ref, categoryId) =>
           ref.read(categoriesRepositoryProvider).getCategoryGallery(categoryId),
     );
-
-// ── Enum ──────────────────────────────────────────────────────────────────────
-
-enum _ViewMode { list, grid }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
@@ -48,15 +45,13 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   bool _dirty = false;
   bool _saving = false;
 
-  /// Vista activa: lista o cuadrícula masonry.
-  _ViewMode _viewMode = _ViewMode.list;
-
   /// ID del ítem actualmente arrastrado en la vista de cuadrícula.
   String? _draggingId;
 
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(_categoryGalleryProvider(widget.categoryId));
+    final viewMode = ref.watch(categoryGalleryViewModeProvider);
 
     return AppScaffold(
       title: 'Galería — ${widget.categoryName}',
@@ -64,18 +59,15 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
         // Toggle lista / cuadrícula
         IconButton(
           icon: Icon(
-            _viewMode == _ViewMode.list
+            viewMode == ViewMode.list
                 ? Icons.grid_view_rounded
                 : Icons.list_rounded,
           ),
-          tooltip: _viewMode == _ViewMode.list
+          tooltip: viewMode == ViewMode.list
               ? 'Vista en cuadrícula'
               : 'Vista en lista',
-          onPressed: () => setState(
-            () => _viewMode = _viewMode == _ViewMode.list
-                ? _ViewMode.grid
-                : _ViewMode.list,
-          ),
+          onPressed: () =>
+              ref.read(categoryGalleryViewModeProvider.notifier).toggle(),
         ),
         if (_dirty)
           TextButton.icon(
@@ -96,7 +88,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           ),
       ],
       body: async.when(
-        loading: () => const _GallerySkeleton(),
+        loading: () => _GallerySkeleton(viewMode: viewMode),
         error: (e, _) => ErrorState(
           message: e.toString(),
           onRetry: () =>
@@ -109,7 +101,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) setState(() => _items = List.of(images));
             });
-            return const _GallerySkeleton();
+            return _GallerySkeleton(viewMode: viewMode);
           }
 
           if (_items!.isEmpty) {
@@ -142,7 +134,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             switchOutCurve: Curves.easeIn,
             transitionBuilder: (child, animation) =>
                 FadeTransition(opacity: animation, child: child),
-            child: _viewMode == _ViewMode.list
+            child: viewMode == ViewMode.list
                 ? _buildListView(context)
                 : _buildGridView(context),
           );
@@ -805,24 +797,15 @@ class _Badge extends StatelessWidget {
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 
 class _GallerySkeleton extends StatelessWidget {
-  const _GallerySkeleton();
+  const _GallerySkeleton({required this.viewMode});
+
+  final ViewMode viewMode;
 
   @override
   Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.base,
-          vertical: AppSpacing.base,
-        ),
-        itemCount: 8,
-        separatorBuilder: (_, _) => const SizedBox(height: 8),
-        itemBuilder: (_, _) => const ShimmerBox(
-          width: double.infinity,
-          height: 80,
-          borderRadius: 10,
-        ),
-      ),
-    );
+    if (viewMode == ViewMode.grid) {
+      return const SkeletonCategoriesGrid();
+    }
+    return const SkeletonCategoriesList();
   }
 }

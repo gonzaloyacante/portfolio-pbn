@@ -188,7 +188,8 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: _buildShimmer,
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(aboutSettingsProvider),
@@ -203,25 +204,6 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   }
 
   // ── Shimmer ───────────────────────────────────────────────────────────────
-
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      children: List.generate(
-        5,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   // ── Form ──────────────────────────────────────────────────────────────────
 

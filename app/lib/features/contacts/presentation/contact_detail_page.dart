@@ -95,7 +95,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
           title: const Text('Detalle del contacto'),
         ),
         body: async.when(
-          loading: () => const _ContactDetailSkeleton(),
+          loading: () => const SkeletonContactDetail(),
           error: (e, _) => Center(child: Text('Error: $e')),
           data: (detail) {
             _populate(detail);
@@ -505,31 +505,4 @@ class _TrackingRow extends StatelessWidget {
   }
 }
 
-class _ContactDetailSkeleton extends StatelessWidget {
-  const _ContactDetailSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header card
-            ShimmerBox(width: double.infinity, height: 160, borderRadius: 16),
-            const SizedBox(height: 16),
-            // Message card
-            ShimmerBox(width: double.infinity, height: 120, borderRadius: 16),
-            const SizedBox(height: 16),
-            // Reply card
-            ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
-            const SizedBox(height: 16),
-            // Notes card
-            ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// La lógica de skeleton usa SkeletonContactDetail desde shimmer_loader.dart.

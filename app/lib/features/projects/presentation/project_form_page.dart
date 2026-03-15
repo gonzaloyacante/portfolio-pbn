@@ -98,7 +98,9 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           body: Column(
             children: [
               const SizedBox(height: 16),
-              const Expanded(child: SkeletonListView(itemCount: 6)),
+              const Expanded(
+                child: SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 4),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: TextButton.icon(

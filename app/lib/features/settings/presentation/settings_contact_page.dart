@@ -104,7 +104,8 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: () => _buildShimmer(),
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(contactSettingsProvider),
@@ -113,25 +114,6 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
             _populate(settings);
             return _buildForm(context);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: List.generate(
-        4,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
         ),
       ),
     );

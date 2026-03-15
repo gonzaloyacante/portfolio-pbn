@@ -159,7 +159,7 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
           ),
           Expanded(
             child: async.when(
-              loading: () => const _ContactsSkeleton(),
+              loading: () => const SkeletonContactsList(),
               error: (e, _) => ErrorState(
                 message: e.toString(),
                 onRetry: () => ref.invalidate(contactsListProvider),
@@ -354,45 +354,6 @@ class _ContactTile extends StatelessWidget {
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-
-class _ContactsSkeleton extends StatelessWidget {
-  const _ContactsSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
-        itemCount: 8,
-        separatorBuilder: (_, _) => const SizedBox(height: 6),
-        itemBuilder: (_, _) => AppCard(
-          borderRadius: AppRadius.forTile,
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-          child: const Row(
-            children: [
-              ShimmerBox(width: 44, height: 44, borderRadius: 14),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ShimmerBox(width: double.infinity, height: 13),
-                    SizedBox(height: 6),
-                    ShimmerBox(width: 160, height: 11),
-                    SizedBox(height: 5),
-                    ShimmerBox(width: 220, height: 11),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

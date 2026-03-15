@@ -122,7 +122,9 @@ class _ProjectsListPageState extends ConsumerState<ProjectsListPage> {
             child: RefreshIndicator(
               onRefresh: () async => ref.invalidate(projectsListProvider),
               child: projectsAsync.when(
-                loading: () => const SkeletonListView(itemCount: 8),
+                loading: () => viewMode == ViewMode.grid
+                    ? const SkeletonProjectsGrid()
+                    : const SkeletonProjectsList(),
                 error: (err, _) => ErrorState(
                   message: 'No se pudieron cargar los proyectos',
                   onRetry: () => ref.invalidate(projectsListProvider),

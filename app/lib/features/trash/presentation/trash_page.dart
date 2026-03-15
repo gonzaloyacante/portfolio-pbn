@@ -32,7 +32,7 @@ class TrashPage extends ConsumerWidget {
     return AppScaffold(
       title: 'Papelera',
       body: trashAsync.when(
-        loading: () => const _TrashShimmer(),
+        loading: () => const SkeletonTrashList(),
         error: (e, _) => ErrorState(
           message: e.toString(),
           onRetry: () => ref.invalidate(trashItemsProvider),
@@ -522,35 +522,6 @@ class _TrashCard extends StatelessWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ── Shimmer skeleton ───────────────────────────────────────────────────────────
-
-class _TrashShimmer extends StatelessWidget {
-  const _TrashShimmer();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-            6,
-            (_) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: ShimmerBox(
-                width: double.infinity,
-                height: 72,
-                borderRadius: 16,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

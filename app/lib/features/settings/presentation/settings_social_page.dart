@@ -62,18 +62,7 @@ class SettingsSocialPage extends ConsumerWidget {
     return AppScaffold(
       title: 'Redes Sociales',
       body: async.when(
-        loading: () => ListView.separated(
-          padding: AppBreakpoints.pagePadding(context),
-          itemCount: _kPlatforms.length,
-          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-          itemBuilder: (_, _) => ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 72,
-              borderRadius: AppRadius.card,
-            ),
-          ),
-        ),
+        loading: () => const SkeletonSocialList(),
         error: (e, _) => ErrorState(
           message: e.toString(),
           onRetry: () => ref.invalidate(socialLinksProvider),

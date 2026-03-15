@@ -144,7 +144,8 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           ],
         ),
         body: async.when(
-          loading: () => _buildShimmer(),
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () =>
@@ -154,25 +155,6 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
             _populate(detail);
             return _buildDetail(context, detail);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: List.generate(
-        5,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
         ),
       ),
     );

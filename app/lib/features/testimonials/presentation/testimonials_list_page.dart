@@ -156,7 +156,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
           ),
           Expanded(
             child: async.when(
-              loading: () => const _TestimonialsSkeleton(),
+              loading: () => const SkeletonTestimonialsList(),
               error: (e, _) => ErrorState(
                 message: e.toString(),
                 onRetry: () => ref.invalidate(testimonialsListProvider),
@@ -471,25 +471,6 @@ class _StarRating extends StatelessWidget {
           size: 14,
           color: AppColors.warning,
         ),
-      ),
-    );
-  }
-}
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-
-class _TestimonialsSkeleton extends StatelessWidget {
-  const _TestimonialsSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
-        itemCount: 8,
-        separatorBuilder: (_, _) => const SizedBox(height: 8),
-        itemBuilder: (_, _) =>
-            ShimmerBox(width: double.infinity, height: 80, borderRadius: 12),
       ),
     );
   }

@@ -9,6 +9,9 @@ abstract class _PrefKeys {
   static const String projectsViewMode = 'pref_projects_view_mode';
   static const String servicesViewMode = 'pref_services_view_mode';
   static const String categoriesViewMode = 'pref_categories_view_mode';
+  static const String categoryGalleryViewMode =
+      'pref_category_gallery_view_mode';
+  static const String testimonialsViewMode = 'pref_testimonials_view_mode';
 }
 
 // ── ViewMode enum ─────────────────────────────────────────────────────────────
@@ -116,5 +119,61 @@ class CategoriesViewMode extends _$CategoriesViewMode {
     state = mode;
     final prefs = await ref.read(sharedPreferencesProvider.future);
     await prefs.setString(_PrefKeys.categoriesViewMode, mode.name);
+  }
+}
+
+/// Vista seleccionada para la galería de proyectos de una categoría (grid o list).
+@riverpod
+class CategoryGalleryViewMode extends _$CategoryGalleryViewMode {
+  @override
+  ViewMode build() {
+    _load();
+    return ViewMode.list;
+  }
+
+  Future<void> _load() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final stored = prefs.getString(_PrefKeys.categoryGalleryViewMode);
+    if (stored != null) {
+      state = ViewMode.values.firstWhere(
+        (e) => e.name == stored,
+        orElse: () => ViewMode.list,
+      );
+    }
+  }
+
+  Future<void> toggle() async {
+    final next = state == ViewMode.grid ? ViewMode.list : ViewMode.grid;
+    state = next;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_PrefKeys.categoryGalleryViewMode, next.name);
+  }
+}
+
+/// Vista seleccionada para la lista de testimonios (grid o list).
+@riverpod
+class TestimonialsViewMode extends _$TestimonialsViewMode {
+  @override
+  ViewMode build() {
+    _load();
+    return ViewMode.list;
+  }
+
+  Future<void> _load() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final stored = prefs.getString(_PrefKeys.testimonialsViewMode);
+    if (stored != null) {
+      state = ViewMode.values.firstWhere(
+        (e) => e.name == stored,
+        orElse: () => ViewMode.list,
+      );
+    }
+  }
+
+  Future<void> toggle() async {
+    final next = state == ViewMode.grid ? ViewMode.list : ViewMode.grid;
+    state = next;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_PrefKeys.testimonialsViewMode, next.name);
   }
 }
