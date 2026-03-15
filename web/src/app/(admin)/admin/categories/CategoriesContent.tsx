@@ -71,7 +71,6 @@ export default function CategoriesContent({
           <div className="space-y-3 p-5">
             <div>
               <h3 className="text-foreground truncate text-lg font-bold">{category.name}</h3>
-              <p className="text-muted-foreground truncate font-mono text-xs">/{category.slug}</p>
             </div>
 
             {category.description && (
@@ -158,7 +157,7 @@ export default function CategoriesContent({
               #{category.sortOrder ?? 0}
             </Badge>
           </div>
-          <p className="text-muted-foreground font-mono text-xs">/{category.slug}</p>
+
           <div className="text-muted-foreground mt-1 text-xs">
             {category._count.projects} proyectos
           </div>

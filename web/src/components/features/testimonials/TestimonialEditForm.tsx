@@ -102,12 +102,18 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
             placeholder="cliente@email.com"
           />
           <Input
-            label="Avatar URL"
-            name="avatarUrl"
-            defaultValue={testimonial.avatarUrl || ''}
-            placeholder="https://..."
+            label="Teléfono"
+            name="phone"
+            defaultValue={testimonial.phone || ''}
+            placeholder="+34 600 000 000"
           />
         </div>
+        <Input
+          label="Avatar URL"
+          name="avatarUrl"
+          defaultValue={testimonial.avatarUrl || ''}
+          placeholder="https://..."
+        />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <Input
             label="Cargo / Posición"

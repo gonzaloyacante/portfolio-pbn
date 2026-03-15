@@ -8,7 +8,9 @@ import '../../features/account/presentation/account_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/help/presentation/help_page.dart';
+import '../../features/trash/data/trash_model.dart';
 import '../../features/trash/presentation/trash_page.dart';
+import '../../features/trash/presentation/trash_item_detail_page.dart';
 import '../../features/categories/presentation/categories_list_page.dart';
 import '../../features/categories/presentation/category_form_page.dart';
 import '../../features/categories/presentation/category_gallery_page.dart';
@@ -350,6 +352,18 @@ final List<RouteBase> _routes = [
     name: RouteNames.trash,
     pageBuilder: (context, state) =>
         _fadePage(state: state, child: const TrashPage()),
+  ),
+  // ── Papelera Detalle ───────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.trashDetail,
+    name: RouteNames.trashDetail,
+    pageBuilder: (context, state) {
+      final item = state.extra! as TrashItem;
+      return _fadePage(
+        state: state,
+        child: TrashItemDetailPage(item: item),
+      );
+    },
   ),
   // ── Ayuda ───────────────────────────────────────────────────────────────
   GoRoute(

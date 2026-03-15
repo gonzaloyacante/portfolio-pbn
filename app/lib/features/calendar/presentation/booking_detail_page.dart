@@ -10,6 +10,7 @@ import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../data/booking_model.dart';
 import '../data/google_calendar_models.dart';
 import '../providers/calendar_provider.dart';
@@ -268,67 +269,59 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           ),
           const SizedBox(height: 12),
           // ── Estado ────────────────────────────────────────────────────────
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Estado de la reserva',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          AppCard(
+            borderRadius: BorderRadius.circular(20),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Estado de la reserva',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: _kStatuses
-                        .map(
-                          (s) => ChoiceChip(
-                            label: Text(s.$1),
-                            selected: _status == s.$2,
-                            onSelected: (_) => setState(() => _status = s.$2),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: _kStatuses
+                      .map(
+                        (s) => ChoiceChip(
+                          label: Text(s.$1),
+                          selected: _status == s.$2,
+                          onSelected: (_) => setState(() => _status = s.$2),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 12),
           // ── Notas admin ───────────────────────────────────────────────────
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Notas internas',
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          AppCard(
+            borderRadius: BorderRadius.circular(20),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Notas internas',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _notesController,
-                    maxLines: 4,
-                    decoration: const InputDecoration(
-                      hintText: 'Añade notas internas sobre esta reserva…',
-                      border: OutlineInputBorder(),
-                    ),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _notesController,
+                  maxLines: 4,
+                  decoration: const InputDecoration(
+                    hintText: 'Añade notas internas sobre esta reserva…',
+                    border: OutlineInputBorder(),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           if (detail.clientNotes != null && detail.clientNotes!.isNotEmpty) ...[
@@ -406,25 +399,23 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (title != null) ...[
-              Text(
-                title!,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-            ],
-            ...children,
+    return AppCard(
+      borderRadius: BorderRadius.circular(20),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (title != null) ...[
+            Text(
+              title!,
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
           ],
-        ),
+          ...children,
+        ],
       ),
     );
   }

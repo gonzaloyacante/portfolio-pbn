@@ -12,6 +12,7 @@ import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/app_card.dart';
 
 // ── LoginPage ─────────────────────────────────────────────────────────────────
 
@@ -276,88 +277,86 @@ class _LoginCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
+    return AppCard(
+      borderRadius: AppRadius.forCard,
       elevation: 0,
       color: scheme.surface,
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Form(
-          key: formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Iniciar sesión',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
+      padding: const EdgeInsets.all(28),
+      child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Iniciar sesión',
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            // Email
+            TextFormField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              textInputAction: TextInputAction.next,
+              autocorrect: false,
+              autofillHints: const [AutofillHints.email],
+              decoration: const InputDecoration(
+                labelText: 'Correo electrónico',
+                prefixIcon: Icon(Icons.mail_outline_rounded),
               ),
-              const SizedBox(height: 24),
-              // Email
-              TextFormField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                autocorrect: false,
-                autofillHints: const [AutofillHints.email],
-                decoration: const InputDecoration(
-                  labelText: 'Correo electrónico',
-                  prefixIcon: Icon(Icons.mail_outline_rounded),
-                ),
-                validator: AppValidators.compose([
-                  AppValidators.required,
-                  AppValidators.email,
-                ]),
-              ),
-              const SizedBox(height: 16),
-              // Password
-              TextFormField(
-                controller: passwordController,
-                obscureText: obscurePassword,
-                textInputAction: TextInputAction.done,
-                autofillHints: const [AutofillHints.password],
-                onFieldSubmitted: (_) => onSubmit(),
-                decoration: InputDecoration(
-                  labelText: 'Contraseña',
-                  prefixIcon: const Icon(Icons.lock_outline_rounded),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      obscurePassword
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                    ),
-                    onPressed: onTogglePassword,
-                    tooltip: obscurePassword
-                        ? 'Mostrar contraseña'
-                        : 'Ocultar contraseña',
+              validator: AppValidators.compose([
+                AppValidators.required,
+                AppValidators.email,
+              ]),
+            ),
+            const SizedBox(height: 16),
+            // Password
+            TextFormField(
+              controller: passwordController,
+              obscureText: obscurePassword,
+              textInputAction: TextInputAction.done,
+              autofillHints: const [AutofillHints.password],
+              onFieldSubmitted: (_) => onSubmit(),
+              decoration: InputDecoration(
+                labelText: 'Contraseña',
+                prefixIcon: const Icon(Icons.lock_outline_rounded),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
                   ),
-                ),
-                validator: AppValidators.compose([
-                  AppValidators.required,
-                  AppValidators.minLength(6),
-                ]),
-              ),
-              const SizedBox(height: 28),
-              // Submit
-              FilledButton(
-                onPressed: isLoading ? null : onSubmit,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.forButton,
-                  ),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Text(
-                  'Entrar',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  onPressed: onTogglePassword,
+                  tooltip: obscurePassword
+                      ? 'Mostrar contraseña'
+                      : 'Ocultar contraseña',
                 ),
               ),
-            ],
-          ),
+              validator: AppValidators.compose([
+                AppValidators.required,
+                AppValidators.minLength(6),
+              ]),
+            ),
+            const SizedBox(height: 28),
+            // Submit
+            FilledButton(
+              onPressed: isLoading ? null : onSubmit,
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(52),
+                shape: RoundedRectangleBorder(
+                  borderRadius: AppRadius.forButton,
+                ),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                'Entrar',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -16,6 +16,8 @@ import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
+import '../../../shared/widgets/app_card.dart';
+import '../../../core/theme/app_radius.dart';
 
 class SettingsContactPage extends ConsumerStatefulWidget {
   const SettingsContactPage({super.key});
@@ -197,10 +199,8 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
                 child: Column(
                   children: [
                     SwitchListTile(

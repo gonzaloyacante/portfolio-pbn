@@ -50,9 +50,15 @@ async function restoreItem(type: TrashType, id: string) {
   const item = await model.findFirst({ where: { id, deletedAt: { not: null } } })
   if (!item) return null
 
-  // Para category y service aplicamos un-mangle del slug
   const updateData: Record<string, unknown> = { deletedAt: null }
-  if ((type === 'category' || type === 'service') && item.slug) {
+
+  // Los proyectos usan isDeleted (bool) además de deletedAt — hay que restaurar ambos
+  if (type === 'project') {
+    updateData.isDeleted = false
+  }
+
+  // Para project, category y service aplicamos un-mangle del slug mangleado al borrar
+  if ((type === 'project' || type === 'category' || type === 'service') && item.slug) {
     updateData.slug = await unmangleSlug(model, item.slug as string, id)
   }
 

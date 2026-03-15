@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_breakpoints.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import 'app_card.dart';
 
 // ── ShimmerLoader ─────────────────────────────────────────────────────────────
 
@@ -78,12 +79,12 @@ class SkeletonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(
+    return Padding(
+      padding: EdgeInsets.symmetric(
         horizontal: AppBreakpoints.pageMargin(context),
         vertical: AppSpacing.xs + 2,
       ),
-      child: Padding(
+      child: AppCard(
         padding: const EdgeInsets.all(AppSpacing.base),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,7 +122,8 @@ class SkeletonGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return AppCard(
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

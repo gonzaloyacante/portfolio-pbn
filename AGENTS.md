@@ -191,6 +191,7 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 - ❌ Modificar `node_modules` o migrations manualmente
 - ❌ Strings hardcodeados para rutas
 - ❌ Llamar a Server Actions directamente desde Flutter (usar endpoints `/api/admin/*`)
+- ❌ **Mostrar el `slug` en cualquier UI admin** — el slug es metadata interna autogenerada. NUNCA mostrarlo como texto visible al administrador en ningún componente, lista, card o formulario. Solo puede usarse internamente en href de navegación a la web pública.
 
 ---
 
@@ -463,6 +464,7 @@ Ambos scripts ejecutan **todos** estos pasos sin excepción (ninguno es opcional
 - ❌ Subir secretos, `.env`, `google-services.json` al repo
 - ❌ Lógica de negocio en widgets (va en providers/repositories)
 - ❌ Acceder a Server Actions de Next.js directamente (solo via `/api/admin/*`)
+- ❌ **Mostrar el `slug` en cualquier UI admin** — el slug es metadata interna autogenerada. NUNCA incluirlo en listas, cards, formularios ni pantallas de detalle como texto visible. Solo se usa internamente (auto-generado, enviado al backend, nunca renderizado).
 
 ---
 

@@ -29,6 +29,7 @@ const TestimonialSchema = z.object({
   website: z.string().url().optional().or(z.literal('')),
   avatarUrl: z.string().url().optional().or(z.literal('')),
   email: z.string().email().optional().or(z.literal('')),
+  phone: z.string().optional(),
   rating: z.number().min(1).max(5).default(5),
   // Admin fields
   isActive: z.boolean().optional(),
@@ -80,6 +81,8 @@ export async function submitPublicTestimonial(formData: FormData) {
     name: formData.get('name'),
     text: formData.get('text'),
     email: formData.get('email'),
+    position: formData.get('position'),
+    company: formData.get('company'),
     rating: parseInt(formData.get('rating') as string) || 5,
   }
 
@@ -87,7 +90,7 @@ export async function submitPublicTestimonial(formData: FormData) {
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
-  const { name, text, email, rating } = validation.data
+  const { name, text, email, position, company, rating } = validation.data
 
   const headersList = await headers()
   const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown'
@@ -106,7 +109,8 @@ export async function submitPublicTestimonial(formData: FormData) {
       data: {
         name,
         text,
-        position: email ? `Cliente verificado (${email})` : 'Cliente',
+        position: position || null,
+        company: company || null,
         rating,
         isActive: false,
       },
@@ -150,6 +154,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
     company: formData.get('company'),
     website: formData.get('website'),
     avatarUrl: formData.get('avatarUrl'),
+    email: formData.get('email'),
+    phone: formData.get('phone'),
     rating: parseInt(formData.get('rating') as string),
     isActive: formData.get('isActive') === 'true',
     isVerified: formData.get('isVerified') === 'true',
@@ -174,6 +180,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
         company: data.company,
         website: data.website,
         avatarUrl: data.avatarUrl,
+        email: data.email,
+        phone: data.phone,
         rating: data.rating,
         isActive: data.isActive,
         verified: data.isVerified, // Schema uses 'verified' boolean

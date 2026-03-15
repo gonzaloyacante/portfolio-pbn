@@ -16,6 +16,8 @@ import '../utils/app_logger.dart';
 import 'debug_log_page.dart';
 import 'debug_provider.dart';
 import 'server_url_provider.dart';
+import '../../shared/widgets/app_card.dart';
+import '../theme/app_radius.dart';
 
 // ── Provider auxiliar ─────────────────────────────────────────────────────────
 
@@ -764,35 +766,18 @@ class _DebugCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: colorScheme.outlineVariant),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+      child: AppCard(
+        title: title,
+        leading: Icon(icon, size: 16, color: colorScheme.primary),
+        elevation: 0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 16, color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.primary,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ...children,
-          ],
+          children: [const SizedBox(height: 4), ...children],
         ),
       ),
     );

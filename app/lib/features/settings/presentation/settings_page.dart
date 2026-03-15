@@ -6,6 +6,7 @@ import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
+import '../../../shared/widgets/app_card.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -90,68 +91,61 @@ class _SettingsTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
-      child: InkWell(
-        borderRadius: AppRadius.forTile,
-        onTap: () => context.pushNamed(item.routeName),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-          child: Row(
-            children: [
-              // ── Icon container ──────────────────────────────
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      colorScheme.primary.withValues(alpha: 0.15),
-                      colorScheme.primary.withValues(alpha: 0.06),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(item.icon, size: 22, color: colorScheme.primary),
+    return AppCard(
+      borderRadius: AppRadius.forTile,
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+      onTap: () => context.pushNamed(item.routeName),
+      child: Row(
+        children: [
+          // ── Icon container ──────────────────────────────
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  colorScheme.primary.withValues(alpha: 0.15),
+                  colorScheme.primary.withValues(alpha: 0.06),
+                ],
               ),
-              const SizedBox(width: 14),
-              // ── Text ───────────────────────────────────────
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      item.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              // ── Chevron ────────────────────────────────────
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colorScheme.outline,
-              ),
-            ],
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(item.icon, size: 22, color: colorScheme.primary),
           ),
-        ),
+          const SizedBox(width: 14),
+          // ── Text ───────────────────────────────────────
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.title,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  item.subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.outline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // ── Chevron ────────────────────────────────────
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 20,
+            color: colorScheme.outline,
+          ),
+        ],
       ),
     );
   }

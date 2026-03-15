@@ -16,6 +16,8 @@ import '../../../core/updates/app_update_provider.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/app_update_dialog.dart';
 import '../providers/notification_prefs_provider.dart';
+import '../../../shared/widgets/app_card.dart';
+import '../../../core/theme/app_radius.dart';
 
 // ── AppSettingsPage ───────────────────────────────────────────────────────────
 
@@ -279,31 +281,28 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(icon, size: 18, color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
-                  ),
+    return AppCard(
+      borderRadius: AppRadius.forCard,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.primary,
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            const Divider(height: 1),
-            ...children,
-          ],
-        ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Divider(height: 1),
+          ...children,
+        ],
       ),
     );
   }

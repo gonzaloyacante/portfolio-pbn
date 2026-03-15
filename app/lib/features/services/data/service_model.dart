@@ -78,9 +78,18 @@ class ServiceFormData {
   final String priceLabel;
   final String currency;
   final String? duration;
+  final int? durationMinutes;
   final String? imageUrl;
   final bool isActive;
   final bool isFeatured;
+  final bool isAvailable;
+  final int? maxBookingsPerDay;
+  final int? advanceNoticeDays;
+  final String? requirements;
+  final String? cancellationPolicy;
+  final String? metaTitle;
+  final String? metaDescription;
+  final String? metaKeywords;
 
   const ServiceFormData({
     required this.name,
@@ -91,9 +100,18 @@ class ServiceFormData {
     this.priceLabel = 'desde',
     this.currency = 'EUR',
     this.duration,
+    this.durationMinutes,
     this.imageUrl,
     this.isActive = true,
     this.isFeatured = false,
+    this.isAvailable = true,
+    this.maxBookingsPerDay,
+    this.advanceNoticeDays,
+    this.requirements,
+    this.cancellationPolicy,
+    this.metaTitle,
+    this.metaDescription,
+    this.metaKeywords,
   });
 
   Map<String, dynamic> toJson() => {
@@ -105,8 +123,17 @@ class ServiceFormData {
     'priceLabel': priceLabel,
     'currency': currency,
     if (duration != null) 'duration': duration,
+    if (durationMinutes != null) 'durationMinutes': durationMinutes,
     if (imageUrl != null) 'imageUrl': imageUrl,
     'isActive': isActive,
     'isFeatured': isFeatured,
+    'isAvailable': isAvailable,
+    if (maxBookingsPerDay != null) 'maxBookingsPerDay': maxBookingsPerDay,
+    if (advanceNoticeDays != null) 'advanceNoticeDays': advanceNoticeDays,
+    if (requirements != null) 'requirements': requirements,
+    if (cancellationPolicy != null) 'cancellationPolicy': cancellationPolicy,
+    if (metaTitle != null) 'metaTitle': metaTitle,
+    if (metaDescription != null) 'metaDescription': metaDescription,
+    if (metaKeywords != null) 'metaKeywords': metaKeywords,
   };
 }

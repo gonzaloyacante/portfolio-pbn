@@ -11,6 +11,7 @@ import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../../../core/router/route_names.dart';
 import '../data/booking_model.dart';
 import '../providers/calendar_provider.dart';
@@ -125,50 +126,53 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
       onSelected: (s) => setState(() => _statusFilter = s),
     );
 
-    final calendarCard = Card(
-      margin: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.xs),
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forCard),
-      child: TableCalendar<BookingItem>(
-        locale: 'es_ES',
-        firstDay: DateTime(2020),
-        lastDay: DateTime(2030),
-        focusedDay: _focusedDay,
-        selectedDayPredicate: (d) =>
-            _selectedDay != null && isSameDay(d, _selectedDay!),
-        onDaySelected: (selected, focused) {
-          setState(() {
-            _selectedDay = selected;
-            _focusedDay = focused;
-          });
-        },
-        onPageChanged: (focused) {
-          setState(() {
-            _focusedDay = focused;
-            _selectedDay = null;
-          });
-          ref.invalidate(bookingsListProvider);
-        },
-        eventLoader: dayBookings,
-        calendarStyle: CalendarStyle(
-          markerDecoration: BoxDecoration(
-            color: colorScheme.primary,
-            shape: BoxShape.circle,
+    final calendarCard = Padding(
+      padding: EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.xs),
+      child: AppCard(
+        borderRadius: AppRadius.forCard,
+        padding: EdgeInsets.zero,
+        child: TableCalendar<BookingItem>(
+          locale: 'es_ES',
+          firstDay: DateTime(2020),
+          lastDay: DateTime(2030),
+          focusedDay: _focusedDay,
+          selectedDayPredicate: (d) =>
+              _selectedDay != null && isSameDay(d, _selectedDay!),
+          onDaySelected: (selected, focused) {
+            setState(() {
+              _selectedDay = selected;
+              _focusedDay = focused;
+            });
+          },
+          onPageChanged: (focused) {
+            setState(() {
+              _focusedDay = focused;
+              _selectedDay = null;
+            });
+            ref.invalidate(bookingsListProvider);
+          },
+          eventLoader: dayBookings,
+          calendarStyle: CalendarStyle(
+            markerDecoration: BoxDecoration(
+              color: colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+            selectedDecoration: BoxDecoration(
+              color: colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+            todayDecoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.35),
+              shape: BoxShape.circle,
+            ),
+            outsideDaysVisible: false,
           ),
-          selectedDecoration: BoxDecoration(
-            color: colorScheme.primary,
-            shape: BoxShape.circle,
+          headerStyle: const HeaderStyle(
+            formatButtonVisible: false,
+            titleCentered: true,
+            leftChevronIcon: Icon(Icons.chevron_left_rounded),
+            rightChevronIcon: Icon(Icons.chevron_right_rounded),
           ),
-          todayDecoration: BoxDecoration(
-            color: colorScheme.primary.withValues(alpha: 0.35),
-            shape: BoxShape.circle,
-          ),
-          outsideDaysVisible: false,
-        ),
-        headerStyle: const HeaderStyle(
-          formatButtonVisible: false,
-          titleCentered: true,
-          leftChevronIcon: Icon(Icons.chevron_left_rounded),
-          rightChevronIcon: Icon(Icons.chevron_right_rounded),
         ),
       ),
     );
@@ -305,97 +309,90 @@ class _BookingCard extends ConsumerWidget {
         '${booking.date.hour.toString().padLeft(2, '0')}:'
         '${booking.date.minute.toString().padLeft(2, '0')}';
 
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
-      child: InkWell(
-        borderRadius: AppRadius.forTile,
-        onTap: () => context.pushNamed(
-          RouteNames.bookingDetail,
-          pathParameters: {'id': booking.id},
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-          child: Row(
-            children: [
-              // ── Time badge ──────────────────────────────────
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  timeStr,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12,
-                  ),
-                ),
+    return AppCard(
+      onTap: () => context.pushNamed(
+        RouteNames.bookingDetail,
+        pathParameters: {'id': booking.id},
+      ),
+      borderRadius: AppRadius.forTile,
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      child: Row(
+        children: [
+          // ── Time badge ──────────────────────────────────
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              timeStr,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: colorScheme.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
               ),
-              const SizedBox(width: 12),
-              // ── Info ────────────────────────────────────────
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+          ),
+          const SizedBox(width: 12),
+          // ── Info ────────────────────────────────────────
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            booking.clientName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                    Expanded(
+                      child: Text(
+                        booking.clientName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(width: 8),
-                        StatusBadge(
-                          status: _toAppStatus(booking.status),
-                          compact: true,
-                        ),
-                      ],
+                      ),
                     ),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.spa_outlined,
-                          size: 13,
-                          color: colorScheme.outline,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            booking.service?.name ?? 'Sin servicio',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.outline,
-                            ),
-                          ),
-                        ),
-                      ],
+                    const SizedBox(width: 8),
+                    StatusBadge(
+                      status: _toAppStatus(booking.status),
+                      compact: true,
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 8),
-              // ── Chevron ─────────────────────────────────────
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 20,
-                color: colorScheme.outline,
-              ),
-            ],
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.spa_outlined,
+                      size: 13,
+                      color: colorScheme.outline,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        booking.service?.name ?? 'Sin servicio',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.outline,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
+          const SizedBox(width: 8),
+          // ── Chevron ─────────────────────────────────────
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 20,
+            color: colorScheme.outline,
+          ),
+        ],
       ),
     );
   }

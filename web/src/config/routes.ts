@@ -23,6 +23,7 @@ export const ROUTES = {
     editTestimonial: (id: string) => `/admin/testimonios/${id}/editar` as const,
     about: '/admin/sobre-mi',
     settings: '/admin/configuracion',
+    siteSettings: '/admin/configuracion/sitio',
     theme: '/admin/tema',
     analytics: '/admin/analitica',
     calendar: '/admin/calendario',

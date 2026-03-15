@@ -6,6 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 import '../../../core/utils/date_utils.dart';
@@ -104,98 +105,92 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Cabecera ────────────────────────────────────────────
-                  Card(
+                  AppCard(
+                    borderRadius: BorderRadius.circular(16),
                     elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    detail.name.isNotEmpty
-                                        ? detail.name[0].toUpperCase()
-                                        : '?',
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      fontSize: 20,
-                                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  detail.name.isNotEmpty
+                                      ? detail.name[0].toUpperCase()
+                                      : '?',
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontSize: 20,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      detail.name,
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      detail.email,
-                                      style: theme.textTheme.bodySmall,
-                                    ),
-                                    if (detail.phone != null) ...[
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        detail.phone!,
-                                        style: theme.textTheme.bodySmall,
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    AppDateUtils.toRelative(detail.createdAt),
-                                    style: theme.textTheme.labelSmall,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      _StatusChip(
-                                        label: _statusLabel(detail.status),
-                                        color: _statusColor(detail.status),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      _PriorityChip(priority: detail.priority),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          if (detail.subject != null) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              'Asunto: ${detail.subject}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    detail.name,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    detail.email,
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                                  if (detail.phone != null) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      detail.phone!,
+                                      style: theme.textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppDateUtils.toRelative(detail.createdAt),
+                                  style: theme.textTheme.labelSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    _StatusChip(
+                                      label: _statusLabel(detail.status),
+                                      color: _statusColor(detail.status),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _PriorityChip(priority: detail.priority),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
+                        ),
+                        if (detail.subject != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            'Asunto: ${detail.subject}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -343,34 +338,32 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                       style: theme.textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (detail.referrer != null)
-                              _TrackingRow(
-                                label: 'Referrer',
-                                value: detail.referrer!,
-                              ),
-                            if (detail.utmSource != null)
-                              _TrackingRow(
-                                label: 'UTM Source',
-                                value: detail.utmSource!,
-                              ),
-                            if (detail.utmMedium != null)
-                              _TrackingRow(
-                                label: 'UTM Medium',
-                                value: detail.utmMedium!,
-                              ),
-                            if (detail.utmCampaign != null)
-                              _TrackingRow(
-                                label: 'UTM Campaign',
-                                value: detail.utmCampaign!,
-                              ),
-                          ],
-                        ),
+                    AppCard(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (detail.referrer != null)
+                            _TrackingRow(
+                              label: 'Referrer',
+                              value: detail.referrer!,
+                            ),
+                          if (detail.utmSource != null)
+                            _TrackingRow(
+                              label: 'UTM Source',
+                              value: detail.utmSource!,
+                            ),
+                          if (detail.utmMedium != null)
+                            _TrackingRow(
+                              label: 'UTM Medium',
+                              value: detail.utmMedium!,
+                            ),
+                          if (detail.utmCampaign != null)
+                            _TrackingRow(
+                              label: 'UTM Campaign',
+                              value: detail.utmCampaign!,
+                            ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 16),

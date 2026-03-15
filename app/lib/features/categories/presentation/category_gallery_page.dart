@@ -9,6 +9,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 
@@ -568,117 +569,119 @@ class _GalleryTile extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Row(
-        children: [
-          // Número de orden
-          SizedBox(
-            width: 36,
-            child: Center(
-              child: Text(
-                '${index + 1}',
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: scheme.onSurface.withValues(alpha: 0.5),
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          // Thumbnail
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: SizedBox(
-              width: 72,
-              height: 72,
-              child: CachedNetworkImage(
-                imageUrl: item.thumbnailUrl,
-                fit: BoxFit.cover,
-                placeholder: (ctx2, url) => Container(
-                  color: scheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: scheme.outlineVariant,
-                    size: 28,
-                  ),
-                ),
-                errorWidget: (ctx2, url, err) => Container(
-                  color: scheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.broken_image_outlined,
-                    color: scheme.outlineVariant,
-                    size: 28,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: AppCard(
+        borderRadius: AppRadius.asRounded(AppRadius.sm),
+        padding: EdgeInsets.zero,
+        child: Row(
+          children: [
+            // Número de orden
+            SizedBox(
+              width: 36,
+              child: Center(
+                child: Text(
+                  '${index + 1}',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.5),
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // Info
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.alt ?? item.projectTitle,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
+            // Thumbnail
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: SizedBox(
+                width: 72,
+                height: 72,
+                child: CachedNetworkImage(
+                  imageUrl: item.thumbnailUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (ctx2, url) => Container(
+                    color: scheme.surfaceContainerHighest,
+                    child: Icon(
+                      Icons.image_outlined,
+                      color: scheme.outlineVariant,
+                      size: 28,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 3),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.folder_outlined,
-                        size: 12,
-                        color: scheme.onSurface.withValues(alpha: 0.5),
+                  errorWidget: (ctx2, url, err) => Container(
+                    color: scheme.surfaceContainerHighest,
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      color: scheme.outlineVariant,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            // Info
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.alt ?? item.projectTitle,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          item.projectTitle,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurface.withValues(alpha: 0.5),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.folder_outlined,
+                          size: 12,
+                          color: scheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            item.projectTitle,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurface.withValues(alpha: 0.5),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                    if (item.isCover || item.isHero)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Wrap(
+                          spacing: 4,
+                          children: [
+                            if (item.isCover)
+                              _Badge(label: 'Portada', color: scheme.primary),
+                            if (item.isHero)
+                              _Badge(label: 'Hero', color: scheme.tertiary),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                  if (item.isCover || item.isHero)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 3),
-                      child: Wrap(
-                        spacing: 4,
-                        children: [
-                          if (item.isCover)
-                            _Badge(label: 'Portada', color: scheme.primary),
-                          if (item.isHero)
-                            _Badge(label: 'Hero', color: scheme.tertiary),
-                        ],
-                      ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          // Drag handle
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Icon(
-              Icons.drag_handle_rounded,
-              color: scheme.onSurface.withValues(alpha: 0.3),
-              size: 22,
+            // Drag handle
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Icon(
+                Icons.drag_handle_rounded,
+                color: scheme.onSurface.withValues(alpha: 0.3),
+                size: 22,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -149,6 +149,7 @@ const List<_NavItem> _allNavItems = [
     icon: Icons.delete_outline,
     selectedIcon: Icons.delete,
     label: 'Papelera',
+    childRoutes: [RouteNames.trashDetail],
   ),
   _NavItem(
     routeName: RouteNames.appSettings,

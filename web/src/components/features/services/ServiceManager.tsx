@@ -85,7 +85,6 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
                     </Badge>
                     {s.isFeatured && <Badge variant="warning">⭐ Destacado</Badge>}
                   </div>
-                  <p className="text-muted-foreground text-sm">/{s.slug}</p>
                   {s.description && (
                     <p className="text-muted-foreground line-clamp-2 text-sm">{s.description}</p>
                   )}

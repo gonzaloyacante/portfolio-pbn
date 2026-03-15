@@ -37,14 +37,14 @@ export default async function PapeleraPage() {
         />
       ) : (
         <Section>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {projectsWithDays.map((project) => (
               <div
                 key={project.id}
-                className="border-border bg-card hover:bg-muted/50 flex items-center gap-4 rounded-xl border p-4 transition-colors"
+                className="border-border bg-card hover:bg-muted/50 flex flex-col items-start gap-4 rounded-xl border p-6 transition-colors md:flex-row"
               >
                 {/* Thumbnail */}
-                <div className="bg-muted relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                <div className="bg-muted relative h-28 w-full flex-shrink-0 overflow-hidden rounded-lg md:w-32">
                   {project.images[0]?.url ? (
                     <Image
                       src={project.images[0].url}
@@ -53,45 +53,64 @@ export default async function PapeleraPage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-2xl">
+                    <div className="flex h-full w-full items-center justify-center text-3xl">
                       🎨
                     </div>
                   )}
                 </div>
 
                 {/* Info */}
-                <div className="flex-1">
-                  <h3 className="text-foreground font-semibold">{project.title}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {project.category?.name || 'Sin categoría'}
-                  </p>
-                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                    ⏰ Se eliminará en {project.daysRemaining} días
-                  </p>
-                </div>
+                <div className="w-full flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 className="text-foreground truncate text-lg font-semibold">
+                        {project.title}
+                      </h3>
+                      <p className="text-muted-foreground mt-1 truncate text-sm">
+                        {project.category?.name || 'Sin categoría'} • {project.images?.length ?? 0}{' '}
+                        imagen(es)
+                      </p>
+                      <p className="text-foreground/80 mt-3 line-clamp-3 text-sm">
+                        {project.excerpt || project.description || '— Sin descripción —'}
+                      </p>
+                    </div>
 
-                {/* Actions */}
-                <div className="flex gap-2">
-                  <form
-                    action={async () => {
-                      'use server'
-                      await restoreProject(project.id)
-                    }}
-                  >
-                    <Button type="submit" variant="secondary" size="sm">
-                      ♻️ Restaurar
-                    </Button>
-                  </form>
-                  <form
-                    action={async () => {
-                      'use server'
-                      await permanentlyDeleteProject(project.id)
-                    }}
-                  >
-                    <Button type="submit" variant="destructive" size="sm">
-                      🗑️ Eliminar
-                    </Button>
-                  </form>
+                    <div className="hidden flex-col items-end gap-2 md:flex">
+                      <p className="text-xs text-red-600 dark:text-red-400">
+                        ⏰ Se eliminará en {project.daysRemaining} días
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {project.deletedAt ? new Date(project.deletedAt).toLocaleDateString() : ''}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Actions (mobile stacked) */}
+                  <div className="mt-4 flex gap-2 md:gap-3">
+                    <form
+                      action={async () => {
+                        'use server'
+                        await restoreProject(project.id)
+                      }}
+                    >
+                      <Button type="submit" variant="secondary" size="sm">
+                        ♻️ Restaurar
+                      </Button>
+                    </form>
+                    <form
+                      action={async () => {
+                        'use server'
+                        await permanentlyDeleteProject(project.id)
+                      }}
+                    >
+                      <Button type="submit" variant="destructive" size="sm">
+                        🗑️ Eliminar
+                      </Button>
+                    </form>
+                    <div className="ml-auto text-xs text-red-600 md:hidden dark:text-red-400">
+                      ⏰ {project.daysRemaining} días
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

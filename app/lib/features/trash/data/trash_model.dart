@@ -9,6 +9,7 @@ abstract class TrashItem with _$TrashItem {
     required String type,
     required String displayName,
     required DateTime deletedAt,
+    @Default(<String, dynamic>{}) Map<String, dynamic> rawData,
   }) = _TrashItem;
 
   factory TrashItem.fromMap(String type, Map<String, dynamic> json) {
@@ -22,6 +23,7 @@ abstract class TrashItem with _$TrashItem {
       type: type,
       displayName: displayName,
       deletedAt: DateTime.parse(json['deletedAt'] as String),
+      rawData: Map<String, dynamic>.from(json),
     );
   }
 }

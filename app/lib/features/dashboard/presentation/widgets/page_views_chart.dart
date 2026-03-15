@@ -2,6 +2,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/dashboard_repository.dart';
+import '../../../../shared/widgets/app_card.dart';
+import '../../../../core/theme/app_radius.dart';
 
 /// Gráfica de visitas diarias (LineChart), extraída para mantener `dashboard_page.dart` limpio.
 class PageViewsChart extends StatelessWidget {
@@ -39,13 +41,16 @@ class PageViewsChart extends StatelessWidget {
     );
     final interval = _niceInterval(maxCount);
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.28)),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: AppRadius.forTile,
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.28),
+        ),
       ),
-      child: Padding(
+      child: AppCard(
+        elevation: 0,
+        borderRadius: AppRadius.forTile,
         padding: const EdgeInsets.fromLTRB(12, 16, 16, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -18,6 +18,7 @@ import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
@@ -277,109 +278,105 @@ class _CategoryGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: InkWell(
-        onTap: () => context.pushNamed(
-          RouteNames.categoryEdit,
-          pathParameters: {'id': item.id},
-        ),
-        child: Stack(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Thumbnail (fixed height to avoid collapsing when image missing)
-                SizedBox(
-                  height: 100,
-                  width: double.infinity,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(8),
-                    ),
-                    child:
-                        item.thumbnailUrl != null &&
-                            item.thumbnailUrl!.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: item.thumbnailUrl!,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              color: scheme.surfaceContainerHighest,
-                              child: Icon(
-                                Icons.image_outlined,
-                                color: scheme.outlineVariant,
-                                size: 36,
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              color: scheme.surfaceContainerHighest,
-                              child: Icon(
-                                Icons.broken_image_outlined,
-                                color: scheme.outlineVariant,
-                                size: 36,
-                              ),
-                            ),
-                          )
-                        : Container(
+    return AppCard(
+      borderRadius: AppRadius.forTile,
+      padding: EdgeInsets.zero,
+      onTap: () => context.pushNamed(
+        RouteNames.categoryEdit,
+        pathParameters: {'id': item.id},
+      ),
+      child: Stack(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Thumbnail (fixed height to avoid collapsing when image missing)
+              SizedBox(
+                height: 100,
+                width: double.infinity,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(8),
+                  ),
+                  child:
+                      item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: item.thumbnailUrl!,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
                             color: scheme.surfaceContainerHighest,
-                            child: Center(
-                              child: Icon(
-                                Icons.photo_library_outlined,
-                                color: scheme.outlineVariant,
-                                size: 36,
-                              ),
+                            child: Icon(
+                              Icons.image_outlined,
+                              color: scheme.outlineVariant,
+                              size: 36,
                             ),
                           ),
-                  ),
-                ),
-                // Info
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.name,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
+                          errorWidget: (context, url, error) => Container(
+                            color: scheme.surfaceContainerHighest,
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              color: scheme.outlineVariant,
+                              size: 36,
+                            ),
+                          ),
+                        )
+                      : Container(
+                          color: scheme.surfaceContainerHighest,
+                          child: Center(
+                            child: Icon(
+                              Icons.photo_library_outlined,
+                              color: scheme.outlineVariant,
+                              size: 36,
+                            ),
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${item.projectCount} proyecto${item.projectCount == 1 ? '' : 's'}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            // Status badge top-right with solid background for readability
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                padding: EdgeInsets.zero,
-                decoration: BoxDecoration(
-                  color: scheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: StatusBadge(
-                  status: item.isActive ? AppStatus.active : AppStatus.inactive,
-                  small: true,
                 ),
               ),
+              // Info
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.name,
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${item.projectCount} proyecto${item.projectCount == 1 ? '' : 's'}',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // Status badge top-right with solid background for readability
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Container(
+              padding: EdgeInsets.zero,
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: StatusBadge(
+                status: item.isActive ? AppStatus.active : AppStatus.inactive,
+                small: true,
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -398,196 +395,175 @@ class _CategoryTile extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Card(
-      margin: EdgeInsets.zero,
-      clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
-      child: InkWell(
-        onTap: () => context.pushNamed(
-          RouteNames.categoryEdit,
-          pathParameters: {'id': item.id},
-        ),
-        child: SizedBox(
-          height: 80,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Thumbnail — tamaño fijo para no expandir el tile
-              SizedBox(
-                width: 80,
-                child:
-                    item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: item.thumbnailUrl!,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.image_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: scheme.surfaceContainerHighest,
-                          child: Icon(
-                            Icons.broken_image_outlined,
-                            color: scheme.outlineVariant,
-                            size: 28,
-                          ),
-                        ),
-                      )
-                    : Container(
+    return AppCard(
+      borderRadius: AppRadius.forTile,
+      padding: EdgeInsets.zero,
+      onTap: () => context.pushNamed(
+        RouteNames.categoryEdit,
+        pathParameters: {'id': item.id},
+      ),
+      child: SizedBox(
+        height: 80,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Thumbnail — tamaño fijo para no expandir el tile
+            SizedBox(
+              width: 80,
+              child: item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: item.thumbnailUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
                         color: scheme.surfaceContainerHighest,
                         child: Icon(
-                          Icons.photo_library_outlined,
+                          Icons.image_outlined,
                           color: scheme.outlineVariant,
                           size: 28,
                         ),
                       ),
+                      errorWidget: (context, url, error) => Container(
+                        color: scheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          color: scheme.outlineVariant,
+                          size: 28,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      color: scheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.photo_library_outlined,
+                        color: scheme.outlineVariant,
+                        size: 28,
+                      ),
+                    ),
+            ),
+            // Content
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        StatusBadge(
+                          small: true,
+                          status: item.isActive
+                              ? AppStatus.active
+                              : AppStatus.inactive,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.photo_library_outlined,
+                          size: 13,
+                          color: scheme.onSurface,
+                        ),
+                        const SizedBox(width: 3),
+                        Text(
+                          '${item.projectCount} proyectos',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: scheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              // Content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            // Menu
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_vert_rounded,
+                size: 20,
+                color: scheme.onSurface,
+              ),
+              onSelected: (action) {
+                if (action == 'edit') {
+                  context.pushNamed(
+                    RouteNames.categoryEdit,
+                    pathParameters: {'id': item.id},
+                  );
+                } else if (action == 'gallery') {
+                  context.pushNamed(
+                    RouteNames.categoryGallery,
+                    pathParameters: {'id': item.id},
+                    queryParameters: {'name': item.name},
+                  );
+                } else if (action == 'delete') {
+                  onDelete(context, item);
+                }
+              },
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.name,
-                              style: theme.textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          StatusBadge(
-                            small: true,
-                            status: item.isActive
-                                ? AppStatus.active
-                                : AppStatus.inactive,
-                          ),
-                        ],
+                      Icon(
+                        Icons.edit_outlined,
+                        size: 18,
+                        color: scheme.onSurface,
                       ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.link_rounded,
-                            size: 13,
-                            color: scheme.onSurface,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              '/${item.slug}',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: scheme.onSurface,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Icon(
-                            Icons.photo_library_outlined,
-                            size: 13,
-                            color: scheme.onSurface,
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            '${item.projectCount}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurface,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
+                      const SizedBox(width: 10),
+                      const Text('Editar'),
                     ],
                   ),
                 ),
-              ),
-              // Menu
-              PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  size: 20,
-                  color: scheme.onSurface,
-                ),
-                onSelected: (action) {
-                  if (action == 'edit') {
-                    context.pushNamed(
-                      RouteNames.categoryEdit,
-                      pathParameters: {'id': item.id},
-                    );
-                  } else if (action == 'gallery') {
-                    context.pushNamed(
-                      RouteNames.categoryGallery,
-                      pathParameters: {'id': item.id},
-                      queryParameters: {'name': item.name},
-                    );
-                  } else if (action == 'delete') {
-                    onDelete(context, item);
-                  }
-                },
-                itemBuilder: (_) => [
+                if (item.projectCount > 0)
                   PopupMenuItem(
-                    value: 'edit',
+                    value: 'gallery',
                     child: Row(
                       children: [
                         Icon(
-                          Icons.edit_outlined,
+                          Icons.photo_library_outlined,
                           size: 18,
                           color: scheme.onSurface,
                         ),
                         const SizedBox(width: 10),
-                        const Text('Editar'),
+                        const Text('Ver galería'),
                       ],
                     ),
                   ),
-                  if (item.projectCount > 0)
-                    PopupMenuItem(
-                      value: 'gallery',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.photo_library_outlined,
-                            size: 18,
-                            color: scheme.onSurface,
-                          ),
-                          const SizedBox(width: 10),
-                          const Text('Ver galería'),
-                        ],
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_outline,
+                        size: 18,
+                        color: AppColors.destructive,
                       ),
-                    ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: AppColors.destructive,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          'Eliminar',
-                          style: TextStyle(color: AppColors.destructive),
-                        ),
-                      ],
-                    ),
+                      SizedBox(width: 10),
+                      Text(
+                        'Eliminar',
+                        style: TextStyle(color: AppColors.destructive),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

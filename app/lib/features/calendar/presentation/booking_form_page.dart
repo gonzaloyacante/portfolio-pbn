@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../../services/providers/services_provider.dart';
 import '../data/booking_model.dart';
 import '../providers/calendar_provider.dart';
+import '../../../core/theme/app_radius.dart';
 
 class BookingFormPage extends ConsumerStatefulWidget {
   const BookingFormPage({super.key});
@@ -173,128 +175,105 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             padding: const EdgeInsets.all(16),
             children: [
               // ── Datos del cliente ────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Datos del cliente',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Datos del cliente',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _clientNameCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Nombre *',
-                        ),
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Obligatorio' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _clientNameCtrl,
+                      decoration: const InputDecoration(labelText: 'Nombre *'),
+                      validator: (v) =>
+                          (v == null || v.isEmpty) ? 'Obligatorio' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _clientEmailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(labelText: 'Email *'),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Obligatorio';
+                        if (!v.contains('@')) return 'Email inválido';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _clientPhoneCtrl,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(labelText: 'Teléfono'),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _guestCountCtrl,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Nº de asistentes',
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _clientEmailCtrl,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(labelText: 'Email *'),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Obligatorio';
-                          if (!v.contains('@')) return 'Email inválido';
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _clientPhoneCtrl,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          labelText: 'Teléfono',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _guestCountCtrl,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Nº de asistentes',
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
               // ── Fecha y hora ─────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                padding: EdgeInsets.zero,
                 child: ListTile(
                   leading: const Icon(Icons.calendar_month_outlined),
                   title: Text(dateLabel),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _pickDateTime,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
                 ),
               ),
               const SizedBox(height: 12),
               // ── Servicio ─────────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Servicio',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Servicio',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
-                      _buildServiceSelector(),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildServiceSelector(),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
               // ── Notas ────────────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notas',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Notas',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _notesCtrl,
-                        maxLines: 4,
-                        decoration: const InputDecoration(
-                          hintText: 'Observaciones, peticiones especiales…',
-                          border: OutlineInputBorder(),
-                        ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _notesCtrl,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        hintText: 'Observaciones, peticiones especiales…',
+                        border: OutlineInputBorder(),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),

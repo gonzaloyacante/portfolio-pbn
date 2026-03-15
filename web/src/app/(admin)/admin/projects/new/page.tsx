@@ -73,7 +73,36 @@ export default async function NewProjectPage() {
             />
           </div>
           <FormField label="Descripción" name="description" type="textarea" rows={4} />
+          <FormField
+            label="Extracto / Resumen"
+            name="excerpt"
+            type="textarea"
+            rows={2}
+            placeholder="Breve descripción para tarjetas y listados..."
+          />
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <FormField label="Cliente" name="client" placeholder="Nombre del cliente..." />
+            <FormField label="Duración" name="duration" placeholder="Ej: 2 horas, Todo el día..." />
+          </div>
           <FormField label="Fecha" name="date" type="date" placeholder="YYYY-MM-DD" />
+          <div className="flex flex-wrap items-center gap-6">
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                name="isFeatured"
+                className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+              />
+              <span className="text-sm font-medium text-(--foreground)">Destacado</span>
+            </label>
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                name="isPinned"
+                className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+              />
+              <span className="text-sm font-medium text-(--foreground)">Fijado al inicio</span>
+            </label>
+          </div>
           <ImageUpload name="images" label="Imágenes del proyecto" multiple mode="gallery" />
 
           <div className="border-border flex justify-end gap-4 border-t pt-4">

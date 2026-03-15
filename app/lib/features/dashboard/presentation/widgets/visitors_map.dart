@@ -6,6 +6,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/country_names.dart';
 import '../../data/dashboard_repository.dart';
+import '../../../../shared/widgets/app_card.dart';
+import '../../../../core/theme/app_radius.dart';
 
 // ── VisitorsMapWidget ────────────────────────────────────────────────────────
 
@@ -91,10 +93,10 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
     // NOTE: previously we attempted Carto tiles; prefer using primary OSM
     // layer with `tileBuilder` for dark mode to avoid retina/@2x 404s.
 
-    return Card(
+    return AppCard(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      clipBehavior: Clip.antiAlias,
+      borderRadius: AppRadius.forCard,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

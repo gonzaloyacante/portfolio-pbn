@@ -36,12 +36,21 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   final _shortDescCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
   final _durationCtrl = TextEditingController();
+  final _durationMinutesCtrl = TextEditingController();
+  final _maxBookingsCtrl = TextEditingController();
+  final _advanceNoticeCtrl = TextEditingController();
+  final _requirementsCtrl = TextEditingController();
+  final _cancellationPolicyCtrl = TextEditingController();
+  final _metaTitleCtrl = TextEditingController();
+  final _metaDescCtrl = TextEditingController();
+  final _metaKeywordsCtrl = TextEditingController();
   final _imageCtrl = TextEditingController();
   File? _pendingImage;
   String _priceLabel = 'desde';
-  String _currency = 'ARS';
+  String _currency = 'EUR';
   bool _isActive = true;
   bool _isFeatured = false;
+  bool _isAvailable = true;
   bool _loading = false;
   bool _populated = false;
 
@@ -56,6 +65,14 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       _shortDescCtrl,
       _priceCtrl,
       _durationCtrl,
+      _durationMinutesCtrl,
+      _maxBookingsCtrl,
+      _advanceNoticeCtrl,
+      _requirementsCtrl,
+      _cancellationPolicyCtrl,
+      _metaTitleCtrl,
+      _metaDescCtrl,
+      _metaKeywordsCtrl,
       _imageCtrl,
     ]) {
       ctrl.dispose();
@@ -72,12 +89,21 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     _shortDescCtrl.text = detail.shortDesc ?? '';
     _priceCtrl.text = detail.price ?? '';
     _durationCtrl.text = detail.duration ?? '';
+    _durationMinutesCtrl.text = detail.durationMinutes?.toString() ?? '';
+    _maxBookingsCtrl.text = detail.maxBookingsPerDay?.toString() ?? '';
+    _advanceNoticeCtrl.text = detail.advanceNoticeDays?.toString() ?? '';
+    _requirementsCtrl.text = detail.requirements ?? '';
+    _cancellationPolicyCtrl.text = detail.cancellationPolicy ?? '';
+    _metaTitleCtrl.text = detail.metaTitle ?? '';
+    _metaDescCtrl.text = detail.metaDescription ?? '';
+    _metaKeywordsCtrl.text = detail.metaKeywords.join(', ');
     _imageCtrl.text = detail.imageUrl ?? '';
     setState(() {
       _priceLabel = detail.priceLabel ?? 'desde';
       _currency = detail.currency;
       _isActive = detail.isActive;
       _isFeatured = detail.isFeatured;
+      _isAvailable = detail.isAvailable;
     });
   }
 
@@ -120,11 +146,30 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
         duration: _durationCtrl.text.trim().isEmpty
             ? null
             : _durationCtrl.text.trim(),
+        durationMinutes: int.tryParse(_durationMinutesCtrl.text.trim()),
         imageUrl: _imageCtrl.text.trim().isEmpty
             ? null
             : _imageCtrl.text.trim(),
         isActive: _isActive,
         isFeatured: _isFeatured,
+        isAvailable: _isAvailable,
+        maxBookingsPerDay: int.tryParse(_maxBookingsCtrl.text.trim()),
+        advanceNoticeDays: int.tryParse(_advanceNoticeCtrl.text.trim()),
+        requirements: _requirementsCtrl.text.trim().isEmpty
+            ? null
+            : _requirementsCtrl.text.trim(),
+        cancellationPolicy: _cancellationPolicyCtrl.text.trim().isEmpty
+            ? null
+            : _cancellationPolicyCtrl.text.trim(),
+        metaTitle: _metaTitleCtrl.text.trim().isEmpty
+            ? null
+            : _metaTitleCtrl.text.trim(),
+        metaDescription: _metaDescCtrl.text.trim().isEmpty
+            ? null
+            : _metaDescCtrl.text.trim(),
+        metaKeywords: _metaKeywordsCtrl.text.trim().isEmpty
+            ? null
+            : _metaKeywordsCtrl.text.trim(),
       );
 
       if (_isEdit) {
@@ -292,6 +337,125 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
                 value: _isFeatured,
                 onChanged: (v) => setState(() => _isFeatured = v),
               ),
+
+              // ── Horario y Disponibilidad ──────────────────────────────
+              const Divider(height: 32),
+              Text(
+                'Horario y Disponibilidad',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              SwitchListTile(
+                title: const Text('Disponible para reservas'),
+                subtitle: const Text(
+                  'Permite que los clientes soliciten este servicio',
+                ),
+                value: _isAvailable,
+                onChanged: (v) => setState(() => _isAvailable = v),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _durationMinutesCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Duración (minutos)',
+                        hintText: 'ej. 60',
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _maxBookingsCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Máx. reservas / día',
+                        hintText: 'ej. 3',
+                      ),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _advanceNoticeCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Días de antelación mínima',
+                  hintText: 'ej. 2',
+                  helperText: 'Días de aviso previo que necesita el cliente',
+                ),
+                keyboardType: TextInputType.number,
+              ),
+
+              // ── Detalles adicionales ──────────────────────────────────
+              const Divider(height: 32),
+              Text(
+                'Detalles adicionales',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _requirementsCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Requisitos para el cliente',
+                  hintText: 'Qué debe traer o saber el cliente...',
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _cancellationPolicyCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Política de cancelación',
+                  hintText: 'Condiciones de cancelación y reembolso...',
+                ),
+                maxLines: 3,
+              ),
+
+              // ── SEO ───────────────────────────────────────────────────
+              const Divider(height: 32),
+              Text(
+                'SEO',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _metaTitleCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Meta Título',
+                  helperText: 'Título para buscadores (50-60 caracteres)',
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _metaDescCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Meta Descripción',
+                  helperText:
+                      'Descripción para buscadores (150-160 caracteres)',
+                ),
+                maxLines: 2,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _metaKeywordsCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Keywords',
+                  hintText: 'fotografía, retrato, sesión...',
+                  helperText: 'Separadas por coma',
+                ),
+              ),
+
               const SizedBox(height: 32),
 
               FilledButton(

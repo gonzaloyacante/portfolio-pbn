@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TrashItem {
 
- String get id; String get type; String get displayName; DateTime get deletedAt;
+ String get id; String get type; String get displayName; DateTime get deletedAt; Map<String, dynamic> get rawData;
 /// Create a copy of TrashItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TrashItemCopyWith<TrashItem> get copyWith => _$TrashItemCopyWithImpl<TrashItem>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrashItem&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TrashItem&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other.rawData, rawData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,type,displayName,deletedAt);
+int get hashCode => Object.hash(runtimeType,id,type,displayName,deletedAt,const DeepCollectionEquality().hash(rawData));
 
 @override
 String toString() {
-  return 'TrashItem(id: $id, type: $type, displayName: $displayName, deletedAt: $deletedAt)';
+  return 'TrashItem(id: $id, type: $type, displayName: $displayName, deletedAt: $deletedAt, rawData: $rawData)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TrashItemCopyWith<$Res>  {
   factory $TrashItemCopyWith(TrashItem value, $Res Function(TrashItem) _then) = _$TrashItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String type, String displayName, DateTime deletedAt
+ String id, String type, String displayName, DateTime deletedAt, Map<String, dynamic> rawData
 });
 
 
@@ -62,13 +62,14 @@ class _$TrashItemCopyWithImpl<$Res>
 
 /// Create a copy of TrashItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? type = null,Object? displayName = null,Object? deletedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? type = null,Object? displayName = null,Object? deletedAt = null,Object? rawData = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,deletedAt: null == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,rawData: null == rawData ? _self.rawData : rawData // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>,
   ));
 }
 
@@ -153,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String type,  String displayName,  DateTime deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String type,  String displayName,  DateTime deletedAt,  Map<String, dynamic> rawData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TrashItem() when $default != null:
-return $default(_that.id,_that.type,_that.displayName,_that.deletedAt);case _:
+return $default(_that.id,_that.type,_that.displayName,_that.deletedAt,_that.rawData);case _:
   return orElse();
 
 }
@@ -174,10 +175,10 @@ return $default(_that.id,_that.type,_that.displayName,_that.deletedAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String type,  String displayName,  DateTime deletedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String type,  String displayName,  DateTime deletedAt,  Map<String, dynamic> rawData)  $default,) {final _that = this;
 switch (_that) {
 case _TrashItem():
-return $default(_that.id,_that.type,_that.displayName,_that.deletedAt);case _:
+return $default(_that.id,_that.type,_that.displayName,_that.deletedAt,_that.rawData);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -194,10 +195,10 @@ return $default(_that.id,_that.type,_that.displayName,_that.deletedAt);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String type,  String displayName,  DateTime deletedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String type,  String displayName,  DateTime deletedAt,  Map<String, dynamic> rawData)?  $default,) {final _that = this;
 switch (_that) {
 case _TrashItem() when $default != null:
-return $default(_that.id,_that.type,_that.displayName,_that.deletedAt);case _:
+return $default(_that.id,_that.type,_that.displayName,_that.deletedAt,_that.rawData);case _:
   return null;
 
 }
@@ -209,13 +210,20 @@ return $default(_that.id,_that.type,_that.displayName,_that.deletedAt);case _:
 
 
 class _TrashItem implements TrashItem {
-  const _TrashItem({required this.id, required this.type, required this.displayName, required this.deletedAt});
+  const _TrashItem({required this.id, required this.type, required this.displayName, required this.deletedAt, final  Map<String, dynamic> rawData = const <String, dynamic>{}}): _rawData = rawData;
   
 
 @override final  String id;
 @override final  String type;
 @override final  String displayName;
 @override final  DateTime deletedAt;
+ final  Map<String, dynamic> _rawData;
+@override@JsonKey() Map<String, dynamic> get rawData {
+  if (_rawData is EqualUnmodifiableMapView) return _rawData;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_rawData);
+}
+
 
 /// Create a copy of TrashItem
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +235,16 @@ _$TrashItemCopyWith<_TrashItem> get copyWith => __$TrashItemCopyWithImpl<_TrashI
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrashItem&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TrashItem&&(identical(other.id, id) || other.id == id)&&(identical(other.type, type) || other.type == type)&&(identical(other.displayName, displayName) || other.displayName == displayName)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&const DeepCollectionEquality().equals(other._rawData, _rawData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,type,displayName,deletedAt);
+int get hashCode => Object.hash(runtimeType,id,type,displayName,deletedAt,const DeepCollectionEquality().hash(_rawData));
 
 @override
 String toString() {
-  return 'TrashItem(id: $id, type: $type, displayName: $displayName, deletedAt: $deletedAt)';
+  return 'TrashItem(id: $id, type: $type, displayName: $displayName, deletedAt: $deletedAt, rawData: $rawData)';
 }
 
 
@@ -247,7 +255,7 @@ abstract mixin class _$TrashItemCopyWith<$Res> implements $TrashItemCopyWith<$Re
   factory _$TrashItemCopyWith(_TrashItem value, $Res Function(_TrashItem) _then) = __$TrashItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String type, String displayName, DateTime deletedAt
+ String id, String type, String displayName, DateTime deletedAt, Map<String, dynamic> rawData
 });
 
 
@@ -264,13 +272,14 @@ class __$TrashItemCopyWithImpl<$Res>
 
 /// Create a copy of TrashItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? type = null,Object? displayName = null,Object? deletedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? type = null,Object? displayName = null,Object? deletedAt = null,Object? rawData = null,}) {
   return _then(_TrashItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,displayName: null == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
 as String,deletedAt: null == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,rawData: null == rawData ? _self._rawData : rawData // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>,
   ));
 }
 

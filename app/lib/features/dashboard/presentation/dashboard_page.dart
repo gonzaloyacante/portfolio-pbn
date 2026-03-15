@@ -19,6 +19,7 @@ import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../../shared/widgets/stat_card.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../data/dashboard_repository.dart';
 import '../providers/dashboard_provider.dart';
 
@@ -414,46 +415,44 @@ class _DeviceUsageSection extends StatelessWidget {
     final sorted = deviceUsage.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    return Card(
+    return AppCard(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.base),
-        child: Row(
-          children: sorted.map((entry) {
-            final pct = (entry.value / safeTotal * 100).round();
-            final color = colors[entry.key] ?? colorScheme.primary;
-            return Expanded(
-              child: Column(
-                children: [
-                  Icon(
-                    _icons[entry.key] ?? Icons.devices_outlined,
+      borderRadius: BorderRadius.circular(16),
+      padding: const EdgeInsets.all(AppSpacing.base),
+      child: Row(
+        children: sorted.map((entry) {
+          final pct = (entry.value / safeTotal * 100).round();
+          final color = colors[entry.key] ?? colorScheme.primary;
+          return Expanded(
+            child: Column(
+              children: [
+                Icon(
+                  _icons[entry.key] ?? Icons.devices_outlined,
+                  color: color,
+                  size: 28,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '$pct%',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: color,
-                    size: 28,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$pct%',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: color,
-                    ),
+                ),
+                Text(
+                  _labels[entry.key] ?? entry.key,
+                  style: theme.textTheme.bodySmall,
+                ),
+                Text(
+                  '${entry.value} visitas',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                   ),
-                  Text(
-                    _labels[entry.key] ?? entry.key,
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  Text(
-                    '${entry.value} visitas',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -473,80 +472,77 @@ class _TopRankingSection extends StatelessWidget {
         ? 1
         : items.map((e) => e.$2).reduce((a, b) => a > b ? a : b);
 
-    return Card(
+    return AppCard(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.base,
-          vertical: AppSpacing.sm,
-        ),
-        child: Column(
-          children: items.asMap().entries.map((entry) {
-            final rank = entry.key + 1;
-            final (label, count) = entry.value;
-            final progress = count / maxCount;
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 24,
-                    child: Text(
-                      '$rank',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(
-                          alpha: 0.4,
-                        ),
-                        fontWeight: FontWeight.bold,
-                      ),
+      borderRadius: BorderRadius.circular(16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.base,
+        vertical: AppSpacing.sm,
+      ),
+      child: Column(
+        children: items.asMap().entries.map((entry) {
+          final rank = entry.key + 1;
+          final (label, count) = entry.value;
+          final progress = count / maxCount;
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 24,
+                  child: Text(
+                    '$rank',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                label,
-                                style: theme.textTheme.bodyMedium,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              '$count',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 4,
-                            backgroundColor: theme.colorScheme.primary
-                                .withValues(alpha: 0.12),
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              theme.colorScheme.primary,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              label,
+                              style: theme.textTheme.bodyMedium,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
+                          Text(
+                            '$count',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: progress,
+                          minHeight: 4,
+                          backgroundColor: theme.colorScheme.primary.withValues(
+                            alpha: 0.12,
+                          ),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            theme.colorScheme.primary,
+                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
-        ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }

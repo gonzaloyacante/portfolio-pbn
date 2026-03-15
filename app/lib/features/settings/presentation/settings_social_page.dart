@@ -11,6 +11,7 @@ import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
+import '../../../shared/widgets/app_card.dart';
 
 class SettingsSocialPage extends ConsumerWidget {
   const SettingsSocialPage({super.key});
@@ -179,8 +180,8 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
     final hasLink = widget.link != null && widget.link!.url.isNotEmpty;
     final cs = Theme.of(context).colorScheme;
 
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    return AppCard(
+      borderRadius: AppRadius.forCard,
       child: Column(
         children: [
           ListTile(
@@ -222,9 +223,7 @@ class _SocialLinkTileState extends ConsumerState<_SocialLinkTile> {
                 ),
               ],
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+
             onTap: () => setState(() => _expanded = !_expanded),
           ),
           if (_expanded)
