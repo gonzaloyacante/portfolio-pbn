@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +16,9 @@ import '../../categories/providers/categories_provider.dart';
 import '../data/project_model.dart';
 import '../data/projects_repository.dart';
 import '../providers/projects_provider.dart';
+import 'widgets/add_image_button.dart';
+import 'widgets/count_badge.dart';
+import 'widgets/gallery_thumb.dart';
 
 // Patrones de slug compilados una sola vez (igual que category_form_page)
 // Tipados como Pattern para evitar DEPRECATED_MEMBER_USE del linter (RegExp
@@ -387,7 +389,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (_errorMsg != null) ...[
-          _InlineError(message: _errorMsg!),
+          InlineError(message: _errorMsg!),
           const SizedBox(height: 16),
         ],
         _gallerySection(),
@@ -418,7 +420,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (_errorMsg != null) ...[
-          _InlineError(message: _errorMsg!),
+          InlineError(message: _errorMsg!),
           const SizedBox(height: 16),
         ],
         Row(
@@ -666,7 +668,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
             ),
             if (allImages > 0) ...[
               const SizedBox(width: 8),
-              _CountBadge(count: allImages, scheme: scheme),
+              CountBadge(count: allImages, scheme: scheme),
             ],
           ],
         ),
@@ -682,7 +684,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               // Imágenes ya guardadas
               if (index < _existingImages.length) {
                 final img = _existingImages[index];
-                return _GalleryThumb.network(
+                return GalleryThumb.network(
                   url: img.imageUrl,
                   onRemove: () => setState(() {
                     _removedImageIds.add(img.id);
@@ -699,7 +701,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               // Imágenes nuevas pendientes de subir
               final pi = index - _existingImages.length;
               if (pi < _pendingNewImages.length) {
-                return _GalleryThumb.file(
+                return GalleryThumb.file(
                   file: _pendingNewImages[pi],
                   onRemove: () =>
                       setState(() => _pendingNewImages.removeAt(pi)),
@@ -712,7 +714,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               }
 
               // Botón "Añadir imagen"
-              return _AddImageButton(
+              return AddImageButton(
                 scheme: scheme,
                 onTap: _isLoading ? null : _pickGalleryImage,
               );
@@ -733,197 +735,3 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     ),
   );
 }
-
-// ── Widgets auxiliares ────────────────────────────────────────────────────────
-
-class _InlineError extends StatelessWidget {
-  const _InlineError({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: scheme.errorContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline_rounded, color: scheme.onErrorContainer),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(color: scheme.onErrorContainer),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Miniatura de galería (red o archivo local) con botón de eliminar.
-class _GalleryThumb extends StatelessWidget {
-  const _GalleryThumb.network({
-    required String url,
-    required this.onRemove,
-    this.onSetCover,
-    this.isCover = false,
-  }) : _url = url,
-       _file = null;
-
-  const _GalleryThumb.file({
-    required File file,
-    required this.onRemove,
-    this.onSetCover,
-    this.isCover = false,
-  }) : _url = null,
-       _file = file;
-
-  final String? _url;
-  final File? _file;
-  final VoidCallback onRemove;
-  final VoidCallback? onSetCover;
-  final bool isCover;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    Widget img;
-    if (_url != null) {
-      img = CachedNetworkImage(
-        imageUrl: _url,
-        width: 100,
-        height: 100,
-        fit: BoxFit.cover,
-        placeholder: (context, url) =>
-            Container(color: scheme.surfaceContainerHighest),
-        errorWidget: (context, url, error) => Container(
-          color: scheme.surfaceContainerHighest,
-          child: Icon(
-            Icons.broken_image_outlined,
-            color: scheme.outlineVariant,
-          ),
-        ),
-      );
-    } else {
-      img = Image.file(_file!, width: 100, height: 100, fit: BoxFit.cover);
-    }
-
-    return Stack(
-      children: [
-        ClipRRect(borderRadius: BorderRadius.circular(10), child: img),
-        // Botón para marcar como miniatura
-        if (onSetCover != null)
-          Positioned(
-            top: 3,
-            left: 3,
-            child: GestureDetector(
-              onTap: onSetCover,
-              child: Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: isCover
-                      ? Colors.amber
-                      : Colors.black.withValues(alpha: 0.55),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isCover ? Icons.star : Icons.star_border,
-                  size: 14,
-                  color: isCover ? Colors.black : Colors.white,
-                ),
-              ),
-            ),
-          ),
-        Positioned(
-          top: 3,
-          right: 3,
-          child: GestureDetector(
-            onTap: onRemove,
-            child: Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.65),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.close_rounded,
-                size: 14,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Botón cuadrado para añadir imagen a la galería.
-class _AddImageButton extends StatelessWidget {
-  const _AddImageButton({required this.scheme, this.onTap});
-
-  final ColorScheme scheme;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: scheme.outlineVariant),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.add_photo_alternate_outlined, color: scheme.primary),
-            const SizedBox(height: 4),
-            Text(
-              'Añadir',
-              style: TextStyle(fontSize: 11, color: scheme.outline),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Badge circular con el conteo de imágenes.
-class _CountBadge extends StatelessWidget {
-  const _CountBadge({required this.count, required this.scheme});
-  final int count;
-  final ColorScheme scheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        '$count',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: scheme.onPrimaryContainer,
-        ),
-      ),
-    );
-  }
-}
-
-// La selección de portada ahora se realiza marcando una miniatura en la galería.

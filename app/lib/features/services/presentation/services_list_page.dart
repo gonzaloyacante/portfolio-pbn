@@ -6,10 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/providers/app_preferences_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/utils/currency_helper.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_search_bar.dart';
 import '../../../shared/widgets/fade_slide_in.dart';
@@ -17,11 +14,12 @@ import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
-import '../../../shared/widgets/status_badge.dart';
-import '../../../shared/widgets/app_card.dart';
+
 import '../data/service_model.dart';
 import '../data/services_repository.dart';
 import '../providers/services_provider.dart';
+import 'widgets/service_grid_card.dart';
+import 'widgets/service_tile.dart';
 
 class ServicesListPage extends ConsumerStatefulWidget {
   const ServicesListPage({super.key});
@@ -164,7 +162,7 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                                 delay: Duration(
                                   milliseconds: (i * 40).clamp(0, 300),
                                 ),
-                                child: _ServiceGridCard(
+                                child: ServiceGridCard(
                                   item: paginated.data[i],
                                   onDelete: _delete,
                                 ),
@@ -179,7 +177,7 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                                 delay: Duration(
                                   milliseconds: (i * 40).clamp(0, 300),
                                 ),
-                                child: _ServiceTile(
+                                child: ServiceTile(
                                   item: paginated.data[i],
                                   onDelete: _delete,
                                 ),
@@ -195,273 +193,3 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
 }
 
 // ── Grid Card ─────────────────────────────────────────────────────────────────
-
-class _ServiceGridCard extends StatelessWidget {
-  const _ServiceGridCard({required this.item, required this.onDelete});
-
-  final ServiceItem item;
-  final Future<void> Function(BuildContext, ServiceItem) onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final color = scheme.primary;
-
-    final priceText = item.price != null
-        ? '${currencySymbol(item.currency)}${item.price}'
-        : null;
-
-    return AppCard(
-      borderRadius: AppRadius.forTile,
-      onTap: () => context.pushNamed(
-        RouteNames.serviceEdit,
-        pathParameters: {'id': item.id},
-      ),
-      padding: const EdgeInsets.fromLTRB(12, 14, 4, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Icon + menu row
-          Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Center(
-                  child: Icon(Icons.design_services, color: color, size: 22),
-                ),
-              ),
-              const Spacer(),
-              PopupMenuButton<String>(
-                iconSize: 18,
-                padding: EdgeInsets.zero,
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  size: 18,
-                  color: scheme.outline,
-                ),
-                itemBuilder: (_) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit_outlined, size: 18),
-                        SizedBox(width: 10),
-                        Text('Editar'),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_outline,
-                          size: 18,
-                          color: AppColors.destructive,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Eliminar',
-                          style: TextStyle(color: AppColors.destructive),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-                onSelected: (action) {
-                  if (action == 'edit') {
-                    context.pushNamed(
-                      RouteNames.serviceEdit,
-                      pathParameters: {'id': item.id},
-                    );
-                  } else if (action == 'delete') {
-                    onDelete(context, item);
-                  }
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // Name
-          Text(
-            item.name,
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          // Price
-          if (priceText != null)
-            Text(
-              priceText,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: scheme.outline,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          const Spacer(),
-          // Status
-          StatusBadge(
-            status: item.isActive ? AppStatus.active : AppStatus.inactive,
-            small: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Tile ──────────────────────────────────────────────────────────────────────
-
-class _ServiceTile extends StatelessWidget {
-  const _ServiceTile({required this.item, required this.onDelete});
-
-  final ServiceItem item;
-  final Future<void> Function(BuildContext, ServiceItem) onDelete;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final color = scheme.primary;
-
-    final priceText = item.price != null
-        ? '${item.priceLabel ?? 'desde'} ${currencySymbol(item.currency)}${item.price}'
-        : 'Sin precio';
-
-    return AppCard(
-      borderRadius: AppRadius.forTile,
-      onTap: () => context.pushNamed(
-        RouteNames.serviceEdit,
-        pathParameters: {'id': item.id},
-      ),
-      padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
-      child: Row(
-        children: [
-          // Icon container
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Center(
-              child: Icon(Icons.design_services, color: color, size: 22),
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.name,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    StatusBadge(
-                      status: item.isActive
-                          ? AppStatus.active
-                          : AppStatus.inactive,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  '$priceText${item.duration != null ? ' · ${item.duration}' : ''}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.outline,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (item.shortDesc != null && item.shortDesc!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    item.shortDesc!,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ],
-            ),
-          ),
-          // Menu
-          PopupMenuButton<String>(
-            iconSize: 20,
-            padding: EdgeInsets.zero,
-            icon: Icon(
-              Icons.more_vert_rounded,
-              size: 20,
-              color: scheme.outline,
-            ),
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                value: 'edit',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit_outlined,
-                      size: 18,
-                      color: scheme.onSurface,
-                    ),
-                    const SizedBox(width: 10),
-                    const Text('Editar'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: AppColors.destructive,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Eliminar',
-                      style: TextStyle(color: AppColors.destructive),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (action) {
-              if (action == 'edit') {
-                context.pushNamed(
-                  RouteNames.serviceEdit,
-                  pathParameters: {'id': item.id},
-                );
-              } else if (action == 'delete') {
-                onDelete(context, item);
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}

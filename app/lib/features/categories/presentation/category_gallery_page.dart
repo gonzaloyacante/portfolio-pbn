@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -10,9 +9,11 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
+import 'widgets/gallery_grid_tile.dart';
+import 'widgets/gallery_tile.dart';
+import 'widgets/instruction_banner.dart';
 
 // ── Provider ──────────────────────────────────────────────────────────────────
 
@@ -156,7 +157,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             AppSpacing.base,
             0,
           ),
-          child: _InstructionBanner(
+          child: InstructionBanner(
             icon: Icons.drag_indicator_rounded,
             text:
                 'Mantené presionado y arrastrá para reordenar. '
@@ -174,7 +175,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             onReorder: _onReorder,
             itemBuilder: (context, index) {
               final img = _items![index];
-              return _GalleryTile(
+              return GalleryTile(
                 key: ValueKey(img.id),
                 item: img,
                 index: index,
@@ -214,7 +215,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             AppSpacing.base,
             0,
           ),
-          child: _InstructionBanner(
+          child: InstructionBanner(
             icon: Icons.touch_app_rounded,
             text:
                 'Mantené presionado y arrastrá para reordenar las fotos. '
@@ -326,7 +327,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                     clipBehavior: Clip.antiAlias,
                     child: Stack(
                       children: [
-                        _GridTile(item: img, position: position),
+                        GalleryGridTile(item: img, position: position),
                         Positioned.fill(
                           child: DecoratedBox(
                             decoration: BoxDecoration(
@@ -380,7 +381,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
               ),
               child: ClipRRect(
                 borderRadius: AppRadius.asRounded(AppRadius.md),
-                child: _GridTile(item: img, position: position),
+                child: GalleryGridTile(item: img, position: position),
               ),
             ),
           );
@@ -509,288 +510,6 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
-  }
-}
-
-// ── Banner de instrucción (reutilizable entre vistas) ─────────────────────────
-
-class _InstructionBanner extends StatelessWidget {
-  const _InstructionBanner({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: scheme.primary),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(text, style: Theme.of(context).textTheme.bodySmall),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Tile lista ────────────────────────────────────────────────────────────────
-
-class _GalleryTile extends StatelessWidget {
-  const _GalleryTile({
-    super.key,
-    required this.item,
-    required this.index,
-    required this.total,
-  });
-
-  final GalleryImageItem item;
-  final int index;
-  final int total;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: AppCard(
-        borderRadius: AppRadius.asRounded(AppRadius.sm),
-        padding: EdgeInsets.zero,
-        child: Row(
-          children: [
-            // Número de orden
-            SizedBox(
-              width: 36,
-              child: Center(
-                child: Text(
-                  '${index + 1}',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: scheme.onSurface.withValues(alpha: 0.5),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            // Thumbnail
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: SizedBox(
-                width: 72,
-                height: 72,
-                child: CachedNetworkImage(
-                  imageUrl: item.thumbnailUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (ctx2, url) => Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.image_outlined,
-                      color: scheme.outlineVariant,
-                      size: 28,
-                    ),
-                  ),
-                  errorWidget: (ctx2, url, err) => Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.broken_image_outlined,
-                      color: scheme.outlineVariant,
-                      size: 28,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Info
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.alt ?? item.projectTitle,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.folder_outlined,
-                          size: 12,
-                          color: scheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            item.projectTitle,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurface.withValues(alpha: 0.5),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (item.isCover || item.isHero)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3),
-                        child: Wrap(
-                          spacing: 4,
-                          children: [
-                            if (item.isCover)
-                              _Badge(label: 'Portada', color: scheme.primary),
-                            if (item.isHero)
-                              _Badge(label: 'Hero', color: scheme.tertiary),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            // Drag handle
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Icon(
-                Icons.drag_handle_rounded,
-                color: scheme.onSurface.withValues(alpha: 0.3),
-                size: 22,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Tile cuadrícula (masonry) ─────────────────────────────────────────────────
-
-class _GridTile extends StatelessWidget {
-  const _GridTile({required this.item, this.position});
-
-  final GalleryImageItem item;
-  final int? position;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    // Relación de aspecto real de la imagen; fallback 4:5
-    final aspectRatio =
-        (item.width != null && item.height != null && item.height! > 0)
-        ? item.width! / item.height!
-        : 0.8;
-
-    return AspectRatio(
-      aspectRatio: aspectRatio,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Imagen
-          CachedNetworkImage(
-            imageUrl: item.thumbnailUrl,
-            fit: BoxFit.cover,
-            placeholder: (_, _) => Container(
-              color: scheme.surfaceContainerHighest,
-              child: Icon(
-                Icons.image_outlined,
-                color: scheme.outlineVariant,
-                size: 32,
-              ),
-            ),
-            errorWidget: (_, _, _) => Container(
-              color: scheme.surfaceContainerHighest,
-              child: Icon(
-                Icons.broken_image_outlined,
-                color: scheme.outlineVariant,
-                size: 32,
-              ),
-            ),
-          ),
-          // Badges de portada / hero
-          if (item.isCover || item.isHero)
-            Positioned(
-              bottom: 6,
-              left: 6,
-              child: Wrap(
-                spacing: 3,
-                children: [
-                  if (item.isCover)
-                    _Badge(label: 'Portada', color: scheme.primary),
-                  if (item.isHero)
-                    _Badge(label: 'Hero', color: scheme.tertiary),
-                ],
-              ),
-            ),
-          // Número de posición en el orden guardado
-          if (position != null)
-            Positioned(
-              top: 6,
-              right: 6,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '#$position',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Mini badge ────────────────────────────────────────────────────────────────
-
-class _Badge extends StatelessWidget {
-  const _Badge({required this.label, required this.color});
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 10,
-          color: color,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
   }
 }
 

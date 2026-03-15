@@ -10,6 +10,7 @@ import '../../../shared/widgets/app_card.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 import '../../../core/utils/date_utils.dart';
+import 'widgets/contact_chips.dart';
 
 class ContactDetailPage extends ConsumerStatefulWidget {
   const ContactDetailPage({super.key, required this.contactId});
@@ -169,12 +170,12 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [
-                                    _StatusChip(
+                                    StatusChip(
                                       label: _statusLabel(detail.status),
                                       color: _statusColor(detail.status),
                                     ),
                                     const SizedBox(width: 8),
-                                    _PriorityChip(priority: detail.priority),
+                                    PriorityChip(priority: detail.priority),
                                   ],
                                 ),
                               ],
@@ -344,22 +345,22 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           if (detail.referrer != null)
-                            _TrackingRow(
+                            TrackingRow(
                               label: 'Referrer',
                               value: detail.referrer!,
                             ),
                           if (detail.utmSource != null)
-                            _TrackingRow(
+                            TrackingRow(
                               label: 'UTM Source',
                               value: detail.utmSource!,
                             ),
                           if (detail.utmMedium != null)
-                            _TrackingRow(
+                            TrackingRow(
                               label: 'UTM Medium',
                               value: detail.utmMedium!,
                             ),
                           if (detail.utmCampaign != null)
-                            _TrackingRow(
+                            TrackingRow(
                               label: 'UTM Campaign',
                               value: detail.utmCampaign!,
                             ),
@@ -425,84 +426,3 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     _ => Icons.email_outlined,
   };
 }
-
-// ── Sub-widgets ───────────────────────────────────────────────────────────────
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.color});
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _PriorityChip extends StatelessWidget {
-  const _PriorityChip({required this.priority});
-  final String priority;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = switch (priority) {
-      'URGENT' => Colors.red,
-      'HIGH' => Colors.orange,
-      'LOW' => Colors.grey,
-      _ => Theme.of(context).colorScheme.primary,
-    };
-    final label = switch (priority) {
-      'URGENT' => 'Urgente',
-      'HIGH' => 'Alta',
-      'LOW' => 'Baja',
-      _ => 'Media',
-    };
-    return _StatusChip(label: label, color: color);
-  }
-}
-
-class _TrackingRow extends StatelessWidget {
-  const _TrackingRow({required this.label, required this.value});
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 110,
-            child: Text(
-              label,
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          Expanded(
-            child: Text(value, style: Theme.of(context).textTheme.bodySmall),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// La lógica de skeleton usa SkeletonContactDetail desde shimmer_loader.dart.

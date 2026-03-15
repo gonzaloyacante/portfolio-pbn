@@ -12,9 +12,10 @@ import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../data/booking_model.dart';
-import '../data/google_calendar_models.dart';
 import '../providers/calendar_provider.dart';
-import '../providers/google_calendar_provider.dart';
+import 'widgets/google_calendar_section.dart';
+import 'widgets/info_row.dart';
+import 'widgets/section_card.dart';
 
 class BookingDetailPage extends ConsumerStatefulWidget {
   const BookingDetailPage({super.key, required this.bookingId});
@@ -169,26 +170,26 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Cabecera ──────────────────────────────────────────────────────
-          _SectionCard(
+          SectionCard(
             children: [
-              _InfoRow(
+              InfoRow(
                 icon: Icons.person_outline,
                 label: 'Cliente',
                 value: detail.clientName,
               ),
-              _InfoRow(
+              InfoRow(
                 icon: Icons.email_outlined,
                 label: 'Email',
                 value: detail.clientEmail,
               ),
               if (detail.clientPhone != null)
-                _InfoRow(
+                InfoRow(
                   icon: Icons.phone_outlined,
                   label: 'Teléfono',
                   value: detail.clientPhone!,
                 ),
               if (detail.guestCount > 0)
-                _InfoRow(
+                InfoRow(
                   icon: Icons.people_outline,
                   label: 'Asistentes',
                   value: '${detail.guestCount}',
@@ -197,20 +198,20 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           ),
           const SizedBox(height: 12),
           // ── Servicio y fecha ──────────────────────────────────────────────
-          _SectionCard(
+          SectionCard(
             children: [
-              _InfoRow(
+              InfoRow(
                 icon: Icons.design_services_outlined,
                 label: 'Servicio',
                 value: detail.service?.name ?? '—',
               ),
-              _InfoRow(
+              InfoRow(
                 icon: Icons.calendar_today_outlined,
                 label: 'Fecha',
                 value: _formatDate(detail.date),
               ),
               if (detail.endDate != null)
-                _InfoRow(
+                InfoRow(
                   icon: Icons.schedule_outlined,
                   label: 'Fin',
                   value: _formatDate(detail.endDate!),
@@ -219,30 +220,30 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           ),
           const SizedBox(height: 12),
           // ── Pago ─────────────────────────────────────────────────────────
-          _SectionCard(
+          SectionCard(
             title: 'Pago',
             children: [
-              _InfoRow(
+              InfoRow(
                 icon: Icons.euro_outlined,
                 label: 'Total',
                 value: detail.totalAmount != null
                     ? '${currencySymbol(null)}${detail.totalAmount}'
                     : '—',
               ),
-              _InfoRow(
+              InfoRow(
                 icon: Icons.paid_outlined,
                 label: 'Pagado',
                 value: detail.paidAmount != null
                     ? '${currencySymbol(null)}${detail.paidAmount}'
                     : '—',
               ),
-              _InfoRow(
+              InfoRow(
                 icon: Icons.receipt_outlined,
                 label: 'Estado pago',
                 value: _paymentLabel(detail.paymentStatus),
               ),
               if (detail.paymentMethod != null)
-                _InfoRow(
+                InfoRow(
                   icon: Icons.credit_card_outlined,
                   label: 'Método',
                   value: detail.paymentMethod!,
@@ -308,7 +309,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           ),
           if (detail.clientNotes != null && detail.clientNotes!.isNotEmpty) ...[
             const SizedBox(height: 12),
-            _SectionCard(
+            SectionCard(
               title: 'Notas del cliente',
               children: [
                 Text(detail.clientNotes!, style: theme.textTheme.bodyMedium),
@@ -327,7 +328,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           ),
           const SizedBox(height: 12),
           // ── Google Calendar ───────────────────────────────────────────────
-          _GoogleCalendarSection(bookingDetail: detail),
+          GoogleCalendarSection(bookingDetail: detail),
           const SizedBox(height: 16),
         ],
       ),
@@ -370,183 +371,4 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     ('Cancelado', 'CANCELLED'),
     ('No presentó', 'NO_SHOW'),
   ];
-}
-
-// ── Widgets auxiliares ────────────────────────────────────────────────────────
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({this.title, required this.children});
-  final String? title;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      borderRadius: BorderRadius.circular(20),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (title != null) ...[
-            Text(
-              title!,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-          ],
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 18, color: theme.colorScheme.outline),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.outline,
-                  ),
-                ),
-                Text(value, style: theme.textTheme.bodyMedium),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── _GoogleCalendarSection ────────────────────────────────────────────────────
-
-/// Botón para exportar la reserva a Google Calendar.
-///
-/// Muestra "Conectar Google Calendar" si no hay sesión Google activa,
-/// o "Añadir a Google Calendar" si el usuario ya tiene cuenta conectada.
-class _GoogleCalendarSection extends ConsumerWidget {
-  const _GoogleCalendarSection({required this.bookingDetail});
-
-  final BookingDetail bookingDetail;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final gcAsync = ref.watch(googleCalendarProvider);
-
-    return gcAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, _) => const SizedBox.shrink(),
-      data: (gcState) {
-        final isConnected = gcState is GoogleAuthConnected;
-
-        return SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: () => _handlePress(context, ref, isConnected),
-            icon: Image.asset(
-              'assets/images/google_calendar_logo.png',
-              width: 20,
-              height: 20,
-              errorBuilder: (_, _, _) =>
-                  const Icon(Icons.calendar_month_outlined, size: 20),
-            ),
-            label: Text(
-              isConnected
-                  ? 'Añadir a Google Calendar'
-                  : 'Conectar Google Calendar',
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> _handlePress(
-    BuildContext context,
-    WidgetRef ref,
-    bool isConnected,
-  ) async {
-    if (!isConnected) {
-      // Conectar cuenta Google primero.
-      await ref.read(googleCalendarProvider.notifier).signIn();
-
-      final newState = ref
-          .read(googleCalendarProvider)
-          .whenOrNull(data: (v) => v);
-      if (newState is! GoogleAuthConnected || !context.mounted) return;
-    }
-
-    // Crear evento en Google Calendar.
-    final endDate =
-        bookingDetail.endDate ??
-        bookingDetail.date.add(const Duration(hours: 2));
-
-    final parts = <String>[
-      if (bookingDetail.clientPhone != null)
-        'Teléfono: ${bookingDetail.clientPhone}',
-      if (bookingDetail.clientNotes != null &&
-          bookingDetail.clientNotes!.isNotEmpty)
-        'Notas: ${bookingDetail.clientNotes}',
-    ];
-
-    final event = GoogleCalendarEvent(
-      title:
-          'Reserva — ${bookingDetail.service?.name ?? 'Sesión'} — ${bookingDetail.clientName}',
-      description: parts.isEmpty ? bookingDetail.clientEmail : parts.join('\n'),
-      startDateTime: bookingDetail.date,
-      endDateTime: endDate,
-      attendeeEmail: bookingDetail.clientEmail,
-    );
-
-    try {
-      final created = await ref
-          .read(googleCalendarProvider.notifier)
-          .createEvent(event);
-
-      if (!context.mounted) return;
-
-      if (created) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Evento añadido a Google Calendar'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error al crear evento: $e'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
 }
