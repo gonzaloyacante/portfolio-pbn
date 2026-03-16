@@ -53,6 +53,31 @@ export { default as LoadingState } from './feedback/LoadingState'
 export { default as LoadingOverlay } from './feedback/LoadingOverlay'
 export { Skeleton } from './feedback/Skeleton'
 export { SkeletonCard, SkeletonGrid, SkeletonTestimonial } from './feedback/SkeletonCard'
+export {
+  SkeletonPageHeader,
+  SkeletonStatCards,
+  SkeletonAnalyticsChart,
+  SkeletonSmallCard,
+  SkeletonTable,
+  SkeletonProjectGrid,
+  SkeletonCategoryGrid,
+  SkeletonServiceList,
+  SkeletonTestimonialList,
+  SkeletonTrashGrid,
+  SkeletonContactList,
+  SkeletonDashboardPage,
+  SkeletonContactsPage,
+  SkeletonProjectsPage,
+  SkeletonCategoriesPage,
+  SkeletonServicesPage,
+  SkeletonTestimonialsPage,
+  SkeletonTrashPage,
+  SkeletonSettingsPage,
+  SkeletonFormPage,
+  SkeletonAnalyticsPage,
+  SkeletonCalendarPage,
+  SkeletonGalleryPage,
+} from './feedback/SkeletonAdmin'
 export { ErrorBoundary } from './feedback/ErrorBoundary'
 
 // Animations
