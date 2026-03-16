@@ -10,6 +10,7 @@ class DashboardSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);
+    final isExpanded = AppBreakpoints.isExpanded(context);
     final cols = AppBreakpoints.gridColumns(
       context,
       compact: 2,
@@ -25,12 +26,11 @@ class DashboardSkeleton extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Encabezado de sección — stats
+            // ── Estadísticas ──────────────────────────────────────────────
             Padding(
               padding: padding.copyWith(bottom: AppSpacing.sm),
               child: const ShimmerBox(width: 160, height: 18, borderRadius: 6),
             ),
-            // Grid de stat cards
             Padding(
               padding: EdgeInsets.fromLTRB(margin, 0, margin, 0),
               child: GridView.builder(
@@ -47,12 +47,57 @@ class DashboardSkeleton extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.xl),
-            // Encabezado de sección — ranking
+
+            // ── Tendencias (charts) ────────────────────────────────────────
+            Padding(
+              padding: padding.copyWith(bottom: AppSpacing.sm),
+              child: const ShimmerBox(width: 140, height: 18, borderRadius: 6),
+            ),
+            Padding(
+              padding: padding.copyWith(top: 0),
+              child: isExpanded
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: ShimmerBox(
+                            width: double.infinity,
+                            height: 180,
+                            borderRadius: 16,
+                          ),
+                        ),
+                        SizedBox(width: gutter),
+                        Expanded(
+                          child: ShimmerBox(
+                            width: double.infinity,
+                            height: 180,
+                            borderRadius: 16,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        ShimmerBox(
+                          width: double.infinity,
+                          height: 180,
+                          borderRadius: 16,
+                        ),
+                        const SizedBox(height: AppSpacing.base),
+                        ShimmerBox(
+                          width: double.infinity,
+                          height: 180,
+                          borderRadius: 16,
+                        ),
+                      ],
+                    ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+
+            // ── Top proyectos (ranking) ────────────────────────────────────
             Padding(
               padding: padding.copyWith(bottom: AppSpacing.sm),
               child: const ShimmerBox(width: 120, height: 18, borderRadius: 6),
             ),
-            // Ranking items
             Padding(
               padding: padding.copyWith(top: 0),
               child: Column(
@@ -65,6 +110,7 @@ class DashboardSkeleton extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: AppSpacing.xxxl),
           ],
         ),
       ),

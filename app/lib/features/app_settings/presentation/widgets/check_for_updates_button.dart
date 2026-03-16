@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../../core/updates/app_release_model.dart';
 import '../../../../core/updates/app_update_provider.dart';
 import '../../../../core/utils/app_logger.dart';

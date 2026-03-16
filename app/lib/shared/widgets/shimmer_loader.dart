@@ -1217,6 +1217,93 @@ class SkeletonSettingsPage extends StatelessWidget {
   }
 }
 
+// ── Dashboard: Device Usage ───────────────────────────────────────────────────
+
+/// Skeleton del widget `DeviceUsageSection`:
+/// 3 columnas con icono + porcentaje + label.
+class SkeletonDeviceUsageSection extends StatelessWidget {
+  const SkeletonDeviceUsageSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      elevation: 0,
+      borderRadius: BorderRadius.circular(16),
+      padding: const EdgeInsets.all(AppSpacing.base),
+      child: ShimmerLoader(
+        child: Row(
+          children: List.generate(
+            3,
+            (_) => Expanded(
+              child: Column(
+                children: [
+                  ShimmerBox(width: 28, height: 28, borderRadius: 8),
+                  const SizedBox(height: 6),
+                  const ShimmerBox(width: 48, height: 20, borderRadius: 4),
+                  const SizedBox(height: 4),
+                  const ShimmerBox(width: 56, height: 11, borderRadius: 4),
+                  const SizedBox(height: 2),
+                  const ShimmerBox(width: 64, height: 10, borderRadius: 4),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Dashboard: Visitors Map ───────────────────────────────────────────────────
+
+/// Skeleton del widget `VisitorsMapWidget`:
+/// caja de mapa + lista de países.
+class SkeletonVisitorsMap extends StatelessWidget {
+  const SkeletonVisitorsMap({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerLoader(
+      child: Column(
+        children: [
+          AppCard(
+            elevation: 0,
+            borderRadius: BorderRadius.circular(16),
+            padding: EdgeInsets.zero,
+            child: const ShimmerBox(
+              width: double.infinity,
+              height: 220,
+              borderRadius: 16,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          ...List.generate(
+            4,
+            (_) => const Padding(
+              padding: EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  ShimmerBox(width: 24, height: 16, borderRadius: 3),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: ShimmerBox(
+                      width: double.infinity,
+                      height: 11,
+                      borderRadius: 4,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  ShimmerBox(width: 36, height: 11, borderRadius: 4),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // ── Detalle de contacto ───────────────────────────────────────────────────────
 
 /// Skeleton para la página de detalle de contacto: 4 tarjetas apiladas.

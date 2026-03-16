@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../../shared/widgets/shimmer_loader.dart';
 import '../../data/booking_model.dart';
 import '../../data/google_calendar_models.dart';
 import '../../providers/google_calendar_provider.dart';
@@ -22,8 +23,12 @@ class GoogleCalendarSection extends ConsumerWidget {
     );
 
     return gcAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, _) => const SizedBox.shrink(),
+      loading: () =>
+          ShimmerBox(width: double.infinity, height: 40, borderRadius: 12),
+      error: (err, st) {
+        Sentry.captureException(err, stackTrace: st);
+        return const SizedBox.shrink();
+      },
       data: (GoogleAuthState gcState) {
         final isConnected = gcState is GoogleAuthConnected;
 

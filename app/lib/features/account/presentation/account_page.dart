@@ -14,6 +14,7 @@ import '../../calendar/providers/google_calendar_provider.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/shimmer_loader.dart';
 import '../providers/account_provider.dart';
 
 class AccountPage extends ConsumerStatefulWidget {
@@ -203,8 +204,19 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                               ),
                         ),
                       ),
-                      loading: () => const SizedBox.shrink(),
-                      error: (_, _) => const SizedBox.shrink(),
+                      loading: () => Center(
+                        child: ShimmerBox(
+                          width: 120,
+                          height: 12,
+                          borderRadius: 4,
+                        ),
+                      ),
+                      error: (_, _) => Text(
+                        'v—',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
+                      ),
                     ),
               ],
             ),
@@ -402,8 +414,33 @@ class _GoogleCalendarCard extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return gcAsync.when(
-      loading: () => const SizedBox.shrink(),
-      error: (_, _) => const SizedBox.shrink(),
+      loading: () => AppCard(
+        borderRadius: AppRadius.forCard,
+        padding: EdgeInsets.zero,
+        child: ShimmerLoader(
+          child: ListTile(
+            leading: const ShimmerBox(width: 24, height: 24, borderRadius: 4),
+            title: const ShimmerBox(width: 180, height: 14, borderRadius: 4),
+            subtitle: const ShimmerBox(width: 120, height: 12, borderRadius: 4),
+          ),
+        ),
+      ),
+      error: (_, _) => AppCard(
+        borderRadius: AppRadius.forCard,
+        padding: EdgeInsets.zero,
+        child: ListTile(
+          leading: const Icon(Icons.calendar_month_outlined),
+          title: const Text(
+            'Google Calendar',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          subtitle: const Text('No se pudo cargar el estado'),
+          trailing: IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: () => ref.invalidate(googleCalendarProvider),
+          ),
+        ),
+      ),
       data: (gcState) {
         final isConnected = gcState is GoogleAuthConnected;
         final isConnecting = gcState is GoogleAuthConnecting;

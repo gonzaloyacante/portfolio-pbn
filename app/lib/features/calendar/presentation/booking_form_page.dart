@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/shimmer_loader.dart';
 import '../../services/providers/services_provider.dart';
 import '../data/booking_model.dart';
 import '../providers/calendar_provider.dart';
@@ -117,8 +119,12 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   Widget _buildServiceSelector() {
     final servicesAsync = ref.watch(servicesListProvider());
     return servicesAsync.when(
-      loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text('Error al cargar servicios: $e'),
+      loading: () =>
+          ShimmerBox(width: double.infinity, height: 56, borderRadius: 12),
+      error: (err, _) => ErrorState(
+        message: 'No se pudieron cargar los servicios',
+        onRetry: () => ref.invalidate(servicesListProvider()),
+      ),
       data: (paginated) {
         final services = paginated.data;
         if (services.isEmpty) {

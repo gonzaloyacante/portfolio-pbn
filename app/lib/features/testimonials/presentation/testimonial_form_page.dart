@@ -9,6 +9,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
 
@@ -370,7 +371,8 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
         testimonialDetailProvider(widget.testimonialId!),
       );
       body = detailAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () =>
+            const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (detail) {
           _populateForm(detail);

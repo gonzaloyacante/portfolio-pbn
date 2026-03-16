@@ -9,6 +9,7 @@ import '../../../../shared/models/paginated_response.dart';
 import '../../../../shared/widgets/fade_slide_in.dart';
 import '../../data/project_model.dart';
 import '../../data/projects_repository.dart';
+import '../../../../shared/widgets/shimmer_loader.dart';
 import 'project_grid_card.dart';
 import 'project_tile.dart';
 
@@ -122,19 +123,7 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
         itemCount: _items.length + (_isLoadingMore ? 1 : 0),
         itemBuilder: (context, index) {
           if (index >= _items.length) {
-            return const SizedBox(
-              width: double.infinity,
-              child: Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Center(
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-              ),
-            );
+            return const SkeletonProjectGridCard();
           }
           final item = _items[index];
           return FadeSlideIn(
@@ -152,19 +141,7 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         if (index >= _items.length) {
-          return const SizedBox(
-            width: double.infinity,
-            child: Padding(
-              padding: EdgeInsets.all(12.0),
-              child: Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            ),
-          );
+          return const SkeletonProjectTile();
         }
         final item = _items[index];
         return FadeSlideIn(

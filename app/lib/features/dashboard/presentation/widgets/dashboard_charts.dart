@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../shared/widgets/error_state.dart';
 import '../../../../shared/widgets/shimmer_loader.dart';
 import '../../providers/dashboard_provider.dart';
 import 'bookings_bar_chart.dart';
@@ -24,7 +26,13 @@ class DashboardChartsSection extends ConsumerWidget {
 
     return chartsAsync.when(
       loading: () => _buildSkeleton(isExpanded),
-      error: (_, _) => const SizedBox.shrink(),
+      error: (err, st) {
+        Sentry.captureException(err, stackTrace: st);
+        return ErrorState(
+          message: 'No se pudieron cargar los gráficos',
+          onRetry: () => ref.invalidate(dashboardChartsProvider),
+        );
+      },
       data: (charts) {
         final pageViewsChart = PageViewsChart(data: charts.dailyPageViews);
         final bookingsChart = BookingsBarChart(data: charts.monthlyBookings);
