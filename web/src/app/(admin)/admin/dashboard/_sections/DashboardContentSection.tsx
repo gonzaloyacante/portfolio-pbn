@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db'
+import { getDashboardContentStats } from '@/actions/analytics'
 import { auth } from '@/lib/auth'
 import { ROUTES } from '@/config/routes'
 import { PageHeader } from '@/components/layout'
@@ -6,23 +6,16 @@ import ContentStats from '@/components/features/dashboard/ContentStats'
 import AlertsSection from '@/components/features/dashboard/AlertsSection'
 
 export default async function DashboardContentSection() {
-  const [
-    session,
+  const [session, stats] = await Promise.all([auth(), getDashboardContentStats()])
+
+  const {
     projectsCount,
     categoriesCount,
     testimonialsCount,
     deletedCount,
     contactsCount,
     pendingTestimonials,
-  ] = await Promise.all([
-    auth(),
-    prisma.project.count({ where: { isDeleted: false } }),
-    prisma.category.count(),
-    prisma.testimonial.count({ where: { isActive: true } }),
-    prisma.project.count({ where: { isDeleted: true } }),
-    prisma.contact.count({ where: { isRead: false } }),
-    prisma.testimonial.count({ where: { isActive: false } }),
-  ])
+  } = stats
 
   const userName = session?.user?.name || 'Administrador'
 

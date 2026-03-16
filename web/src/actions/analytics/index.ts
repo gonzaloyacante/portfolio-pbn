@@ -4,6 +4,8 @@ import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
 import { headers } from 'next/headers'
 import { requireAdmin } from '@/lib/security-server'
+import { unstable_cache } from 'next/cache'
+import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 
 // -----------------------------------------------
 // Types
@@ -181,13 +183,56 @@ export async function recordAnalyticEvent(
   }
 }
 
+/** Cached content counts for Dashboard header section — TTL 2 min */
+const _fetchDashboardContentStats = unstable_cache(
+  async () => {
+    const [
+      projectsCount,
+      categoriesCount,
+      testimonialsCount,
+      deletedCount,
+      contactsCount,
+      pendingTestimonials,
+    ] = await Promise.all([
+      prisma.project.count({ where: { isDeleted: false } }),
+      prisma.category.count(),
+      prisma.testimonial.count({ where: { isActive: true } }),
+      prisma.project.count({ where: { isDeleted: true } }),
+      prisma.contact.count({ where: { isRead: false } }),
+      prisma.testimonial.count({ where: { isActive: false } }),
+    ])
+    return {
+      projectsCount,
+      categoriesCount,
+      testimonialsCount,
+      deletedCount,
+      contactsCount,
+      pendingTestimonials,
+    }
+  },
+  ['dashboard-content-stats'],
+  {
+    revalidate: CACHE_DURATIONS.SHORT * 2,
+    tags: [
+      CACHE_TAGS.projects,
+      CACHE_TAGS.categories,
+      CACHE_TAGS.testimonials,
+      CACHE_TAGS.contacts,
+    ],
+  }
+)
+
+export async function getDashboardContentStats() {
+  await requireAdmin()
+  return _fetchDashboardContentStats()
+}
+
 // -----------------------------------------------
 // Dashboard Data (7-day summary) — all queries in parallel
 // -----------------------------------------------
-export async function getAnalyticsDashboardData() {
-  await requireAdmin()
-
-  try {
+/** Cached DB queries for the 7-day summary — auth check excluded from cache */
+const _fetchAnalyticsDashboardData = unstable_cache(
+  async () => {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
     const where7d = { timestamp: { gte: sevenDaysAgo } }
@@ -196,7 +241,7 @@ export async function getAnalyticsDashboardData() {
       totalVisits,
       detailVisits,
       contactLeads,
-      lastWeekLogs,
+      trendRaw,
       topProjectsRaw,
       deviceGroups,
       topLocationsRaw,
@@ -213,11 +258,16 @@ export async function getAnalyticsDashboardData() {
       prisma.analyticLog.count({
         where: { ...where7d, eventType: 'CONTACT_SUBMIT', isBot: false },
       }),
-      // 4. Trend data: all view events last 7 days (timestamps only)
-      prisma.analyticLog.findMany({
-        where: { ...where7d, eventType: { endsWith: '_VIEW' }, isBot: false },
-        select: { timestamp: true },
-      }),
+      // 4. Trend data: aggregate by day in DB — avoids fetching all timestamps
+      prisma.$queryRaw<{ date: Date; count: bigint }[]>`
+        SELECT DATE_TRUNC('day', timestamp) AS date, COUNT(*)::bigint AS count
+        FROM "AnalyticLog"
+        WHERE timestamp >= ${sevenDaysAgo}
+          AND "eventType" LIKE '%_VIEW'
+          AND "isBot" = false
+        GROUP BY DATE_TRUNC('day', timestamp)
+        ORDER BY date ASC
+      `,
       // 5. Top projects by view count
       prisma.analyticLog.groupBy({
         by: ['entityId'],
@@ -232,13 +282,13 @@ export async function getAnalyticsDashboardData() {
         orderBy: { _count: { entityId: 'desc' } },
         take: 5,
       }),
-      // 6. Device groups (por visitantes únicos: isDuplicate=false)
+      // 6. Device groups (unique visitors: isDuplicate=false)
       prisma.analyticLog.groupBy({
         by: ['device'],
         where: { ...where7d, isBot: false, isDuplicate: false },
         _count: { device: true },
       }),
-      // 7. Top locations by city+country (not raw IPs)
+      // 7. Top locations by city+country (no raw IPs)
       prisma.analyticLog.groupBy({
         by: ['city', 'country'],
         where: { ...where7d, city: { not: null }, isBot: false, isDuplicate: false },
@@ -248,8 +298,8 @@ export async function getAnalyticsDashboardData() {
       }),
     ])
 
-    // --- Process trend data ---
-    const trendData = processTrendData(lastWeekLogs)
+    // --- Build trend map from DB aggregation ---
+    const trendData = buildTrendData(trendRaw)
 
     // --- Process top projects ---
     const projectIds = topProjectsRaw.map((r) => r.entityId).filter(Boolean) as string[]
@@ -293,6 +343,15 @@ export async function getAnalyticsDashboardData() {
       deviceUsage,
       topLocations,
     }
+  },
+  ['analytics-dashboard-7d'],
+  { revalidate: CACHE_DURATIONS.SHORT * 2, tags: [CACHE_TAGS.analytics] }
+)
+
+export async function getAnalyticsDashboardData() {
+  await requireAdmin()
+  try {
+    return await _fetchAnalyticsDashboardData()
   } catch (error) {
     logger.error('Error fetching analytics data:', { error })
     return null
@@ -302,10 +361,8 @@ export async function getAnalyticsDashboardData() {
 // -----------------------------------------------
 // Extended Analytics (for world map + vitals)
 // -----------------------------------------------
-export async function getExtendedAnalyticsData(days = 30) {
-  await requireAdmin()
-
-  try {
+const _fetchExtendedAnalyticsData = unstable_cache(
+  async (days: number) => {
     const since = new Date()
     since.setDate(since.getDate() - days)
     const where = { timestamp: { gte: since }, isBot: false }
@@ -347,6 +404,15 @@ export async function getExtendedAnalyticsData(days = 30) {
       geoPoints: buildGeoPoints(geoRows),
       countryCounts: buildCountryCounts(countryRows),
     }
+  },
+  ['analytics-extended'],
+  { revalidate: CACHE_DURATIONS.SHORT * 2, tags: [CACHE_TAGS.analytics] }
+)
+
+export async function getExtendedAnalyticsData(days = 30) {
+  await requireAdmin()
+  try {
+    return await _fetchExtendedAnalyticsData(days)
   } catch (error) {
     logger.error('Error fetching extended analytics:', { error })
     return null
@@ -356,16 +422,21 @@ export async function getExtendedAnalyticsData(days = 30) {
 // -----------------------------------------------
 // Helpers
 // -----------------------------------------------
-function processTrendData(logs: { timestamp: Date }[]) {
+
+/**
+ * Builds a 7-day trend array from DB-aggregated rows (DATE_TRUNC query).
+ * Days with no data get count = 0.
+ */
+function buildTrendData(rows: { date: Date; count: bigint }[]) {
   const days: Record<string, number> = {}
   for (let i = 6; i >= 0; i--) {
     const d = new Date()
     d.setDate(d.getDate() - i)
     days[d.toISOString().split('T')[0]] = 0
   }
-  for (const log of logs) {
-    const key = log.timestamp.toISOString().split('T')[0]
-    if (key in days) days[key]++
+  for (const row of rows) {
+    const key = new Date(row.date).toISOString().split('T')[0]
+    if (key in days) days[key] = Number(row.count)
   }
   return Object.entries(days).map(([date, count]) => ({ date, count }))
 }
