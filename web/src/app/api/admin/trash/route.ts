@@ -8,19 +8,25 @@ const TRASH_TYPES = ['project', 'category', 'service', 'testimonial', 'contact',
 
 type TrashType = (typeof TRASH_TYPES)[number]
 
-const TRASH_MAP: Record<TrashType, string> = {
-  project: 'project',
-  category: 'category',
-  service: 'service',
-  testimonial: 'testimonial',
-  contact: 'contact',
-  booking: 'booking',
+type TrashModel = {
+  findMany(args: {
+    where: { deletedAt: unknown }
+    orderBy?: Record<string, unknown>
+    take?: number
+  }): Promise<Record<string, unknown>[]>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getModel(type: TrashType): any {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (prisma as any)[TRASH_MAP[type]]
+const TRASH_MODELS: Record<TrashType, TrashModel> = {
+  project: prisma.project as unknown as TrashModel,
+  category: prisma.category as unknown as TrashModel,
+  service: prisma.service as unknown as TrashModel,
+  testimonial: prisma.testimonial as unknown as TrashModel,
+  contact: prisma.contact as unknown as TrashModel,
+  booking: prisma.booking as unknown as TrashModel,
+}
+
+function getModel(type: TrashType): TrashModel {
+  return TRASH_MODELS[type]
 }
 
 async function fetchDeletedByType(type: TrashType) {

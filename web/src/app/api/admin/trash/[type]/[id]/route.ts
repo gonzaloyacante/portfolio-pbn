@@ -14,10 +14,26 @@ function isValidType(t: string): t is TrashType {
   return VALID_TYPES.includes(t as TrashType)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getModel(type: TrashType): any {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (prisma as any)[type]
+type TrashItemModel = {
+  findFirst(args: { where: Record<string, unknown> }): Promise<Record<string, unknown> | null>
+  update(args: {
+    where: Record<string, unknown>
+    data: Record<string, unknown>
+  }): Promise<Record<string, unknown>>
+  delete(args: { where: Record<string, unknown> }): Promise<Record<string, unknown>>
+}
+
+const TRASH_MODELS: Record<TrashType, TrashItemModel> = {
+  project: prisma.project as unknown as TrashItemModel,
+  category: prisma.category as unknown as TrashItemModel,
+  service: prisma.service as unknown as TrashItemModel,
+  testimonial: prisma.testimonial as unknown as TrashItemModel,
+  contact: prisma.contact as unknown as TrashItemModel,
+  booking: prisma.booking as unknown as TrashItemModel,
+}
+
+function getModel(type: TrashType): TrashItemModel {
+  return TRASH_MODELS[type]
 }
 
 /** Deshace el mangle del slug aplicado en el soft-delete.
