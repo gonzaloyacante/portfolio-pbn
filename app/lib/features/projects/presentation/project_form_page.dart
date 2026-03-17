@@ -684,39 +684,45 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               // Imágenes ya guardadas
               if (index < _existingImages.length) {
                 final img = _existingImages[index];
-                return GalleryThumb.network(
-                  url: img.imageUrl,
-                  onRemove: () => setState(() {
-                    _removedImageIds.add(img.id);
-                    _existingImages.removeAt(index);
-                  }),
-                  onSetCover: () => setState(() {
-                    _data.thumbnailUrl = img.imageUrl;
-                    _pendingCoverIndex = null;
-                  }),
-                  isCover: _data.thumbnailUrl == img.imageUrl,
+                return RepaintBoundary(
+                  child: GalleryThumb.network(
+                    url: img.imageUrl,
+                    onRemove: () => setState(() {
+                      _removedImageIds.add(img.id);
+                      _existingImages.removeAt(index);
+                    }),
+                    onSetCover: () => setState(() {
+                      _data.thumbnailUrl = img.imageUrl;
+                      _pendingCoverIndex = null;
+                    }),
+                    isCover: _data.thumbnailUrl == img.imageUrl,
+                  ),
                 );
               }
 
               // Imágenes nuevas pendientes de subir
               final pi = index - _existingImages.length;
               if (pi < _pendingNewImages.length) {
-                return GalleryThumb.file(
-                  file: _pendingNewImages[pi],
-                  onRemove: () =>
-                      setState(() => _pendingNewImages.removeAt(pi)),
-                  onSetCover: () => setState(() {
-                    _pendingCoverIndex = pi;
-                    _data.thumbnailUrl = '';
-                  }),
-                  isCover: _pendingCoverIndex == pi,
+                return RepaintBoundary(
+                  child: GalleryThumb.file(
+                    file: _pendingNewImages[pi],
+                    onRemove: () =>
+                        setState(() => _pendingNewImages.removeAt(pi)),
+                    onSetCover: () => setState(() {
+                      _pendingCoverIndex = pi;
+                      _data.thumbnailUrl = '';
+                    }),
+                    isCover: _pendingCoverIndex == pi,
+                  ),
                 );
               }
 
               // Botón "Añadir imagen"
-              return AddImageButton(
-                scheme: scheme,
-                onTap: _isLoading ? null : _pickGalleryImage,
+              return RepaintBoundary(
+                child: AddImageButton(
+                  scheme: scheme,
+                  onTap: _isLoading ? null : _pickGalleryImage,
+                ),
               );
             },
           ),

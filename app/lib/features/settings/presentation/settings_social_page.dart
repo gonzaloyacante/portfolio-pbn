@@ -72,13 +72,15 @@ class SettingsSocialPage extends ConsumerWidget {
             final existing = links.where((l) => l.platform == platform.$2);
             final link = existing.isEmpty ? null : existing.first;
 
-            return SocialLinkTile(
-              platform: platform.$1,
-              platformId: platform.$2,
-              icon: platform.$3,
-              urlHint: platform.$4,
-              link: link,
-              onSaved: () => ref.invalidate(socialLinksProvider),
+            return RepaintBoundary(
+              child: SocialLinkTile(
+                platform: platform.$1,
+                platformId: platform.$2,
+                icon: platform.$3,
+                urlHint: platform.$4,
+                link: link,
+                onSaved: () => ref.invalidate(socialLinksProvider),
+              ),
             );
           },
         ),

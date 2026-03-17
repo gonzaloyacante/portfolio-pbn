@@ -47,9 +47,11 @@ class DraggableList<T> extends StatelessWidget {
       proxyDecorator: _proxyDecorator,
       itemBuilder: (context, index) {
         final item = items[index];
-        return KeyedSubtree(
-          key: keyBuilder(item),
-          child: itemBuilder(item, index, false),
+        return RepaintBoundary(
+          child: KeyedSubtree(
+            key: keyBuilder(item),
+            child: itemBuilder(item, index, false),
+          ),
         );
       },
     );

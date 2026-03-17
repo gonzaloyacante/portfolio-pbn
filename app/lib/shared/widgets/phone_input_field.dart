@@ -264,25 +264,27 @@ class _CountryPickerSheetState extends State<_CountryPickerSheet> {
                 itemBuilder: (_, i) {
                   final country = _filtered[i];
                   final isSelected = country.code == widget.selected.code;
-                  return ListTile(
-                    leading: Text(
-                      country.flag ?? '',
-                      style: const TextStyle(fontSize: 24),
-                    ),
-                    title: Text(country.name),
-                    trailing: Text(
-                      country.dialCode,
-                      style: TextStyle(
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : null,
+                  return RepaintBoundary(
+                    child: ListTile(
+                      leading: Text(
+                        country.flag ?? '',
+                        style: const TextStyle(fontSize: 24),
                       ),
+                      title: Text(country.name),
+                      trailing: Text(
+                        country.dialCode,
+                        style: TextStyle(
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.primary
+                              : null,
+                        ),
+                      ),
+                      selected: isSelected,
+                      onTap: () => Navigator.of(context).pop(country),
                     ),
-                    selected: isSelected,
-                    onTap: () => Navigator.of(context).pop(country),
                   );
                 },
               ),
