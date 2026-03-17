@@ -331,7 +331,9 @@ class DashboardPage extends ConsumerWidget {
                               title: 'Visitantes por ubicación (30d)',
                             ),
                             const SizedBox(height: AppSpacing.sm),
-                            VisitorsMapWidget(locations: stats.topLocations),
+                            RepaintBoundary(
+                              child: VisitorsMapWidget(locations: stats.topLocations),
+                            ),
                           ],
                         ),
                       ),
