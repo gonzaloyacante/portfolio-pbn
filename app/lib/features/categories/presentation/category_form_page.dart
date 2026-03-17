@@ -163,7 +163,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.of(ctx).pop(),
+                          onPressed: () => ctx.pop(),
                         ),
                       ],
                     ),
@@ -189,7 +189,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                                 _coverImageCtrl.text = img.url;
                                 _pendingThumbnail = null;
                               });
-                              Navigator.of(ctx).pop();
+                              ctx.pop();
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
