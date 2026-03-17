@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
+
+import '../../../core/utils/app_logger.dart';
 
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
@@ -529,7 +532,9 @@ class TrashItemDetailPage extends ConsumerWidget {
           ),
         );
       }
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.error('TrashItemDetailPage: error al eliminar permanentemente', e, st);
+      Sentry.captureException(e, stackTrace: st);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No se pudo eliminar el elemento')),

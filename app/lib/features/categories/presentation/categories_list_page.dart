@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/providers/app_preferences_provider.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -81,7 +82,9 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
     CategoryDisplaySettings current;
     try {
       current = await ref.read(categoryDisplaySettingsProvider.future);
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.warn('CategoriesListPage: error loading display settings, using defaults — $e');
+      Sentry.captureException(e, stackTrace: st);
       current = const CategoryDisplaySettings();
     }
     if (!context.mounted) return;

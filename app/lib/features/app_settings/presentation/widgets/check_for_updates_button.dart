@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../../core/updates/app_release_model.dart';
 import '../../../../core/updates/app_update_provider.dart';
 import '../../../../core/utils/app_logger.dart';
@@ -58,8 +59,9 @@ class _CheckForUpdatesButtonState extends ConsumerState<CheckForUpdatesButton> {
           ),
         );
       }
-    } on Exception catch (e) {
-      AppLogger.error('CheckForUpdatesButton: error — $e');
+    } on Exception catch (e, st) {
+      AppLogger.error('CheckForUpdatesButton: error — $e', e, st);
+      Sentry.captureException(e, stackTrace: st);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
