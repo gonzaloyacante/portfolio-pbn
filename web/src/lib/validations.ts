@@ -494,7 +494,8 @@ export const reorderSchema = z.object({
         sortOrder: z.number().int(),
       })
     )
-    .min(1, 'Se requiere al menos un elemento'),
+    .min(1, 'Se requiere al menos un elemento')
+    .max(200, 'No se pueden reordenar más de 200 elementos a la vez'),
 })
 
 // ── App Release ─────────────────────────────────────────────────────────────
