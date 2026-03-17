@@ -50,4 +50,9 @@ class AppColors {
   static const Color priorityHighLight = Color(0xFFFEE2E2);
   static const Color priorityMediumLight = Color(0xFFFEF3C7);
   static const Color priorityLowLight = Color(0xFFF3F4F6);
+
+  // ── Neutros y misceláneos ─────────────────────────────────────────────────
+  static const Color neutral = Color(0xFF6B7280); // gris ui (inactivo/borrador)
+  static const Color neutralMedium = Color(0xFF9E9E9E); // gris placeholder imgs
+  static const Color featured = Color(0xFF8B5CF6); // violeta para "Destacado"
 }

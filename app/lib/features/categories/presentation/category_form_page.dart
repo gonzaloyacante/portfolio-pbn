@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
@@ -197,10 +198,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                                 imageUrl: img.thumbnailUrl,
                                 fit: BoxFit.cover,
                                 placeholder: (ctx2, url) =>
-                                    const ColoredBox(color: Color(0xFFE5E5E5)),
+                                    const ColoredBox(color: AppColors.lightBorder),
                                 errorWidget: (ctx2, url, err) => const Icon(
                                   Icons.broken_image,
-                                  color: Color(0xFF9E9E9E),
+                                  color: AppColors.neutralMedium,
                                 ),
                               ),
                             ),
@@ -303,8 +304,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null || !box.attached) return;
       final dy = box.localToGlobal(Offset.zero).dy;
-      final usable =
-          mediaSize.height - mediaPadding.bottom - dy - appBarApprox;
+      final usable = mediaSize.height - mediaPadding.bottom - dy - appBarApprox;
       final newH = usable.clamp(200.0, 1200.0);
       if ((_calculatedImageHeight == null) ||
           ((_calculatedImageHeight! - newH).abs() > 1.0)) {

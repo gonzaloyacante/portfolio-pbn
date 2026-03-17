@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/core/theme/app_colors.dart';
 
 // ── Status ────────────────────────────────────────────────────────────────────
 
@@ -112,52 +113,52 @@ class _StatusConfig {
 const _statusConfig = {
   AppStatus.active: _StatusConfig(
     label: 'Activo',
-    color: Color(0xFF10B981),
+    color: AppColors.success,
     icon: Icons.check_circle_outline,
   ),
   AppStatus.inactive: _StatusConfig(
     label: 'Inactivo',
-    color: Color(0xFF6B7280),
+    color: AppColors.neutral,
     icon: Icons.cancel_outlined,
   ),
   AppStatus.pending: _StatusConfig(
     label: 'Pendiente',
-    color: Color(0xFFF59E0B),
+    color: AppColors.warning,
     icon: Icons.hourglass_empty_outlined,
   ),
   AppStatus.confirmed: _StatusConfig(
     label: 'Confirmada',
-    color: Color(0xFF10B981),
+    color: AppColors.success,
     icon: Icons.check_circle_outline,
   ),
   AppStatus.cancelled: _StatusConfig(
     label: 'Cancelada',
-    color: Color(0xFFEF4444),
+    color: AppColors.destructive,
     icon: Icons.close,
   ),
   AppStatus.featured: _StatusConfig(
     label: 'Destacado',
-    color: Color(0xFF8B5CF6),
+    color: AppColors.featured,
     icon: Icons.star_outline,
   ),
   AppStatus.draft: _StatusConfig(
     label: 'Borrador',
-    color: Color(0xFF6B7280),
+    color: AppColors.neutral,
     icon: Icons.edit_outlined,
   ),
   AppStatus.published: _StatusConfig(
     label: 'Publicado',
-    color: Color(0xFF10B981),
+    color: AppColors.success,
     icon: Icons.public,
   ),
   AppStatus.approved: _StatusConfig(
     label: 'Aprobado',
-    color: Color(0xFF10B981),
+    color: AppColors.success,
     icon: Icons.verified_outlined,
   ),
   AppStatus.rejected: _StatusConfig(
     label: 'Rechazado',
-    color: Color(0xFFEF4444),
+    color: AppColors.destructive,
     icon: Icons.block_outlined,
   ),
 };
