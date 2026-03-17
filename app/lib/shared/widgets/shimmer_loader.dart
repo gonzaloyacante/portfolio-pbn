@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../core/providers/app_preferences_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_breakpoints.dart';
 import '../../core/theme/app_radius.dart';
@@ -15,17 +17,31 @@ import 'app_card.dart';
 ///
 /// Todos los skeleton widgets deben estar dentro de un [ShimmerLoader].
 /// Cuando [isLoading] es `false` el hijo se renderiza sin efecto.
-class ShimmerLoader extends StatelessWidget {
+/// Cuando las animaciones están deshabilitadas en preferencias, muestra
+/// el hijo con un fondo estático en lugar del efecto animado.
+class ShimmerLoader extends ConsumerWidget {
   const ShimmerLoader({super.key, required this.child, this.isLoading = true});
 
   final Widget child;
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (!isLoading) return child;
 
+    final animationsEnabled = ref.watch(animationsEnabledProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Sin animaciones: caja estática con el color base del skeleton.
+    if (!animationsEnabled) {
+      return ColorFiltered(
+        colorFilter: ColorFilter.mode(
+          isDark ? AppColors.darkMuted : AppColors.lightBorder,
+          BlendMode.srcATop,
+        ),
+        child: child,
+      );
+    }
 
     return Shimmer.fromColors(
       baseColor: isDark ? AppColors.darkMuted : AppColors.lightBorder,

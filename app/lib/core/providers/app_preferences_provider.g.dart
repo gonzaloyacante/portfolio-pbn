@@ -342,3 +342,217 @@ abstract class _$TestimonialsViewMode extends $Notifier<ViewMode> {
     element.handleCreate(ref, build);
   }
 }
+
+/// Habilita o deshabilita todas las animaciones de la app.
+///
+/// Cuando está en `false` se usa un [timeDilation] próximo a cero y
+/// [MediaQueryData.disableAnimations] = true, lo que detiene todos los
+/// cursores, transiciones y efectos shimmer.
+
+@ProviderFor(AnimationsEnabled)
+final animationsEnabledProvider = AnimationsEnabledProvider._();
+
+/// Habilita o deshabilita todas las animaciones de la app.
+///
+/// Cuando está en `false` se usa un [timeDilation] próximo a cero y
+/// [MediaQueryData.disableAnimations] = true, lo que detiene todos los
+/// cursores, transiciones y efectos shimmer.
+final class AnimationsEnabledProvider
+    extends $NotifierProvider<AnimationsEnabled, bool> {
+  /// Habilita o deshabilita todas las animaciones de la app.
+  ///
+  /// Cuando está en `false` se usa un [timeDilation] próximo a cero y
+  /// [MediaQueryData.disableAnimations] = true, lo que detiene todos los
+  /// cursores, transiciones y efectos shimmer.
+  AnimationsEnabledProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'animationsEnabledProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$animationsEnabledHash();
+
+  @$internal
+  @override
+  AnimationsEnabled create() => AnimationsEnabled();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$animationsEnabledHash() => r'6591200701ce67731789fcfd50bb478a97c8c104';
+
+/// Habilita o deshabilita todas las animaciones de la app.
+///
+/// Cuando está en `false` se usa un [timeDilation] próximo a cero y
+/// [MediaQueryData.disableAnimations] = true, lo que detiene todos los
+/// cursores, transiciones y efectos shimmer.
+
+abstract class _$AnimationsEnabled extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Velocidad global de las animaciones cuando están habilitadas.
+///
+/// Se mapea a [timeDilation] para ralentizar o acelerar todas las
+/// animaciones de Flutter sin tocar cada widget individualmente.
+
+@ProviderFor(AnimationSpeedPref)
+final animationSpeedPrefProvider = AnimationSpeedPrefProvider._();
+
+/// Velocidad global de las animaciones cuando están habilitadas.
+///
+/// Se mapea a [timeDilation] para ralentizar o acelerar todas las
+/// animaciones de Flutter sin tocar cada widget individualmente.
+final class AnimationSpeedPrefProvider
+    extends $NotifierProvider<AnimationSpeedPref, AnimationSpeed> {
+  /// Velocidad global de las animaciones cuando están habilitadas.
+  ///
+  /// Se mapea a [timeDilation] para ralentizar o acelerar todas las
+  /// animaciones de Flutter sin tocar cada widget individualmente.
+  AnimationSpeedPrefProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'animationSpeedPrefProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$animationSpeedPrefHash();
+
+  @$internal
+  @override
+  AnimationSpeedPref create() => AnimationSpeedPref();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AnimationSpeed value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AnimationSpeed>(value),
+    );
+  }
+}
+
+String _$animationSpeedPrefHash() =>
+    r'e4e3476fc5c672999d8878745856dfbe26914a9d';
+
+/// Velocidad global de las animaciones cuando están habilitadas.
+///
+/// Se mapea a [timeDilation] para ralentizar o acelerar todas las
+/// animaciones de Flutter sin tocar cada widget individualmente.
+
+abstract class _$AnimationSpeedPref extends $Notifier<AnimationSpeed> {
+  AnimationSpeed build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AnimationSpeed, AnimationSpeed>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AnimationSpeed, AnimationSpeed>,
+              AnimationSpeed,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// Modo compacto: reduce la densidad visual (padding, altura de tiles).
+///
+/// Útil en dispositivos con pantallas pequeñas o para usuarios que
+/// prefieren ver más contenido sin hacer scroll.
+
+@ProviderFor(CompactMode)
+final compactModeProvider = CompactModeProvider._();
+
+/// Modo compacto: reduce la densidad visual (padding, altura de tiles).
+///
+/// Útil en dispositivos con pantallas pequeñas o para usuarios que
+/// prefieren ver más contenido sin hacer scroll.
+final class CompactModeProvider extends $NotifierProvider<CompactMode, bool> {
+  /// Modo compacto: reduce la densidad visual (padding, altura de tiles).
+  ///
+  /// Útil en dispositivos con pantallas pequeñas o para usuarios que
+  /// prefieren ver más contenido sin hacer scroll.
+  CompactModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'compactModeProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$compactModeHash();
+
+  @$internal
+  @override
+  CompactMode create() => CompactMode();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$compactModeHash() => r'2fad3085471ad9f6de59071a787bf7f5f674a839';
+
+/// Modo compacto: reduce la densidad visual (padding, altura de tiles).
+///
+/// Útil en dispositivos con pantallas pequeñas o para usuarios que
+/// prefieren ver más contenido sin hacer scroll.
+
+abstract class _$CompactMode extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

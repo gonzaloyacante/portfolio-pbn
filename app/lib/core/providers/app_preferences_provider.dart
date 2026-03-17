@@ -12,11 +12,35 @@ abstract class _PrefKeys {
   static const String categoryGalleryViewMode =
       'pref_category_gallery_view_mode';
   static const String testimonialsViewMode = 'pref_testimonials_view_mode';
+  // Performance
+  static const String animationsEnabled = 'pref_animations_enabled';
+  static const String animationSpeed = 'pref_animation_speed';
+  static const String compactMode = 'pref_compact_mode';
 }
 
 // ── ViewMode enum ─────────────────────────────────────────────────────────────
 
 enum ViewMode { grid, list }
+
+// ── AnimationSpeed enum ───────────────────────────────────────────────────────
+
+/// Velocidad de las animaciones de la app.
+///
+/// El valor [dilation] es el factor aplicado a [timeDilation]:
+/// < 1 → más rápido, > 1 → más lento, 1 → velocidad estándar de Flutter.
+enum AnimationSpeed {
+  fast(0.5, 'Rápidas'),
+  normal(1.0, 'Normales'),
+  slow(2.0, 'Lentas');
+
+  const AnimationSpeed(this.dilation, this.label);
+
+  /// Factor de dilatación para [schedulerBinding.timeDilation].
+  final double dilation;
+
+  /// Etiqueta legible para mostrar en la UI.
+  final String label;
+}
 
 // ── SharedPreferences singleton ───────────────────────────────────────────────
 
@@ -176,4 +200,91 @@ class TestimonialsViewMode extends _$TestimonialsViewMode {
     final prefs = await ref.read(sharedPreferencesProvider.future);
     await prefs.setString(_PrefKeys.testimonialsViewMode, next.name);
   }
+}
+
+// ── Performance providers ─────────────────────────────────────────────────────
+
+/// Habilita o deshabilita todas las animaciones de la app.
+///
+/// Cuando está en `false` se usa un [timeDilation] próximo a cero y
+/// [MediaQueryData.disableAnimations] = true, lo que detiene todos los
+/// cursores, transiciones y efectos shimmer.
+@Riverpod(keepAlive: true)
+class AnimationsEnabled extends _$AnimationsEnabled {
+  @override
+  bool build() {
+    _load();
+    return true;
+  }
+
+  Future<void> _load() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final stored = prefs.getBool(_PrefKeys.animationsEnabled);
+    if (stored != null) state = stored;
+  }
+
+  Future<void> set(bool value) async {
+    state = value;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setBool(_PrefKeys.animationsEnabled, value);
+  }
+
+  Future<void> toggle() => set(!state);
+}
+
+/// Velocidad global de las animaciones cuando están habilitadas.
+///
+/// Se mapea a [timeDilation] para ralentizar o acelerar todas las
+/// animaciones de Flutter sin tocar cada widget individualmente.
+@Riverpod(keepAlive: true)
+class AnimationSpeedPref extends _$AnimationSpeedPref {
+  @override
+  AnimationSpeed build() {
+    _load();
+    return AnimationSpeed.normal;
+  }
+
+  Future<void> _load() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final stored = prefs.getString(_PrefKeys.animationSpeed);
+    if (stored != null) {
+      state = AnimationSpeed.values.firstWhere(
+        (e) => e.name == stored,
+        orElse: () => AnimationSpeed.normal,
+      );
+    }
+  }
+
+  Future<void> set(AnimationSpeed speed) async {
+    state = speed;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_PrefKeys.animationSpeed, speed.name);
+  }
+}
+
+/// Modo compacto: reduce la densidad visual (padding, altura de tiles).
+///
+/// Útil en dispositivos con pantallas pequeñas o para usuarios que
+/// prefieren ver más contenido sin hacer scroll.
+@Riverpod(keepAlive: true)
+class CompactMode extends _$CompactMode {
+  @override
+  bool build() {
+    _load();
+    return false;
+  }
+
+  Future<void> _load() async {
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    final stored = prefs.getBool(_PrefKeys.compactMode);
+    if (stored != null) state = stored;
+  }
+
+  Future<void> set(bool value) async {
+    state = value;
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setBool(_PrefKeys.compactMode, value);
+  }
+
+  Future<void> toggle() => set(!state);
 }

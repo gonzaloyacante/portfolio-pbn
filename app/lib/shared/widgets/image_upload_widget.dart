@@ -219,7 +219,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: colorScheme.outline.withOpacity(0.3),
+                          color: colorScheme.outline.withValues(alpha: 0.3),
                         ),
                         color: colorScheme.surfaceContainerHighest,
                       ),
@@ -258,7 +258,9 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: colorScheme.outline.withOpacity(0.3)),
+              border: Border.all(
+                color: colorScheme.outline.withValues(alpha: 0.3),
+              ),
               color: colorScheme.surfaceContainerHighest,
             ),
             child: _isProcessing
@@ -571,7 +573,7 @@ class _EmptyPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayColor = colorScheme.onSurface.withOpacity(0.65);
+    final displayColor = colorScheme.onSurface.withValues(alpha: 0.65);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

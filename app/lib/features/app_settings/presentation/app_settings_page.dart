@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import '../../../core/debug/debug_log_page.dart';
 import '../../../core/debug/debug_panel.dart';
 import '../../../core/debug/debug_provider.dart';
+import '../../../core/providers/app_preferences_provider.dart';
 import '../../../core/theme/theme_provider.dart';
 
 import '../../../core/utils/app_logger.dart';
@@ -81,6 +82,9 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final animationsEnabled = ref.watch(animationsEnabledProvider);
+    final animationSpeed = ref.watch(animationSpeedPrefProvider);
+    final compactMode = ref.watch(compactModeProvider);
 
     return AppScaffold(
       title: 'Preferencias',
@@ -154,6 +158,91 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                         color: colorScheme.onSurface.withValues(alpha: 0.4),
                       ),
                 onTap: _clearingCache ? null : _clearCache,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // ── Rendimiento ──────────────────────────────────────────────────
+          AppSettingsSectionCard(
+            title: 'Rendimiento',
+            icon: Icons.speed_outlined,
+            children: [
+              // Toggle principal de animaciones
+              SwitchListTile(
+                dense: true,
+                visualDensity: VisualDensity.compact,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 0,
+                  vertical: 0,
+                ),
+                secondary: Icon(
+                  Icons.animation_outlined,
+                  color: colorScheme.primary,
+                ),
+                title: const Text('Animaciones'),
+                subtitle: const Text('Desactivar reduce el consumo de batería'),
+                value: animationsEnabled,
+                onChanged: (v) =>
+                    ref.read(animationsEnabledProvider.notifier).set(v),
+              ),
+              // Selector de velocidad (sólo visible cuando las animaciones están on)
+              if (animationsEnabled) ...[
+                const Divider(height: 1),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          'Velocidad de animaciones',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                      ),
+                      SegmentedButton<AnimationSpeed>(
+                        showSelectedIcon: false,
+                        style: SegmentedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        segments: AnimationSpeed.values
+                            .map(
+                              (s) => ButtonSegment<AnimationSpeed>(
+                                value: s,
+                                label: Text(s.label),
+                              ),
+                            )
+                            .toList(),
+                        selected: {animationSpeed},
+                        onSelectionChanged: (sel) => ref
+                            .read(animationSpeedPrefProvider.notifier)
+                            .set(sel.first),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              const Divider(height: 1),
+              // Toggle modo compacto
+              SwitchListTile(
+                dense: true,
+                visualDensity: VisualDensity.compact,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 0,
+                  vertical: 0,
+                ),
+                secondary: Icon(
+                  Icons.compress_outlined,
+                  color: colorScheme.primary,
+                ),
+                title: const Text('Modo compacto'),
+                subtitle: const Text(
+                  'Reduce el espaciado para ver más contenido',
+                ),
+                value: compactMode,
+                onChanged: (v) => ref.read(compactModeProvider.notifier).set(v),
               ),
             ],
           ),
