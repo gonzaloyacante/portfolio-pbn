@@ -16,6 +16,10 @@ class TrashRepository {
       queryParams: {if (type != null) 'type': type},
     );
 
+    final success = resp['success'] as bool? ?? false;
+    if (!success) {
+      throw Exception(resp['error']?.toString() ?? 'Error al obtener papelera');
+    }
     final data = (resp['data'] as Map<String, dynamic>?) ?? {};
     final result = <String, List<TrashItem>>{};
     data.forEach((key, value) {
@@ -31,15 +35,23 @@ class TrashRepository {
 
   /// Restaura un elemento de la papelera.
   Future<void> restore({required String type, required String id}) async {
-    await _client.patch<Map<String, dynamic>>(
+    final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.trashTypedItem(type, id),
     );
+    final success = resp['success'] as bool? ?? false;
+    if (!success) {
+      throw Exception(resp['error']?.toString() ?? 'Error al restaurar elemento');
+    }
   }
 
   /// Elimina permanentemente un elemento de la papelera.
   Future<void> purge({required String type, required String id}) async {
-    await _client.delete<Map<String, dynamic>>(
+    final resp = await _client.delete<Map<String, dynamic>>(
       Endpoints.trashTypedItem(type, id),
     );
+    final success = resp['success'] as bool? ?? false;
+    if (!success) {
+      throw Exception(resp['error']?.toString() ?? 'Error al eliminar elemento permanentemente');
+    }
   }
 }

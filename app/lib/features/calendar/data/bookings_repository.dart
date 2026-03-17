@@ -100,6 +100,10 @@ class BookingsRepository {
   }
 
   Future<void> deleteBooking(String id) async {
-    await _client.delete<Map<String, dynamic>>(Endpoints.booking(id));
+    final resp = await _client.delete<Map<String, dynamic>>(Endpoints.booking(id));
+    final apiResp = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResp.success) {
+      throw Exception(apiResp.error ?? 'Error al eliminar reserva');
+    }
   }
 }
