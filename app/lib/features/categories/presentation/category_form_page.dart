@@ -286,12 +286,13 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       detailAsync.whenData(_populateForm);
     }
 
-    final media = MediaQuery.of(context);
+    final mediaSize = MediaQuery.sizeOf(context);
+    final mediaPadding = MediaQuery.paddingOf(context);
     const appBarApprox = 100.0;
     final fallbackHeight =
-        (media.size.height -
-                media.padding.top -
-                media.padding.bottom -
+        (mediaSize.height -
+                mediaPadding.top -
+                mediaPadding.bottom -
                 appBarApprox)
             .clamp(200.0, 1200.0);
     final imageHeight = _calculatedImageHeight ?? fallbackHeight;
@@ -303,7 +304,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       if (box == null || !box.attached) return;
       final dy = box.localToGlobal(Offset.zero).dy;
       final usable =
-          media.size.height - media.padding.bottom - dy - appBarApprox;
+          mediaSize.height - mediaPadding.bottom - dy - appBarApprox;
       final newH = usable.clamp(200.0, 1200.0);
       if ((_calculatedImageHeight == null) ||
           ((_calculatedImageHeight! - newH).abs() > 1.0)) {
@@ -330,7 +331,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
               Builder(
                 builder: (ctx) {
                   final colorScheme = Theme.of(ctx).colorScheme;
-                  final isTablet = media.size.width >= 600;
+                  final isTablet = mediaSize.width >= 600;
 
                   final nameField = TextFormField(
                     controller: _nameCtrl,

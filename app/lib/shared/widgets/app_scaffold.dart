@@ -679,7 +679,7 @@ class _DrawerHeader extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
         AppSpacing.base,
-        AppSpacing.xl + MediaQuery.of(context).padding.top,
+        AppSpacing.xl + MediaQuery.paddingOf(context).top,
         AppSpacing.base,
         AppSpacing.lg,
       ),

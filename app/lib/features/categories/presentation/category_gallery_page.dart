@@ -194,7 +194,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   // ── Vista cuadrícula masonry ────────────────────────────────────────────────
 
   Widget _buildGridView(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final columnCount = screenWidth >= 600 ? 3 : 2;
     const gap = 8.0;
     const padding = AppSpacing.base;
