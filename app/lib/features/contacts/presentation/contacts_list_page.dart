@@ -177,15 +177,17 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                         separatorBuilder: (_, _) => const SizedBox(height: 6),
                         itemBuilder: (ctx, i) {
                           final item = paginated.data[i];
-                          return FadeSlideIn(
-                            delay: Duration(
-                              milliseconds: (i * 40).clamp(0, 300),
-                            ),
-                            child: ContactTile(
-                              item: item,
-                              priorityColor: _priorityColor(ctx, item.priority),
-                              statusIcon: _statusIcon(item.status),
-                              onDelete: _delete,
+                          return RepaintBoundary(
+                            child: FadeSlideIn(
+                              delay: Duration(
+                                milliseconds: (i * 40).clamp(0, 300),
+                              ),
+                              child: ContactTile(
+                                item: item,
+                                priorityColor: _priorityColor(ctx, item.priority),
+                                statusIcon: _statusIcon(item.status),
+                                onDelete: _delete,
+                              ),
                             ),
                           );
                         },

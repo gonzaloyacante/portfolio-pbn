@@ -208,7 +208,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
             itemCount: dayItems.length,
             separatorBuilder: (_, _) => const SizedBox(height: 8),
-            itemBuilder: (_, i) => BookingCard(dayItems[i]),
+            itemBuilder: (_, i) => RepaintBoundary(child: BookingCard(dayItems[i])),
           );
 
     if (isExpanded) {

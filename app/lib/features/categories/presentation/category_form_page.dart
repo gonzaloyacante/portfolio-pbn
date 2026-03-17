@@ -182,24 +182,26 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                       itemCount: images.length,
                       itemBuilder: (_, i) {
                         final img = images[i];
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _coverImageCtrl.text = img.url;
-                              _pendingThumbnail = null;
-                            });
-                            Navigator.of(ctx).pop();
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: img.thumbnailUrl,
-                              fit: BoxFit.cover,
-                              placeholder: (ctx2, url) =>
-                                  const ColoredBox(color: Color(0xFFE5E5E5)),
-                              errorWidget: (ctx2, url, err) => const Icon(
-                                Icons.broken_image,
-                                color: Color(0xFF9E9E9E),
+                        return RepaintBoundary(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _coverImageCtrl.text = img.url;
+                                _pendingThumbnail = null;
+                              });
+                              Navigator.of(ctx).pop();
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: img.thumbnailUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (ctx2, url) =>
+                                    const ColoredBox(color: Color(0xFFE5E5E5)),
+                                errorWidget: (ctx2, url, err) => const Icon(
+                                  Icons.broken_image,
+                                  color: Color(0xFF9E9E9E),
+                                ),
                               ),
                             ),
                           ),
