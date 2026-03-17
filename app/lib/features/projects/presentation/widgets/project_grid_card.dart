@@ -48,7 +48,7 @@ class ProjectGridCard extends StatelessWidget {
                               imageUrl: item.thumbnailUrl!,
                               width: double.infinity,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
+                              placeholder: (context, url) => ColoredBox(
                                 color: scheme.surfaceContainerHighest,
                                 child: Icon(
                                   Icons.image_outlined,
@@ -56,7 +56,7 @@ class ProjectGridCard extends StatelessWidget {
                                   size: 36,
                                 ),
                               ),
-                              errorWidget: (context, url, error) => Container(
+                              errorWidget: (context, url, error) => ColoredBox(
                                 color: scheme.surfaceContainerHighest,
                                 child: Icon(
                                   Icons.broken_image_outlined,
@@ -65,7 +65,7 @@ class ProjectGridCard extends StatelessWidget {
                                 ),
                               ),
                             )
-                          : Container(
+                          : ColoredBox(
                               color: scheme.surfaceContainerHighest,
                               child: Center(
                                 child: Icon(
@@ -134,7 +134,7 @@ class ProjectGridCard extends StatelessWidget {
                             ),
                           ),
                           if (item.isFeatured)
-                            Container(
+                            DecoratedBox(
                               decoration: BoxDecoration(
                                 color:
                                     Theme.of(context).brightness ==
@@ -150,7 +150,7 @@ class ProjectGridCard extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              child: StatusBadge(
+                              child: const StatusBadge(
                                 status: AppStatus.featured,
                                 small: true,
                               ),

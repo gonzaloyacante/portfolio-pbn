@@ -120,7 +120,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     final servicesAsync = ref.watch(servicesListProvider());
     return servicesAsync.when(
       loading: () =>
-          ShimmerBox(width: double.infinity, height: 56, borderRadius: 12),
+          const ShimmerBox(width: double.infinity, height: 56, borderRadius: 12),
       error: (err, _) => ErrorState(
         message: 'No se pudieron cargar los servicios',
         onRetry: () => ref.invalidate(servicesListProvider()),

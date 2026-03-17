@@ -204,7 +204,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
                               ),
                         ),
                       ),
-                      loading: () => Center(
+                      loading: () => const Center(
                         child: ShimmerBox(
                           width: 120,
                           height: 12,
@@ -417,11 +417,11 @@ class _GoogleCalendarCard extends ConsumerWidget {
       loading: () => AppCard(
         borderRadius: AppRadius.forCard,
         padding: EdgeInsets.zero,
-        child: ShimmerLoader(
+        child: const ShimmerLoader(
           child: ListTile(
-            leading: const ShimmerBox(width: 24, height: 24, borderRadius: 4),
-            title: const ShimmerBox(width: 180, height: 14, borderRadius: 4),
-            subtitle: const ShimmerBox(width: 120, height: 12, borderRadius: 4),
+            leading: ShimmerBox(width: 24, height: 24, borderRadius: 4),
+            title: ShimmerBox(width: 180, height: 14, borderRadius: 4),
+            subtitle: ShimmerBox(width: 120, height: 12, borderRadius: 4),
           ),
         ),
       ),

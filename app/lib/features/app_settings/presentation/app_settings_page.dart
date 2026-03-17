@@ -264,16 +264,16 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                     data: (v) => Column(
                       children: [
                         InfoTile(label: 'Versión', value: v.fullVersion),
-                        InfoTile(
+                        const InfoTile(
                           label: 'Aplicación',
                           value: 'Portfolio PBN Admin',
                         ),
                         InfoTile(label: 'Entorno', value: _environmentLabel),
                       ],
                     ),
-                    loading: () => InfoTile(label: 'Versión', value: '...'),
+                    loading: () => const InfoTile(label: 'Versión', value: '...'),
                     error: (error, stackTrace) =>
-                        InfoTile(label: 'Versión', value: 'N/A'),
+                        const InfoTile(label: 'Versión', value: 'N/A'),
                   );
                 },
               ),

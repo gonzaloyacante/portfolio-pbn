@@ -101,18 +101,18 @@ class SkeletonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (hasImage) ...[
-              ShimmerBox(width: 60, height: 60, borderRadius: AppRadius.tile),
+              const ShimmerBox(width: 60, height: 60, borderRadius: AppRadius.tile),
               const SizedBox(width: AppSpacing.md),
             ],
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const ShimmerBox(width: double.infinity, height: 16),
-                  const SizedBox(height: AppSpacing.sm),
-                  const ShimmerBox(width: 200, height: 12),
-                  const SizedBox(height: AppSpacing.xs + 2),
-                  const ShimmerBox(width: 140, height: 12),
+                  ShimmerBox(width: double.infinity, height: 16),
+                  SizedBox(height: AppSpacing.sm),
+                  ShimmerBox(width: 200, height: 12),
+                  SizedBox(height: AppSpacing.xs + 2),
+                  ShimmerBox(width: 140, height: 12),
                 ],
               ),
             ),
@@ -147,21 +147,21 @@ class SkeletonGridCard extends StatelessWidget {
               ),
             ),
           ],
-          Padding(
-            padding: const EdgeInsets.all(AppSpacing.md),
+          const Padding(
+            padding: EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const ShimmerBox(width: double.infinity, height: 14),
-                const SizedBox(height: AppSpacing.xs + 2),
-                const ShimmerBox(width: 100, height: 11),
-                const SizedBox(height: AppSpacing.sm),
+                ShimmerBox(width: double.infinity, height: 14),
+                SizedBox(height: AppSpacing.xs + 2),
+                ShimmerBox(width: 100, height: 11),
+                SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
-                    const ShimmerBox(width: 48, height: 20),
-                    const SizedBox(width: AppSpacing.xs),
-                    const ShimmerBox(width: 48, height: 20),
+                    ShimmerBox(width: 48, height: 20),
+                    SizedBox(width: AppSpacing.xs),
+                    ShimmerBox(width: 48, height: 20),
                   ],
                 ),
               ],
@@ -255,37 +255,37 @@ class SkeletonServiceTile extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
-      child: Row(
+      child: const Row(
         children: [
           ShimmerBox(width: 46, height: 46, borderRadius: 14),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: ShimmerBox(
                         width: double.infinity,
                         height: 13,
                         borderRadius: 6,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     ShimmerBox(width: 52, height: 20, borderRadius: 10),
                   ],
                 ),
-                const SizedBox(height: 5),
-                const ShimmerBox(width: 130, height: 11, borderRadius: 5),
-                const SizedBox(height: 3),
-                const ShimmerBox(width: 180, height: 11, borderRadius: 5),
+                SizedBox(height: 5),
+                ShimmerBox(width: 130, height: 11, borderRadius: 5),
+                SizedBox(height: 3),
+                ShimmerBox(width: 180, height: 11, borderRadius: 5),
               ],
             ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: 4),
           ShimmerBox(width: 20, height: 20, borderRadius: 4),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
         ],
       ),
     );
@@ -302,22 +302,22 @@ class SkeletonServiceGridCard extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: const EdgeInsets.fromLTRB(12, 14, 4, 12),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               ShimmerBox(width: 46, height: 46, borderRadius: 14),
-              const Spacer(),
+              Spacer(),
               ShimmerBox(width: 18, height: 18, borderRadius: 4),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
             ],
           ),
-          const SizedBox(height: 10),
-          const ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
-          const SizedBox(height: 4),
-          const ShimmerBox(width: 60, height: 11, borderRadius: 5),
-          const Spacer(),
+          SizedBox(height: 10),
+          ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
+          SizedBox(height: 4),
+          ShimmerBox(width: 60, height: 11, borderRadius: 5),
+          Spacer(),
           ShimmerBox(width: 54, height: 20, borderRadius: 10),
         ],
       ),
@@ -337,7 +337,7 @@ class SkeletonCategoryTile extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: EdgeInsets.zero,
-      child: SizedBox(
+      child: const SizedBox(
         height: 80,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -348,36 +348,36 @@ class SkeletonCategoryTile extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.tile),
                 bottomLeft: Radius.circular(AppRadius.tile),
               ),
-              child: const ShimmerBox(width: 80, height: 80, borderRadius: 0),
+              child: ShimmerBox(width: 80, height: 80, borderRadius: 0),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                padding: EdgeInsets.fromLTRB(14, 12, 4, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: ShimmerBox(
                             width: double.infinity,
                             height: 13,
                             borderRadius: 6,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         ShimmerBox(width: 52, height: 20, borderRadius: 10),
                       ],
                     ),
-                    const SizedBox(height: 5),
-                    const ShimmerBox(width: 100, height: 11, borderRadius: 5),
+                    SizedBox(height: 5),
+                    ShimmerBox(width: 100, height: 11, borderRadius: 5),
                   ],
                 ),
               ),
             ),
             ShimmerBox(width: 20, height: 20, borderRadius: 4),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
           ],
         ),
       ),
@@ -395,31 +395,31 @@ class SkeletonCategoryGridCard extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: EdgeInsets.zero,
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
+            borderRadius: BorderRadius.vertical(
               top: Radius.circular(AppRadius.tile),
             ),
-            child: const ShimmerBox(
+            child: ShimmerBox(
               width: double.infinity,
               height: 100,
               borderRadius: 0,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(10, 8, 10, 12),
+            padding: EdgeInsets.fromLTRB(10, 8, 10, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ShimmerBox(
+                ShimmerBox(
                   width: double.infinity,
                   height: 13,
                   borderRadius: 6,
                 ),
-                const SizedBox(height: 4),
-                const ShimmerBox(width: 80, height: 11, borderRadius: 5),
+                SizedBox(height: 4),
+                ShimmerBox(width: 80, height: 11, borderRadius: 5),
               ],
             ),
           ),
@@ -441,7 +441,7 @@ class SkeletonProjectTile extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: EdgeInsets.zero,
-      child: SizedBox(
+      child: const SizedBox(
         height: 90,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -452,35 +452,35 @@ class SkeletonProjectTile extends StatelessWidget {
                 topLeft: Radius.circular(AppRadius.tile),
                 bottomLeft: Radius.circular(AppRadius.tile),
               ),
-              child: const ShimmerBox(width: 80, height: 90, borderRadius: 0),
+              child: ShimmerBox(width: 80, height: 90, borderRadius: 0),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+                padding: EdgeInsets.fromLTRB(14, 10, 4, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       children: [
-                        const Expanded(
+                        Expanded(
                           child: ShimmerBox(
                             width: double.infinity,
                             height: 13,
                             borderRadius: 6,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        SizedBox(width: 8),
                         ShimmerBox(width: 52, height: 20, borderRadius: 10),
                       ],
                     ),
-                    const SizedBox(height: 5),
-                    const ShimmerBox(width: 110, height: 11, borderRadius: 5),
-                    const SizedBox(height: 6),
+                    SizedBox(height: 5),
+                    ShimmerBox(width: 110, height: 11, borderRadius: 5),
+                    SizedBox(height: 6),
                     Row(
                       children: [
                         ShimmerBox(width: 44, height: 18, borderRadius: 9),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         ShimmerBox(width: 44, height: 18, borderRadius: 9),
                       ],
                     ),
@@ -489,7 +489,7 @@ class SkeletonProjectTile extends StatelessWidget {
               ),
             ),
             ShimmerBox(width: 20, height: 20, borderRadius: 4),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
           ],
         ),
       ),
@@ -507,36 +507,36 @@ class SkeletonProjectGridCard extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: EdgeInsets.zero,
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(
+            borderRadius: BorderRadius.vertical(
               top: Radius.circular(AppRadius.tile),
             ),
-            child: const ShimmerBox(
+            child: ShimmerBox(
               width: double.infinity,
               height: 140,
               borderRadius: 0,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+            padding: EdgeInsets.fromLTRB(12, 8, 12, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ShimmerBox(
+                ShimmerBox(
                   width: double.infinity,
                   height: 13,
                   borderRadius: 6,
                 ),
-                const SizedBox(height: 4),
-                const ShimmerBox(width: 90, height: 11, borderRadius: 5),
-                const SizedBox(height: 8),
+                SizedBox(height: 4),
+                ShimmerBox(width: 90, height: 11, borderRadius: 5),
+                SizedBox(height: 8),
                 Row(
                   children: [
                     ShimmerBox(width: 44, height: 18, borderRadius: 9),
-                    const SizedBox(width: 4),
+                    SizedBox(width: 4),
                     ShimmerBox(width: 44, height: 18, borderRadius: 9),
                   ],
                 ),
@@ -599,7 +599,7 @@ class SkeletonTestimonialCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Avatar circular
-          ShimmerBox(width: 44, height: 44, borderRadius: 22),
+          const ShimmerBox(width: 44, height: 44, borderRadius: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -620,8 +620,8 @@ class SkeletonTestimonialCard extends StatelessWidget {
                     Row(
                       children: List.generate(
                         5,
-                        (_) => Padding(
-                          padding: const EdgeInsets.only(left: 2),
+                        (_) => const Padding(
+                          padding: EdgeInsets.only(left: 2),
                           child: ShimmerBox(
                             width: 12,
                             height: 12,
@@ -646,12 +646,12 @@ class SkeletonTestimonialCard extends StatelessWidget {
                 const ShimmerBox(width: 200, height: 11, borderRadius: 5),
                 const SizedBox(height: 8),
                 // Badge de estado
-                ShimmerBox(width: 68, height: 20, borderRadius: 10),
+                const ShimmerBox(width: 68, height: 20, borderRadius: 10),
               ],
             ),
           ),
           const SizedBox(width: 4),
-          ShimmerBox(width: 20, height: 20, borderRadius: 4),
+          const ShimmerBox(width: 20, height: 20, borderRadius: 4),
           const SizedBox(width: 8),
         ],
       ),
@@ -668,41 +668,41 @@ class SkeletonTrashCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      borderRadius: const BorderRadius.all(Radius.circular(16)),
-      padding: const EdgeInsets.all(16),
+    return const AppCard(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
               ShimmerBox(width: 44, height: 44, borderRadius: 22),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const ShimmerBox(
+                    ShimmerBox(
                       width: double.infinity,
                       height: 13,
                       borderRadius: 6,
                     ),
-                    const SizedBox(height: 4),
-                    const ShimmerBox(width: 80, height: 11, borderRadius: 5),
+                    SizedBox(height: 4),
+                    ShimmerBox(width: 80, height: 11, borderRadius: 5),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               ShimmerBox(width: 60, height: 20, borderRadius: 10),
             ],
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           // Acción buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ShimmerBox(width: 80, height: 30, borderRadius: 12),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               ShimmerBox(width: 80, height: 30, borderRadius: 12),
             ],
           ),
@@ -724,40 +724,40 @@ class SkeletonBookingCard extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-      child: Row(
+      child: const Row(
         children: [
           // Time badge
           ShimmerBox(width: 46, height: 46, borderRadius: 14),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: ShimmerBox(
                         width: double.infinity,
                         height: 13,
                         borderRadius: 6,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     ShimmerBox(width: 56, height: 20, borderRadius: 10),
                   ],
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Row(
                   children: [
                     ShimmerBox(width: 13, height: 13, borderRadius: 4),
-                    const SizedBox(width: 4),
-                    const ShimmerBox(width: 140, height: 11, borderRadius: 5),
+                    SizedBox(width: 4),
+                    ShimmerBox(width: 140, height: 11, borderRadius: 5),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           ShimmerBox(width: 20, height: 20, borderRadius: 4),
         ],
       ),
@@ -777,8 +777,8 @@ class SkeletonCalendarSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Day label
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 8),
           child: ShimmerBox(width: 140, height: 14, borderRadius: 6),
         ),
         ...List.generate(
@@ -802,24 +802,24 @@ class SkeletonStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.md),
+    return const AppCard(
+      padding: EdgeInsets.all(AppSpacing.md),
       child: Row(
         children: [
           ShimmerBox(width: 36, height: 36, borderRadius: 12),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const ShimmerBox(
+                ShimmerBox(
                   width: double.infinity,
                   height: 18,
                   borderRadius: 6,
                 ),
-                const SizedBox(height: 4),
-                const ShimmerBox(width: 80, height: 11, borderRadius: 5),
+                SizedBox(height: 4),
+                ShimmerBox(width: 80, height: 11, borderRadius: 5),
               ],
             ),
           ),
@@ -835,20 +835,20 @@ class SkeletonRankingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           ShimmerBox(width: 24, height: 24, borderRadius: 6),
-          const SizedBox(width: 12),
-          const Expanded(
+          SizedBox(width: 12),
+          Expanded(
             child: ShimmerBox(
               width: double.infinity,
               height: 11,
               borderRadius: 5,
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           ShimmerBox(width: 40, height: 11, borderRadius: 5),
         ],
       ),
@@ -868,25 +868,25 @@ class SkeletonSocialTile extends StatelessWidget {
     return AppCard(
       borderRadius: AppRadius.forTile,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-      child: Row(
+      child: const Row(
         children: [
           ShimmerBox(width: 40, height: 40, borderRadius: 12),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ShimmerBox(
+                ShimmerBox(
                   width: double.infinity,
                   height: 13,
                   borderRadius: 6,
                 ),
-                const SizedBox(height: 5),
-                const ShimmerBox(width: 180, height: 11, borderRadius: 5),
+                SizedBox(height: 5),
+                ShimmerBox(width: 180, height: 11, borderRadius: 5),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           ShimmerBox(width: 44, height: 24, borderRadius: 12),
         ],
       ),
@@ -928,7 +928,7 @@ class SkeletonSettingsFormCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ShimmerBox(width: 80, height: 11, borderRadius: 5),
+                  const ShimmerBox(width: 80, height: 11, borderRadius: 5),
                   const SizedBox(height: 6),
                   ShimmerBox(
                     width: double.infinity,
@@ -1196,7 +1196,7 @@ class SkeletonSocialList extends StatelessWidget {
       child: ListView.separated(
         padding: AppBreakpoints.pagePadding(context),
         itemCount: itemCount,
-        separatorBuilder: (_, _) => SizedBox(height: AppSpacing.sm),
+        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
         itemBuilder: (_, _) => const SkeletonSocialTile(),
       ),
     );
@@ -1250,16 +1250,16 @@ class SkeletonDeviceUsageSection extends StatelessWidget {
         child: Row(
           children: List.generate(
             3,
-            (_) => Expanded(
+            (_) => const Expanded(
               child: Column(
                 children: [
                   ShimmerBox(width: 28, height: 28, borderRadius: 8),
-                  const SizedBox(height: 6),
-                  const ShimmerBox(width: 48, height: 20, borderRadius: 4),
-                  const SizedBox(height: 4),
-                  const ShimmerBox(width: 56, height: 11, borderRadius: 4),
-                  const SizedBox(height: 2),
-                  const ShimmerBox(width: 64, height: 10, borderRadius: 4),
+                  SizedBox(height: 6),
+                  ShimmerBox(width: 48, height: 20, borderRadius: 4),
+                  SizedBox(height: 4),
+                  ShimmerBox(width: 56, height: 11, borderRadius: 4),
+                  SizedBox(height: 2),
+                  ShimmerBox(width: 64, height: 10, borderRadius: 4),
                 ],
               ),
             ),

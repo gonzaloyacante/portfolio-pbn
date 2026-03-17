@@ -63,7 +63,7 @@ class DashboardChartsSection extends ConsumerWidget {
 
   Widget _buildSkeleton(bool isExpanded) {
     if (isExpanded) {
-      return Row(
+      return const Row(
         children: [
           Expanded(
             child: ShimmerBox(
@@ -72,7 +72,7 @@ class DashboardChartsSection extends ConsumerWidget {
               borderRadius: 16,
             ),
           ),
-          const SizedBox(width: AppSpacing.base),
+          SizedBox(width: AppSpacing.base),
           Expanded(
             child: ShimmerBox(
               width: double.infinity,
@@ -83,10 +83,10 @@ class DashboardChartsSection extends ConsumerWidget {
         ],
       );
     }
-    return Column(
+    return const Column(
       children: [
         ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
-        const SizedBox(height: AppSpacing.base),
+        SizedBox(height: AppSpacing.base),
         ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
       ],
     );

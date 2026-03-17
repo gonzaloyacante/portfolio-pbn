@@ -92,7 +92,7 @@ class _AppSearchBarState extends State<AppSearchBar> {
     return Padding(
       padding:
           widget.padding ??
-          EdgeInsets.symmetric(
+          const EdgeInsets.symmetric(
             horizontal: AppSpacing.base,
             vertical: AppSpacing.sm,
           ),

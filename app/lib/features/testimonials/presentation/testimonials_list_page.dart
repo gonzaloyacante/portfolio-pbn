@@ -174,7 +174,9 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                         separatorBuilder: (_, _) => const SizedBox(height: 8),
                         itemBuilder: (ctx, i) => RepaintBoundary(
                           child: FadeSlideIn(
-                            delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+                            delay: Duration(
+                              milliseconds: (i * 40).clamp(0, 300),
+                            ),
                             child: TestimonialTile(
                               item: paginated.data[i],
                               statusOf: _statusFromString,

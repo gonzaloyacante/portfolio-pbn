@@ -27,7 +27,7 @@ class GalleryGridTile extends StatelessWidget {
           CachedNetworkImage(
             imageUrl: item.thumbnailUrl,
             fit: BoxFit.cover,
-            placeholder: (_, _) => Container(
+            placeholder: (_, _) => ColoredBox(
               color: scheme.surfaceContainerHighest,
               child: Icon(
                 Icons.image_outlined,
@@ -35,7 +35,7 @@ class GalleryGridTile extends StatelessWidget {
                 size: 32,
               ),
             ),
-            errorWidget: (_, _, _) => Container(
+            errorWidget: (_, _, _) => ColoredBox(
               color: scheme.surfaceContainerHighest,
               child: Icon(
                 Icons.broken_image_outlined,

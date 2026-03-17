@@ -159,10 +159,10 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: SizedBox.expand(
+                              child: const SizedBox.expand(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.edit_outlined, size: 20),
                                     SizedBox(height: 6),
                                     Text(
@@ -187,10 +187,10 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
                                 side: BorderSide(color: colorScheme.outline),
                                 foregroundColor: colorScheme.onSurface,
                               ),
-                              child: SizedBox.expand(
+                              child: const SizedBox.expand(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
+                                  children: [
                                     Icon(Icons.close, size: 20),
                                     SizedBox(height: 6),
                                     Text(
@@ -466,13 +466,13 @@ class _ImagePreview extends StatelessWidget {
     if (file != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: _AdaptiveImage.file(file!),
+        child: _AdaptiveImage.file(file),
       );
     }
     if (url != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: _AdaptiveImage.network(url!),
+        child: _AdaptiveImage.network(url),
       );
     }
     return const SizedBox.shrink();

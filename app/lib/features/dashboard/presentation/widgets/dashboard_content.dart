@@ -114,7 +114,7 @@ class DashboardContent extends StatelessWidget {
         // ── Sección: Tendencias ──────────────────────────────────────────
         SliverPadding(
           padding: padding.copyWith(top: 0, bottom: AppSpacing.sm),
-          sliver: SliverToBoxAdapter(child: SectionHeader(title: 'Tendencias')),
+          sliver: const SliverToBoxAdapter(child: SectionHeader(title: 'Tendencias')),
         ),
         SliverPadding(
           padding: padding.copyWith(top: 0),
@@ -128,7 +128,7 @@ class DashboardContent extends StatelessWidget {
               top: AppSpacing.lg,
               bottom: AppSpacing.sm,
             ),
-            sliver: SliverToBoxAdapter(
+            sliver: const SliverToBoxAdapter(
               child: SectionHeader(title: 'Dispositivos (30d)'),
             ),
           ),
@@ -150,7 +150,7 @@ class DashboardContent extends StatelessWidget {
               top: AppSpacing.lg,
               bottom: AppSpacing.sm,
             ),
-            sliver: SliverToBoxAdapter(
+            sliver: const SliverToBoxAdapter(
               child: SectionHeader(title: 'Top proyectos (30d)'),
             ),
           ),
@@ -171,7 +171,7 @@ class DashboardContent extends StatelessWidget {
               top: AppSpacing.lg,
               bottom: AppSpacing.sm,
             ),
-            sliver: SliverToBoxAdapter(
+            sliver: const SliverToBoxAdapter(
               child: SectionHeader(title: 'Visitantes por ubicación (30d)'),
             ),
           ),

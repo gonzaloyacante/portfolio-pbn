@@ -277,9 +277,11 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
         return RepaintBoundary(
           child: GestureDetector(
             onTap: () => widget.onSelected(emoji),
-            child: Container(
+            child: DecoratedBox(
               decoration: BoxDecoration(
-                color: isSelected ? scheme.primaryContainer : Colors.transparent,
+                color: isSelected
+                    ? scheme.primaryContainer
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
                 border: isSelected
                     ? Border.all(

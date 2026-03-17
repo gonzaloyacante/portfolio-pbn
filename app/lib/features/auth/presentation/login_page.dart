@@ -174,7 +174,7 @@ class _TwoColumnLayout extends StatelessWidget {
       children: [
         // Lado izquierdo — panel de marca con fondo de color
         Expanded(
-          child: Container(
+          child: ColoredBox(
             color: scheme.primary,
             child: Center(
               child: Padding(

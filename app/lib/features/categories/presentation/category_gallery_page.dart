@@ -150,8 +150,8 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     return Column(
       key: const ValueKey('list'),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
+        const Padding(
+          padding: EdgeInsets.fromLTRB(
             AppSpacing.base,
             AppSpacing.base,
             AppSpacing.base,
@@ -211,8 +211,8 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     return Column(
       key: const ValueKey('grid'),
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(
+        const Padding(
+          padding: EdgeInsets.fromLTRB(
             AppSpacing.base,
             AppSpacing.base,
             AppSpacing.base,
@@ -469,7 +469,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
+            child: const Text(
               'Restablecer',
               style: TextStyle(color: AppColors.destructive),
             ),

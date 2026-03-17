@@ -87,7 +87,7 @@ void main() {
       expect(const HttpException(statusCode: 400).errors, isNull);
     });
     test('errors can be set', () {
-      final e = const HttpException(
+      const e = HttpException(
         statusCode: 422,
         errors: {'field': 'required'},
       );

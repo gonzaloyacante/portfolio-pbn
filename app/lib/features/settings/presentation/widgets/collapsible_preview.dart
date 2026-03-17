@@ -21,7 +21,7 @@ class _CollapsiblePreviewState extends State<CollapsiblePreview> {
     return AnimatedSize(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      child: Container(
+      child: DecoratedBox(
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(20),

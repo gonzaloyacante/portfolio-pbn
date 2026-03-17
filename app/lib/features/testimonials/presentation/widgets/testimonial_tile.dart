@@ -116,7 +116,7 @@ class TestimonialTile extends StatelessWidget {
                       StatusBadge(status: statusOf(item.status), small: true),
                       if (item.featured) ...[
                         const SizedBox(width: 6),
-                        Icon(
+                        const Icon(
                           Icons.star_rounded,
                           size: 14,
                           color: AppColors.warning,

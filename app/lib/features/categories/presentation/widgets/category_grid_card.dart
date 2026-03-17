@@ -48,7 +48,7 @@ class CategoryGridCard extends StatelessWidget {
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
+                          placeholder: (context, url) => ColoredBox(
                             color: scheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.image_outlined,
@@ -56,7 +56,7 @@ class CategoryGridCard extends StatelessWidget {
                               size: 36,
                             ),
                           ),
-                          errorWidget: (context, url, error) => Container(
+                          errorWidget: (context, url, error) => ColoredBox(
                             color: scheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.broken_image_outlined,
@@ -65,7 +65,7 @@ class CategoryGridCard extends StatelessWidget {
                             ),
                           ),
                         )
-                      : Container(
+                      : ColoredBox(
                           color: scheme.surfaceContainerHighest,
                           child: Center(
                             child: Icon(

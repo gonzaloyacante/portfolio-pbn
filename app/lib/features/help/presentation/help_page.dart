@@ -41,7 +41,7 @@ class HelpPage extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          _SectionCard(
+          const _SectionCard(
             icon: Icons.dashboard_outlined,
             title: 'Secciones del panel',
             children: [
@@ -86,8 +86,8 @@ class HelpPage extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
-          _SectionCard(
+          const SizedBox(height: 16),
+          const _SectionCard(
             icon: Icons.help_outline,
             title: 'Preguntas frecuentes',
             children: [
@@ -108,8 +108,8 @@ class HelpPage extends ConsumerWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
-          _SectionCard(
+          const SizedBox(height: 16),
+          const _SectionCard(
             icon: Icons.support_agent_outlined,
             title: 'Soporte',
             children: [

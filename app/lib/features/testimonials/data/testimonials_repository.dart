@@ -100,7 +100,9 @@ class TestimonialsRepository {
   }
 
   Future<void> deleteTestimonial(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(Endpoints.testimonial(id));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.testimonial(id),
+    );
     final apiResp = ApiResponse<void>.fromJson(resp, (_) {});
     if (!apiResp.success) {
       throw Exception(apiResp.error ?? 'Error al eliminar testimonio');

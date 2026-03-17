@@ -41,7 +41,7 @@ class PageViewsChart extends StatelessWidget {
     );
     final interval = _niceInterval(maxCount);
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: AppRadius.forTile,
         border: Border.all(

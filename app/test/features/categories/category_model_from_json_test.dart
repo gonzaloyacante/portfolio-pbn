@@ -253,18 +253,18 @@ void main() {
 
   group('CategoryFormData.toJson', () {
     test('required fields in json', () {
-      final j = CategoryFormData(name: 'Bodas', slug: 'bodas').toJson();
+      final j = const CategoryFormData(name: 'Bodas', slug: 'bodas').toJson();
       expect(j['name'], 'Bodas');
       expect(j['slug'], 'bodas');
     });
     test('isActive defaults to true', () {
       expect(
-        CategoryFormData(name: 'T', slug: 't').toJson()['isActive'],
+        const CategoryFormData(name: 'T', slug: 't').toJson()['isActive'],
         isTrue,
       );
     });
     test('null optional fields not present', () {
-      final j = CategoryFormData(name: 'T', slug: 't').toJson();
+      final j = const CategoryFormData(name: 'T', slug: 't').toJson();
       expect(j.containsKey('description'), isFalse);
       expect(j.containsKey('thumbnailUrl'), isFalse);
     });

@@ -304,27 +304,27 @@ void main() {
 
   group('ServiceFormData.toJson', () {
     test('required fields present', () {
-      final f = ServiceFormData(name: 'Test', slug: 'test');
+      const f = ServiceFormData(name: 'Test', slug: 'test');
       final j = f.toJson();
       expect(j['name'], 'Test');
       expect(j['slug'], 'test');
     });
     test('defaults: priceLabel = "desde"', () {
       expect(
-        ServiceFormData(name: 'T', slug: 't').toJson()['priceLabel'],
+        const ServiceFormData(name: 'T', slug: 't').toJson()['priceLabel'],
         'desde',
       );
     });
     test('defaults: currency = "EUR"', () {
-      expect(ServiceFormData(name: 'T', slug: 't').toJson()['currency'], 'EUR');
+      expect(const ServiceFormData(name: 'T', slug: 't').toJson()['currency'], 'EUR');
     });
     test('null optionals not present in json', () {
-      final j = ServiceFormData(name: 'T', slug: 't').toJson();
+      final j = const ServiceFormData(name: 'T', slug: 't').toJson();
       expect(j.containsKey('description'), isFalse);
       expect(j.containsKey('imageUrl'), isFalse);
     });
     test('description present when set', () {
-      final j = ServiceFormData(
+      final j = const ServiceFormData(
         name: 'T',
         slug: 't',
         description: 'Desc',

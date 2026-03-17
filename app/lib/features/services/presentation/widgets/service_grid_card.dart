@@ -73,7 +73,7 @@ class ServiceGridCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  PopupMenuItem(
+                  const PopupMenuItem(
                     value: 'delete',
                     child: Row(
                       children: [
@@ -82,7 +82,7 @@ class ServiceGridCard extends StatelessWidget {
                           size: 18,
                           color: AppColors.destructive,
                         ),
-                        const SizedBox(width: 10),
+                        SizedBox(width: 10),
                         Text(
                           'Eliminar',
                           style: TextStyle(color: AppColors.destructive),

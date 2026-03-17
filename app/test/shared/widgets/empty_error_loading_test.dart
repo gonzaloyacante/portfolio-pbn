@@ -121,21 +121,21 @@ void main() {
   group('LoadingOverlay — renders', () {
     testWidgets('renders child when not loading', (tester) async {
       await tester.pumpWidget(
-        _wrap(LoadingOverlay(isLoading: false, child: const Text('Content'))),
+        _wrap(const LoadingOverlay(isLoading: false, child: Text('Content'))),
       );
       expect(find.text('Content'), findsOneWidget);
     });
 
     testWidgets('renders child when loading', (tester) async {
       await tester.pumpWidget(
-        _wrap(LoadingOverlay(isLoading: true, child: const Text('Content'))),
+        _wrap(const LoadingOverlay(isLoading: true, child: Text('Content'))),
       );
       expect(find.text('Content'), findsAtLeastNWidgets(1));
     });
 
     testWidgets('shows CircularProgressIndicator when loading', (tester) async {
       await tester.pumpWidget(
-        _wrap(LoadingOverlay(isLoading: true, child: const SizedBox())),
+        _wrap(const LoadingOverlay(isLoading: true, child: SizedBox())),
       );
       expect(find.byType(CircularProgressIndicator), findsAtLeastNWidgets(1));
     });
@@ -144,7 +144,7 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        _wrap(LoadingOverlay(isLoading: false, child: const SizedBox())),
+        _wrap(const LoadingOverlay(isLoading: false, child: SizedBox())),
       );
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });

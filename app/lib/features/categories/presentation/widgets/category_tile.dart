@@ -38,7 +38,7 @@ class CategoryTile extends StatelessWidget {
                   ? CachedNetworkImage(
                       imageUrl: item.thumbnailUrl!,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
+                      placeholder: (context, url) => ColoredBox(
                         color: scheme.surfaceContainerHighest,
                         child: Icon(
                           Icons.image_outlined,
@@ -46,7 +46,7 @@ class CategoryTile extends StatelessWidget {
                           size: 28,
                         ),
                       ),
-                      errorWidget: (context, url, error) => Container(
+                      errorWidget: (context, url, error) => ColoredBox(
                         color: scheme.surfaceContainerHighest,
                         child: Icon(
                           Icons.broken_image_outlined,
@@ -55,7 +55,7 @@ class CategoryTile extends StatelessWidget {
                         ),
                       ),
                     )
-                  : Container(
+                  : ColoredBox(
                       color: scheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.photo_library_outlined,
@@ -166,7 +166,7 @@ class CategoryTile extends StatelessWidget {
                       ],
                     ),
                   ),
-                PopupMenuItem(
+                const PopupMenuItem(
                   value: 'delete',
                   child: Row(
                     children: [
@@ -175,7 +175,7 @@ class CategoryTile extends StatelessWidget {
                         size: 18,
                         color: AppColors.destructive,
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                       Text(
                         'Eliminar',
                         style: TextStyle(color: AppColors.destructive),

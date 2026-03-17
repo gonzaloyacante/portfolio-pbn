@@ -36,7 +36,7 @@ class SectionHeader extends StatelessWidget {
     return Padding(
       padding:
           padding ??
-          EdgeInsets.fromLTRB(
+          const EdgeInsets.fromLTRB(
             AppSpacing.base,
             AppSpacing.base,
             AppSpacing.base,

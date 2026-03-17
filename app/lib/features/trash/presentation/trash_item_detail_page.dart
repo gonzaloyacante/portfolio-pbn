@@ -483,7 +483,7 @@ class TrashItemDetailPage extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No se pudo restaurar: ${e.toString()}'),
+            content: Text('No se pudo restaurar: $e'),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );

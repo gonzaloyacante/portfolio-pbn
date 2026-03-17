@@ -41,7 +41,7 @@ class GalleryThumb extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) =>
             Container(color: scheme.surfaceContainerHighest),
-        errorWidget: (context, url, error) => Container(
+        errorWidget: (context, url, error) => ColoredBox(
           color: scheme.surfaceContainerHighest,
           child: Icon(
             Icons.broken_image_outlined,

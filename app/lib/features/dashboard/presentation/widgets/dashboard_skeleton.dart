@@ -58,7 +58,7 @@ class DashboardSkeleton extends StatelessWidget {
               child: isExpanded
                   ? Row(
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: ShimmerBox(
                             width: double.infinity,
                             height: 180,
@@ -66,7 +66,7 @@ class DashboardSkeleton extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: gutter),
-                        Expanded(
+                        const Expanded(
                           child: ShimmerBox(
                             width: double.infinity,
                             height: 180,
@@ -75,14 +75,14 @@ class DashboardSkeleton extends StatelessWidget {
                         ),
                       ],
                     )
-                  : Column(
+                  : const Column(
                       children: [
                         ShimmerBox(
                           width: double.infinity,
                           height: 180,
                           borderRadius: 16,
                         ),
-                        const SizedBox(height: AppSpacing.base),
+                        SizedBox(height: AppSpacing.base),
                         ShimmerBox(
                           width: double.infinity,
                           height: 180,

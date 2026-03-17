@@ -17,7 +17,9 @@ class AccountRepository {
     );
     final success = resp['success'] as bool? ?? false;
     if (!success) {
-      throw Exception(resp['error']?.toString() ?? 'Error al cambiar contraseña');
+      throw Exception(
+        resp['error']?.toString() ?? 'Error al cambiar contraseña',
+      );
     }
   }
 
@@ -29,7 +31,9 @@ class AccountRepository {
     );
     final success = resp['success'] as bool? ?? false;
     if (!success) {
-      throw Exception(resp['error']?.toString() ?? 'Error al actualizar perfil');
+      throw Exception(
+        resp['error']?.toString() ?? 'Error al actualizar perfil',
+      );
     }
   }
 }

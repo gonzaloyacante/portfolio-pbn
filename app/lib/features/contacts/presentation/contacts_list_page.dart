@@ -184,7 +184,10 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                               ),
                               child: ContactTile(
                                 item: item,
-                                priorityColor: _priorityColor(ctx, item.priority),
+                                priorityColor: _priorityColor(
+                                  ctx,
+                                  item.priority,
+                                ),
                                 statusIcon: _statusIcon(item.status),
                                 onDelete: _delete,
                               ),

@@ -119,7 +119,7 @@ class ServiceTile extends StatelessWidget {
                   ],
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'delete',
                 child: Row(
                   children: [
@@ -128,7 +128,7 @@ class ServiceTile extends StatelessWidget {
                       size: 18,
                       color: AppColors.destructive,
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Text(
                       'Eliminar',
                       style: TextStyle(color: AppColors.destructive),

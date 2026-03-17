@@ -593,7 +593,7 @@ class AppDrawer extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                 children: [
-                  _SectionLabel(label: 'CONTENIDO'),
+                  const _SectionLabel(label: 'CONTENIDO'),
                   ..._buildItems(
                     context,
                     items: _allNavItems.sublist(0, 9),
@@ -602,7 +602,7 @@ class AppDrawer extends ConsumerWidget {
                     badgeCounts: badgeCounts,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  _SectionLabel(label: 'CONFIGURACIÓN'),
+                  const _SectionLabel(label: 'CONFIGURACIÓN'),
                   ..._buildItems(
                     context,
                     items: _allNavItems.sublist(9),

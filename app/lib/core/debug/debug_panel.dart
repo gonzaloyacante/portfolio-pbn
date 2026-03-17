@@ -519,7 +519,7 @@ class _BuildInfoCard extends StatelessWidget {
           label: 'Sentry',
           value: info.hasActiveSentry ? '✅ Activo' : '⚪ Inactivo',
         ),
-        _InfoRow(
+        const _InfoRow(
           label: 'Modo Flutter',
           value: kDebugMode
               ? '🐛 Debug'
@@ -591,7 +591,7 @@ class _AuthStateContent extends StatelessWidget {
       Authenticated(:final user) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _InfoRow(
+          const _InfoRow(
             label: 'Estado',
             value: '✅ Autenticado',
             valueColor: Colors.green,
@@ -610,7 +610,7 @@ class _AuthStateContent extends StatelessWidget {
           ),
         ],
       ),
-      Unauthenticated() => _InfoRow(
+      Unauthenticated() => const _InfoRow(
         label: 'Estado',
         value: '🔴 No autenticado',
         valueColor: Colors.red,
@@ -620,7 +620,7 @@ class _AuthStateContent extends StatelessWidget {
         value: '❌ Error: $message',
         valueColor: Colors.red,
       ),
-      _ => _InfoRow(label: 'Estado', value: 'Cargando...'),
+      _ => const _InfoRow(label: 'Estado', value: 'Cargando...'),
     };
   }
 }
@@ -766,7 +766,7 @@ class _DebugCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppRadius.card),
         border: Border.all(color: colorScheme.outlineVariant),

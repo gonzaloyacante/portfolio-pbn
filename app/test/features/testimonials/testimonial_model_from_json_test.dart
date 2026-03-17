@@ -309,26 +309,26 @@ void main() {
 
   group('TestimonialFormData.toJson', () {
     test('required fields in json', () {
-      final j = TestimonialFormData(name: 'Test', text: 'Comment').toJson();
+      final j = const TestimonialFormData(name: 'Test', text: 'Comment').toJson();
       expect(j['name'], 'Test');
       expect(j['text'], 'Comment');
     });
     test('default rating is 5', () {
-      expect(TestimonialFormData(name: 'T', text: 'T').toJson()['rating'], 5);
+      expect(const TestimonialFormData(name: 'T', text: 'T').toJson()['rating'], 5);
     });
     test('default status is PENDING', () {
       expect(
-        TestimonialFormData(name: 'T', text: 'T').toJson()['status'],
+        const TestimonialFormData(name: 'T', text: 'T').toJson()['status'],
         'PENDING',
       );
     });
     test('optional fields absent when null', () {
-      final j = TestimonialFormData(name: 'T', text: 'T').toJson();
+      final j = const TestimonialFormData(name: 'T', text: 'T').toJson();
       expect(j.containsKey('email'), isFalse);
       expect(j.containsKey('source'), isFalse);
     });
     test('optional fields present when set', () {
-      final j = TestimonialFormData(
+      final j = const TestimonialFormData(
         name: 'T',
         text: 'T',
         email: 'a@test.com',

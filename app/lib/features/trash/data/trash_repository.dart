@@ -40,7 +40,9 @@ class TrashRepository {
     );
     final success = resp['success'] as bool? ?? false;
     if (!success) {
-      throw Exception(resp['error']?.toString() ?? 'Error al restaurar elemento');
+      throw Exception(
+        resp['error']?.toString() ?? 'Error al restaurar elemento',
+      );
     }
   }
 
@@ -51,7 +53,10 @@ class TrashRepository {
     );
     final success = resp['success'] as bool? ?? false;
     if (!success) {
-      throw Exception(resp['error']?.toString() ?? 'Error al eliminar elemento permanentemente');
+      throw Exception(
+        resp['error']?.toString() ??
+            'Error al eliminar elemento permanentemente',
+      );
     }
   }
 }

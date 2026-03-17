@@ -346,7 +346,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                         : null,
                   );
 
-                  final switchTile = Container(
+                  final switchTile = DecoratedBox(
                     decoration: BoxDecoration(
                       color: colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),

@@ -193,7 +193,7 @@ class DashboardPage extends ConsumerWidget {
                 top: AppSpacing.lg,
                 bottom: AppSpacing.sm,
               ),
-              sliver: SliverToBoxAdapter(
+              sliver: const SliverToBoxAdapter(
                 child: SectionHeader(title: 'Tendencias'),
               ),
             ),
@@ -233,7 +233,7 @@ class DashboardPage extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SectionHeader(title: 'Dispositivos (30d)'),
+                            const SectionHeader(title: 'Dispositivos (30d)'),
                             const SizedBox(height: AppSpacing.sm),
                             DeviceUsageSection(
                               deviceUsage: stats.deviceUsage,
@@ -282,7 +282,7 @@ class DashboardPage extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SectionHeader(title: 'Top proyectos (30d)'),
+                            const SectionHeader(title: 'Top proyectos (30d)'),
                             const SizedBox(height: AppSpacing.sm),
                             TopRankingSection(
                               items: [
@@ -327,7 +327,7 @@ class DashboardPage extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SectionHeader(
+                            const SectionHeader(
                               title: 'Visitantes por ubicación (30d)',
                             ),
                             const SizedBox(height: AppSpacing.sm),

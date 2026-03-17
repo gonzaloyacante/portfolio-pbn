@@ -139,7 +139,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           lastDay: DateTime(2030),
           focusedDay: _focusedDay,
           selectedDayPredicate: (d) =>
-              _selectedDay != null && isSameDay(d, _selectedDay!),
+              _selectedDay != null && isSameDay(d, _selectedDay),
           onDaySelected: (selected, focused) {
             setState(() {
               _selectedDay = selected;
@@ -203,12 +203,13 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     final dayListContent = loading
         ? const SkeletonCalendarList()
         : dayItems.isEmpty
-        ? EmptyDay()
+        ? const EmptyDay()
         : ListView.separated(
             padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
             itemCount: dayItems.length,
             separatorBuilder: (_, _) => const SizedBox(height: 8),
-            itemBuilder: (_, i) => RepaintBoundary(child: BookingCard(dayItems[i])),
+            itemBuilder: (_, i) =>
+                RepaintBoundary(child: BookingCard(dayItems[i])),
           );
 
     if (isExpanded) {

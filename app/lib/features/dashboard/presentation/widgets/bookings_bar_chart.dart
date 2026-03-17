@@ -43,7 +43,7 @@ class BookingsBarChart extends StatelessWidget {
       );
     }).toList();
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: AppRadius.forTile,
         border: Border.all(
