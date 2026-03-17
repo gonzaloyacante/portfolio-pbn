@@ -11,6 +11,7 @@ import 'core/notifications/notification_handler.dart';
 import 'core/notifications/push_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/sync/sync_manager.dart';
 import 'core/updates/app_release_model.dart';
 import 'core/updates/app_update_provider.dart';
 import 'core/utils/app_logger.dart';
@@ -26,7 +27,7 @@ class App extends ConsumerStatefulWidget {
   ConsumerState<App> createState() => _AppState();
 }
 
-class _AppState extends ConsumerState<App> {
+class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   NotificationHandler? _notifHandler;
 
   // ── timeDilation sync ────────────────────────────────────────────────────
@@ -43,6 +44,7 @@ class _AppState extends ConsumerState<App> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final router = ref.read(routerProvider);
       _notifHandler = NotificationHandler(router: router);
@@ -66,7 +68,16 @@ class _AppState extends ConsumerState<App> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      AppLogger.info('App: resumed from background → triggering sync');
+      ref.read(syncManagerProvider.notifier).syncNow();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     clearShowUpdateDialogCallback();
     super.dispose();
   }
