@@ -220,6 +220,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                       controller: _clientPhoneCtrl,
                       keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(labelText: 'Teléfono'),
+                      validator: AppValidators.phone,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
