@@ -101,6 +101,7 @@ export async function getBookingsByRange(start: Date, end: Date) {
   try {
     return await prisma.booking.findMany({
       where: {
+        deletedAt: null,
         date: {
           gte: start,
           lte: end,
