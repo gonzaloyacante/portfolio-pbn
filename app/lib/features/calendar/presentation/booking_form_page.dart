@@ -44,10 +44,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
   Future<void> _pickDateTime() async {
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: _date ?? now,
-      firstDate: DateTime(2020),
+      initialDate: _date != null && _date!.isAfter(today) ? _date! : today,
+      firstDate: today,
       lastDate: DateTime(2035),
     );
     if (pickedDate == null || !mounted) return;
@@ -196,8 +197,12 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                     TextFormField(
                       controller: _clientNameCtrl,
                       decoration: const InputDecoration(labelText: 'Nombre *'),
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Obligatorio' : null,
+                      textCapitalization: TextCapitalization.words,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                        if (v.trim().length < 2) return 'Mínimo 2 caracteres';
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -205,8 +210,13 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(labelText: 'Email *'),
                       validator: (v) {
-                        if (v == null || v.isEmpty) return 'Obligatorio';
-                        if (!v.contains('@')) return 'Email inválido';
+                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                        final emailRegex = RegExp(
+                          r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$',
+                        );
+                        if (!emailRegex.hasMatch(v.trim())) {
+                          return 'Email inválido';
+                        }
                         return null;
                       },
                     ),
@@ -223,6 +233,13 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                       decoration: const InputDecoration(
                         labelText: 'Nº de asistentes',
                       ),
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) return null;
+                        final n = int.tryParse(v.trim());
+                        if (n == null || n < 1) return 'Mínimo 1 asistente';
+                        if (n > 999) return 'Máximo 999 asistentes';
+                        return null;
+                      },
                     ),
                   ],
                 ),

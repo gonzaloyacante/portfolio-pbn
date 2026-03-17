@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../shared/widgets/app_scaffold.dart';
@@ -472,7 +473,7 @@ class TrashItemDetailPage extends ConsumerWidget {
       ref.invalidate(trashItemsProvider);
       _invalidateListByType(ref);
       if (context.mounted) {
-        Navigator.of(context).pop();
+        context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${item.displayName} restaurado correctamente'),
@@ -521,7 +522,7 @@ class TrashItemDetailPage extends ConsumerWidget {
       ref.invalidate(trashItemsProvider);
       _invalidateListByType(ref);
       if (context.mounted) {
-        Navigator.of(context).pop();
+        context.pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${item.displayName} eliminado permanentemente'),
