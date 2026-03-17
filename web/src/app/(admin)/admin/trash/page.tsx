@@ -3,8 +3,12 @@ import { Button, EmptyState } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import Image from 'next/image'
 import { restoreProject, permanentlyDeleteProject } from '@/actions/cms/content'
+import { requireAdmin } from '@/lib/security-server'
+
+export const dynamic = 'force-dynamic'
 
 export default async function PapeleraPage() {
+  await requireAdmin()
   const deletedProjects = await prisma.project.findMany({
     where: { isDeleted: true },
     include: { category: true, images: { take: 1 } },

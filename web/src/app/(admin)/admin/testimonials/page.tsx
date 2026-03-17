@@ -5,8 +5,12 @@ import { SmartField as FormField } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
+import { requireAdmin } from '@/lib/security-server'
+
+export const dynamic = 'force-dynamic'
 
 export default async function TestimonialsPage() {
+  await requireAdmin()
   const testimonials = await prisma.testimonial.findMany({
     where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },

@@ -170,7 +170,9 @@ export async function getContacts() {
   await checkApiRateLimit()
 
   return await prisma.contact.findMany({
+    where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },
+    take: 500,
   })
 }
 
