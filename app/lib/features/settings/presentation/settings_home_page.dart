@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -495,10 +496,10 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                   if (hasPending)
                     Image.file(_pendingHeroImage!, fit: BoxFit.cover)
                   else if (hasUrl)
-                    Image.network(
-                      _heroImageCtrl.text,
+                    CachedNetworkImage(
+                      imageUrl: _heroImageCtrl.text,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stack) =>
+                      errorWidget: (context, url, error) =>
                           PreviewImagePlaceholder(color: colorScheme),
                     )
                   else

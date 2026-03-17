@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -498,7 +499,7 @@ class _AdaptiveImageState extends State<_AdaptiveImage> {
 
   ImageProvider get _provider {
     if (widget.file != null) return FileImage(widget.file!);
-    return NetworkImage(widget.url!);
+    return CachedNetworkImageProvider(widget.url!);
   }
 
   @override
