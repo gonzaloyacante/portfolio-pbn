@@ -84,7 +84,7 @@ class AdaptiveGrid extends StatelessWidget {
         childAspectRatio: childAspectRatio,
       ),
       itemCount: children.length,
-      itemBuilder: (_, i) => children[i],
+      itemBuilder: (_, i) => RepaintBoundary(child: children[i]),
     );
   }
 }

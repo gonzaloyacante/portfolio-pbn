@@ -259,9 +259,11 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
         childAspectRatio: 1.1,
       ),
       itemCount: items.length,
-      itemBuilder: (ctx, i) => FadeSlideIn(
-        delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-        child: CategoryGridCard(item: items[i], onDelete: _delete),
+      itemBuilder: (ctx, i) => RepaintBoundary(
+        child: FadeSlideIn(
+          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+          child: CategoryGridCard(item: items[i], onDelete: _delete),
+        ),
       ),
     );
   }

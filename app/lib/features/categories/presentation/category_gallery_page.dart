@@ -175,11 +175,14 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             onReorder: _onReorder,
             itemBuilder: (context, index) {
               final img = _items![index];
-              return GalleryTile(
+              return RepaintBoundary(
                 key: ValueKey(img.id),
-                item: img,
-                index: index,
-                total: _items!.length,
+                child: GalleryTile(
+                  key: ValueKey('tile_${img.id}'),
+                  item: img,
+                  index: index,
+                  total: _items!.length,
+                ),
               );
             },
           ),

@@ -126,9 +126,11 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
             return const SkeletonProjectGridCard();
           }
           final item = _items[index];
-          return FadeSlideIn(
-            delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
-            child: ProjectGridCard(item: item, onDelete: widget.onDelete),
+          return RepaintBoundary(
+            child: FadeSlideIn(
+              delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
+              child: ProjectGridCard(item: item, onDelete: widget.onDelete),
+            ),
           );
         },
       );
@@ -144,9 +146,11 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
           return const SkeletonProjectTile();
         }
         final item = _items[index];
-        return FadeSlideIn(
-          delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
-          child: ProjectTile(item: item, onDelete: widget.onDelete),
+        return RepaintBoundary(
+          child: FadeSlideIn(
+            delay: Duration(milliseconds: (index * 40).clamp(0, 300)),
+            child: ProjectTile(item: item, onDelete: widget.onDelete),
+          ),
         );
       },
     );

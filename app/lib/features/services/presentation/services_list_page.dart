@@ -158,13 +158,15 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                                     childAspectRatio: 1.05,
                                   ),
                               itemCount: paginated.data.length,
-                              itemBuilder: (ctx, i) => FadeSlideIn(
-                                delay: Duration(
-                                  milliseconds: (i * 40).clamp(0, 300),
-                                ),
-                                child: ServiceGridCard(
-                                  item: paginated.data[i],
-                                  onDelete: _delete,
+                              itemBuilder: (ctx, i) => RepaintBoundary(
+                                child: FadeSlideIn(
+                                  delay: Duration(
+                                    milliseconds: (i * 40).clamp(0, 300),
+                                  ),
+                                  child: ServiceGridCard(
+                                    item: paginated.data[i],
+                                    onDelete: _delete,
+                                  ),
                                 ),
                               ),
                             )
@@ -173,13 +175,15 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                               itemCount: paginated.data.length,
                               separatorBuilder: (_, _) =>
                                   const SizedBox(height: 8),
-                              itemBuilder: (ctx, i) => FadeSlideIn(
-                                delay: Duration(
-                                  milliseconds: (i * 40).clamp(0, 300),
-                                ),
-                                child: ServiceTile(
-                                  item: paginated.data[i],
-                                  onDelete: _delete,
+                              itemBuilder: (ctx, i) => RepaintBoundary(
+                                child: FadeSlideIn(
+                                  delay: Duration(
+                                    milliseconds: (i * 40).clamp(0, 300),
+                                  ),
+                                  child: ServiceTile(
+                                    item: paginated.data[i],
+                                    onDelete: _delete,
+                                  ),
                                 ),
                               ),
                             ),
