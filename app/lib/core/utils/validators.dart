@@ -21,6 +21,13 @@ class AppValidators {
     return null;
   }
 
+  /// Igual que [email] pero permite campo vacío (opcional).
+  static String? emailOptional(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    if (!_emailPattern.hasMatch(value.trim())) return 'Email inválido';
+    return null;
+  }
+
   static String? Function(String?) minLength(int min) {
     return (value) {
       if (value == null || value.length < min) {

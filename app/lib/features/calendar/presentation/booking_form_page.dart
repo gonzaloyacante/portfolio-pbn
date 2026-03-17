@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -120,8 +121,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   Widget _buildServiceSelector() {
     final servicesAsync = ref.watch(servicesListProvider());
     return servicesAsync.when(
-      loading: () =>
-          const ShimmerBox(width: double.infinity, height: 56, borderRadius: 12),
+      loading: () => const ShimmerBox(
+        width: double.infinity,
+        height: 56,
+        borderRadius: 12,
+      ),
       error: (err, _) => ErrorState(
         message: 'No se pudieron cargar los servicios',
         onRetry: () => ref.invalidate(servicesListProvider()),
@@ -209,16 +213,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                       controller: _clientEmailCtrl,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(labelText: 'Email *'),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
-                        final emailRegex = RegExp(
-                          r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$',
-                        );
-                        if (!emailRegex.hasMatch(v.trim())) {
-                          return 'Email inválido';
-                        }
-                        return null;
-                      },
+                      validator: AppValidators.email,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
