@@ -197,8 +197,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                               child: CachedNetworkImage(
                                 imageUrl: img.thumbnailUrl,
                                 fit: BoxFit.cover,
-                                placeholder: (ctx2, url) =>
-                                    const ColoredBox(color: AppColors.lightBorder),
+                                placeholder: (ctx2, url) => const ColoredBox(
+                                  color: AppColors.lightBorder,
+                                ),
                                 errorWidget: (ctx2, url, err) => const Icon(
                                   Icons.broken_image,
                                   color: AppColors.neutralMedium,

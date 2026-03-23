@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/utils/app_logger.dart';
+import '../../../core/theme/app_colors.dart';
 
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
@@ -390,13 +391,13 @@ class TrashItemDetailPage extends ConsumerWidget {
             Icon(
               value ? Icons.check_circle_outline : Icons.cancel_outlined,
               size: 16,
-              color: value ? Colors.green.shade600 : Colors.red.shade400,
+              color: value ? AppColors.success : AppColors.destructive,
             ),
             const SizedBox(width: 4),
             Text(
               value ? 'Sí' : 'No',
               style: TextStyle(
-                color: value ? Colors.green.shade700 : Colors.red.shade500,
+                color: value ? AppColors.success : AppColors.destructive,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -420,7 +421,7 @@ class TrashItemDetailPage extends ConsumerWidget {
                   ? Icons.star_rounded
                   : Icons.star_outline_rounded,
               size: 18,
-              color: Colors.amber.shade600,
+              color: AppColors.warning,
             );
           }),
         );
@@ -533,7 +534,11 @@ class TrashItemDetailPage extends ConsumerWidget {
         );
       }
     } catch (e, st) {
-      AppLogger.error('TrashItemDetailPage: error al eliminar permanentemente', e, st);
+      AppLogger.error(
+        'TrashItemDetailPage: error al eliminar permanentemente',
+        e,
+        st,
+      );
       Sentry.captureException(e, stackTrace: st);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

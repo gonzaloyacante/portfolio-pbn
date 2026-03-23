@@ -83,7 +83,9 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
     try {
       current = await ref.read(categoryDisplaySettingsProvider.future);
     } catch (e, st) {
-      AppLogger.warn('CategoriesListPage: error loading display settings, using defaults — $e');
+      AppLogger.warn(
+        'CategoriesListPage: error loading display settings, using defaults — $e',
+      );
       Sentry.captureException(e, stackTrace: st);
       current = const CategoryDisplaySettings();
     }

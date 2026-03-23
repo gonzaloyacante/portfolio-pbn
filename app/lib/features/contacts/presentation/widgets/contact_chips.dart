@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/core/theme/app_colors.dart';
 
 class StatusChip extends StatelessWidget {
   const StatusChip({super.key, required this.label, required this.color});
@@ -34,9 +35,9 @@ class PriorityChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = switch (priority) {
-      'URGENT' => Colors.red,
-      'HIGH' => Colors.orange,
-      'LOW' => Colors.grey,
+      'URGENT' => AppColors.priorityHigh,
+      'HIGH' => AppColors.warning,
+      'LOW' => AppColors.neutral,
       _ => Theme.of(context).colorScheme.primary,
     };
     final label = switch (priority) {

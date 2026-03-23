@@ -34,10 +34,12 @@ class DashboardChartsSection extends ConsumerWidget {
         );
       },
       data: (charts) {
-        final pageViewsChart =
-            RepaintBoundary(child: PageViewsChart(data: charts.dailyPageViews));
-        final bookingsChart =
-            RepaintBoundary(child: BookingsBarChart(data: charts.monthlyBookings));
+        final pageViewsChart = RepaintBoundary(
+          child: PageViewsChart(data: charts.dailyPageViews),
+        );
+        final bookingsChart = RepaintBoundary(
+          child: BookingsBarChart(data: charts.monthlyBookings),
+        );
 
         if (isExpanded) {
           return IntrinsicHeight(

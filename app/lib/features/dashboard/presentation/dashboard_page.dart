@@ -332,7 +332,9 @@ class DashboardPage extends ConsumerWidget {
                             ),
                             const SizedBox(height: AppSpacing.sm),
                             RepaintBoundary(
-                              child: VisitorsMapWidget(locations: stats.topLocations),
+                              child: VisitorsMapWidget(
+                                locations: stats.topLocations,
+                              ),
                             ),
                           ],
                         ),

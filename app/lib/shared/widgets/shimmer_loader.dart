@@ -143,7 +143,11 @@ class SkeletonGridCard extends StatelessWidget {
                   topLeft: Radius.circular(AppRadius.card),
                   topRight: Radius.circular(AppRadius.card),
                 ),
-                child: Container(width: double.infinity, color: Colors.white),
+                child: ColoredBox(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? AppColors.darkMuted
+                      : AppColors.lightBorder,
+                ),
               ),
             ),
           ],

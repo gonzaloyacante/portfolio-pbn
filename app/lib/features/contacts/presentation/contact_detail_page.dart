@@ -7,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../core/theme/app_colors.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 import '../../../core/utils/date_utils.dart';
@@ -394,11 +395,11 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
   };
 
   Color _statusColor(String s) => switch (s) {
-    'REPLIED' => Colors.green,
-    'CLOSED' => Colors.grey,
-    'SPAM' => Colors.red,
-    'IN_PROGRESS' => Colors.orange,
-    _ => Colors.blue,
+    'REPLIED' => AppColors.success,
+    'CLOSED' => AppColors.neutral,
+    'SPAM' => AppColors.destructive,
+    'IN_PROGRESS' => AppColors.warning,
+    _ => AppColors.info,
   };
 
   String _priorityLabel(String p) => switch (p) {
