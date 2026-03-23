@@ -14,6 +14,8 @@ class Endpoints {
   static String project(String id) => '/api/admin/projects/$id';
   static const String projectsReorder = '/api/admin/projects/reorder';
   static String projectImages(String id) => '/api/admin/projects/$id/images';
+  static String projectImagesReorder(String id) =>
+      '/api/admin/projects/$id/images/reorder';
   static String projectImage(String id, String imageId) =>
       '/api/admin/projects/$id/images/$imageId';
 

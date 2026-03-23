@@ -223,8 +223,15 @@ class DashboardPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              error: (_, _) =>
-                  const SliverToBoxAdapter(child: SizedBox.shrink()),
+              error: (err, _) => SliverPadding(
+                padding: padding.copyWith(top: AppSpacing.lg),
+                sliver: SliverToBoxAdapter(
+                  child: ErrorState(
+                    message: 'Error al cargar dispositivos',
+                    onRetry: () => ref.invalidate(dashboardStatsProvider),
+                  ),
+                ),
+              ),
               data: (stats) => stats.deviceUsage.isEmpty
                   ? const SliverToBoxAdapter(child: SizedBox.shrink())
                   : SliverPadding(
@@ -272,8 +279,15 @@ class DashboardPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              error: (_, _) =>
-                  const SliverToBoxAdapter(child: SizedBox.shrink()),
+              error: (err, _) => SliverPadding(
+                padding: padding.copyWith(top: AppSpacing.lg),
+                sliver: SliverToBoxAdapter(
+                  child: ErrorState(
+                    message: 'Error al cargar ranking',
+                    onRetry: () => ref.invalidate(dashboardStatsProvider),
+                  ),
+                ),
+              ),
               data: (stats) => stats.topProjects.isEmpty
                   ? const SliverToBoxAdapter(child: SizedBox.shrink())
                   : SliverPadding(
@@ -317,8 +331,15 @@ class DashboardPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              error: (_, _) =>
-                  const SliverToBoxAdapter(child: SizedBox.shrink()),
+              error: (err, _) => SliverPadding(
+                padding: padding.copyWith(top: AppSpacing.lg),
+                sliver: SliverToBoxAdapter(
+                  child: ErrorState(
+                    message: 'Error al cargar mapa de visitantes',
+                    onRetry: () => ref.invalidate(dashboardStatsProvider),
+                  ),
+                ),
+              ),
               data: (stats) => stats.topLocations.isEmpty
                   ? const SliverToBoxAdapter(child: SizedBox.shrink())
                   : SliverPadding(

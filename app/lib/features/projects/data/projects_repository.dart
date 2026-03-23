@@ -168,6 +168,21 @@ class ProjectsRepository {
       throw Exception(apiResponse.error ?? 'Error al eliminar imagen');
     }
   }
+
+  /// Reordena las imágenes de la galería del proyecto.
+  Future<void> reorderImages(
+    String projectId,
+    List<Map<String, dynamic>> items,
+  ) async {
+    final resp = await _client.put<Map<String, dynamic>>(
+      Endpoints.projectImagesReorder(projectId),
+      data: {'items': items},
+    );
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al reordenar imágenes');
+    }
+  }
 }
 
 // ── Provider ──────────────────────────────────────────────────────────────────

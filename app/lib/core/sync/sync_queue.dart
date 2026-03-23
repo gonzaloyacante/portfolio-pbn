@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../config/app_constants.dart';
 import '../database/app_database.dart';
 import '../utils/app_logger.dart';
 
@@ -100,7 +101,7 @@ class SyncQueueRepository {
     final row = await (_db.select(
       _db.syncOperationsTable,
     )..where((t) => t.id.equals(id))).getSingleOrNull();
-    if (row != null && row.attempts >= 3) {
+    if (row != null && row.attempts >= AppConstants.maxSyncRetries) {
       await markFailed(id);
     }
   }

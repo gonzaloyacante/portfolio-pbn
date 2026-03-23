@@ -52,6 +52,21 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
   }
 
   @override
+  void didUpdateWidget(covariant ProjectsList oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.search != widget.search ||
+        oldWidget.categoryId != widget.categoryId ||
+        oldWidget.initialPaginated != widget.initialPaginated) {
+      setState(() {
+        _items = List<ProjectListItem>.from(widget.initialPaginated.data);
+        _page = widget.initialPaginated.pagination.page;
+        _totalPages = widget.initialPaginated.pagination.totalPages;
+        _isLoadingMore = false;
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();

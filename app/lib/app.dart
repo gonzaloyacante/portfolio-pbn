@@ -11,6 +11,7 @@ import 'core/notifications/notification_handler.dart';
 import 'core/notifications/push_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/database/cache_manager.dart';
 import 'core/sync/sync_manager.dart';
 import 'core/updates/app_release_model.dart';
 import 'core/updates/app_update_provider.dart';
@@ -72,6 +73,9 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       AppLogger.info('App: resumed from background → triggering sync');
       ref.read(syncManagerProvider.notifier).syncNow();
+
+      // Purge expired cache entries on resume to prevent stale data buildup.
+      ref.read(cacheManagerProvider).purgeExpired();
     }
   }
 

@@ -98,8 +98,9 @@ class ConnectivityInterceptor extends Interceptor {
 
 // ── RetryInterceptor ──────────────────────────────────────────────────────────
 
-/// Reintenta peticiones fallidas en caso de error de red o 503.
+/// Reintenta peticiones fallidas en caso de error de red, 503 o 429 (rate limit).
 /// Usa backoff exponencial: 1s, 2s, 4s (máximo [AppConstants.maxRetries]).
+/// Para 429, respeta el header Retry-After si está presente.
 class RetryInterceptor extends Interceptor {
   RetryInterceptor({required this.dio});
 
@@ -119,7 +120,7 @@ class RetryInterceptor extends Interceptor {
       return handler.next(err);
     }
 
-    final delay = Duration(seconds: 1 << attempt); // 1s, 2s, 4s
+    final delay = _retryDelay(err, attempt);
     AppLogger.info(
       '[Retry] Attempt ${attempt + 1}/${AppConstants.maxRetries} '
       'for ${options.uri} in ${delay.inSeconds}s',
@@ -137,9 +138,24 @@ class RetryInterceptor extends Interceptor {
     }
   }
 
+  /// Calcula el delay de reintemto.
+  /// Para 429, usa el header Retry-After si está disponible.
+  static Duration _retryDelay(DioException err, int attempt) {
+    if (err.response?.statusCode == 429) {
+      final retryAfter = err.response?.headers.value('retry-after');
+      if (retryAfter != null) {
+        final seconds = int.tryParse(retryAfter);
+        if (seconds != null && seconds > 0) {
+          return Duration(seconds: seconds);
+        }
+      }
+    }
+    return Duration(seconds: 1 << attempt); // 1s, 2s, 4s
+  }
+
   static bool _shouldRetry(DioException err) {
     if (err.error is NetworkException) return true;
     final status = err.response?.statusCode;
-    return status == 503 || status == 502 || status == 504;
+    return status == 429 || status == 502 || status == 503 || status == 504;
   }
 }

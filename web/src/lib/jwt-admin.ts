@@ -121,9 +121,6 @@ export async function withAdminJwt(
   const rateResult = await adminApiLimiter.check(clientIp)
   if (!rateResult.allowed) {
     logger.warn(`[withAdminJwt] Rate limit exceeded for IP: ${clientIp}`)
-    adminApiLimiter
-      .record(clientIp, { route: req.url })
-      .catch((err) => logger.error('[withAdminJwt] Error recording rate limit', { error: err }))
 
     return {
       ok: false,

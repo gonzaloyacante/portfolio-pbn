@@ -58,6 +58,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   // Galería de imágenes
   List<ProjectImage> _existingImages = [];
+  bool _galleryReordered = false;
 
   @override
   void initState() {
@@ -258,6 +259,14 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       // 2. Eliminar imágenes marcadas para eliminar.
       for (final imageId in _removedImageIds) {
         await repo.removeProjectImage(projectId, imageId);
+      }
+
+      // 2b. Si se reordenó la galería, enviar nuevo orden al backend.
+      if (_galleryReordered && _existingImages.isNotEmpty) {
+        await repo.reorderImages(projectId, [
+          for (int i = 0; i < _existingImages.length; i++)
+            {'id': _existingImages[i].id, 'order': i},
+        ]);
       }
 
       // 3. Añadir a la galería las imágenes ya pre-subidas (si las hay)
@@ -670,65 +679,115 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               const SizedBox(width: 8),
               CountBadge(count: allImages, scheme: scheme),
             ],
+            const Spacer(),
+            if (allImages > 1)
+              Text(
+                'Mantén pulsado para reordenar',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
           ],
         ),
         const SizedBox(height: 10),
         SizedBox(
           height: 100,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.zero,
-            itemCount: _existingImages.length + _pendingNewImages.length + 1,
-            separatorBuilder: (context, i) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              // Imágenes ya guardadas
-              if (index < _existingImages.length) {
-                final img = _existingImages[index];
-                return RepaintBoundary(
-                  child: GalleryThumb.network(
-                    url: img.imageUrl,
-                    onRemove: () => setState(() {
-                      _removedImageIds.add(img.id);
-                      _existingImages.removeAt(index);
-                    }),
-                    onSetCover: () => setState(() {
-                      _data.thumbnailUrl = img.imageUrl;
-                      _pendingCoverIndex = null;
-                    }),
-                    isCover: _data.thumbnailUrl == img.imageUrl,
-                  ),
-                );
-              }
+          child: Row(
+            children: [
+              Expanded(
+                child: ReorderableListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  buildDefaultDragHandles: true,
+                  itemCount: _existingImages.length + _pendingNewImages.length,
+                  onReorder: _onGalleryReorder,
+                  proxyDecorator: (child, _, animation) {
+                    return Material(
+                      elevation: 4 * animation.value,
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.transparent,
+                      child: child,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    // Imágenes ya guardadas
+                    if (index < _existingImages.length) {
+                      final img = _existingImages[index];
+                      return RepaintBoundary(
+                        key: ValueKey('existing-${img.id}'),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GalleryThumb.network(
+                            url: img.imageUrl,
+                            onRemove: () => setState(() {
+                              _removedImageIds.add(img.id);
+                              _existingImages.removeAt(index);
+                            }),
+                            onSetCover: () => setState(() {
+                              _data.thumbnailUrl = img.imageUrl;
+                              _pendingCoverIndex = null;
+                            }),
+                            isCover: _data.thumbnailUrl == img.imageUrl,
+                          ),
+                        ),
+                      );
+                    }
 
-              // Imágenes nuevas pendientes de subir
-              final pi = index - _existingImages.length;
-              if (pi < _pendingNewImages.length) {
-                return RepaintBoundary(
-                  child: GalleryThumb.file(
-                    file: _pendingNewImages[pi],
-                    onRemove: () =>
-                        setState(() => _pendingNewImages.removeAt(pi)),
-                    onSetCover: () => setState(() {
-                      _pendingCoverIndex = pi;
-                      _data.thumbnailUrl = '';
-                    }),
-                    isCover: _pendingCoverIndex == pi,
-                  ),
-                );
-              }
-
-              // Botón "Añadir imagen"
-              return RepaintBoundary(
+                    // Imágenes nuevas pendientes de subir
+                    final pi = index - _existingImages.length;
+                    return RepaintBoundary(
+                      key: ValueKey(
+                        'pending-$pi-${_pendingNewImages[pi].path}',
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: GalleryThumb.file(
+                          file: _pendingNewImages[pi],
+                          onRemove: () =>
+                              setState(() => _pendingNewImages.removeAt(pi)),
+                          onSetCover: () => setState(() {
+                            _pendingCoverIndex = pi;
+                            _data.thumbnailUrl = '';
+                          }),
+                          isCover: _pendingCoverIndex == pi,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              RepaintBoundary(
                 child: AddImageButton(
                   scheme: scheme,
                   onTap: _isLoading ? null : _pickGalleryImage,
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ),
       ],
     );
+  }
+
+  void _onGalleryReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex--;
+      final totalExisting = _existingImages.length;
+
+      if (oldIndex < totalExisting && newIndex < totalExisting) {
+        // Both in existing images
+        final item = _existingImages.removeAt(oldIndex);
+        _existingImages.insert(newIndex, item);
+        _galleryReordered = true;
+      } else if (oldIndex >= totalExisting && newIndex >= totalExisting) {
+        // Both in pending images
+        final pi = oldIndex - totalExisting;
+        final ni = newIndex - totalExisting;
+        final item = _pendingNewImages.removeAt(pi);
+        _pendingNewImages.insert(ni, item);
+      }
+      // Cross-list moves are ignored (existing → pending or vice versa)
+    });
   }
 
   Widget _submitButton() => SizedBox(
