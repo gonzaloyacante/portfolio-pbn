@@ -529,3 +529,52 @@ export const appReleaseDeleteSchema = z
 export const uploadDeleteSchema = z.object({
   publicId: z.string().min(1, 'publicId es requerido'),
 })
+
+// ── Partial schemas for PATCH endpoints ─────────────────────────────────────
+
+export const projectPatchSchema = projectApiSchema
+  .extend({
+    slug: z.string().optional(),
+    ogImage: z.string().optional().nullable(),
+    isActive: z.boolean().optional(),
+  })
+  .partial()
+
+export const categoryPatchSchema = categoryApiSchema
+  .extend({
+    metaTitle: z.string().optional().nullable(),
+    metaDescription: z.string().optional().nullable(),
+    metaKeywords: z.array(z.string()).optional(),
+    ogImage: z.string().optional().nullable(),
+  })
+  .partial()
+
+export const servicePatchSchema = serviceApiSchema
+  .extend({
+    currency: z.string().optional(),
+    durationMinutes: z.number().optional().nullable(),
+    isAvailable: z.boolean().optional(),
+    maxBookingsPerDay: z.number().optional().nullable(),
+    advanceNoticeDays: z.number().optional().nullable(),
+    sortOrder: z.number().optional(),
+    metaTitle: z.string().optional().nullable(),
+    metaDescription: z.string().optional().nullable(),
+    metaKeywords: z.array(z.string()).optional(),
+    requirements: z.string().optional().nullable(),
+    cancellationPolicy: z.string().optional().nullable(),
+  })
+  .partial()
+
+export const testimonialPatchSchema = testimonialApiSchema
+  .extend({
+    sortOrder: z.number().optional(),
+  })
+  .partial()
+
+export const bookingPatchSchema = bookingApiSchema
+  .extend({
+    cancellationReason: z.string().optional().nullable(),
+    paidAmount: z.number().optional().nullable(),
+    paymentRef: z.string().optional().nullable(),
+  })
+  .partial()

@@ -13,6 +13,7 @@ import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { categoryPatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -72,7 +73,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = categoryPatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       name,
       slug,
@@ -85,7 +93,7 @@ export async function PATCH(req: Request, { params }: Params) {
       metaDescription,
       metaKeywords,
       ogImage,
-    } = body
+    } = parsed.data
 
     // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
@@ -106,7 +114,7 @@ export async function PATCH(req: Request, { params }: Params) {
       thumbnailUrl !== undefined
         ? thumbnailUrl
         : coverImageUrl !== undefined
-          ? generateThumbnailUrl(coverImageUrl)
+          ? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : null)
           : undefined
 
     const category = await prisma.category.update({

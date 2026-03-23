@@ -5,8 +5,19 @@ import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { uploadDeleteSchema } from '@/lib/validations'
-
 import { getToken } from 'next-auth/jwt'
+
+/**
+ * Verifica autenticación via session o JWT token.
+ * Unifica la lógica de auth para POST y DELETE.
+ */
+async function isRequestAuthenticated(req: NextRequest): Promise<boolean> {
+  const session = await getServerSession(authOptions)
+  if (session) return true
+
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  return !!token
+}
 
 /**
  * POST /api/upload - Subir imagen a Cloudinary
@@ -17,23 +28,9 @@ export async function POST(req: NextRequest) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
     await checkApiRateLimit(ip)
 
-    // 1. Intentar obtener sesión completa (Server-side)
-    const session = await getServerSession(authOptions)
-    let isAuthenticated = !!session
-
-    // 2. Fallback: Verificar Token JWT directamente (si getServerSession falla en Route Handler)
-    if (!isAuthenticated) {
-      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-      if (token) {
-        isAuthenticated = true
-        // logger.info('API Upload - Auth via JWT Token (getServerSession failed)')
-      }
-    }
-
-    if (!isAuthenticated) {
+    // 1. Verificar autenticación
+    if (!(await isRequestAuthenticated(req))) {
       logger.error('API Upload - 401 Unauthorized - No session or token found')
-      // Debug: Log cookie names only
-      // Log Cookies removed for production
       return NextResponse.json({ error: 'No autorizado - Sesión no encontrada' }, { status: 401 })
     }
 
@@ -84,16 +81,7 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     // Verificar autenticación
-    let isAuthenticated = false
-    const session = await getServerSession(authOptions)
-    if (session) isAuthenticated = true
-
-    if (!isAuthenticated) {
-      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-      if (token) isAuthenticated = true
-    }
-
-    if (!isAuthenticated) {
+    if (!(await isRequestAuthenticated(req))) {
       logger.error('API Delete - 401 Unauthorized - No session found')
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }

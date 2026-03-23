@@ -13,6 +13,7 @@ import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { servicePatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -83,7 +84,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = servicePatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       name,
       slug,
@@ -106,7 +114,7 @@ export async function PATCH(req: Request, { params }: Params) {
       metaKeywords,
       requirements,
       cancellationPolicy,
-    } = body
+    } = parsed.data
 
     if (slug) {
       const existing = await prisma.service.findFirst({
@@ -128,7 +136,7 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(slug !== undefined && { slug }),
         ...(description !== undefined && { description }),
         ...(shortDesc !== undefined && { shortDesc }),
-        ...(price !== undefined && { price: price !== null ? parseFloat(price) : null }),
+        ...(price !== undefined && { price }),
         ...(priceLabel !== undefined && { priceLabel }),
         ...(currency !== undefined && { currency }),
         ...(duration !== undefined && { duration }),

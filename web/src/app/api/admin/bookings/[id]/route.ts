@@ -11,6 +11,7 @@ import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { bookingPatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -83,7 +84,14 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = bookingPatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       date,
       endDate,
@@ -100,7 +108,7 @@ export async function PATCH(req: Request, { params }: Params) {
       paymentStatus,
       paymentMethod,
       paymentRef,
-    } = body
+    } = parsed.data
 
     const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
@@ -129,10 +137,8 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(guestCount !== undefined && { guestCount }),
         ...(adminNotes !== undefined && { adminNotes }),
         ...(cancellationReason !== undefined && { cancellationReason }),
-        ...(totalAmount !== undefined && {
-          totalAmount: totalAmount ? parseFloat(totalAmount) : null,
-        }),
-        ...(paidAmount !== undefined && { paidAmount: paidAmount ? parseFloat(paidAmount) : null }),
+        ...(totalAmount !== undefined && { totalAmount }),
+        ...(paidAmount !== undefined && { paidAmount }),
         ...(paymentStatus !== undefined && { paymentStatus }),
         ...(paymentMethod !== undefined && { paymentMethod }),
         ...(paymentRef !== undefined && { paymentRef }),

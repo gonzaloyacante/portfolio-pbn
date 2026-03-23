@@ -29,7 +29,9 @@ class AuthInterceptor extends Interceptor {
   /// Dio limpio solo para el refresh (sin AuthInterceptor → sin bucle).
   late final Dio _refreshDio = _buildRefreshDio();
 
-  bool _isRefreshing = false;
+  /// Completer activo mientras hay un refresh en curso.
+  /// Los requests que llegan durante el refresh esperan a este completer.
+  Completer<void>? _refreshCompleter;
   final List<_PendingRequest> _pendingQueue = [];
 
   // ── onRequest ──────────────────────────────────────────────────────────────
@@ -75,22 +77,25 @@ class AuthInterceptor extends Interceptor {
 
     AppLogger.info('AuthInterceptor: 401 on $path → attempting token refresh');
 
-    if (_isRefreshing) {
-      // Encolar la petición mientras el refresh está en curso.
+    if (_refreshCompleter != null) {
+      // Otro request ya está haciendo refresh — encolar y esperar.
       final completer = _PendingRequest(response.requestOptions);
       _pendingQueue.add(completer);
       try {
-        final resolved = await completer.future;
+        await _refreshCompleter!.future;
+        final resolved = await _retry(completer.options);
+        completer.complete(resolved);
         return handler.next(resolved);
       } catch (_) {
         return handler.reject(_make401Error(response));
       }
     }
 
-    _isRefreshing = true;
+    _refreshCompleter = Completer<void>();
 
     try {
       await _doRefresh();
+      _refreshCompleter!.complete();
 
       // Reintentar la petición original con el nuevo token.
       final retried = await _retry(response.requestOptions);
@@ -109,17 +114,21 @@ class AuthInterceptor extends Interceptor {
       return handler.next(retried);
     } on UnauthorizedException catch (_) {
       AppLogger.warn('AuthInterceptor: refresh failed → clearing session');
+      _refreshCompleter!.completeError(_);
       await _clearSessionAndRedirect();
       final err = _make401Error(response);
       _rejectPendingWithError(err);
       return handler.reject(err);
     } catch (e) {
       AppLogger.error('AuthInterceptor: unexpected refresh error', e);
+      if (!_refreshCompleter!.isCompleted) {
+        _refreshCompleter!.completeError(e);
+      }
       final err = _make401Error(response);
       _rejectPendingWithError(err);
       return handler.reject(err);
     } finally {
-      _isRefreshing = false;
+      _refreshCompleter = null;
     }
   }
 
