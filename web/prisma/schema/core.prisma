@@ -109,7 +109,7 @@ model Project {
 
   @@index([categoryId, date(sort: Desc)])
   @@index([categoryId, sortOrder])
-  @@index([isActive, isDeleted])
+  @@index([isActive, deletedAt])
   @@index([isFeatured, isPinned])
   @@index([publishedAt])
   @@index([tags])

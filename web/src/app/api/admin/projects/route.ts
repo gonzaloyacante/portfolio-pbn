@@ -49,7 +49,7 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit
 
     const where = {
-      isDeleted: false,
+      deletedAt: null,
       ...(search && {
         OR: [
           { title: { contains: search, mode: 'insensitive' as const } },
@@ -157,7 +157,7 @@ export async function POST(req: Request) {
 
     const maxOrder = await prisma.project.aggregate({
       _max: { sortOrder: true },
-      where: { isDeleted: false },
+      where: { deletedAt: null },
     })
 
     const project = await prisma.project.create({

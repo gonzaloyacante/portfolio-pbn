@@ -37,7 +37,7 @@ export async function POST(req: Request, { params }: Params) {
     const { id } = await params
 
     const project = await prisma.project.findFirst({
-      where: { id, isDeleted: false },
+      where: { id, deletedAt: null },
       select: { id: true, thumbnailUrl: true },
     })
 

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       where: { id },
       include: {
         projects: {
-          where: { isActive: true, isDeleted: false },
+          where: { isActive: true, deletedAt: null },
           include: { images: true },
         },
       },

@@ -194,10 +194,10 @@ const _fetchDashboardContentStats = unstable_cache(
       contactsCount,
       pendingTestimonials,
     ] = await Promise.all([
-      prisma.project.count({ where: { isDeleted: false } }),
+      prisma.project.count({ where: { deletedAt: null } }),
       prisma.category.count(),
       prisma.testimonial.count({ where: { isActive: true } }),
-      prisma.project.count({ where: { isDeleted: true } }),
+      prisma.project.count({ where: { deletedAt: { not: null } } }),
       prisma.contact.count({ where: { isRead: false } }),
       prisma.testimonial.count({ where: { isActive: false } }),
     ])

@@ -14,14 +14,14 @@ export default async function CategoriesPage() {
       where: { deletedAt: null },
       include: {
         projects: {
-          where: { isActive: true, isDeleted: false },
+          where: { isActive: true, deletedAt: null },
           take: 1,
           orderBy: { date: 'desc' },
           select: { thumbnailUrl: true },
         },
         _count: {
           select: {
-            projects: { where: { isActive: true, isDeleted: false } },
+            projects: { where: { isActive: true, deletedAt: null } },
           },
         },
       },

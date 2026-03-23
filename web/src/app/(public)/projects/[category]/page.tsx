@@ -25,7 +25,7 @@ const getCategory = cache((slug: string) =>
     where: { slug, isActive: true, deletedAt: null },
     include: {
       projects: {
-        where: { isDeleted: false, isActive: true },
+        where: { deletedAt: null, isActive: true },
         orderBy: { date: 'desc' },
         include: {
           images: {

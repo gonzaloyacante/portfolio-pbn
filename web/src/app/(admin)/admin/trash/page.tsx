@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 export default async function PapeleraPage() {
   await requireAdmin()
   const deletedProjects = await prisma.project.findMany({
-    where: { isDeleted: true },
+    where: { deletedAt: { not: null } },
     include: { category: true, images: { take: 1 } },
     orderBy: { deletedAt: 'desc' },
   })

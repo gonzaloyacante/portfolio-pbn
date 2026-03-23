@@ -20,7 +20,7 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
     where: { id },
     include: {
       _count: {
-        select: { projects: { where: { isActive: true, isDeleted: false } } },
+        select: { projects: { where: { isActive: true, deletedAt: null } } },
       },
     },
   })

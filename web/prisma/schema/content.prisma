@@ -123,6 +123,8 @@ model Contact {
 
   @@index([ipAddress, createdAt])
   @@index([isRead, status])
+  @@index([status, priority])
+  @@index([isRead, deletedAt])
   @@map("contacts")
 }
 
@@ -168,5 +170,7 @@ model Booking {
   @@index([clientEmail])
   @@index([serviceId, date])
   @@index([paymentStatus])
+  @@index([date, status])
+  @@index([status, deletedAt])
   @@map("bookings")
 }

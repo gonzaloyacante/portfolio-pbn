@@ -465,7 +465,7 @@ export async function deleteCategory(id: string) {
   try {
     // Verificar que no tenga proyectos activos antes de eliminar
     const projectCount = await prisma.project.count({
-      where: { categoryId: id, isDeleted: false },
+      where: { categoryId: id, deletedAt: null },
     })
     if (projectCount > 0) {
       return {

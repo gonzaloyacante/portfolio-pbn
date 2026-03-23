@@ -14,7 +14,7 @@ export const revalidate = 0
 
 export async function generateStaticParams() {
   const projects = await prisma.project.findMany({
-    where: { isActive: true, isDeleted: false },
+    where: { isActive: true, deletedAt: null },
     select: { slug: true, category: { select: { slug: true } } },
   })
   return projects.map((p) => ({ category: p.category?.slug ?? '', project: p.slug }))
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 // React.cache deduplica la consulta entre generateMetadata y el componente de página
 const getProject = cache((slug: string) =>
   prisma.project.findFirst({
-    where: { slug, isActive: true, isDeleted: false },
+    where: { slug, isActive: true, deletedAt: null },
     include: {
       category: true,
       images: { orderBy: { order: 'asc' } },

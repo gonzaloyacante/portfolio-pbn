@@ -20,7 +20,7 @@ export default async function CategoryGalleryPage({ params }: { params: Promise<
     where: { id, deletedAt: null },
     include: {
       projects: {
-        where: { isDeleted: false, isActive: true },
+        where: { deletedAt: null, isActive: true },
         include: {
           images: {
             select: {

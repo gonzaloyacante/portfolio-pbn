@@ -24,19 +24,19 @@ export default async function ProjectsPage() {
         isActive: true,
         deletedAt: null,
         projects: {
-          some: { isActive: true, isDeleted: false },
+          some: { isActive: true, deletedAt: null },
         },
       },
       include: {
         projects: {
-          where: { isActive: true, isDeleted: false },
+          where: { isActive: true, deletedAt: null },
           take: 1,
           orderBy: { date: 'desc' },
           select: { thumbnailUrl: true },
         },
         _count: {
           select: {
-            projects: { where: { isActive: true, isDeleted: false } },
+            projects: { where: { isActive: true, deletedAt: null } },
           },
         },
       },

@@ -4,7 +4,8 @@
 
 /// Home Page Hero and Featured Settings
 model HomeSettings {
-  id String @id @default(cuid())
+  id  String @id @default(cuid())
+  key String @unique @default("singleton")
 
   // ===== TÍTULO 1 ("Make-up") =====
   heroTitle1Text      String? @default("Make-up")
@@ -117,6 +118,7 @@ model HomeSettings {
 /// About Page Bio and Profile Settings
 model AboutSettings {
   id                String   @id @default(cuid())
+  key               String   @unique @default("singleton")
   // Illustration
   illustrationUrl   String?
   illustrationAlt   String?  @default("Ilustración sobre mí")
@@ -144,6 +146,7 @@ model AboutSettings {
 /// Contact Page Settings with Form Labels
 model ContactSettings {
   id               String   @id @default(cuid())
+  key              String   @unique @default("singleton")
   // Page Title
   pageTitle        String?  @default("Contacto")
   // Illustration
@@ -180,6 +183,7 @@ model ContactSettings {
 /// Project Display Settings
 model ProjectSettings {
   id               String   @id @default(cuid())
+  key              String   @unique @default("singleton")
   // Card Display Options
   showCardTitles   Boolean  @default(true)
   showCardCategory Boolean  @default(true)
@@ -196,6 +200,7 @@ model ProjectSettings {
 /// Category Display Settings
 model CategorySettings {
   id               String   @id @default(cuid())
+  key              String   @unique @default("singleton")
   showDescription  Boolean  @default(true)
   showProjectCount Boolean  @default(true)
   // Layout
@@ -211,6 +216,7 @@ model CategorySettings {
 /// Testimonial Display Settings (SRP: separate from About)
 model TestimonialSettings {
   id          String   @id @default(cuid())
+  key         String   @unique @default("singleton")
   showOnAbout Boolean  @default(true)
   title       String?  @default("Lo que dicen mis clientes")
   maxDisplay  Int      @default(6)
@@ -225,6 +231,7 @@ model TestimonialSettings {
 /// Theme Colors and Typography
 model ThemeSettings {
   id                  String   @id @default(cuid())
+  key                 String   @unique @default("singleton")
   // Light Theme Colors
   primaryColor        String   @default("#6c0a0a")
   secondaryColor      String   @default("#ffaadd")
@@ -292,7 +299,8 @@ model SocialLink {
 
 /// Site-wide SEO and branding settings
 model SiteSettings {
-  id String @id @default(cuid())
+  id  String @id @default(cuid())
+  key String @unique @default("singleton")
 
   // Branding
   siteName    String  @default("Paola Bolívar Nievas - Make-up Artist")
@@ -336,7 +344,8 @@ model SiteSettings {
 
 /// Email notification settings
 model EmailSettings {
-  id String @id @default(cuid())
+  id  String @id @default(cuid())
+  key String @unique @default("singleton")
 
   // Notification toggles
   sendContactNotifications     Boolean @default(true)

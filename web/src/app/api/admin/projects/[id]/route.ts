@@ -59,7 +59,7 @@ export async function GET(req: Request, { params }: Params) {
   try {
     const { id } = await params
     const project = await prisma.project.findFirst({
-      where: { id, isDeleted: false },
+      where: { id, deletedAt: null },
       select: PROJECT_FULL_SELECT,
     })
 
@@ -93,14 +93,14 @@ export async function PATCH(req: Request, { params }: Params) {
       )
     }
 
-    const existing = await prisma.project.findFirst({ where: { id, isDeleted: false } })
+    const existing = await prisma.project.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }
 
     if (parsed.data.slug && parsed.data.slug !== existing.slug) {
       const slugConflict = await prisma.project.findFirst({
-        where: { slug: parsed.data.slug, isDeleted: false, id: { not: id } },
+        where: { slug: parsed.data.slug, deletedAt: null, id: { not: id } },
       })
       if (slugConflict) {
         return NextResponse.json(
@@ -193,7 +193,7 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
-    const existing = await prisma.project.findFirst({ where: { id, isDeleted: false } })
+    const existing = await prisma.project.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }

@@ -23,7 +23,7 @@ export const getPaginatedProjects = unstable_cache(
         prisma.project.findMany({
           where: {
             isActive: true,
-            isDeleted: false,
+            deletedAt: null,
           },
           select: {
             id: true,
@@ -47,7 +47,7 @@ export const getPaginatedProjects = unstable_cache(
         prisma.project.count({
           where: {
             isActive: true,
-            isDeleted: false,
+            deletedAt: null,
           },
         }),
       ])
@@ -92,7 +92,7 @@ export const getFeaturedProjects = unstable_cache(
       return await prisma.project.findMany({
         where: {
           isActive: true,
-          isDeleted: false,
+          deletedAt: null,
         },
         take: count,
         orderBy: { date: 'desc' },
@@ -128,7 +128,7 @@ export async function getProjectsByCategory(
           prisma.project.findMany({
             where: {
               isActive: true,
-              isDeleted: false,
+              deletedAt: null,
               category: {
                 slug: categorySlug,
               },
@@ -155,7 +155,7 @@ export async function getProjectsByCategory(
           prisma.project.count({
             where: {
               isActive: true,
-              isDeleted: false,
+              deletedAt: null,
               category: {
                 slug: categorySlug,
               },
@@ -204,7 +204,7 @@ export async function getProjectBySlug(slug: string) {
     async () => {
       try {
         return await prisma.project.findFirst({
-          where: { slug, isActive: true, isDeleted: false },
+          where: { slug, isActive: true, deletedAt: null },
           select: {
             id: true,
             title: true,
@@ -270,7 +270,7 @@ export async function getRelatedProjects(projectId: string, categoryId: string, 
         return await prisma.project.findMany({
           where: {
             isActive: true,
-            isDeleted: false,
+            deletedAt: null,
             categoryId,
             id: {
               not: projectId,
@@ -335,7 +335,7 @@ export async function getAdjacentProjects(currentProjectId: string, categoryId: 
         where: {
           categoryId,
           isActive: true,
-          isDeleted: false,
+          deletedAt: null,
           date: { gt: currentProject.date },
         },
         orderBy: { date: 'asc' },
@@ -346,7 +346,7 @@ export async function getAdjacentProjects(currentProjectId: string, categoryId: 
         where: {
           categoryId,
           isActive: true,
-          isDeleted: false,
+          deletedAt: null,
           date: { lt: currentProject.date },
         },
         orderBy: { date: 'desc' },
@@ -354,13 +354,13 @@ export async function getAdjacentProjects(currentProjectId: string, categoryId: 
       }),
       // First (Newest) - for wrapping
       prisma.project.findFirst({
-        where: { categoryId, isActive: true, isDeleted: false },
+        where: { categoryId, isActive: true, deletedAt: null },
         orderBy: { date: 'desc' },
         select: { title: true, slug: true, thumbnailUrl: true },
       }),
       // Last (Oldest) - for wrapping
       prisma.project.findFirst({
-        where: { categoryId, isActive: true, isDeleted: false },
+        where: { categoryId, isActive: true, deletedAt: null },
         orderBy: { date: 'asc' },
         select: { title: true, slug: true, thumbnailUrl: true },
       }),

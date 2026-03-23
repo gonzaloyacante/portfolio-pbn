@@ -10,7 +10,7 @@ import { ROUTES } from '@/config/routes'
 export default async function ProjectsManagementPage() {
   const [projects, categories, settings] = await Promise.all([
     prisma.project.findMany({
-      where: { isDeleted: false },
+      where: { deletedAt: null },
       include: {
         category: true,
         images: { take: 1, orderBy: { order: 'asc' } },
