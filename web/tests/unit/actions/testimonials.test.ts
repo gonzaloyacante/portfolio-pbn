@@ -291,7 +291,7 @@ describe('Testimonial Actions', () => {
   describe('deleteTestimonial', () => {
     it('should delete a testimonial successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonial.delete).mockResolvedValue(makeTestimonial())
+      vi.mocked(prisma.testimonial.update).mockResolvedValue(makeTestimonial())
 
       const { deleteTestimonial } = await import('@/actions/cms/testimonials')
       const result = await deleteTestimonial('testimonial-1')
@@ -300,19 +300,20 @@ describe('Testimonial Actions', () => {
 
     it('should call prisma.testimonial.delete with correct id', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonial.delete).mockResolvedValue(makeTestimonial())
+      vi.mocked(prisma.testimonial.update).mockResolvedValue(makeTestimonial())
 
       const { deleteTestimonial } = await import('@/actions/cms/testimonials')
       await deleteTestimonial('testimonial-xyz')
 
-      expect(prisma.testimonial.delete).toHaveBeenCalledWith({
+      expect(prisma.testimonial.update).toHaveBeenCalledWith({
         where: { id: 'testimonial-xyz' },
+        data: { deletedAt: expect.any(Date) },
       })
     })
 
     it('should handle delete errors gracefully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonial.delete).mockRejectedValue(new Error('DB Error'))
+      vi.mocked(prisma.testimonial.update).mockRejectedValue(new Error('DB Error'))
 
       const { deleteTestimonial } = await import('@/actions/cms/testimonials')
       const result = await deleteTestimonial('testimonial-1')

@@ -124,12 +124,13 @@ export function generateProjectJsonLd(
 }
 
 // Generate Person JSON-LD (Home Page)
-export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', location = 'España') {
+export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', location = 'Málaga') {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: ownerName,
     url: seoConfig.siteUrl,
+    image: `${seoConfig.siteUrl}${seoConfig.defaultImage}`,
     jobTitle: 'Maquilladora Profesional',
     description: seoConfig.defaultDescription,
     address: {

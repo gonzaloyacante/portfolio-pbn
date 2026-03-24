@@ -229,17 +229,20 @@ describe('deleteService', () => {
 
   it('should delete service successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
     const { deleteService } = await import('@/actions/cms/services')
     const result = await deleteService('svc-1')
     expect(result.success).toBe(true)
-    expect(prisma.service.delete).toHaveBeenCalledWith({ where: { id: 'svc-1' } })
+    expect(prisma.service.update).toHaveBeenCalledWith({
+      where: { id: 'svc-1' },
+      data: { deletedAt: expect.any(Date) },
+    })
   })
 
   it('should handle database error on delete', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.delete).mockRejectedValue(new Error('DB error'))
+    vi.mocked(prisma.service.update).mockRejectedValue(new Error('DB error'))
 
     const { deleteService } = await import('@/actions/cms/services')
     const result = await deleteService('svc-1')
@@ -249,7 +252,7 @@ describe('deleteService', () => {
   it('should revalidate paths after deletion', async () => {
     const { revalidatePath } = await import('next/cache')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
     const { deleteService } = await import('@/actions/cms/services')
     await deleteService('svc-1')

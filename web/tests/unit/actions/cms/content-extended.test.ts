@@ -14,6 +14,7 @@ vi.mock('@/lib/db', () => ({
     },
     projectImage: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
       createMany: vi.fn(),
       update: vi.fn(),
       delete: vi.fn(),
@@ -40,6 +41,7 @@ vi.mock('@/lib/rate-limit-guards', () => ({
 
 vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
 }))
 
 vi.mock('@/lib/logger', () => ({
@@ -239,6 +241,8 @@ describe('deleteProjectImage', () => {
       publicId: 'pub-1',
     } as never)
     vi.mocked(prisma.projectImage.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.projectImage.findFirst).mockResolvedValue(null as never)
+    vi.mocked(prisma.project.update).mockResolvedValue({} as never)
 
     const { deleteProjectImage } = await import('@/actions/cms/content')
     const result = await deleteProjectImage('img-1')
@@ -341,7 +345,8 @@ describe('deleteCategory (content.ts)', () => {
   it('should delete category when no projects exist', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.project.count).mockResolvedValue(0)
-    vi.mocked(prisma.category.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.category.findUnique).mockResolvedValue({ slug: 'test-cat' } as never)
+    vi.mocked(prisma.category.update).mockResolvedValue({} as never)
 
     const { deleteCategory } = await import('@/actions/cms/content')
     const result = await deleteCategory('cat-1')
@@ -371,7 +376,8 @@ describe('deleteCategory (content.ts)', () => {
   it('should handle database error', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.project.count).mockResolvedValue(0)
-    vi.mocked(prisma.category.delete).mockRejectedValue(new Error('DB'))
+    vi.mocked(prisma.category.findUnique).mockResolvedValue({ slug: 'test-cat' } as never)
+    vi.mocked(prisma.category.update).mockRejectedValue(new Error('DB'))
 
     const { deleteCategory } = await import('@/actions/cms/content')
     const result = await deleteCategory('cat-1')

@@ -194,9 +194,11 @@ describe('getContacts', () => {
     const { getContacts } = await import('@/actions/user/contact')
     const result = await getContacts()
     expect(result).toEqual(contacts)
-    expect(prisma.contact.findMany).toHaveBeenCalledWith({
-      orderBy: { createdAt: 'desc' },
-    })
+    expect(prisma.contact.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        orderBy: { createdAt: 'desc' },
+      })
+    )
   })
 
   it('should check rate limit', async () => {
@@ -239,7 +241,7 @@ describe('markContactAsRead', () => {
     await markContactAsRead('c-1')
     expect(prisma.contact.update).toHaveBeenCalledWith({
       where: { id: 'c-1' },
-      data: { isRead: true },
+      data: { isRead: true, readAt: expect.any(Date) },
     })
   })
 
@@ -267,7 +269,13 @@ describe('markContactAsReplied', () => {
     await markContactAsReplied('c-1', 'Admin note here')
     expect(prisma.contact.update).toHaveBeenCalledWith({
       where: { id: 'c-1' },
-      data: { isReplied: true, isRead: true, adminNote: 'Admin note here' },
+      data: {
+        isReplied: true,
+        isRead: true,
+        adminNote: 'Admin note here',
+        repliedAt: expect.any(Date),
+        readAt: expect.any(Date),
+      },
     })
   })
 
@@ -279,7 +287,13 @@ describe('markContactAsReplied', () => {
     await markContactAsReplied('c-1')
     expect(prisma.contact.update).toHaveBeenCalledWith({
       where: { id: 'c-1' },
-      data: { isReplied: true, isRead: true, adminNote: undefined },
+      data: {
+        isReplied: true,
+        isRead: true,
+        adminNote: undefined,
+        repliedAt: expect.any(Date),
+        readAt: expect.any(Date),
+      },
     })
   })
 })
@@ -291,17 +305,20 @@ describe('deleteContact', () => {
 
   it('should delete contact by id', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.contact.update).mockResolvedValue({} as never)
 
     const { deleteContact } = await import('@/actions/user/contact')
     await deleteContact('c-1')
-    expect(prisma.contact.delete).toHaveBeenCalledWith({ where: { id: 'c-1' } })
+    expect(prisma.contact.update).toHaveBeenCalledWith({
+      where: { id: 'c-1' },
+      data: { deletedAt: expect.any(Date) },
+    })
   })
 
   it('should revalidate path after deletion', async () => {
     const { revalidatePath } = await import('next/cache')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.contact.update).mockResolvedValue({} as never)
 
     const { deleteContact } = await import('@/actions/user/contact')
     await deleteContact('c-1')

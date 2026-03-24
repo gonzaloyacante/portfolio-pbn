@@ -24,5 +24,8 @@ function _computePasswordScore(password: string): number {
  */
 export function calculatePasswordStrength(password: string): StrengthLevel {
   if (!password) return _STRENGTH_LEVELS[0]
-  return _STRENGTH_LEVELS[_computePasswordScore(password)]
+  const score = _computePasswordScore(password)
+  // Non-empty passwords with score 0 display as 'Muy débil', not 'Vacía'
+  if (score === 0) return { score: 0, label: 'Muy débil', color: 'bg-destructive' }
+  return _STRENGTH_LEVELS[score]
 }

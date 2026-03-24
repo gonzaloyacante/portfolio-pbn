@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
+// Desactivar el mock global de security-server (setup.ts) para probar la implementación real
+vi.unmock('@/lib/security-server')
+
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
 vi.mock('@/lib/auth', () => ({

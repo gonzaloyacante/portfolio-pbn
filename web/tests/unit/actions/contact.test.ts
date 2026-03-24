@@ -179,9 +179,11 @@ describe('Contact Actions', () => {
       const contacts = await getContacts()
 
       expect(contacts).toHaveLength(2)
-      expect(prisma.contact.findMany).toHaveBeenCalledWith({
-        orderBy: { createdAt: 'desc' },
-      })
+      expect(prisma.contact.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { createdAt: 'desc' },
+        })
+      )
     })
   })
 
@@ -194,7 +196,7 @@ describe('Contact Actions', () => {
 
       expect(prisma.contact.update).toHaveBeenCalledWith({
         where: { id: 'contact-1' },
-        data: { isRead: true },
+        data: { isRead: true, readAt: expect.any(Date) },
       })
     })
   })

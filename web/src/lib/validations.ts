@@ -286,7 +286,7 @@ export type CategorySettingsFormData = z.infer<typeof categorySettingsSchema>
 
 // Project
 export const projectFormSchema = z.object({
-  title: z.string().min(1).max(200),
+  title: z.string().min(3).max(200),
   description: z.string().optional().nullable(),
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string(), // date input returns string
@@ -314,7 +314,7 @@ export type ProjectFormData = z.infer<typeof projectFormSchema>
 
 // Project API schema (receives arrays for tags/metaKeywords, proper booleans)
 export const projectApiSchema = z.object({
-  title: z.string().min(1).max(200),
+  title: z.string().min(3).max(200),
   description: z.string().optional().nullable(),
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string().optional(), // Defaults to today on the server if not provided

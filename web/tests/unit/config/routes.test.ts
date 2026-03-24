@@ -10,7 +10,12 @@ describe('ROUTES config', () => {
   // --- Admin routes ---
   it('all admin routes start with "/admin"', () => {
     for (const [, value] of Object.entries(ROUTES.admin)) {
-      expect(value).toMatch(/^\/admin/)
+      if (typeof value === 'string') {
+        expect(value).toMatch(/^\/admin/)
+      } else if (typeof value === 'function') {
+        // Dynamic route factory — call with a test ID to verify the generated path
+        expect(value('test-id')).toMatch(/^\/admin/)
+      }
     }
   })
 
@@ -79,9 +84,9 @@ describe('ROUTES config', () => {
   })
 
   it('all route values are strings', () => {
-    // Check admin
+    // Check admin — may include function factories for dynamic routes
     for (const value of Object.values(ROUTES.admin)) {
-      expect(typeof value).toBe('string')
+      expect(typeof value === 'string' || typeof value === 'function').toBe(true)
     }
     // Check auth
     for (const value of Object.values(ROUTES.auth)) {

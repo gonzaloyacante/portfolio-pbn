@@ -263,7 +263,7 @@ describe('Service Actions', () => {
   describe('deleteService', () => {
     it('should delete a service', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.service.delete).mockResolvedValue(makeService())
+      vi.mocked(prisma.service.update).mockResolvedValue(makeService())
 
       const { deleteService } = await import('@/actions/cms/services')
       const result = await deleteService('service-1')
@@ -272,19 +272,20 @@ describe('Service Actions', () => {
 
     it('should call prisma delete with correct id', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.service.delete).mockResolvedValue(makeService())
+      vi.mocked(prisma.service.update).mockResolvedValue(makeService())
 
       const { deleteService } = await import('@/actions/cms/services')
       await deleteService('service-abc')
 
-      expect(prisma.service.delete).toHaveBeenCalledWith({
+      expect(prisma.service.update).toHaveBeenCalledWith({
         where: { id: 'service-abc' },
+        data: { deletedAt: expect.any(Date) },
       })
     })
 
     it('should return error on delete failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.service.delete).mockRejectedValue(new Error('Service not found'))
+      vi.mocked(prisma.service.update).mockRejectedValue(new Error('Service not found'))
 
       const { deleteService } = await import('@/actions/cms/services')
       const result = await deleteService('nonexistent')

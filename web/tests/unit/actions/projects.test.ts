@@ -11,6 +11,14 @@ vi.mock('@/lib/db', () => ({
       findUnique: vi.fn(),
       findMany: vi.fn(),
     },
+    projectImage: {
+      count: vi.fn().mockResolvedValue(0),
+      createMany: vi.fn().mockResolvedValue({}),
+      findUnique: vi.fn(),
+      findFirst: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
     category: {
       findUnique: vi.fn(),
     },

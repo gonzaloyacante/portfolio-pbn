@@ -89,6 +89,7 @@ const validTestimonialFields = {
   website: '',
   avatarUrl: '',
   email: '',
+  phone: '',
   rating: '5',
   isActive: 'true',
   isVerified: 'false',
@@ -276,17 +277,20 @@ describe('deleteTestimonial', () => {
 
   it('should delete testimonial successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.delete).mockResolvedValue({} as never)
+    vi.mocked(prisma.testimonial.update).mockResolvedValue({} as never)
 
     const { deleteTestimonial } = await import('@/actions/cms/testimonials')
     const result = await deleteTestimonial('tst-1')
     expect(result.success).toBe(true)
-    expect(prisma.testimonial.delete).toHaveBeenCalledWith({ where: { id: 'tst-1' } })
+    expect(prisma.testimonial.update).toHaveBeenCalledWith({
+      where: { id: 'tst-1' },
+      data: { deletedAt: expect.any(Date) },
+    })
   })
 
   it('should handle error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.delete).mockRejectedValue(new Error('DB'))
+    vi.mocked(prisma.testimonial.update).mockRejectedValue(new Error('DB'))
 
     const { deleteTestimonial } = await import('@/actions/cms/testimonials')
     const result = await deleteTestimonial('tst-1')
