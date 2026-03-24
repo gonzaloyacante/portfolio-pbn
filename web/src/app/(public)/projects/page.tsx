@@ -6,8 +6,8 @@ import { FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
 import type { Metadata } from 'next'
 
-// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
-export const revalidate = 0
+// ISR on-demand: cache permanente, se regenera solo cuando revalidatePath() es llamado desde Server Actions
+export const revalidate = false
 
 export const metadata: Metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',

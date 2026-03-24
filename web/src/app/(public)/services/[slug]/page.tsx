@@ -8,7 +8,8 @@ import { Check, Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 
-export const revalidate = 0
+// ISR on-demand: cache permanente, se regenera solo cuando revalidatePath() es llamado desde Server Actions
+export const revalidate = false
 
 export async function generateStaticParams() {
   const services = await getServices()
