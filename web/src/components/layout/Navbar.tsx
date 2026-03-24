@@ -58,7 +58,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
         {/* Logo - visible en pantallas grandes */}
         <Link
           href={ROUTES.home}
-          className="font-script text-foreground mb-4 hidden text-3xl transition-transform duration-200 hover:scale-105 md:mb-0 md:block"
+            className="font-script text-foreground mb-4 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
         >
           {displayBrand}
         </Link>

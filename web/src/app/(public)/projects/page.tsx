@@ -4,13 +4,28 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
+import type { Metadata } from 'next'
 
 // ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
 export const revalidate = 0
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',
   description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
+  alternates: {
+    canonical: '/proyectos',
+  },
+  openGraph: {
+    title: 'Proyectos | Portfolio Paola Bolívar Nievas',
+    description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
+    url: '/proyectos',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Proyectos | Portfolio Paola Bolívar Nievas',
+    description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
+  },
 }
 
 /**

@@ -223,10 +223,10 @@ export default function ContactForm({
         </div>
 
         {/* Response Preference Selector */}
-        <div>
-          <label className="mb-3 block text-sm font-semibold text-(--foreground)">
+        <fieldset>
+          <legend className="mb-3 block text-sm font-semibold text-(--foreground)">
             {preferenceLabel || '¿Cómo preferís que te contacte?'} *
-          </label>
+          </legend>
           <div className="grid grid-cols-3 gap-3">
             <PreferenceButton
               active={responsePreference === 'EMAIL'}
@@ -261,7 +261,7 @@ export default function ContactForm({
                 </motion.p>
               )}
           </AnimatePresence>
-        </div>
+        </fieldset>
 
         {/* Message */}
         <div>

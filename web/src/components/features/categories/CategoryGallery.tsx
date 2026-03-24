@@ -103,6 +103,7 @@ export default function CategoryGallery({
                 <div
                   role="button"
                   tabIndex={0}
+                  aria-label={img.alt || `Ver imagen ${img.originalIndex + 1}`}
                   onClick={(e) => {
                     triggerRef.current = e.currentTarget as HTMLDivElement
                     const originalIndex = images.findIndex((i) => i.id === img.id)

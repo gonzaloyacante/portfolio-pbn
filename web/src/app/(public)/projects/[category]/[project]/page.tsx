@@ -36,7 +36,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ category: string; project: string }>
 }): Promise<Metadata> {
-  const { project: projectSlug } = await params
+  const { project: projectSlug, category: categorySlug } = await params
   const project = await getProject(projectSlug)
 
   if (!project) {
@@ -48,7 +48,7 @@ export async function generateMetadata({
     description: project.metaDescription || project.description.substring(0, 160),
     keywords: project.metaKeywords,
     alternates: {
-      canonical: project.canonicalUrl || undefined,
+      canonical: project.canonicalUrl || `/proyectos/${categorySlug}/${projectSlug}`,
     },
     openGraph: {
       title: project.metaTitle || project.title,

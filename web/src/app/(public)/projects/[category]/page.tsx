@@ -52,6 +52,20 @@ export async function generateMetadata({
   return {
     title: `${category.name} | Portfolio PBN`,
     description: category.description || `Galería de ${category.name}`,
+    alternates: {
+      canonical: `/proyectos/${categorySlug}`,
+    },
+    openGraph: {
+      title: `${category.name} | Portfolio PBN`,
+      description: category.description || `Galería de ${category.name}`,
+      url: `/proyectos/${categorySlug}`,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${category.name} | Portfolio PBN`,
+      description: category.description || `Galería de ${category.name}`,
+    },
   }
 }
 

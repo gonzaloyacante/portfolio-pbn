@@ -83,20 +83,11 @@ export const metadata: Metadata = {
     title: 'Paola Bolívar Nievas | Maquilladora Profesional',
     description:
       'Maquilladora profesional especializada en audiovisuales, caracterización y efectos especiales. Descubre mi portfolio de trabajos.',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Portfolio Paola Bolívar Nievas - Maquilladora Profesional',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Paola Bolívar Nievas | Maquilladora Profesional',
     description: 'Portfolio de maquillaje profesional - Caracterización, efectos especiales y más.',
-    images: ['/og-image.jpg'],
   },
   robots: {
     index: true,

@@ -88,6 +88,7 @@ export default function MasonryGallery({
                 <div
                   role="button"
                   tabIndex={0}
+                  aria-label={image.title ?? `${titlePrefix} ${image.originalIndex + 1}`}
                   onClick={(e) => {
                     triggerRef.current = e.currentTarget as HTMLDivElement
                     const idx = images.findIndex((i) => i.id === image.id)

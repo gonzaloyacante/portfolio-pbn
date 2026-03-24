@@ -4,6 +4,16 @@ export const metadata: Metadata = {
   title: 'Política de Privacidad - Portfolio Paola Bolívar',
   description:
     'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
+  alternates: {
+    canonical: '/privacidad',
+  },
+  openGraph: {
+    title: 'Política de Privacidad - Portfolio Paola Bolívar',
+    description:
+      'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
+    url: '/privacidad',
+    type: 'website',
+  },
 }
 
 import { getContactSettings } from '@/actions/settings/contact'
