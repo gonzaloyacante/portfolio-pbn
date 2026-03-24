@@ -112,9 +112,9 @@ class AuthInterceptor extends Interceptor {
       _pendingQueue.clear();
 
       return handler.next(retried);
-    } on UnauthorizedException catch (_) {
+    } on UnauthorizedException catch (ex) {
       AppLogger.warn('AuthInterceptor: refresh failed → clearing session');
-      _refreshCompleter!.completeError(_);
+      _refreshCompleter!.completeError(ex);
       await _clearSessionAndRedirect();
       final err = _make401Error(response);
       _rejectPendingWithError(err);

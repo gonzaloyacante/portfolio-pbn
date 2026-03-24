@@ -92,54 +92,70 @@ jobs:
           # Fonts
           GOOGLE_FONTS_API_KEY: ${{ secrets.GOOGLE_FONTS_API_KEY }}
 
-  # E2E tests - DISABLED by default to save minutes
-  # Enable manually via workflow_dispatch when needed
-  # e2e:
-  #   name: E2E Tests
-  #   runs-on: ubuntu-latest
-  #   needs: test
-  #   if: github.event_name == 'workflow_dispatch'
-  #
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-  #
-  #     - name: Setup pnpm
-  #       uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
-  #       with:
-  #         version: 10.28.0
-  #
-  #     - name: Setup Node.js
-  #       uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
-  #       with:
-  #         node-version: 20.x
-  #         cache: 'pnpm'
-  #         cache-dependency-path: web/pnpm-lock.yaml
-  #
-  #     - name: Install dependencies
-  #       working-directory: web
-  #       run: pnpm install
-  #
-  #     - name: Install Playwright browsers
-  #       working-directory: web
-  #       run: pnpm playwright install --with-deps chromium
-  #
-  #     - name: Run E2E tests
-  #       working-directory: web
-  #       run: pnpm test
-  #       env:
-  #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  #         NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-  #         CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-  #         CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-  #         CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-  #         RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-  #         RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
-  #
-  #     - name: Upload test results
-  #       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-  #       if: failure()
-  #       with:
-  #         name: playwright-report
-  #         path: web/playwright-report
-  #         retention-days: 1
+  # ── E2E Tests ────────────────────────────────────────────────────────────
+  # Playwright E2E tests. Runs after unit tests pass.
+  # Requires DB + auth secrets for the dev server.
+  e2e:
+    name: 🎭 E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c
+        with:
+          version: 10.28.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: web
+        run: pnpm install
+
+      - name: Generate Prisma Client
+        working-directory: web
+        run: pnpm prisma generate
+
+      - name: Install Playwright browsers
+        working-directory: web
+        run: pnpm playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        working-directory: web
+        run: pnpm test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_REFRESH_SECRET: ${{ secrets.JWT_REFRESH_SECRET }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          JWT_REFRESH_EXPIRES_IN: ${{ secrets.JWT_REFRESH_EXPIRES_IN }}
+          NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ${{ secrets.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          CLOUDINARY_URL: ${{ secrets.CLOUDINARY_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_APP_NAME: ${{ secrets.NEXT_PUBLIC_APP_NAME }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+          GOOGLE_FONTS_API_KEY: ${{ secrets.GOOGLE_FONTS_API_KEY }}
+
+      - name: Upload test results
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: failure()
+        with:
+          name: playwright-report
+          path: web/playwright-report
+          retention-days: 7

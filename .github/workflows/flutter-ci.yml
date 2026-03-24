@@ -3,9 +3,9 @@
 # ============================================================
 #
 # ESTRATEGIA:
-#   Los quality gates (analyze + format + test) ya los cubren los
-#   hooks de pre-commit y pre-push locales. En CI solo ejecutamos
-#   lo que no se puede hacer localmente: build release + distribución.
+#   1. Quality gate: flutter analyze + flutter test (obligatorio)
+#   2. Build release APK firmado
+#   3. Distribución a Firebase App Distribution (grupo 'admins')
 #
 #   main → Build release APK firmado + distribución automática a
 #           Firebase App Distribution (grupo 'admins').
@@ -34,11 +34,47 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # ── Quality Gate ──────────────────────────────────────────────────────────
+  # Static analysis + unit/widget tests. Must pass before build.
+  quality-gate:
+    name: 🔍 Analyze + Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze (strict)
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test --coverage
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: flutter-coverage
+          path: app/coverage/lcov.info
+          retention-days: 14
+
   # ── Build & Distribute ────────────────────────────────────────────────────
   # Build release APK firmado y distribución a Firebase App Distribution.
-  # Analyze + test ya se ejecutan en los hooks locales (pre-push).
   build-and-distribute:
     name: 🚀 Build APK + Firebase App Distribution
+    needs: quality-gate
     runs-on: ubuntu-latest
     environment: production
     defaults:
