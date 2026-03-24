@@ -1,40 +1,53 @@
 import { getAboutSettings } from '@/actions/settings/about'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
+import { getContactSettings } from '@/actions/settings/contact'
 import JsonLd from '@/components/seo/JsonLd'
 import { AboutBioColumn, AboutProfileImage } from '@/components/features/about/AboutBioSection'
 import { AboutTestimonialsSection } from '@/components/features/about/AboutTestimonialsSection'
 import { Metadata } from 'next'
 
-export const metadata: Metadata = {
-  title: 'Sobre Mí',
-  description:
-    'Conoce a Paola Bolívar Nievas, maquilladora profesional y caracterizadora en Málaga. Más de 10 años de experiencia en bodas, editoriales y caracterización artística.',
-  alternates: {
-    canonical: '/sobre-mi',
-  },
-  openGraph: {
-    title: 'Sobre Mí | Paola Bolívar Nievas',
-    description:
-      'Conoce a Paola Bolívar Nievas, maquilladora profesional y caracterizadora en Málaga. Bodas, editoriales, cine y teatro.',
-    type: 'profile',
-    locale: 'es_ES',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Sobre Mí | Paola Bolívar Nievas',
-    description:
-      'Maquilladora profesional y caracterizadora en Málaga. Bodas, editoriales, cine y teatro.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const contact = await getContactSettings()
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location || ''
+  const locationSuffix = location ? ` en ${location}` : ''
+
+  return {
+    title: 'Sobre Mí',
+    description: `Conoce a ${ownerName}, maquilladora profesional y caracterizadora${locationSuffix}. Más de 10 años de experiencia en bodas, editoriales y caracterización artística.`,
+    alternates: {
+      canonical: '/sobre-mi',
+    },
+    openGraph: {
+      title: `Sobre Mí | ${ownerName}`,
+      description: `Conoce a ${ownerName}, maquilladora profesional y caracterizadora${locationSuffix}. Bodas, editoriales, cine y teatro.`,
+      type: 'profile',
+      locale: 'es_ES',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Sobre Mí | ${ownerName}`,
+      description: `Maquilladora profesional y caracterizadora${locationSuffix}. Bodas, editoriales, cine y teatro.`,
+    },
+  }
 }
 
-function buildJsonLdData(aboutSettings: Awaited<ReturnType<typeof getAboutSettings>>) {
+function buildJsonLdData(
+  aboutSettings: Awaited<ReturnType<typeof getAboutSettings>>,
+  ownerName: string,
+  location: string
+) {
   return {
-    name: 'Paola Bolívar Nievas',
+    name: ownerName,
     description: aboutSettings?.bioIntro || undefined,
     image: aboutSettings?.profileImageUrl || undefined,
-    jobTitle: 'Professional Makeup Artist',
+    jobTitle: 'Maquilladora Profesional',
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/sobre-mi`,
+    address: {
+      addressLocality: location,
+      addressCountry: 'ES',
+    },
   }
 }
 
@@ -43,17 +56,20 @@ function buildJsonLdData(aboutSettings: Awaited<ReturnType<typeof getAboutSettin
  * Mínima complejidad ciclomática: toda lógica delegada a sub-componentes.
  */
 export default async function AboutPage() {
-  const [testimonials, aboutSettings, testimonialSettings] = await Promise.all([
+  const [testimonials, aboutSettings, testimonialSettings, contact] = await Promise.all([
     getActiveTestimonials(6),
     getAboutSettings(),
     getTestimonialSettings(),
+    getContactSettings(),
   ])
 
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location || ''
   const showTestimonials = testimonialSettings?.showOnAbout ?? true
 
   return (
     <section className="w-full bg-(--background) transition-colors duration-500">
-      <JsonLd type="Person" data={buildJsonLdData(aboutSettings)} />
+      <JsonLd type="Person" data={buildJsonLdData(aboutSettings, ownerName, location)} />
 
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-8 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         <AboutBioColumn

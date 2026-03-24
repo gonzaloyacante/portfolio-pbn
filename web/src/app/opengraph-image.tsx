@@ -1,9 +1,18 @@
 import { ImageResponse } from 'next/og'
+import { getSiteSettings } from '@/actions/settings/site'
+import { getContactSettings } from '@/actions/settings/contact'
 
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
-export default function Image() {
+export default async function Image() {
+  const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])
+
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const tagline = site?.siteTagline || 'Maquilladora Profesional'
+  const location = contact?.location || ''
+  const specialty = `Caracterización · Efectos Especiales · Audiovisual${location ? ` · ${location}` : ''}`
+
   return new ImageResponse(
     (
       <div
@@ -38,7 +47,7 @@ export default function Image() {
             textAlign: 'center',
           }}
         >
-          Paola Bolívar Nievas
+          {ownerName}
         </div>
         <div
           style={{
@@ -47,7 +56,7 @@ export default function Image() {
             textAlign: 'center',
           }}
         >
-          Maquilladora Profesional
+          {tagline}
         </div>
         <div
           style={{
@@ -56,7 +65,7 @@ export default function Image() {
             textAlign: 'center',
           }}
         >
-          Caracterización · Efectos Especiales · Audiovisual · Granada
+          {specialty}
         </div>
         {/* Bottom bar */}
         <div

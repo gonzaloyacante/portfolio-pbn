@@ -6,31 +6,39 @@ import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
 
-export const metadata: Metadata = {
-  title: 'Servicios',
-  description:
-    'Descubre todos los servicios de maquillaje profesional de Paola Bolívar Nievas en Málaga: novias, editoriales, caracterización y más.',
-  alternates: {
-    canonical: '/servicios',
-  },
-  openGraph: {
-    title: 'Servicios de Maquillaje | Paola Bolívar Nievas',
-    description:
-      'Maquillaje profesional en Málaga: novias, editoriales, caracterización artística y eventos. Reserva tu cita.',
-    type: 'website',
-    locale: 'es_ES',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Servicios | Paola Bolívar Nievas',
-    description:
-      'Maquillaje profesional en Málaga: novias, editoriales, caracterización y eventos.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const contact = await getContactSettings()
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location || ''
+  const locationSuffix = location ? ` en ${location}` : ''
+
+  return {
+    title: 'Servicios',
+    description: `Descubre todos los servicios de maquillaje profesional de ${ownerName}${locationSuffix}: novias, editoriales, caracterización y más.`,
+    alternates: {
+      canonical: '/servicios',
+    },
+    openGraph: {
+      title: `Servicios de Maquillaje | ${ownerName}`,
+      description: `Maquillaje profesional${locationSuffix}: novias, editoriales, caracterización artística y eventos. Reserva tu cita.`,
+      type: 'website',
+      locale: 'es_ES',
+    },
+    twitter: {
+      card: 'summary',
+      title: `Servicios | ${ownerName}`,
+      description: `Maquillaje profesional${locationSuffix}: novias, editoriales, caracterización y eventos.`,
+    },
+  }
 }
 
 export default async function ServicesPage() {
   const services = await getActiveServices()
   const contactSettings = await getContactSettings()
+
+  const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
+  const location = contactSettings?.location || ''
+  const locationSuffix = location ? ` en ${location}` : ''
 
   // Generate WhatsApp link
   const whatsappNumber = contactSettings?.whatsapp?.replace(/\D/g, '') || ''
@@ -46,10 +54,13 @@ export default async function ServicesPage() {
       <JsonLd
         type="ProfessionalService"
         data={{
-          name: 'Paola Bolívar Nievas - Servicios de Maquillaje',
-          description:
-            'Servicios profesionales de maquillaje en Málaga: bodas, editoriales, caracterización artística y eventos.',
+          name: `${ownerName} - Servicios de Maquillaje`,
+          description: `Servicios profesionales de maquillaje${locationSuffix}: bodas, editoriales, caracterización artística y eventos.`,
           url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios`,
+          address: {
+            addressLocality: location,
+            addressCountry: 'ES',
+          },
         }}
       />
       <div className="container mx-auto max-w-6xl px-4">

@@ -9,6 +9,7 @@ import {
   getBookingConfirmationEmail,
 } from './email-templates'
 import { getContactSettings } from '@/actions/settings/contact'
+import { getSiteSettings } from '@/actions/settings/site'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -17,6 +18,17 @@ interface SendEmailParams {
   subject: string
   html: string
   replyTo?: string
+}
+
+/**
+ * Get branding info (owner name + site name) from admin settings
+ */
+async function getSenderBranding() {
+  const [contact, site] = await Promise.all([getContactSettings(), getSiteSettings()])
+  return {
+    ownerName: contact?.ownerName || undefined,
+    siteName: site?.siteName || undefined,
+  }
 }
 
 /**
@@ -40,8 +52,9 @@ async function getAdminEmail() {
  * Get the sender identity
  * Using a verified domain or resend default for now
  */
-function getSender() {
-  const fromName = 'Portfolio Paola Bolívar'
+async function getSender() {
+  const { ownerName } = await getSenderBranding()
+  const fromName = ownerName || 'Portfolio'
   const fromEmail = 'onboarding@resend.dev' // Replace with proper domain when verified, e.g., 'notificaciones@paolabolivar.es'
 
   if (process.env.EMAIL_FROM) {
@@ -63,7 +76,7 @@ async function sendEmail({ to, subject, html, replyTo }: SendEmailParams) {
     }
 
     const data = await resend.emails.send({
-      from: getSender(),
+      from: await getSender(),
       to,
       replyTo,
       subject,
@@ -93,13 +106,13 @@ export const emailService = {
     message: string
     preference: string
   }) {
-    const adminEmail = await getAdminEmail()
+    const [adminEmail, branding] = await Promise.all([getAdminEmail(), getSenderBranding()])
 
     return sendEmail({
       to: adminEmail,
       subject: `✨ Nuevo Mensaje de ${data.name}`,
       replyTo: data.email,
-      html: getContactMessageEmail(data),
+      html: getContactMessageEmail({ ...data, ...branding }),
     })
   },
 
@@ -108,11 +121,12 @@ export const emailService = {
    */
   async sendPasswordReset(email: string, token: string) {
     const resetUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password?token=${token}`
+    const branding = await getSenderBranding()
 
     return sendEmail({
       to: email,
       subject: '🔐 Recuperar Contraseña - Portfolio Admin',
-      html: getPasswordResetEmail({ resetUrl }),
+      html: getPasswordResetEmail({ resetUrl, ...branding }),
     })
   },
 
@@ -125,6 +139,7 @@ export const emailService = {
     userAgent: string
     location?: string
   }) {
+    const branding = await getSenderBranding()
     return sendEmail({
       to: params.email,
       subject: '🛡️ Seguridad: Nuevo Inicio de Sesión Detectado',
@@ -133,6 +148,7 @@ export const emailService = {
         ipAddress: params.ipAddress,
         userAgent: params.userAgent,
         location: params.location,
+        ...branding,
       }),
     })
   },
@@ -141,12 +157,12 @@ export const emailService = {
    * Notify Admin about a new testimonial
    */
   async notifyNewTestimonial(data: { name: string; rating: number; text: string; email?: string }) {
-    const adminEmail = await getAdminEmail()
+    const [adminEmail, branding] = await Promise.all([getAdminEmail(), getSenderBranding()])
 
     return sendEmail({
       to: adminEmail,
       subject: `🌟 Nuevo Testimonio de ${data.name}`,
-      html: getTestimonialAlertEmail(data),
+      html: getTestimonialAlertEmail({ ...data, ...branding }),
     })
   },
 
@@ -161,12 +177,12 @@ export const emailService = {
     serviceId: string
     notes?: string
   }) {
-    const adminEmail = await getAdminEmail()
+    const [adminEmail, branding] = await Promise.all([getAdminEmail(), getSenderBranding()])
 
     return sendEmail({
       to: adminEmail,
       subject: `📅 Nueva Reserva: ${data.clientName}`,
-      html: getBookingAlertEmail(data),
+      html: getBookingAlertEmail({ ...data, ...branding }),
       replyTo: data.clientEmail,
     })
   },
@@ -175,12 +191,14 @@ export const emailService = {
    * Notify Client that booking is received (Pending)
    */
   async notifyClientBookingReceived(data: { clientEmail: string; clientName: string; date: Date }) {
+    const branding = await getSenderBranding()
     return sendEmail({
       to: data.clientEmail,
       subject: '📅 Reserva Recibida - Pendiente de Confirmación',
       html: getBookingConfirmationEmail({
         clientName: data.clientName,
         date: data.date,
+        ...branding,
       }),
     })
   },

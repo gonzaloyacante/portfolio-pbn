@@ -43,9 +43,13 @@ export const COLORS = {
 interface BaseTemplateProps {
   title: string
   children: string
+  ownerName?: string
+  siteName?: string
 }
 
-function generateEmailHtml({ title, children }: BaseTemplateProps): string {
+function generateEmailHtml({ title, children, ownerName, siteName }: BaseTemplateProps): string {
+  const displayName = ownerName || 'Paola Bolívar Nievas'
+  const displaySite = siteName || 'Portfolio Profesional'
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -62,8 +66,8 @@ function generateEmailHtml({ title, children }: BaseTemplateProps): string {
 <body style="${EMAIL_STYLES.fontFamily} ${EMAIL_STYLES.body}">
   <div style="${EMAIL_STYLES.container}" class="container">
     <div style="${EMAIL_STYLES.header}">
-      <h1 style="${EMAIL_STYLES.logo}">Paola Bolívar Nievas</h1>
-      <p style="${EMAIL_STYLES.subhead}">Portfolio Profesional</p>
+      <h1 style="${EMAIL_STYLES.logo}">${displayName}</h1>
+      <p style="${EMAIL_STYLES.subhead}">${displaySite}</p>
     </div>
 
     <div style="${EMAIL_STYLES.content}">
@@ -72,7 +76,7 @@ function generateEmailHtml({ title, children }: BaseTemplateProps): string {
     </div>
 
     <div style="${EMAIL_STYLES.footer}">
-      <p style="margin-bottom: 8px;">© ${new Date().getFullYear()} Paola Bolívar Nievas. Todos los derechos reservados.</p>
+      <p style="margin-bottom: 8px;">© ${new Date().getFullYear()} ${displayName}. Todos los derechos reservados.</p>
       <p style="margin: 0;">Este correo fue enviado automáticamente desde tu portfolio.</p>
     </div>
   </div>
@@ -93,9 +97,13 @@ export const getContactMessageEmail = (params: {
   phone?: string
   message: string
   preference: string
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '✨ Nuevo Mensaje de Contacto',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Recibiste un nuevo mensaje a través del formulario de contacto de tu sitio web.
@@ -153,9 +161,13 @@ export const getContactMessageEmail = (params: {
 export const getPasswordResetEmail = (params: {
   resetUrl: string
   ipAddress?: string // Optional security context
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '🔐 Recuperación de Contraseña',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Recibimos una solicitud para restablecer la contraseña de tu cuenta de administrador.
@@ -197,9 +209,13 @@ export const getLoginAlertEmail = (params: {
   ipAddress: string
   userAgent: string
   location?: string
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '🛡️ Alerta de Nuevo Inicio de Sesión',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Detectamos un nuevo inicio de sesión en tu panel de administración.
@@ -258,9 +274,13 @@ export const getTestimonialAlertEmail = (params: {
   rating: number
   text: string
   email?: string
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '🌟 Nuevo Testimonio Recibido',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Un cliente ha dejado un nuevo testimonio en tu sitio web.
@@ -303,6 +323,8 @@ export const getBookingAlertEmail = (params: {
   clientPhone?: string
   serviceId: string // Ideally service name, but ID for now or resolved before passing
   notes?: string
+  ownerName?: string
+  siteName?: string
 }) => {
   const dateString = params.date.toLocaleString('es-ES', {
     dateStyle: 'full',
@@ -312,6 +334,8 @@ export const getBookingAlertEmail = (params: {
 
   return generateEmailHtml({
     title: '📅 Nueva Reserva Recibida',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Tienes una nueva solicitud de reserva pendiente de confirmación.
@@ -364,7 +388,12 @@ export const getBookingAlertEmail = (params: {
 /**
  * 6. Booking Confirmation (Client)
  */
-export const getBookingConfirmationEmail = (params: { clientName: string; date: Date }) => {
+export const getBookingConfirmationEmail = (params: {
+  clientName: string
+  date: Date
+  ownerName?: string
+  siteName?: string
+}) => {
   const dateString = params.date.toLocaleString('es-ES', {
     dateStyle: 'full',
     timeStyle: 'short',
@@ -373,6 +402,8 @@ export const getBookingConfirmationEmail = (params: { clientName: string; date: 
 
   return generateEmailHtml({
     title: 'Reserva Recibida',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Hola ${esc(params.clientName)},

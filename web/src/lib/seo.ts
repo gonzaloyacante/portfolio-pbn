@@ -94,14 +94,17 @@ export function generateProjectMetadata({
 }
 
 // Generate Project JSON-LD (VisualArtwork / CreativeWork)
-export function generateProjectJsonLd(project: {
-  title: string
-  description: string | null
-  slug: string
-  images: { url: string }[]
-  category: { name: string }
-  date: Date
-}) {
+export function generateProjectJsonLd(
+  project: {
+    title: string
+    description: string | null
+    slug: string
+    images: { url: string }[]
+    category: { name: string }
+    date: Date
+  },
+  ownerName = 'Paola Bolívar Nievas'
+) {
   const images = project.images.map((img) => img.url)
 
   return {
@@ -113,7 +116,7 @@ export function generateProjectJsonLd(project: {
     url: `${seoConfig.siteUrl}/proyecto/${project.slug}`,
     artist: {
       '@type': 'Person',
-      name: 'Paola Bolívar Nievas',
+      name: ownerName,
     },
     artform: project.category.name,
     dateCreated: project.date.toISOString(),
@@ -121,18 +124,17 @@ export function generateProjectJsonLd(project: {
 }
 
 // Generate Person JSON-LD (Home Page)
-export function generatePersonSchema() {
+export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', location = 'España') {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Paola Bolívar Nievas',
+    name: ownerName,
     url: seoConfig.siteUrl,
-    image: `${seoConfig.siteUrl}${seoConfig.defaultImage}`,
     jobTitle: 'Maquilladora Profesional',
     description: seoConfig.defaultDescription,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: 'Málaga',
+      addressLocality: location,
       addressCountry: 'ES',
     },
   }
