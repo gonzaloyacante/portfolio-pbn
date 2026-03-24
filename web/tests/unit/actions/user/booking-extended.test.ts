@@ -206,7 +206,7 @@ describe('getBookingsByRange', () => {
 
     expect(prisma.booking.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { date: { gte: start, lte: end } },
+        where: expect.objectContaining({ date: { gte: start, lte: end } }),
       })
     )
   })

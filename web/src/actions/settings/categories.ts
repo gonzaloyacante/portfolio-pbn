@@ -57,6 +57,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
         showDescription: (cleanData.showDescription as boolean) ?? true,
         showProjectCount: (cleanData.showProjectCount as boolean) ?? true,
         gridColumns: (cleanData.gridColumns as number) ?? 4,
+        isActive: (cleanData.isActive as boolean) ?? true,
       }
 
       await prisma.categorySettings.create({

@@ -7,8 +7,10 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
 
@@ -95,10 +97,11 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       // Subir avatar si se seleccionó uno nuevo.
       if (_pendingAvatar != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _avatarCtrl.text = await uploadSvc.uploadImage(
+        final result = await uploadSvc.uploadImageFull(
           _pendingAvatar!,
           folder: 'portfolio/testimonials',
         );
+        _avatarCtrl.text = result.url;
       }
 
       final data = TestimonialFormData(
@@ -212,6 +215,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                     controller: _emailCtrl,
                     decoration: const InputDecoration(labelText: 'Email'),
                     keyboardType: TextInputType.emailAddress,
+                    validator: AppValidators.emailOptional,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -220,6 +224,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                     controller: _phoneCtrl,
                     decoration: const InputDecoration(labelText: 'Teléfono'),
                     keyboardType: TextInputType.phone,
+                    validator: AppValidators.phone,
                   ),
                 ),
               ],
@@ -302,6 +307,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                       labelText: 'Sitio web',
                       hintText: 'https://...',
                     ),
+                    validator: AppValidators.url,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -369,7 +375,8 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
         testimonialDetailProvider(widget.testimonialId!),
       );
       body = detailAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () =>
+            const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (detail) {
           _populateForm(detail);

@@ -1,9 +1,13 @@
 // ignore_for_file: use_null_aware_elements
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/utils/app_logger.dart';
+import '../../../shared/widgets/app_scaffold.dart';
+
+import '../../../core/router/route_names.dart';
 import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -16,8 +20,7 @@ import '../../services/providers/services_provider.dart';
 import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
 import '../providers/trash_provider.dart';
-
-final _dateFmt = DateFormat('d MMM yyyy', 'es');
+import 'widgets/trash_section.dart';
 
 class TrashPage extends ConsumerWidget {
   const TrashPage({super.key});
@@ -29,7 +32,7 @@ class TrashPage extends ConsumerWidget {
     return AppScaffold(
       title: 'Papelera',
       body: trashAsync.when(
-        loading: () => const _TrashShimmer(),
+        loading: () => const SkeletonTrashList(),
         error: (e, _) => ErrorState(
           message: e.toString(),
           onRetry: () => ref.invalidate(trashItemsProvider),
@@ -43,19 +46,109 @@ class TrashPage extends ConsumerWidget {
               subtitle: 'No hay elementos eliminados',
             );
           }
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            children: grouped.entries
-                .where((e) => e.value.isNotEmpty)
-                .map(
-                  (entry) => _TrashSection(
-                    type: entry.key,
-                    items: entry.value,
-                    onRestore: (item) => _restore(context, ref, item),
-                    onPurge: (item) => _purge(context, ref, item),
-                  ),
-                )
-                .toList(),
+          final sections = grouped.entries
+              .where((e) => e.value.isNotEmpty)
+              .toList();
+
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 600;
+              final List<Widget> rows = [];
+
+              if (!isWide) {
+                // Mobile: secciones apiladas verticalmente
+                for (final entry in sections) {
+                  rows.add(
+                    TrashSection(
+                      type: entry.key,
+                      items: entry.value,
+                      isNarrow: false,
+                      onTap: (item) => context.pushNamed(
+                        RouteNames.trashDetail,
+                        extra: item,
+                      ),
+                      onRestore: (item) => _restore(context, ref, item),
+                      onPurge: (item) => _purge(context, ref, item),
+                    ),
+                  );
+                }
+              } else {
+                // Tablet: secciones con 1 item se emparejan (50/50).
+                // Secciones con 2+ items ocupan el ancho completo.
+                int i = 0;
+                while (i < sections.length) {
+                  final cur = sections[i];
+                  final curIsNarrow = cur.value.length == 1;
+                  final hasNext = i + 1 < sections.length;
+                  final nextIsNarrow =
+                      hasNext && sections[i + 1].value.length == 1;
+
+                  if (curIsNarrow && hasNext && nextIsNarrow) {
+                    // Dos secciones de 1 item → lado a lado
+                    final next = sections[i + 1];
+                    rows.add(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: TrashSection(
+                              type: cur.key,
+                              items: cur.value,
+                              isNarrow: true,
+                              onTap: (item) => context.pushNamed(
+                                RouteNames.trashDetail,
+                                extra: item,
+                              ),
+                              onRestore: (item) => _restore(context, ref, item),
+                              onPurge: (item) => _purge(context, ref, item),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TrashSection(
+                              type: next.key,
+                              items: next.value,
+                              isNarrow: true,
+                              onTap: (item) => context.pushNamed(
+                                RouteNames.trashDetail,
+                                extra: item,
+                              ),
+                              onRestore: (item) => _restore(context, ref, item),
+                              onPurge: (item) => _purge(context, ref, item),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                    i += 2;
+                  } else {
+                    // Sección con 2+ items (o impar sin par) → ancho completo
+                    rows.add(
+                      TrashSection(
+                        type: cur.key,
+                        items: cur.value,
+                        isNarrow: false,
+                        onTap: (item) => context.pushNamed(
+                          RouteNames.trashDetail,
+                          extra: item,
+                        ),
+                        onRestore: (item) => _restore(context, ref, item),
+                        onPurge: (item) => _purge(context, ref, item),
+                      ),
+                    );
+                    i++;
+                  }
+                }
+              }
+
+              return ListView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                children: rows,
+              );
+            },
           );
         },
       ),
@@ -66,17 +159,17 @@ class TrashPage extends ConsumerWidget {
   /// para que las listas reflejen la restauración o eliminación.
   void _invalidateListByType(WidgetRef ref, String type) {
     switch (type) {
-      case 'projects':
+      case 'project':
         ref.invalidate(projectsListProvider);
-      case 'categories':
+      case 'category':
         ref.invalidate(categoriesListProvider);
-      case 'services':
+      case 'service':
         ref.invalidate(servicesListProvider);
-      case 'testimonials':
+      case 'testimonial':
         ref.invalidate(testimonialsListProvider);
-      case 'contacts':
+      case 'contact':
         ref.invalidate(contactsListProvider);
-      case 'bookings':
+      case 'booking':
         ref.invalidate(bookingsListProvider);
     }
   }
@@ -86,6 +179,16 @@ class TrashPage extends ConsumerWidget {
     WidgetRef ref,
     TrashItem item,
   ) async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: 'Restaurar elemento',
+      message:
+          '¿Restaurar "${item.displayName}"? Volverá a aparecer en su sección original.',
+      confirmLabel: 'Restaurar',
+      isDestructive: false,
+    );
+    if (!confirmed) return;
+
     try {
       await ref
           .read(trashRepositoryProvider)
@@ -99,11 +202,13 @@ class TrashPage extends ConsumerWidget {
           ),
         );
       }
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.error('TrashPage: error al restaurar elemento', e, st);
+      Sentry.captureException(e, stackTrace: st);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo restaurar el elemento')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('No se pudo restaurar: $e')));
       }
     }
   }
@@ -136,141 +241,14 @@ class TrashPage extends ConsumerWidget {
           ),
         );
       }
-    } catch (_) {
+    } catch (e, st) {
+      AppLogger.error('TrashPage: error al eliminar permanentemente', e, st);
+      Sentry.captureException(e, stackTrace: st);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('No se pudo eliminar el elemento')),
         );
       }
     }
-  }
-}
-
-// ── Sección por tipo ───────────────────────────────────────────────────────────
-
-class _TrashSection extends StatelessWidget {
-  const _TrashSection({
-    required this.type,
-    required this.items,
-    required this.onRestore,
-    required this.onPurge,
-  });
-
-  final String type;
-  final List<TrashItem> items;
-  final void Function(TrashItem) onRestore;
-  final void Function(TrashItem) onPurge;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            trashTypeLabel(type),
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ),
-        ...items.map(
-          (item) => _TrashCard(
-            item: item,
-            onRestore: () => onRestore(item),
-            onPurge: () => onPurge(item),
-          ),
-        ),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
-}
-
-// ── Card de item ───────────────────────────────────────────────────────────────
-
-class _TrashCard extends StatelessWidget {
-  const _TrashCard({
-    required this.item,
-    required this.onRestore,
-    required this.onPurge,
-  });
-
-  final TrashItem item;
-  final VoidCallback onRestore;
-  final VoidCallback onPurge;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final deletedStr = _dateFmt.format(item.deletedAt.toLocal());
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.displayName,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Eliminado: $deletedStr',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-            TextButton(onPressed: onRestore, child: const Text('Restaurar')),
-            IconButton(
-              icon: Icon(Icons.delete_forever, color: colorScheme.error),
-              onPressed: onPurge,
-              tooltip: 'Eliminar permanentemente',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Shimmer skeleton ───────────────────────────────────────────────────────────
-
-class _TrashShimmer extends StatelessWidget {
-  const _TrashShimmer();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: List.generate(
-            6,
-            (_) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: ShimmerBox(
-                width: double.infinity,
-                height: 72,
-                borderRadius: 16,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function NewServicePage() {
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-6">
+    <div className="mx-auto max-w-4xl space-y-8">
       <PageHeader
         title="✨ Crear Servicio"
         description="Define un nuevo servicio que ofreces a tus clientes."

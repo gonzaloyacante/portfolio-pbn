@@ -9,6 +9,8 @@ import { ErrorBoundary } from '@/components/ui'
 import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
+import { getSiteSettings } from '@/actions/settings/site'
+import { getContactSettings } from '@/actions/settings/contact'
 import FontLoader from '@/components/layout/FontLoader'
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
@@ -49,72 +51,80 @@ export const viewport: Viewport = {
   ],
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
-  title: {
-    default: 'Paola Bolívar Nievas | Maquilladora Profesional',
-    template: '%s | Paola Bolívar Nievas',
-  },
-  description:
-    'Portfolio de Paola Bolívar Nievas - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social en Málaga, España.',
-  keywords: [
-    'maquilladora málaga',
-    'maquillaje profesional',
-    'caracterización',
-    'efectos especiales',
-    'maquillaje audiovisual',
-    'maquillaje cine',
-    'maquillaje teatro',
-    'Paola Bolívar Nievas',
-  ],
-  authors: [{ name: 'Paola Bolívar Nievas' }],
-  creator: 'Paola Bolívar Nievas',
-  publisher: 'Portfolio PBN',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'es_ES',
-    url: SITE_URL,
-    siteName: 'Portfolio Paola Bolívar Nievas',
-    title: 'Paola Bolívar Nievas | Maquilladora Profesional',
-    description:
-      'Maquilladora profesional especializada en audiovisuales, caracterización y efectos especiales. Descubre mi portfolio de trabajos.',
-    images: [
-      {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Portfolio Paola Bolívar Nievas - Maquilladora Profesional',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Paola Bolívar Nievas | Maquilladora Profesional',
-    description: 'Portfolio de maquillaje profesional - Caracterización, efectos especiales y más.',
-    images: ['/og-image.jpg'],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+export async function generateMetadata(): Promise<Metadata> {
+  const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])
+
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location || ''
+  const siteName = site?.siteName || ownerName
+
+  const defaultTitle = site?.defaultMetaTitle || `${ownerName} | Maquilladora Profesional`
+  const defaultDescription =
+    site?.defaultMetaDescription ||
+    `Portfolio de ${ownerName} - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social${location ? ` en ${location}` : ''}, España.`
+
+  const locationKeyword = location ? `maquilladora ${location.toLowerCase()}` : 'maquilladora profesional'
+  const favicon = site?.faviconUrl || '/favicon.ico'
+  const ogImage = site?.defaultOgImage || undefined
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: defaultTitle,
+      template: `%s | ${ownerName}`,
     },
-  },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/icons/icon-192x192.png',
-  },
-  manifest: '/manifest.json',
+    description: defaultDescription,
+    keywords: [
+      locationKeyword,
+      'maquillaje profesional',
+      'caracterización',
+      'efectos especiales',
+      'maquillaje audiovisual',
+      'maquillaje cine',
+      'maquillaje teatro',
+      ownerName,
+    ],
+    authors: [{ name: ownerName }],
+    creator: ownerName,
+    publisher: siteName,
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'es_ES',
+      url: SITE_URL,
+      siteName,
+      title: defaultTitle,
+      description: defaultDescription,
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: ownerName }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: defaultTitle,
+      description: defaultDescription,
+      ...(ogImage && { images: [ogImage] }),
+    },
+    robots: {
+      index: site?.allowIndexing ?? true,
+      follow: site?.allowIndexing ?? true,
+      googleBot: {
+        index: site?.allowIndexing ?? true,
+        follow: site?.allowIndexing ?? true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    icons: {
+      icon: favicon,
+      shortcut: favicon,
+      apple: '/icons/icon-192x192.png',
+    },
+    manifest: '/manifest.json',
+  }
 }
 
 export default async function RootLayout({

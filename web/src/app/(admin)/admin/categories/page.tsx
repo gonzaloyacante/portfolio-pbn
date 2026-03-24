@@ -11,16 +11,17 @@ import CategoriesContent from './CategoriesContent'
 export default async function CategoriesPage() {
   const [categories, settings] = await Promise.all([
     prisma.category.findMany({
+      where: { deletedAt: null },
       include: {
         projects: {
-          where: { isActive: true, isDeleted: false },
+          where: { isActive: true, deletedAt: null },
           take: 1,
           orderBy: { date: 'desc' },
           select: { thumbnailUrl: true },
         },
         _count: {
           select: {
-            projects: { where: { isActive: true, isDeleted: false } },
+            projects: { where: { isActive: true, deletedAt: null } },
           },
         },
       },
@@ -53,6 +54,12 @@ export default async function CategoriesPage() {
                 type: 'boolean',
               },
               {
+                key: 'isActive',
+                label: 'Activo',
+                description: 'Habilitar sección de categorías (mostrar/ocultar)',
+                type: 'boolean',
+              },
+              {
                 key: 'showDescription',
                 label: 'Mostrar Descripción',
                 description: 'Descripción de la categoría',
@@ -68,12 +75,12 @@ export default async function CategoriesPage() {
               },
             ]}
           />
-          <Link href={`${ROUTES.admin.categories}/new`}>
-            <Button className="gap-2">
+          <Button asChild className="gap-2">
+            <Link href={ROUTES.admin.newCategory}>
               <Plus size={16} />
               Nueva Categoría
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </div>
 

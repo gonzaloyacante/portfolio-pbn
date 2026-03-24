@@ -6,9 +6,12 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/app_card.dart';
+import '../../../core/theme/app_colors.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 import '../../../core/utils/date_utils.dart';
+import 'widgets/contact_chips.dart';
 
 class ContactDetailPage extends ConsumerStatefulWidget {
   const ContactDetailPage({super.key, required this.contactId});
@@ -94,7 +97,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
           title: const Text('Detalle del contacto'),
         ),
         body: async.when(
-          loading: () => const _ContactDetailSkeleton(),
+          loading: () => const SkeletonContactDetail(),
           error: (e, _) => Center(child: Text('Error: $e')),
           data: (detail) {
             _populate(detail);
@@ -104,98 +107,92 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Cabecera ────────────────────────────────────────────
-                  Card(
+                  AppCard(
+                    borderRadius: BorderRadius.circular(16),
                     elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 56,
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    detail.name.isNotEmpty
-                                        ? detail.name[0].toUpperCase()
-                                        : '?',
-                                    style: theme.textTheme.titleLarge?.copyWith(
-                                      fontSize: 20,
-                                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 56,
+                              height: 56,
+                              decoration: BoxDecoration(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.primary.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  detail.name.isNotEmpty
+                                      ? detail.name[0].toUpperCase()
+                                      : '?',
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontSize: 20,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      detail.name,
-                                      style: theme.textTheme.titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      detail.email,
-                                      style: theme.textTheme.bodySmall,
-                                    ),
-                                    if (detail.phone != null) ...[
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        detail.phone!,
-                                        style: theme.textTheme.bodySmall,
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    AppDateUtils.toRelative(detail.createdAt),
-                                    style: theme.textTheme.labelSmall,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      _StatusChip(
-                                        label: _statusLabel(detail.status),
-                                        color: _statusColor(detail.status),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      _PriorityChip(priority: detail.priority),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          if (detail.subject != null) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              'Asunto: ${detail.subject}',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
                               ),
                             ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    detail.name,
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    detail.email,
+                                    style: theme.textTheme.bodySmall,
+                                  ),
+                                  if (detail.phone != null) ...[
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      detail.phone!,
+                                      style: theme.textTheme.bodySmall,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  AppDateUtils.toRelative(detail.createdAt),
+                                  style: theme.textTheme.labelSmall,
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    StatusChip(
+                                      label: _statusLabel(detail.status),
+                                      color: _statusColor(detail.status),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    PriorityChip(priority: detail.priority),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
+                        ),
+                        if (detail.subject != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            'Asunto: ${detail.subject}',
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ],
-                      ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -343,34 +340,32 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
                       style: theme.textTheme.titleSmall,
                     ),
                     const SizedBox(height: 8),
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (detail.referrer != null)
-                              _TrackingRow(
-                                label: 'Referrer',
-                                value: detail.referrer!,
-                              ),
-                            if (detail.utmSource != null)
-                              _TrackingRow(
-                                label: 'UTM Source',
-                                value: detail.utmSource!,
-                              ),
-                            if (detail.utmMedium != null)
-                              _TrackingRow(
-                                label: 'UTM Medium',
-                                value: detail.utmMedium!,
-                              ),
-                            if (detail.utmCampaign != null)
-                              _TrackingRow(
-                                label: 'UTM Campaign',
-                                value: detail.utmCampaign!,
-                              ),
-                          ],
-                        ),
+                    AppCard(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (detail.referrer != null)
+                            TrackingRow(
+                              label: 'Referrer',
+                              value: detail.referrer!,
+                            ),
+                          if (detail.utmSource != null)
+                            TrackingRow(
+                              label: 'UTM Source',
+                              value: detail.utmSource!,
+                            ),
+                          if (detail.utmMedium != null)
+                            TrackingRow(
+                              label: 'UTM Medium',
+                              value: detail.utmMedium!,
+                            ),
+                          if (detail.utmCampaign != null)
+                            TrackingRow(
+                              label: 'UTM Campaign',
+                              value: detail.utmCampaign!,
+                            ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -400,11 +395,11 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
   };
 
   Color _statusColor(String s) => switch (s) {
-    'REPLIED' => Colors.green,
-    'CLOSED' => Colors.grey,
-    'SPAM' => Colors.red,
-    'IN_PROGRESS' => Colors.orange,
-    _ => Colors.blue,
+    'REPLIED' => AppColors.success,
+    'CLOSED' => AppColors.neutral,
+    'SPAM' => AppColors.destructive,
+    'IN_PROGRESS' => AppColors.warning,
+    _ => AppColors.info,
   };
 
   String _priorityLabel(String p) => switch (p) {
@@ -431,112 +426,4 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     'WHATSAPP' => Icons.chat_outlined,
     _ => Icons.email_outlined,
   };
-}
-
-// ── Sub-widgets ───────────────────────────────────────────────────────────────
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label, required this.color});
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _PriorityChip extends StatelessWidget {
-  const _PriorityChip({required this.priority});
-  final String priority;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = switch (priority) {
-      'URGENT' => Colors.red,
-      'HIGH' => Colors.orange,
-      'LOW' => Colors.grey,
-      _ => Theme.of(context).colorScheme.primary,
-    };
-    final label = switch (priority) {
-      'URGENT' => 'Urgente',
-      'HIGH' => 'Alta',
-      'LOW' => 'Baja',
-      _ => 'Media',
-    };
-    return _StatusChip(label: label, color: color);
-  }
-}
-
-class _TrackingRow extends StatelessWidget {
-  const _TrackingRow({required this.label, required this.value});
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 110,
-            child: Text(
-              label,
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          Expanded(
-            child: Text(value, style: Theme.of(context).textTheme.bodySmall),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ContactDetailSkeleton extends StatelessWidget {
-  const _ContactDetailSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header card
-            ShimmerBox(width: double.infinity, height: 160, borderRadius: 16),
-            const SizedBox(height: 16),
-            // Message card
-            ShimmerBox(width: double.infinity, height: 120, borderRadius: 16),
-            const SizedBox(height: 16),
-            // Reply card
-            ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
-            const SizedBox(height: 16),
-            // Notes card
-            ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
-          ],
-        ),
-      ),
-    );
-  }
 }

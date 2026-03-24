@@ -9,9 +9,11 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { servicePatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -27,8 +29,6 @@ const SERVICE_FULL_SELECT = {
   duration: true,
   durationMinutes: true,
   imageUrl: true,
-  iconName: true,
-  color: true,
   isActive: true,
   isFeatured: true,
   isAvailable: true,
@@ -40,8 +40,6 @@ const SERVICE_FULL_SELECT = {
   metaKeywords: true,
   requirements: true,
   cancellationPolicy: true,
-  bookingCount: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
 }
@@ -63,7 +61,13 @@ export async function GET(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Servicio no encontrado' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true, data: service })
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...service,
+        thumbnailUrl: service.imageUrl ? generateThumbnailUrl(service.imageUrl) : null,
+      },
+    })
   } catch (err) {
     logger.error('[admin-service-get] Error', {
       error: err instanceof Error ? err.message : String(err),
@@ -80,7 +84,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = servicePatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       name,
       slug,
@@ -92,8 +103,6 @@ export async function PATCH(req: Request, { params }: Params) {
       duration,
       durationMinutes,
       imageUrl,
-      iconName,
-      color,
       isActive,
       isFeatured,
       isAvailable,
@@ -105,7 +114,7 @@ export async function PATCH(req: Request, { params }: Params) {
       metaKeywords,
       requirements,
       cancellationPolicy,
-    } = body
+    } = parsed.data
 
     if (slug) {
       const existing = await prisma.service.findFirst({
@@ -127,14 +136,12 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(slug !== undefined && { slug }),
         ...(description !== undefined && { description }),
         ...(shortDesc !== undefined && { shortDesc }),
-        ...(price !== undefined && { price: price !== null ? parseFloat(price) : null }),
+        ...(price !== undefined && { price }),
         ...(priceLabel !== undefined && { priceLabel }),
         ...(currency !== undefined && { currency }),
         ...(duration !== undefined && { duration }),
         ...(durationMinutes !== undefined && { durationMinutes }),
         ...(imageUrl !== undefined && { imageUrl }),
-        ...(iconName !== undefined && { iconName }),
-        ...(color !== undefined && { color }),
         ...(isActive !== undefined && { isActive }),
         ...(isFeatured !== undefined && { isFeatured }),
         ...(isAvailable !== undefined && { isAvailable }),
@@ -166,7 +173,7 @@ export async function PATCH(req: Request, { params }: Params) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }
@@ -206,7 +213,7 @@ export async function DELETE(req: Request, { params }: Params) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

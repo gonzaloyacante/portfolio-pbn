@@ -8,13 +8,13 @@ import { headers } from 'next/headers'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
 import { ROUTES } from '@/config/routes'
-import { auth } from '@/lib/auth'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/rate-limit-config'
 
-// Rate limiting cache (simple in-memory, for production use Redis)
-const recentSubmissions = new Map<string, number>()
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000 // 15 minutes
+// Rate limiter para el formulario público de testimonios
+const publicTestimonialLimiter = createRateLimiter(RATE_LIMITS.TESTIMONIAL)
 
 import { z } from 'zod'
 
@@ -29,6 +29,7 @@ const TestimonialSchema = z.object({
   website: z.string().url().optional().or(z.literal('')),
   avatarUrl: z.string().url().optional().or(z.literal('')),
   email: z.string().email().optional().or(z.literal('')),
+  phone: z.string().optional(),
   rating: z.number().min(1).max(5).default(5),
   // Admin fields
   isActive: z.boolean().optional(),
@@ -72,14 +73,6 @@ export async function createTestimonial(formData: FormData) {
   }
 }
 
-function cleanOldRateLimitEntries(now: number) {
-  for (const [key, time] of recentSubmissions.entries()) {
-    if (now - time > RATE_LIMIT_WINDOW) {
-      recentSubmissions.delete(key)
-    }
-  }
-}
-
 /**
  * Create testimonial from public form (goes to moderation)
  */
@@ -88,6 +81,8 @@ export async function submitPublicTestimonial(formData: FormData) {
     name: formData.get('name'),
     text: formData.get('text'),
     email: formData.get('email'),
+    position: formData.get('position'),
+    company: formData.get('company'),
     rating: parseInt(formData.get('rating') as string) || 5,
   }
 
@@ -95,15 +90,14 @@ export async function submitPublicTestimonial(formData: FormData) {
   if (!validation.success) {
     return { success: false, error: validation.error.issues[0].message }
   }
-  const { name, text, email, rating } = validation.data
+  const { name, text, email, position, company, rating } = validation.data
 
   const headersList = await headers()
   const ip = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown'
-  const now = Date.now()
-  const lastSubmission = recentSubmissions.get(ip)
 
-  if (lastSubmission && now - lastSubmission < RATE_LIMIT_WINDOW) {
-    const minutesLeft = Math.ceil((RATE_LIMIT_WINDOW - (now - lastSubmission)) / 60000)
+  const rateCheck = await publicTestimonialLimiter.check(ip)
+  if (!rateCheck.allowed) {
+    const minutesLeft = Math.ceil((rateCheck.resetIn ?? 900) / 60)
     return {
       success: false,
       error: `Por favor espera ${minutesLeft} minutos antes de enviar otro testimonio`,
@@ -115,14 +109,14 @@ export async function submitPublicTestimonial(formData: FormData) {
       data: {
         name,
         text,
-        position: email ? `Cliente verificado (${email})` : 'Cliente',
+        position: position || null,
+        company: company || null,
         rating,
         isActive: false,
       },
     })
 
-    recentSubmissions.set(ip, now)
-    cleanOldRateLimitEntries(now)
+    await publicTestimonialLimiter.record(ip)
 
     // 📧 NOTIFICAR AL ADMIN
     try {
@@ -160,6 +154,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
     company: formData.get('company'),
     website: formData.get('website'),
     avatarUrl: formData.get('avatarUrl'),
+    email: formData.get('email'),
+    phone: formData.get('phone'),
     rating: parseInt(formData.get('rating') as string),
     isActive: formData.get('isActive') === 'true',
     isVerified: formData.get('isVerified') === 'true',
@@ -173,7 +169,6 @@ export async function updateTestimonial(id: string, formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
   const data = validation.data
-  const session = await auth()
 
   try {
     await prisma.testimonial.update({
@@ -185,6 +180,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
         company: data.company,
         website: data.website,
         avatarUrl: data.avatarUrl,
+        email: data.email,
+        phone: data.phone,
         rating: data.rating,
         isActive: data.isActive,
         verified: data.isVerified, // Schema uses 'verified' boolean
@@ -192,7 +189,6 @@ export async function updateTestimonial(id: string, formData: FormData) {
         status: data.status,
         moderationNote: data.moderationNote,
         moderatedAt: new Date(),
-        moderatedBy: session?.user?.id || 'system',
       },
     })
 
@@ -213,13 +209,16 @@ export async function deleteTestimonial(id: string) {
   await checkApiRateLimit()
 
   try {
-    await prisma.testimonial.delete({ where: { id } })
+    await prisma.testimonial.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    })
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about, 'layout')
     revalidatePath(ROUTES.admin.testimonials)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
-    logger.info(`Testimonial deleted: ${id}`)
+    logger.info(`Testimonial soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
     logger.error('Error deleting testimonial:', { error })

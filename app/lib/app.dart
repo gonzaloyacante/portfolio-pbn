@@ -1,14 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/auth/auth_provider.dart';
+import 'core/providers/app_preferences_provider.dart';
 import 'core/auth/auth_state.dart';
 import 'core/debug/debug_panel.dart';
 import 'core/notifications/notification_handler.dart';
 import 'core/notifications/push_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme_provider.dart';
+import 'core/database/cache_manager.dart';
+import 'core/sync/sync_manager.dart';
 import 'core/updates/app_release_model.dart';
 import 'core/updates/app_update_provider.dart';
 import 'core/utils/app_logger.dart';
@@ -24,16 +28,31 @@ class App extends ConsumerStatefulWidget {
   ConsumerState<App> createState() => _AppState();
 }
 
-class _AppState extends ConsumerState<App> {
+class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   NotificationHandler? _notifHandler;
+
+  // ── timeDilation sync ────────────────────────────────────────────────────
+
+  /// Aplica el factor de dilatación correcto según las preferencias.
+  /// Debe llamarse fuera del ciclo de build (addPostFrameCallback o listener).
+  void _syncTimeDilation() {
+    if (!mounted) return;
+    final enabled = ref.read(animationsEnabledProvider);
+    final speed = ref.read(animationSpeedPrefProvider);
+    timeDilation = enabled ? speed.dilation : 0.01;
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final router = ref.read(routerProvider);
       _notifHandler = NotificationHandler(router: router);
       _notifHandler!.init();
+
+      // Aplicar preferencias de rendimiento al arrancar.
+      _syncTimeDilation();
 
       // ── Registrar la referencia global al contenedor Riverpod ──────────
       // Permite disparar checks de actualización desde el FCM handler,
@@ -50,7 +69,19 @@ class _AppState extends ConsumerState<App> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      AppLogger.info('App: resumed from background → triggering sync');
+      ref.read(syncManagerProvider.notifier).syncNow();
+
+      // Purge expired cache entries on resume to prevent stale data buildup.
+      ref.read(cacheManagerProvider).purgeExpired();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     clearShowUpdateDialogCallback();
     super.dispose();
   }
@@ -82,6 +113,12 @@ class _AppState extends ConsumerState<App> {
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final animationsEnabled = ref.watch(animationsEnabledProvider);
+    final compactMode = ref.watch(compactModeProvider);
+
+    // Sincronizar timeDilation cuando cambian las preferencias de rendimiento.
+    ref.listen(animationsEnabledProvider, (prev, _) => _syncTimeDilation());
+    ref.listen(animationSpeedPrefProvider, (prev, _) => _syncTimeDilation());
 
     // Escuchar cambios de auth para registrar/desregistrar token FCM
     // y disparar el check de actualizaciones al iniciar sesión.
@@ -141,18 +178,33 @@ class _AppState extends ConsumerState<App> {
 
       // ── Router ────────────────────────────────────────────────────────────
       routerConfig: router,
-      // ── Debug overlay (solo debug/profile) ───────────────────────────
-      builder: kReleaseMode
-          ? null
-          : (context, child) {
-              return Stack(
-                children: [
-                  child ?? const SizedBox.shrink(),
-                  // Badge flotante de entorno (esquina inferior derecha)
-                  const _DebugEnvBadge(),
-                ],
-              );
-            },
+      // ── Builder: performance overrides + debug overlay ─────────────────
+      builder: (context, child) {
+        // Propagar disableAnimations a todo el árbol de widgets.
+        Widget content = MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(disableAnimations: !animationsEnabled),
+          child: child ?? const SizedBox.shrink(),
+        );
+
+        // Modo compacto: reduce la densidad visual de los componentes Material.
+        if (compactMode) {
+          content = Theme(
+            data: Theme.of(
+              context,
+            ).copyWith(visualDensity: VisualDensity.compact),
+            child: content,
+          );
+        }
+
+        // Badge de entorno (solo debug/profile).
+        if (!kReleaseMode) {
+          content = Stack(children: [content, const _DebugEnvBadge()]);
+        }
+
+        return content;
+      },
     );
   }
 }

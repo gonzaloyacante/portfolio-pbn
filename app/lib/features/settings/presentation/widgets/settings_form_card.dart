@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../../shared/widgets/app_card.dart';
 
 /// Tarjeta de sección reutilizable para todos los formularios de Settings.
 class SettingsFormCard extends StatelessWidget {
@@ -22,37 +22,17 @@ class SettingsFormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return AppCard(
+      title: title,
+      leading: leadingIcon != null ? Icon(leadingIcon, size: 18) : null,
+      trailing: trailing,
       color: color,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.card),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.cardPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                if (leadingIcon != null) ...[
-                  Icon(leadingIcon, size: 18),
-                  const SizedBox(width: AppSpacing.sm),
-                ],
-                Expanded(
-                  child: Text(
-                    title,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                ?trailing,
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            ...children,
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: AppSpacing.md - AppSpacing.sm),
+          ...children,
+        ],
       ),
     );
   }

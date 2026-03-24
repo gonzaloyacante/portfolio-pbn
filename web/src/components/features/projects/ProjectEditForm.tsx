@@ -17,7 +17,7 @@ type ProjectWithRelations = Project & {
 
 interface ProjectEditFormProps {
   project: ProjectWithRelations
-  categories: Category[]
+  categories: Pick<Category, 'id' | 'name'>[]
 }
 
 export default function ProjectEditForm({ project, categories }: ProjectEditFormProps) {
@@ -28,8 +28,14 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     title: string
     categoryId: string
     description: string
+    excerpt?: string
+    client?: string
+    duration?: string
     date: string
     newImages: never[]
+    isActive?: boolean
+    isFeatured?: boolean
+    isPinned?: boolean
   }
 
   const {
@@ -41,7 +47,13 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
       title: project.title,
       categoryId: project.categoryId,
       description: project.description || '',
+      excerpt: project.excerpt || '',
+      client: project.client || '',
+      duration: project.duration || '',
       date: project.date ? new Date(project.date).toISOString().split('T')[0] : '',
+      isActive: project.isActive,
+      isFeatured: project.isFeatured,
+      isPinned: project.isPinned,
       newImages: [],
     },
   })
@@ -63,6 +75,9 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
     formData.append('title', data.title)
     formData.append('categoryId', data.categoryId)
     formData.append('description', data.description)
+    formData.append('excerpt', data.excerpt || '')
+    formData.append('client', data.client || '')
+    formData.append('duration', data.duration || '')
     formData.append('date', data.date)
 
     // Append new images (URLs + PublicIDs from ImageUpload)
@@ -71,6 +86,11 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
       formData.append('images', img.url)
       formData.append('images_public_id', img.publicId)
     })
+
+    // Append flags
+    formData.append('isActive', data.isActive ? 'on' : 'off')
+    formData.append('isFeatured', data.isFeatured ? 'on' : 'off')
+    formData.append('isPinned', data.isPinned ? 'on' : 'off')
 
     try {
       const result = await updateProject(project.id, formData)
@@ -184,6 +204,56 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
           placeholder="Descripción completa del proyecto..."
         />
         <SmartField label="Fecha" {...register('date')} type="date" />
+        <SmartField
+          label="Extracto / Resumen"
+          {...register('excerpt')}
+          type="textarea"
+          rows={2}
+          placeholder="Breve descripción para tarjetas y listados..."
+        />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <SmartField label="Cliente" {...register('client')} placeholder="Nombre del cliente..." />
+          <SmartField
+            label="Duración"
+            {...register('duration')}
+            placeholder="Ej: 2 horas, Todo el día..."
+          />
+        </div>
+        <div className="flex flex-wrap items-center gap-6">
+          <div className="flex items-center gap-3">
+            <input
+              id="isActive"
+              type="checkbox"
+              {...register('isActive')}
+              className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+            />
+            <label htmlFor="isActive" className="text-sm font-medium text-(--foreground)">
+              Activo
+            </label>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              id="isFeatured"
+              type="checkbox"
+              {...register('isFeatured')}
+              className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+            />
+            <label htmlFor="isFeatured" className="text-sm font-medium text-(--foreground)">
+              Destacado
+            </label>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              id="isPinned"
+              type="checkbox"
+              {...register('isPinned')}
+              className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+            />
+            <label htmlFor="isPinned" className="text-sm font-medium text-(--foreground)">
+              Fijado al inicio
+            </label>
+          </div>
+        </div>
       </div>
 
       {/* 2. Galería */}
@@ -203,6 +273,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             name="newImages"
             label="Agregar más fotos"
             multiple
+            mode="gallery"
             onChange={(urls, publicIds) => {
               if (urls.length > 0) {
                 // ImageUpload sends ALL images in its state, not just new ones

@@ -324,7 +324,7 @@ class _AppUpdateDialogState extends State<AppUpdateDialog>
         key: const ValueKey('verifying'),
         hasChecksum: widget.release.checksumSha256 != null,
       ),
-      _Phase.ready => _ReadyPhase(key: const ValueKey('ready')),
+      _Phase.ready => const _ReadyPhase(key: ValueKey('ready')),
       _Phase.error => _ErrorPhase(
         key: const ValueKey('error'),
         message: _errorMessage ?? 'Error desconocido',

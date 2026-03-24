@@ -36,7 +36,7 @@ class SectionHeader extends StatelessWidget {
     return Padding(
       padding:
           padding ??
-          EdgeInsets.fromLTRB(
+          const EdgeInsets.fromLTRB(
             AppSpacing.base,
             AppSpacing.base,
             AppSpacing.base,
@@ -62,7 +62,7 @@ class SectionHeader extends StatelessWidget {
                   Text(
                     subtitle,
                     style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurface.withAlpha(140),
+                      color: colorScheme.onSurface.withValues(alpha: 140 / 255),
                     ),
                   ),
                 ],

@@ -19,14 +19,10 @@ abstract class ServiceItem with _$ServiceItem {
     @Default('EUR') String currency,
     String? duration,
     String? imageUrl,
-    String? iconName,
-    String? color,
     @Default(true) bool isActive,
     @Default(false) bool isFeatured,
     @Default(true) bool isAvailable,
     @Default(0) int sortOrder,
-    @Default(0) int bookingCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _ServiceItem;
@@ -52,8 +48,6 @@ abstract class ServiceDetail with _$ServiceDetail {
     String? duration,
     int? durationMinutes,
     String? imageUrl,
-    String? iconName,
-    String? color,
     @Default(true) bool isActive,
     @Default(false) bool isFeatured,
     @Default(true) bool isAvailable,
@@ -65,8 +59,6 @@ abstract class ServiceDetail with _$ServiceDetail {
     @Default([]) List<String> metaKeywords,
     String? requirements,
     String? cancellationPolicy,
-    @Default(0) int bookingCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _ServiceDetail;
@@ -86,11 +78,18 @@ class ServiceFormData {
   final String priceLabel;
   final String currency;
   final String? duration;
+  final int? durationMinutes;
   final String? imageUrl;
-  final String? iconName;
-  final String? color;
   final bool isActive;
   final bool isFeatured;
+  final bool isAvailable;
+  final int? maxBookingsPerDay;
+  final int? advanceNoticeDays;
+  final String? requirements;
+  final String? cancellationPolicy;
+  final String? metaTitle;
+  final String? metaDescription;
+  final String? metaKeywords;
 
   const ServiceFormData({
     required this.name,
@@ -101,11 +100,18 @@ class ServiceFormData {
     this.priceLabel = 'desde',
     this.currency = 'EUR',
     this.duration,
+    this.durationMinutes,
     this.imageUrl,
-    this.iconName,
-    this.color,
     this.isActive = true,
     this.isFeatured = false,
+    this.isAvailable = true,
+    this.maxBookingsPerDay,
+    this.advanceNoticeDays,
+    this.requirements,
+    this.cancellationPolicy,
+    this.metaTitle,
+    this.metaDescription,
+    this.metaKeywords,
   });
 
   Map<String, dynamic> toJson() => {
@@ -117,10 +123,17 @@ class ServiceFormData {
     'priceLabel': priceLabel,
     'currency': currency,
     if (duration != null) 'duration': duration,
+    if (durationMinutes != null) 'durationMinutes': durationMinutes,
     if (imageUrl != null) 'imageUrl': imageUrl,
-    if (iconName != null) 'iconName': iconName,
-    if (color != null) 'color': color,
     'isActive': isActive,
     'isFeatured': isFeatured,
+    'isAvailable': isAvailable,
+    if (maxBookingsPerDay != null) 'maxBookingsPerDay': maxBookingsPerDay,
+    if (advanceNoticeDays != null) 'advanceNoticeDays': advanceNoticeDays,
+    if (requirements != null) 'requirements': requirements,
+    if (cancellationPolicy != null) 'cancellationPolicy': cancellationPolicy,
+    if (metaTitle != null) 'metaTitle': metaTitle,
+    if (metaDescription != null) 'metaDescription': metaDescription,
+    if (metaKeywords != null) 'metaKeywords': metaKeywords,
   };
 }

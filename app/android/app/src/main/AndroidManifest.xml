@@ -120,6 +120,17 @@
                 android:resource="@xml/cropper_file_paths" />
         </provider>
 
+        <!-- ── UCropActivity (image_cropper) ──────────────────────────── -->
+        <!--
+            image_cropper 11.x requiere que el host declare UCropActivity explícitamente.
+            El AAR de ucrop 2.2.11 tiene manifest vacío y no hace auto-merge.
+            Sin esta entrada la app lanza ActivityNotFoundException al intentar recortar.
+        -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <!-- ── Proveedor de archivos para open_file (in-app updates) ──── -->
         <!--
             El plugin `open_file` espera un FileProvider personalizado y una

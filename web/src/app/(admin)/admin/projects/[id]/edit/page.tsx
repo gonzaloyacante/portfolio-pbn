@@ -23,7 +23,9 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
       },
     }),
     prisma.category.findMany({
+      where: { isActive: true, deletedAt: null },
       orderBy: { name: 'asc' },
+      select: { id: true, name: true, slug: true },
     }),
   ])
 
@@ -32,7 +34,7 @@ export default async function EditProjectPage({ params }: EditProjectPageProps) 
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 p-6">
+    <div className="mx-auto max-w-4xl space-y-8">
       <PageHeader
         title="✏️ Editar Proyecto"
         description={`Editando: ${project.title}`}

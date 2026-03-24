@@ -213,14 +213,6 @@ void main() {
       () => expect(BookingDetail.fromJson(base).guestCount, 1),
     );
     test(
-      'reminderCount defaults to 0',
-      () => expect(BookingDetail.fromJson(base).reminderCount, 0),
-    );
-    test(
-      'feedbackSent defaults to false',
-      () => expect(BookingDetail.fromJson(base).feedbackSent, isFalse),
-    );
-    test(
       'clientNotes is null',
       () => expect(BookingDetail.fromJson(base).clientNotes, isNull),
     );
@@ -235,14 +227,6 @@ void main() {
     test(
       'paymentMethod is null',
       () => expect(BookingDetail.fromJson(base).paymentMethod, isNull),
-    );
-    test(
-      'feedbackRating is null',
-      () => expect(BookingDetail.fromJson(base).feedbackRating, isNull),
-    );
-    test(
-      'feedbackText is null',
-      () => expect(BookingDetail.fromJson(base).feedbackText, isNull),
     );
   });
 
@@ -262,9 +246,6 @@ void main() {
       'paymentStatus': 'PAID',
       'paymentMethod': 'card',
       'paymentRef': 'STRIPE_REF_001',
-      'feedbackSent': true,
-      'feedbackRating': 5,
-      'feedbackText': 'Excelente',
       'serviceId': 'srv-1',
       'createdAt': '2024-11-01T00:00:00Z',
       'updatedAt': '2024-12-16T00:00:00Z',
@@ -302,18 +283,6 @@ void main() {
     test(
       'parses paymentRef',
       () => expect(BookingDetail.fromJson(full()).paymentRef, 'STRIPE_REF_001'),
-    );
-    test(
-      'parses feedbackSent = true',
-      () => expect(BookingDetail.fromJson(full()).feedbackSent, isTrue),
-    );
-    test(
-      'parses feedbackRating',
-      () => expect(BookingDetail.fromJson(full()).feedbackRating, 5),
-    );
-    test(
-      'parses feedbackText',
-      () => expect(BookingDetail.fromJson(full()).feedbackText, 'Excelente'),
     );
     test(
       'status is COMPLETED',

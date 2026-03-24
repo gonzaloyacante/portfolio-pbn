@@ -1,51 +1,44 @@
 import { getActiveServices } from '@/actions/cms/services'
 import { getContactSettings } from '@/actions/settings/contact'
 import { Metadata } from 'next'
-import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/ui'
+import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage, Button } from '@/components/ui'
 import Link from 'next/link'
-import { MessageCircle, type LucideIcon } from 'lucide-react'
-import * as icons from 'lucide-react'
+import { MessageCircle } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
 
-export const metadata: Metadata = {
-  title: 'Servicios',
-  description:
-    'Descubre todos los servicios de maquillaje profesional de Paola Bolívar Nievas en Málaga: novias, editoriales, caracterización y más.',
-  alternates: {
-    canonical: '/servicios',
-  },
-  openGraph: {
-    title: 'Servicios de Maquillaje | Paola Bolívar Nievas',
-    description:
-      'Maquillaje profesional en Málaga: novias, editoriales, caracterización artística y eventos. Reserva tu cita.',
-    type: 'website',
-    locale: 'es_ES',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Servicios | Paola Bolívar Nievas',
-    description:
-      'Maquillaje profesional en Málaga: novias, editoriales, caracterización y eventos.',
-  },
-}
+export async function generateMetadata(): Promise<Metadata> {
+  const contact = await getContactSettings()
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location || ''
+  const locationSuffix = location ? ` en ${location}` : ''
 
-// Type-safe icon lookup using LucideIcon type
-function getIconComponent(iconName?: string | null): LucideIcon | null {
-  if (!iconName) return null
-  // Convert to PascalCase (e.g., "sparkles" -> "Sparkles")
-  const pascalCase = iconName.charAt(0).toUpperCase() + iconName.slice(1)
-  // Access the icon from the icons module with proper type guard
-  const icon = icons[pascalCase as keyof typeof icons]
-  // Verify it's a valid component (function) not a type or other export
-  if (typeof icon === 'function') {
-    return icon as LucideIcon
+  return {
+    title: 'Servicios',
+    description: `Descubre todos los servicios de maquillaje profesional de ${ownerName}${locationSuffix}: novias, editoriales, caracterización y más.`,
+    alternates: {
+      canonical: '/servicios',
+    },
+    openGraph: {
+      title: `Servicios de Maquillaje | ${ownerName}`,
+      description: `Maquillaje profesional${locationSuffix}: novias, editoriales, caracterización artística y eventos. Reserva tu cita.`,
+      type: 'website',
+      locale: 'es_ES',
+    },
+    twitter: {
+      card: 'summary',
+      title: `Servicios | ${ownerName}`,
+      description: `Maquillaje profesional${locationSuffix}: novias, editoriales, caracterización y eventos.`,
+    },
   }
-  return null
 }
 
 export default async function ServicesPage() {
   const services = await getActiveServices()
   const contactSettings = await getContactSettings()
+
+  const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
+  const location = contactSettings?.location || ''
+  const locationSuffix = location ? ` en ${location}` : ''
 
   // Generate WhatsApp link
   const whatsappNumber = contactSettings?.whatsapp?.replace(/\D/g, '') || ''
@@ -61,10 +54,13 @@ export default async function ServicesPage() {
       <JsonLd
         type="ProfessionalService"
         data={{
-          name: 'Paola Bolívar Nievas - Servicios de Maquillaje',
-          description:
-            'Servicios profesionales de maquillaje en Málaga: bodas, editoriales, caracterización artística y eventos.',
+          name: `${ownerName} - Servicios de Maquillaje`,
+          description: `Servicios profesionales de maquillaje${locationSuffix}: bodas, editoriales, caracterización artística y eventos.`,
           url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios`,
+          address: {
+            addressLocality: location,
+            addressCountry: 'ES',
+          },
         }}
       />
       <div className="container mx-auto max-w-6xl px-4">
@@ -87,7 +83,6 @@ export default async function ServicesPage() {
         ) : (
           <StaggerChildren className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => {
-              const IconComponent = getIconComponent(service.iconName)
               return (
                 <ScaleIn key={service.id}>
                   <article className="border-border bg-card group relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -106,8 +101,6 @@ export default async function ServicesPage() {
                             height={300}
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
-                        ) : IconComponent ? (
-                          <IconComponent className="text-muted-foreground/30 h-24 w-24" />
                         ) : (
                           <span className="text-6xl opacity-30">💄</span>
                         )}
@@ -161,23 +154,28 @@ export default async function ServicesPage() {
                       {/* CTA Buttons */}
                       <div className="mt-auto flex flex-col gap-3">
                         {whatsappLink && (
-                          <Link
-                            href={`${whatsappLink}&text=${encodeURIComponent(`¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`)}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 rounded-xl px-4 py-3 font-semibold transition-all duration-300 hover:shadow-lg"
+                          <Button
+                            asChild
+                            className="w-full rounded-xl py-3 font-semibold hover:shadow-lg"
                           >
-                            <MessageCircle className="h-5 w-5" />
-                            Reservar por WhatsApp
-                          </Link>
+                            <Link
+                              href={`${whatsappLink}&text=${encodeURIComponent(`¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <MessageCircle className="h-5 w-5" />
+                              Reservar por WhatsApp
+                            </Link>
+                          </Button>
                         )}
 
-                        <Link
-                          href={`/servicios/${service.slug}`}
-                          className="border-input text-foreground hover:bg-muted flex items-center justify-center gap-2 rounded-xl border px-4 py-3 font-semibold transition-all duration-300"
+                        <Button
+                          asChild
+                          variant="outline"
+                          className="w-full rounded-xl py-3 font-semibold"
                         >
-                          Ver Detalles & Precios
-                        </Link>
+                          <Link href={`/servicios/${service.slug}`}>Ver Detalles & Precios</Link>
+                        </Button>
                       </div>
                     </div>
                   </article>
@@ -197,15 +195,15 @@ export default async function ServicesPage() {
               <p className="text-muted-foreground mb-6">
                 Contáctame para servicios personalizados o paquetes especiales.
               </p>
-              <Link
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-xl bg-green-500 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-green-600 hover:shadow-lg"
+              <Button
+                asChild
+                className="rounded-xl bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600 hover:shadow-lg"
               >
-                <MessageCircle className="h-5 w-5" />
-                Escribirme por WhatsApp
-              </Link>
+                <Link href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="h-5 w-5" />
+                  Escribirme por WhatsApp
+                </Link>
+              </Button>
             </div>
           </FadeIn>
         )}

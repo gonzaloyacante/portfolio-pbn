@@ -19,6 +19,7 @@ class RouteNames {
   static const String categories = 'categories';
   static const String categoryNew = 'category-new';
   static const String categoryEdit = 'category-edit';
+  static const String categoryGallery = 'category-gallery';
 
   // ── Servicios ─────────────────────────────────────────────────────────────
   static const String services = 'services';
@@ -50,6 +51,7 @@ class RouteNames {
 
   // ── Papelera ──────────────────────────────────────────────────────────────
   static const String trash = 'trash';
+  static const String trashDetail = 'trash-detail';
 
   // ── Cuenta ────────────────────────────────────────────────────────────────
   static const String account = 'account';
@@ -74,6 +76,7 @@ class RoutePaths {
   static const String categories = '/categories';
   static const String categoryNew = '/categories/new';
   static const String categoryEdit = '/categories/:id/edit';
+  static const String categoryGallery = '/categories/:id/gallery';
   static const String services = '/services';
   static const String serviceNew = '/services/new';
   static const String serviceEdit = '/services/:id/edit';
@@ -93,6 +96,7 @@ class RoutePaths {
   static const String settingsSite = '/settings/site';
   static const String settingsSocial = '/settings/social';
   static const String trash = '/trash';
+  static const String trashDetail = '/trash/detail';
   static const String account = '/account';
   static const String help = '/help';
   static const String appSettings = '/app-settings';

@@ -1,14 +1,15 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/color_picker_field.dart';
-import '../../../shared/widgets/emoji_icon_picker.dart';
 import '../../../shared/widgets/image_upload_widget.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
@@ -69,11 +70,11 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   final _nameCtrl = TextEditingController();
   final _slugCtrl = TextEditingController();
   final _descriptionCtrl = TextEditingController();
-  final _thumbnailCtrl = TextEditingController();
+  final _coverImageCtrl = TextEditingController();
+  // Key para medir la posición del widget de imagen y calcular altura restante
+  final _imageSlotKey = GlobalKey();
+  double? _calculatedImageHeight;
   File? _pendingThumbnail;
-  final _iconCtrl = TextEditingController();
-  final _colorCtrl = TextEditingController();
-  String? _selectedIcon;
 
   bool _isActive = true;
   bool _loading = false;
@@ -94,9 +95,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _nameCtrl.dispose();
     _slugCtrl.dispose();
     _descriptionCtrl.dispose();
-    _thumbnailCtrl.dispose();
-    _iconCtrl.dispose();
-    _colorCtrl.dispose();
+    _coverImageCtrl.dispose();
     super.dispose();
   }
 
@@ -106,18 +105,128 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;
     _descriptionCtrl.text = detail.description ?? '';
-    _thumbnailCtrl.text = detail.thumbnailUrl ?? '';
-    _iconCtrl.text = detail.iconName ?? '';
-    _colorCtrl.text = detail.color ?? '';
+    // Usar coverImageUrl si existe; si no, thumbnailUrl como fallback para
+    // categorías creadas antes del sistema de imagen dual.
+    _coverImageCtrl.text = detail.coverImageUrl ?? detail.thumbnailUrl ?? '';
     setState(() {
       _isActive = detail.isActive;
-      _selectedIcon = detail.iconName;
     });
   }
 
   void _autoSlug(String name) {
     if (_isEdit) return;
     _slugCtrl.text = _toSlug(name);
+  }
+
+  Future<void> _pickFromGallery() async {
+    if (!_isEdit) return;
+    try {
+      final images = await ref
+          .read(categoriesRepositoryProvider)
+          .getCategoryGallery(widget.categoryId!);
+      if (!mounted) return;
+      if (images.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No hay imágenes en la galería de proyectos de esta categoría.',
+            ),
+          ),
+        );
+        return;
+      }
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) {
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.6,
+            maxChildSize: 0.9,
+            builder: (_, scrollCtrl) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Seleccionar de la galería',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => ctx.pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: GridView.builder(
+                      controller: scrollCtrl,
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                          ),
+                      itemCount: images.length,
+                      itemBuilder: (_, i) {
+                        final img = images[i];
+                        return RepaintBoundary(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _coverImageCtrl.text = img.url;
+                                _pendingThumbnail = null;
+                              });
+                              ctx.pop();
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: img.thumbnailUrl,
+                                fit: BoxFit.cover,
+                                placeholder: (ctx2, url) => const ColoredBox(
+                                  color: AppColors.lightBorder,
+                                ),
+                                errorWidget: (ctx2, url, err) => const Icon(
+                                  Icons.broken_image,
+                                  color: AppColors.neutralMedium,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo cargar la galería. Inténtalo de nuevo.'),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _submit() async {
@@ -127,10 +236,11 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       // Subir imagen si se seleccionó una nueva.
       if (_pendingThumbnail != null) {
         final uploadSvc = ref.read(uploadServiceProvider);
-        _thumbnailCtrl.text = await uploadSvc.uploadImage(
+        final result = await uploadSvc.uploadImageFull(
           _pendingThumbnail!,
           folder: 'portfolio/categories',
         );
+        _coverImageCtrl.text = result.url;
       }
 
       final repo = ref.read(categoriesRepositoryProvider);
@@ -140,11 +250,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
         description: _descriptionCtrl.text.trim().isEmpty
             ? null
             : _descriptionCtrl.text.trim(),
-        thumbnailUrl: _thumbnailCtrl.text.trim().isEmpty
+        coverImageUrl: _coverImageCtrl.text.trim().isEmpty
             ? null
-            : _thumbnailCtrl.text.trim(),
-        iconName: (_selectedIcon?.isEmpty ?? true) ? null : _selectedIcon,
-        color: _colorCtrl.text.trim().isEmpty ? null : _colorCtrl.text.trim(),
+            : _coverImageCtrl.text.trim(),
         isActive: _isActive,
       );
 
@@ -180,6 +288,31 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       detailAsync.whenData(_populateForm);
     }
 
+    final mediaSize = MediaQuery.sizeOf(context);
+    final mediaPadding = MediaQuery.paddingOf(context);
+    const appBarApprox = 100.0;
+    final fallbackHeight =
+        (mediaSize.height -
+                mediaPadding.top -
+                mediaPadding.bottom -
+                appBarApprox)
+            .clamp(200.0, 1200.0);
+    final imageHeight = _calculatedImageHeight ?? fallbackHeight;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _imageSlotKey.currentContext;
+      if (ctx == null) return;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null || !box.attached) return;
+      final dy = box.localToGlobal(Offset.zero).dy;
+      final usable = mediaSize.height - mediaPadding.bottom - dy - appBarApprox;
+      final newH = usable.clamp(200.0, 1200.0);
+      if ((_calculatedImageHeight == null) ||
+          ((_calculatedImageHeight! - newH).abs() > 1.0)) {
+        setState(() => _calculatedImageHeight = newH);
+      }
+    });
+
     return AppScaffold(
       title: _isEdit ? 'Editar categoría' : 'Nueva categoría',
       actions: [
@@ -195,77 +328,139 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // Nombre
-              TextFormField(
-                controller: _nameCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre *',
-                  hintText: 'ej. Fotografía',
-                  helperText: 'Nombre público de la categoría',
-                ),
-                textCapitalization: TextCapitalization.words,
-                onChanged: _autoSlug,
-                validator: (v) =>
-                    (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
-              ),
-              const SizedBox(height: 16),
+              // Nombre + Switch + Descripción (responsivo)
+              Builder(
+                builder: (ctx) {
+                  final colorScheme = Theme.of(ctx).colorScheme;
+                  final isTablet = mediaSize.width >= 600;
 
-              // Descripción
-              TextFormField(
-                controller: _descriptionCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción',
-                  hintText: 'Breve descripción de esta categoría',
-                  helperText: 'Se muestra en la página de la categoría',
-                ),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 16),
+                  final nameField = TextFormField(
+                    controller: _nameCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Nombre *',
+                      hintText: 'ej. Fotografía',
+                      helperText: 'Nombre público de la categoría',
+                    ),
+                    textCapitalization: TextCapitalization.words,
+                    onChanged: _autoSlug,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Nombre requerido'
+                        : null,
+                  );
 
-              // Ícono
-              EmojiIconPicker(
-                value: _selectedIcon,
-                onChanged: (v) => setState(() => _selectedIcon = v),
-                label: 'Ícono de la categoría',
-                hint: 'Toca para elegir un emoji',
-              ),
-              const SizedBox(height: 16),
+                  final switchTile = DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.outline.withValues(alpha: 0.3),
+                      ),
+                    ),
+                    child: SwitchListTile(
+                      title: const Text('Categoría activa'),
+                      subtitle: const Text('Visible en el portfolio'),
+                      value: _isActive,
+                      onChanged: (v) => setState(() => _isActive = v),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                      ),
+                      visualDensity: VisualDensity.compact,
+                      controlAffinity: ListTileControlAffinity.trailing,
+                    ),
+                  );
 
-              // Color
-              ColorPickerField(
-                controller: _colorCtrl,
-                label: 'Color de marca',
-                helperText: 'Color identificativo de la categoría',
+                  if (isTablet) {
+                    return IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                nameField,
+                                const SizedBox(height: 8),
+                                switchTile,
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _descriptionCtrl,
+                              decoration: const InputDecoration(
+                                labelText: 'Descripción',
+                                hintText: 'Breve descripción de esta categoría',
+                                helperText:
+                                    'Se muestra en la página de la categoría',
+                              ),
+                              maxLines: null,
+                              expands: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // Mobile: apilado
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      nameField,
+                      const SizedBox(height: 8),
+                      switchTile,
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _descriptionCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Descripción',
+                          hintText: 'Breve descripción de esta categoría',
+                          helperText: 'Se muestra en la página de la categoría',
+                        ),
+                        maxLines: 3,
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 16),
 
               // Thumbnail
-              ImageUploadWidget(
-                label: 'Imagen de portada',
-                currentImageUrl: _thumbnailCtrl.text.isNotEmpty
-                    ? _thumbnailCtrl.text
-                    : null,
-                onImageSelected: (file) {
-                  setState(() => _pendingThumbnail = file);
-                },
-                onImageRemoved: () {
-                  setState(() {
-                    _pendingThumbnail = null;
-                    _thumbnailCtrl.clear();
-                  });
-                },
-                height: 160,
+              // Wrapper con key para medir su posición en pantalla
+              Container(
+                key: _imageSlotKey,
+                child: ImageUploadWidget(
+                  label: 'Imagen de portada',
+                  currentImageUrl: _coverImageCtrl.text.isNotEmpty
+                      ? _coverImageCtrl.text
+                      : null,
+                  onImageSelected: (file) {
+                    setState(() => _pendingThumbnail = file);
+                  },
+                  onImageRemoved: () {
+                    setState(() {
+                      _pendingThumbnail = null;
+                      _coverImageCtrl.clear();
+                    });
+                  },
+                  height: imageHeight,
+                ),
               ),
-              const SizedBox(height: 16),
 
-              // Estado activo
-              SwitchListTile(
-                title: const Text('Categoría activa'),
-                subtitle: const Text('Visible en el portfolio'),
-                value: _isActive,
-                onChanged: (v) => setState(() => _isActive = v),
-              ),
-              const SizedBox(height: 32),
+              if (_isEdit) ...[
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.photo_library_outlined, size: 18),
+                  label: const Text('Seleccionar de la galería'),
+                  onPressed: _loading ? null : _pickFromGallery,
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 44),
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 24),
 
               FilledButton(
                 onPressed: _loading ? null : _submit,

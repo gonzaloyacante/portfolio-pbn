@@ -10,6 +10,7 @@ import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
@@ -110,7 +111,8 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: () => _buildShimmer(),
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(siteSettingsProvider),
@@ -119,25 +121,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
             _populate(settings);
             return _buildForm(context);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      children: List.generate(
-        4,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
         ),
       ),
     );
@@ -203,96 +186,86 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
               ),
               const SizedBox(height: AppSpacing.md),
               // ── Visibilidad ────────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.cardPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Visibilidad de páginas',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Visibilidad de páginas',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      SwitchListTile(
-                        title: const Text('Sobre mí'),
-                        value: _showAbout,
-                        onChanged: (v) => setState(() => _showAbout = v),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      SwitchListTile(
-                        title: const Text('Proyectos'),
-                        value: _showProjects,
-                        onChanged: (v) => setState(() => _showProjects = v),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      SwitchListTile(
-                        title: const Text('Servicios'),
-                        value: _showServices,
-                        onChanged: (v) => setState(() => _showServices = v),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                      SwitchListTile(
-                        title: const Text('Contacto'),
-                        value: _showContact,
-                        onChanged: (v) => setState(() => _showContact = v),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ],
-                  ),
+                    ),
+                    SwitchListTile(
+                      title: const Text('Sobre mí'),
+                      value: _showAbout,
+                      onChanged: (v) => setState(() => _showAbout = v),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    SwitchListTile(
+                      title: const Text('Proyectos'),
+                      value: _showProjects,
+                      onChanged: (v) => setState(() => _showProjects = v),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    SwitchListTile(
+                      title: const Text('Servicios'),
+                      value: _showServices,
+                      onChanged: (v) => setState(() => _showServices = v),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    SwitchListTile(
+                      title: const Text('Contacto'),
+                      value: _showContact,
+                      onChanged: (v) => setState(() => _showContact = v),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
               // ── Mantenimiento ──────────────────────────────────────────────
-              Card(
+              AppCard(
                 color: _maintenanceMode
                     ? Colors.orange.withValues(alpha: 0.12)
                     : null,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.card),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.cardPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.engineering_outlined,
-                            color: Colors.orange,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Modo mantenimiento',
-                            style: Theme.of(context).textTheme.titleSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          const Spacer(),
-                          Switch(
-                            value: _maintenanceMode,
-                            onChanged: (v) =>
-                                setState(() => _maintenanceMode = v),
-                          ),
-                        ],
-                      ),
-                      if (_maintenanceMode) ...[
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _maintenanceMsgCtrl,
-                          maxLines: 2,
-                          decoration: const InputDecoration(
-                            labelText: 'Mensaje de mantenimiento',
-                            border: OutlineInputBorder(),
-                          ),
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.engineering_outlined,
+                          color: Colors.orange,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Modo mantenimiento',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const Spacer(),
+                        Switch(
+                          value: _maintenanceMode,
+                          onChanged: (v) =>
+                              setState(() => _maintenanceMode = v),
                         ),
                       ],
+                    ),
+                    if (_maintenanceMode) ...[
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _maintenanceMsgCtrl,
+                        maxLines: 2,
+                        decoration: const InputDecoration(
+                          labelText: 'Mensaje de mantenimiento',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
                     ],
-                  ),
+                  ],
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),

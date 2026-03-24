@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import '../../../core/api/upload_service.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
 import '../../../shared/widgets/error_state.dart';
@@ -19,6 +21,11 @@ import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
+import 'widgets/collapsible_preview.dart';
+import 'widgets/featured_count_picker.dart';
+import 'widgets/hero_image_picker.dart';
+import 'widgets/preview_image_placeholder.dart';
+import 'widgets/sticky_preview_column.dart';
 
 class SettingsHomePage extends ConsumerStatefulWidget {
   const SettingsHomePage({super.key});
@@ -105,33 +112,40 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   // ── Image picker ─────────────────────────────────────────────────────────
 
   Future<void> _pickHeroImage() async {
-    final picker = ImagePicker();
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
+    try {
+      final picker = ImagePicker();
+      final primaryColor = Theme.of(context).colorScheme.primary;
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
 
-    final cropped = await ImageCropper().cropImage(
-      sourcePath: picked.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Recortar imagen hero',
-          toolbarColor: primaryColor,
-          toolbarWidgetColor: Colors.white,
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false,
-        ),
-        IOSUiSettings(title: 'Recortar imagen hero'),
-      ],
-    );
+      final cropped = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        compressQuality: 85,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Recortar imagen hero',
+            toolbarColor: primaryColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false,
+          ),
+          IOSUiSettings(title: 'Recortar imagen hero'),
+        ],
+      );
 
-    if (cropped != null) {
-      setState(() {
-        _pendingHeroImage = File(cropped.path);
-        _heroImageCtrl.text = cropped.path;
-      });
+      if (cropped != null) {
+        setState(() {
+          _pendingHeroImage = File(cropped.path);
+          _heroImageCtrl.text = cropped.path;
+        });
+      }
+    } catch (e) {
+      AppLogger.error('SettingsHomePage: error picking hero image', e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+        );
+      }
     }
   }
 
@@ -150,10 +164,11 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     try {
       if (_pendingHeroImage != null) {
         final svc = ref.read(uploadServiceProvider);
-        _heroImageCtrl.text = await svc.uploadImage(
+        final result = await svc.uploadImageFull(
           _pendingHeroImage!,
           folder: 'portfolio/home',
         );
+        _heroImageCtrl.text = result.url;
         _pendingHeroImage = null;
       }
 
@@ -202,7 +217,8 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: _buildShimmer,
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(homeSettingsProvider),
@@ -218,26 +234,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   // ── Shimmer ───────────────────────────────────────────────────────────────
 
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      children: List.generate(
-        4,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 80,
-              borderRadius: 20,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ── Form ──────────────────────────────────────────────────────────────────
+  // ── Form ─────────────────────────────────────────────────────────────────-
 
   Widget _buildForm(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);
@@ -271,7 +268,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                     const SizedBox(width: AppSpacing.xl),
                     Expanded(
                       flex: 42,
-                      child: _StickyPreviewColumn(
+                      child: StickyPreviewColumn(
                         preview: _buildHeroPreview(context),
                       ),
                     ),
@@ -282,7 +279,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Preview colapsable en mobile
-                    _CollapsiblePreview(preview: _buildHeroPreview(context)),
+                    CollapsiblePreview(preview: _buildHeroPreview(context)),
                     const SizedBox(height: AppSpacing.md),
                     formContent,
                   ],
@@ -336,7 +333,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
           title: 'Foto del Hero',
           leadingIcon: Icons.image_outlined,
           children: [
-            _HeroImagePicker(
+            HeroImagePicker(
               imageUrl: _heroImageCtrl.text,
               pendingFile: _pendingHeroImage,
               onPick: _pickHeroImage,
@@ -407,7 +404,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              _FeaturedCountPicker(
+              FeaturedCountPicker(
                 value: _featuredCount,
                 onChanged: (v) => setState(() => _featuredCount = v),
               ),
@@ -476,12 +473,12 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
             color: colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: colorScheme.outline.withAlpha(80),
+              color: colorScheme.outline.withValues(alpha: 80 / 255),
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(20),
+                color: Colors.black.withValues(alpha: 20 / 255),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -499,14 +496,14 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                   if (hasPending)
                     Image.file(_pendingHeroImage!, fit: BoxFit.cover)
                   else if (hasUrl)
-                    Image.network(
-                      _heroImageCtrl.text,
+                    CachedNetworkImage(
+                      imageUrl: _heroImageCtrl.text,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stack) =>
-                          _PreviewImagePlaceholder(color: colorScheme),
+                      errorWidget: (context, url, error) =>
+                          PreviewImagePlaceholder(color: colorScheme),
                     )
                   else
-                    _PreviewImagePlaceholder(color: colorScheme),
+                    PreviewImagePlaceholder(color: colorScheme),
 
                   // Gradiente oscuro en la parte inferior
                   Positioned.fill(
@@ -518,7 +515,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
                           stops: const [0.35, 1.0],
                           colors: [
                             Colors.transparent,
-                            Colors.black.withAlpha(200),
+                            Colors.black.withValues(alpha: 200 / 255),
                           ],
                         ),
                       ),
@@ -595,305 +592,10 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         Text(
           'Se actualiza en tiempo real mientras editas',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurface.withAlpha(100),
+            color: colorScheme.onSurface.withValues(alpha: 100 / 255),
             fontStyle: FontStyle.italic,
           ),
           textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-}
-
-// ── _StickyPreviewColumn ──────────────────────────────────────────────────────
-
-/// Mantiene el preview visible mientras el usuario scrollea el formulario.
-class _StickyPreviewColumn extends StatelessWidget {
-  const _StickyPreviewColumn({required this.preview});
-  final Widget preview;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xs),
-      child: preview,
-    );
-  }
-}
-
-// ── _CollapsiblePreview ───────────────────────────────────────────────────────
-
-/// Preview colapsable para mobile: por defecto expandida.
-class _CollapsiblePreview extends StatefulWidget {
-  const _CollapsiblePreview({required this.preview});
-  final Widget preview;
-
-  @override
-  State<_CollapsiblePreview> createState() => _CollapsiblePreviewState();
-}
-
-class _CollapsiblePreviewState extends State<_CollapsiblePreview> {
-  bool _expanded = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InkWell(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(20),
-              ),
-              onTap: () => setState(() => _expanded = !_expanded),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.base,
-                  vertical: AppSpacing.sm,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.phonelink_outlined,
-                      size: 16,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Vista previa del Hero',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(),
-                    AnimatedRotation(
-                      turns: _expanded ? 0 : 0.5,
-                      duration: const Duration(milliseconds: 200),
-                      child: Icon(
-                        Icons.expand_less_rounded,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            if (_expanded)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.lg,
-                  vertical: AppSpacing.sm,
-                ),
-                child: Center(
-                  child: SizedBox(width: 200, child: widget.preview),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── _PreviewImagePlaceholder ──────────────────────────────────────────────────
-
-class _PreviewImagePlaceholder extends StatelessWidget {
-  const _PreviewImagePlaceholder({required this.color});
-  final ColorScheme color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [color.primaryContainer, color.secondaryContainer],
-        ),
-      ),
-      child: Center(
-        child: Icon(
-          Icons.image_outlined,
-          size: 48,
-          color: color.onPrimaryContainer.withAlpha(100),
-        ),
-      ),
-    );
-  }
-}
-
-// ── Image Picker Widget ───────────────────────────────────────────────────────
-
-class _HeroImagePicker extends StatelessWidget {
-  const _HeroImagePicker({
-    required this.imageUrl,
-    required this.pendingFile,
-    required this.onPick,
-    required this.onRemove,
-  });
-
-  final String imageUrl;
-  final File? pendingFile;
-  final VoidCallback onPick;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final hasImage = pendingFile != null || imageUrl.isNotEmpty;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Preview
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: hasImage ? 180 : 100,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: colorScheme.outline.withValues(alpha: 0.4),
-            ),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: hasImage
-              ? Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    pendingFile != null
-                        ? Image.file(pendingFile!, fit: BoxFit.cover)
-                        : Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, error, stack) => const Center(
-                              child: Icon(
-                                Icons.broken_image_outlined,
-                                size: 40,
-                              ),
-                            ),
-                          ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: onRemove,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.black54,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.close_rounded,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.image_outlined,
-                        size: 32,
-                        color: colorScheme.outline,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Sin imagen',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-
-        // Action button
-        OutlinedButton.icon(
-          onPressed: onPick,
-          icon: const Icon(Icons.photo_library_outlined, size: 18),
-          label: Text(hasImage ? 'Cambiar imagen' : 'Elegir foto'),
-        ),
-      ],
-    );
-  }
-}
-
-// ── Featured Count Picker ─────────────────────────────────────────────────────
-
-class _FeaturedCountPicker extends StatelessWidget {
-  const _FeaturedCountPicker({required this.value, required this.onChanged});
-
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Cantidad de proyectos a mostrar',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: List.generate(9, (i) {
-            final n = i + 1;
-            final selected = value == n;
-            return Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
-                child: GestureDetector(
-                  onTap: () => onChanged(n),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? colorScheme.primary
-                          : colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: selected
-                            ? colorScheme.primary
-                            : colorScheme.outline.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      '$n',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: selected ? Colors.white : colorScheme.onSurface,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
         ),
       ],
     );

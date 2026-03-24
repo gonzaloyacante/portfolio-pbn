@@ -14,6 +14,7 @@ import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
+import 'widgets/dynamic_item_list.dart';
 
 class SettingsAboutPage extends ConsumerStatefulWidget {
   const SettingsAboutPage({super.key});
@@ -134,10 +135,11 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
     try {
       if (_pendingProfileImage != null) {
         final svc = ref.read(uploadServiceProvider);
-        _profileImageCtrl.text = await svc.uploadImage(
+        final result = await svc.uploadImageFull(
           _pendingProfileImage!,
           folder: 'portfolio/about',
         );
+        _profileImageCtrl.text = result.url;
       }
 
       await ref.read(settingsRepositoryProvider).updateAbout({
@@ -187,7 +189,8 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: _buildShimmer,
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(aboutSettingsProvider),
@@ -202,25 +205,6 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   }
 
   // ── Shimmer ───────────────────────────────────────────────────────────────
-
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      children: List.generate(
-        5,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   // ── Form ──────────────────────────────────────────────────────────────────
 
@@ -302,7 +286,7 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
               SettingsFormCard(
                 title: 'Habilidades',
                 children: [
-                  _DynamicItemList(
+                  DynamicItemList(
                     controllers: _skillsCtrls,
                     focusNodes: _skillsFocus,
                     labelPrefix: 'Habilidad',
@@ -328,7 +312,7 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
               SettingsFormCard(
                 title: 'Certificaciones',
                 children: [
-                  _DynamicItemList(
+                  DynamicItemList(
                     controllers: _certificationsCtrls,
                     focusNodes: _certificationsFocus,
                     labelPrefix: 'Certificación',
@@ -368,90 +352,6 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
           ),
         ),
       ),
-    );
-  }
-}
-
-// ── Lista dinámica de items ───────────────────────────────────────────────────
-
-class _DynamicItemList extends StatelessWidget {
-  const _DynamicItemList({
-    required this.controllers,
-    required this.focusNodes,
-    required this.labelPrefix,
-    required this.addLabel,
-    required this.onAdd,
-    required this.onRemove,
-    required this.onSubmit,
-  });
-
-  final List<TextEditingController> controllers;
-  final List<FocusNode> focusNodes;
-  final String labelPrefix;
-  final String addLabel;
-  final VoidCallback onAdd;
-  final ValueChanged<int> onRemove;
-  final VoidCallback onSubmit;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (controllers.isNotEmpty)
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final cols = AppBreakpoints.isTablet(context) ? 2 : 1;
-              const spacing = AppSpacing.sm;
-              final itemWidth =
-                  (constraints.maxWidth - spacing * (cols - 1)) / cols;
-
-              return Wrap(
-                spacing: spacing,
-                runSpacing: AppSpacing.sm,
-                children: List.generate(controllers.length, (i) {
-                  return SizedBox(
-                    width: itemWidth,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: controllers[i],
-                            focusNode: focusNodes[i],
-                            textInputAction: i < controllers.length - 1
-                                ? TextInputAction.next
-                                : TextInputAction.done,
-                            decoration: InputDecoration(
-                              labelText: '$labelPrefix ${i + 1}',
-                              border: const OutlineInputBorder(),
-                              isDense: true,
-                            ),
-                            onFieldSubmitted: (_) => onSubmit(),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          iconSize: 20,
-                          tooltip: 'Eliminar',
-                          visualDensity: VisualDensity.compact,
-                          onPressed: () => onRemove(i),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              );
-            },
-          ),
-        const SizedBox(height: AppSpacing.sm),
-        TextButton.icon(
-          onPressed: onAdd,
-          icon: const Icon(Icons.add, size: 18),
-          label: Text(addLabel),
-          style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
-        ),
-      ],
     );
   }
 }

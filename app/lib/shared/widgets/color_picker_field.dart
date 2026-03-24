@@ -108,13 +108,13 @@ class ColorPickerField extends StatelessWidget {
                       border: Border.all(
                         color: isSelected
                             ? colorScheme.primary
-                            : colorScheme.outline.withAlpha(60),
+                            : colorScheme.outline.withValues(alpha: 60 / 255),
                         width: isSelected ? 2.5 : 1,
                       ),
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: color.withAlpha(100),
+                                color: color.withValues(alpha: 100 / 255),
                                 blurRadius: 8,
                                 spreadRadius: 1,
                               ),

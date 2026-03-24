@@ -30,7 +30,7 @@ abstract final class AppRadius {
   static const double tile = lg;
 
   /// Tarjetas estándar (= rounded-[2.5rem] de la web).
-  static const double card = xxxl;
+  static const double card = xl;
 
   /// Diálogos y bottom sheets.
   static const double dialog = xxl;

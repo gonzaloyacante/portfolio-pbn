@@ -1,6 +1,7 @@
 import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 /**
  * API para verificar credenciales con mensajes específicos
@@ -8,6 +9,10 @@ import { prisma } from '@/lib/db'
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting por IP para prevenir enumeración de usuarios
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
+    await checkApiRateLimit(ip)
+
     const { email, password } = await req.json()
 
     if (!email || !password) {
@@ -24,8 +29,9 @@ export async function POST(req: NextRequest) {
     })
 
     if (!user) {
+      // Respuesta genérica para evitar enumeración de usuarios (OWASP A07)
       return NextResponse.json(
-        { error: 'No existe una cuenta con este correo', code: 'USER_NOT_FOUND' },
+        { error: 'Credenciales inválidas', code: 'INVALID_CREDENTIALS' },
         { status: 401 }
       )
     }
@@ -33,6 +39,9 @@ export async function POST(req: NextRequest) {
     // Si existe, retornamos éxito. La contraseña se verificará en el signIn de NextAuth.
     return NextResponse.json({ success: true, email: user.email })
   } catch (error) {
+    if (error instanceof Error && error.message.includes('solicitudes')) {
+      return NextResponse.json({ error: error.message }, { status: 429 })
+    }
     logger.error('Error verifying credentials:', { error: error })
     return NextResponse.json({ error: 'Error del servidor', code: 'SERVER_ERROR' }, { status: 500 })
   }

@@ -5,7 +5,7 @@ import { uploadImage, deleteImage } from '@/lib/cloudinary'
 // ── POST /api/admin/upload ────────────────────────────────────────────────────
 // Sube una imagen a Cloudinary con autenticación JWT Flutter.
 
-const MAX_SIZE_BYTES = 10 * 1024 * 1024 // 10 MB
+const MAX_SIZE_BYTES = 50 * 1024 * 1024 // 50 MB — soporta fotos 4K (~30 MB JPEG q:100)
 
 export async function POST(req: NextRequest) {
   const auth = await withAdminJwt(req)
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
 
     if (file.size > MAX_SIZE_BYTES) {
       return NextResponse.json(
-        { success: false, error: 'La imagen no debe superar 10 MB' },
+        { success: false, error: 'La imagen no debe superar 50 MB' },
         { status: 400 }
       )
     }
@@ -42,11 +42,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       url: result.url,
+      thumbnailUrl: result.thumbnailUrl,
       publicId: result.publicId,
     })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Error al subir la imagen', details: String(error) },
+      {
+        success: false,
+        error: 'Error al subir la imagen',
+        ...(process.env.NODE_ENV !== 'production' && { details: String(error) }),
+      },
       { status: 500 }
     )
   }
@@ -74,7 +79,11 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: true })
   } catch (error) {
     return NextResponse.json(
-      { success: false, error: 'Error al eliminar imagen', details: String(error) },
+      {
+        success: false,
+        error: 'Error al eliminar imagen',
+        ...(process.env.NODE_ENV !== 'production' && { details: String(error) }),
+      },
       { status: 500 }
     )
   }

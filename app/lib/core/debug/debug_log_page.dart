@@ -146,9 +146,11 @@ class _DebugLogPageState extends State<DebugLogPage> {
                   const Divider(height: 1, indent: 16),
               itemBuilder: (context, index) {
                 final entry = logs[index];
-                return _LogTile(
-                  entry: entry,
-                  levelColor: _levelColor(entry.level),
+                return RepaintBoundary(
+                  child: _LogTile(
+                    entry: entry,
+                    levelColor: _levelColor(entry.level),
+                  ),
                 );
               },
             ),

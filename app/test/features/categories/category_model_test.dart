@@ -24,12 +24,9 @@ void main() {
       'thumbnailUrl defaults to null',
       () => expect(item.thumbnailUrl, isNull),
     );
-    test('iconName defaults to null', () => expect(item.iconName, isNull));
-    test('color defaults to null', () => expect(item.color, isNull));
     test('sortOrder defaults to 0', () => expect(item.sortOrder, 0));
     test('isActive defaults to true', () => expect(item.isActive, true));
     test('projectCount defaults to 0', () => expect(item.projectCount, 0));
-    test('viewCount defaults to 0', () => expect(item.viewCount, 0));
   });
 
   group('CategoryItem — with optional fields', () {
@@ -38,8 +35,6 @@ void main() {
       name: 'Diseño',
       slug: 'diseno',
       description: 'Diseño gráfico',
-      iconName: 'palette',
-      color: '#FF0000',
       sortOrder: 2,
       isActive: false,
       projectCount: 5,
@@ -51,8 +46,6 @@ void main() {
       'stores description',
       () => expect(item.description, 'Diseño gráfico'),
     );
-    test('stores iconName', () => expect(item.iconName, 'palette'));
-    test('stores color', () => expect(item.color, '#FF0000'));
     test('stores sortOrder', () => expect(item.sortOrder, 2));
     test('stores isActive=false', () => expect(item.isActive, false));
     test('stores projectCount', () => expect(item.projectCount, 5));

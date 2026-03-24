@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,13 +7,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/confirm_dialog.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../../categories/providers/categories_provider.dart';
 import '../data/project_model.dart';
 import '../data/projects_repository.dart';
 import '../providers/projects_provider.dart';
+import 'widgets/add_image_button.dart';
+import 'widgets/count_badge.dart';
+import 'widgets/gallery_thumb.dart';
 
 // Patrones de slug compilados una sola vez (igual que category_form_page)
 // Tipados como Pattern para evitar DEPRECATED_MEMBER_USE del linter (RegExp
@@ -50,12 +54,27 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   final _data = ProjectFormData();
   bool _isLoading = false;
   String? _errorMsg;
-  File? _pendingCoverImage;
+  int? _pendingCoverIndex;
 
   // Galería de imágenes
   List<ProjectImage> _existingImages = [];
+  bool _galleryReordered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Para proyectos nuevos, la fecha por defecto es hoy
+    if (!widget.isEditing) {
+      _data.date = DateTime.now();
+    }
+  }
+
   final List<File> _pendingNewImages = [];
   final Set<String> _removedImageIds = {};
+
+  /// Imágenes pre-subidas (antes de crear el proyecto) guardadas como mapas
+  /// {'url': url, 'publicId': publicId}
+  final List<Map<String, String>> _preuploadedImages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -70,8 +89,32 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               tooltip: 'Volver',
             ),
             title: const Text('Editar proyecto'),
+            actions: [
+              IconButton(
+                tooltip: 'Reintentar',
+                icon: const Icon(Icons.refresh_rounded),
+                onPressed: () =>
+                    ref.invalidate(projectDetailProvider(widget.projectId!)),
+              ),
+            ],
           ),
-          body: const SkeletonListView(itemCount: 6),
+          body: Column(
+            children: [
+              const SizedBox(height: 16),
+              const Expanded(
+                child: SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 4),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: TextButton.icon(
+                  onPressed: () =>
+                      ref.invalidate(projectDetailProvider(widget.projectId!)),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Reintentar'),
+                ),
+              ),
+            ],
+          ),
         ),
         error: (err, _) => Scaffold(
           appBar: AppBar(
@@ -81,8 +124,20 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               tooltip: 'Volver',
             ),
             title: const Text('Error'),
+            actions: [
+              IconButton(
+                tooltip: 'Reintentar',
+                icon: const Icon(Icons.refresh_rounded),
+                onPressed: () =>
+                    ref.invalidate(projectDetailProvider(widget.projectId!)),
+              ),
+            ],
           ),
-          body: ErrorState(message: err.toString()),
+          body: ErrorState(
+            message: err.toString(),
+            onRetry: () =>
+                ref.invalidate(projectDetailProvider(widget.projectId!)),
+          ),
         ),
         data: (project) {
           _populateForm(project);
@@ -111,6 +166,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       _data.categoryId = project.categoryId;
       _data.isFeatured = project.isFeatured;
       _data.isPinned = project.isPinned;
+      _data.isActive = project.isActive;
       // Cargar galería existente (solo una vez)
       _existingImages = project.images.toList();
     }
@@ -132,13 +188,22 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   Future<void> _pickGalleryImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
-    setState(() => _pendingNewImages.add(File(picked.path)));
+    try {
+      final picker = ImagePicker();
+      // imageQuality is intentionally omitted: the upload service compresses
+      // before sending to Cloudinary, and omitting it avoids native crashes
+      // on HEIC / cloud-backed gallery photos on Android 13+.
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
+      setState(() => _pendingNewImages.add(File(picked.path)));
+    } catch (e) {
+      AppLogger.error('ProjectFormPage: error picking gallery image', e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+        );
+      }
+    }
   }
 
   Future<void> _submit() async {
@@ -152,13 +217,28 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     });
 
     try {
-      // 1. Subir imagen de portada si se seleccionó una nueva.
-      if (_pendingCoverImage != null) {
-        final uploadSvc = ref.read(uploadServiceProvider);
-        _data.thumbnailUrl = await uploadSvc.uploadImage(
-          _pendingCoverImage!,
-          folder: 'portfolio/projects',
-        );
+      // 1. Si el usuario seleccionó una imagen de la galería como miniatura
+      // (pendiente), subimos esa imagen primero para obtener url + publicId
+      // y setear `thumbnailUrl` antes de crear/actualizar el proyecto.
+      final uploadSvc = ref.read(uploadServiceProvider);
+      if (_pendingCoverIndex != null) {
+        // Si la miniatura escogida es una imagen nueva pendiente
+        if (_pendingCoverIndex! < _pendingNewImages.length) {
+          final file = _pendingNewImages.removeAt(_pendingCoverIndex!);
+          final result = await uploadSvc.uploadImageFull(
+            file,
+            folder: 'portfolio/projects/gallery',
+          );
+          _data.thumbnailUrl = result.url;
+          _preuploadedImages.add({
+            'url': result.url,
+            'publicId': result.publicId,
+          });
+        } else {
+          // Si la miniatura escogida es una imagen ya existente, ya debe
+          // existir en _existingImages; cubrimos ese caso abajo antes del
+          // update/create si es necesario.
+        }
       }
 
       final repo = ref.read(projectsRepositoryProvider);
@@ -181,9 +261,27 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         await repo.removeProjectImage(projectId, imageId);
       }
 
-      // 3. Subir e indexar nuevas imágenes de galería.
+      // 2b. Si se reordenó la galería, enviar nuevo orden al backend.
+      if (_galleryReordered && _existingImages.isNotEmpty) {
+        await repo.reorderImages(projectId, [
+          for (int i = 0; i < _existingImages.length; i++)
+            {'id': _existingImages[i].id, 'order': i},
+        ]);
+      }
+
+      // 3. Añadir a la galería las imágenes ya pre-subidas (si las hay)
+      for (int i = 0; i < _preuploadedImages.length; i++) {
+        final img = _preuploadedImages[i];
+        await repo.addProjectImage(
+          projectId,
+          url: img['url']!,
+          publicId: img['publicId']!,
+          order: _existingImages.length + i,
+        );
+      }
+
+      // 4. Subir e indexar las nuevas imágenes restantes de la galería.
       if (_pendingNewImages.isNotEmpty) {
-        final uploadSvc = ref.read(uploadServiceProvider);
         for (int i = 0; i < _pendingNewImages.length; i++) {
           final result = await uploadSvc.uploadImageFull(
             _pendingNewImages[i],
@@ -193,7 +291,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
             projectId,
             url: result.url,
             publicId: result.publicId,
-            order: _existingImages.length + i,
+            order: _existingImages.length + _preuploadedImages.length + i,
           );
         }
       }
@@ -205,6 +303,43 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       setState(
         () => _errorMsg = 'No se pudo guardar el proyecto. Inténtalo de nuevo.',
       );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _confirmAndDelete() async {
+    if (!widget.isEditing || widget.projectId == null) return;
+    final confirmed = await ConfirmDialog.show(
+      context,
+      title: 'Eliminar proyecto',
+      message: '¿Eliminar "${_data.title}"? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      isDestructive: true,
+      icon: Icons.delete_forever_outlined,
+    );
+    if (!confirmed) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMsg = null;
+    });
+
+    try {
+      await ref
+          .read(projectsRepositoryProvider)
+          .deleteProject(widget.projectId!);
+      ref.invalidate(projectsListProvider);
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('"${_data.title}" eliminado')));
+      context.pop();
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        setState(() => _errorMsg = 'No se pudo eliminar el proyecto.');
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -222,6 +357,12 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           ),
           title: Text(widget.isEditing ? 'Editar proyecto' : 'Nuevo proyecto'),
           actions: [
+            if (widget.isEditing)
+              IconButton(
+                tooltip: 'Eliminar',
+                icon: const Icon(Icons.delete_outline),
+                onPressed: _isLoading ? null : _confirmAndDelete,
+              ),
             TextButton.icon(
               onPressed: _isLoading ? null : _submit,
               icon: const Icon(Icons.check_rounded),
@@ -257,10 +398,10 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (_errorMsg != null) ...[
-          _InlineError(message: _errorMsg!),
+          InlineError(message: _errorMsg!),
           const SizedBox(height: 16),
         ],
-        _imageField(),
+        _gallerySection(),
         const SizedBox(height: 20),
         _titleField(),
         const SizedBox(height: 12),
@@ -271,6 +412,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         _excerptField(),
         const SizedBox(height: 12),
         _clientDurationRow(),
+        const SizedBox(height: 12),
+        _dateField(),
         const SizedBox(height: 16),
         _featuredPinnedRow(),
         const SizedBox(height: 20),
@@ -286,7 +429,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (_errorMsg != null) ...[
-          _InlineError(message: _errorMsg!),
+          InlineError(message: _errorMsg!),
           const SizedBox(height: 16),
         ],
         Row(
@@ -296,8 +439,6 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _imageField(),
-                  const SizedBox(height: 16),
                   _descriptionField(),
                   const SizedBox(height: 12),
                   _excerptField(),
@@ -314,6 +455,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
                   _categoryField(),
                   const SizedBox(height: 12),
                   _clientDurationRow(),
+                  const SizedBox(height: 12),
+                  _dateField(),
                   const SizedBox(height: 16),
                   _featuredPinnedRow(),
                 ],
@@ -331,11 +474,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
 
   // ── Campos individuales ───────────────────────────────────────────────────
 
-  Widget _imageField() => _ImageField(
-    label: 'Imagen de portada',
-    currentImageUrl: _data.thumbnailUrl.isNotEmpty ? _data.thumbnailUrl : null,
-    onImageSelected: (file) => setState(() => _pendingCoverImage = file),
-  );
+  // Nota: el campo de portada grande fue eliminado en favor de la galería.
 
   Widget _titleField() => TextFormField(
     initialValue: _data.title,
@@ -402,13 +541,73 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     ],
   );
 
+  Widget _dateField() => Builder(
+    builder: (context) {
+      final d = _data.date ?? DateTime.now();
+      final label =
+          '${d.day.toString().padLeft(2, '0')} / ${d.month.toString().padLeft(2, '0')} / ${d.year}';
+      return InkWell(
+        onTap: () async {
+          final picked = await showDatePicker(
+            context: context,
+            initialDate: _data.date ?? DateTime.now(),
+            firstDate: DateTime(2000),
+            lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+          );
+          if (picked != null) setState(() => _data.date = picked);
+        },
+        borderRadius: BorderRadius.circular(4),
+        child: InputDecorator(
+          decoration: const InputDecoration(
+            labelText: 'Fecha del proyecto',
+            helperText: 'Fecha en que se realizó el trabajo',
+            suffixIcon: Icon(Icons.calendar_today_outlined, size: 20),
+          ),
+          child: Text(label),
+        ),
+      );
+    },
+  );
+
   Widget _categoryField() {
     final categoriesAsync = ref.watch(categoriesListProvider());
     return categoriesAsync.when(
       loading: () => const LinearProgressIndicator(),
-      error: (_, _) => const Text('Error cargando categorías'),
+      error: (err, _) => const Text('Error cargando categorías'),
       data: (paginated) {
         final categories = paginated.data;
+        if (categories.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(
+                context,
+              ).colorScheme.errorContainer.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Theme.of(
+                  context,
+                ).colorScheme.error.withValues(alpha: 0.5),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: Theme.of(context).colorScheme.error,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                const Expanded(
+                  child: Text(
+                    'No hay categorías disponibles. Crea una en la sección de Categorías antes de crear un proyecto.',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
         return DropdownButtonFormField<String>(
           value:
               _data.categoryId.isNotEmpty &&
@@ -422,18 +621,7 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
           items: categories.map((c) {
             return DropdownMenuItem(
               value: c.id,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (c.iconName != null && c.iconName!.isNotEmpty) ...[
-                    Text(c.iconName!, style: const TextStyle(fontSize: 16)),
-                    const SizedBox(width: 8),
-                  ],
-                  Flexible(
-                    child: Text(c.name, overflow: TextOverflow.ellipsis),
-                  ),
-                ],
-              ),
+              child: Text(c.name, overflow: TextOverflow.ellipsis),
             );
           }).toList(),
           onChanged: (v) => setState(() => _data.categoryId = v ?? ''),
@@ -461,6 +649,13 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
         onChanged: (v) => setState(() => _data.isPinned = v),
         contentPadding: EdgeInsets.zero,
       ),
+      SwitchListTile(
+        title: const Text('Activo'),
+        subtitle: const Text('Visibilidad pública del proyecto'),
+        value: _data.isActive,
+        onChanged: (v) => setState(() => _data.isActive = v),
+        contentPadding: EdgeInsets.zero,
+      ),
     ],
   );
 
@@ -482,51 +677,117 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
             ),
             if (allImages > 0) ...[
               const SizedBox(width: 8),
-              _CountBadge(count: allImages, scheme: scheme),
+              CountBadge(count: allImages, scheme: scheme),
             ],
+            const Spacer(),
+            if (allImages > 1)
+              Text(
+                'Mantén pulsado para reordenar',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
           ],
         ),
         const SizedBox(height: 10),
         SizedBox(
           height: 100,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.zero,
-            itemCount: _existingImages.length + _pendingNewImages.length + 1,
-            separatorBuilder: (context, i) => const SizedBox(width: 8),
-            itemBuilder: (context, index) {
-              // Imágenes ya guardadas
-              if (index < _existingImages.length) {
-                final img = _existingImages[index];
-                return _GalleryThumb.network(
-                  url: img.imageUrl,
-                  onRemove: () => setState(() {
-                    _removedImageIds.add(img.id);
-                    _existingImages.removeAt(index);
-                  }),
-                );
-              }
+          child: Row(
+            children: [
+              Expanded(
+                child: ReorderableListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  buildDefaultDragHandles: true,
+                  itemCount: _existingImages.length + _pendingNewImages.length,
+                  onReorder: _onGalleryReorder,
+                  proxyDecorator: (child, _, animation) {
+                    return Material(
+                      elevation: 4 * animation.value,
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.transparent,
+                      child: child,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    // Imágenes ya guardadas
+                    if (index < _existingImages.length) {
+                      final img = _existingImages[index];
+                      return RepaintBoundary(
+                        key: ValueKey('existing-${img.id}'),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GalleryThumb.network(
+                            url: img.imageUrl,
+                            onRemove: () => setState(() {
+                              _removedImageIds.add(img.id);
+                              _existingImages.removeAt(index);
+                            }),
+                            onSetCover: () => setState(() {
+                              _data.thumbnailUrl = img.imageUrl;
+                              _pendingCoverIndex = null;
+                            }),
+                            isCover: _data.thumbnailUrl == img.imageUrl,
+                          ),
+                        ),
+                      );
+                    }
 
-              // Imágenes nuevas pendientes de subir
-              final pi = index - _existingImages.length;
-              if (pi < _pendingNewImages.length) {
-                return _GalleryThumb.file(
-                  file: _pendingNewImages[pi],
-                  onRemove: () =>
-                      setState(() => _pendingNewImages.removeAt(pi)),
-                );
-              }
-
-              // Botón "Añadir imagen"
-              return _AddImageButton(
-                scheme: scheme,
-                onTap: _isLoading ? null : _pickGalleryImage,
-              );
-            },
+                    // Imágenes nuevas pendientes de subir
+                    final pi = index - _existingImages.length;
+                    return RepaintBoundary(
+                      key: ValueKey(
+                        'pending-$pi-${_pendingNewImages[pi].path}',
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: GalleryThumb.file(
+                          file: _pendingNewImages[pi],
+                          onRemove: () =>
+                              setState(() => _pendingNewImages.removeAt(pi)),
+                          onSetCover: () => setState(() {
+                            _pendingCoverIndex = pi;
+                            _data.thumbnailUrl = '';
+                          }),
+                          isCover: _pendingCoverIndex == pi,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              RepaintBoundary(
+                child: AddImageButton(
+                  scheme: scheme,
+                  onTap: _isLoading ? null : _pickGalleryImage,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
+  }
+
+  void _onGalleryReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex--;
+      final totalExisting = _existingImages.length;
+
+      if (oldIndex < totalExisting && newIndex < totalExisting) {
+        // Both in existing images
+        final item = _existingImages.removeAt(oldIndex);
+        _existingImages.insert(newIndex, item);
+        _galleryReordered = true;
+      } else if (oldIndex >= totalExisting && newIndex >= totalExisting) {
+        // Both in pending images
+        final pi = oldIndex - totalExisting;
+        final ni = newIndex - totalExisting;
+        final item = _pendingNewImages.removeAt(pi);
+        _pendingNewImages.insert(ni, item);
+      }
+      // Cross-list moves are ignored (existing → pending or vice versa)
+    });
   }
 
   Widget _submitButton() => SizedBox(
@@ -538,240 +799,4 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
     ),
   );
-}
-
-// ── Widgets auxiliares ────────────────────────────────────────────────────────
-
-class _InlineError extends StatelessWidget {
-  const _InlineError({required this.message});
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: scheme.errorContainer,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline_rounded, color: scheme.onErrorContainer),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(color: scheme.onErrorContainer),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Miniatura de galería (red o archivo local) con botón de eliminar.
-class _GalleryThumb extends StatelessWidget {
-  const _GalleryThumb.network({required String url, required this.onRemove})
-    : _url = url,
-      _file = null;
-
-  const _GalleryThumb.file({required File file, required this.onRemove})
-    : _url = null,
-      _file = file;
-
-  final String? _url;
-  final File? _file;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    Widget img;
-    if (_url != null) {
-      img = CachedNetworkImage(
-        imageUrl: _url,
-        width: 100,
-        height: 100,
-        fit: BoxFit.cover,
-        placeholder: (context, url) =>
-            Container(color: scheme.surfaceContainerHighest),
-        errorWidget: (context, url, error) => Container(
-          color: scheme.surfaceContainerHighest,
-          child: Icon(
-            Icons.broken_image_outlined,
-            color: scheme.outlineVariant,
-          ),
-        ),
-      );
-    } else {
-      img = Image.file(_file!, width: 100, height: 100, fit: BoxFit.cover);
-    }
-
-    return Stack(
-      children: [
-        ClipRRect(borderRadius: BorderRadius.circular(10), child: img),
-        Positioned(
-          top: 3,
-          right: 3,
-          child: GestureDetector(
-            onTap: onRemove,
-            child: Container(
-              width: 22,
-              height: 22,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.65),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.close_rounded,
-                size: 14,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Botón cuadrado para añadir imagen a la galería.
-class _AddImageButton extends StatelessWidget {
-  const _AddImageButton({required this.scheme, this.onTap});
-
-  final ColorScheme scheme;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 100,
-        height: 100,
-        decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: scheme.outlineVariant),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.add_photo_alternate_outlined, color: scheme.primary),
-            const SizedBox(height: 4),
-            Text(
-              'Añadir',
-              style: TextStyle(fontSize: 11, color: scheme.outline),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Badge circular con el conteo de imágenes.
-class _CountBadge extends StatelessWidget {
-  const _CountBadge({required this.count, required this.scheme});
-  final int count;
-  final ColorScheme scheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: scheme.primaryContainer,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        '$count',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: scheme.onPrimaryContainer,
-        ),
-      ),
-    );
-  }
-}
-
-/// Widget para seleccionar imagen de portada (cover).
-class _ImageField extends StatelessWidget {
-  const _ImageField({
-    required this.label,
-    this.currentImageUrl,
-    required this.onImageSelected,
-  });
-
-  final String label;
-  final String? currentImageUrl;
-  final void Function(File) onImageSelected;
-
-  Future<void> _pick(BuildContext context) async {
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Galería'),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Cámara'),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (source == null) return;
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, imageQuality: 85);
-    if (picked == null) return;
-    onImageSelected(File(picked.path));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () => _pick(context),
-      child: Container(
-        height: 160,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: scheme.outlineVariant),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: currentImageUrl != null
-            ? CachedNetworkImage(
-                imageUrl: currentImageUrl!,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    const Center(child: CircularProgressIndicator.adaptive()),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.add_photo_alternate_outlined,
-                    size: 40,
-                    color: scheme.primary,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(label, style: TextStyle(color: scheme.outline)),
-                ],
-              ),
-      ),
-    );
-  }
 }

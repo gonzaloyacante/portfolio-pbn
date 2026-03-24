@@ -1,10 +1,12 @@
-import { logger } from '@/lib/logger'
-import { NextResponse, NextRequest } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { getToken } from 'next-auth/jwt'
-import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
+import { logger } from '@/lib/logger'
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { getToken } from 'next-auth/jwt'
+
+import { authOptions } from '@/lib/auth'
+import { prisma } from '@/lib/db'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 async function _resolveUserEmail(req: NextRequest): Promise<string | null> {
   const session = await getServerSession(authOptions)
@@ -15,6 +17,9 @@ async function _resolveUserEmail(req: NextRequest): Promise<string | null> {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
+    await checkApiRateLimit(ip)
+
     const userEmail = await _resolveUserEmail(req)
     if (!userEmail) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })

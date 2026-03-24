@@ -58,18 +58,10 @@ export default function CategoryGallery({
 
   const imagesWithIndex = images.map((img, idx) => ({ ...img, originalIndex: idx }))
 
-  imagesWithIndex.forEach((img) => {
-    const aspectRatio = img.height && img.width ? img.height / img.width : 1.5
-    let minColIndex = 0
-    let minHeight = columnsData[0].height
-    columnsData.forEach((col, idx) => {
-      if (col.height < minHeight) {
-        minHeight = col.height
-        minColIndex = idx
-      }
-    })
-    columnsData[minColIndex].images.push(img)
-    columnsData[minColIndex].height += aspectRatio
+  // Distribución round-robin (secuencial): preserva el orden asignado por el admin.
+  // posición 0→col0, 1→col1, 2→col2... el orden visual izq→der coincide con el orden guardado.
+  imagesWithIndex.forEach((img, i) => {
+    columnsData[i % columns].images.push(img)
   })
 
   const distributedImages = columnsData.map((c) => c.images)
@@ -111,6 +103,7 @@ export default function CategoryGallery({
                 <div
                   role="button"
                   tabIndex={0}
+                  aria-label={img.alt || `Ver imagen ${img.originalIndex + 1}`}
                   onClick={(e) => {
                     triggerRef.current = e.currentTarget as HTMLDivElement
                     const originalIndex = images.findIndex((i) => i.id === img.id)

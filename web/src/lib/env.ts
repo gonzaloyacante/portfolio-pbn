@@ -47,6 +47,25 @@ const envSchema = z.object({
     .string()
     .min(32, 'ADMIN_JWT_SECRET must be at least 32 characters')
     .describe('Generate with: openssl rand -base64 32'),
+
+  // Flutter App Distribution — token para el script distribute-*.sh
+  DEPLOY_SECRET_TOKEN: z
+    .string()
+    .min(32, 'DEPLOY_SECRET_TOKEN must be at least 32 characters')
+    .optional()
+    .describe('Generate with: openssl rand -hex 32'),
+
+  // Firebase Cloud Messaging (push notifications)
+  FIREBASE_PROJECT_ID: z.string().min(1).optional(),
+  FIREBASE_CLIENT_EMAIL: z.string().email('FIREBASE_CLIENT_EMAIL must be a valid email').optional(),
+  FIREBASE_PRIVATE_KEY: z.string().min(1).optional(),
+
+  // Email fallbacks (opcionales — se leen de DB en tiempo de ejecución)
+  ADMIN_EMAIL: z.string().email('ADMIN_EMAIL must be a valid email').optional(),
+  EMAIL_FROM: z.string().email('EMAIL_FROM must be a valid email').optional(),
+
+  // Google Fonts API (opcional — usada por /api/fonts/google)
+  GOOGLE_FONTS_API_KEY: z.string().min(1).optional(),
 })
 
 // Validate environment variables

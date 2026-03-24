@@ -58,6 +58,7 @@ function _readProjectFormData(formData: FormData) {
     layout: formData.get('layout'),
     isFeatured: formData.get('isFeatured'),
     isPinned: formData.get('isPinned'),
+    isActive: formData.get('isActive'),
   }
 }
 
@@ -135,6 +136,10 @@ export async function uploadImageAndCreateProject(formData: FormData) {
         layout: data.layout || 'grid',
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
         isPinned: data.isPinned === 'true' || data.isPinned === 'on',
+        isActive:
+          data.isActive === undefined
+            ? true
+            : data.isActive === 'true' || data.isActive === 'on' || data.isActive === true,
         images: {
           create: validImages.map((img) => ({
             url: img.url,
@@ -267,6 +272,10 @@ export async function updateProject(id: string, formData: FormData) {
         layout: data.layout,
         isFeatured: data.isFeatured === 'true' || data.isFeatured === 'on',
         isPinned: data.isPinned === 'true' || data.isPinned === 'on',
+        isActive:
+          data.isActive === undefined
+            ? undefined
+            : data.isActive === 'true' || data.isActive === 'on' || data.isActive === true,
       },
     })
 
@@ -334,13 +343,28 @@ export async function deleteProjectImage(imageId: string) {
   await checkApiRateLimit()
 
   try {
-    const image = await prisma.projectImage.findUnique({ where: { id: imageId } })
+    const image = await prisma.projectImage.findUnique({
+      where: { id: imageId },
+      select: { publicId: true, url: true, projectId: true },
+    })
     if (!image) throw new Error('Image not found')
 
     await deleteImage(image.publicId)
     await prisma.projectImage.delete({ where: { id: imageId } })
 
+    // Recompute thumbnailUrl: use first remaining image or clear it
+    const firstRemaining = await prisma.projectImage.findFirst({
+      where: { projectId: image.projectId },
+      orderBy: { order: 'asc' },
+      select: { url: true },
+    })
+    await prisma.project.update({
+      where: { id: image.projectId },
+      data: { thumbnailUrl: firstRemaining?.url ?? '' },
+    })
+
     _revalidatePublicContent()
+    revalidatePath(ROUTES.admin.projects)
     logger.info(`Image deleted: ${imageId}`)
     return { success: true }
   } catch (error) {
@@ -355,12 +379,17 @@ export async function createCategory(formData: FormData) {
   await requireAdmin()
   await checkApiRateLimit()
 
+  // File inputs (even empty ones) send File objects via native form submit.
+  // Filter them out — only accept string URLs from hidden inputs.
+  const _toStringOrNull = (v: FormDataEntryValue | null): string | null =>
+    typeof v === 'string' && v !== '' ? v : null
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
-    coverImageUrl: formData.get('coverImageUrl'),
-    thumbnailUrl: formData.get('thumbnailUrl'),
+    coverImageUrl: _toStringOrNull(formData.get('coverImageUrl')),
+    thumbnailUrl: _toStringOrNull(formData.get('thumbnailUrl')),
   }
 
   const validation = categorySchema.safeParse(rawData)
@@ -416,7 +445,7 @@ export async function updateCategory(id: string, formData: FormData) {
   try {
     await prisma.category.update({
       where: { id },
-      data: { name, slug, description, coverImageUrl },
+      data: { name, slug, description, coverImageUrl: coverImageUrl || null },
     })
     _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
@@ -434,9 +463,9 @@ export async function deleteCategory(id: string) {
   await checkApiRateLimit()
 
   try {
-    // Verificar que no tenga proyectos antes de eliminar (evitar cascade destructivo)
+    // Verificar que no tenga proyectos activos antes de eliminar
     const projectCount = await prisma.project.count({
-      where: { categoryId: id },
+      where: { categoryId: id, deletedAt: null },
     })
     if (projectCount > 0) {
       return {
@@ -445,11 +474,17 @@ export async function deleteCategory(id: string) {
       }
     }
 
-    await prisma.category.delete({ where: { id } })
+    // Soft delete: marcar como eliminada y liberar slug único para reutilización
+    const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
+    await prisma.category.update({
+      where: { id },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
+    })
     _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     revalidatePath(ROUTES.admin.categories)
-    logger.info(`Category deleted: ${id}`)
+    logger.info(`Category soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
     logger.error('Error deleting category:', { error })

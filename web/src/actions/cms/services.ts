@@ -40,8 +40,6 @@ const ServiceSchema = z.object({
   imageUrl: z.string().url().optional().or(z.literal('')),
   galleryUrls: z.string().optional(), // Comma separated URLs
   videoUrl: z.string().url().optional().or(z.literal('')),
-  iconName: z.string().optional(),
-  color: z.string().optional(), // Brand color
 
   // Display
   isActive: z.boolean().default(true),
@@ -151,8 +149,6 @@ export async function createService(formData: FormData) {
     imageUrl: formData.get('imageUrl'),
     galleryUrls: formData.get('galleryUrls'),
     videoUrl: formData.get('videoUrl'),
-    iconName: formData.get('iconName'),
-    color: formData.get('color'),
     // Display
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
@@ -186,12 +182,16 @@ export async function createService(formData: FormData) {
       if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
     } catch {}
 
-    const galleryList = data.galleryUrls
-      ? data.galleryUrls
-          .split(',')
-          .map((u) => u.trim())
-          .filter(Boolean)
-      : []
+    // Prefer multiple inputs `galleryUrls` (from ImageUpload hidden inputs). Fallback to CSV string.
+    const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
+    const galleryList = rawGalleryInputs.length
+      ? rawGalleryInputs.map((u) => u.trim())
+      : data.galleryUrls
+        ? data.galleryUrls
+            .split(',')
+            .map((u) => u.trim())
+            .filter(Boolean)
+        : []
     const keywordList = data.metaKeywords
       ? data.metaKeywords
           .split(',')
@@ -214,11 +214,9 @@ export async function createService(formData: FormData) {
         isAvailable: data.isAvailable,
         maxBookingsPerDay: data.maxBookingsPerDay,
         advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || null,
+        imageUrl: data.imageUrl || galleryList[0] || null,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
-        iconName: data.iconName || null,
-        color: data.color || null,
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
@@ -268,8 +266,6 @@ export async function updateService(id: string, formData: FormData) {
     imageUrl: formData.get('imageUrl'),
     galleryUrls: formData.get('galleryUrls'),
     videoUrl: formData.get('videoUrl'),
-    iconName: formData.get('iconName'),
-    color: formData.get('color'),
     // Display
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
@@ -305,12 +301,15 @@ export async function updateService(id: string, formData: FormData) {
       if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
     } catch {}
 
-    const galleryList = data.galleryUrls
-      ? data.galleryUrls
-          .split(',')
-          .map((u) => u.trim())
-          .filter(Boolean)
-      : []
+    const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
+    const galleryList = rawGalleryInputs.length
+      ? rawGalleryInputs.map((u) => u.trim())
+      : data.galleryUrls
+        ? data.galleryUrls
+            .split(',')
+            .map((u) => u.trim())
+            .filter(Boolean)
+        : []
     const keywordList = data.metaKeywords
       ? data.metaKeywords
           .split(',')
@@ -334,11 +333,9 @@ export async function updateService(id: string, formData: FormData) {
         isAvailable: data.isAvailable,
         maxBookingsPerDay: data.maxBookingsPerDay,
         advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || null,
+        imageUrl: data.imageUrl || galleryList[0] || null,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
-        iconName: data.iconName || null,
-        color: data.color || null,
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
@@ -369,12 +366,18 @@ export async function deleteService(id: string) {
   await checkApiRateLimit()
 
   try {
-    await prisma.service.delete({ where: { id } })
+    // Soft delete: marcar como eliminado y liberar slug único para reutilización
+    const svc = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
+    const mangledSlug = svc ? `${svc.slug}_deleted_${Date.now()}` : undefined
+    await prisma.service.update({
+      where: { id },
+      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
+    })
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services, 'layout')
     revalidateTag(CACHE_TAGS.services, 'max')
-    logger.info(`Service deleted: ${id}`)
+    logger.info(`Service soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
     logger.error('Error deleting service:', { error })

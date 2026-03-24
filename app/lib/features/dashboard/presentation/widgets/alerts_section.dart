@@ -108,7 +108,7 @@ class _AlertChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: color.withAlpha(20),
+      color: color.withValues(alpha: 20 / 255),
       borderRadius: BorderRadius.circular(AppRadius.card),
       child: InkWell(
         onTap: onTap,

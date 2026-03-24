@@ -6,6 +6,8 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/country_names.dart';
 import '../../data/dashboard_repository.dart';
+import '../../../../shared/widgets/app_card.dart';
+import '../../../../core/theme/app_radius.dart';
 
 // ── VisitorsMapWidget ────────────────────────────────────────────────────────
 
@@ -91,10 +93,10 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
     // NOTE: previously we attempted Carto tiles; prefer using primary OSM
     // layer with `tileBuilder` for dark mode to avoid retina/@2x 404s.
 
-    return Card(
+    return AppCard(
       elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      clipBehavior: Clip.antiAlias,
+      borderRadius: AppRadius.forCard,
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -109,13 +111,17 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                         Icon(
                           Icons.map_outlined,
                           size: 40,
-                          color: colorScheme.onSurface.withAlpha(60),
+                          color: colorScheme.onSurface.withValues(
+                            alpha: 60 / 255,
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
                         Text(
                           'Sin coordenadas disponibles aún',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurface.withAlpha(100),
+                            color: colorScheme.onSurface.withValues(
+                              alpha: 100 / 255,
+                            ),
                           ),
                         ),
                       ],
@@ -207,8 +213,10 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                         height: haloSize,
                                         decoration: BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: color.withAlpha(
-                                            (35 * pulseFactor).round(),
+                                          color: color.withValues(
+                                            alpha:
+                                                (35 * pulseFactor).round() /
+                                                255,
                                           ),
                                         ),
                                       ),
@@ -221,8 +229,10 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                           color: color,
                                           boxShadow: [
                                             BoxShadow(
-                                              color: color.withAlpha(
-                                                isSelected ? 220 : 140,
+                                              color: color.withValues(
+                                                alpha:
+                                                    (isSelected ? 220 : 140) /
+                                                    255,
                                               ),
                                               blurRadius: isSelected ? 14 : 8,
                                               spreadRadius: isSelected ? 3 : 1,
@@ -247,14 +257,17 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                color: color.withAlpha(120),
+                                                color: color.withValues(
+                                                  alpha: 120 / 255,
+                                                ),
                                                 width: 1.5,
                                               ),
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: Colors.black.withAlpha(
-                                                    50,
-                                                  ),
+                                                  color: Colors.black
+                                                      .withValues(
+                                                        alpha: 50 / 255,
+                                                      ),
                                                   blurRadius: 12,
                                                   offset: const Offset(0, 4),
                                                 ),
@@ -296,7 +309,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                                         vertical: 2,
                                                       ),
                                                   decoration: BoxDecoration(
-                                                    color: color.withAlpha(40),
+                                                    color: color.withValues(
+                                                      alpha: 40 / 255,
+                                                    ),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           6,
@@ -336,7 +351,7 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
             Divider(
               height: 1,
               thickness: 1,
-              color: colorScheme.outline.withAlpha(40),
+              color: colorScheme.outline.withValues(alpha: 40 / 255),
             ),
 
             // ── Cabecera ranking ───────────────────────────────────────────
@@ -351,7 +366,7 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                 'PAÍSES DE ORIGEN',
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: colorScheme.onSurface.withAlpha(100),
+                  color: colorScheme.onSurface.withValues(alpha: 100 / 255),
                   letterSpacing: 1.2,
                 ),
               ),
@@ -367,7 +382,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
               final color = colorScheme.primary;
 
               return Material(
-                color: isSelected ? color.withAlpha(18) : Colors.transparent,
+                color: isSelected
+                    ? color.withValues(alpha: 18 / 255)
+                    : Colors.transparent,
                 child: InkWell(
                   onTap: hasCoords
                       ? () {
@@ -395,7 +412,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                           child: Text(
                             '${idx + 1}',
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurface.withAlpha(80),
+                              color: colorScheme.onSurface.withValues(
+                                alpha: 80 / 255,
+                              ),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -434,7 +453,7 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                             Icons.location_on_outlined,
                                             size: 11,
                                             color: colorScheme.primary
-                                                .withAlpha(140),
+                                                .withValues(alpha: 140 / 255),
                                           ),
                                         ],
                                       ],
@@ -456,11 +475,13 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                   value: progress,
                                   minHeight: 3,
                                   backgroundColor: colorScheme.primary
-                                      .withAlpha(25),
+                                      .withValues(alpha: 25 / 255),
                                   valueColor: AlwaysStoppedAnimation(
                                     isSelected
                                         ? colorScheme.primary
-                                        : colorScheme.primary.withAlpha(180),
+                                        : colorScheme.primary.withValues(
+                                            alpha: 180 / 255,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -503,7 +524,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                                                     ?.copyWith(
                                                       color: colorScheme
                                                           .onSurface
-                                                          .withAlpha(160),
+                                                          .withValues(
+                                                            alpha: 160 / 255,
+                                                          ),
                                                     ),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
@@ -550,7 +573,7 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                   Icon(
                     Icons.info_outline_rounded,
                     size: 11,
-                    color: colorScheme.onSurface.withAlpha(80),
+                    color: colorScheme.onSurface.withValues(alpha: 80 / 255),
                   ),
                   const SizedBox(width: 4),
                   Expanded(
@@ -559,7 +582,9 @@ class _VisitorsMapWidgetState extends State<VisitorsMapWidget>
                       'Para mayor precisión, el visitante debe aceptar '
                       'la geolocalización en el banner de cookies del sitio.',
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: colorScheme.onSurface.withAlpha(80),
+                        color: colorScheme.onSurface.withValues(
+                          alpha: 80 / 255,
+                        ),
                         height: 1.4,
                       ),
                     ),

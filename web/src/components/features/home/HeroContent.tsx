@@ -394,18 +394,17 @@ export function HeroContent({
                 </div>
               ) : (
                 <MagneticButton>
-                  <Link href={ctaLink}>
-                    <Button
-                      size={mapButtonSize(s.ctaSize)}
-                      variant={mapCtaVariant(s.ctaVariant)}
-                      style={{
-                        fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
-                        fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,
-                      }}
-                    >
-                      {ctaText}
-                    </Button>
-                  </Link>
+                  <Button
+                    asChild
+                    size={mapButtonSize(s.ctaSize)}
+                    variant={mapCtaVariant(s.ctaVariant)}
+                    style={{
+                      fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
+                      fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,
+                    }}
+                  >
+                    <Link href={ctaLink}>{ctaText}</Link>
+                  </Button>
                 </MagneticButton>
               )}
             </Wrapper>

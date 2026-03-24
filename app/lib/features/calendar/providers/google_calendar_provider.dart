@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/utils/app_logger.dart';
 import '../data/google_calendar_models.dart';
@@ -95,9 +96,15 @@ class GoogleCalendarNotifier extends _$GoogleCalendarNotifier {
       return false;
     }
 
-    final service = ref.read(googleCalendarServiceProvider);
-    await service.createEvent(event);
-    return true;
+    try {
+      final service = ref.read(googleCalendarServiceProvider);
+      await service.createEvent(event);
+      return true;
+    } catch (e, st) {
+      AppLogger.error('GoogleCalendarNotifier: error en createEvent()', e, st);
+      Sentry.captureException(e, stackTrace: st);
+      return false;
+    }
   }
 }
 

@@ -118,6 +118,48 @@ class CategoriesRepository {
       throw Exception(apiResponse.error ?? 'Error al eliminar categoría');
     }
   }
+
+  // ── Gallery ───────────────────────────────────────────────────────────────
+
+  /// Obtiene todas las imágenes de proyectos de una categoría,
+  /// ordenadas por [categoryGalleryOrder] (nulos al final).
+  Future<List<GalleryImageItem>> getCategoryGallery(String categoryId) async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+    );
+
+    final apiResponse = ApiResponse<List<GalleryImageItem>>.fromJson(
+      resp,
+      (json) => (json as List<dynamic>)
+          .map((e) => GalleryImageItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+    if (!apiResponse.success || apiResponse.data == null) {
+      throw Exception(apiResponse.error ?? 'Error al obtener la galería');
+    }
+    return apiResponse.data!;
+  }
+
+  /// Actualiza el [categoryGalleryOrder] de cada imagen.
+  /// [items] es una lista de pares (id, order) con el nuevo orden deseado.
+  Future<void> updateGalleryOrder(
+    String categoryId,
+    List<({String id, int order})> items,
+  ) async {
+    final resp = await _client.put<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {
+        'order': items.map((e) => {'id': e.id, 'order': e.order}).toList(),
+      },
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al guardar el orden');
+    }
+  }
 }
 
 @Riverpod(keepAlive: true)

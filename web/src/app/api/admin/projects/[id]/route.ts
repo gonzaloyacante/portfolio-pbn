@@ -4,6 +4,7 @@
  * DELETE /api/admin/projects/[id]  — Soft delete
  */
 
+import { type Prisma } from '@/generated/prisma/client'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
@@ -12,6 +13,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { projectPatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -38,7 +40,6 @@ const PROJECT_FULL_SELECT = {
   isPinned: true,
   isActive: true,
   viewCount: true,
-  likeCount: true,
   publishedAt: true,
   createdAt: true,
   updatedAt: true,
@@ -58,7 +59,7 @@ export async function GET(req: Request, { params }: Params) {
   try {
     const { id } = await params
     const project = await prisma.project.findFirst({
-      where: { id, isDeleted: false },
+      where: { id, deletedAt: null },
       select: PROJECT_FULL_SELECT,
     })
 
@@ -83,16 +84,23 @@ export async function PATCH(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = projectPatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
 
-    const existing = await prisma.project.findFirst({ where: { id, isDeleted: false } })
+    const existing = await prisma.project.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }
 
-    if (body.slug && body.slug !== existing.slug) {
+    if (parsed.data.slug && parsed.data.slug !== existing.slug) {
       const slugConflict = await prisma.project.findFirst({
-        where: { slug: body.slug, isDeleted: false, id: { not: id } },
+        where: { slug: parsed.data.slug, deletedAt: null, id: { not: id } },
       })
       if (slugConflict) {
         return NextResponse.json(
@@ -122,7 +130,7 @@ export async function PATCH(req: Request, { params }: Params) {
       isFeatured,
       isPinned,
       isActive,
-    } = body
+    } = parsed.data
 
     const project = await prisma.project.update({
       where: { id },
@@ -147,7 +155,7 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(isPinned !== undefined && { isPinned }),
         ...(isActive !== undefined && { isActive }),
         updatedBy: auth.payload.userId,
-      },
+      } as Prisma.ProjectUncheckedUpdateInput,
       select: PROJECT_FULL_SELECT,
     })
 
@@ -170,7 +178,7 @@ export async function PATCH(req: Request, { params }: Params) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }
@@ -185,7 +193,7 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
-    const existing = await prisma.project.findFirst({ where: { id, isDeleted: false } })
+    const existing = await prisma.project.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }
@@ -219,7 +227,7 @@ export async function DELETE(req: Request, { params }: Params) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

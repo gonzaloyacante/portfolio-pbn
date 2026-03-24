@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -27,7 +28,6 @@ const TESTIMONIAL_SELECT = {
   status: true,
   isActive: true,
   sortOrder: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -74,7 +74,10 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        data: testimonials,
+        data: testimonials.map((t) => ({
+          ...t,
+          thumbnailUrl: t.avatarUrl ? generateThumbnailUrl(t.avatarUrl) : null,
+        })),
         pagination: {
           page,
           limit,
@@ -128,8 +131,11 @@ export async function POST(req: Request) {
       status = 'PENDING',
       isActive = true,
     } = parsed.data as typeof parsed.data & {
-      rating?: number; verified?: boolean; featured?: boolean;
-      status?: string; isActive?: boolean
+      rating?: number
+      verified?: boolean
+      featured?: boolean
+      status?: string
+      isActive?: boolean
     }
 
     const agg = await prisma.testimonial.aggregate({ _max: { sortOrder: true } })

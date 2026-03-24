@@ -13,8 +13,9 @@ interface RateLimitAttempt {
   timestamp: Date
 }
 
-// In-memory storage
+// In-memory storage with max entries cap to prevent unbounded growth in serverless
 const rateLimitStore = new Map<string, RateLimitAttempt[]>()
+const MAX_RATE_LIMIT_ENTRIES = 10_000
 
 /**
  * Create a rate limiter with custom configuration
@@ -71,6 +72,12 @@ export function createRateLimiter(config: RateLimitConfig) {
     })
 
     rateLimitStore.set(key, attempts)
+
+    // Evict oldest entries if store exceeds max size
+    if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
+      const firstKey = rateLimitStore.keys().next().value
+      if (firstKey) rateLimitStore.delete(firstKey)
+    }
 
     // Log to analytics (optional)
     try {

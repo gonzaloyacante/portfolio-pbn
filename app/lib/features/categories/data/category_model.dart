@@ -15,12 +15,9 @@ abstract class CategoryItem with _$CategoryItem {
     required String slug,
     String? description,
     String? thumbnailUrl,
-    String? iconName,
-    String? color,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
     @Default(0) int projectCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _CategoryItem;
@@ -41,8 +38,6 @@ abstract class CategoryDetail with _$CategoryDetail {
     String? description,
     String? thumbnailUrl,
     String? coverImageUrl,
-    String? iconName,
-    String? color,
     String? metaTitle,
     String? metaDescription,
     @Default([]) List<String> metaKeywords,
@@ -50,7 +45,6 @@ abstract class CategoryDetail with _$CategoryDetail {
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
     @Default(0) int projectCount,
-    @Default(0) int viewCount,
     required String createdAt,
     required String updatedAt,
   }) = _CategoryDetail;
@@ -65,18 +59,17 @@ class CategoryFormData {
   final String name;
   final String slug;
   final String? description;
-  final String? thumbnailUrl;
-  final String? iconName;
-  final String? color;
+
+  /// URL original (alta calidad) subida por el usuario.
+  /// El backend genera automáticamente thumbnailUrl a partir de este campo.
+  final String? coverImageUrl;
   final bool isActive;
 
   const CategoryFormData({
     required this.name,
     required this.slug,
     this.description,
-    this.thumbnailUrl,
-    this.iconName,
-    this.color,
+    this.coverImageUrl,
     this.isActive = true,
   });
 
@@ -84,9 +77,34 @@ class CategoryFormData {
     'name': name,
     'slug': slug,
     if (description != null) 'description': description,
-    if (thumbnailUrl != null) 'thumbnailUrl': thumbnailUrl,
-    if (iconName != null) 'iconName': iconName,
-    if (color != null) 'color': color,
+    if (coverImageUrl != null) 'coverImageUrl': coverImageUrl,
     'isActive': isActive,
   };
+}
+
+// ── GalleryImageItem ────────────────────────────────────────────────────────────
+
+/// Imagen de un proyecto que pertenece a la galería de su categoría.
+/// El campo [categoryGalleryOrder] es independiente del orden dentro del proyecto.
+@freezed
+abstract class GalleryImageItem with _$GalleryImageItem {
+  const factory GalleryImageItem({
+    required String id,
+    required String url,
+    required String thumbnailUrl,
+    String? publicId,
+    String? alt,
+    String? caption,
+    int? width,
+    int? height,
+    @Default(false) bool isCover,
+    @Default(false) bool isHero,
+    int? categoryGalleryOrder,
+    required String projectId,
+    required String projectTitle,
+    required String projectSlug,
+  }) = _GalleryImageItem;
+
+  factory GalleryImageItem.fromJson(Map<String, dynamic> json) =>
+      _$GalleryImageItemFromJson(json);
 }

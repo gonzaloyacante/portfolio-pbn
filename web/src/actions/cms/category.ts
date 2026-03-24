@@ -37,7 +37,7 @@ export async function getCategoryImages(categoryId: string) {
   await requireAdmin()
   try {
     const projects = await prisma.project.findMany({
-      where: { categoryId, isDeleted: false },
+      where: { categoryId, deletedAt: null },
       select: {
         title: true,
         images: {

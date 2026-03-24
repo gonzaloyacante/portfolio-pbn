@@ -1,15 +1,31 @@
 import { prisma } from '@/lib/db'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import Link from 'next/link'
 import Image from 'next/image'
 import { FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
+import type { Metadata } from 'next'
 
-// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
-export const revalidate = 0
+// ISR on-demand: cache permanente, se regenera solo cuando revalidatePath() es llamado desde Server Actions
+export const revalidate = false
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Proyectos | Portfolio Paola Bolívar Nievas',
   description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
+  alternates: {
+    canonical: '/proyectos',
+  },
+  openGraph: {
+    title: 'Proyectos | Portfolio Paola Bolívar Nievas',
+    description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
+    url: '/proyectos',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Proyectos | Portfolio Paola Bolívar Nievas',
+    description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
+  },
 }
 
 /**
@@ -23,19 +39,19 @@ export default async function ProjectsPage() {
         isActive: true,
         deletedAt: null,
         projects: {
-          some: { isActive: true, isDeleted: false },
+          some: { isActive: true, deletedAt: null },
         },
       },
       include: {
         projects: {
-          where: { isActive: true, isDeleted: false },
+          where: { isActive: true, deletedAt: null },
           take: 1,
           orderBy: { date: 'desc' },
           select: { thumbnailUrl: true },
         },
         _count: {
           select: {
-            projects: { where: { isActive: true, isDeleted: false } },
+            projects: { where: { isActive: true, deletedAt: null } },
           },
         },
       },
@@ -71,8 +87,15 @@ export default async function ProjectsPage() {
             className={`grid gap-3 sm:gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-2 lg:grid-cols-4' : ''} `}
           >
             {categories.map((category) => {
-              // Priority: Custom Cover > First Project Thumbnail
-              const thumbnailUrl = category.coverImageUrl || category.projects[0]?.thumbnailUrl
+              // Orden de prioridad para el rendimiento:
+              // 1. thumbnailUrl: versión optimizada 800×600 de Cloudinary (la más rápida)
+              // 2. coverImageUrl: calidad original (next/image la optimizará on-the-fly)
+              // 3. Primer thumbnailUrl de un proyecto de la categoría como último fallback
+              const fallbackProjectThumb = category.projects[0]?.thumbnailUrl
+              const cardImageUrl =
+                category.thumbnailUrl ??
+                category.coverImageUrl ??
+                (fallbackProjectThumb ? generateThumbnailUrl(fallbackProjectThumb) : null)
 
               return (
                 <FadeIn key={category.id}>
@@ -81,10 +104,10 @@ export default async function ProjectsPage() {
                     className="group relative block aspect-4/5 w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
                   >
                     {/* Background Image */}
-                    {thumbnailUrl ? (
+                    {cardImageUrl ? (
                       <>
                         <Image
-                          src={thumbnailUrl}
+                          src={cardImageUrl}
                           alt={category.name}
                           fill
                           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"

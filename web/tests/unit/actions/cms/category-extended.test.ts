@@ -233,7 +233,7 @@ describe('getCategoryImages', () => {
 
     expect(prisma.project.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { categoryId: 'cat-1', isDeleted: false },
+        where: { categoryId: 'cat-1', deletedAt: null },
       })
     )
   })

@@ -9,8 +9,8 @@ import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 
-// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
-export const revalidate = 0
+// ISR on-demand: cache permanente, se regenera solo cuando revalidatePath() es llamado desde Server Actions
+export const revalidate = false
 
 export async function generateStaticParams() {
   const categories = await prisma.category.findMany({
@@ -25,7 +25,7 @@ const getCategory = cache((slug: string) =>
     where: { slug, isActive: true, deletedAt: null },
     include: {
       projects: {
-        where: { isDeleted: false, isActive: true },
+        where: { deletedAt: null, isActive: true },
         orderBy: { date: 'desc' },
         include: {
           images: {
@@ -52,6 +52,20 @@ export async function generateMetadata({
   return {
     title: `${category.name} | Portfolio PBN`,
     description: category.description || `Galería de ${category.name}`,
+    alternates: {
+      canonical: `/proyectos/${categorySlug}`,
+    },
+    openGraph: {
+      title: `${category.name} | Portfolio PBN`,
+      description: category.description || `Galería de ${category.name}`,
+      url: `/proyectos/${categorySlug}`,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${category.name} | Portfolio PBN`,
+      description: category.description || `Galería de ${category.name}`,
+    },
   }
 }
 
@@ -79,18 +93,31 @@ export default async function CategoryProjectsPage({
 
   const showTitles = settings?.showCardTitles ?? true
 
-  // Flatten images for the gallery
-  const allImages = category.projects.flatMap((project) =>
-    project.images.map((img) => ({
-      id: img.id,
-      url: img.url,
-      alt: img.alt || project.title,
-      title: project.title,
-      projectSlug: project.slug,
-      width: img.width,
-      height: img.height,
-    }))
-  )
+  // Flatten images and sort globally by categoryGalleryOrder.
+  // Images with a manual cross-project order come first (ascending);
+  // the rest fall back to the per-project `order` field.
+  const allImages = category.projects
+    .flatMap((project) =>
+      project.images.map((img) => ({
+        id: img.id,
+        url: img.url,
+        alt: img.alt || project.title,
+        title: project.title,
+        projectSlug: project.slug,
+        width: img.width,
+        height: img.height,
+        _catOrder: img.categoryGalleryOrder,
+        _order: img.order,
+      }))
+    )
+    .sort((a, b) => {
+      if (a._catOrder != null && b._catOrder != null) return a._catOrder - b._catOrder
+      if (a._catOrder != null) return -1
+      if (b._catOrder != null) return 1
+      return (a._order ?? 0) - (b._order ?? 0)
+    })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(({ _catOrder: _c, _order: _o, ...img }) => img)
 
   return (
     <section className="bg-background w-full transition-colors duration-500">

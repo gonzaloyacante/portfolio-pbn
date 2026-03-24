@@ -27,6 +27,8 @@ interface ImageUploadProps {
   onUploadEnd?: () => void
   maxFiles?: number
   maxSizeMB?: number
+  // UI mode: 'single' forces single-image preview UI, 'gallery' forces multiple/grid UI
+  mode?: 'single' | 'gallery'
 }
 
 interface UseImageUploadOptions {
@@ -336,7 +338,6 @@ function DropZone({
         </div>
         <input
           id={`file-upload-${name}`}
-          name={name}
           type="file"
           className="hidden"
           multiple={multiple}
@@ -422,7 +423,6 @@ function SingleImagePreview({
       </div>
       <input
         id={`file-upload-${name}`}
-        name={name}
         type="file"
         className="hidden"
         multiple={multiple}
@@ -526,10 +526,13 @@ export default function ImageUpload({
   onUploadEnd,
   maxFiles = 20,
   maxSizeMB = 10,
+  mode,
 }: ImageUploadProps) {
   const computeImagesFromProps = (v: string[], ci: string | null | undefined): UploadedImage[] =>
     v.length > 0 ? v.map((url) => ({ url, publicId: '' })) : ci ? [{ url: ci, publicId: '' }] : []
 
+  // Determine effective multiple behavior based on explicit mode prop
+  const effectiveMultiple = mode === 'gallery' ? true : mode === 'single' ? false : multiple
   const [images, setImages] = useState<UploadedImage[]>(() =>
     computeImagesFromProps(value, currentImage)
   )
@@ -566,7 +569,7 @@ export default function ImageUpload({
     onUploadEnd,
   })
 
-  const hasSingleImage = !multiple && images.length > 0 && !images[0].isUploading
+  const hasSingleImage = !effectiveMultiple && images.length > 0 && !images[0].isUploading
 
   return (
     <div className="w-full">
@@ -576,7 +579,7 @@ export default function ImageUpload({
         <SingleImagePreview
           imageUrl={images[0].url}
           name={name}
-          multiple={multiple}
+          multiple={effectiveMultiple}
           isUploading={isUploading}
           onEdit={() => handleEditClick(name)}
           onRemove={() => handleRemove(0)}
@@ -588,7 +591,7 @@ export default function ImageUpload({
       ) : (
         <DropZone
           name={name}
-          multiple={multiple}
+          multiple={effectiveMultiple}
           isDragging={isDragging}
           isUploading={isUploading}
           maxSizeMB={maxSizeMB}

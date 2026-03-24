@@ -3,10 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/utils/validators.dart';
+import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/loading_overlay.dart';
+import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/shimmer_loader.dart';
 import '../../services/providers/services_provider.dart';
 import '../data/booking_model.dart';
 import '../providers/calendar_provider.dart';
+import '../../../core/theme/app_radius.dart';
 
 class BookingFormPage extends ConsumerStatefulWidget {
   const BookingFormPage({super.key});
@@ -40,10 +45,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
   Future<void> _pickDateTime() async {
     final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: _date ?? now,
-      firstDate: DateTime(2020),
+      initialDate: _date != null && _date!.isAfter(today) ? _date! : today,
+      firstDate: today,
       lastDate: DateTime(2035),
     );
     if (pickedDate == null || !mounted) return;
@@ -115,8 +121,15 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   Widget _buildServiceSelector() {
     final servicesAsync = ref.watch(servicesListProvider());
     return servicesAsync.when(
-      loading: () => const LinearProgressIndicator(),
-      error: (e, _) => Text('Error al cargar servicios: $e'),
+      loading: () => const ShimmerBox(
+        width: double.infinity,
+        height: 56,
+        borderRadius: 12,
+      ),
+      error: (err, _) => ErrorState(
+        message: 'No se pudieron cargar los servicios',
+        onRetry: () => ref.invalidate(servicesListProvider()),
+      ),
       data: (paginated) {
         final services = paginated.data;
         if (services.isEmpty) {
@@ -133,18 +146,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
               .map(
                 (s) => DropdownMenuItem(
                   value: s.id,
-                  child: Row(
-                    children: [
-                      if (s.iconName != null &&
-                          s.iconName!.runes.length <= 2) ...[
-                        Text(s.iconName!, style: const TextStyle(fontSize: 18)),
-                        const SizedBox(width: 8),
-                      ],
-                      Flexible(
-                        child: Text(s.name, overflow: TextOverflow.ellipsis),
-                      ),
-                    ],
-                  ),
+                  child: Text(s.name, overflow: TextOverflow.ellipsis),
                 ),
               )
               .toList(),
@@ -184,128 +186,113 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             padding: const EdgeInsets.all(16),
             children: [
               // ── Datos del cliente ────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Datos del cliente',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Datos del cliente',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _clientNameCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Nombre *',
-                        ),
-                        validator: (v) =>
-                            (v == null || v.isEmpty) ? 'Obligatorio' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _clientNameCtrl,
+                      decoration: const InputDecoration(labelText: 'Nombre *'),
+                      textCapitalization: TextCapitalization.words,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
+                        if (v.trim().length < 2) return 'Mínimo 2 caracteres';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _clientEmailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(labelText: 'Email *'),
+                      validator: AppValidators.email,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _clientPhoneCtrl,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(labelText: 'Teléfono'),
+                      validator: AppValidators.phone,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _guestCountCtrl,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: 'Nº de asistentes',
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _clientEmailCtrl,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(labelText: 'Email *'),
-                        validator: (v) {
-                          if (v == null || v.isEmpty) return 'Obligatorio';
-                          if (!v.contains('@')) return 'Email inválido';
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _clientPhoneCtrl,
-                        keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(
-                          labelText: 'Teléfono',
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _guestCountCtrl,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Nº de asistentes',
-                        ),
-                      ),
-                    ],
-                  ),
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) return null;
+                        final n = int.tryParse(v.trim());
+                        if (n == null || n < 1) return 'Mínimo 1 asistente';
+                        if (n > 999) return 'Máximo 999 asistentes';
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
               // ── Fecha y hora ─────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                padding: EdgeInsets.zero,
                 child: ListTile(
                   leading: const Icon(Icons.calendar_month_outlined),
                   title: Text(dateLabel),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _pickDateTime,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
                 ),
               ),
               const SizedBox(height: 12),
               // ── Servicio ─────────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Servicio',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Servicio',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
-                      _buildServiceSelector(),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildServiceSelector(),
+                  ],
                 ),
               ),
               const SizedBox(height: 12),
               // ── Notas ────────────────────────────────────────────────────
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Notas',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Notas',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _notesCtrl,
-                        maxLines: 4,
-                        decoration: const InputDecoration(
-                          hintText: 'Observaciones, peticiones especiales…',
-                          border: OutlineInputBorder(),
-                        ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: _notesCtrl,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        hintText: 'Observaciones, peticiones especiales…',
+                        border: OutlineInputBorder(),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 24),

@@ -74,7 +74,7 @@ class AppTheme {
         foregroundColor: foreground,
         elevation: 0,
         scrolledUnderElevation: 1,
-        shadowColor: border.withAlpha(80),
+        shadowColor: border.withValues(alpha: 80 / 255),
         centerTitle: false,
         titleTextStyle: AppTypography.textTheme(
           brightness,
@@ -89,7 +89,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.forCard,
-          side: BorderSide(color: border.withAlpha(180)),
+          side: BorderSide(color: border.withValues(alpha: 180 / 255)),
         ),
         margin: const EdgeInsets.all(0),
         surfaceTintColor: Colors.transparent,
@@ -158,7 +158,7 @@ class AppTheme {
         labelStyle: AppTypography.textTheme(brightness).bodyMedium,
         hintStyle: AppTypography.textTheme(
           brightness,
-        ).bodyMedium?.copyWith(color: foreground.withAlpha(102)),
+        ).bodyMedium?.copyWith(color: foreground.withValues(alpha: 102 / 255)),
       ),
 
       // ── Divider ─────────────────────────────────────────────────────────
@@ -168,7 +168,7 @@ class AppTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: card,
         selectedItemColor: primary,
-        unselectedItemColor: foreground.withAlpha(102),
+        unselectedItemColor: foreground.withValues(alpha: 102 / 255),
         elevation: 0,
         type: BottomNavigationBarType.fixed,
       ),
@@ -179,7 +179,7 @@ class AppTheme {
         selectedColor: secondary,
         labelStyle: AppTypography.textTheme(brightness).labelSmall,
         shape: const StadiumBorder(),
-        side: BorderSide(color: border.withAlpha(150)),
+        side: BorderSide(color: border.withValues(alpha: 150 / 255)),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       ),
 
@@ -191,7 +191,7 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return primary.withAlpha(77);
+            return primary.withValues(alpha: 77 / 255);
           }
           return muted;
         }),

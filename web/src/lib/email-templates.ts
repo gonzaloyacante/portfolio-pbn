@@ -1,6 +1,16 @@
 import { EMAIL_BRAND_COLORS, EMAIL_NEUTRAL_COLORS } from '@/lib/design-tokens'
 import { ROUTES } from '@/config/routes'
 
+/** Escapes HTML special characters to prevent XSS in email templates. */
+function esc(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+}
+
 export const EMAIL_STYLES = {
   fontFamily: "font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;",
   body: `margin: 0; padding: 0; background-color: ${EMAIL_NEUTRAL_COLORS.bodyBg}; width: 100%;`,
@@ -33,9 +43,13 @@ export const COLORS = {
 interface BaseTemplateProps {
   title: string
   children: string
+  ownerName?: string
+  siteName?: string
 }
 
-function generateEmailHtml({ title, children }: BaseTemplateProps): string {
+function generateEmailHtml({ title, children, ownerName, siteName }: BaseTemplateProps): string {
+  const displayName = ownerName || 'Paola Bolívar Nievas'
+  const displaySite = siteName || 'Portfolio Profesional'
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -52,8 +66,8 @@ function generateEmailHtml({ title, children }: BaseTemplateProps): string {
 <body style="${EMAIL_STYLES.fontFamily} ${EMAIL_STYLES.body}">
   <div style="${EMAIL_STYLES.container}" class="container">
     <div style="${EMAIL_STYLES.header}">
-      <h1 style="${EMAIL_STYLES.logo}">Paola Bolívar Nievas</h1>
-      <p style="${EMAIL_STYLES.subhead}">Portfolio Profesional</p>
+      <h1 style="${EMAIL_STYLES.logo}">${displayName}</h1>
+      <p style="${EMAIL_STYLES.subhead}">${displaySite}</p>
     </div>
 
     <div style="${EMAIL_STYLES.content}">
@@ -62,7 +76,7 @@ function generateEmailHtml({ title, children }: BaseTemplateProps): string {
     </div>
 
     <div style="${EMAIL_STYLES.footer}">
-      <p style="margin-bottom: 8px;">© ${new Date().getFullYear()} Paola Bolívar Nievas. Todos los derechos reservados.</p>
+      <p style="margin-bottom: 8px;">© ${new Date().getFullYear()} ${displayName}. Todos los derechos reservados.</p>
       <p style="margin: 0;">Este correo fue enviado automáticamente desde tu portfolio.</p>
     </div>
   </div>
@@ -83,9 +97,13 @@ export const getContactMessageEmail = (params: {
   phone?: string
   message: string
   preference: string
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '✨ Nuevo Mensaje de Contacto',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Recibiste un nuevo mensaje a través del formulario de contacto de tu sitio web.
@@ -95,13 +113,13 @@ export const getContactMessageEmail = (params: {
       <div style="${EMAIL_STYLES.box}">
         <div style="margin-bottom: 20px;">
           <span style="${EMAIL_STYLES.label}">Nombre</span>
-          <p style="${EMAIL_STYLES.value}">${params.name}</p>
+          <p style="${EMAIL_STYLES.value}">${esc(params.name)}</p>
         </div>
         
         <div style="margin-bottom: 20px;">
           <span style="${EMAIL_STYLES.label}">Email</span>
           <p style="${EMAIL_STYLES.value}">
-            <a href="mailto:${params.email}" style="color: inherit; text-decoration: none;">${params.email}</a>
+            <a href="mailto:${esc(params.email)}" style="color: inherit; text-decoration: none;">${esc(params.email)}</a>
           </p>
         </div>
 
@@ -111,7 +129,7 @@ export const getContactMessageEmail = (params: {
         <div style="margin-bottom: 20px;">
           <span style="${EMAIL_STYLES.label}">Teléfono</span>
           <p style="${EMAIL_STYLES.value}">
-             <a href="tel:${params.phone}" style="color: inherit; text-decoration: none;">${params.phone}</a>
+             <a href="tel:${esc(params.phone)}" style="color: inherit; text-decoration: none;">${esc(params.phone)}</a>
           </p>
         </div>`
             : ''
@@ -119,12 +137,12 @@ export const getContactMessageEmail = (params: {
 
         <div style="margin-bottom: 20px;">
           <span style="${EMAIL_STYLES.label}">Preferencia de Contacto</span>
-          <p style="${EMAIL_STYLES.value}">${params.preference}</p>
+          <p style="${EMAIL_STYLES.value}">${esc(params.preference)}</p>
         </div>
 
         <div>
           <span style="${EMAIL_STYLES.label}">Mensaje</span>
-          <p style="${EMAIL_STYLES.value}; white-space: pre-wrap;">"${params.message}"</p>
+          <p style="${EMAIL_STYLES.value}; white-space: pre-wrap;">"${esc(params.message)}"</p>
         </div>
       </div>
 
@@ -143,9 +161,13 @@ export const getContactMessageEmail = (params: {
 export const getPasswordResetEmail = (params: {
   resetUrl: string
   ipAddress?: string // Optional security context
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '🔐 Recuperación de Contraseña',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Recibimos una solicitud para restablecer la contraseña de tu cuenta de administrador.
@@ -166,7 +188,7 @@ export const getPasswordResetEmail = (params: {
         params.ipAddress
           ? `
       <div style="text-align: center; margin-top: 32px; font-size: 12px; color: ${EMAIL_NEUTRAL_COLORS.footerText};">
-        Solicitado desde IP: ${params.ipAddress}
+        Solicitado desde IP: ${esc(params.ipAddress)}
       </div>`
           : ''
       }
@@ -187,9 +209,13 @@ export const getLoginAlertEmail = (params: {
   ipAddress: string
   userAgent: string
   location?: string
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '🛡️ Alerta de Nuevo Inicio de Sesión',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Detectamos un nuevo inicio de sesión en tu panel de administración.
@@ -204,7 +230,7 @@ export const getLoginAlertEmail = (params: {
 
         <div style="margin-bottom: 16px;">
           <span style="${EMAIL_STYLES.label}">Dirección IP</span>
-          <p style="${EMAIL_STYLES.value}">${params.ipAddress}</p>
+          <p style="${EMAIL_STYLES.value}">${esc(params.ipAddress)}</p>
         </div>
 
         ${
@@ -212,14 +238,14 @@ export const getLoginAlertEmail = (params: {
             ? `
         <div style="margin-bottom: 16px;">
           <span style="${EMAIL_STYLES.label}">Ubicación Aproximada</span>
-          <p style="${EMAIL_STYLES.value}">${params.location}</p>
+          <p style="${EMAIL_STYLES.value}">${esc(params.location)}</p>
         </div>`
             : ''
         }
 
         <div>
           <span style="${EMAIL_STYLES.label}">Dispositivo / Navegador</span>
-          <p style="${EMAIL_STYLES.value}; font-size: 14px;">${params.userAgent}</p>
+          <p style="${EMAIL_STYLES.value}; font-size: 14px;">${esc(params.userAgent)}</p>
         </div>
       </div>
 
@@ -248,9 +274,13 @@ export const getTestimonialAlertEmail = (params: {
   rating: number
   text: string
   email?: string
+  ownerName?: string
+  siteName?: string
 }) => {
   return generateEmailHtml({
     title: '🌟 Nuevo Testimonio Recibido',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Un cliente ha dejado un nuevo testimonio en tu sitio web.
@@ -260,7 +290,7 @@ export const getTestimonialAlertEmail = (params: {
       <div style="${EMAIL_STYLES.box}">
         <div style="margin-bottom: 16px;">
           <span style="${EMAIL_STYLES.label}">Cliente</span>
-          <p style="${EMAIL_STYLES.value}">${params.name} ${params.email ? `(${params.email})` : ''}</p>
+          <p style="${EMAIL_STYLES.value}">${esc(params.name)} ${params.email ? `(${esc(params.email)})` : ''}</p>
         </div>
 
         <div style="margin-bottom: 16px;">
@@ -270,7 +300,7 @@ export const getTestimonialAlertEmail = (params: {
 
         <div>
            <span style="${EMAIL_STYLES.label}">Mensaje</span>
-           <p style="${EMAIL_STYLES.value}; font-style: italic;">"${params.text}"</p>
+           <p style="${EMAIL_STYLES.value}; font-style: italic;">"${esc(params.text)}"</p>
         </div>
       </div>
 
@@ -293,6 +323,8 @@ export const getBookingAlertEmail = (params: {
   clientPhone?: string
   serviceId: string // Ideally service name, but ID for now or resolved before passing
   notes?: string
+  ownerName?: string
+  siteName?: string
 }) => {
   const dateString = params.date.toLocaleString('es-ES', {
     dateStyle: 'full',
@@ -302,6 +334,8 @@ export const getBookingAlertEmail = (params: {
 
   return generateEmailHtml({
     title: '📅 Nueva Reserva Recibida',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
         Tienes una nueva solicitud de reserva pendiente de confirmación.
@@ -310,13 +344,13 @@ export const getBookingAlertEmail = (params: {
       <div style="${EMAIL_STYLES.box}">
         <div style="margin-bottom: 16px;">
           <span style="${EMAIL_STYLES.label}">Cliente</span>
-          <p style="${EMAIL_STYLES.value}">${params.clientName}</p>
+          <p style="${EMAIL_STYLES.value}">${esc(params.clientName)}</p>
           <p style="${EMAIL_STYLES.value}; font-size: 14px; font-weight: normal;">
-            <a href="mailto:${params.clientEmail}" style="color: inherit;">${params.clientEmail}</a>
+            <a href="mailto:${esc(params.clientEmail)}" style="color: inherit;">${esc(params.clientEmail)}</a>
           </p>
           ${
             params.clientPhone
-              ? `<p style="${EMAIL_STYLES.value}; font-size: 14px; font-weight: normal;">${params.clientPhone}</p>`
+              ? `<p style="${EMAIL_STYLES.value}; font-size: 14px; font-weight: normal;">${esc(params.clientPhone)}</p>`
               : ''
           }
         </div>
@@ -328,7 +362,7 @@ export const getBookingAlertEmail = (params: {
 
         <div style="margin-bottom: 16px;">
            <span style="${EMAIL_STYLES.label}">Servicio (ID)</span>
-           <p style="${EMAIL_STYLES.value}">${params.serviceId}</p>
+           <p style="${EMAIL_STYLES.value}">${esc(params.serviceId)}</p>
         </div>
 
         ${
@@ -336,7 +370,7 @@ export const getBookingAlertEmail = (params: {
             ? `
         <div>
            <span style="${EMAIL_STYLES.label}">Notas Adicionales</span>
-           <p style="${EMAIL_STYLES.value}; font-style: italic;">"${params.notes}"</p>
+           <p style="${EMAIL_STYLES.value}; font-style: italic;">"${esc(params.notes)}"</p>
         </div>`
             : ''
         }
@@ -354,7 +388,12 @@ export const getBookingAlertEmail = (params: {
 /**
  * 6. Booking Confirmation (Client)
  */
-export const getBookingConfirmationEmail = (params: { clientName: string; date: Date }) => {
+export const getBookingConfirmationEmail = (params: {
+  clientName: string
+  date: Date
+  ownerName?: string
+  siteName?: string
+}) => {
   const dateString = params.date.toLocaleString('es-ES', {
     dateStyle: 'full',
     timeStyle: 'short',
@@ -363,9 +402,11 @@ export const getBookingConfirmationEmail = (params: { clientName: string; date: 
 
   return generateEmailHtml({
     title: 'Reserva Recibida',
+    ownerName: params.ownerName,
+    siteName: params.siteName,
     children: `
       <p style="${EMAIL_STYLES.text}">
-        Hola ${params.clientName},
+        Hola ${esc(params.clientName)},
       </p>
       <p style="${EMAIL_STYLES.text}">
         Hemos recibido tu solicitud de reserva correctamente.

@@ -13,8 +13,8 @@ void main() {
     testWidgets('renders all provided children', (tester) async {
       await tester.pumpWidget(
         _wrap(
-          AdaptiveFormLayout(
-            children: const [Text('Campo 1'), Text('Campo 2'), Text('Campo 3')],
+          const AdaptiveFormLayout(
+            children: [Text('Campo 1'), Text('Campo 2'), Text('Campo 3')],
           ),
         ),
       );
@@ -25,7 +25,7 @@ void main() {
 
     testWidgets('renders single child without error', (tester) async {
       await tester.pumpWidget(
-        _wrap(AdaptiveFormLayout(children: const [Text('Solo')])),
+        _wrap(const AdaptiveFormLayout(children: [Text('Solo')])),
       );
       expect(find.text('Solo'), findsOneWidget);
     });
@@ -72,9 +72,9 @@ void main() {
     ) async {
       await tester.pumpWidget(
         _wrap(
-          AdaptiveFormLayout(
+          const AdaptiveFormLayout(
             twoColumnBreakpoint: 600,
-            children: const [Text('A'), Text('B')],
+            children: [Text('A'), Text('B')],
           ),
           width: 400,
         ),
@@ -90,9 +90,9 @@ void main() {
     ) async {
       await tester.pumpWidget(
         _wrap(
-          AdaptiveFormLayout(
+          const AdaptiveFormLayout(
             twoColumnBreakpoint: 600,
-            children: const [Text('Izquierda'), Text('Derecha')],
+            children: [Text('Izquierda'), Text('Derecha')],
           ),
           width: 800,
         ),
@@ -106,9 +106,9 @@ void main() {
     ) async {
       await tester.pumpWidget(
         _wrap(
-          AdaptiveFormLayout(
+          const AdaptiveFormLayout(
             twoColumnBreakpoint: 600,
-            children: const [Text('A'), Text('B'), Text('C')],
+            children: [Text('A'), Text('B'), Text('C')],
           ),
           width: 800,
         ),
@@ -125,10 +125,10 @@ void main() {
     ) async {
       await tester.pumpWidget(
         _wrap(
-          AdaptiveFormLayout(
+          const AdaptiveFormLayout(
             mainAxisSpacing: 32,
             crossAxisSpacing: 32,
-            children: const [Text('X'), Text('Y')],
+            children: [Text('X'), Text('Y')],
           ),
         ),
       );

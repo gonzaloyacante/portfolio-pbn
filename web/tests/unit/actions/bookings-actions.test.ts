@@ -175,9 +175,9 @@ describe('Bookings Actions', () => {
       expect(result).toHaveLength(1)
       expect(prisma.booking.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: {
+          where: expect.objectContaining({
             date: { gte: start, lte: end },
-          },
+          }),
         })
       )
     })

@@ -54,8 +54,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-foreground text-3xl font-bold">Gestión de Servicios</h1>
+      <div className="flex justify-end">
         <Button onClick={handleCreate} className="gap-2">
           <Plus size={18} />
           Nuevo Servicio
@@ -86,7 +85,6 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
                     </Badge>
                     {s.isFeatured && <Badge variant="warning">⭐ Destacado</Badge>}
                   </div>
-                  <p className="text-muted-foreground text-sm">/{s.slug}</p>
                   {s.description && (
                     <p className="text-muted-foreground line-clamp-2 text-sm">{s.description}</p>
                   )}

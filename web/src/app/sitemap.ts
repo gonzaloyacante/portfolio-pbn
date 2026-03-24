@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic projects
   const projects = await prisma.project.findMany({
-    where: { isDeleted: false, isActive: true },
+    where: { deletedAt: null, isActive: true },
     select: {
       slug: true,
       updatedAt: true,

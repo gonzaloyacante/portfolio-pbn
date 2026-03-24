@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'app_card.dart';
 
 // ── LoadingOverlay ────────────────────────────────────────────────────────────
 
@@ -33,30 +34,26 @@ class LoadingOverlay extends StatelessWidget {
             child: ColoredBox(
               color: Colors.black.withValues(alpha: 0.4),
               child: Center(
-                child: Card(
+                child: AppCard(
                   elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 28,
+                    vertical: 24,
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 24,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircularProgressIndicator(),
-                        if (message != null) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            message!,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      if (message != null) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          message!,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          textAlign: TextAlign.center,
+                        ),
                       ],
-                    ),
+                    ],
                   ),
                 ),
               ),

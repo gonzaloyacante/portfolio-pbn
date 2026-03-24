@@ -149,6 +149,7 @@ const List<_NavItem> _allNavItems = [
     icon: Icons.delete_outline,
     selectedIcon: Icons.delete,
     label: 'Papelera',
+    childRoutes: [RouteNames.trashDetail],
   ),
   _NavItem(
     routeName: RouteNames.appSettings,
@@ -592,7 +593,7 @@ class AppDrawer extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                 children: [
-                  _SectionLabel(label: 'CONTENIDO'),
+                  const _SectionLabel(label: 'CONTENIDO'),
                   ..._buildItems(
                     context,
                     items: _allNavItems.sublist(0, 9),
@@ -601,7 +602,7 @@ class AppDrawer extends ConsumerWidget {
                     badgeCounts: badgeCounts,
                   ),
                   const SizedBox(height: AppSpacing.sm),
-                  _SectionLabel(label: 'CONFIGURACIÓN'),
+                  const _SectionLabel(label: 'CONFIGURACIÓN'),
                   ..._buildItems(
                     context,
                     items: _allNavItems.sublist(9),
@@ -676,19 +677,9 @@ class _DrawerHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            colorScheme.primary.withValues(alpha: 0.12),
-            colorScheme.primary.withValues(alpha: 0.04),
-          ],
-        ),
-      ),
       padding: EdgeInsets.fromLTRB(
         AppSpacing.base,
-        AppSpacing.xl + MediaQuery.of(context).padding.top,
+        AppSpacing.xl + MediaQuery.paddingOf(context).top,
         AppSpacing.base,
         AppSpacing.lg,
       ),

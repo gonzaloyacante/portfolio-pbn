@@ -37,8 +37,8 @@ export async function POST(req: Request, { params }: Params) {
     const { id } = await params
 
     const project = await prisma.project.findFirst({
-      where: { id, isDeleted: false },
-      select: { id: true },
+      where: { id, deletedAt: null },
+      select: { id: true, thumbnailUrl: true },
     })
 
     if (!project) {
@@ -57,30 +57,83 @@ export async function POST(req: Request, { params }: Params) {
     const { url, publicId, order, alt, caption, width, height, format, bytes, isCover } =
       parsed.data
 
-    // Si esta imagen es portada, desmarcar la existente
-    if (isCover) {
-      await prisma.projectImage.updateMany({
-        where: { projectId: id, isCover: true },
-        data: { isCover: false },
+    // Ejecutar creación y posible actualización del proyecto en una transacción
+    // para evitar estados intermedios inconsistentes.
+    let image
+    try {
+      if (isCover) {
+        const [, createdImage] = await prisma.$transaction([
+          prisma.projectImage.updateMany({
+            where: { projectId: id, isCover: true },
+            data: { isCover: false },
+          }),
+          prisma.projectImage.create({
+            data: {
+              projectId: id,
+              url,
+              publicId,
+              order,
+              alt: alt ?? null,
+              caption: caption ?? null,
+              width: width ?? null,
+              height: height ?? null,
+              format: format ?? null,
+              bytes: bytes ?? null,
+              isCover,
+            },
+            select: { id: true, url: true, publicId: true, order: true, alt: true, isCover: true },
+          }),
+          prisma.project.update({ where: { id }, data: { thumbnailUrl: url } }),
+        ])
+        image = createdImage
+      } else if (!project.thumbnailUrl) {
+        const [createdImage] = await prisma.$transaction([
+          prisma.projectImage.create({
+            data: {
+              projectId: id,
+              url,
+              publicId,
+              order,
+              alt: alt ?? null,
+              caption: caption ?? null,
+              width: width ?? null,
+              height: height ?? null,
+              format: format ?? null,
+              bytes: bytes ?? null,
+              isCover,
+            },
+            select: { id: true, url: true, publicId: true, order: true, alt: true, isCover: true },
+          }),
+          prisma.project.update({ where: { id }, data: { thumbnailUrl: url } }),
+        ])
+        image = createdImage
+      } else {
+        image = await prisma.projectImage.create({
+          data: {
+            projectId: id,
+            url,
+            publicId,
+            order,
+            alt: alt ?? null,
+            caption: caption ?? null,
+            width: width ?? null,
+            height: height ?? null,
+            format: format ?? null,
+            bytes: bytes ?? null,
+            isCover,
+          },
+          select: { id: true, url: true, publicId: true, order: true, alt: true, isCover: true },
+        })
+      }
+    } catch (txErr) {
+      logger.error('[admin-project-images-post] Transaction failed', {
+        error: txErr instanceof Error ? txErr.message : String(txErr),
       })
+      return NextResponse.json(
+        { success: false, error: 'No se pudo crear la imagen' },
+        { status: 500 }
+      )
     }
-
-    const image = await prisma.projectImage.create({
-      data: {
-        projectId: id,
-        url,
-        publicId,
-        order,
-        alt: alt ?? null,
-        caption: caption ?? null,
-        width: width ?? null,
-        height: height ?? null,
-        format: format ?? null,
-        bytes: bytes ?? null,
-        isCover,
-      },
-      select: { id: true, url: true, publicId: true, order: true, alt: true, isCover: true },
-    })
 
     try {
       revalidatePath(ROUTES.public.projects, 'layout')
@@ -99,7 +152,7 @@ export async function POST(req: Request, { params }: Params) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

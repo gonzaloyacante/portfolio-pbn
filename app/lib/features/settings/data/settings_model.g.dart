@@ -198,6 +198,26 @@ Map<String, dynamic> _$HomeSettingsToJson(_HomeSettings instance) =>
       'isActive': instance.isActive,
     };
 
+_CategoryDisplaySettings _$CategoryDisplaySettingsFromJson(
+  Map<String, dynamic> json,
+) => _CategoryDisplaySettings(
+  id: json['id'] as String?,
+  showDescription: json['showDescription'] as bool? ?? true,
+  showProjectCount: json['showProjectCount'] as bool? ?? true,
+  gridColumns: (json['gridColumns'] as num?)?.toInt() ?? 4,
+  isActive: json['isActive'] as bool? ?? true,
+);
+
+Map<String, dynamic> _$CategoryDisplaySettingsToJson(
+  _CategoryDisplaySettings instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'showDescription': instance.showDescription,
+  'showProjectCount': instance.showProjectCount,
+  'gridColumns': instance.gridColumns,
+  'isActive': instance.isActive,
+};
+
 _SocialLink _$SocialLinkFromJson(Map<String, dynamic> json) => _SocialLink(
   id: json['id'] as String,
   platform: json['platform'] as String,

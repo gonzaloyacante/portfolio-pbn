@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -19,14 +20,12 @@ const CATEGORY_SELECT = {
   slug: true,
   description: true,
   thumbnailUrl: true,
-  iconName: true,
-  color: true,
+  coverImageUrl: true,
   sortOrder: true,
   isActive: true,
-  projectCount: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
+  _count: { select: { projects: { where: { deletedAt: null } } } },
 } as const
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -65,10 +64,15 @@ export async function GET(req: Request) {
       prisma.category.count({ where }),
     ])
 
+    const mapped = categories.map(({ _count, ...cat }) => ({
+      ...cat,
+      projectCount: _count.projects,
+    }))
+
     return NextResponse.json({
       success: true,
       data: {
-        data: categories,
+        data: mapped,
         pagination: {
           page,
           limit,
@@ -104,7 +108,12 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, slug, description, thumbnailUrl, iconName, color, isActive = true } = parsed.data
+    const { name, slug, description, isActive = true } = parsed.data
+    // Si sólo se proporciona coverImageUrl, generar thumbnailUrl automáticamente.
+    // Si sólo se proporciona thumbnailUrl, usarlo como coverImageUrl también.
+    const coverImageUrl = parsed.data.coverImageUrl ?? parsed.data.thumbnailUrl ?? undefined
+    const thumbnailUrl =
+      parsed.data.thumbnailUrl ?? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : undefined)
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)
@@ -127,8 +136,7 @@ export async function POST(req: Request) {
         slug,
         description,
         thumbnailUrl,
-        iconName,
-        color,
+        coverImageUrl,
         isActive,
         sortOrder: nextOrder,
       },
@@ -153,7 +161,7 @@ export async function POST(req: Request) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

@@ -147,10 +147,11 @@ const nextConfig: NextConfig = {
       { source: '/admin/categorias', destination: '/admin/categories' },
       { source: '/admin/categorias/nueva', destination: '/admin/categories/new' },
       { source: '/admin/categorias/:id/editar', destination: '/admin/categories/:id/edit' },
+      { source: '/admin/categorias/:id/galeria', destination: '/admin/categories/:id/gallery' },
 
       // Testimonios
       { source: '/admin/testimonios', destination: '/admin/testimonials' },
-      // (Si tuvieras /new o /edit, agregarlos aquí)
+      { source: '/admin/testimonios/:id/editar', destination: '/admin/testimonials/:id/edit' },
 
       // Contactos (Mensajes)
       { source: '/admin/contactos', destination: '/admin/contacts' },
@@ -160,6 +161,7 @@ const nextConfig: NextConfig = {
 
       // Configuración General (Settings)
       { source: '/admin/configuracion', destination: '/admin/settings' },
+      { source: '/admin/configuracion/sitio', destination: '/admin/settings/site' },
 
       // Tema
       { source: '/admin/tema', destination: '/admin/theme' },

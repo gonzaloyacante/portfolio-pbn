@@ -62,7 +62,7 @@ void main() {
     testWidgets('shows child directly when isLoading=false', (tester) async {
       await tester.pumpWidget(
         _wrap(
-          ShimmerLoader(isLoading: false, child: const Text('Contenido real')),
+          const ShimmerLoader(isLoading: false, child: Text('Contenido real')),
         ),
       );
       expect(find.text('Contenido real'), findsOneWidget);
@@ -70,7 +70,7 @@ void main() {
 
     testWidgets('wraps child in shimmer when isLoading=true', (tester) async {
       await tester.pumpWidget(
-        _wrap(ShimmerLoader(isLoading: true, child: const SkeletonCard())),
+        _wrap(const ShimmerLoader(isLoading: true, child: SkeletonCard())),
       );
       // Shimmer package renders its widget — verify child is present
       expect(find.byType(SkeletonCard), findsOneWidget);
@@ -78,7 +78,7 @@ void main() {
 
     testWidgets('default isLoading is true', (tester) async {
       await tester.pumpWidget(
-        _wrap(ShimmerLoader(child: const Text('Loading...'))),
+        _wrap(const ShimmerLoader(child: Text('Loading...'))),
       );
       // Widget renders without error
       expect(find.byType(ShimmerLoader), findsOneWidget);
@@ -88,12 +88,12 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        _wrap(ShimmerLoader(isLoading: true, child: const SkeletonCard())),
+        _wrap(const ShimmerLoader(isLoading: true, child: SkeletonCard())),
       );
       expect(find.byType(SkeletonCard), findsOneWidget);
 
       await tester.pumpWidget(
-        _wrap(ShimmerLoader(isLoading: false, child: const Text('Cargado'))),
+        _wrap(const ShimmerLoader(isLoading: false, child: Text('Cargado'))),
       );
       expect(find.text('Cargado'), findsOneWidget);
     });

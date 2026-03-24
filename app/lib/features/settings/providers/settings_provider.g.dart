@@ -252,6 +252,48 @@ final class HomeSettingsProvider
 
 String _$homeSettingsHash() => r'e43afb06a4afc0d5de0c8f060d8e6db152e0771e';
 
+@ProviderFor(categoryDisplaySettings)
+final categoryDisplaySettingsProvider = CategoryDisplaySettingsProvider._();
+
+final class CategoryDisplaySettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<CategoryDisplaySettings>,
+          CategoryDisplaySettings,
+          FutureOr<CategoryDisplaySettings>
+        >
+    with
+        $FutureModifier<CategoryDisplaySettings>,
+        $FutureProvider<CategoryDisplaySettings> {
+  CategoryDisplaySettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'categoryDisplaySettingsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$categoryDisplaySettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<CategoryDisplaySettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<CategoryDisplaySettings> create(Ref ref) {
+    return categoryDisplaySettings(ref);
+  }
+}
+
+String _$categoryDisplaySettingsHash() =>
+    r'8dd6f06133622d4889f6aeda58a77c0310503a66';
+
 @ProviderFor(socialLinks)
 final socialLinksProvider = SocialLinksProvider._();
 

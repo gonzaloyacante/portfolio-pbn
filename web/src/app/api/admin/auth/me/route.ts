@@ -98,6 +98,16 @@ export async function PATCH(req: Request) {
       )
     }
 
+    if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'La contraseña debe contener al menos una mayúscula, una minúscula y un número',
+        },
+        { status: 400 }
+      )
+    }
+
     const user = await prisma.user.findFirst({
       where: { id: userId, isActive: true, deletedAt: null },
       select: { password: true },

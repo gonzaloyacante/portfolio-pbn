@@ -1,8 +1,11 @@
+import { getToken } from 'next-auth/jwt'
+import { type NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+
+import { authOptions } from '@/lib/auth'
 import { logger } from '@/lib/logger'
-import { NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 3600 // Cache for 1 hour
 
 interface GoogleFontItem {
   family: string
@@ -31,7 +34,17 @@ interface GoogleFontsResponse {
  *
  * The API key is FREE with generous quotas (no credit card required)
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // Solo accesible para administradores autenticados
+  const session = await getServerSession(authOptions)
+  const isAuthenticated =
+    !!session ||
+    !!(await getToken({ req, secret: process.env.NEXTAUTH_SECRET }))
+
+  if (!isAuthenticated) {
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
+
   try {
     const apiKey = process.env.GOOGLE_FONTS_API_KEY
 
@@ -63,14 +76,7 @@ export async function GET() {
       const errorText = await response.text()
       logger.error('Google Fonts API error', { status: response.status, details: errorText })
 
-      return NextResponse.json(
-        {
-          error: 'Google Fonts API request failed',
-          status: response.status,
-          details: errorText,
-        },
-        { status: response.status }
-      )
+      return NextResponse.json({ error: 'Error al obtener las fuentes de Google' }, { status: 502 })
     }
 
     const data: GoogleFontsResponse = await response.json()
@@ -87,12 +93,6 @@ export async function GET() {
     return NextResponse.json({ fonts, count: fonts.length })
   } catch (error) {
     logger.error('Error fetching Google Fonts:', { error: error })
-    return NextResponse.json(
-      {
-        error: 'Failed to fetch Google Fonts',
-        message: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }

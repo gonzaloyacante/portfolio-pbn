@@ -8,7 +8,7 @@ import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
-import { Plus, ExternalLink, Pencil, Trash2 } from 'lucide-react'
+import { Plus, ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
 import type { Category } from '@/generated/prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
@@ -38,7 +38,9 @@ export default function CategoriesContent({
     errorMessage: TOAST_MESSAGES.categories.reorder.error,
   })
   const renderCategoryItem = (category: CategoryWithCount, isDragging: boolean) => {
-    const thumbnailUrl = category.projects[0]?.thumbnailUrl
+    // Priority: explicit category cover → category thumbnail → first project thumbnail → empty
+    const thumbnailUrl =
+      category.coverImageUrl || category.thumbnailUrl || category.projects[0]?.thumbnailUrl
 
     if (view === 'grid') {
       return (
@@ -69,7 +71,6 @@ export default function CategoriesContent({
           <div className="space-y-3 p-5">
             <div>
               <h3 className="text-foreground truncate text-lg font-bold">{category.name}</h3>
-              <p className="text-muted-foreground truncate font-mono text-xs">/{category.slug}</p>
             </div>
 
             {category.description && (
@@ -84,23 +85,28 @@ export default function CategoriesContent({
 
             {/* Actions */}
             <div className="border-border mt-auto flex gap-2 border-t pt-4">
-              <Link
-                href={`${ROUTES.public.projects}/${category.slug}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1"
-              >
-                <Button variant="outline" size="sm" className="w-full gap-2">
+              <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
+                <Link
+                  href={`${ROUTES.public.projects}/${category.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <ExternalLink size={14} />
                   Ver
-                </Button>
-              </Link>
-              <Link href={`${ROUTES.admin.categories}/${category.id}/edit`} className="flex-1">
-                <Button size="sm" className="w-full gap-2">
+                </Link>
+              </Button>
+              <Button asChild size="sm" className="flex-1 gap-2">
+                <Link href={ROUTES.admin.editCategory(category.id)}>
                   <Pencil size={14} />
                   Editar
-                </Button>
-              </Link>
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
+                <Link href={ROUTES.admin.categoryGallery(category.id)}>
+                  <Images size={14} />
+                  Galería
+                </Link>
+              </Button>
               <form action={deleteCategoryAction.bind(null, category.id)}>
                 <Button
                   variant="destructive"
@@ -151,7 +157,7 @@ export default function CategoriesContent({
               #{category.sortOrder ?? 0}
             </Badge>
           </div>
-          <p className="text-muted-foreground font-mono text-xs">/{category.slug}</p>
+
           <div className="text-muted-foreground mt-1 text-xs">
             {category._count.projects} proyectos
           </div>
@@ -159,24 +165,35 @@ export default function CategoriesContent({
 
         {/* Actions */}
         <div className="flex items-center gap-1">
-          <Link
-            href={`${ROUTES.public.projects}/${category.slug}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            aria-label={`Ver categoría ${category.name} en público`}
           >
-            <Button
-              variant="ghost"
-              size="sm"
-              aria-label={`Ver categoría ${category.name} en público`}
+            <Link
+              href={`${ROUTES.public.projects}/${category.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <ExternalLink size={16} />
-            </Button>
-          </Link>
-          <Link href={`${ROUTES.admin.categories}/${category.id}/edit`}>
-            <Button variant="ghost" size="sm" aria-label={`Editar categoría ${category.name}`}>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            aria-label={`Editar categoría ${category.name}`}
+          >
+            <Link href={ROUTES.admin.editCategory(category.id)}>
               <Pencil size={16} />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" aria-label={`Ver galería de ${category.name}`}>
+            <Link href={ROUTES.admin.categoryGallery(category.id)}>
+              <Images size={16} />
+            </Link>
+          </Button>
           <form action={deleteCategoryAction.bind(null, category.id)}>
             <Button
               variant="ghost"
@@ -222,12 +239,12 @@ export default function CategoriesContent({
               <p className="text-muted-foreground mb-6">
                 Crea tu primera categoría para organizar tus proyectos
               </p>
-              <Link href={`${ROUTES.admin.categories}/new`}>
-                <Button className="gap-2">
+              <Button asChild className="gap-2">
+                <Link href={ROUTES.admin.newCategory}>
                   <Plus size={16} />
                   Nueva Categoría
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </Card>
           )}
         </motion.div>

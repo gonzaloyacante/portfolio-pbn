@@ -9,12 +9,12 @@ import { ArrowLeft, Calendar } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 
-// ISR on-demand: solo se regenera cuando revalidatePath('/proyectos', 'layout') es llamado
-export const revalidate = 0
+// ISR on-demand: cache permanente, se regenera solo cuando revalidatePath() es llamado desde Server Actions
+export const revalidate = false
 
 export async function generateStaticParams() {
   const projects = await prisma.project.findMany({
-    where: { isActive: true, isDeleted: false },
+    where: { isActive: true, deletedAt: null },
     select: { slug: true, category: { select: { slug: true } } },
   })
   return projects.map((p) => ({ category: p.category?.slug ?? '', project: p.slug }))
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 // React.cache deduplica la consulta entre generateMetadata y el componente de página
 const getProject = cache((slug: string) =>
   prisma.project.findFirst({
-    where: { slug, isActive: true, isDeleted: false },
+    where: { slug, isActive: true, deletedAt: null },
     include: {
       category: true,
       images: { orderBy: { order: 'asc' } },
@@ -36,7 +36,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ category: string; project: string }>
 }): Promise<Metadata> {
-  const { project: projectSlug } = await params
+  const { project: projectSlug, category: categorySlug } = await params
   const project = await getProject(projectSlug)
 
   if (!project) {
@@ -48,7 +48,7 @@ export async function generateMetadata({
     description: project.metaDescription || project.description.substring(0, 160),
     keywords: project.metaKeywords,
     alternates: {
-      canonical: project.canonicalUrl || undefined,
+      canonical: project.canonicalUrl || `/proyectos/${categorySlug}/${projectSlug}`,
     },
     openGraph: {
       title: project.metaTitle || project.title,

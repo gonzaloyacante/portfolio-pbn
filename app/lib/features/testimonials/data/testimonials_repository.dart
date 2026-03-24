@@ -37,6 +37,9 @@ class TestimonialsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al obtener testimonios');
+    }
     return PaginatedResponse<TestimonialItem>.fromJson(
       apiResp.data!,
       (e) => TestimonialItem.fromJson(e as Map<String, dynamic>),
@@ -53,6 +56,9 @@ class TestimonialsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Testimonio no encontrado');
+    }
     return TestimonialDetail.fromJson(apiResp.data!);
   }
 
@@ -67,6 +73,9 @@ class TestimonialsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al crear testimonio');
+    }
     return TestimonialDetail.fromJson(apiResp.data!);
   }
 
@@ -84,10 +93,19 @@ class TestimonialsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al actualizar testimonio');
+    }
     return TestimonialDetail.fromJson(apiResp.data!);
   }
 
   Future<void> deleteTestimonial(String id) async {
-    await _client.delete<Map<String, dynamic>>(Endpoints.testimonial(id));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.testimonial(id),
+    );
+    final apiResp = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResp.success) {
+      throw Exception(apiResp.error ?? 'Error al eliminar testimonio');
+    }
   }
 }

@@ -275,6 +275,7 @@ export const categorySettingsSchema = z.object({
   showDescription: z.boolean().default(true),
   showProjectCount: z.boolean().default(true),
   gridColumns: z.number().min(1).max(5).default(4),
+  isActive: z.boolean().default(true),
 })
 
 export type CategorySettingsFormData = z.infer<typeof categorySettingsSchema>
@@ -306,6 +307,7 @@ export const projectFormSchema = z.object({
   layout: z.string().optional().nullable(),
   isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(), // Handle boolean or string 'on'/'true'
   isPinned: z.union([z.boolean(), z.string()]).optional().nullable(),
+  isActive: z.union([z.boolean(), z.string()]).optional().nullable(),
 })
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>
@@ -315,7 +317,7 @@ export const projectApiSchema = z.object({
   title: z.string().min(3).max(200),
   description: z.string().optional().nullable(),
   categoryId: z.string().min(1, 'Categoría requerida'),
-  date: z.string(),
+  date: z.string().optional(), // Defaults to today on the server if not provided
   thumbnailUrl: z.string().optional().nullable(),
   excerpt: z.string().optional().nullable(),
   videoUrl: z.string().optional().nullable(),
@@ -370,7 +372,10 @@ export const pushUnregisterSchema = z.object({
 
 export const serviceApiSchema = z.object({
   name: z.string().min(1, 'El nombre es obligatorio'),
-  slug: z.string().min(1, 'El slug es obligatorio').regex(/^[a-z0-9-]+$/, 'Slug inválido'),
+  slug: z
+    .string()
+    .min(1, 'El slug es obligatorio')
+    .regex(/^[a-z0-9-]+$/, 'Slug inválido'),
   description: z.string().optional().nullable(),
   shortDesc: z.string().optional().nullable(),
   price: z.number().optional().nullable(),
@@ -378,8 +383,6 @@ export const serviceApiSchema = z.object({
   currency: z.string().optional().nullable(),
   duration: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
-  iconName: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
 })
@@ -387,8 +390,6 @@ export const serviceApiSchema = z.object({
 // ── Category (API — extends base categorySchema) ────────────────────────────
 
 export const categoryApiSchema = categorySchema.extend({
-  iconName: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
 })
 
@@ -436,10 +437,22 @@ export const bookingApiSchema = z.object({
 export const contactUpdateApiSchema = z.object({
   status: z.enum(['PENDING', 'READ', 'REPLIED', 'ARCHIVED']).optional(),
   priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']).optional(),
-  assignedTo: z.string().optional().nullable().transform((v) => v ?? undefined),
+  assignedTo: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((v) => v ?? undefined),
   isRead: z.boolean().optional(),
-  replyText: z.string().optional().nullable().transform((v) => v ?? undefined),
-  adminNote: z.string().optional().nullable().transform((v) => v ?? undefined),
+  replyText: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((v) => v ?? undefined),
+  adminNote: z
+    .string()
+    .optional()
+    .nullable()
+    .transform((v) => v ?? undefined),
   tags: z.array(z.string()).optional(),
 })
 
@@ -456,26 +469,33 @@ export const socialLinkApiSchema = z.object({
 
 // ── Auth /me update ─────────────────────────────────────────────────────────
 
-export const authMeUpdateSchema = z.object({
-  currentPassword: z.string().optional(),
-  newPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
-}).refine(
-  (data) => {
-    // If newPassword is set, currentPassword must also be set
-    if (data.newPassword && !data.currentPassword) return false
-    return true
-  },
-  { message: 'Debes indicar la contraseña actual para cambiarla', path: ['currentPassword'] }
-)
+export const authMeUpdateSchema = z
+  .object({
+    currentPassword: z.string().optional(),
+    newPassword: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres').optional(),
+    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
+  })
+  .refine(
+    (data) => {
+      // If newPassword is set, currentPassword must also be set
+      if (data.newPassword && !data.currentPassword) return false
+      return true
+    },
+    { message: 'Debes indicar la contraseña actual para cambiarla', path: ['currentPassword'] }
+  )
 
 // ── Reorder ─────────────────────────────────────────────────────────────────
 
 export const reorderSchema = z.object({
-  items: z.array(z.object({
-    id: z.string().min(1),
-    sortOrder: z.number().int(),
-  })).min(1, 'Se requiere al menos un elemento'),
+  items: z
+    .array(
+      z.object({
+        id: z.string().min(1),
+        sortOrder: z.number().int(),
+      })
+    )
+    .min(1, 'Se requiere al menos un elemento')
+    .max(200, 'No se pueden reordenar más de 200 elementos a la vez'),
 })
 
 // ── App Release ─────────────────────────────────────────────────────────────
@@ -484,27 +504,77 @@ export const appReleaseApiSchema = z.object({
   version: z.string().min(1, 'La versión es obligatoria'),
   versionCode: z.number().int().positive(),
   releaseNotes: z.string().min(1, 'releaseNotes es obligatorio'),
-  downloadUrl: z.string().url('URL de descarga inválida').refine(
-    (u) => u.startsWith('https://'),
-    'La URL de descarga debe ser HTTPS'
-  ),
+  downloadUrl: z
+    .string()
+    .url('URL de descarga inválida')
+    .refine((u) => u.startsWith('https://'), 'La URL de descarga debe ser HTTPS'),
   checksumSha256: z.string().optional().nullable(),
   mandatory: z.boolean().optional(),
   minVersion: z.string().optional().nullable(),
   fileSizeBytes: z.number().int().positive().optional().nullable(),
 })
 
-export const appReleaseDeleteSchema = z.object({
-  id: z.string().optional(),
-  version: z.string().optional(),
-  downloadUrl: z.string().optional(),
-}).refine(
-  (data) => data.id || data.version || data.downloadUrl,
-  { message: 'Se requiere al menos un identificador (id, version o downloadUrl)' }
-)
+export const appReleaseDeleteSchema = z
+  .object({
+    id: z.string().optional(),
+    version: z.string().optional(),
+    downloadUrl: z.string().optional(),
+  })
+  .refine((data) => data.id || data.version || data.downloadUrl, {
+    message: 'Se requiere al menos un identificador (id, version o downloadUrl)',
+  })
 
 // ── Upload ──────────────────────────────────────────────────────────────────
 
 export const uploadDeleteSchema = z.object({
   publicId: z.string().min(1, 'publicId es requerido'),
 })
+
+// ── Partial schemas for PATCH endpoints ─────────────────────────────────────
+
+export const projectPatchSchema = projectApiSchema
+  .extend({
+    slug: z.string().optional(),
+    ogImage: z.string().optional().nullable(),
+    isActive: z.boolean().optional(),
+  })
+  .partial()
+
+export const categoryPatchSchema = categoryApiSchema
+  .extend({
+    metaTitle: z.string().optional().nullable(),
+    metaDescription: z.string().optional().nullable(),
+    metaKeywords: z.array(z.string()).optional(),
+    ogImage: z.string().optional().nullable(),
+  })
+  .partial()
+
+export const servicePatchSchema = serviceApiSchema
+  .extend({
+    currency: z.string().optional(),
+    durationMinutes: z.number().optional().nullable(),
+    isAvailable: z.boolean().optional(),
+    maxBookingsPerDay: z.number().optional().nullable(),
+    advanceNoticeDays: z.number().optional().nullable(),
+    sortOrder: z.number().optional(),
+    metaTitle: z.string().optional().nullable(),
+    metaDescription: z.string().optional().nullable(),
+    metaKeywords: z.array(z.string()).optional(),
+    requirements: z.string().optional().nullable(),
+    cancellationPolicy: z.string().optional().nullable(),
+  })
+  .partial()
+
+export const testimonialPatchSchema = testimonialApiSchema
+  .extend({
+    sortOrder: z.number().optional(),
+  })
+  .partial()
+
+export const bookingPatchSchema = bookingApiSchema
+  .extend({
+    cancellationReason: z.string().optional().nullable(),
+    paidAmount: z.number().optional().nullable(),
+    paymentRef: z.string().optional().nullable(),
+  })
+  .partial()

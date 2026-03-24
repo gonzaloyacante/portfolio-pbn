@@ -8,6 +8,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -23,14 +24,10 @@ const SERVICE_SELECT = {
   currency: true,
   duration: true,
   imageUrl: true,
-  iconName: true,
-  color: true,
   isActive: true,
   isFeatured: true,
   isAvailable: true,
   sortOrder: true,
-  bookingCount: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -76,7 +73,10 @@ export async function GET(req: Request) {
     return NextResponse.json({
       success: true,
       data: {
-        data: services,
+        data: services.map((s) => ({
+          ...s,
+          thumbnailUrl: s.imageUrl ? generateThumbnailUrl(s.imageUrl) : null,
+        })),
         pagination: {
           page,
           limit,
@@ -122,8 +122,6 @@ export async function POST(req: Request) {
       currency = 'ARS',
       duration,
       imageUrl,
-      iconName,
-      color,
       isActive = true,
       isFeatured = false,
     } = parsed.data as typeof parsed.data & { priceLabel?: string; currency?: string }
@@ -152,8 +150,6 @@ export async function POST(req: Request) {
         currency,
         duration,
         imageUrl,
-        iconName,
-        color,
         isActive,
         isFeatured,
         sortOrder: nextOrder,
@@ -177,7 +173,7 @@ export async function POST(req: Request) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

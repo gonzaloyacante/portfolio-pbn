@@ -2,17 +2,26 @@ import { prisma } from '@/lib/db'
 import { createTestimonial, deleteTestimonial, toggleTestimonial } from '@/actions/cms/testimonials'
 import { Button, Card, Badge } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
-import { Section } from '@/components/layout'
+import { Section, PageHeader } from '@/components/layout'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
+import { requireAdmin } from '@/lib/security-server'
+
+export const dynamic = 'force-dynamic'
 
 export default async function TestimonialsPage() {
+  await requireAdmin()
   const testimonials = await prisma.testimonial.findMany({
+    where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },
   })
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 p-6">
-      <h1 className="text-foreground text-3xl font-bold">Gestión de Testimonios</h1>
+    <div className="mx-auto max-w-5xl space-y-8">
+      <PageHeader
+        title="💬 Gestión de Testimonios"
+        description="Administra los testimonios de tus clientes"
+      />
 
       {/* Formulario */}
       <Section title="Crear Nuevo Testimonio">
@@ -102,16 +111,15 @@ export default async function TestimonialsPage() {
 
                 <div className="flex items-center gap-2 self-end md:self-start">
                   {/* Edit */}
-                  <Link href={`/admin/testimonials/${t.id}/edit`}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="px-3"
-                      aria-label={`Editar testimonio de ${t.name}`}
-                    >
-                      ✏️
-                    </Button>
-                  </Link>
+                  <Button
+                    asChild
+                    variant="outline"
+                    size="sm"
+                    className="px-3"
+                    aria-label={`Editar testimonio de ${t.name}`}
+                  >
+                    <Link href={ROUTES.admin.editTestimonial(t.id)}>✏️</Link>
+                  </Button>
 
                   {/* Toggle Active/Inactive */}
                   <form

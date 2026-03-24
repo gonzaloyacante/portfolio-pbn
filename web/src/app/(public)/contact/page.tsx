@@ -1,5 +1,7 @@
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSocialLinks } from '@/actions/settings/social'
+import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 import ContactForm from '@/components/features/contact/ContactForm'
 import {
   Instagram,
@@ -136,7 +138,7 @@ export default async function ContactPage() {
           <div className="mb-8 space-y-4 text-left font-sans text-lg">
             {contactSettings?.email && (
               <a
-                href={`mailto:${contactSettings.email} `}
+                href={`mailto:${contactSettings.email}`}
                 className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
               >
                 <Mail className="h-6 w-6" />
@@ -145,7 +147,7 @@ export default async function ContactPage() {
             )}
             {contactSettings?.phone && (
               <a
-                href={`tel:${contactSettings.phone.replace(/\s+/g, '')} `}
+                href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
                 className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
               >
                 <Phone className="h-6 w-6" />
@@ -214,6 +216,19 @@ export default async function ContactPage() {
               ))}
           </div>
         </div>
+      </div>
+
+      {/* Copyright */}
+      <div className="border-primary/20 border-t py-8 text-center font-sans">
+        <p className="text-muted-foreground mb-2 text-sm font-light tracking-widest uppercase">
+          © {new Date().getFullYear()} {ownerName.toUpperCase()}
+        </p>
+        <Link
+          href={ROUTES.public.privacy}
+          className="text-muted-foreground text-xs opacity-60 transition-opacity hover:opacity-100"
+        >
+          Política de Privacidad
+        </Link>
       </div>
     </section>
   )

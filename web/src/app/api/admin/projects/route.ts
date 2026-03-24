@@ -40,8 +40,8 @@ export async function GET(req: Request) {
 
   try {
     const { searchParams } = new URL(req.url)
-    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
-    const limit = Math.min(50, parseInt(searchParams.get('limit') ?? '20', 10))
+    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10) || 1)
+    const limit = Math.max(1, Math.min(50, parseInt(searchParams.get('limit') ?? '20', 10) || 20))
     const search = searchParams.get('search')?.trim() || undefined
     const categoryId = searchParams.get('categoryId') || undefined
     const active = searchParams.get('active')
@@ -49,7 +49,7 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit
 
     const where = {
-      isDeleted: false,
+      deletedAt: null,
       ...(search && {
         OR: [
           { title: { contains: search, mode: 'insensitive' as const } },
@@ -130,18 +130,22 @@ export async function POST(req: Request) {
       isPinned = false,
     } = parsed.data
 
-    // Generar slug a partir del title
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-
-    if (!title || !description || !thumbnailUrl || !categoryId || !date) {
+    // Validar campos requeridos (thumbnailUrl puede ser vacío y será añadido luego)
+    if (!title || !categoryId) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Campos requeridos: title, description, thumbnailUrl, categoryId, date',
-        },
+        { success: false, error: 'Campos requeridos: title, categoryId' },
         { status: 400 }
       )
     }
+
+    // Generar slug a partir del title
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+
+    // Date: usar la provista o default a hoy
+    const resolvedDate = date ?? new Date().toISOString()
 
     const existing = await prisma.project.findUnique({ where: { slug } })
     if (existing) {
@@ -153,18 +157,18 @@ export async function POST(req: Request) {
 
     const maxOrder = await prisma.project.aggregate({
       _max: { sortOrder: true },
-      where: { isDeleted: false },
+      where: { deletedAt: null },
     })
 
     const project = await prisma.project.create({
       data: {
         title,
         slug,
-        description,
+        description: description ?? '',
         excerpt,
-        thumbnailUrl,
+        thumbnailUrl: thumbnailUrl ?? '',
         videoUrl,
-        date: new Date(date),
+        date: new Date(resolvedDate),
         duration,
         client,
         location,
@@ -199,7 +203,7 @@ export async function POST(req: Request) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

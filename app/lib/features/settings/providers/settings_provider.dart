@@ -49,6 +49,13 @@ Future<HomeSettings> homeSettings(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getHome();
 }
 
+// ── Category Display Settings ────────────────────────────────────────────────
+
+@Riverpod(keepAlive: true)
+Future<CategoryDisplaySettings> categoryDisplaySettings(Ref ref) async {
+  return ref.watch(settingsRepositoryProvider).getCategorySettings();
+}
+
 // ── Social Links ──────────────────────────────────────────────────────────────
 
 @Riverpod(keepAlive: true)

@@ -8,9 +8,12 @@ import '../../features/account/presentation/account_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/help/presentation/help_page.dart';
+import '../../features/trash/data/trash_model.dart';
 import '../../features/trash/presentation/trash_page.dart';
+import '../../features/trash/presentation/trash_item_detail_page.dart';
 import '../../features/categories/presentation/categories_list_page.dart';
 import '../../features/categories/presentation/category_form_page.dart';
+import '../../features/categories/presentation/category_gallery_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
 import '../../features/projects/presentation/project_form_page.dart';
 import '../../features/projects/presentation/projects_list_page.dart';
@@ -204,6 +207,17 @@ final List<RouteBase> _routes = [
       child: CategoryFormPage(categoryId: state.pathParameters['id']),
     ),
   ),
+  GoRoute(
+    path: RoutePaths.categoryGallery,
+    name: RouteNames.categoryGallery,
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: CategoryGalleryPage(
+        categoryId: state.pathParameters['id']!,
+        categoryName: state.uri.queryParameters['name'] ?? 'Galería',
+      ),
+    ),
+  ),
   // ── Servicios ────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.services,
@@ -338,6 +352,18 @@ final List<RouteBase> _routes = [
     name: RouteNames.trash,
     pageBuilder: (context, state) =>
         _fadePage(state: state, child: const TrashPage()),
+  ),
+  // ── Papelera Detalle ───────────────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.trashDetail,
+    name: RouteNames.trashDetail,
+    pageBuilder: (context, state) {
+      final item = state.extra! as TrashItem;
+      return _fadePage(
+        state: state,
+        child: TrashItemDetailPage(item: item),
+      );
+    },
   ),
   // ── Ayuda ───────────────────────────────────────────────────────────────
   GoRoute(

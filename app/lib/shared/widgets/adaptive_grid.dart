@@ -84,7 +84,7 @@ class AdaptiveGrid extends StatelessWidget {
         childAspectRatio: childAspectRatio,
       ),
       itemCount: children.length,
-      itemBuilder: (_, i) => children[i],
+      itemBuilder: (_, i) => RepaintBoundary(child: children[i]),
     );
   }
 }
@@ -135,7 +135,7 @@ class SliverAdaptiveGrid extends StatelessWidget {
           EdgeInsets.symmetric(horizontal: hPad, vertical: AppSpacing.sm),
       sliver: SliverGrid(
         delegate: SliverChildBuilderDelegate(
-          (_, i) => children[i],
+          (_, i) => RepaintBoundary(child: children[i]),
           childCount: children.length,
         ),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

@@ -1538,6 +1538,281 @@ as bool,
 
 
 /// @nodoc
+mixin _$CategoryDisplaySettings {
+
+ String? get id; bool get showDescription; bool get showProjectCount; int get gridColumns; bool get isActive;
+/// Create a copy of CategoryDisplaySettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CategoryDisplaySettingsCopyWith<CategoryDisplaySettings> get copyWith => _$CategoryDisplaySettingsCopyWithImpl<CategoryDisplaySettings>(this as CategoryDisplaySettings, _$identity);
+
+  /// Serializes this CategoryDisplaySettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryDisplaySettings&&(identical(other.id, id) || other.id == id)&&(identical(other.showDescription, showDescription) || other.showDescription == showDescription)&&(identical(other.showProjectCount, showProjectCount) || other.showProjectCount == showProjectCount)&&(identical(other.gridColumns, gridColumns) || other.gridColumns == gridColumns)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,showDescription,showProjectCount,gridColumns,isActive);
+
+@override
+String toString() {
+  return 'CategoryDisplaySettings(id: $id, showDescription: $showDescription, showProjectCount: $showProjectCount, gridColumns: $gridColumns, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $CategoryDisplaySettingsCopyWith<$Res>  {
+  factory $CategoryDisplaySettingsCopyWith(CategoryDisplaySettings value, $Res Function(CategoryDisplaySettings) _then) = _$CategoryDisplaySettingsCopyWithImpl;
+@useResult
+$Res call({
+ String? id, bool showDescription, bool showProjectCount, int gridColumns, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class _$CategoryDisplaySettingsCopyWithImpl<$Res>
+    implements $CategoryDisplaySettingsCopyWith<$Res> {
+  _$CategoryDisplaySettingsCopyWithImpl(this._self, this._then);
+
+  final CategoryDisplaySettings _self;
+  final $Res Function(CategoryDisplaySettings) _then;
+
+/// Create a copy of CategoryDisplaySettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? showDescription = null,Object? showProjectCount = null,Object? gridColumns = null,Object? isActive = null,}) {
+  return _then(_self.copyWith(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,showDescription: null == showDescription ? _self.showDescription : showDescription // ignore: cast_nullable_to_non_nullable
+as bool,showProjectCount: null == showProjectCount ? _self.showProjectCount : showProjectCount // ignore: cast_nullable_to_non_nullable
+as bool,gridColumns: null == gridColumns ? _self.gridColumns : gridColumns // ignore: cast_nullable_to_non_nullable
+as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [CategoryDisplaySettings].
+extension CategoryDisplaySettingsPatterns on CategoryDisplaySettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CategoryDisplaySettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _CategoryDisplaySettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CategoryDisplaySettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _CategoryDisplaySettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CategoryDisplaySettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _CategoryDisplaySettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  bool showDescription,  bool showProjectCount,  int gridColumns,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _CategoryDisplaySettings() when $default != null:
+return $default(_that.id,_that.showDescription,_that.showProjectCount,_that.gridColumns,_that.isActive);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  bool showDescription,  bool showProjectCount,  int gridColumns,  bool isActive)  $default,) {final _that = this;
+switch (_that) {
+case _CategoryDisplaySettings():
+return $default(_that.id,_that.showDescription,_that.showProjectCount,_that.gridColumns,_that.isActive);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  bool showDescription,  bool showProjectCount,  int gridColumns,  bool isActive)?  $default,) {final _that = this;
+switch (_that) {
+case _CategoryDisplaySettings() when $default != null:
+return $default(_that.id,_that.showDescription,_that.showProjectCount,_that.gridColumns,_that.isActive);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _CategoryDisplaySettings implements CategoryDisplaySettings {
+  const _CategoryDisplaySettings({this.id, this.showDescription = true, this.showProjectCount = true, this.gridColumns = 4, this.isActive = true});
+  factory _CategoryDisplaySettings.fromJson(Map<String, dynamic> json) => _$CategoryDisplaySettingsFromJson(json);
+
+@override final  String? id;
+@override@JsonKey() final  bool showDescription;
+@override@JsonKey() final  bool showProjectCount;
+@override@JsonKey() final  int gridColumns;
+@override@JsonKey() final  bool isActive;
+
+/// Create a copy of CategoryDisplaySettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CategoryDisplaySettingsCopyWith<_CategoryDisplaySettings> get copyWith => __$CategoryDisplaySettingsCopyWithImpl<_CategoryDisplaySettings>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$CategoryDisplaySettingsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryDisplaySettings&&(identical(other.id, id) || other.id == id)&&(identical(other.showDescription, showDescription) || other.showDescription == showDescription)&&(identical(other.showProjectCount, showProjectCount) || other.showProjectCount == showProjectCount)&&(identical(other.gridColumns, gridColumns) || other.gridColumns == gridColumns)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,showDescription,showProjectCount,gridColumns,isActive);
+
+@override
+String toString() {
+  return 'CategoryDisplaySettings(id: $id, showDescription: $showDescription, showProjectCount: $showProjectCount, gridColumns: $gridColumns, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$CategoryDisplaySettingsCopyWith<$Res> implements $CategoryDisplaySettingsCopyWith<$Res> {
+  factory _$CategoryDisplaySettingsCopyWith(_CategoryDisplaySettings value, $Res Function(_CategoryDisplaySettings) _then) = __$CategoryDisplaySettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? id, bool showDescription, bool showProjectCount, int gridColumns, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class __$CategoryDisplaySettingsCopyWithImpl<$Res>
+    implements _$CategoryDisplaySettingsCopyWith<$Res> {
+  __$CategoryDisplaySettingsCopyWithImpl(this._self, this._then);
+
+  final _CategoryDisplaySettings _self;
+  final $Res Function(_CategoryDisplaySettings) _then;
+
+/// Create a copy of CategoryDisplaySettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? showDescription = null,Object? showProjectCount = null,Object? gridColumns = null,Object? isActive = null,}) {
+  return _then(_CategoryDisplaySettings(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,showDescription: null == showDescription ? _self.showDescription : showDescription // ignore: cast_nullable_to_non_nullable
+as bool,showProjectCount: null == showProjectCount ? _self.showProjectCount : showProjectCount // ignore: cast_nullable_to_non_nullable
+as bool,gridColumns: null == gridColumns ? _self.gridColumns : gridColumns // ignore: cast_nullable_to_non_nullable
+as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$SocialLink {
 
  String get id; String get platform; String get url; String? get username; String? get icon; bool get isActive; int get sortOrder; DateTime? get createdAt; DateTime? get updatedAt;

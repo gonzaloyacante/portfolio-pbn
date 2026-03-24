@@ -20,8 +20,6 @@ const CONTACT_SELECT = {
   isReplied: true,
   readAt: true,
   repliedAt: true,
-  leadScore: true,
-  leadSource: true,
   tags: true,
   createdAt: true,
   updatedAt: true,

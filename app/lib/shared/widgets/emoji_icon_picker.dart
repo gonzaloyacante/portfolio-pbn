@@ -274,18 +274,25 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
       itemBuilder: (_, i) {
         final emoji = emojis[i];
         final isSelected = emoji == widget.currentValue;
-        return GestureDetector(
-          onTap: () => widget.onSelected(emoji),
-          child: Container(
-            decoration: BoxDecoration(
-              color: isSelected ? scheme.primaryContainer : Colors.transparent,
-              borderRadius: BorderRadius.circular(10),
-              border: isSelected
-                  ? Border.all(color: scheme.primary.withAlpha(120), width: 1.5)
-                  : null,
-            ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 28)),
+        return RepaintBoundary(
+          child: GestureDetector(
+            onTap: () => widget.onSelected(emoji),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? scheme.primaryContainer
+                    : Colors.transparent,
+                borderRadius: BorderRadius.circular(10),
+                border: isSelected
+                    ? Border.all(
+                        color: scheme.primary.withValues(alpha: 120 / 255),
+                        width: 1.5,
+                      )
+                    : null,
+              ),
+              child: Center(
+                child: Text(emoji, style: const TextStyle(fontSize: 28)),
+              ),
             ),
           ),
         );

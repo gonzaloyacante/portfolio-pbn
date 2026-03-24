@@ -11,6 +11,7 @@ import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { bookingPatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -26,20 +27,13 @@ const BOOKING_DETAIL_SELECT = {
   guestCount: true,
   adminNotes: true,
   confirmedAt: true,
-  confirmedBy: true,
   cancelledAt: true,
-  cancelledBy: true,
   cancellationReason: true,
   totalAmount: true,
   paidAmount: true,
   paymentStatus: true,
   paymentMethod: true,
   paymentRef: true,
-  reminderSentAt: true,
-  reminderCount: true,
-  feedbackSent: true,
-  feedbackRating: true,
-  feedbackText: true,
   serviceId: true,
   service: { select: { name: true, slug: true } },
   createdAt: true,
@@ -90,7 +84,14 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = bookingPatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       date,
       endDate,
@@ -107,7 +108,7 @@ export async function PATCH(req: Request, { params }: Params) {
       paymentStatus,
       paymentMethod,
       paymentRef,
-    } = body
+    } = parsed.data
 
     const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
@@ -118,10 +119,8 @@ export async function PATCH(req: Request, { params }: Params) {
     if (status && status !== existing.status) {
       if (status === 'CONFIRMED') {
         statusData.confirmedAt = new Date()
-        statusData.confirmedBy = auth.payload?.email ?? 'admin'
       } else if (status === 'CANCELLED') {
         statusData.cancelledAt = new Date()
-        statusData.cancelledBy = 'admin'
       }
     }
 
@@ -138,10 +137,8 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(guestCount !== undefined && { guestCount }),
         ...(adminNotes !== undefined && { adminNotes }),
         ...(cancellationReason !== undefined && { cancellationReason }),
-        ...(totalAmount !== undefined && {
-          totalAmount: totalAmount ? parseFloat(totalAmount) : null,
-        }),
-        ...(paidAmount !== undefined && { paidAmount: paidAmount ? parseFloat(paidAmount) : null }),
+        ...(totalAmount !== undefined && { totalAmount }),
+        ...(paidAmount !== undefined && { paidAmount }),
         ...(paymentStatus !== undefined && { paymentStatus }),
         ...(paymentMethod !== undefined && { paymentMethod }),
         ...(paymentRef !== undefined && { paymentRef }),

@@ -204,7 +204,7 @@ describe('Project Queries (cms/projects)', () => {
   describe('getProjectBySlug', () => {
     it('returns single project', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findUnique).mockResolvedValue(mockProject as never)
+      vi.mocked(prisma.project.findFirst).mockResolvedValue(mockProject as never)
 
       const { getProjectBySlug } = await import('@/actions/cms/projects')
       const result = await getProjectBySlug('test-project')
@@ -215,7 +215,7 @@ describe('Project Queries (cms/projects)', () => {
 
     it('returns null for non-existent slug', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findUnique).mockResolvedValue(null as never)
+      vi.mocked(prisma.project.findFirst).mockResolvedValue(null as never)
 
       const { getProjectBySlug } = await import('@/actions/cms/projects')
       const result = await getProjectBySlug('no-existe')
@@ -225,7 +225,7 @@ describe('Project Queries (cms/projects)', () => {
 
     it('returns null on DB error', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findUnique).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.project.findFirst).mockRejectedValue(new Error('DB error'))
 
       const { getProjectBySlug } = await import('@/actions/cms/projects')
       const result = await getProjectBySlug('test-project')
@@ -294,8 +294,8 @@ describe('Project Queries (cms/projects)', () => {
       const { revalidateProjects } = await import('@/actions/cms/projects')
       await revalidateProjects()
 
-      expect(revalidatePath).toHaveBeenCalledWith('/proyectos')
-      expect(revalidatePath).toHaveBeenCalledWith('/', 'layout')
+      expect(revalidatePath).toHaveBeenCalledWith('/proyectos', 'layout')
+      expect(revalidatePath).toHaveBeenCalledWith('/')
       expect(revalidateTag).toHaveBeenCalled()
     })
   })

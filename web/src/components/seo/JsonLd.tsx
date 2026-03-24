@@ -37,14 +37,14 @@ export default function JsonLd({ type, data }: JsonLdProps) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
 
   const defaultData = {
-    name: 'Paola Bolívar Nievas',
+    name: '',
     url: baseUrl,
-    image: `${baseUrl}/og-image.jpg`,
-    jobTitle: 'Professional Makeup Artist',
+    image: '',
+    jobTitle: 'Maquilladora Profesional',
     sameAs: [],
     address: {
-      addressLocality: 'Málaga',
-      addressRegion: 'Málaga',
+      addressLocality: '',
+      addressRegion: '',
       addressCountry: 'ES',
     },
     priceRange: '$$',
@@ -85,7 +85,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           email: mergedData.email,
           areaServed: {
             '@type': 'City',
-            name: 'Málaga',
+            name: mergedData.address.addressLocality || 'España',
           },
           serviceType: [
             'Maquillaje de novias',
@@ -151,7 +151,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           datePublished: mergedData.datePublished,
           author: {
             '@type': 'Person',
-            name: mergedData.author || 'Paola Bolívar Nievas',
+            name: mergedData.author || mergedData.name,
           },
         }
 
@@ -165,12 +165,12 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           image: mergedData.image,
           provider: {
             '@type': 'Person',
-            name: 'Paola Bolívar Nievas',
+            name: mergedData.name,
             url: baseUrl,
           },
           areaServed: {
             '@type': 'City',
-            name: 'Málaga',
+            name: mergedData.address.addressLocality || 'España',
           },
           ...(mergedData.priceRange && {
             offers: {

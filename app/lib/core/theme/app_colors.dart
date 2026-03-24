@@ -13,9 +13,7 @@ class AppColors {
   static const Color lightSecondary = Color(0xFFFCE7F3);
   static const Color lightMuted = Color(0xFFF5F5F5);
   static const Color lightAccent = Color(0xFFFFF1F9);
-  static const Color lightBorder = Color(
-    0xFFE5E5E5,
-  ); // ← corregido (era #9E9E9E)
+  static const Color lightBorder = Color(0xFFE5E5E5);
 
   // ── Dark Mode ─────────────────────────────────────────────────────────────
   static const Color darkPrimary = Color(0xFFFB7185);
@@ -25,9 +23,7 @@ class AppColors {
   static const Color darkSecondary = Color(0xFF881337);
   static const Color darkMuted = Color(0xFF2A1015);
   static const Color darkAccent = Color(0xFF2A1015);
-  static const Color darkBorder = Color(
-    0xFF4A1E28,
-  ); // separación visible en dark mode
+  static const Color darkBorder = Color(0xFF2A1015);
 
   // ── Semánticos (igual en ambos modos) ────────────────────────────────────
   // ── Colores de categorías de entidades ─────────────────────────────────────
@@ -54,4 +50,9 @@ class AppColors {
   static const Color priorityHighLight = Color(0xFFFEE2E2);
   static const Color priorityMediumLight = Color(0xFFFEF3C7);
   static const Color priorityLowLight = Color(0xFFF3F4F6);
+
+  // ── Neutros y misceláneos ─────────────────────────────────────────────────
+  static const Color neutral = Color(0xFF6B7280); // gris ui (inactivo/borrador)
+  static const Color neutralMedium = Color(0xFF9E9E9E); // gris placeholder imgs
+  static const Color featured = Color(0xFF8B5CF6); // violeta para "Destacado"
 }

@@ -287,7 +287,11 @@ class AppUpdateRepository {
             AppLogger.debug(
               'AppUpdateRepository: eliminado APK antiguo: ${entity.path}',
             );
-          } catch (_) {}
+          } catch (e) {
+            AppLogger.debug(
+              'AppUpdateRepository: no se pudo eliminar APK antiguo ${entity.path}: $e',
+            );
+          }
         }
       }
     } catch (e) {

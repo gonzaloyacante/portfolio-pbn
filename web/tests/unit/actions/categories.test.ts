@@ -80,7 +80,9 @@ describe('Category Actions', () => {
       const { deleteCategoryAction } = await import('@/actions/cms/category')
 
       await deleteCategoryAction('cat-3')
-      expect(revalidatePath).toHaveBeenCalledWith('/proyectos')
+      // deleteCategoryAction only directly revalidates the admin path;
+      // public path revalidation is handled by the mocked deleteCategory (content.ts)
+      expect(revalidatePath).toHaveBeenCalledWith('/admin/categorias')
     })
 
     it('should propagate errors from deleteCategory', async () => {
@@ -253,7 +255,7 @@ describe('Category Actions', () => {
 
       expect(prisma.project.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { categoryId: 'cat-1', isDeleted: false },
+          where: { categoryId: 'cat-1', deletedAt: null },
         })
       )
     })

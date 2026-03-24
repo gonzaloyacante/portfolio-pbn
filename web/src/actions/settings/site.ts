@@ -19,7 +19,12 @@ export interface SiteSettingsData {
   defaultEmail: string | null
   defaultPhone: string | null
   defaultWhatsapp: string | null
+  defaultMetaTitle: string | null
+  defaultMetaDescription: string | null
+  defaultOgImage: string | null
+  defaultAddress: string | null
   maintenanceMode: boolean
+  maintenanceMessage: string | null
   showAboutPage: boolean
   showProjectsPage: boolean
   showServicesPage: boolean
@@ -47,6 +52,7 @@ const siteSettingsSchema = z.object({
   defaultPhone: z.string().max(30).nullable().optional(),
   defaultWhatsapp: z.string().max(30).nullable().optional(),
   maintenanceMode: z.boolean().optional(),
+  maintenanceMessage: z.string().max(500).nullable().optional(),
   showAboutPage: z.boolean().optional(),
   showProjectsPage: z.boolean().optional(),
   showServicesPage: z.boolean().optional(),
@@ -73,7 +79,12 @@ export const getSiteSettings = unstable_cache(
           defaultEmail: true,
           defaultPhone: true,
           defaultWhatsapp: true,
+          defaultMetaTitle: true,
+          defaultMetaDescription: true,
+          defaultOgImage: true,
+          defaultAddress: true,
           maintenanceMode: true,
+          maintenanceMessage: true,
           showAboutPage: true,
           showProjectsPage: true,
           showServicesPage: true,

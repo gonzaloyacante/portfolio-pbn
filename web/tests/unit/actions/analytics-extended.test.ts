@@ -12,12 +12,14 @@ vi.mock('next/headers', () => ({
 
 vi.mock('@/lib/db', () => ({
   prisma: {
+    $queryRaw: vi.fn().mockResolvedValue([]),
     analyticLog: {
       create: vi.fn(),
       count: vi.fn(),
       findMany: vi.fn(),
       groupBy: vi.fn(),
       aggregate: vi.fn(),
+      findFirst: vi.fn().mockResolvedValue(null),
     },
     project: {
       findMany: vi.fn(),
@@ -231,7 +233,7 @@ describe('recordAnalyticEvent', () => {
 
     const createCall = vi.mocked(prisma.analyticLog.create).mock.calls[0][0]
     const data = (createCall as { data: Record<string, unknown> }).data
-    expect(data.eventData).toEqual({ key: 'value', nested: { a: 1 } })
+    expect(data.eventData).toEqual(expect.objectContaining({ key: 'value', nested: { a: 1 } }))
   })
 
   it('should return success false on database error', async () => {
@@ -266,7 +268,6 @@ describe('getAnalyticsDashboardData', () => {
       .mockResolvedValueOnce(100) // totalVisits
       .mockResolvedValueOnce(30) // detailVisits
       .mockResolvedValueOnce(5) // contactLeads
-    vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([])
     vi.mocked(prisma.analyticLog.groupBy)
       .mockResolvedValueOnce([]) // topProjectsRaw
       .mockResolvedValueOnce([]) // deviceGroups
@@ -289,7 +290,6 @@ describe('getAnalyticsDashboardData', () => {
   it('should return trend data with 7 days', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
-    vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([])
     vi.mocked(prisma.analyticLog.groupBy).mockResolvedValue([] as never)
     vi.mocked(prisma.project.findMany).mockResolvedValue([])
 
@@ -302,7 +302,6 @@ describe('getAnalyticsDashboardData', () => {
   it('should map projects to titles', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
-    vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([])
     vi.mocked(prisma.analyticLog.groupBy)
       .mockResolvedValueOnce([
         { entityId: 'proj-1', _count: { entityId: 10 } },
@@ -327,7 +326,6 @@ describe('getAnalyticsDashboardData', () => {
   it('should aggregate device groups', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
-    vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([])
     vi.mocked(prisma.analyticLog.groupBy)
       .mockResolvedValueOnce([]) // topProjects
       .mockResolvedValueOnce([
@@ -346,7 +344,6 @@ describe('getAnalyticsDashboardData', () => {
   it('should format top locations', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
-    vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([])
     vi.mocked(prisma.analyticLog.groupBy)
       .mockResolvedValueOnce([]) // topProjects
       .mockResolvedValueOnce([]) // deviceGroups

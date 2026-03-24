@@ -4,6 +4,7 @@ import '../../core/theme/app_breakpoints.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import 'app_card.dart';
 
 // ── StatCard ──────────────────────────────────────────────────────────────────
 
@@ -32,6 +33,8 @@ class StatCard extends StatelessWidget {
     this.trendPositive,
     this.onTap,
     this.color,
+    this.valueSuffix,
+    this.valueSuffixIcon,
   });
 
   final IconData icon;
@@ -41,6 +44,8 @@ class StatCard extends StatelessWidget {
   final bool? trendPositive;
   final VoidCallback? onTap;
   final Color? color;
+  final String? valueSuffix;
+  final IconData? valueSuffixIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -51,98 +56,131 @@ class StatCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Fondo tintado: más intenso en dark, más suave en light
-    final bgTint = isDark ? cardColor.withAlpha(55) : cardColor.withAlpha(26);
+    final bgTint = isDark
+        ? cardColor.withValues(alpha: 55 / 255)
+        : cardColor.withValues(alpha: 26 / 255);
     final iconBgTint = isDark
-        ? cardColor.withAlpha(90)
-        : cardColor.withAlpha(45);
+        ? cardColor.withValues(alpha: 90 / 255)
+        : cardColor.withValues(alpha: 45 / 255);
 
-    return Material(
+    return AppCard(
       color: bgTint,
       borderRadius: BorderRadius.circular(AppRadius.card),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        splashColor: cardColor.withAlpha(40),
-        highlightColor: cardColor.withAlpha(20),
-        child: Padding(
-          padding: EdgeInsets.all(
-            isExpanded ? AppSpacing.base : AppSpacing.sm + 2,
+      onTap: onTap,
+      padding: EdgeInsets.all(isExpanded ? AppSpacing.base : AppSpacing.sm + 2),
+      child: Row(
+        children: [
+          // ── Icono circular ──────────────────────────────────────
+          Container(
+            width: isExpanded ? 48 : 40,
+            height: isExpanded ? 48 : 40,
+            decoration: BoxDecoration(
+              color: iconBgTint,
+              borderRadius: BorderRadius.circular(isExpanded ? 14 : 12),
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon, color: cardColor, size: isExpanded ? 24 : 20),
           ),
-          child: Row(
-            children: [
-              // ── Icono circular ──────────────────────────────────────
-              Container(
-                width: isExpanded ? 48 : 40,
-                height: isExpanded ? 48 : 40,
-                decoration: BoxDecoration(
-                  color: iconBgTint,
-                  borderRadius: BorderRadius.circular(isExpanded ? 14 : 12),
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, color: cardColor, size: isExpanded ? 24 : 20),
-              ),
-              SizedBox(width: isExpanded ? AppSpacing.md : AppSpacing.sm),
+          SizedBox(width: isExpanded ? AppSpacing.md : AppSpacing.sm),
 
-              // ── Contenido: valor + label + trend ────────────────────
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+          // ── Contenido: valor + label + trend ────────────────────
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Valor numérico (con sufijo opcional para pendientes)
+                Row(
                   children: [
-                    // Valor numérico
-                    Text(
-                      value,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          (isExpanded
-                                  ? textTheme.titleLarge
-                                  : textTheme.titleMedium)
-                              ?.copyWith(
-                                fontWeight: FontWeight.w800,
-                                color: cardColor,
-                                height: 1.1,
-                                letterSpacing: -0.5,
-                              ),
-                    ),
-                    const SizedBox(height: 2),
-                    // Etiqueta descriptiva
-                    Text(
-                      label,
-                      style: textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurface.withAlpha(160),
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.1,
-                        fontSize: isExpanded ? null : 11,
+                    Expanded(
+                      child: Text(
+                        value,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            (isExpanded
+                                    ? textTheme.titleLarge
+                                    : textTheme.titleMedium)
+                                ?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: cardColor,
+                                  height: 1.1,
+                                  letterSpacing: -0.5,
+                                ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    // Badge de tendencia
-                    if (trend != null) ...[
-                      const SizedBox(height: 4),
-                      _TrendBadge(
-                        trend: trend!,
-                        isPositive: trendPositive ?? true,
+                    if (valueSuffix != null) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xs,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 12 / 255),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (valueSuffixIcon != null) ...[
+                              Icon(
+                                valueSuffixIcon,
+                                size: 14,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                            ],
+                            Text(
+                              valueSuffix!,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ],
                 ),
-              ),
-
-              // ── Flecha si tiene onTap ───────────────────────────────
-              if (onTap != null && trend == null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 13,
-                    color: cardColor.withAlpha(180),
+                // Etiqueta descriptiva
+                Text(
+                  label,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withValues(alpha: 160 / 255),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.1,
+                    fontSize: isExpanded ? null : 12,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-            ],
+                // Badge de tendencia
+                if (trend != null) ...[
+                  const SizedBox(height: 4),
+                  _TrendBadge(trend: trend!, isPositive: trendPositive ?? true),
+                ],
+              ],
+            ),
           ),
-        ),
+
+          // ── Flecha si tiene onTap ───────────────────────────────
+          if (onTap != null && trend == null)
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 13,
+                color: cardColor.withValues(alpha: 180 / 255),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -166,9 +204,12 @@ class _TrendBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: color.withAlpha(28),
+        color: color.withValues(alpha: 28 / 255),
         borderRadius: AppRadius.forChip,
-        border: Border.all(color: color.withAlpha(70), width: 0.8),
+        border: Border.all(
+          color: color.withValues(alpha: 70 / 255),
+          width: 0.8,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

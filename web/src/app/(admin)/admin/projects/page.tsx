@@ -10,7 +10,7 @@ import { ROUTES } from '@/config/routes'
 export default async function ProjectsManagementPage() {
   const [projects, categories, settings] = await Promise.all([
     prisma.project.findMany({
-      where: { isDeleted: false },
+      where: { deletedAt: null },
       include: {
         category: true,
         images: { take: 1, orderBy: { order: 'asc' } },
@@ -18,6 +18,7 @@ export default async function ProjectsManagementPage() {
       orderBy: { sortOrder: 'asc' }, // Prioritize manual order
     }),
     prisma.category.findMany({
+      where: { deletedAt: null, isActive: true },
       orderBy: { name: 'asc' },
       select: { id: true, name: true },
     }),
@@ -25,7 +26,7 @@ export default async function ProjectsManagementPage() {
   ])
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 p-6">
+    <div className="mx-auto max-w-6xl space-y-8">
       <PageHeader
         title="🎨 Gestión de Proyectos"
         description="Crea, edita y organiza tus proyectos de portfolio"
@@ -54,11 +55,9 @@ export default async function ProjectsManagementPage() {
           ]}
         />
 
-        <Link href={`${ROUTES.admin.projects}/nuevo`}>
-          <Button size="lg" className="shadow-lg transition-transform hover:scale-105">
-            ✨ Crear Nuevo Proyecto
-          </Button>
-        </Link>
+        <Button asChild size="lg" className="shadow-lg transition-transform hover:scale-105">
+          <Link href={ROUTES.admin.newProject}>✨ Crear Nuevo Proyecto</Link>
+        </Button>
       </div>
 
       <Section title={`Proyectos (${projects.length})`}>

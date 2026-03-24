@@ -21,6 +21,32 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
   const [activeTab, setActiveTab] = useState('general')
   const isEditing = !!service
 
+  function slugify(text?: string) {
+    return (text || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/(^-|-$)/g, '')
+  }
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const form = e.currentTarget as HTMLFormElement
+      const fd = new FormData(form)
+      if (!fd.get('slug')) {
+        const name = (fd.get('name') || '') as string
+        fd.set('slug', slugify(name))
+      }
+      await handleSubmit(fd)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function handleSubmit(formData: FormData) {
     setIsLoading(true)
     try {
@@ -56,7 +82,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
   ]
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form onSubmit={onSubmit} className="space-y-6">
       {/* Tabs Nav */}
       <div className="overflow-x-auto border-b border-(--border)">
         <div className="flex min-w-max gap-4 px-1">
@@ -86,13 +112,8 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
             defaultValue={service?.name}
             required
           />
-          <FormField
-            label="Slug (URL)"
-            name="slug"
-            defaultValue={service?.slug}
-            placeholder="maquillaje-novia"
-            required
-          />
+          {/* Slug is auto-generated from name by default. Hidden field preserved for manual overrides if needed. */}
+          <input type="hidden" name="slug" defaultValue={service?.slug || ''} />
         </div>
         <FormField
           label="Descripción Corta (Para tarjetas)"
@@ -114,18 +135,14 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
           <div className="space-y-2">
             <label className="text-sm font-medium">Imagen Principal</label>
             <ImageUpload
-              name="imageUrl"
-              label="Subir Imagen"
+              name="galleryUrls"
+              label="Galería de Imágenes"
               folder="services"
-              value={service?.imageUrl ? [service.imageUrl] : []}
+              value={service?.galleryUrls || []}
+              multiple
+              mode="gallery"
             />
           </div>
-          <FormField
-            label="Icono (Lucide name)"
-            name="iconName"
-            defaultValue={service?.iconName || ''}
-            placeholder="sparkles"
-          />
         </div>
         <div className="bg-muted/20 flex items-center gap-6 rounded-lg p-4">
           <label className="flex cursor-pointer items-center gap-2">
@@ -234,23 +251,12 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       {/* --- DETAILS --- */}
       <div className={activeTab === 'details' ? 'block space-y-4' : 'hidden'}>
         <FormField
-          label="Color de Marca (Hex)"
-          name="color"
-          defaultValue={service?.color || ''}
-          // eslint-disable-next-line no-restricted-syntax -- placeholder is descriptive text for user, not a system color
-          placeholder="#ff00ff"
-        />
-        <FormField
           label="Video URL"
           name="videoUrl"
           defaultValue={service?.videoUrl || ''}
           placeholder="https://youtube.com..."
         />
-        <FormField
-          label="Galería (URLs sep. por coma)"
-          name="galleryUrls"
-          defaultValue={service?.galleryUrls?.join(', ') || ''}
-        />
+        {/* Gallery is handled via ImageUpload (galleryUrls) */}
         <FormField
           label="Requisitos para el Cliente"
           name="requirements"

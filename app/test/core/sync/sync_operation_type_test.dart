@@ -92,7 +92,7 @@ void main() {
       () => expect(SyncOperationType.delete, isNot(SyncOperationType.upload)),
     );
     test('all values are distinct', () {
-      final values = SyncOperationType.values;
+      const values = SyncOperationType.values;
       final unique = values.toSet();
       expect(unique.length, values.length);
     });

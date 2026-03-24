@@ -9,9 +9,11 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { categoryPatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -22,18 +24,15 @@ const CATEGORY_FULL_SELECT = {
   description: true,
   thumbnailUrl: true,
   coverImageUrl: true,
-  iconName: true,
-  color: true,
   metaTitle: true,
   metaDescription: true,
   metaKeywords: true,
   ogImage: true,
   sortOrder: true,
   isActive: true,
-  projectCount: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
+  _count: { select: { projects: { where: { deletedAt: null } } } },
 }
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -56,7 +55,8 @@ export async function GET(req: Request, { params }: Params) {
       )
     }
 
-    return NextResponse.json({ success: true, data: category })
+    const { _count, ...cat } = category
+    return NextResponse.json({ success: true, data: { ...cat, projectCount: _count.projects } })
   } catch (err) {
     logger.error('[admin-category-get] Error', {
       error: err instanceof Error ? err.message : String(err),
@@ -73,22 +73,27 @@ export async function PATCH(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = categoryPatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       name,
       slug,
       description,
       thumbnailUrl,
       coverImageUrl,
-      iconName,
-      color,
       isActive,
       sortOrder,
       metaTitle,
       metaDescription,
       metaKeywords,
       ogImage,
-    } = body
+    } = parsed.data
 
     // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
@@ -104,16 +109,22 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     }
 
+    // Si se actualiza coverImageUrl sin thumbnailUrl explícito → regenerar thumbnail.
+    const resolvedThumbnailUrl =
+      thumbnailUrl !== undefined
+        ? thumbnailUrl
+        : coverImageUrl !== undefined
+          ? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : null)
+          : undefined
+
     const category = await prisma.category.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
         ...(slug !== undefined && { slug }),
         ...(description !== undefined && { description }),
-        ...(thumbnailUrl !== undefined && { thumbnailUrl }),
+        ...(resolvedThumbnailUrl !== undefined && { thumbnailUrl: resolvedThumbnailUrl }),
         ...(coverImageUrl !== undefined && { coverImageUrl }),
-        ...(iconName !== undefined && { iconName }),
-        ...(color !== undefined && { color }),
         ...(isActive !== undefined && { isActive }),
         ...(sortOrder !== undefined && { sortOrder }),
         ...(metaTitle !== undefined && { metaTitle }),
@@ -137,13 +148,14 @@ export async function PATCH(req: Request, { params }: Params) {
       })
     }
 
-    return NextResponse.json({ success: true, data: category })
+    const { _count, ...cat } = category
+    return NextResponse.json({ success: true, data: { ...cat, projectCount: _count.projects } })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }
@@ -186,7 +198,7 @@ export async function DELETE(req: Request, { params }: Params) {
       error: err instanceof Error ? err.message : String(err),
     })
     return NextResponse.json(
-      { success: false, error: err instanceof Error ? err.message : 'Error interno' },
+      { success: false, error: 'Error interno del servidor' },
       { status: 500 }
     )
   }

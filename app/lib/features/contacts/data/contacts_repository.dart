@@ -37,6 +37,9 @@ class ContactsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al obtener contactos');
+    }
     return PaginatedResponse<ContactItem>.fromJson(
       apiResp.data!,
       (e) => ContactItem.fromJson(e as Map<String, dynamic>),
@@ -51,6 +54,9 @@ class ContactsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Contacto no encontrado');
+    }
     return ContactDetail.fromJson(apiResp.data!);
   }
 
@@ -68,10 +74,19 @@ class ContactsRepository {
       (d) => d as Map<String, dynamic>,
     );
 
+    if (!apiResp.success || apiResp.data == null) {
+      throw Exception(apiResp.error ?? 'Error al actualizar contacto');
+    }
     return ContactDetail.fromJson(apiResp.data!);
   }
 
   Future<void> deleteContact(String id) async {
-    await _client.delete<Map<String, dynamic>>(Endpoints.contact(id));
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.contact(id),
+    );
+    final apiResp = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResp.success) {
+      throw Exception(apiResp.error ?? 'Error al eliminar contacto');
+    }
   }
 }

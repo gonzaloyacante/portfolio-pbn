@@ -18,18 +18,27 @@ import {
 import type { ZodSchema } from 'zod'
 
 // ── Mapa de tipo → modelo Prisma ──────────────────────────────────────────────
-const SETTINGS_MAP = {
-  home: 'homeSettings',
-  about: 'aboutSettings',
-  contact: 'contactSettings',
-  theme: 'themeSettings',
-  site: 'siteSettings',
-  project: 'projectSettings',
-  testimonial: 'testimonialSettings',
-  category: 'categorySettings',
-} as const
+type SettingsModel = {
+  findFirst(): Promise<Record<string, unknown> | null>
+  create(args: { data: Record<string, unknown> }): Promise<Record<string, unknown>>
+  update(args: {
+    where: Record<string, unknown>
+    data: Record<string, unknown>
+  }): Promise<Record<string, unknown>>
+}
 
-type SettingsType = keyof typeof SETTINGS_MAP
+const SETTINGS_MODELS = {
+  home: prisma.homeSettings as unknown as SettingsModel,
+  about: prisma.aboutSettings as unknown as SettingsModel,
+  contact: prisma.contactSettings as unknown as SettingsModel,
+  theme: prisma.themeSettings as unknown as SettingsModel,
+  site: prisma.siteSettings as unknown as SettingsModel,
+  project: prisma.projectSettings as unknown as SettingsModel,
+  testimonial: prisma.testimonialSettings as unknown as SettingsModel,
+  category: prisma.categorySettings as unknown as SettingsModel,
+} satisfies Record<string, SettingsModel>
+
+type SettingsType = keyof typeof SETTINGS_MODELS
 
 // Mapa de tipo → Zod schema (site no tiene schema propio, pasa sin validar)
 const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
@@ -46,13 +55,11 @@ const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
 const FORBIDDEN_FIELDS = ['id', 'createdAt', 'updatedAt', 'isActive']
 
 function isValidType(t: string): t is SettingsType {
-  return t in SETTINGS_MAP
+  return t in SETTINGS_MODELS
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getPrismaModel(type: SettingsType): any {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (prisma as any)[SETTINGS_MAP[type]]
+function getPrismaModel(type: SettingsType): SettingsModel {
+  return SETTINGS_MODELS[type]
 }
 
 async function fetchOrCreateSettings(type: SettingsType) {
@@ -110,10 +117,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
   try {
     const body = await req.json().catch(() => null)
     if (!body || typeof body !== 'object') {
-      return NextResponse.json(
-        { success: false, error: 'Body JSON inválido' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'Body JSON inválido' }, { status: 400 })
     }
 
     // Validate with type-specific Zod schema when available

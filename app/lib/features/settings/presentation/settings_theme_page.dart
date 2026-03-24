@@ -13,6 +13,7 @@ import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
+import 'widgets/theme_color_preview.dart';
 
 class SettingsThemePage extends ConsumerStatefulWidget {
   const SettingsThemePage({super.key});
@@ -134,7 +135,8 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
       body: LoadingOverlay(
         isLoading: _saving,
         child: async.when(
-          loading: () => _buildShimmer(),
+          loading: () =>
+              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
           error: (e, _) => ErrorState(
             message: e.toString(),
             onRetry: () => ref.invalidate(themeSettingsProvider),
@@ -143,25 +145,6 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             _populate(settings);
             return _buildForm(context);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShimmer() {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.base),
-      children: List.generate(
-        4,
-        (_) => Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ShimmerLoader(
-            child: ShimmerBox(
-              width: double.infinity,
-              height: 56,
-              borderRadius: 12,
-            ),
-          ),
         ),
       ),
     );
@@ -240,7 +223,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
               ),
               const SizedBox(height: AppSpacing.md),
               // ── Vista previa de colores ──────────────────────────────
-              _ThemeColorPreview(
+              ThemeColorPreview(
                 lightPrimary: _primaryCtrl.text,
                 lightSecondary: _secondaryCtrl.text,
                 lightBg: _bgCtrl.text,
@@ -257,247 +240,6 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ── _ThemeColorPreview ────────────────────────────────────────────────────────
-
-/// Muestra una vista previa visual de los colores del tema en tiempo real.
-class _ThemeColorPreview extends StatelessWidget {
-  const _ThemeColorPreview({
-    required this.lightPrimary,
-    required this.lightSecondary,
-    required this.lightBg,
-    required this.darkPrimary,
-    required this.darkBg,
-  });
-
-  final String lightPrimary;
-  final String lightSecondary;
-  final String lightBg;
-  final String darkPrimary;
-  final String darkBg;
-
-  Color? _parse(String hex) {
-    try {
-      final h = hex.trim().replaceAll('#', '');
-      if (h.length < 6) return null;
-      return Color(int.parse('FF${h.substring(0, 6)}', radix: 16));
-    } catch (_) {
-      return null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    final lPrimary = _parse(lightPrimary) ?? colorScheme.primary;
-    final lSecondary = _parse(lightSecondary) ?? colorScheme.secondary;
-    final lBg = _parse(lightBg) ?? colorScheme.surface;
-    final dPrimary = _parse(darkPrimary) ?? colorScheme.primary;
-    final dBg = _parse(darkBg) ?? const Color(0xFF0F0505);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colorScheme.outlineVariant.withAlpha(80)),
-      ),
-      padding: const EdgeInsets.all(AppSpacing.base),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.palette_outlined,
-                size: 16,
-                color: colorScheme.primary,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'Vista previa del tema',
-                style: textTheme.labelMedium?.copyWith(
-                  color: colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Row(
-            children: [
-              Expanded(
-                child: _MiniThemeCard(
-                  label: 'Modo claro',
-                  primary: lPrimary,
-                  secondary: lSecondary,
-                  background: lBg,
-                  isDark: false,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: _MiniThemeCard(
-                  label: 'Modo oscuro',
-                  primary: dPrimary,
-                  secondary: lSecondary,
-                  background: dBg,
-                  isDark: true,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MiniThemeCard extends StatelessWidget {
-  const _MiniThemeCard({
-    required this.label,
-    required this.primary,
-    required this.secondary,
-    required this.background,
-    required this.isDark,
-  });
-
-  final String label;
-  final Color primary;
-  final Color secondary;
-  final Color background;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    final textColor = isDark ? Colors.white : Colors.black87;
-    final subtextColor = isDark ? Colors.white54 : Colors.black45;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(isDark ? 60 : 18),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(AppSpacing.sm),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 9,
-              color: subtextColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          // Mini card dentro del preview
-          Container(
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withAlpha(12)
-                  : Colors.white.withAlpha(230),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.all(6),
-            child: Row(
-              children: [
-                Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: primary.withAlpha(isDark ? 90 : 40),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Icon(Icons.photo_outlined, size: 12, color: primary),
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: textColor.withAlpha(180),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Container(
-                        height: 4,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: subtextColor,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          // Color swatches
-          Row(
-            children: [
-              _Swatch(color: primary),
-              const SizedBox(width: 4),
-              _Swatch(color: secondary),
-              const SizedBox(width: 4),
-              _SwatchOutlined(color: background),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Swatch extends StatelessWidget {
-  const _Swatch({required this.color});
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.black.withAlpha(30), width: 0.5),
-      ),
-    );
-  }
-}
-
-class _SwatchOutlined extends StatelessWidget {
-  const _SwatchOutlined({required this.color});
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.grey.withAlpha(100), width: 1),
       ),
     );
   }

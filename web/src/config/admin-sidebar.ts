@@ -10,6 +10,7 @@ import {
   User,
   Settings,
   Palette,
+  Globe,
   Trash2,
   type LucideIcon,
 } from 'lucide-react'
@@ -65,6 +66,11 @@ export const menuItems: SidebarItem[] = [
     href: ROUTES.admin.settings,
     label: 'Contacto y Redes',
     icon: Settings,
+  },
+  {
+    href: ROUTES.admin.siteSettings,
+    label: 'Configuración del Sitio',
+    icon: Globe,
   },
   {
     href: ROUTES.admin.theme,

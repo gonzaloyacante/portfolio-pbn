@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../api/api_client.dart';
+import '../api/api_exceptions.dart';
 import '../database/app_database.dart';
 import '../network/connectivity_provider.dart';
 import '../utils/app_logger.dart';
@@ -110,6 +111,18 @@ class SyncManager extends _$SyncManager {
       AppLogger.info(
         'SyncManager: completed ${operation.operation} on ${operation.resource} [${operation.id}]',
       );
+    } on ConflictException catch (e) {
+      // 409 Conflict: server has newer data — discard client operation.
+      AppLogger.warn(
+        'SyncManager: conflict on ${operation.resource} [${operation.id}]: ${e.message} — marking as failed',
+      );
+      await queue.markFailed(operation.id);
+    } on NotFoundException catch (_) {
+      // 404: resource no longer exists on server — discard operation.
+      AppLogger.warn(
+        'SyncManager: resource ${operation.resource} [${operation.id}] not found — marking as failed',
+      );
+      await queue.markFailed(operation.id);
     } catch (e) {
       AppLogger.error(
         'SyncManager: failed ${operation.operation} on ${operation.resource} [${operation.id}]',

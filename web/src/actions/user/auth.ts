@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { emailService } from '@/lib/email-service'
+import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { z } from 'zod'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
@@ -25,6 +26,8 @@ export async function requestPasswordReset(email: string) {
   if (!result.success) {
     return { success: false, message: result.error.issues[0].message }
   }
+
+  await checkApiRateLimit()
 
   try {
     const user = await prisma.user.findUnique({ where: { email } })
@@ -79,7 +82,7 @@ export async function resetPassword(token: string, password: string) {
       data: { password: hashedPassword },
     })
 
-    await prisma.passwordResetToken.delete({ where: { id: storedToken.id } })
+    await prisma.passwordResetToken.deleteMany({ where: { email: storedToken.email } })
 
     return { success: true, message: 'Contraseña actualizada correctamente.' }
   } catch (error) {

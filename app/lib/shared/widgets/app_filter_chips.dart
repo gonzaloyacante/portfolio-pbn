@@ -56,7 +56,7 @@ class AppFilterChips<T> extends StatelessWidget {
       height: 40,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: padding ?? EdgeInsets.symmetric(horizontal: AppSpacing.base),
+        padding: padding ?? const EdgeInsets.symmetric(horizontal: AppSpacing.base),
         children: [
           if (showAll) ...[
             _FilterChipItem(
@@ -125,17 +125,23 @@ class _FilterChipItem extends StatelessWidget {
           vertical: AppSpacing.xs + 2,
         ),
         decoration: BoxDecoration(
-          color: isSelected ? color.withAlpha(30) : Colors.transparent,
+          color: isSelected
+              ? color.withValues(alpha: 30 / 255)
+              : Colors.transparent,
           borderRadius: AppRadius.forChip,
           border: Border.all(
-            color: isSelected ? color : colorScheme.outline.withAlpha(100),
+            color: isSelected
+                ? color
+                : colorScheme.outline.withValues(alpha: 100 / 255),
             width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Text(
           label,
           style: (textTheme.labelSmall ?? const TextStyle()).copyWith(
-            color: isSelected ? color : colorScheme.onSurface.withAlpha(160),
+            color: isSelected
+                ? color
+                : colorScheme.onSurface.withValues(alpha: 160 / 255),
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
           ),
           maxLines: 1,

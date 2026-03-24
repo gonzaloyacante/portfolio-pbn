@@ -275,7 +275,7 @@ describe('Project Mutations (cms/project)', () => {
       await toggleProjectActive('proj-1')
 
       expect(revalidatePath).toHaveBeenCalledWith('/admin/proyectos')
-      expect(revalidatePath).toHaveBeenCalledWith('/proyectos')
+      expect(revalidatePath).toHaveBeenCalledWith('/proyectos', 'layout')
     })
 
     it('returns error if project not found', async () => {

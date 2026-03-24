@@ -174,26 +174,11 @@ export default function AnalyticsTracker({
     }
 
     // ── Click tracking ───────────────────────────────────────────────────
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as HTMLElement
-      const label =
-        target.getAttribute('aria-label') ||
-        target.getAttribute('data-track') ||
-        target.closest('[data-track]')?.getAttribute('data-track') ||
-        target.tagName.toLowerCase()
-
-      const interestingTags = ['a', 'button', 'img']
-      const tagName = target.tagName.toLowerCase()
-      if (!interestingTags.includes(tagName) && !target.closest('a, button')) return
-
-      recordAnalyticEvent(ANALYTIC_EVENTS.CLICK, entityId, entityType, {
-        sessionId: sessionIdRef.current,
-        clickTarget: label,
-      }).catch(() => {})
-    }
+    // Click tracking to DB disabled — cada click generaba un DB write en Neon
+    // lo que agotaba el compute serverless. Los datos de scroll/tiempo ya
+    // capturan el engagement relevante.
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('click', handleClick)
 
     // ── Web Vitals ───────────────────────────────────────────────────────
     let vitalsLCP: number | undefined
@@ -251,7 +236,6 @@ export default function AnalyticsTracker({
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('click', handleClick)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('beforeunload', sendEngagement)
     }

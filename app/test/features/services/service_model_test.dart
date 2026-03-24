@@ -24,8 +24,6 @@ void main() {
     test('isFeatured defaults to false', () => expect(item.isFeatured, false));
     test('isAvailable defaults to true', () => expect(item.isAvailable, true));
     test('sortOrder defaults to 0', () => expect(item.sortOrder, 0));
-    test('bookingCount defaults to 0', () => expect(item.bookingCount, 0));
-    test('viewCount defaults to 0', () => expect(item.viewCount, 0));
   });
 
   group('ServiceItem — custom values', () {

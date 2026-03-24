@@ -9,9 +9,11 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
+import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { testimonialPatchSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -32,11 +34,9 @@ const TESTIMONIAL_DETAIL_SELECT = {
   source: true,
   projectId: true,
   status: true,
-  moderatedBy: true,
   moderatedAt: true,
   isActive: true,
   sortOrder: true,
-  viewCount: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -62,7 +62,13 @@ export async function GET(req: Request, { params }: Params) {
       )
     }
 
-    return NextResponse.json({ success: true, data: testimonial })
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...testimonial,
+        thumbnailUrl: testimonial.avatarUrl ? generateThumbnailUrl(testimonial.avatarUrl) : null,
+      },
+    })
   } catch (err) {
     logger.error('[admin-testimonial-get] Error', {
       id,
@@ -81,7 +87,14 @@ export async function PATCH(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const body = await req.json()
+    const body = await req.json().catch(() => null)
+    const parsed = testimonialPatchSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      )
+    }
     const {
       name,
       text,
@@ -100,7 +113,7 @@ export async function PATCH(req: Request, { params }: Params) {
       status,
       isActive,
       sortOrder,
-    } = body
+    } = parsed.data
 
     const existing = await prisma.testimonial.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
@@ -110,10 +123,7 @@ export async function PATCH(req: Request, { params }: Params) {
       )
     }
 
-    const moderationData =
-      status && status !== existing.status
-        ? { moderatedBy: auth.payload?.email ?? 'admin', moderatedAt: new Date() }
-        : {}
+    const moderationData = status && status !== existing.status ? { moderatedAt: new Date() } : {}
 
     const updated = await prisma.testimonial.update({
       where: { id },

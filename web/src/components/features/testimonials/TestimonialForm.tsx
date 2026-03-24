@@ -48,6 +48,11 @@ export default function TestimonialForm() {
     <form action={handleSubmit} className="space-y-6">
       <Input label="Tu nombre *" name="name" required placeholder="¿Cómo te llamas?" />
 
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <Input label="Cargo / Profesión" name="position" placeholder="ej. Diseñadora gráfica" />
+        <Input label="Empresa / Negocio" name="company" placeholder="ej. Studio Creativo" />
+      </div>
+
       <Input label="Email (opcional)" name="email" type="email" placeholder="tu@email.com" />
 
       <div>
