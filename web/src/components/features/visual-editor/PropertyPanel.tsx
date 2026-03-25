@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui'
 import type { HomeSettingsData } from '@/actions/settings/home'
-import type { EditableElement } from './types'
+import type { EditableElement, ViewportMode } from './types'
 import { Info } from 'lucide-react'
 import { PropertyEditor } from './PropertyEditor'
 
@@ -10,13 +10,19 @@ interface PropertyPanelProps {
   selectedElement: EditableElement
   settings: HomeSettingsData | null
   onUpdate: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
+  viewportMode: ViewportMode
 }
 
 /**
  * Property Panel Component
  * Displays editable properties for selected visual elements
  */
-export function PropertyPanel({ selectedElement, settings, onUpdate }: PropertyPanelProps) {
+export function PropertyPanel({
+  selectedElement,
+  settings,
+  onUpdate,
+  viewportMode,
+}: PropertyPanelProps) {
   if (!selectedElement || !settings) {
     return (
       <Card className="flex h-[200px] items-center justify-center p-6">
@@ -31,7 +37,12 @@ export function PropertyPanel({ selectedElement, settings, onUpdate }: PropertyP
   return (
     <Card className="p-6">
       <h3 className="mb-4 text-lg font-semibold">Propiedades</h3>
-      <PropertyEditor element={selectedElement} settings={settings} onUpdate={onUpdate} />
+      <PropertyEditor
+        element={selectedElement}
+        settings={settings}
+        onUpdate={onUpdate}
+        viewportMode={viewportMode}
+      />
     </Card>
   )
 }

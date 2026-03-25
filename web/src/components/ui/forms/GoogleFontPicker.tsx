@@ -91,7 +91,18 @@ export function GoogleFontPicker({
     setVisibleCount(20)
   }, [search, category, open])
 
-  // 4. Dynamic Font Loading (Fix for "Preview not working")
+  // 4a. Load the currently selected font's CSS on mount / value change (so the button shows it)
+  useEffect(() => {
+    if (!value || loadedFontsRef.current.has(value)) return
+    loadedFontsRef.current.add(value)
+    const family = value.replace(/ /g, '+')
+    const link = document.createElement('link')
+    link.href = `https://fonts.googleapis.com/css2?family=${family}&display=swap`
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+  }, [value])
+
+  // 4b. Dynamic Font Loading for modal grid (Fix for "Preview not working")
   useEffect(() => {
     if (!open) return
 

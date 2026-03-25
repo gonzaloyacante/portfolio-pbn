@@ -29,8 +29,17 @@ type FieldConfig = {
   featuredCount?: keyof HomeSettingsData
 }
 
+type MobileFieldConfig = {
+  offsetX?: keyof HomeSettingsData
+  offsetY?: keyof HomeSettingsData
+  fontSize?: keyof HomeSettingsData
+  size?: keyof HomeSettingsData
+  rotation?: keyof HomeSettingsData
+}
+
 type ControlConfig = {
   fields: FieldConfig
+  mobileFields?: MobileFieldConfig
   defaults: {
     fontSize?: number
     fontSizeMin?: number
@@ -39,6 +48,8 @@ type ControlConfig = {
   }
   label?: string
 }
+
+export type { FieldConfig, MobileFieldConfig, ControlConfig }
 
 export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfig> = {
   heroTitle1: {
@@ -52,6 +63,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       zIndex: 'heroTitle1ZIndex',
       offsetX: 'heroTitle1OffsetX',
       offsetY: 'heroTitle1OffsetY',
+    },
+    mobileFields: {
+      offsetX: 'heroTitle1MobileOffsetX',
+      offsetY: 'heroTitle1MobileOffsetY',
+      fontSize: 'heroTitle1MobileFontSize',
     },
     defaults: {
       fontSize: 112,
@@ -73,6 +89,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetX: 'heroTitle2OffsetX',
       offsetY: 'heroTitle2OffsetY',
     },
+    mobileFields: {
+      offsetX: 'heroTitle2MobileOffsetX',
+      offsetY: 'heroTitle2MobileOffsetY',
+      fontSize: 'heroTitle2MobileFontSize',
+    },
     defaults: {
       fontSize: 96,
       fontSizeMin: 20,
@@ -93,6 +114,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetX: 'ownerNameOffsetX',
       offsetY: 'ownerNameOffsetY',
     },
+    mobileFields: {
+      offsetX: 'ownerNameMobileOffsetX',
+      offsetY: 'ownerNameMobileOffsetY',
+      fontSize: 'ownerNameMobileFontSize',
+    },
     defaults: {
       fontSize: 36,
       fontSizeMin: 12,
@@ -111,6 +137,12 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetY: 'illustrationOffsetY',
       rotation: 'illustrationRotation',
     },
+    mobileFields: {
+      offsetX: 'illustrationMobileOffsetX',
+      offsetY: 'illustrationMobileOffsetY',
+      size: 'illustrationMobileSize',
+      rotation: 'illustrationMobileRotation',
+    },
     defaults: {
       zIndex: 10,
     },
@@ -127,6 +159,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetX: 'ctaOffsetX',
       offsetY: 'ctaOffsetY',
     },
+    mobileFields: {
+      offsetX: 'ctaMobileOffsetX',
+      offsetY: 'ctaMobileOffsetY',
+      fontSize: 'ctaMobileFontSize',
+    },
     defaults: {
       fontSize: 16,
       fontSizeMin: 10,
@@ -142,6 +179,10 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       zIndex: 'heroMainImageZIndex',
       offsetX: 'heroMainImageOffsetX',
       offsetY: 'heroMainImageOffsetY',
+    },
+    mobileFields: {
+      offsetX: 'heroMainImageMobileOffsetX',
+      offsetY: 'heroMainImageMobileOffsetY',
     },
     defaults: {
       zIndex: 5,
