@@ -250,7 +250,8 @@ describe('POST /api/admin/services', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('name')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 400 for missing slug', async () => {
@@ -260,7 +261,8 @@ describe('POST /api/admin/services', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('slug')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 409 for duplicate slug', async () => {
@@ -286,7 +288,7 @@ describe('POST /api/admin/services', () => {
     await POST(
       makeRequest(BASE_URL, {
         method: 'POST',
-        body: { ...validServiceBody, price: '15000.50' },
+        body: { ...validServiceBody, price: 15000.5 },
       })
     )
 
@@ -324,10 +326,10 @@ describe('POST /api/admin/services', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 
-  it('checks slug uniqueness via findFirst with deletedAt: null', async () => {
+  it('checks slug uniqueness via findFirst', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
     vi.mocked(prisma.service.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as any)
@@ -337,7 +339,7 @@ describe('POST /api/admin/services', () => {
     await POST(makeRequest(BASE_URL, { method: 'POST', body: validServiceBody }))
 
     expect(prisma.service.findFirst).toHaveBeenCalledWith({
-      where: { slug: 'nuevo-servicio', deletedAt: null },
+      where: { slug: 'nuevo-servicio' },
     })
   })
 

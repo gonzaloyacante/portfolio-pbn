@@ -260,7 +260,8 @@ describe('POST /api/admin/bookings', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Campos requeridos')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('parses totalAmount to float', async () => {
@@ -271,7 +272,7 @@ describe('POST /api/admin/bookings', () => {
     await POST(
       makeRequest(BASE_URL, {
         method: 'POST',
-        body: { ...validBookingBody, totalAmount: '250.50' },
+        body: { ...validBookingBody, totalAmount: 250.5 },
       })
     )
 
@@ -305,7 +306,7 @@ describe('POST /api/admin/bookings', () => {
 
     const { POST } = await import('@/app/api/admin/bookings/route')
     const res = await POST(
-      makeRequest(BASE_URL, { method: 'POST', body: { ...validBookingBody, totalAmount: '150' } })
+      makeRequest(BASE_URL, { method: 'POST', body: { ...validBookingBody, totalAmount: 150 } })
     )
     const json = await res.json()
 

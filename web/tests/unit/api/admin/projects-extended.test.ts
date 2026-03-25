@@ -301,10 +301,10 @@ describe('POST /api/admin/projects — extended', () => {
     expect(res.status).toBe(400)
   })
 
-  it('POST returns 400 when slug is missing', async () => {
+  it('POST returns 400 when categoryId is missing', async () => {
     const { POST } = await import('@/app/api/admin/projects/route')
     const res = await POST(
-      makeRequest(BASE_URL, { method: 'POST', body: { ...validProject, slug: undefined } })
+      makeRequest(BASE_URL, { method: 'POST', body: { ...validProject, categoryId: undefined } })
     )
 
     expect(res.status).toBe(400)

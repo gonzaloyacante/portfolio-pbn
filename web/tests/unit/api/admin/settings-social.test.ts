@@ -175,7 +175,7 @@ describe('POST /api/admin/settings/social', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('platform')
+    expect(json.error).toBe('Datos inválidos')
   })
 
   it('returns 400 when url is missing', async () => {

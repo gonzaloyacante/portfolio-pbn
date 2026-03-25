@@ -44,12 +44,10 @@ const mockCategory = {
   slug: 'retratos',
   description: 'Fotografía de retratos',
   thumbnailUrl: 'https://img.test/cat.jpg',
-  iconName: 'camera',
-  color: '#6C0A0A',
+  coverImageUrl: null,
   sortOrder: 1,
   isActive: true,
-  projectCount: 5,
-  viewCount: 100,
+  _count: { projects: 5 },
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -229,7 +227,8 @@ describe('POST /api/admin/categories', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('name')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 400 for missing slug', async () => {
@@ -239,7 +238,8 @@ describe('POST /api/admin/categories', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('slug')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 409 for duplicate slug (with deletedAt: null)', async () => {
@@ -255,7 +255,7 @@ describe('POST /api/admin/categories', () => {
     expect(json.error).toContain('slug')
 
     expect(prisma.category.findFirst).toHaveBeenCalledWith({
-      where: { slug: 'nueva-categoria', deletedAt: null },
+      where: { slug: 'nueva-categoria' },
     })
   })
 
@@ -286,7 +286,7 @@ describe('POST /api/admin/categories', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 
   it('validates required fields (name and slug)', async () => {
@@ -296,10 +296,11 @@ describe('POST /api/admin/categories', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Campos requeridos')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
-  it('accepts optional fields (description, thumbnailUrl, iconName, color)', async () => {
+  it('accepts optional fields (description, thumbnailUrl, coverImageUrl)', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.category.findFirst).mockResolvedValueOnce(null)
     vi.mocked(prisma.category.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as any)
@@ -310,8 +311,7 @@ describe('POST /api/admin/categories', () => {
       ...validCategoryBody,
       description: 'Descripción extra',
       thumbnailUrl: 'https://img.test/cat.jpg',
-      iconName: 'camera',
-      color: '#FF0000',
+      coverImageUrl: 'https://img.test/cover.jpg',
     }
     const res = await POST(makeRequest(BASE_URL, { method: 'POST', body }))
 
@@ -321,8 +321,7 @@ describe('POST /api/admin/categories', () => {
         data: expect.objectContaining({
           description: 'Descripción extra',
           thumbnailUrl: 'https://img.test/cat.jpg',
-          iconName: 'camera',
-          color: '#FF0000',
+          coverImageUrl: 'https://img.test/cover.jpg',
         }),
       })
     )

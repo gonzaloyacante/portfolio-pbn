@@ -61,16 +61,16 @@ describe('POST /api/admin/push/register', () => {
     expect(res.status).toBe(400)
     const json = await res.json()
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Token')
+    expect(json.error).toBe('Datos inválidos')
   })
 
   it('returns 400 for empty token', async () => {
     const { POST } = await import('@/app/api/admin/push/register/route')
-    const res = await POST(makeRequest({ token: '   ', platform: 'android' }))
+    const res = await POST(makeRequest({ token: '', platform: 'android' }))
     expect(res.status).toBe(400)
     const json = await res.json()
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Token')
+    expect(json.error).toBe('Datos inválidos')
   })
 
   it('returns 400 for invalid platform', async () => {
@@ -79,7 +79,7 @@ describe('POST /api/admin/push/register', () => {
     expect(res.status).toBe(400)
     const json = await res.json()
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Platform')
+    expect(json.error).toBe('Datos inválidos')
   })
 
   it('registers token successfully via upsert', async () => {

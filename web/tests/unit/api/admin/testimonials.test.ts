@@ -247,7 +247,8 @@ describe('POST /api/admin/testimonials', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('name')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 400 for missing text', async () => {
@@ -257,7 +258,8 @@ describe('POST /api/admin/testimonials', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('text')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('defaults rating to 5', async () => {

@@ -333,6 +333,11 @@ describe('CRUD Create Edge Cases — Projects', () => {
   })
 
   it('rejects create with slug containing spaces', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.project.findUnique).mockResolvedValueOnce(null)
+    vi.mocked(prisma.project.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as never)
+    vi.mocked(prisma.project.create).mockResolvedValueOnce(mockProject as never)
+
     const { POST } = await import('@/app/api/admin/projects/route')
     const body = {
       title: 'Valid Title',
@@ -372,7 +377,14 @@ describe('CRUD Pagination Edge Cases — Categories', () => {
 
   it('returns paginated list of categories', async () => {
     const { prisma } = await import('@/lib/db')
-    const mockCat = { id: 'cat-1', name: 'Test', slug: 'test', sortOrder: 1, isActive: true }
+    const mockCat = {
+      id: 'cat-1',
+      name: 'Test',
+      slug: 'test',
+      sortOrder: 1,
+      isActive: true,
+      _count: { projects: 0 },
+    }
     vi.mocked(prisma.category.findMany).mockResolvedValueOnce([mockCat] as never)
     vi.mocked(prisma.category.count).mockResolvedValueOnce(1)
 

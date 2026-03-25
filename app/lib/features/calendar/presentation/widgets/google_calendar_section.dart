@@ -23,8 +23,11 @@ class GoogleCalendarSection extends ConsumerWidget {
     );
 
     return gcAsync.when(
-      loading: () =>
-          const ShimmerBox(width: double.infinity, height: 40, borderRadius: 12),
+      loading: () => const ShimmerBox(
+        width: double.infinity,
+        height: 40,
+        borderRadius: 12,
+      ),
       error: (err, st) {
         Sentry.captureException(err, stackTrace: st);
         return const SizedBox.shrink();

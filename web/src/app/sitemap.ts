@@ -42,6 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic categories
   const categories = await prisma.category.findMany({
+    where: { deletedAt: null },
     select: {
       slug: true,
     },

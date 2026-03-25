@@ -6,6 +6,7 @@ vi.mock('@/lib/db', () => ({
   prisma: {
     category: {
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -41,16 +42,13 @@ const mockCategoryFull = {
   description: 'Fotografía de retratos',
   thumbnailUrl: 'https://img.test/cat.jpg',
   coverImageUrl: null,
-  iconName: 'camera',
-  color: '#6C0A0A',
   metaTitle: null,
   metaDescription: null,
   metaKeywords: [],
   ogImage: null,
   sortOrder: 1,
   isActive: true,
-  projectCount: 5,
-  viewCount: 100,
+  _count: { projects: 5 },
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -163,6 +161,7 @@ describe('PATCH /api/admin/categories/[id]', () => {
     vi.mocked(prisma.category.update).mockResolvedValueOnce({
       ...mockCategoryFull,
       name: 'Updated Name',
+      _count: { projects: 5 },
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/categories/[id]/route')
@@ -195,7 +194,7 @@ describe('PATCH /api/admin/categories/[id]', () => {
     expect(json.error).toContain('slug')
 
     expect(prisma.category.findFirst).toHaveBeenCalledWith({
-      where: { slug: 'taken-slug', deletedAt: null, NOT: { id: 'cat-1' } },
+      where: { slug: 'taken-slug', NOT: { id: 'cat-1' } },
     })
   })
 
@@ -204,6 +203,7 @@ describe('PATCH /api/admin/categories/[id]', () => {
     vi.mocked(prisma.category.update).mockResolvedValueOnce({
       ...mockCategoryFull,
       isActive: false,
+      _count: { projects: 5 },
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/categories/[id]/route')
@@ -229,7 +229,7 @@ describe('PATCH /api/admin/categories/[id]', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 })
 
@@ -254,24 +254,33 @@ describe('DELETE /api/admin/categories/[id]', () => {
     expect(res.status).toBe(401)
   })
 
-  it('soft deletes category (sets deletedAt)', async () => {
+  it('soft deletes category (sets deletedAt + slug mangling)', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({ slug: 'retratos' } as any)
     vi.mocked(prisma.category.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/categories/[id]/route')
     const params = Promise.resolve({ id: 'cat-1' })
     await DELETE(makeRequest(BASE_URL, { method: 'DELETE' }), { params })
 
+    expect(prisma.category.findUnique).toHaveBeenCalledWith({
+      where: { id: 'cat-1' },
+      select: { slug: true },
+    })
     expect(prisma.category.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 'cat-1' },
-        data: { deletedAt: expect.any(Date) },
+        data: expect.objectContaining({
+          deletedAt: expect.any(Date),
+          slug: expect.stringContaining('_deleted_'),
+        }),
       })
     )
   })
 
   it('returns success response', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({ slug: 'retratos' } as any)
     vi.mocked(prisma.category.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/categories/[id]/route')
@@ -286,6 +295,7 @@ describe('DELETE /api/admin/categories/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({ slug: 'retratos' } as any)
     vi.mocked(prisma.category.update).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/categories/[id]/route')
@@ -294,6 +304,6 @@ describe('DELETE /api/admin/categories/[id]', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 })

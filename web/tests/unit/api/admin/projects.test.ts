@@ -280,7 +280,8 @@ describe('POST /api/admin/projects', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Campos requeridos')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 409 for duplicate slug', async () => {
@@ -339,7 +340,7 @@ describe('POST /api/admin/projects', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 
   it('validates slug uniqueness via findUnique', async () => {

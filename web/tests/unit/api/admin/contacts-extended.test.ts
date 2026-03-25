@@ -286,19 +286,19 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
     ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
     ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
-      status: 'IN_PROGRESS',
+      status: 'READ',
     })
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/contact-1`, { method: 'PATCH', body: { status: 'IN_PROGRESS' } }),
+      makeRequest(`${BASE_URL}/contact-1`, { method: 'PATCH', body: { status: 'READ' } }),
       { params: Promise.resolve({ id: 'contact-1' }) }
     )
 
     expect(res.status).toBe(200)
     expect(prisma.contact.update).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ status: 'IN_PROGRESS' }),
+        data: expect.objectContaining({ status: 'READ' }),
       })
     )
   })
@@ -398,7 +398,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/contact-404`, { method: 'PATCH', body: { status: 'RESOLVED' } }),
+      makeRequest(`${BASE_URL}/contact-404`, { method: 'PATCH', body: { status: 'ARCHIVED' } }),
       { params: Promise.resolve({ id: 'contact-404' }) }
     )
 
@@ -412,7 +412,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/contact-1`, { method: 'PATCH', body: { status: 'RESOLVED' } }),
+      makeRequest(`${BASE_URL}/contact-1`, { method: 'PATCH', body: { status: 'ARCHIVED' } }),
       { params: Promise.resolve({ id: 'contact-1' }) }
     )
 

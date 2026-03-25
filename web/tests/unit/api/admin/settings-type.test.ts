@@ -194,7 +194,10 @@ describe('PATCH /api/admin/settings/[type]', () => {
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: { heroTitle: 'Updated Title' } }),
+      makeRequest(`${BASE_URL}/home`, {
+        method: 'PATCH',
+        body: { heroTitle: 'Updated Title', showFeaturedProjects: true, featuredCount: 3 },
+      }),
       { params }
     )
     const json = await res.json()
@@ -211,7 +214,10 @@ describe('PATCH /api/admin/settings/[type]', () => {
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: { heroTitle: 'New' } }),
+      makeRequest(`${BASE_URL}/home`, {
+        method: 'PATCH',
+        body: { heroTitle: 'New', showFeaturedProjects: true, featuredCount: 3 },
+      }),
       { params }
     )
     const json = await res.json()
@@ -237,6 +243,8 @@ describe('PATCH /api/admin/settings/[type]', () => {
           updatedAt: '2020-01-01',
           isActive: false,
           heroTitle: 'Valid Field',
+          showFeaturedProjects: true,
+          featuredCount: 3,
         },
       }),
       { params }
@@ -265,7 +273,10 @@ describe('PATCH /api/admin/settings/[type]', () => {
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: { heroTitle: 'X' } }),
+      makeRequest(`${BASE_URL}/home`, {
+        method: 'PATCH',
+        body: { heroTitle: 'X', showFeaturedProjects: true, featuredCount: 3 },
+      }),
       { params }
     )
     const json = await res.json()

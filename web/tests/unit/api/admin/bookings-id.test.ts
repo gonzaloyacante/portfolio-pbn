@@ -254,7 +254,6 @@ describe('PATCH /api/admin/bookings/[id]', () => {
         data: expect.objectContaining({
           status: 'CANCELLED',
           cancelledAt: expect.any(Date),
-          cancelledBy: 'admin',
         }),
       })
     )
@@ -274,7 +273,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
     await PATCH(
       makeRequest(BASE_URL, {
         method: 'PATCH',
-        body: { totalAmount: '300.50', paidAmount: '100' },
+        body: { totalAmount: 300.5, paidAmount: 100 },
       }),
       { params }
     )

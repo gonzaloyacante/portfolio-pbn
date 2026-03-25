@@ -271,7 +271,8 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
                         InfoTile(label: 'Entorno', value: _environmentLabel),
                       ],
                     ),
-                    loading: () => const InfoTile(label: 'Versión', value: '...'),
+                    loading: () =>
+                        const InfoTile(label: 'Versión', value: '...'),
                     error: (error, stackTrace) =>
                         const InfoTile(label: 'Versión', value: 'N/A'),
                   );
