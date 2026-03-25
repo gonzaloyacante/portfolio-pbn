@@ -155,6 +155,7 @@ const nextConfig: NextConfig = {
 
       // Contactos (Mensajes)
       { source: '/admin/contactos', destination: '/admin/contacts' },
+      { source: '/admin/contactos/configuracion', destination: '/admin/settings' },
 
       // Sobre Mí
       { source: '/admin/sobre-mi', destination: '/admin/about' },
