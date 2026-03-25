@@ -56,7 +56,8 @@ class AppFilterChips<T> extends StatelessWidget {
       height: 40,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: padding ?? const EdgeInsets.symmetric(horizontal: AppSpacing.base),
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: AppSpacing.base),
         children: [
           if (showAll) ...[
             _FilterChipItem(

@@ -128,7 +128,7 @@ describe('GET /api/admin/projects/[id]', () => {
     expect(res.status).toBe(404)
     expect(prisma.project.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'deleted-proj', isDeleted: false },
+        where: { id: 'deleted-proj', deletedAt: null },
       })
     )
   })
@@ -237,7 +237,9 @@ describe('PATCH /api/admin/projects/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/projects/[id]/route')
     const params = Promise.resolve({ id: 'proj-1' })
-    await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { title: 'X' } }), { params })
+    await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { title: 'Updated Title' } }), {
+      params,
+    })
 
     expect(prisma.project.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -252,9 +254,12 @@ describe('PATCH /api/admin/projects/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/projects/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
-    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { title: 'X' } }), {
-      params,
-    })
+    const res = await PATCH(
+      makeRequest(BASE_URL, { method: 'PATCH', body: { title: 'Updated Title' } }),
+      {
+        params,
+      }
+    )
     const json = await res.json()
 
     expect(res.status).toBe(404)
@@ -268,13 +273,16 @@ describe('PATCH /api/admin/projects/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/projects/[id]/route')
     const params = Promise.resolve({ id: 'proj-1' })
-    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { title: 'X' } }), {
-      params,
-    })
+    const res = await PATCH(
+      makeRequest(BASE_URL, { method: 'PATCH', body: { title: 'Updated Title' } }),
+      {
+        params,
+      }
+    )
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 })
 
@@ -391,6 +399,6 @@ describe('DELETE /api/admin/projects/[id]', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 })

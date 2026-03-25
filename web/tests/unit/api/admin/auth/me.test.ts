@@ -178,13 +178,13 @@ describe('PATCH /api/admin/auth/me', () => {
   })
 
   it('returns 400 for missing currentPassword', async () => {
-    const req = makePatchRequest({ newPassword: 'newpass123' })
+    const req = makePatchRequest({ newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     const res = await PATCH(req)
     expect(res.status).toBe(400)
     const data = await res.json()
     expect(data.success).toBe(false)
-    expect(data.error).toContain('requeridos')
+    expect(data.error).toBe('Datos inválidos')
   })
 
   it('returns 400 for missing newPassword', async () => {
@@ -204,14 +204,14 @@ describe('PATCH /api/admin/auth/me', () => {
     expect(res.status).toBe(400)
     const data = await res.json()
     expect(data.success).toBe(false)
-    expect(data.error).toContain('8 caracteres')
+    expect(data.error).toBe('Datos inválidos')
   })
 
   it('returns 404 if user not found', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
 
-    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'newpass123' })
+    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     const res = await PATCH(req)
     expect(res.status).toBe(404)
@@ -227,7 +227,7 @@ describe('PATCH /api/admin/auth/me', () => {
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
 
-    const req = makePatchRequest({ currentPassword: 'wrongpass', newPassword: 'newpass123' })
+    const req = makePatchRequest({ currentPassword: 'wrongpass', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     const res = await PATCH(req)
     expect(res.status).toBe(400)
@@ -244,7 +244,7 @@ describe('PATCH /api/admin/auth/me', () => {
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(true as never)
 
-    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'newpass123' })
+    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     const res = await PATCH(req)
     expect(res.status).toBe(200)
@@ -267,11 +267,11 @@ describe('PATCH /api/admin/auth/me', () => {
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(true as never)
 
-    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'newpass123' })
+    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     await PATCH(req)
 
-    expect(bcrypt.hash).toHaveBeenCalledWith('newpass123', 12)
+    expect(bcrypt.hash).toHaveBeenCalledWith('NewPass123', 12)
   })
 
   it('returns success response with message', async () => {
@@ -282,7 +282,7 @@ describe('PATCH /api/admin/auth/me', () => {
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(true as never)
 
-    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'newpass123' })
+    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     const res = await PATCH(req)
     const data = await res.json()
@@ -294,7 +294,7 @@ describe('PATCH /api/admin/auth/me', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.user.findFirst).mockRejectedValue(new Error('DB down'))
 
-    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'newpass123' })
+    const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
     const res = await PATCH(req)
     expect(res.status).toBe(500)

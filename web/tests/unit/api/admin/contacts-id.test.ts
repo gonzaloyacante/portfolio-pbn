@@ -176,10 +176,9 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'contact-1' })
-    const res = await PATCH(
-      makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'IN_PROGRESS' } }),
-      { params }
-    )
+    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'READ' } }), {
+      params,
+    })
     expect(res.status).toBe(401)
   })
 
@@ -189,10 +188,9 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
-    const res = await PATCH(
-      makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'IN_PROGRESS' } }),
-      { params }
-    )
+    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'READ' } }), {
+      params,
+    })
     const json = await res.json()
 
     expect(res.status).toBe(404)
@@ -204,15 +202,14 @@ describe('PATCH /api/admin/contacts/[id]', () => {
     vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(mockContactDetail as any)
     vi.mocked(prisma.contact.update).mockResolvedValueOnce({
       ...mockContactDetail,
-      status: 'IN_PROGRESS',
+      status: 'READ',
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'contact-1' })
-    const res = await PATCH(
-      makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'IN_PROGRESS' } }),
-      { params }
-    )
+    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'READ' } }), {
+      params,
+    })
     const json = await res.json()
 
     expect(res.status).toBe(200)
@@ -286,7 +283,7 @@ describe('PATCH /api/admin/contacts/[id]', () => {
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'contact-1' })
     const res = await PATCH(
-      makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'CLOSED' } }),
+      makeRequest(BASE_URL, { method: 'PATCH', body: { status: 'ARCHIVED' } }),
       { params }
     )
     const json = await res.json()

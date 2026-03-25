@@ -22,6 +22,17 @@ vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }))
 
+vi.mock('@/lib/rate-limit', () => ({
+  createRateLimiter: vi.fn().mockReturnValue({
+    check: vi.fn().mockResolvedValue({ allowed: true, remaining: 99 }),
+    record: vi.fn().mockResolvedValue(undefined),
+  }),
+}))
+
+vi.mock('@/lib/rate-limit-config', () => ({
+  RATE_LIMITS: { API: { id: 'api', limit: 100, window: 60000 } },
+}))
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makeRefreshRequest(body: unknown) {

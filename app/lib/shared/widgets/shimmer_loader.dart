@@ -101,7 +101,11 @@ class SkeletonCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (hasImage) ...[
-              const ShimmerBox(width: 60, height: 60, borderRadius: AppRadius.tile),
+              const ShimmerBox(
+                width: 60,
+                height: 60,
+                borderRadius: AppRadius.tile,
+              ),
               const SizedBox(width: AppSpacing.md),
             ],
             const Expanded(
@@ -417,11 +421,7 @@ class SkeletonCategoryGridCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerBox(
-                  width: double.infinity,
-                  height: 13,
-                  borderRadius: 6,
-                ),
+                ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
                 SizedBox(height: 4),
                 ShimmerBox(width: 80, height: 11, borderRadius: 5),
               ],
@@ -529,11 +529,7 @@ class SkeletonProjectGridCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerBox(
-                  width: double.infinity,
-                  height: 13,
-                  borderRadius: 6,
-                ),
+                ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
                 SizedBox(height: 4),
                 ShimmerBox(width: 90, height: 11, borderRadius: 5),
                 SizedBox(height: 8),
@@ -817,11 +813,7 @@ class SkeletonStatCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ShimmerBox(
-                  width: double.infinity,
-                  height: 18,
-                  borderRadius: 6,
-                ),
+                ShimmerBox(width: double.infinity, height: 18, borderRadius: 6),
                 SizedBox(height: 4),
                 ShimmerBox(width: 80, height: 11, borderRadius: 5),
               ],
@@ -880,11 +872,7 @@ class SkeletonSocialTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ShimmerBox(
-                  width: double.infinity,
-                  height: 13,
-                  borderRadius: 6,
-                ),
+                ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
                 SizedBox(height: 5),
                 ShimmerBox(width: 180, height: 11, borderRadius: 5),
               ],

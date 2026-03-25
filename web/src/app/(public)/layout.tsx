@@ -59,9 +59,7 @@ export default async function PublicLayout({ children }: { children: React.React
           name: contactSettings?.ownerName || 'Paola Bolívar Nievas',
           email: contactSettings?.email || 'contacto@paolamakeup.com',
           telephone: contactSettings?.phone || undefined,
-          address: contactSettings?.location
-            ? { addressLocality: contactSettings.location }
-            : undefined,
+          address: contactSettings?.location ? { addressLocality: contactSettings.location } : {},
         }}
       />
 

@@ -282,7 +282,7 @@ describe('POST /api/admin/bookings — extended', () => {
       clientPhone: '+34 600 111 222',
       guestCount: 4,
       adminNotes: 'VIP client',
-      totalAmount: '250.00',
+      totalAmount: 250.0,
       paymentStatus: 'PAID',
       status: 'CONFIRMED',
     }
@@ -311,7 +311,7 @@ describe('POST /api/admin/bookings — extended', () => {
 
     const { POST } = await import('@/app/api/admin/bookings/route')
     await POST(
-      makeRequest(BASE_URL, { method: 'POST', body: { ...validBooking, totalAmount: '99.99' } })
+      makeRequest(BASE_URL, { method: 'POST', body: { ...validBooking, totalAmount: 99.99 } })
     )
 
     expect(prisma.booking.create).toHaveBeenCalledWith(

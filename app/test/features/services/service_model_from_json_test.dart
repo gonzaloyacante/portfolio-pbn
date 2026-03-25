@@ -316,7 +316,10 @@ void main() {
       );
     });
     test('defaults: currency = "EUR"', () {
-      expect(const ServiceFormData(name: 'T', slug: 't').toJson()['currency'], 'EUR');
+      expect(
+        const ServiceFormData(name: 'T', slug: 't').toJson()['currency'],
+        'EUR',
+      );
     });
     test('null optionals not present in json', () {
       final j = const ServiceFormData(name: 'T', slug: 't').toJson();

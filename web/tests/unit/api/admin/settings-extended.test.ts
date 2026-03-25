@@ -51,6 +51,40 @@ const VALID_TYPES = [
   'category',
 ] as const
 
+const VALID_BODY_PER_TYPE: Record<string, Record<string, unknown>> = {
+  home: { showFeaturedProjects: true, featuredCount: 3 },
+  about: { title: 'New title' },
+  contact: { email: 'test@example.com', showSocialLinks: false },
+  theme: {
+    primaryColor: '#6c0a0a',
+    secondaryColor: '#fce7f3',
+    accentColor: '#fff1f9',
+    backgroundColor: '#fff8fc',
+    textColor: '#1a050a',
+    cardBgColor: '#ffffff',
+    darkPrimaryColor: '#fb7185',
+    darkSecondaryColor: '#881337',
+    darkAccentColor: '#2a1015',
+    darkBackgroundColor: '#0f0505',
+    darkTextColor: '#fafafa',
+    darkCardBgColor: '#1c0a0f',
+    headingFont: 'Poppins',
+    headingFontSize: 32,
+    scriptFont: 'Great Vibes',
+    scriptFontSize: 40,
+    bodyFont: 'Open Sans',
+    bodyFontSize: 16,
+    brandFontSize: 24,
+    portfolioFontSize: 24,
+    signatureFontSize: 24,
+    borderRadius: 40,
+  },
+  site: { title: 'New title' },
+  project: { showCardTitles: true, showCardCategory: true, gridColumns: 3 },
+  testimonial: { showOnAbout: true, maxDisplay: 5 },
+  category: { showDescription: true },
+}
+
 beforeEach(() => {
   vi.clearAllMocks()
 })
@@ -161,7 +195,7 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/${type}`, { method: 'PATCH', body: { title: 'New title' } }),
+      makeRequest(`${BASE_URL}/${type}`, { method: 'PATCH', body: VALID_BODY_PER_TYPE[type] }),
       { params: Promise.resolve({ type }) }
     )
 
@@ -186,11 +220,11 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     await PATCH(
-      makeRequest(`${BASE_URL}/home`, {
+      makeRequest(`${BASE_URL}/site`, {
         method: 'PATCH',
-        body: { id: 'hacked', heroTitle: 'Hello' },
+        body: { id: 'hacked', title: 'Hello' },
       }),
-      { params: Promise.resolve({ type: 'home' }) }
+      { params: Promise.resolve({ type: 'site' }) }
     )
 
     expect(mockModel.update).toHaveBeenCalledWith(
@@ -226,11 +260,11 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     await PATCH(
-      makeRequest(`${BASE_URL}/contact`, {
+      makeRequest(`${BASE_URL}/about`, {
         method: 'PATCH',
-        body: { updatedAt: '2020-01-01', phone: '999' },
+        body: { updatedAt: '2020-01-01', title: 'x' },
       }),
-      { params: Promise.resolve({ type: 'contact' }) }
+      { params: Promise.resolve({ type: 'about' }) }
     )
 
     expect(mockModel.update).toHaveBeenCalledWith(
@@ -246,11 +280,11 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     await PATCH(
-      makeRequest(`${BASE_URL}/theme`, {
+      makeRequest(`${BASE_URL}/site`, {
         method: 'PATCH',
-        body: { isActive: false, primaryColor: '#ff0000' },
+        body: { isActive: false, title: 'test' },
       }),
-      { params: Promise.resolve({ type: 'theme' }) }
+      { params: Promise.resolve({ type: 'site' }) }
     )
 
     expect(mockModel.update).toHaveBeenCalledWith(
@@ -266,14 +300,14 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: { heroTitle: 'My Hero' } }),
-      { params: Promise.resolve({ type: 'home' }) }
+      makeRequest(`${BASE_URL}/about`, { method: 'PATCH', body: { title: 'My Hero' } }),
+      { params: Promise.resolve({ type: 'about' }) }
     )
 
     expect(res.status).toBe(200)
     expect(mockModel.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ heroTitle: 'My Hero' }),
+        data: expect.objectContaining({ title: 'My Hero' }),
       })
     )
   })
@@ -283,14 +317,13 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
     mockModel.update.mockResolvedValue({ id: 'existing-id', heroTitle: 'Updated' })
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
-    await PATCH(
-      makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: { heroTitle: 'Updated' } }),
-      { params: Promise.resolve({ type: 'home' }) }
-    )
+    await PATCH(makeRequest(`${BASE_URL}/about`, { method: 'PATCH', body: { title: 'Updated' } }), {
+      params: Promise.resolve({ type: 'about' }),
+    })
 
     expect(mockModel.update).toHaveBeenCalledWith({
       where: { id: 'existing-id' },
-      data: { heroTitle: 'Updated' },
+      data: { title: 'Updated' },
     })
   })
 
@@ -299,8 +332,8 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
     mockModel.update.mockResolvedValue({ id: '1' })
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
-    const res = await PATCH(makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: {} }), {
-      params: Promise.resolve({ type: 'home' }),
+    const res = await PATCH(makeRequest(`${BASE_URL}/site`, { method: 'PATCH', body: {} }), {
+      params: Promise.resolve({ type: 'site' }),
     })
 
     expect(res.status).toBe(200)
@@ -313,11 +346,11 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/home`, {
+      makeRequest(`${BASE_URL}/site`, {
         method: 'PATCH',
         body: { id: 'x', createdAt: 'x', updatedAt: 'x', isActive: true },
       }),
-      { params: Promise.resolve({ type: 'home' }) }
+      { params: Promise.resolve({ type: 'site' }) }
     )
 
     expect(res.status).toBe(200)
@@ -329,8 +362,8 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/home`, { method: 'PATCH', body: { heroTitle: 'test' } }),
-      { params: Promise.resolve({ type: 'home' }) }
+      makeRequest(`${BASE_URL}/site`, { method: 'PATCH', body: { title: 'test' } }),
+      { params: Promise.resolve({ type: 'site' }) }
     )
 
     expect(res.status).toBe(500)

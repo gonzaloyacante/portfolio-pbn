@@ -4,13 +4,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    project: { count: vi.fn() },
+    project: { count: vi.fn(), findUnique: vi.fn() },
     category: { count: vi.fn() },
     service: { count: vi.fn() },
     testimonial: { count: vi.fn() },
     contact: { count: vi.fn() },
     booking: { count: vi.fn() },
-    analyticLog: { count: vi.fn() },
+    analyticLog: { count: vi.fn(), groupBy: vi.fn(), findFirst: vi.fn() },
   },
 }))
 
@@ -37,6 +37,56 @@ function makeRequest(url: string, opts: { method?: string; body?: unknown } = {}
 
 const BASE_URL = 'http://localhost/api/admin/analytics/overview'
 
+/**
+ * Setup all prisma mocks needed for the 13 parallel queries in the route.
+ * Call order in Promise.all:
+ *   project.count(active), category.count(active), service.count(active),
+ *   testimonial.count(active), contact.count(unread), booking.count(pending),
+ *   testimonial.count(pendingTestimonials),
+ *   [trash: project.count, category.count, service.count, testimonial.count, contact.count, booking.count],
+ *   analyticLog.count(pageViews), analyticLog.count(uniqueVisitors),
+ *   analyticLog.groupBy(device), analyticLog.groupBy(countries), analyticLog.groupBy(projects)
+ */
+async function setupDefaultMocks(overrides: Record<string, number> = {}) {
+  const { prisma } = await import('@/lib/db')
+  const v = {
+    totalProjects: 0,
+    totalCategories: 0,
+    totalServices: 0,
+    totalTestimonials: 0,
+    newContacts: 0,
+    pendingBookings: 0,
+    pendingTestimonials: 0,
+    pageViews30d: 0,
+    uniqueVisitors30d: 0,
+    ...overrides,
+  }
+  // Active counts
+  vi.mocked(prisma.project.count).mockResolvedValueOnce(v.totalProjects)
+  vi.mocked(prisma.category.count).mockResolvedValueOnce(v.totalCategories)
+  vi.mocked(prisma.service.count).mockResolvedValueOnce(v.totalServices)
+  vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(v.totalTestimonials)
+  vi.mocked(prisma.contact.count).mockResolvedValueOnce(v.newContacts)
+  vi.mocked(prisma.booking.count).mockResolvedValueOnce(v.pendingBookings)
+  // pendingTestimonials
+  vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(v.pendingTestimonials)
+  // Trash counts (6 models)
+  vi.mocked(prisma.project.count).mockResolvedValueOnce(0)
+  vi.mocked(prisma.category.count).mockResolvedValueOnce(0)
+  vi.mocked(prisma.service.count).mockResolvedValueOnce(0)
+  vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
+  vi.mocked(prisma.contact.count).mockResolvedValueOnce(0)
+  vi.mocked(prisma.booking.count).mockResolvedValueOnce(0)
+  // analyticLog counts
+  vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(v.pageViews30d)
+  vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(v.uniqueVisitors30d)
+  // groupBy: device, countries, projects — all empty
+  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
+  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
+  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
+  return prisma
+}
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('GET /api/admin/analytics/overview', () => {
@@ -60,22 +110,7 @@ describe('GET /api/admin/analytics/overview', () => {
   })
 
   it('returns all counters on success', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.count).mockResolvedValueOnce(10)
-    vi.mocked(prisma.category.count).mockResolvedValueOnce(5)
-    vi.mocked(prisma.service.count).mockResolvedValueOnce(8)
-    vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(12)
-    vi.mocked(prisma.contact.count).mockResolvedValueOnce(3)
-    vi.mocked(prisma.booking.count).mockResolvedValueOnce(2)
-    vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(500)
-
-    const { GET } = await import('@/app/api/admin/analytics/overview/route')
-    const res = await GET(makeRequest(BASE_URL))
-    const json = await res.json()
-
-    expect(res.status).toBe(200)
-    expect(json.success).toBe(true)
-    expect(json.data).toEqual({
+    await setupDefaultMocks({
       totalProjects: 10,
       totalCategories: 5,
       totalServices: 8,
@@ -83,18 +118,30 @@ describe('GET /api/admin/analytics/overview', () => {
       newContacts: 3,
       pendingBookings: 2,
       pageViews30d: 500,
+      uniqueVisitors30d: 100,
     })
+
+    const { GET } = await import('@/app/api/admin/analytics/overview/route')
+    const res = await GET(makeRequest(BASE_URL))
+    const json = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(json.success).toBe(true)
+    expect(json.data.totalProjects).toBe(10)
+    expect(json.data.totalCategories).toBe(5)
+    expect(json.data.totalServices).toBe(8)
+    expect(json.data.totalTestimonials).toBe(12)
+    expect(json.data.newContacts).toBe(3)
+    expect(json.data.pendingBookings).toBe(2)
+    expect(json.data.pageViews30d).toBe(500)
+    expect(json.data.uniqueVisitors30d).toBe(100)
+    expect(json.data.deviceUsage).toEqual({})
+    expect(json.data.topLocations).toEqual([])
+    expect(json.data.topProjects).toEqual([])
   })
 
   it('returns zero for empty DB', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.category.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.service.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.contact.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.booking.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(0)
+    await setupDefaultMocks()
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -107,14 +154,7 @@ describe('GET /api/admin/analytics/overview', () => {
   })
 
   it('includes newContacts count (unread)', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.category.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.service.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.contact.count).mockResolvedValueOnce(7)
-    vi.mocked(prisma.booking.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(0)
+    const prisma = await setupDefaultMocks({ newContacts: 7 })
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -127,14 +167,7 @@ describe('GET /api/admin/analytics/overview', () => {
   })
 
   it('includes pendingBookings count', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.category.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.service.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.contact.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.booking.count).mockResolvedValueOnce(4)
-    vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(0)
+    const prisma = await setupDefaultMocks({ pendingBookings: 4 })
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -147,14 +180,7 @@ describe('GET /api/admin/analytics/overview', () => {
   })
 
   it('includes pageViews30d count with correct date range', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.category.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.service.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.contact.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.booking.count).mockResolvedValueOnce(0)
-    vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(1234)
+    const prisma = await setupDefaultMocks({ pageViews30d: 1234 })
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -163,7 +189,11 @@ describe('GET /api/admin/analytics/overview', () => {
     expect(json.data.pageViews30d).toBe(1234)
     expect(prisma.analyticLog.count).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { timestamp: { gte: expect.any(Date) } },
+        where: expect.objectContaining({
+          timestamp: { gte: expect.any(Date) },
+          eventType: { endsWith: '_VIEW' },
+          isBot: false,
+        }),
       })
     )
   })

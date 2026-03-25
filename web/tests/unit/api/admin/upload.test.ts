@@ -95,15 +95,15 @@ describe('POST /api/admin/upload', () => {
     expect(json.error).toContain('imagen')
   })
 
-  it('returns 400 for file > 10MB', async () => {
-    const largeFile = createImageFile('large.jpg', 'image/jpeg', 11 * 1024 * 1024)
+  it('returns 400 for file > 50MB', async () => {
+    const largeFile = createImageFile('large.jpg', 'image/jpeg', 51 * 1024 * 1024)
 
     const { POST } = await import('@/app/api/admin/upload/route')
     const res = await POST(makeFormDataRequest({ file: largeFile }) as any)
     expect(res.status).toBe(400)
     const json = await res.json()
     expect(json.success).toBe(false)
-    expect(json.error).toContain('10 MB')
+    expect(json.error).toContain('50 MB')
   })
 
   it('uploads image successfully', async () => {

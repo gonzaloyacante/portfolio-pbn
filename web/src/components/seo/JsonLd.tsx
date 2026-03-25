@@ -50,7 +50,11 @@ export default function JsonLd({ type, data }: JsonLdProps) {
     priceRange: '$$',
   }
 
-  const mergedData = { ...defaultData, ...data }
+  const mergedData = {
+    ...defaultData,
+    ...data,
+    address: { ...defaultData.address, ...data?.address },
+  }
 
   const generateSchema = () => {
     switch (type) {
@@ -85,7 +89,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           email: mergedData.email,
           areaServed: {
             '@type': 'City',
-            name: mergedData.address.addressLocality || 'España',
+            name: mergedData.address?.addressLocality || 'España',
           },
           serviceType: [
             'Maquillaje de novias',
@@ -170,7 +174,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           },
           areaServed: {
             '@type': 'City',
-            name: mergedData.address.addressLocality || 'España',
+            name: mergedData.address?.addressLocality || 'España',
           },
           ...(mergedData.priceRange && {
             offers: {

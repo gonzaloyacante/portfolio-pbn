@@ -84,7 +84,8 @@ describe('POST /api/admin/projects/reorder', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('items')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('returns 400 for empty items array', async () => {
@@ -94,7 +95,8 @@ describe('POST /api/admin/projects/reorder', () => {
 
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
-    expect(json.error).toContain('items')
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details).toBeDefined()
   })
 
   it('assigns updatedBy to each update in transaction', async () => {
@@ -140,7 +142,7 @@ describe('POST /api/admin/projects/reorder', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 
   it('returns success response with correct message', async () => {

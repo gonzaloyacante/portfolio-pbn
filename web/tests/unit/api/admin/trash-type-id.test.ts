@@ -100,7 +100,7 @@ describe('PATCH /api/admin/trash/[type]/[id]', () => {
     expect(prisma.project.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 'item-1' },
-        data: { deletedAt: null },
+        data: { deletedAt: null, isDeleted: false },
       })
     )
   })

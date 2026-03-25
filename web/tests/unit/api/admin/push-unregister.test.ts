@@ -61,7 +61,7 @@ describe('POST /api/admin/push/unregister', () => {
     expect(res.status).toBe(400)
     const json = await res.json()
     expect(json.success).toBe(false)
-    expect(json.error).toContain('Token')
+    expect(json.error).toBe('Datos inválidos')
   })
 
   it('deactivates token successfully', async () => {

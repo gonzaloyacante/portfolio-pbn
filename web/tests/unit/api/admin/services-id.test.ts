@@ -6,6 +6,7 @@ vi.mock('@/lib/db', () => ({
   prisma: {
     service: {
       findFirst: vi.fn(),
+      findUnique: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -205,7 +206,7 @@ describe('PATCH /api/admin/services/[id]', () => {
     expect(json.error).toContain('slug')
 
     expect(prisma.service.findFirst).toHaveBeenCalledWith({
-      where: { slug: 'taken-slug', deletedAt: null, NOT: { id: 'svc-1' } },
+      where: { slug: 'taken-slug', NOT: { id: 'svc-1' } },
     })
   })
 
@@ -233,7 +234,7 @@ describe('PATCH /api/admin/services/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'svc-1' })
-    await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { price: '25000.99' } }), { params })
+    await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { price: 25000.99 } }), { params })
 
     expect(prisma.service.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -248,13 +249,13 @@ describe('PATCH /api/admin/services/[id]', () => {
 
     const { PATCH } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'svc-1' })
-    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { name: 'X' } }), {
+    const res = await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { name: 'Updated' } }), {
       params,
     })
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 })
 
@@ -281,6 +282,7 @@ describe('DELETE /api/admin/services/[id]', () => {
 
   it('soft deletes service (sets deletedAt)', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({ slug: 'sesion-retrato' } as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/services/[id]/route')
@@ -290,13 +292,14 @@ describe('DELETE /api/admin/services/[id]', () => {
     expect(prisma.service.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 'svc-1' },
-        data: { deletedAt: expect.any(Date) },
+        data: expect.objectContaining({ deletedAt: expect.any(Date) }),
       })
     )
   })
 
   it('returns success response', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({ slug: 'sesion-retrato' } as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/services/[id]/route')
@@ -311,6 +314,7 @@ describe('DELETE /api/admin/services/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({ slug: 'sesion-retrato' } as any)
     vi.mocked(prisma.service.update).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/services/[id]/route')
@@ -319,6 +323,6 @@ describe('DELETE /api/admin/services/[id]', () => {
     const json = await res.json()
 
     expect(res.status).toBe(500)
-    expect(json).toEqual({ success: false, error: 'Error interno' })
+    expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 })

@@ -21,12 +21,10 @@ import { getContactSettings } from '@/actions/settings/contact'
 export default async function PrivacyPage() {
   // Fetch dynamic contact info
   const contactSettings = await getContactSettings()
-  const { email, location, ownerName, phone } = contactSettings ?? {
-    email: 'admin@paolabolivar.com',
-    location: 'Granada, España',
-    ownerName: 'Paola Bolívar Nievas',
-    phone: '',
-  }
+  const email = contactSettings?.email || 'admin@paolabolivar.com'
+  const location = contactSettings?.location || 'Granada, España'
+  const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
+  const phone = contactSettings?.phone || ''
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">

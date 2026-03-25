@@ -309,12 +309,18 @@ void main() {
 
   group('TestimonialFormData.toJson', () {
     test('required fields in json', () {
-      final j = const TestimonialFormData(name: 'Test', text: 'Comment').toJson();
+      final j = const TestimonialFormData(
+        name: 'Test',
+        text: 'Comment',
+      ).toJson();
       expect(j['name'], 'Test');
       expect(j['text'], 'Comment');
     });
     test('default rating is 5', () {
-      expect(const TestimonialFormData(name: 'T', text: 'T').toJson()['rating'], 5);
+      expect(
+        const TestimonialFormData(name: 'T', text: 'T').toJson()['rating'],
+        5,
+      );
     });
     test('default status is PENDING', () {
       expect(
