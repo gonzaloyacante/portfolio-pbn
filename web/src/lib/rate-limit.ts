@@ -129,5 +129,7 @@ export function cleanupRateLimitStore(): void {
 
 // Cleanup every 10 minutes (server-side only)
 if (typeof window === 'undefined') {
-  setInterval(cleanupRateLimitStore, 10 * 60 * 1000)
+  const _cleanupTimer = setInterval(cleanupRateLimitStore, 10 * 60 * 1000)
+  // Allow process to exit naturally in serverless environments
+  if (_cleanupTimer.unref) _cleanupTimer.unref()
 }

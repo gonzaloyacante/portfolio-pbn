@@ -94,6 +94,7 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
         search: widget.search,
         categoryId: widget.categoryId,
       );
+      if (!mounted) return;
       setState(() {
         _items.addAll(resp.data);
         _page = resp.pagination.page;
@@ -101,6 +102,7 @@ class _ProjectsListState extends ConsumerState<ProjectsList> {
         _isLoadingMore = false;
       });
     } catch (e, st) {
+      if (!mounted) return;
       setState(() => _isLoadingMore = false);
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {

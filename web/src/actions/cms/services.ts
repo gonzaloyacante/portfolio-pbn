@@ -170,17 +170,16 @@ export async function createService(formData: FormData) {
   const data = validation.data
 
   try {
-    // Check for duplicate slug
-    const existing = await prisma.service.findUnique({ where: { slug: data.slug } })
-    if (existing) {
-      return { success: false, error: 'Ya existe un servicio con ese slug' }
-    }
-
     // Process specialized fields
     let tiersJson = undefined
     try {
       if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
-    } catch {}
+    } catch (e) {
+      logger.warn('Invalid pricingTiers JSON in createService', {
+        input: data.pricingTiers,
+        error: e,
+      })
+    }
 
     // Prefer multiple inputs `galleryUrls` (from ImageUpload hidden inputs). Fallback to CSV string.
     const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
@@ -233,7 +232,16 @@ export async function createService(formData: FormData) {
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service created: ${data.name}`)
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
+    // Handle duplicate slug (P2002 unique constraint violation)
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code: string }).code === 'P2002'
+    ) {
+      return { success: false, error: 'Ya existe un servicio con ese slug' }
+    }
     logger.error('Error creating service:', { error })
     return { success: false, error: 'Error al crear el servicio' }
   }
@@ -287,19 +295,16 @@ export async function updateService(id: string, formData: FormData) {
   const data = validation.data
 
   try {
-    // Check for duplicate slug (excluding current)
-    const existing = await prisma.service.findFirst({
-      where: { slug: data.slug, NOT: { id } },
-    })
-    if (existing) {
-      return { success: false, error: 'Ya existe otro servicio con ese slug' }
-    }
-
     // Process specialized fields
     let tiersJson = undefined
     try {
       if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
-    } catch {}
+    } catch (e) {
+      logger.warn('Invalid pricingTiers JSON in updateService', {
+        input: data.pricingTiers,
+        error: e,
+      })
+    }
 
     const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
     const galleryList = rawGalleryInputs.length
@@ -352,7 +357,15 @@ export async function updateService(id: string, formData: FormData) {
     revalidateTag(CACHE_TAGS.services, 'max')
     logger.info(`Service updated: ${id}`)
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code: string }).code === 'P2002'
+    ) {
+      return { success: false, error: 'Ya existe otro servicio con ese slug' }
+    }
     logger.error('Error updating service:', { error })
     return { success: false, error: 'Error al actualizar el servicio' }
   }

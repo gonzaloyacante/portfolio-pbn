@@ -41,6 +41,9 @@ export async function requestPasswordReset(email: string) {
     const token = crypto.randomBytes(32).toString('hex')
     const expiresAt = new Date(Date.now() + 3600000) // 1 hour
 
+    // Delete any existing tokens for this email to prevent race condition
+    await prisma.passwordResetToken.deleteMany({ where: { email } })
+
     await prisma.passwordResetToken.create({
       data: { email, token, expiresAt },
     })
@@ -107,7 +110,7 @@ export async function signInAction(prevState: SignInState | null, formData: Form
   try {
     // Note: NextAuth signIn needs to be called from client-side
     // This is a placeholder - the actual login is handled by the login page client component
-    return { success: true, email }
+    return { success: true }
   } catch (error) {
     logger.error('Error en signInAction:', { error: error })
     return { success: false, message: 'Error al iniciar sesión' }

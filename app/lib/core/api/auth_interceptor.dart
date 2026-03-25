@@ -194,6 +194,16 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<Response<dynamic>> _retry(RequestOptions options) async {
+    // FormData streams are consumed after first send — cannot be retried.
+    if (options.data is FormData) {
+      AppLogger.warn(
+        'AuthInterceptor: cannot retry multipart request to ${options.path}',
+      );
+      throw const UnauthorizedException(
+        message: 'Session expired during upload. Please try again.',
+      );
+    }
+
     final storage = ref.read(tokenStorageProvider);
     final token = await storage.getAccessToken();
 

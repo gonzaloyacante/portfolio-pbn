@@ -63,7 +63,9 @@ export async function generateMetadata(): Promise<Metadata> {
     site?.defaultMetaDescription ||
     `Portfolio de ${ownerName} - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social${location ? ` en ${location}` : ''}, España.`
 
-  const locationKeyword = location ? `maquilladora ${location.toLowerCase()}` : 'maquilladora profesional'
+  const locationKeyword = location
+    ? `maquilladora ${location.toLowerCase()}`
+    : 'maquilladora profesional'
   const favicon = site?.faviconUrl || '/favicon.ico'
   const ogImage = site?.defaultOgImage || undefined
 
@@ -149,6 +151,7 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://res.cloudinary.com" />
       </head>
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}

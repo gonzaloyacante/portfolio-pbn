@@ -20,7 +20,7 @@ enum SyncStatus { idle, syncing, error }
 ///
 /// Se activa automáticamente al recuperar la conexión a internet.
 /// Procesa las operaciones en orden FIFO con reintento.
-@riverpod
+@Riverpod(keepAlive: true)
 class SyncManager extends _$SyncManager {
   late final SyncHandlerRegistry _registry;
 

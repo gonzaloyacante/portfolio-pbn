@@ -13,6 +13,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'app.dart';
 import 'core/config/env_config.dart';
 import 'core/notifications/push_service.dart';
+import 'core/theme/theme_provider.dart';
 import 'core/utils/app_logger.dart';
 import 'firebase_options.dart';
 
@@ -71,7 +72,12 @@ Future<void> bootstrap() async {
     AppLogger.debug('Firebase init stack: $st');
   }
 
-  // 3. Sentry + runApp ───────────────────────────────────────────────────────
+  // 3. Pre-cargar tema ────────────────────────────────────────────────────────
+  // Leer la preferencia de tema ANTES de runApp para evitar el flash de tema
+  // incorrecto al arrancar. El valor se inyecta en ProviderScope.overrides.
+  final initialTheme = await preloadThemeMode();
+
+  // 4. Sentry + runApp ───────────────────────────────────────────────────────
   // SentryFlutter.init envuelve internamente runApp con captura de errores de
   // Flutter framework (FlutterError.onError) además de la zona de runZonedGuarded
   // definida en main.dart. Doble capa: zona async + flutter framework.
@@ -82,16 +88,21 @@ Future<void> bootstrap() async {
       // En dev capturamos todo; en prod solo el 10% de trazas de rendimiento.
       options.tracesSampleRate = EnvConfig.isProduction ? 0.1 : 1.0;
       options.debug = EnvConfig.isDevelopment;
-    }, appRunner: _runApp);
+    }, appRunner: () => _runApp(initialTheme));
   } else {
     // Sin DSN de Sentry (entorno local sin configurar): arrancar directamente.
     AppLogger.warn(
       'Sentry DSN no configurado — omitiendo captura de errores remota',
     );
-    _runApp();
+    _runApp(initialTheme);
   }
 }
 
-void _runApp() {
-  runApp(const ProviderScope(child: App()));
+void _runApp(ThemeMode initialTheme) {
+  runApp(
+    ProviderScope(
+      overrides: [initialThemeModeProvider.overrideWithValue(initialTheme)],
+      child: const App(),
+    ),
+  );
 }

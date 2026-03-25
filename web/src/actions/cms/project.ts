@@ -8,10 +8,14 @@ import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
+import { z } from 'zod'
+
 interface ActionResult {
   success: boolean
   error?: string
 }
+
+const ReorderProjectsSchema = z.array(z.string().cuid()).min(1)
 
 /**
  * Reorder projects by updating their sortOrder
@@ -19,8 +23,14 @@ interface ActionResult {
 export async function reorderProjects(projectIds: string[]): Promise<void> {
   await requireAdmin()
   await checkApiRateLimit()
-  await Promise.all(
-    projectIds.map((id, index) =>
+
+  const parsed = ReorderProjectsSchema.safeParse(projectIds)
+  if (!parsed.success) {
+    throw new Error('IDs de proyecto inválidos')
+  }
+
+  await prisma.$transaction(
+    parsed.data.map((id, index) =>
       prisma.project.update({
         where: { id },
         data: { sortOrder: index },

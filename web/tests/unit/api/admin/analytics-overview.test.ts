@@ -4,13 +4,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    project: { count: vi.fn(), findUnique: vi.fn() },
+    project: { count: vi.fn(), findUnique: vi.fn(), findMany: vi.fn() },
     category: { count: vi.fn() },
     service: { count: vi.fn() },
     testimonial: { count: vi.fn() },
     contact: { count: vi.fn() },
     booking: { count: vi.fn() },
-    analyticLog: { count: vi.fn(), groupBy: vi.fn(), findFirst: vi.fn() },
+    analyticLog: { count: vi.fn(), groupBy: vi.fn(), findFirst: vi.fn(), findMany: vi.fn() },
   },
 }))
 
@@ -83,6 +83,11 @@ async function setupDefaultMocks(overrides: Record<string, number> = {}) {
   // groupBy: device, countries, projects — all empty
   vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
   vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
+  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
+  // Post-Promise.all batch queries:
+  // Country coords findMany (countryKeys = [] from empty topCountriesRaw)
+  vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([] as never)
+  // Cities groupBy (4th groupBy call)
   vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
   return prisma
 }
