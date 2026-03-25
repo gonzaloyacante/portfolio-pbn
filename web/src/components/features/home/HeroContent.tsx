@@ -83,6 +83,7 @@ interface HeroContentProps {
   isEditor?: boolean
   selectedElement?: EditableElement
   onSelectElement?: (element: EditableElement) => void
+  forceIsMobile?: boolean
 }
 
 // Pick mobile override when isMobile is true, fallback to desktop value
@@ -125,9 +126,11 @@ export function HeroContent({
   isEditor = false,
   selectedElement = null,
   onSelectElement,
+  forceIsMobile,
 }: HeroContentProps) {
   const s = settings || ({} as Partial<HomeSettingsData>)
-  const isMobile = useIsMobile()
+  const actualIsMobile = useIsMobile()
+  const isMobile = forceIsMobile ?? actualIsMobile
 
   // Props mapping
   const title1 = s.heroTitle1Text || 'Make-up'

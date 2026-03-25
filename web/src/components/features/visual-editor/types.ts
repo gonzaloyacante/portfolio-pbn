@@ -8,6 +8,8 @@ export type EditableElement =
   | 'featuredTitle'
   | null
 
+export type ViewportMode = 'desktop' | 'tablet' | 'mobile'
+
 export interface VisualEditorProps {
   selectedElement: EditableElement
   onSelectElement: (element: EditableElement) => void

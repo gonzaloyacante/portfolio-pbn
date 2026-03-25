@@ -8,7 +8,7 @@ import { showToast } from '@/lib/toast'
 import { VisualEditorLayout } from '../visual-editor/VisualEditorLayout'
 import { HeroPreview } from './HeroPreview'
 import { PropertyPanel } from '../visual-editor/PropertyPanel'
-import type { EditableElement } from '../visual-editor/types'
+import type { EditableElement, ViewportMode } from '../visual-editor/types'
 import { Save } from 'lucide-react'
 
 interface HomeEditorProps {
@@ -20,6 +20,7 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const [selectedElement, setSelectedElement] = useState<EditableElement>(null)
   const [settings, setSettings] = useState<HomeSettingsData | null>(initialSettings)
   const [isSaving, setIsSaving] = useState(false)
+  const [viewportMode, setViewportMode] = useState<ViewportMode>('desktop')
 
   // ✅ TYPE-SAFE UPDATE con generics
   const handleUpdate = <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => {
@@ -66,11 +67,14 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
 
       {/* Visual Editor */}
       <VisualEditorLayout
+        viewportMode={viewportMode}
+        onViewportChange={setViewportMode}
         preview={
           <HeroPreview
             settings={settings}
             selectedElement={selectedElement}
             onSelectElement={setSelectedElement}
+            forceIsMobile={viewportMode === 'mobile'}
           />
         }
         propertyPanel={
@@ -78,6 +82,7 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
             selectedElement={selectedElement}
             settings={settings}
             onUpdate={handleUpdate}
+            viewportMode={viewportMode}
           />
         }
       />
