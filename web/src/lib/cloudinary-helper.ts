@@ -20,7 +20,7 @@ const VARIANTS: Record<ImageVariant, TransformationOptions> = {
   thumbnail: { width: 400, quality: 'auto', format: 'auto' }, // Grid thumbnails
   card: { width: 800, quality: 'auto', format: 'auto' }, // Cards / Blog posts
   hero: { width: 1600, quality: 'auto', format: 'auto' }, // Hero headers
-  full: { width: 1920, quality: 'auto', format: 'auto' }, // Lightbox full view
+  full: { width: 3840, quality: 'auto', format: 'auto' }, // Lightbox full view (4K)
   original: { quality: 'auto', format: 'auto' }, // As uploaded but optimized
 }
 

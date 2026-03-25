@@ -84,7 +84,7 @@ export default async function ContactPage() {
 
         {/* Compact Info Grid */}
         <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-4 text-sm">
-          {contactSettings?.email && (
+          {contactSettings?.showEmail !== false && contactSettings?.email && (
             <a
               href={`mailto:${contactSettings.email}`}
               className="hover:text-primary flex items-center gap-2"
@@ -93,7 +93,7 @@ export default async function ContactPage() {
               <span>{contactSettings.email}</span>
             </a>
           )}
-          {contactSettings?.phone && (
+          {contactSettings?.showPhone !== false && contactSettings?.phone && (
             <a
               href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
               className="hover:text-primary flex items-center gap-2"
@@ -103,7 +103,7 @@ export default async function ContactPage() {
             </a>
           )}
         </div>
-        {contactSettings?.location && (
+        {contactSettings?.showLocation !== false && contactSettings?.location && (
           <div className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
             <MapPin className="h-4 w-4" />
             <span>{contactSettings.location}</span>
@@ -136,7 +136,7 @@ export default async function ContactPage() {
 
           {/* Contact Info Desktop */}
           <div className="mb-8 space-y-4 text-left font-sans text-lg">
-            {contactSettings?.email && (
+            {contactSettings?.showEmail !== false && contactSettings?.email && (
               <a
                 href={`mailto:${contactSettings.email}`}
                 className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
@@ -145,7 +145,7 @@ export default async function ContactPage() {
                 <span>{contactSettings.email}</span>
               </a>
             )}
-            {contactSettings?.phone && (
+            {contactSettings?.showPhone !== false && contactSettings?.phone && (
               <a
                 href={`tel:${contactSettings.phone.replace(/\s+/g, '')}`}
                 className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
@@ -154,7 +154,7 @@ export default async function ContactPage() {
                 <span>{contactSettings.phone}</span>
               </a>
             )}
-            {contactSettings?.location && (
+            {contactSettings?.showLocation !== false && contactSettings?.location && (
               <div className="flex items-center justify-start gap-3">
                 <MapPin className="h-6 w-6" />
                 <span>{contactSettings.location}</span>

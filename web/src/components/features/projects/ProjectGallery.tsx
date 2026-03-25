@@ -83,7 +83,7 @@ export default function ProjectGallery({ projects }: { projects: ProjectWithImag
                   src={project.images[0].url}
                   alt={project.title}
                   fill
-                  variant="thumbnail"
+                  variant="card"
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               ) : (

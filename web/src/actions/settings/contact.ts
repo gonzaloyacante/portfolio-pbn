@@ -32,6 +32,10 @@ export interface ContactSettingsData {
   successMessage: string | null
   sendAnotherLabel: string | null
   showSocialLinks: boolean
+  showPhone: boolean
+  showWhatsapp: boolean
+  showEmail: boolean
+  showLocation: boolean
   isActive: boolean
 }
 
@@ -103,6 +107,10 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
           'Gracias por contactarme. Te responderé lo antes posible.',
         sendAnotherLabel: (cleanData.sendAnotherLabel as string) || 'Enviar otro mensaje',
         showSocialLinks: (cleanData.showSocialLinks as boolean) ?? true,
+        showPhone: (cleanData.showPhone as boolean) ?? true,
+        showWhatsapp: (cleanData.showWhatsapp as boolean) ?? true,
+        showEmail: (cleanData.showEmail as boolean) ?? true,
+        showLocation: (cleanData.showLocation as boolean) ?? true,
 
         isActive: true,
       }

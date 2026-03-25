@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/ui'
 
 interface ProjectThumbnailProps {
   image?: {
@@ -12,10 +12,11 @@ export default function ProjectThumbnail({ image, title }: ProjectThumbnailProps
   return (
     <div className="bg-accent relative aspect-square overflow-hidden rounded-lg">
       {image ? (
-        <Image
+        <OptimizedImage
           src={image.url}
           alt={title}
           fill
+          variant="card"
           className="object-cover transition-transform duration-300 hover:scale-105"
         />
       ) : (

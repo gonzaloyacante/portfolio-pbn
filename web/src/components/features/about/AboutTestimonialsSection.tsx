@@ -39,19 +39,21 @@ interface AboutTestimonialsSectionProps {
 }
 
 export function AboutTestimonialsSection({ testimonials, title }: AboutTestimonialsSectionProps) {
-  if (testimonials.length === 0) return null
-
   return (
     <div className="border-border bg-muted/30 border-t py-16 transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
-        <h2 className="font-heading mb-12 text-center text-3xl font-bold text-(--foreground)">
-          {title}
-        </h2>
+        {testimonials.length > 0 && (
+          <>
+            <h2 className="font-heading mb-12 text-center text-3xl font-bold text-(--foreground)">
+              {title}
+            </h2>
 
-        {testimonials.length <= 3 ? (
-          <TestimonialsGrid testimonials={testimonials} />
-        ) : (
-          <TestimonialSlider testimonials={testimonials} />
+            {testimonials.length <= 3 ? (
+              <TestimonialsGrid testimonials={testimonials} />
+            ) : (
+              <TestimonialSlider testimonials={testimonials} />
+            )}
+          </>
         )}
 
         <div className="mx-auto mt-16 max-w-lg">

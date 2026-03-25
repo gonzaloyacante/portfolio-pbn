@@ -15,7 +15,7 @@ import {
   testimonialSettingsSchema,
   categorySettingsSchema,
 } from '@/lib/validations'
-import type { ZodSchema } from 'zod'
+import type { ZodSchema, ZodObject, ZodRawShape } from 'zod'
 
 // ── Mapa de tipo → modelo Prisma ──────────────────────────────────────────────
 type SettingsModel = {
@@ -120,10 +120,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
       return NextResponse.json({ success: false, error: 'Body JSON inválido' }, { status: 400 })
     }
 
-    // Validate with type-specific Zod schema when available
+    // Validate with type-specific Zod schema (partial for PATCH semantics)
     const schema = SETTINGS_SCHEMA_MAP[type]
     if (schema) {
-      const parsed = schema.safeParse(body)
+      const partialSchema =
+        'partial' in schema ? (schema as ZodObject<ZodRawShape>).partial() : schema
+      const parsed = partialSchema.safeParse(body)
       if (!parsed.success) {
         return NextResponse.json(
           { success: false, error: 'Datos inválidos', details: parsed.error.flatten().fieldErrors },

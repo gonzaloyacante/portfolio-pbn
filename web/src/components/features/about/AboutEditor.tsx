@@ -29,6 +29,11 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       bioDescription: settings?.bioDescription || '',
       profileImageUrl: settings?.profileImageUrl || undefined,
       profileImageAlt: settings?.profileImageAlt || 'Paola Bolívar Nievas',
+      profileImageShape: (settings?.profileImageShape || 'ellipse') as
+        | 'ellipse'
+        | 'circle'
+        | 'rounded'
+        | 'none',
       illustrationUrl: settings?.illustrationUrl || undefined,
       illustrationAlt: settings?.illustrationAlt || 'Ilustración sobre mí',
       skills: settings?.skills || [],
@@ -100,7 +105,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Foto de Perfil (Oval)</label>
+            <label className="text-sm font-medium">Foto de Perfil</label>
             <ImageUpload
               name="profileImageUrl"
               value={profileImageUrl ? [profileImageUrl] : []}
@@ -108,6 +113,19 @@ export function AboutEditor({ settings }: AboutEditorProps) {
                 setValue('profileImageUrl', urls[0], { shouldDirty: true })
               }
             />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Forma de la Foto</label>
+            <select
+              {...register('profileImageShape')}
+              className="dark:bg-muted w-full rounded border p-2 text-sm"
+            >
+              <option value="ellipse">Óvalo (Elipse)</option>
+              <option value="circle">Círculo</option>
+              <option value="rounded">Esquinas Redondeadas</option>
+              <option value="none">Rectangular (Sin recorte)</option>
+            </select>
           </div>
 
           <div className="space-y-2">

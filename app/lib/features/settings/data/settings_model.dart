@@ -45,6 +45,10 @@ abstract class ContactSettings with _$ContactSettings {
     String? successTitle,
     String? successMessage,
     @Default(true) bool showSocialLinks,
+    @Default(true) bool showPhone,
+    @Default(true) bool showWhatsapp,
+    @Default(true) bool showEmail,
+    @Default(true) bool showLocation,
     @Default(true) bool isActive,
   }) = _ContactSettings;
 
@@ -113,17 +117,101 @@ abstract class SiteSettings with _$SiteSettings {
 abstract class HomeSettings with _$HomeSettings {
   const factory HomeSettings({
     String? id,
+
+    // ── Título 1 ──
     String? heroTitle1Text,
+    String? heroTitle1Font,
+    String? heroTitle1FontUrl,
+    int? heroTitle1FontSize,
+    String? heroTitle1Color,
+    String? heroTitle1ColorDark,
+    int? heroTitle1ZIndex,
+    int? heroTitle1OffsetX,
+    int? heroTitle1OffsetY,
+
+    // ── Título 2 ──
     String? heroTitle2Text,
+    String? heroTitle2Font,
+    String? heroTitle2FontUrl,
+    int? heroTitle2FontSize,
+    String? heroTitle2Color,
+    String? heroTitle2ColorDark,
+    int? heroTitle2ZIndex,
+    int? heroTitle2OffsetX,
+    int? heroTitle2OffsetY,
+
+    // ── Nombre propietario ──
     String? ownerNameText,
+    String? ownerNameFont,
+    String? ownerNameFontUrl,
+    int? ownerNameFontSize,
+    String? ownerNameColor,
+    String? ownerNameColorDark,
+    int? ownerNameZIndex,
+    int? ownerNameOffsetX,
+    int? ownerNameOffsetY,
+
+    // ── Imagen principal ──
     String? heroMainImageUrl,
     String? heroMainImageAlt,
+    String? heroMainImageCaption,
+    String? heroImageStyle,
+    int? heroMainImageZIndex,
+    int? heroMainImageOffsetX,
+    int? heroMainImageOffsetY,
+
+    // ── Ilustración ──
+    String? illustrationUrl,
+    String? illustrationAlt,
+    int? illustrationZIndex,
+    int? illustrationOpacity,
+    int? illustrationSize,
+    int? illustrationOffsetX,
+    int? illustrationOffsetY,
+    int? illustrationRotation,
+
+    // ── Botón CTA ──
     String? ctaText,
     String? ctaLink,
+    String? ctaFont,
+    String? ctaFontUrl,
+    int? ctaFontSize,
+    String? ctaVariant,
+    String? ctaSize,
+    int? ctaOffsetX,
+    int? ctaOffsetY,
+
+    // ── Mobile Overrides ──
+    int? heroTitle1MobileOffsetX,
+    int? heroTitle1MobileOffsetY,
+    int? heroTitle1MobileFontSize,
+    int? heroTitle2MobileOffsetX,
+    int? heroTitle2MobileOffsetY,
+    int? heroTitle2MobileFontSize,
+    int? ownerNameMobileOffsetX,
+    int? ownerNameMobileOffsetY,
+    int? ownerNameMobileFontSize,
+    int? heroMainImageMobileOffsetX,
+    int? heroMainImageMobileOffsetY,
+    int? illustrationMobileOffsetX,
+    int? illustrationMobileOffsetY,
+    int? illustrationMobileSize,
+    int? illustrationMobileRotation,
+    int? ctaMobileOffsetX,
+    int? ctaMobileOffsetY,
+    int? ctaMobileFontSize,
+
+    // ── Proyectos destacados ──
     @Default(true) bool showFeaturedProjects,
     String? featuredTitle,
-    @Default(3) int featuredCount,
-    String? illustrationUrl,
+    String? featuredTitleFont,
+    String? featuredTitleFontUrl,
+    int? featuredTitleFontSize,
+    String? featuredTitleColor,
+    String? featuredTitleColorDark,
+    @Default(6) int featuredCount,
+
+    // ── Meta ──
     @Default(true) bool isActive,
   }) = _HomeSettings;
 

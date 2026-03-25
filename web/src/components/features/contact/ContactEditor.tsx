@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import {
   Button,
   Input,
+  Switch,
   Tabs,
   TabsContent,
   TabsList,
@@ -33,6 +34,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ContactSettingsFormData>({
     resolver: zodResolver(contactSettingsSchema),
@@ -56,6 +58,10 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       successMessage: settings?.successMessage || 'Gracias por contactarme.',
       sendAnotherLabel: settings?.sendAnotherLabel || 'Enviar otro mensaje',
       showSocialLinks: settings?.showSocialLinks ?? true,
+      showPhone: settings?.showPhone ?? true,
+      showWhatsapp: settings?.showWhatsapp ?? true,
+      showEmail: settings?.showEmail ?? true,
+      showLocation: settings?.showLocation ?? true,
     },
   })
 
@@ -135,6 +141,28 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
               <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
                 <Save className="mr-2 h-4 w-4" /> Guardar Info
               </Button>
+            </div>
+
+            {/* VISIBILITY TOGGLES */}
+            <div className="border-border border-t pt-6">
+              <h3 className="mb-4 text-sm font-semibold">Visibilidad en la web pública</h3>
+              <div className="grid gap-3 md:grid-cols-2">
+                {[
+                  { field: 'showEmail' as const, label: 'Mostrar email' },
+                  { field: 'showPhone' as const, label: 'Mostrar teléfono' },
+                  { field: 'showWhatsapp' as const, label: 'Mostrar WhatsApp' },
+                  { field: 'showLocation' as const, label: 'Mostrar ubicación' },
+                  { field: 'showSocialLinks' as const, label: 'Mostrar redes sociales' },
+                ].map(({ field, label }) => (
+                  <label key={field} className="flex items-center gap-3">
+                    <Switch
+                      checked={watch(field) ?? true}
+                      onCheckedChange={(v) => setValue(field, v, { shouldDirty: true })}
+                    />
+                    <span className="text-sm">{label}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </form>
         </TabsContent>

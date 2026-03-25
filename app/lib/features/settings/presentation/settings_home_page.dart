@@ -18,7 +18,9 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/app_scaffold.dart';
 import '../../../shared/widgets/app_snack_bar.dart';
+import '../../../shared/widgets/color_picker_field.dart';
 import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/font_picker_field.dart';
 import '../../../shared/widgets/loading_overlay.dart';
 import '../../../shared/widgets/shimmer_loader.dart';
 import '../data/settings_model.dart';
@@ -58,6 +60,26 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   final _featuredTitleCtrl = TextEditingController();
   int _featuredCount = 3;
 
+  // Illustration
+  File? _pendingIllustration;
+
+  // Extended design fields (fonts, font URLs, colors, caption, alt texts)
+  final Map<String, TextEditingController> _extraCtrls = {};
+
+  // Numeric / enum design values (font sizes, z-indexes, offsets, styles…)
+  final Map<String, dynamic> _vals = {};
+
+  TextEditingController _ctrl(String key) =>
+      _extraCtrls.putIfAbsent(key, TextEditingController.new);
+
+  int _intVal(String key, [int fallback = 0]) =>
+      (_vals[key] as int?) ?? fallback;
+
+  String _strVal(String key, [String fallback = '']) =>
+      (_vals[key] as String?) ?? fallback;
+
+  void _setVal(String key, dynamic v) => setState(() => _vals[key] = v);
+
   @override
   void initState() {
     super.initState();
@@ -92,12 +114,17 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     _ctaTextCtrl.dispose();
     _ctaLinkCtrl.dispose();
     _featuredTitleCtrl.dispose();
+    for (final c in _extraCtrls.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
   void _populate(HomeSettings s) {
     if (_populated) return;
     _populated = true;
+
+    // Core text controllers
     _title1Ctrl.text = s.heroTitle1Text ?? '';
     _title2Ctrl.text = s.heroTitle2Text ?? '';
     _ownerNameCtrl.text = s.ownerNameText ?? '';
@@ -108,6 +135,79 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     _showFeatured = s.showFeaturedProjects;
     _featuredTitleCtrl.text = s.featuredTitle ?? '';
     _featuredCount = s.featuredCount.clamp(1, 9);
+
+    // Extra text controllers — fonts, font URLs, colors, caption, alt
+    _ctrl('heroTitle1Font').text = s.heroTitle1Font ?? '';
+    _ctrl('heroTitle1FontUrl').text = s.heroTitle1FontUrl ?? '';
+    _ctrl('heroTitle1Color').text = s.heroTitle1Color ?? '';
+    _ctrl('heroTitle1ColorDark').text = s.heroTitle1ColorDark ?? '';
+    _ctrl('heroTitle2Font').text = s.heroTitle2Font ?? '';
+    _ctrl('heroTitle2FontUrl').text = s.heroTitle2FontUrl ?? '';
+    _ctrl('heroTitle2Color').text = s.heroTitle2Color ?? '';
+    _ctrl('heroTitle2ColorDark').text = s.heroTitle2ColorDark ?? '';
+    _ctrl('ownerNameFont').text = s.ownerNameFont ?? '';
+    _ctrl('ownerNameFontUrl').text = s.ownerNameFontUrl ?? '';
+    _ctrl('ownerNameColor').text = s.ownerNameColor ?? '';
+    _ctrl('ownerNameColorDark').text = s.ownerNameColorDark ?? '';
+    _ctrl('heroMainImageCaption').text = s.heroMainImageCaption ?? '';
+    _ctrl('illustrationAlt').text = s.illustrationAlt ?? '';
+    _ctrl('ctaFont').text = s.ctaFont ?? '';
+    _ctrl('ctaFontUrl').text = s.ctaFontUrl ?? '';
+    _ctrl('featuredTitleFont').text = s.featuredTitleFont ?? '';
+    _ctrl('featuredTitleFontUrl').text = s.featuredTitleFontUrl ?? '';
+    _ctrl('featuredTitleColor').text = s.featuredTitleColor ?? '';
+    _ctrl('featuredTitleColorDark').text = s.featuredTitleColorDark ?? '';
+
+    // Numeric / enum values
+    _vals.addAll({
+      'heroTitle1FontSize': s.heroTitle1FontSize,
+      'heroTitle1ZIndex': s.heroTitle1ZIndex,
+      'heroTitle1OffsetX': s.heroTitle1OffsetX,
+      'heroTitle1OffsetY': s.heroTitle1OffsetY,
+      'heroTitle2FontSize': s.heroTitle2FontSize,
+      'heroTitle2ZIndex': s.heroTitle2ZIndex,
+      'heroTitle2OffsetX': s.heroTitle2OffsetX,
+      'heroTitle2OffsetY': s.heroTitle2OffsetY,
+      'ownerNameFontSize': s.ownerNameFontSize,
+      'ownerNameZIndex': s.ownerNameZIndex,
+      'ownerNameOffsetX': s.ownerNameOffsetX,
+      'ownerNameOffsetY': s.ownerNameOffsetY,
+      'heroImageStyle': s.heroImageStyle ?? 'original',
+      'heroMainImageZIndex': s.heroMainImageZIndex,
+      'heroMainImageOffsetX': s.heroMainImageOffsetX,
+      'heroMainImageOffsetY': s.heroMainImageOffsetY,
+      'illustrationUrl': s.illustrationUrl,
+      'illustrationZIndex': s.illustrationZIndex,
+      'illustrationOpacity': s.illustrationOpacity,
+      'illustrationSize': s.illustrationSize,
+      'illustrationOffsetX': s.illustrationOffsetX,
+      'illustrationOffsetY': s.illustrationOffsetY,
+      'illustrationRotation': s.illustrationRotation,
+      'ctaFontSize': s.ctaFontSize,
+      'ctaVariant': s.ctaVariant ?? 'default',
+      'ctaSize': s.ctaSize ?? 'default',
+      'ctaOffsetX': s.ctaOffsetX,
+      'ctaOffsetY': s.ctaOffsetY,
+      'heroTitle1MobileOffsetX': s.heroTitle1MobileOffsetX,
+      'heroTitle1MobileOffsetY': s.heroTitle1MobileOffsetY,
+      'heroTitle1MobileFontSize': s.heroTitle1MobileFontSize,
+      'heroTitle2MobileOffsetX': s.heroTitle2MobileOffsetX,
+      'heroTitle2MobileOffsetY': s.heroTitle2MobileOffsetY,
+      'heroTitle2MobileFontSize': s.heroTitle2MobileFontSize,
+      'ownerNameMobileOffsetX': s.ownerNameMobileOffsetX,
+      'ownerNameMobileOffsetY': s.ownerNameMobileOffsetY,
+      'ownerNameMobileFontSize': s.ownerNameMobileFontSize,
+      'heroMainImageMobileOffsetX': s.heroMainImageMobileOffsetX,
+      'heroMainImageMobileOffsetY': s.heroMainImageMobileOffsetY,
+      'illustrationMobileOffsetX': s.illustrationMobileOffsetX,
+      'illustrationMobileOffsetY': s.illustrationMobileOffsetY,
+      'illustrationMobileSize': s.illustrationMobileSize,
+      'illustrationMobileRotation': s.illustrationMobileRotation,
+      'ctaMobileOffsetX': s.ctaMobileOffsetX,
+      'ctaMobileOffsetY': s.ctaMobileOffsetY,
+      'ctaMobileFontSize': s.ctaMobileFontSize,
+      'featuredTitleFontSize': s.featuredTitleFontSize,
+    });
   }
 
   String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v.trim();
@@ -159,14 +259,43 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     });
   }
 
+  // ── Illustration picker ──────────────────────────────────────────────────
+
+  Future<void> _pickIllustration() async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked == null) return;
+      setState(() {
+        _pendingIllustration = File(picked.path);
+        _vals['illustrationUrl'] = picked.path;
+      });
+    } catch (e) {
+      AppLogger.error('SettingsHomePage: error picking illustration', e);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+        );
+      }
+    }
+  }
+
+  void _removeIllustration() {
+    setState(() {
+      _pendingIllustration = null;
+      _vals['illustrationUrl'] = null;
+    });
+  }
+
   // ── Save ─────────────────────────────────────────────────────────────────
 
   Future<void> _save() async {
     if (!mounted) return;
     setState(() => _saving = true);
     try {
+      final svc = ref.read(uploadServiceProvider);
+
       if (_pendingHeroImage != null) {
-        final svc = ref.read(uploadServiceProvider);
         final result = await svc.uploadImageFull(
           _pendingHeroImage!,
           folder: 'portfolio/home',
@@ -175,7 +304,17 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         _pendingHeroImage = null;
       }
 
-      await ref.read(settingsRepositoryProvider).updateHome({
+      if (_pendingIllustration != null) {
+        final result = await svc.uploadImageFull(
+          _pendingIllustration!,
+          folder: 'portfolio/home',
+        );
+        _vals['illustrationUrl'] = result.url;
+        _pendingIllustration = null;
+      }
+
+      final data = <String, dynamic>{
+        // Core text fields
         'heroTitle1Text': _nullIfEmpty(_title1Ctrl.text),
         'heroTitle2Text': _nullIfEmpty(_title2Ctrl.text),
         'ownerNameText': _nullIfEmpty(_ownerNameCtrl.text),
@@ -183,10 +322,17 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         'heroMainImageAlt': _nullIfEmpty(_heroImageAltCtrl.text),
         'ctaText': _nullIfEmpty(_ctaTextCtrl.text),
         'ctaLink': _nullIfEmpty(_ctaLinkCtrl.text),
-        'showFeaturedProjects': _showFeatured,
         'featuredTitle': _nullIfEmpty(_featuredTitleCtrl.text),
+        // Non-text state
+        'showFeaturedProjects': _showFeatured,
         'featuredCount': _featuredCount,
-      });
+        // Extra text controllers (fonts, colors, caption, alt…)
+        for (final e in _extraCtrls.entries) e.key: _nullIfEmpty(e.value.text),
+        // Numeric / enum vals (font sizes, z-indexes, offsets, styles…)
+        ..._vals,
+      };
+
+      await ref.read(settingsRepositoryProvider).updateHome(data);
 
       ref.invalidate(homeSettingsProvider);
       if (mounted) {
@@ -296,132 +442,20 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // ── Hero texts ───────────────────────────────────────────────
-        SettingsFormCard(
-          title: 'Textos del Hero',
-          leadingIcon: Icons.title_rounded,
-          children: [
-            TextFormField(
-              controller: _title1Ctrl,
-              decoration: const InputDecoration(
-                labelText: 'Título principal',
-                hintText: 'Ej: "Make-up"',
-                prefixIcon: Icon(Icons.format_size),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TextFormField(
-              controller: _title2Ctrl,
-              decoration: const InputDecoration(
-                labelText: 'Segundo título',
-                hintText: 'Ej: "Artist"',
-                prefixIcon: Icon(Icons.format_size),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TextFormField(
-              controller: _ownerNameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Nombre de la artista',
-                hintText: 'Ej: "Paola Bolívar Nievas"',
-                prefixIcon: Icon(Icons.person_outline),
-              ),
-            ),
-          ],
-        ),
+        _buildHeroTextsSection(),
         const SizedBox(height: AppSpacing.md),
-
-        // ── Hero image ───────────────────────────────────────────────
-        SettingsFormCard(
-          title: 'Foto del Hero',
-          leadingIcon: Icons.image_outlined,
-          children: [
-            HeroImagePicker(
-              imageUrl: _heroImageCtrl.text,
-              pendingFile: _pendingHeroImage,
-              onPick: _pickHeroImage,
-              onRemove: _removeHeroImage,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TextFormField(
-              controller: _heroImageAltCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Texto alternativo (accesibilidad)',
-                hintText: 'Ej: "Foto de Paola maquillando"',
-                prefixIcon: Icon(Icons.accessibility_new_outlined),
-              ),
-            ),
-          ],
-        ),
+        _buildHeroImageSection(),
         const SizedBox(height: AppSpacing.md),
-
-        // ── CTA ──────────────────────────────────────────────────────
-        SettingsFormCard(
-          title: 'Botón de acción (CTA)',
-          leadingIcon: Icons.touch_app_outlined,
-          children: [
-            TextFormField(
-              controller: _ctaTextCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Texto del botón',
-                hintText: 'Ej: "Ver proyectos"',
-                prefixIcon: Icon(Icons.smart_button_outlined),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TextFormField(
-              controller: _ctaLinkCtrl,
-              keyboardType: TextInputType.url,
-              decoration: const InputDecoration(
-                labelText: 'Enlace destino',
-                hintText: 'Ej: "/proyectos"',
-                prefixIcon: Icon(Icons.link_outlined),
-              ),
-            ),
-          ],
-        ),
+        _buildIllustrationSection(),
         const SizedBox(height: AppSpacing.md),
-
-        // ── Featured projects ─────────────────────────────────────
-        SettingsFormCard(
-          title: 'Proyectos destacados',
-          leadingIcon: Icons.star_outline_rounded,
-          children: [
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Mostrar sección de destacados'),
-              subtitle: const Text(
-                'Aparece debajo del Hero en la página de inicio',
-              ),
-              value: _showFeatured,
-              onChanged: (v) => setState(() => _showFeatured = v),
-            ),
-            if (_showFeatured) ...[
-              const Divider(height: AppSpacing.xl),
-              TextFormField(
-                controller: _featuredTitleCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Título de la sección',
-                  hintText: 'Ej: "Trabajos recientes"',
-                  prefixIcon: Icon(Icons.title_outlined),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              FeaturedCountPicker(
-                value: _featuredCount,
-                onChanged: (v) => setState(() => _featuredCount = v),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              OutlinedButton.icon(
-                onPressed: () => context.pushNamed(RouteNames.projects),
-                icon: const Icon(Icons.open_in_new_rounded, size: 16),
-                label: const Text('Ordenar proyectos →'),
-              ),
-            ],
-          ],
-        ),
+        _buildCtaSection(),
+        const SizedBox(height: AppSpacing.md),
+        _buildFeaturedSection(),
+        const SizedBox(height: AppSpacing.md),
+        _buildPositionSection(),
+        const SizedBox(height: AppSpacing.md),
+        _buildMobileSection(),
         const SizedBox(height: AppSpacing.xl),
-
         FilledButton.icon(
           onPressed: _saving ? null : _save,
           icon: const Icon(Icons.save_outlined),
@@ -429,6 +463,536 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         ),
         const SizedBox(height: AppSpacing.base),
       ],
+    );
+  }
+
+  // ── Section 1: Hero Texts ─────────────────────────────────────────────────
+
+  Widget _buildHeroTextsSection() {
+    return SettingsFormCard(
+      title: 'Textos del Hero',
+      leadingIcon: Icons.title_rounded,
+      children: [
+        TextFormField(
+          controller: _title1Ctrl,
+          decoration: const InputDecoration(
+            labelText: 'Título principal',
+            hintText: 'Ej: "Make-up"',
+            prefixIcon: Icon(Icons.format_size),
+          ),
+        ),
+        _buildTextDesign('heroTitle1', fontSizeFallback: 112),
+        const SizedBox(height: AppSpacing.md),
+        TextFormField(
+          controller: _title2Ctrl,
+          decoration: const InputDecoration(
+            labelText: 'Segundo título',
+            hintText: 'Ej: "Artist"',
+            prefixIcon: Icon(Icons.format_size),
+          ),
+        ),
+        _buildTextDesign('heroTitle2', fontSizeFallback: 96),
+        const SizedBox(height: AppSpacing.md),
+        TextFormField(
+          controller: _ownerNameCtrl,
+          decoration: const InputDecoration(
+            labelText: 'Nombre de la artista',
+            hintText: 'Ej: "Paola Bolívar Nievas"',
+            prefixIcon: Icon(Icons.person_outline),
+          ),
+        ),
+        _buildTextDesign('ownerName', fontSizeFallback: 36),
+      ],
+    );
+  }
+
+  // ── Section 2: Hero Image ─────────────────────────────────────────────────
+
+  Widget _buildHeroImageSection() {
+    return SettingsFormCard(
+      title: 'Foto del Hero',
+      leadingIcon: Icons.image_outlined,
+      children: [
+        HeroImagePicker(
+          imageUrl: _heroImageCtrl.text,
+          pendingFile: _pendingHeroImage,
+          onPick: _pickHeroImage,
+          onRemove: _removeHeroImage,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TextFormField(
+          controller: _heroImageAltCtrl,
+          decoration: const InputDecoration(
+            labelText: 'Texto alternativo (accesibilidad)',
+            hintText: 'Ej: "Foto de Paola maquillando"',
+            prefixIcon: Icon(Icons.accessibility_new_outlined),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TextFormField(
+          controller: _ctrl('heroMainImageCaption'),
+          decoration: const InputDecoration(
+            labelText: 'Pie de foto (opcional)',
+            hintText: 'Ej: "Sesión en Barcelona"',
+            prefixIcon: Icon(Icons.closed_caption_outlined),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        DropdownButtonFormField<String>(
+          value: _strVal('heroImageStyle', 'original'),
+          decoration: const InputDecoration(
+            labelText: 'Estilo de imagen',
+            prefixIcon: Icon(Icons.crop_outlined),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'original', child: Text('Original')),
+            DropdownMenuItem(value: 'rounded', child: Text('Redondeado')),
+            DropdownMenuItem(value: 'square', child: Text('Cuadrado')),
+            DropdownMenuItem(value: 'circle', child: Text('Circular')),
+            DropdownMenuItem(value: 'landscape', child: Text('Horizontal')),
+            DropdownMenuItem(value: 'portrait', child: Text('Retrato')),
+            DropdownMenuItem(value: 'star', child: Text('Estrella')),
+          ],
+          onChanged: (v) => _setVal('heroImageStyle', v),
+        ),
+      ],
+    );
+  }
+
+  // ── Section 3: Illustration ───────────────────────────────────────────────
+
+  Widget _buildIllustrationSection() {
+    final illustrationUrl = (_vals['illustrationUrl'] as String?) ?? '';
+
+    return SettingsFormCard(
+      title: 'Ilustración decorativa',
+      leadingIcon: Icons.brush_outlined,
+      children: [
+        HeroImagePicker(
+          imageUrl: illustrationUrl,
+          pendingFile: _pendingIllustration,
+          onPick: _pickIllustration,
+          onRemove: _removeIllustration,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TextFormField(
+          controller: _ctrl('illustrationAlt'),
+          decoration: const InputDecoration(
+            labelText: 'Texto alternativo',
+            hintText: 'Ej: "Ilustración maquilladora"',
+            prefixIcon: Icon(Icons.accessibility_new_outlined),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildSlider(
+          'illustrationOpacity',
+          'Opacidad',
+          min: 0,
+          max: 100,
+          fallback: 100,
+          suffix: '%',
+        ),
+        _buildSlider(
+          'illustrationSize',
+          'Tamaño',
+          min: 10,
+          max: 500,
+          fallback: 100,
+          suffix: '%',
+        ),
+        _buildSlider(
+          'illustrationRotation',
+          'Rotación',
+          min: -180,
+          max: 180,
+          fallback: 0,
+          suffix: '°',
+        ),
+      ],
+    );
+  }
+
+  // ── Section 4: CTA ────────────────────────────────────────────────────────
+
+  Widget _buildCtaSection() {
+    return SettingsFormCard(
+      title: 'Botón de acción (CTA)',
+      leadingIcon: Icons.touch_app_outlined,
+      children: [
+        TextFormField(
+          controller: _ctaTextCtrl,
+          decoration: const InputDecoration(
+            labelText: 'Texto del botón',
+            hintText: 'Ej: "Ver proyectos"',
+            prefixIcon: Icon(Icons.smart_button_outlined),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        TextFormField(
+          controller: _ctaLinkCtrl,
+          keyboardType: TextInputType.url,
+          decoration: const InputDecoration(
+            labelText: 'Enlace destino',
+            hintText: 'Ej: "/proyectos"',
+            prefixIcon: Icon(Icons.link_outlined),
+          ),
+        ),
+        _buildTextDesignCta(),
+        const SizedBox(height: AppSpacing.md),
+        DropdownButtonFormField<String>(
+          value: _strVal('ctaVariant', 'default'),
+          decoration: const InputDecoration(
+            labelText: 'Variante',
+            prefixIcon: Icon(Icons.style_outlined),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'default', child: Text('Primario')),
+            DropdownMenuItem(value: 'secondary', child: Text('Secundario')),
+            DropdownMenuItem(value: 'outline', child: Text('Contorno')),
+            DropdownMenuItem(value: 'ghost', child: Text('Fantasma')),
+          ],
+          onChanged: (v) => _setVal('ctaVariant', v),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        DropdownButtonFormField<String>(
+          value: _strVal('ctaSize', 'default'),
+          decoration: const InputDecoration(
+            labelText: 'Tamaño del botón',
+            prefixIcon: Icon(Icons.format_size_outlined),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'sm', child: Text('Pequeño')),
+            DropdownMenuItem(value: 'default', child: Text('Mediano')),
+            DropdownMenuItem(value: 'lg', child: Text('Grande')),
+          ],
+          onChanged: (v) => _setVal('ctaSize', v),
+        ),
+      ],
+    );
+  }
+
+  // ── Section 5: Featured Projects ──────────────────────────────────────────
+
+  Widget _buildFeaturedSection() {
+    return SettingsFormCard(
+      title: 'Proyectos destacados',
+      leadingIcon: Icons.star_outline_rounded,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Mostrar sección de destacados'),
+          subtitle: const Text(
+            'Aparece debajo del Hero en la página de inicio',
+          ),
+          value: _showFeatured,
+          onChanged: (v) => setState(() => _showFeatured = v),
+        ),
+        if (_showFeatured) ...[
+          const Divider(height: AppSpacing.xl),
+          TextFormField(
+            controller: _featuredTitleCtrl,
+            decoration: const InputDecoration(
+              labelText: 'Título de la sección',
+              hintText: 'Ej: "Trabajos recientes"',
+              prefixIcon: Icon(Icons.title_outlined),
+            ),
+          ),
+          _buildTextDesign('featuredTitle', fontSizeFallback: 32),
+          const SizedBox(height: AppSpacing.md),
+          FeaturedCountPicker(
+            value: _featuredCount,
+            onChanged: (v) => setState(() => _featuredCount = v),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          OutlinedButton.icon(
+            onPressed: () => context.pushNamed(RouteNames.projects),
+            icon: const Icon(Icons.open_in_new_rounded, size: 16),
+            label: const Text('Ordenar proyectos →'),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // ── Section 6: Position & Layers ──────────────────────────────────────────
+
+  Widget _buildPositionSection() {
+    return SettingsFormCard(
+      title: 'Posición y capas',
+      leadingIcon: Icons.layers_outlined,
+      children: [
+        Text(
+          'Ajusta la profundidad (z-index) y posición de cada elemento.',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+        _buildPositionBlock('Título 1', 'heroTitle1', zFallback: 20),
+        _buildPositionBlock('Título 2', 'heroTitle2', zFallback: 10),
+        _buildPositionBlock('Nombre', 'ownerName', zFallback: 15),
+        _buildPositionBlock('Imagen hero', 'heroMainImage', zFallback: 5),
+        _buildPositionBlock('Ilustración', 'illustration', zFallback: 10),
+        _buildPositionBlockNoZ('Botón CTA', 'cta'),
+      ],
+    );
+  }
+
+  // ── Section 7: Mobile Overrides ──────────────────────────────────────────
+
+  Widget _buildMobileSection() {
+    return SettingsFormCard(
+      title: 'Ajustes móviles',
+      leadingIcon: Icons.smartphone_outlined,
+      children: [
+        Text(
+          'Sobreescribe valores para pantallas pequeñas.',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+        _buildMobileBlock('Título 1', 'heroTitle1', fontSizeFallback: 56),
+        _buildMobileBlock('Título 2', 'heroTitle2', fontSizeFallback: 72),
+        _buildMobileBlock('Nombre', 'ownerName', fontSizeFallback: 28),
+        _buildMobileBlockOffset('Imagen hero', 'heroMainImage'),
+        _buildMobileBlockIllustration(),
+        _buildMobileBlock('Botón CTA', 'cta', fontSizeFallback: 16),
+      ],
+    );
+  }
+
+  // ── Reusable helpers ──────────────────────────────────────────────────────
+
+  /// Expandable font, size & color panel for a text element.
+  Widget _buildTextDesign(String prefix, {int fontSizeFallback = 16}) {
+    final fontKey = '${prefix}Font';
+    final fontUrlKey = '${prefix}FontUrl';
+    final sizeKey = '${prefix}FontSize';
+    final colorKey = '${prefix}Color';
+    final colorDarkKey = '${prefix}ColorDark';
+
+    return ExpansionTile(
+      title: const Text('Personalizar tipografía'),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        FontPickerField(
+          value: _ctrl(fontKey).text.isEmpty ? null : _ctrl(fontKey).text,
+          onChanged: (name, url) => setState(() {
+            _ctrl(fontKey).text = name;
+            _ctrl(fontUrlKey).text = url;
+          }),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildSlider(
+          sizeKey,
+          'Tamaño',
+          min: 8,
+          max: 200,
+          fallback: fontSizeFallback,
+        ),
+        const SizedBox(height: AppSpacing.md),
+        ColorPickerField(controller: _ctrl(colorKey), label: 'Color (claro)'),
+        const SizedBox(height: AppSpacing.md),
+        ColorPickerField(
+          controller: _ctrl(colorDarkKey),
+          label: 'Color (oscuro)',
+        ),
+      ],
+    );
+  }
+
+  /// CTA font design — font + size (no colors, CTA colors come from variant).
+  Widget _buildTextDesignCta() {
+    return ExpansionTile(
+      title: const Text('Personalizar tipografía'),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        FontPickerField(
+          value: _ctrl('ctaFont').text.isEmpty ? null : _ctrl('ctaFont').text,
+          onChanged: (name, url) => setState(() {
+            _ctrl('ctaFont').text = name;
+            _ctrl('ctaFontUrl').text = url;
+          }),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildSlider('ctaFontSize', 'Tamaño', min: 8, max: 48, fallback: 16),
+      ],
+    );
+  }
+
+  /// Position block with z-index + offsets.
+  Widget _buildPositionBlock(String label, String prefix, {int zFallback = 0}) {
+    return ExpansionTile(
+      title: Text(label),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        _buildSlider(
+          '${prefix}ZIndex',
+          'Z-Index',
+          min: 0,
+          max: 50,
+          fallback: zFallback,
+        ),
+        _buildSlider('${prefix}OffsetX', 'Desplazar X', min: -200, max: 200),
+        _buildSlider('${prefix}OffsetY', 'Desplazar Y', min: -200, max: 200),
+      ],
+    );
+  }
+
+  /// Position block without z-index (e.g. CTA).
+  Widget _buildPositionBlockNoZ(String label, String prefix) {
+    return ExpansionTile(
+      title: Text(label),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        _buildSlider('${prefix}OffsetX', 'Desplazar X', min: -200, max: 200),
+        _buildSlider('${prefix}OffsetY', 'Desplazar Y', min: -200, max: 200),
+      ],
+    );
+  }
+
+  /// Mobile block with font size + offsets (text elements + CTA).
+  Widget _buildMobileBlock(
+    String label,
+    String prefix, {
+    int fontSizeFallback = 16,
+  }) {
+    return ExpansionTile(
+      title: Text(label),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        _buildSlider(
+          '${prefix}MobileFontSize',
+          'Tamaño fuente',
+          min: 8,
+          max: 120,
+          fallback: fontSizeFallback,
+        ),
+        _buildSlider(
+          '${prefix}MobileOffsetX',
+          'Desplazar X',
+          min: -200,
+          max: 200,
+        ),
+        _buildSlider(
+          '${prefix}MobileOffsetY',
+          'Desplazar Y',
+          min: -200,
+          max: 200,
+        ),
+      ],
+    );
+  }
+
+  /// Mobile block with offset only (hero image).
+  Widget _buildMobileBlockOffset(String label, String prefix) {
+    return ExpansionTile(
+      title: Text(label),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        _buildSlider(
+          '${prefix}MobileOffsetX',
+          'Desplazar X',
+          min: -200,
+          max: 200,
+        ),
+        _buildSlider(
+          '${prefix}MobileOffsetY',
+          'Desplazar Y',
+          min: -200,
+          max: 200,
+        ),
+      ],
+    );
+  }
+
+  /// Mobile block for illustration (offset + size + rotation).
+  Widget _buildMobileBlockIllustration() {
+    return ExpansionTile(
+      title: const Text('Ilustración'),
+      tilePadding: EdgeInsets.zero,
+      childrenPadding: const EdgeInsets.only(bottom: 8),
+      children: [
+        _buildSlider(
+          'illustrationMobileOffsetX',
+          'Desplazar X',
+          min: -200,
+          max: 200,
+        ),
+        _buildSlider(
+          'illustrationMobileOffsetY',
+          'Desplazar Y',
+          min: -200,
+          max: 200,
+        ),
+        _buildSlider(
+          'illustrationMobileSize',
+          'Tamaño',
+          min: 10,
+          max: 200,
+          fallback: 60,
+          suffix: '%',
+        ),
+        _buildSlider(
+          'illustrationMobileRotation',
+          'Rotación',
+          min: -180,
+          max: 180,
+          suffix: '°',
+        ),
+      ],
+    );
+  }
+
+  /// Labeled slider backed by _vals[key].
+  Widget _buildSlider(
+    String key,
+    String label, {
+    required double min,
+    required double max,
+    int fallback = 0,
+    String suffix = 'px',
+  }) {
+    final val = _intVal(key, fallback);
+    final clamped = val.toDouble().clamp(min, max);
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label, style: Theme.of(context).textTheme.labelLarge),
+              Text(
+                '$val $suffix',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          Slider(
+            value: clamped,
+            min: min,
+            max: max,
+            divisions: (max - min).round(),
+            onChanged: (v) => _setVal(key, v.round()),
+          ),
+        ],
+      ),
     );
   }
 

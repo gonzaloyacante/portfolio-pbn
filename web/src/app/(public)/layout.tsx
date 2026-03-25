@@ -26,7 +26,8 @@ export default async function PublicLayout({ children }: { children: React.React
           <div className="flex flex-col items-start gap-4">
             <h1 className="font-heading text-2xl font-bold sm:text-3xl">Sitio en mantenimiento</h1>
             <p className="text-muted-foreground max-w-xl text-base">
-              Estamos realizando mejoras para mejorar la experiencia. Volvemos pronto.
+              {visibility.maintenanceMessage ||
+                'Estamos realizando mejoras para mejorar la experiencia. Volvemos pronto.'}
             </p>
 
             <div className="mt-4 w-full">
