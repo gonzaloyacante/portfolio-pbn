@@ -77,8 +77,9 @@ class _CollapsiblePreviewState extends State<CollapsiblePreview> {
                   horizontal: AppSpacing.lg,
                   vertical: AppSpacing.sm,
                 ),
-                child: Center(
-                  child: SizedBox(width: 200, child: widget.preview),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  child: widget.preview,
                 ),
               ),
           ],
