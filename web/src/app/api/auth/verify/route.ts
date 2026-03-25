@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Si existe, retornamos éxito. La contraseña se verificará en el signIn de NextAuth.
-    return NextResponse.json({ success: true, email: user.email })
+    return NextResponse.json({ success: true })
   } catch (error) {
     if (error instanceof Error && error.message.includes('solicitudes')) {
       return NextResponse.json({ error: error.message }, { status: 429 })

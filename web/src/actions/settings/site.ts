@@ -39,6 +39,7 @@ export interface PageVisibility {
   showServicesPage: boolean
   showContactPage: boolean
   maintenanceMode: boolean
+  maintenanceMessage: string | null
 }
 
 // ─── Validation ─────────────────────────────────────
@@ -116,6 +117,7 @@ export const getPageVisibility = unstable_cache(
           showServicesPage: true,
           showContactPage: true,
           maintenanceMode: true,
+          maintenanceMessage: true,
         },
       })
       return (
@@ -125,6 +127,7 @@ export const getPageVisibility = unstable_cache(
           showServicesPage: false,
           showContactPage: true,
           maintenanceMode: false,
+          maintenanceMessage: null,
         }
       )
     } catch {
@@ -134,6 +137,7 @@ export const getPageVisibility = unstable_cache(
         showServicesPage: false,
         showContactPage: true,
         maintenanceMode: false,
+        maintenanceMessage: null,
       }
     }
   },

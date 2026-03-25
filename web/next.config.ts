@@ -199,12 +199,12 @@ const pwaConfig = withPWA({
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
-        handler: 'CacheFirst',
+        handler: 'StaleWhileRevalidate',
         options: {
           cacheName: 'cloudinary-images',
           expiration: {
             maxEntries: 100,
-            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+            maxAgeSeconds: 60 * 60 * 24, // 1 day
           },
         },
       },
@@ -221,12 +221,12 @@ const pwaConfig = withPWA({
       },
       {
         urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
-        handler: 'CacheFirst',
+        handler: 'StaleWhileRevalidate',
         options: {
           cacheName: 'static-images',
           expiration: {
             maxEntries: 64,
-            maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+            maxAgeSeconds: 60 * 60 * 24, // 1 day
           },
         },
       },

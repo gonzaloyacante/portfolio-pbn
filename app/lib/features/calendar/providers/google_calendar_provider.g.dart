@@ -107,7 +107,7 @@ final class GoogleCalendarNotifierProvider
 }
 
 String _$googleCalendarNotifierHash() =>
-    r'89e0a67d051b74f6a3b29209f57e1647e86f6561';
+    r'12e93db54be5c57da307a22f8feeb155d6583779';
 
 /// Gestiona el estado de autenticación de Google Calendar y la creación
 /// de eventos en el calendario del usuario.

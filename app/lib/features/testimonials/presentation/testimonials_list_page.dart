@@ -74,37 +74,6 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
     }
   }
 
-  Future<void> _moderate(
-    BuildContext ctx,
-    TestimonialItem item,
-    String newStatus,
-  ) async {
-    try {
-      await ref.read(testimonialsRepositoryProvider).updateTestimonial(
-        item.id,
-        {'status': newStatus},
-      );
-      ref.invalidate(testimonialsListProvider);
-      if (ctx.mounted) {
-        final label = newStatus == 'APPROVED' ? 'aprobado' : 'rechazado';
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Testimonio $label')));
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
-      }
-    }
-  }
-
   AppStatus _statusFromString(String status) => switch (status) {
     'APPROVED' => AppStatus.approved,
     'REJECTED' => AppStatus.rejected,
@@ -181,7 +150,6 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                               item: paginated.data[i],
                               statusOf: _statusFromString,
                               onDelete: _delete,
-                              onModerate: _moderate,
                             ),
                           ),
                         ),

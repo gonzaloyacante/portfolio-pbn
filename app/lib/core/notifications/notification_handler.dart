@@ -107,7 +107,12 @@ class NotificationHandler {
           );
           // Leve delay para que el router esté montado
           Future.delayed(const Duration(milliseconds: 600), () {
-            _navigateFromMessage(message);
+            try {
+              _navigateFromMessage(message);
+            } catch (e, st) {
+              AppLogger.warn('Navigation from initial notification failed: $e');
+              AppLogger.debug('Initial notification nav stack: $st');
+            }
           });
         }
       });

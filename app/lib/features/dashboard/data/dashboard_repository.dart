@@ -144,10 +144,6 @@ class DashboardRepository {
 
 @Riverpod(keepAlive: true)
 DashboardRepository dashboardRepository(Ref ref) {
-  // Usamos `read` en lugar de `watch` para evitar que la instancia del
-  // `DashboardRepository` se re-cree automáticamente cuando cambia el
-  // `ApiClient` (por ejemplo, al cargar async el `serverUrlProvider` en debug).
-  // Evita re-fetchs duplicados al arranque.
-  final client = ref.read(apiClientProvider);
+  final client = ref.watch(apiClientProvider);
   return DashboardRepository(client);
 }

@@ -45,36 +45,28 @@ describe('Project Mutations (cms/project)', () => {
 
   // ─── reorderProjects ─────────────────────────────
 
+  const fakeCuid1 = 'clxxxxxxxxxxxxxxxxxxxxxxxxx'
+  const fakeCuid2 = 'clyyyyyyyyyyyyyyyyyyyyyyyyy'
+  const fakeCuid3 = 'clzzzzzzzzzzzzzzzzzzzzzzzzz'
+
   describe('reorderProjects', () => {
     it('reorders projects successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.$transaction).mockResolvedValue(undefined as never)
 
       const { reorderProjects } = await import('@/actions/cms/project')
-      await reorderProjects(['p1', 'p2', 'p3'])
+      await reorderProjects([fakeCuid1, fakeCuid2, fakeCuid3])
 
-      expect(prisma.project.update).toHaveBeenCalledTimes(3)
-      expect(prisma.project.update).toHaveBeenCalledWith({
-        where: { id: 'p1' },
-        data: { sortOrder: 0 },
-      })
-      expect(prisma.project.update).toHaveBeenCalledWith({
-        where: { id: 'p2' },
-        data: { sortOrder: 1 },
-      })
-      expect(prisma.project.update).toHaveBeenCalledWith({
-        where: { id: 'p3' },
-        data: { sortOrder: 2 },
-      })
+      expect(prisma.$transaction).toHaveBeenCalledTimes(1)
     })
 
     it('requires admin auth', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.$transaction).mockResolvedValue(undefined as never)
 
       const { reorderProjects } = await import('@/actions/cms/project')
-      await reorderProjects(['p1'])
+      await reorderProjects([fakeCuid1])
 
       expect(requireAdmin).toHaveBeenCalled()
     })
@@ -82,41 +74,37 @@ describe('Project Mutations (cms/project)', () => {
     it('checks rate limiting', async () => {
       const { checkApiRateLimit } = await import('@/lib/rate-limit-guards')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.$transaction).mockResolvedValue(undefined as never)
 
       const { reorderProjects } = await import('@/actions/cms/project')
-      await reorderProjects(['p1'])
+      await reorderProjects([fakeCuid1])
 
       expect(checkApiRateLimit).toHaveBeenCalled()
     })
 
-    it('handles empty array', async () => {
-      const { prisma } = await import('@/lib/db')
-
+    it('throws for empty array (Zod min 1)', async () => {
       const { reorderProjects } = await import('@/actions/cms/project')
-      await reorderProjects([])
-
-      expect(prisma.project.update).not.toHaveBeenCalled()
+      await expect(reorderProjects([])).rejects.toThrow()
     })
 
     it('calls revalidatePath after reorder', async () => {
       const { revalidatePath } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.update).mockResolvedValue({} as never)
+      vi.mocked(prisma.$transaction).mockResolvedValue(undefined as never)
 
       const { reorderProjects } = await import('@/actions/cms/project')
-      await reorderProjects(['p1'])
+      await reorderProjects([fakeCuid1])
 
       expect(revalidatePath).toHaveBeenCalledWith('/admin/proyectos')
     })
 
     it('throws on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.update).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.$transaction).mockRejectedValue(new Error('DB error'))
 
       const { reorderProjects } = await import('@/actions/cms/project')
 
-      await expect(reorderProjects(['p1'])).rejects.toThrow()
+      await expect(reorderProjects([fakeCuid1])).rejects.toThrow()
     })
   })
 

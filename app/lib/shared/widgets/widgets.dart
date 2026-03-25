@@ -21,6 +21,7 @@ export 'emoji_icon_picker.dart';
 export 'empty_state.dart';
 export 'error_state.dart';
 export 'fade_slide_in.dart';
+export 'font_picker_field.dart';
 export 'help_tooltip.dart';
 export 'image_upload_widget.dart';
 export 'loading_overlay.dart';

@@ -170,8 +170,12 @@ model ContactSettings {
   successTitle     String?  @default("¡Mensaje enviado!")
   successMessage   String?  @default("Gracias por contactarme. Te responderé lo antes posible.")
   sendAnotherLabel String?  @default("Enviar otro mensaje")
-  // Show Social Links
+  // Visibility Toggles
   showSocialLinks  Boolean  @default(true)
+  showPhone        Boolean  @default(true)
+  showWhatsapp     Boolean  @default(true)
+  showEmail        Boolean  @default(true)
+  showLocation     Boolean  @default(true)
   // Meta
   isActive         Boolean  @default(true)
   createdAt        DateTime @default(now())

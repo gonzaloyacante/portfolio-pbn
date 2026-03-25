@@ -358,7 +358,11 @@ final List<RouteBase> _routes = [
     path: RoutePaths.trashDetail,
     name: RouteNames.trashDetail,
     pageBuilder: (context, state) {
-      final item = state.extra! as TrashItem;
+      final item = state.extra as TrashItem?;
+      if (item == null) {
+        // Fallback: missing extra data, redirect to trash list
+        return _fadePage(state: state, child: const TrashPage());
+      }
       return _fadePage(
         state: state,
         child: TrashItemDetailPage(item: item),

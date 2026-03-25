@@ -269,7 +269,6 @@ describe('createCategory (content.ts)', () => {
 
   it('should create category successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.category.create).mockResolvedValue({} as never)
 
     const { createCategory } = await import('@/actions/cms/content')
@@ -282,7 +281,8 @@ describe('createCategory (content.ts)', () => {
 
   it('should return error for duplicate slug', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findUnique).mockResolvedValue({ id: 'existing' } as never)
+    const p2002Error = Object.assign(new Error('Unique constraint'), { code: 'P2002' })
+    vi.mocked(prisma.category.create).mockRejectedValue(p2002Error)
 
     const { createCategory } = await import('@/actions/cms/content')
     const fd = new FormData()
@@ -295,7 +295,6 @@ describe('createCategory (content.ts)', () => {
 
   it('should handle database error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.category.create).mockRejectedValue(new Error('DB'))
 
     const { createCategory } = await import('@/actions/cms/content')

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -22,7 +22,6 @@ import { CSS } from '@dnd-kit/utilities'
 import { OptimizedImage } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { GripVertical } from 'lucide-react'
-import { useState } from 'react'
 
 interface GalleryImage {
   id: string
@@ -61,13 +60,11 @@ export default function DraggableMasonryGallery({
   const [columns, setColumns] = useState(3)
 
   // Calculate columns based on window width
-  useMemo(() => {
+  useEffect(() => {
     const handleResize = () => {
-      if (typeof window !== 'undefined') {
-        if (window.innerWidth >= 1024) setColumns(3)
-        else if (window.innerWidth >= 640) setColumns(2)
-        else setColumns(1)
-      }
+      if (window.innerWidth >= 1024) setColumns(3)
+      else if (window.innerWidth >= 640) setColumns(2)
+      else setColumns(1)
     }
     handleResize()
     window.addEventListener('resize', handleResize)

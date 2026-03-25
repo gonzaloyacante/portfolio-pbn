@@ -242,10 +242,7 @@ export function HeroContent({
                   isEditor={isEditor}
                   selectedElement={selectedElement}
                   onSelectElement={onSelectElement}
-                  className={cn(
-                    'relative h-24 w-24 lg:h-80 lg:w-80',
-                    !isEditor && 'opacity-80 mix-blend-multiply dark:mix-blend-screen'
-                  )}
+                  className={cn('relative h-24 w-24 lg:h-80 lg:w-80', !isEditor && 'opacity-80')}
                   style={{
                     zIndex: s.illustrationZIndex ?? 0,
                     opacity: (s.illustrationOpacity ?? 80) / 100,
@@ -339,8 +336,8 @@ export function HeroContent({
                     <OptimizedImage
                       src={mainImage}
                       alt={mainImageAlt}
-                      width={800}
-                      height={800}
+                      width={1600}
+                      height={1600}
                       priority
                       variant="hero"
                       className={cn(

@@ -121,9 +121,69 @@ export async function GET(req: Request) {
       return acc
     }, {})
 
-    // Resolver lat/lng representativo por país + nombre y desglose por ciudades
-    // Intl.DisplayNames may not exist in all runtimes. Create a typed constructor
-    // reference to avoid using `any` or `@ts-ignore` inline comments.
+    // ── Batch: Resolver coordenadas representativas por país ────────────────
+    const countryKeys = topCountriesRaw.map((r) => r.country)
+    const countryCoords = await prisma.analyticLog.findMany({
+      where: {
+        country: { in: countryKeys.filter((c): c is string => c !== null) },
+        latitude: { not: null },
+        longitude: { not: null },
+      },
+      select: { country: true, latitude: true, longitude: true },
+      distinct: ['country'],
+    })
+    const coordsByCountry = new Map(
+      countryCoords.map((c) => [c.country, { lat: c.latitude, lng: c.longitude }])
+    )
+
+    // ── Batch: Top ciudades por país (una sola groupBy con country+city) ──
+    const citiesRaw = await prisma.analyticLog.groupBy({
+      by: ['country', 'city'],
+      where: {
+        timestamp: { gte: thirtyDaysAgo },
+        eventType: { endsWith: '_VIEW' },
+        isBot: false,
+        country: { in: countryKeys.filter((c): c is string => c !== null) },
+      },
+      _count: { _all: true },
+      orderBy: { _count: { id: 'desc' } },
+    })
+
+    // ── Batch: Coordenadas representativas por ciudad ─────────────────────
+    const cityPairs = citiesRaw
+      .filter((c) => c.city !== null)
+      .map((c) => ({ country: c.country!, city: c.city! }))
+    const cityCoords =
+      cityPairs.length > 0
+        ? await prisma.analyticLog.findMany({
+            where: {
+              OR: cityPairs.map((p) => ({
+                country: p.country,
+                city: p.city,
+                latitude: { not: null },
+                longitude: { not: null },
+              })),
+            },
+            select: { country: true, city: true, latitude: true, longitude: true },
+            distinct: ['country', 'city'],
+          })
+        : []
+    const coordsByCity = new Map(
+      cityCoords.map((c) => [`${c.country}|${c.city}`, { lat: c.latitude, lng: c.longitude }])
+    )
+
+    // ── Agrupar ciudades por país (máx 8 por país) ───────────────────────
+    const citiesByCountry = new Map<string, Array<{ city: string | null; count: number }>>()
+    for (const row of citiesRaw) {
+      const key = row.country ?? 'unknown'
+      const arr = citiesByCountry.get(key) ?? []
+      if (arr.length < 8) {
+        arr.push({ city: row.city, count: row._count._all })
+      }
+      citiesByCountry.set(key, arr)
+    }
+
+    // ── DisplayNames ─────────────────────────────────────────────────────
     type DisplayNamesConstructor = new (
       locales: string | string[],
       options?: { type: 'region' }
@@ -137,91 +197,64 @@ export async function GET(req: Request) {
 
     const displayNames = DisplayNamesCtor ? new DisplayNamesCtor(['es'], { type: 'region' }) : null
 
-    const topLocations = await Promise.all(
-      topCountriesRaw.map(async ({ country, _count }) => {
-        const countryKey = country ?? 'unknown'
+    // ── Construir topLocations sin queries adicionales ────────────────────
+    const topLocations = topCountriesRaw.map(({ country, _count }) => {
+      const countryKey = country ?? 'unknown'
+      const countryTotal = _count._all
+      const rep = country ? coordsByCountry.get(country) : undefined
 
-        // Representative coordinates (si existen)
-        const rep = await prisma.analyticLog.findFirst({
-          where: { country: country, latitude: { not: null }, longitude: { not: null } },
-          select: { latitude: true, longitude: true },
-        })
-
-        // Top ciudades dentro del país (últimos 30 días)
-        const citiesRaw = await prisma.analyticLog.groupBy({
-          by: ['city'],
-          where: {
-            timestamp: { gte: thirtyDaysAgo },
-            eventType: { endsWith: '_VIEW' },
-            isBot: false,
-            country: country,
-          },
-          _count: { _all: true },
-          orderBy: { _count: { id: 'desc' } },
-          take: 8,
-        })
-
-        const countryTotal = _count._all
-
-        // For each city, try to resolve a representative lat/lng
-        const cities = await Promise.all(
-          citiesRaw.map(async ({ city, _count: c }) => {
-            // Decode URI-encoded city names (e.g. "S%C3%A3o%20Paulo" → "São Paulo")
-            let cityName = city ?? 'unknown'
-            try {
-              cityName = decodeURIComponent(cityName)
-            } catch {
-              // Keep original if decoding fails
-            }
-            const repCity = await prisma.analyticLog.findFirst({
-              where: { country: country, city, latitude: { not: null }, longitude: { not: null } },
-              select: { latitude: true, longitude: true },
-            })
-            return {
-              label: cityName,
-              count: c._all,
-              percent: countryTotal > 0 ? Math.round((c._all / countryTotal) * 100) : 0,
-              latitude: repCity?.latitude ?? null,
-              longitude: repCity?.longitude ?? null,
-            }
-          })
-        )
-
-        // Resolve display name for country code, prefer Intl.DisplayNames when available
-        let displayName: string
-        if (country) {
-          if (displayNames) {
-            displayName = displayNames.of(country) || country
-          } else {
-            displayName = country
-          }
-        } else {
-          displayName = 'unknown'
+      const rawCities = citiesByCountry.get(countryKey) ?? []
+      const cities = rawCities.map(({ city, count }) => {
+        let cityName = city ?? 'unknown'
+        try {
+          cityName = decodeURIComponent(cityName)
+        } catch {
+          // Keep original if decoding fails
         }
-
+        const cityCoord = city && country ? coordsByCity.get(`${country}|${city}`) : undefined
         return {
-          code: countryKey,
-          label: displayName,
-          count: countryTotal,
-          latitude: rep?.latitude ?? null,
-          longitude: rep?.longitude ?? null,
-          cities,
+          label: cityName,
+          count,
+          percent: countryTotal > 0 ? Math.round((count / countryTotal) * 100) : 0,
+          latitude: cityCoord?.lat ?? null,
+          longitude: cityCoord?.lng ?? null,
         }
       })
-    )
 
-    // Resolver nombre de proyecto
-    const topProjects = await Promise.all(
-      topProjectsRaw.map(async ({ entityId, _count }) => {
-        const proj = entityId
-          ? await prisma.project.findUnique({
-              where: { id: entityId },
-              select: { title: true },
-            })
-          : null
-        return { label: proj?.title ?? entityId ?? 'Desconocido', count: _count._all }
-      })
-    )
+      let displayName: string
+      if (country) {
+        displayName = displayNames?.of(country) || country
+      } else {
+        displayName = 'unknown'
+      }
+
+      return {
+        code: countryKey,
+        label: displayName,
+        count: countryTotal,
+        latitude: rep?.lat ?? null,
+        longitude: rep?.lng ?? null,
+        cities,
+      }
+    })
+
+    // ── Batch: Resolver nombres de proyectos ─────────────────────────────
+    const projectIds = topProjectsRaw
+      .map((r) => r.entityId)
+      .filter((id): id is string => id !== null)
+    const projectRecords =
+      projectIds.length > 0
+        ? await prisma.project.findMany({
+            where: { id: { in: projectIds } },
+            select: { id: true, title: true },
+          })
+        : []
+    const projectTitleMap = new Map(projectRecords.map((p) => [p.id, p.title]))
+
+    const topProjects = topProjectsRaw.map(({ entityId, _count }) => ({
+      label: (entityId ? projectTitleMap.get(entityId) : null) ?? entityId ?? 'Desconocido',
+      count: _count._all,
+    }))
 
     return NextResponse.json({
       success: true,

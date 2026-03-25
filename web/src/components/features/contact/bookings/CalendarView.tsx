@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { getBookingsByRange, updateBookingStatus } from '@/actions/user/bookings'
 import { Button, Modal, Badge } from '@/components/ui'
 import { ChevronLeft, User, Mail, Phone, FileText } from 'lucide-react'
@@ -44,13 +44,17 @@ export default function CalendarView() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date()) // Default to today
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Calendar calculations
-  const monthStart = startOfMonth(currentDate)
-  const monthEnd = endOfMonth(currentDate)
-  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 }) // Monday start
-  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 })
-
-  const calendarDays = eachDayOfInterval({ start: startDate, end: endDate })
+  // Calendar calculations (memoized to prevent infinite re-fetch in useEffect)
+  const { startDate, endDate, calendarDays } = useMemo(() => {
+    const ms = startOfMonth(currentDate)
+    const sd = startOfWeek(ms, { weekStartsOn: 1 })
+    const ed = endOfWeek(endOfMonth(currentDate), { weekStartsOn: 1 })
+    return {
+      startDate: sd,
+      endDate: ed,
+      calendarDays: eachDayOfInterval({ start: sd, end: ed }),
+    }
+  }, [currentDate])
 
   // Fetch bookings when month changes
   useEffect(() => {

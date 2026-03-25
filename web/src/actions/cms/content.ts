@@ -400,11 +400,6 @@ export async function createCategory(formData: FormData) {
   const data = validation.data
 
   try {
-    const existing = await prisma.category.findUnique({ where: { slug: data.slug } })
-    if (existing) {
-      return { success: false, error: 'Ya existe una categoría con ese slug' }
-    }
-
     await prisma.category.create({
       data: {
         name: data.name,
@@ -419,7 +414,15 @@ export async function createCategory(formData: FormData) {
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category created: ${data.name}`)
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code: string }).code === 'P2002'
+    ) {
+      return { success: false, error: 'Ya existe una categoría con ese slug' }
+    }
     logger.error('Error creating category:', { error })
     return { success: false, error: 'Error al crear la categoría' }
   }
@@ -452,7 +455,15 @@ export async function updateCategory(id: string, formData: FormData) {
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category updated: ${id}`)
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code: string }).code === 'P2002'
+    ) {
+      return { success: false, error: 'Ya existe otra categoría con ese slug' }
+    }
     logger.error('Error updating category:', { error })
     return { success: false, error: 'Error al actualizar la categoría' }
   }

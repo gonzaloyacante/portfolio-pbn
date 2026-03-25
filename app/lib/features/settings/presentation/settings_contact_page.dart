@@ -38,6 +38,10 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   final _whatsappCtrl = TextEditingController();
   final _locationCtrl = TextEditingController();
   bool _showSocialLinks = true;
+  bool _showPhone = true;
+  bool _showWhatsapp = true;
+  bool _showEmail = true;
+  bool _showLocation = true;
 
   @override
   void dispose() {
@@ -60,6 +64,10 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
     _whatsappCtrl.text = s.whatsapp ?? '';
     _locationCtrl.text = s.location ?? '';
     _showSocialLinks = s.showSocialLinks;
+    _showPhone = s.showPhone;
+    _showWhatsapp = s.showWhatsapp;
+    _showEmail = s.showEmail;
+    _showLocation = s.showLocation;
   }
 
   String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v.trim();
@@ -75,6 +83,10 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
         'whatsapp': _nullIfEmpty(_whatsappCtrl.text),
         'location': _nullIfEmpty(_locationCtrl.text),
         'showSocialLinks': _showSocialLinks,
+        'showPhone': _showPhone,
+        'showWhatsapp': _showWhatsapp,
+        'showEmail': _showEmail,
+        'showLocation': _showLocation,
       });
       ref.invalidate(contactSettingsProvider);
       if (mounted) AppSnackBar.success(context, 'Configuración guardada');
@@ -179,6 +191,53 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+              AppCard(
+                borderRadius: AppRadius.forCard,
+                child: Column(
+                  children: [
+                    SwitchListTile(
+                      title: const Text('Mostrar email'),
+                      subtitle: const Text('Visible en la página de contacto'),
+                      value: _showEmail,
+                      onChanged: (v) => setState(() => _showEmail = v),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    SwitchListTile(
+                      title: const Text('Mostrar teléfono'),
+                      subtitle: const Text('Visible en la página de contacto'),
+                      value: _showPhone,
+                      onChanged: (v) => setState(() => _showPhone = v),
+                    ),
+                    const Divider(height: 1),
+                    SwitchListTile(
+                      title: const Text('Mostrar WhatsApp'),
+                      subtitle: const Text('Visible en la página de contacto'),
+                      value: _showWhatsapp,
+                      onChanged: (v) => setState(() => _showWhatsapp = v),
+                    ),
+                    const Divider(height: 1),
+                    SwitchListTile(
+                      title: const Text('Mostrar ubicación'),
+                      subtitle: const Text('Visible en la página de contacto'),
+                      value: _showLocation,
+                      onChanged: (v) => setState(() => _showLocation = v),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               AppCard(

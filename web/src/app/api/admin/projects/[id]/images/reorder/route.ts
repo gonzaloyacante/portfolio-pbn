@@ -42,10 +42,7 @@ export async function PUT(req: Request, { params }: Params) {
     })
 
     if (!project) {
-      return NextResponse.json(
-        { success: false, error: 'Proyecto no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }
 
     const body = await req.json()
@@ -58,6 +55,21 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     const { items } = parsed.data
+
+    // Validate all image IDs belong to this project
+    const imageCount = await prisma.projectImage.count({
+      where: {
+        id: { in: items.map((i) => i.id) },
+        projectId: id,
+      },
+    })
+
+    if (imageCount !== items.length) {
+      return NextResponse.json(
+        { success: false, error: 'Una o más imágenes no pertenecen a este proyecto' },
+        { status: 403 }
+      )
+    }
 
     await prisma.$transaction(
       items.map(({ id: imageId, order }) =>

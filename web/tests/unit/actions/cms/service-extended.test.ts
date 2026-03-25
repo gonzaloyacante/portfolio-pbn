@@ -98,7 +98,6 @@ describe('createService', () => {
   it('should require admin authentication', async () => {
     const { requireAdmin } = await import('@/lib/security-server')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.service.create).mockResolvedValue({} as never)
 
     const { createService } = await import('@/actions/cms/services')
@@ -109,7 +108,6 @@ describe('createService', () => {
   it('should check rate limit', async () => {
     const { checkApiRateLimit } = await import('@/lib/rate-limit-guards')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.service.create).mockResolvedValue({} as never)
 
     const { createService } = await import('@/actions/cms/services')
@@ -126,7 +124,8 @@ describe('createService', () => {
 
   it('should return error for duplicate slug', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue({ id: 'existing' } as never)
+    const p2002Error = Object.assign(new Error('Unique constraint'), { code: 'P2002' })
+    vi.mocked(prisma.service.create).mockRejectedValue(p2002Error)
 
     const { createService } = await import('@/actions/cms/services')
     const result = await createService(makeFormData(validServiceFields))
@@ -136,7 +135,6 @@ describe('createService', () => {
 
   it('should create service successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.service.create).mockResolvedValue({} as never)
 
     const { createService } = await import('@/actions/cms/services')
@@ -146,7 +144,6 @@ describe('createService', () => {
 
   it('should handle database error on create', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.service.create).mockRejectedValue(new Error('DB error'))
 
     const { createService } = await import('@/actions/cms/services')
@@ -157,7 +154,6 @@ describe('createService', () => {
   it('should revalidate paths and tags after creation', async () => {
     const { revalidatePath, revalidateTag } = await import('next/cache')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValue(null)
     vi.mocked(prisma.service.create).mockResolvedValue({} as never)
 
     const { createService } = await import('@/actions/cms/services')
@@ -183,7 +179,6 @@ describe('updateService', () => {
   it('should require admin authentication', async () => {
     const { requireAdmin } = await import('@/lib/security-server')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValue(null)
     vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
     const { updateService } = await import('@/actions/cms/services')
@@ -193,7 +188,8 @@ describe('updateService', () => {
 
   it('should return error if slug conflicts with another service', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValue({ id: 'other' } as never)
+    const p2002Error = Object.assign(new Error('Unique constraint'), { code: 'P2002' })
+    vi.mocked(prisma.service.update).mockRejectedValue(p2002Error)
 
     const { updateService } = await import('@/actions/cms/services')
     const result = await updateService('svc-1', makeFormData(validServiceFields))
@@ -203,7 +199,6 @@ describe('updateService', () => {
 
   it('should update service successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValue(null)
     vi.mocked(prisma.service.update).mockResolvedValue({} as never)
 
     const { updateService } = await import('@/actions/cms/services')
@@ -213,7 +208,6 @@ describe('updateService', () => {
 
   it('should handle database error on update', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValue(null)
     vi.mocked(prisma.service.update).mockRejectedValue(new Error('DB error'))
 
     const { updateService } = await import('@/actions/cms/services')

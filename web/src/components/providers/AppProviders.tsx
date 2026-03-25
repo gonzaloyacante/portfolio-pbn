@@ -10,7 +10,11 @@ import CustomThemeProvider from '@/components/layout/ThemeProvider'
 const swrConfig = {
   revalidateOnFocus: false,
   dedupingInterval: 2000,
-  fetcher: (url: string) => fetch(url).then((res) => res.json()),
+  fetcher: async (url: string) => {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`SWR fetch error: ${res.status}`)
+    return res.json()
+  },
 }
 
 interface AppProvidersProps {

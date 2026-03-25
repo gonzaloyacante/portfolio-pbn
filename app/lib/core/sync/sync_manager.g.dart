@@ -32,7 +32,7 @@ final class SyncManagerProvider
         argument: null,
         retry: null,
         name: r'syncManagerProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -53,7 +53,7 @@ final class SyncManagerProvider
   }
 }
 
-String _$syncManagerHash() => r'61c4e39fe4ea2f51a5e33ab3edb40bb4f431ee4d';
+String _$syncManagerHash() => r'394812f186f8aa824d8d1f95862b1ac459042313';
 
 /// Procesa la cola de operaciones pendientes cuando hay conectividad.
 ///

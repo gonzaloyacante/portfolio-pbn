@@ -12,21 +12,32 @@ final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
   ThemeModeNotifier.new,
 );
 
+/// Provider que almacena el ThemeMode cargado síncronamente en bootstrap.
+/// Evita el flash de tema incorrecto al arrancar la app.
+final initialThemeModeProvider = Provider<ThemeMode>((_) => ThemeMode.system);
+
+/// Pre-carga la preferencia de tema desde SharedPreferences.
+/// Debe llamarse en bootstrap() ANTES de runApp().
+Future<ThemeMode> preloadThemeMode() async {
+  final prefs = await SharedPreferences.getInstance();
+  final saved = prefs.getString(AppConstants.kThemeModeKey);
+  if (saved == null) return ThemeMode.system;
+  switch (saved) {
+    case 'dark':
+      return ThemeMode.dark;
+    case 'light':
+      return ThemeMode.light;
+    default:
+      return ThemeMode.system;
+  }
+}
+
 // ── Notifier ──────────────────────────────────────────────────────────────────
 
 class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override
   ThemeMode build() {
-    _loadFromPrefs();
-    return ThemeMode.system;
-  }
-
-  Future<void> _loadFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(AppConstants.kThemeModeKey);
-    if (saved != null) {
-      state = _fromString(saved);
-    }
+    return ref.read(initialThemeModeProvider);
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {
@@ -39,12 +50,6 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     await setThemeMode(isDark ? ThemeMode.light : ThemeMode.dark);
   }
-
-  static ThemeMode _fromString(String value) => switch (value) {
-    'light' => ThemeMode.light,
-    'dark' => ThemeMode.dark,
-    _ => ThemeMode.system,
-  };
 
   static String _toString(ThemeMode mode) => switch (mode) {
     ThemeMode.light => 'light',

@@ -28,15 +28,12 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _textCtrl = TextEditingController();
-  final _excerptCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
   final _positionCtrl = TextEditingController();
   final _companyCtrl = TextEditingController();
-  final _websiteCtrl = TextEditingController();
   final _avatarCtrl = TextEditingController();
   File? _pendingAvatar;
-  final _sourceCtrl = TextEditingController();
 
   int _rating = 5;
   bool _verified = false;
@@ -53,14 +50,11 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
     for (final ctrl in [
       _nameCtrl,
       _textCtrl,
-      _excerptCtrl,
       _emailCtrl,
       _phoneCtrl,
       _positionCtrl,
       _companyCtrl,
-      _websiteCtrl,
       _avatarCtrl,
-      _sourceCtrl,
     ]) {
       ctrl.dispose();
     }
@@ -72,14 +66,11 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
     _populated = true;
     _nameCtrl.text = d.name;
     _textCtrl.text = d.text;
-    _excerptCtrl.text = d.excerpt ?? '';
     _emailCtrl.text = d.email ?? '';
     _phoneCtrl.text = d.phone ?? '';
     _positionCtrl.text = d.position ?? '';
     _companyCtrl.text = d.company ?? '';
-    _websiteCtrl.text = d.website ?? '';
     _avatarCtrl.text = d.avatarUrl ?? '';
-    _sourceCtrl.text = d.source ?? '';
     setState(() {
       _rating = d.rating;
       _verified = d.verified;
@@ -107,9 +98,6 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       final data = TestimonialFormData(
         name: _nameCtrl.text.trim(),
         text: _textCtrl.text.trim(),
-        excerpt: _excerptCtrl.text.trim().isEmpty
-            ? null
-            : _excerptCtrl.text.trim(),
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
         phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
         position: _positionCtrl.text.trim().isEmpty
@@ -118,15 +106,9 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
         company: _companyCtrl.text.trim().isEmpty
             ? null
             : _companyCtrl.text.trim(),
-        website: _websiteCtrl.text.trim().isEmpty
-            ? null
-            : _websiteCtrl.text.trim(),
         avatarUrl: _avatarCtrl.text.trim().isEmpty
             ? null
             : _avatarCtrl.text.trim(),
-        source: _sourceCtrl.text.trim().isEmpty
-            ? null
-            : _sourceCtrl.text.trim(),
         rating: _rating,
         verified: _verified,
         featured: _featured,
@@ -265,16 +247,6 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                   (v == null || v.trim().isEmpty) ? 'Requerido' : null,
             ),
             const SizedBox(height: 12),
-            TextFormField(
-              controller: _excerptCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Extracto (opcional)',
-                hintText: 'Resumen breve para mostrar en la galería',
-                helperText: 'Se muestra en tarjetas y previews',
-              ),
-              maxLines: 2,
-            ),
-            const SizedBox(height: 12),
             // Rating
             Row(
               children: [
@@ -291,35 +263,6 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                   ),
                 const SizedBox(width: 8),
                 Text('$_rating/5', style: theme.textTheme.bodySmall),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            // ── Metadatos ──────────────────────────────────────────────────
-            Text('Metadatos', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _websiteCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Sitio web',
-                      hintText: 'https://...',
-                    ),
-                    validator: AppValidators.url,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _sourceCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente',
-                      hintText: 'Google, Instagram…',
-                    ),
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 24),

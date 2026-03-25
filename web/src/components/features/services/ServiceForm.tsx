@@ -48,7 +48,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
   }
 
   async function handleSubmit(formData: FormData) {
-    setIsLoading(true)
+    // Loading state managed by onSubmit — no duplicate setIsLoading here
     try {
       const result = isEditing
         ? await updateService(service!.id, formData)
@@ -68,8 +68,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       }
     } catch {
       showToast.error('Ocurrió un error inesperado')
-    } finally {
-      setIsLoading(false)
     }
   }
 

@@ -257,6 +257,10 @@ export const contactSettingsSchema = z.object({
   successMessage: z.string().optional(),
   sendAnotherLabel: z.string().optional(),
   showSocialLinks: z.boolean(),
+  showPhone: z.boolean().optional(),
+  showWhatsapp: z.boolean().optional(),
+  showEmail: z.boolean().optional(),
+  showLocation: z.boolean().optional(),
 })
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>

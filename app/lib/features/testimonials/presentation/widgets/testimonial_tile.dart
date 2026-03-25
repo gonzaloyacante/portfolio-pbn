@@ -16,13 +16,11 @@ class TestimonialTile extends StatelessWidget {
     required this.item,
     required this.statusOf,
     required this.onDelete,
-    required this.onModerate,
   });
 
   final TestimonialItem item;
   final AppStatus Function(String) statusOf;
   final Future<void> Function(BuildContext, TestimonialItem) onDelete;
-  final Future<void> Function(BuildContext, TestimonialItem, String) onModerate;
 
   @override
   Widget build(BuildContext context) {
@@ -158,28 +156,6 @@ class TestimonialTile extends StatelessWidget {
                   ],
                 ),
               ),
-              if (item.status != 'APPROVED')
-                const PopupMenuItem(
-                  value: 'approve',
-                  child: Row(
-                    children: [
-                      Icon(Icons.check_circle_outline, size: 18),
-                      SizedBox(width: 8),
-                      Text('Aprobar'),
-                    ],
-                  ),
-                ),
-              if (item.status != 'REJECTED')
-                const PopupMenuItem(
-                  value: 'reject',
-                  child: Row(
-                    children: [
-                      Icon(Icons.cancel_outlined, size: 18),
-                      SizedBox(width: 8),
-                      Text('Rechazar'),
-                    ],
-                  ),
-                ),
               PopupMenuItem(
                 value: 'delete',
                 child: Row(
@@ -205,10 +181,6 @@ class TestimonialTile extends StatelessWidget {
                     RouteNames.testimonialEdit,
                     pathParameters: {'id': item.id},
                   );
-                case 'approve':
-                  onModerate(context, item, 'APPROVED');
-                case 'reject':
-                  onModerate(context, item, 'REJECTED');
                 case 'delete':
                   onDelete(context, item);
               }

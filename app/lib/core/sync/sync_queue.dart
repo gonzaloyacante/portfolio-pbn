@@ -93,7 +93,7 @@ class SyncQueueRepository {
   Future<void> incrementAttempts(String id) async {
     // Incrementar attempts + actualizar lastAttemptAt en un solo paso via SQL.
     await _db.customStatement(
-      'UPDATE sync_operations_table SET attempts = attempts + 1, last_attempt_at = ? WHERE id = ?',
+      'UPDATE sync_operations SET attempts = attempts + 1, last_attempt_at = ? WHERE id = ?',
       [DateTime.now().millisecondsSinceEpoch ~/ 1000, id],
     );
 

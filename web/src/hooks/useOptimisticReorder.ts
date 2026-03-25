@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/toast'
 import { logger } from '@/lib/logger'
@@ -56,8 +56,12 @@ export function useOptimisticReorder<T>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nextIds]) // Only depend on the IDs signature
 
+  // Snapshot items before optimistic update to avoid stale closure on revert
+  const snapshotRef = useRef<T[]>(initialItems)
+
   const handleReorder = async (reorderedItems: T[]) => {
-    // Optimistic update
+    // Capture current state before optimistic update
+    snapshotRef.current = items
     setItems(reorderedItems)
     setIsReordering(true)
 
@@ -68,8 +72,8 @@ export function useOptimisticReorder<T>({
     } catch (err) {
       logger.error('Reorder error', { error: err })
       showToast.error(errorMessage)
-      // Revert on error
-      setItems(initialItems)
+      // Revert to pre-reorder snapshot (not stale initialItems)
+      setItems(snapshotRef.current)
       router.refresh()
     } finally {
       setIsReordering(false)

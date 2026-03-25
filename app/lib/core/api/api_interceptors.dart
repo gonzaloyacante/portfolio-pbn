@@ -37,11 +37,9 @@ class LoggingInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     final rid = err.requestOptions.extra['requestId'] ?? '-';
-    final body = err.response?.data;
     AppLogger.error(
       '[HTTP] ✗ $rid ${err.response?.statusCode ?? "no-response"} '
-      '${err.requestOptions.uri}: ${err.message}'
-      '${body != null ? "\n  body: $body" : ""}',
+      '${err.requestOptions.uri}: ${err.message}',
       err,
     );
     return handler.next(err);
