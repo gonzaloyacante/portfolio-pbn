@@ -8,13 +8,7 @@ import '../../../core/utils/app_logger.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/app_search_bar.dart';
-import '../../../shared/widgets/fade_slide_in.dart';
-import '../../../shared/widgets/confirm_dialog.dart';
-import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';

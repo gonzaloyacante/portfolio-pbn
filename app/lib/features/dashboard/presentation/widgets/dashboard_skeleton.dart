@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/shimmer_loader.dart';
+import '../../../../shared/widgets/widgets.dart';
 
 class DashboardSkeleton extends StatelessWidget {
   const DashboardSkeleton({super.key});

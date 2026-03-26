@@ -8,9 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/utils/validators.dart';
-import '../../../shared/widgets/image_upload_widget.dart';
-import '../../../shared/widgets/loading_overlay.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
 

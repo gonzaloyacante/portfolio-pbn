@@ -4,8 +4,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/error_state.dart';
-import '../../../../shared/widgets/shimmer_loader.dart';
+import '../../../../shared/widgets/widgets.dart';
 import '../../providers/dashboard_provider.dart';
 import 'bookings_bar_chart.dart';
 import 'page_views_chart.dart';

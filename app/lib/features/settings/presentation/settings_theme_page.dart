@@ -4,12 +4,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_snack_bar.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/color_field.dart';
-import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/loading_overlay.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
