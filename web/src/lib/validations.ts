@@ -9,16 +9,38 @@ import { z } from 'zod'
 // ============================================
 
 // Contact Form (Public)
-export const contactFormSchema = z.object({
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
-  email: z.email('Email inválido'),
-  phone: z.string().optional(),
-  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres').max(2000),
-  responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
-  privacy: z.boolean().refine((val) => val === true, {
-    message: 'Debes aceptar la política de privacidad',
-  }),
-})
+export const contactFormSchema = z
+  .object({
+    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres').max(2000),
+    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
+    privacy: z.boolean().refine((val) => val === true, {
+      message: 'Debes aceptar la política de privacidad',
+    }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.responsePreference === 'EMAIL') {
+      if (!data.email?.trim()) {
+        ctx.addIssue({ code: 'custom', path: ['email'], message: 'El email es obligatorio' })
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        ctx.addIssue({ code: 'custom', path: ['email'], message: 'Email inválido' })
+      }
+    } else if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      ctx.addIssue({ code: 'custom', path: ['email'], message: 'Email inválido' })
+    }
+    if (
+      (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
+      !data.phone?.trim()
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['phone'],
+        message: 'El teléfono es obligatorio para este tipo de contacto',
+      })
+    }
+  })
 
 export type ContactFormData = z.infer<typeof contactFormSchema>
 
@@ -441,11 +463,6 @@ export const bookingApiSchema = z.object({
 export const contactUpdateApiSchema = z.object({
   status: z.enum(['PENDING', 'READ', 'REPLIED', 'ARCHIVED']).optional(),
   priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']).optional(),
-  assignedTo: z
-    .string()
-    .optional()
-    .nullable()
-    .transform((v) => v ?? undefined),
   isRead: z.boolean().optional(),
   replyText: z
     .string()

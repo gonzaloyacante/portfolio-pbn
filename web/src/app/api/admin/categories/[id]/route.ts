@@ -114,9 +114,13 @@ export async function PATCH(req: Request, { params }: Params) {
       thumbnailUrl !== undefined
         ? thumbnailUrl
         : coverImageUrl !== undefined
-          ? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : null)
+          ? coverImageUrl
+            ? generateThumbnailUrl(coverImageUrl)
+            : null
           : undefined
 
+    // Neon HTTP adapter no soporta transacciones implícitas al usar _count en mutations.
+    // Actualizamos sin _count y luego consultamos el count por separado.
     const category = await prisma.category.update({
       where: { id },
       data: {
@@ -132,8 +136,24 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(metaKeywords !== undefined && { metaKeywords }),
         ...(ogImage !== undefined && { ogImage }),
       },
-      select: CATEGORY_FULL_SELECT,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        thumbnailUrl: true,
+        coverImageUrl: true,
+        metaTitle: true,
+        metaDescription: true,
+        metaKeywords: true,
+        ogImage: true,
+        sortOrder: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })
+    const projectCount = await prisma.project.count({ where: { categoryId: id, deletedAt: null } })
 
     try {
       revalidatePath(ROUTES.public.projects, 'layout')
@@ -148,8 +168,7 @@ export async function PATCH(req: Request, { params }: Params) {
       })
     }
 
-    const { _count, ...cat } = category
-    return NextResponse.json({ success: true, data: { ...cat, projectCount: _count.projects } })
+    return NextResponse.json({ success: true, data: { ...category, projectCount } })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
