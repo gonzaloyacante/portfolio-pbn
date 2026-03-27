@@ -15,11 +15,15 @@ class TestimonialTile extends StatelessWidget {
     required this.item,
     required this.statusOf,
     required this.onDelete,
+    this.onApprove,
+    this.onReject,
   });
 
   final TestimonialItem item;
   final AppStatus Function(String) statusOf;
   final Future<void> Function(BuildContext, TestimonialItem) onDelete;
+  final Future<void> Function(BuildContext, TestimonialItem)? onApprove;
+  final Future<void> Function(BuildContext, TestimonialItem)? onReject;
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +148,43 @@ class TestimonialTile extends StatelessWidget {
           // ── Menu ────────────────────────────────────────
           PopupMenuButton<String>(
             iconSize: 20,
-            itemBuilder: (_) => [
+            itemBuilder: (ctx) => [
+              if (item.status == 'PENDING' && onApprove != null)
+                const PopupMenuItem(
+                  value: 'approve',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 18,
+                        color: Colors.green,
+                      ),
+                      SizedBox(width: 8),
+                      Text('Aprobar', style: TextStyle(color: Colors.green)),
+                    ],
+                  ),
+                ),
+              if (item.status == 'PENDING' && onReject != null)
+                PopupMenuItem(
+                  value: 'reject',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.cancel_outlined,
+                        size: 18,
+                        color: colorScheme.error,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Rechazar',
+                        style: TextStyle(color: colorScheme.error),
+                      ),
+                    ],
+                  ),
+                ),
+              if (item.status == 'PENDING' &&
+                  (onApprove != null || onReject != null))
+                const PopupMenuDivider(),
               const PopupMenuItem(
                 value: 'edit',
                 child: Row(
@@ -175,6 +215,10 @@ class TestimonialTile extends StatelessWidget {
             ],
             onSelected: (action) {
               switch (action) {
+                case 'approve':
+                  onApprove?.call(context, item);
+                case 'reject':
+                  onReject?.call(context, item);
                 case 'edit':
                   context.pushNamed(
                     RouteNames.testimonialEdit,

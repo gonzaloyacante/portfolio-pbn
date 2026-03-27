@@ -55,13 +55,36 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
+      }
+    }
+  }
+
+  Future<void> _setStatus(
+    BuildContext ctx,
+    TestimonialItem item,
+    String status,
+  ) async {
+    try {
+      await ref.read(testimonialsRepositoryProvider).updateTestimonial(
+        item.id,
+        {'status': status},
+      );
+      ref.invalidate(testimonialsListProvider);
+      final label = status == 'APPROVED' ? 'Aprobado' : 'Rechazado';
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Testimonio $label')));
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
       }
     }
   }
@@ -142,6 +165,10 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                               item: paginated.data[i],
                               statusOf: _statusFromString,
                               onDelete: _delete,
+                              onApprove: (ctx, t) =>
+                                  _setStatus(ctx, t, 'APPROVED'),
+                              onReject: (ctx, t) =>
+                                  _setStatus(ctx, t, 'REJECTED'),
                             ),
                           ),
                         ),

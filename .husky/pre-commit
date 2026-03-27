@@ -90,11 +90,15 @@ echo ""
 
 echo "🏗️  [5/7] Next.js: Verificando build de producción en 'web' (puede ser pesado)..."
 if [ -f "web/package.json" ]; then
-  if ! (cd web && $NPX_CMD next build); then
-    echo "❌ Error en build de Next.js (web). El código no compila correctamente."
-    exit 1
+  if [ "${SKIP_NEXT_BUILD}" = "1" ]; then
+    echo "⚡ SKIP_NEXT_BUILD activo: saltando build de Next.js (usar solo si DB no disponible)"
+  else
+    if ! (cd web && $NPX_CMD next build); then
+      echo "❌ Error en build de Next.js (web). El código no compila correctamente."
+      exit 1
+    fi
+    echo "✅ Build de producción (web) exitoso"
   fi
-  echo "✅ Build de producción (web) exitoso"
 else
   echo "ℹ️  No se encontró web/package.json — no se ejecutan checks de Next.js para web"
 fi

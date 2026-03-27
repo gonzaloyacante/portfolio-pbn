@@ -87,6 +87,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
   }
 
   Future<void> _save() async {
+    if (!_populated) return; // evitar guardar con controladores vacíos
     setState(() => _saving = true);
     try {
       await ref.read(settingsRepositoryProvider).updateTheme({
@@ -104,10 +105,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        AppSnackBar.error(
-          context,
-          'No se pudo guardar el tema. Inténtalo de nuevo.',
-        );
+        AppSnackBar.error(context, 'Error al guardar el tema: $e');
       }
     } finally {
       if (mounted) setState(() => _saving = false);

@@ -87,7 +87,7 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
+        AppSnackBar.error(context, 'Error al guardar: $e');
       }
     } finally {
       if (mounted) setState(() => _saving = false);
