@@ -7,16 +7,10 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_snack_bar.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/loading_overlay.dart';
-import '../../../shared/widgets/phone_input_field.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../../../core/theme/app_radius.dart';
 
 class SettingsContactPage extends ConsumerStatefulWidget {
@@ -93,7 +87,7 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
+        AppSnackBar.error(context, 'Error al guardar: $e');
       }
     } finally {
       if (mounted) setState(() => _saving = false);

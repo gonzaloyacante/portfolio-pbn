@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_spacing.dart';
 
 /// Cabecera de sección reutilizable: título + subtítulo opcional + acción opcional.
 ///

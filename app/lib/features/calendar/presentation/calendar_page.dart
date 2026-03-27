@@ -6,12 +6,8 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_filter_chips.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 
-import '../../../shared/widgets/app_card.dart';
 import 'widgets/booking_card.dart';
 import 'widgets/empty_day.dart';
 import '../../../core/router/route_names.dart';

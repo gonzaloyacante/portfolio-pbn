@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import '../../../../shared/widgets/shimmer_loader.dart';
+import '../../../../shared/widgets/widgets.dart';
 import '../../data/booking_model.dart';
 import '../../data/google_calendar_models.dart';
 import '../../providers/google_calendar_provider.dart';

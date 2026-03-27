@@ -4,7 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/auth/auth_provider.dart';
-import 'core/providers/app_preferences_provider.dart';
+import 'features/app_settings/providers/app_preferences_provider.dart';
 import 'core/auth/auth_state.dart';
 import 'core/debug/debug_panel.dart';
 import 'core/notifications/notification_handler.dart';
@@ -16,7 +16,7 @@ import 'core/sync/sync_manager.dart';
 import 'core/updates/app_release_model.dart';
 import 'core/updates/app_update_provider.dart';
 import 'core/utils/app_logger.dart';
-import 'shared/widgets/app_update_dialog.dart';
+import 'core/updates/presentation/app_update_dialog.dart';
 
 /// Widget raíz de la aplicación.
 /// Conecta el router (GoRouter) con el sistema de temas (light/dark).

@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/image_upload_widget.dart';
-import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
 
+part 'category_form_page_builders.dart';
 // ── Slug helpers ──────────────────────────────────────────────────────────────
 
 /// Convierte un nombre legible en un slug URL-safe sin dependencias de RegExp
@@ -268,13 +267,9 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No se pudo guardar la categoría. Inténtalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -282,196 +277,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (_isEdit) {
-      final detailAsync = ref.watch(categoryDetailProvider(widget.categoryId!));
-      detailAsync.whenData(_populateForm);
-    }
+  Widget build(BuildContext context) => _buildContent(context);
 
-    final mediaSize = MediaQuery.sizeOf(context);
-    final mediaPadding = MediaQuery.paddingOf(context);
-    const appBarApprox = 100.0;
-    final fallbackHeight =
-        (mediaSize.height -
-                mediaPadding.top -
-                mediaPadding.bottom -
-                appBarApprox)
-            .clamp(200.0, 1200.0);
-    final imageHeight = _calculatedImageHeight ?? fallbackHeight;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctx = _imageSlotKey.currentContext;
-      if (ctx == null) return;
-      final box = ctx.findRenderObject() as RenderBox?;
-      if (box == null || !box.attached) return;
-      final dy = box.localToGlobal(Offset.zero).dy;
-      final usable = mediaSize.height - mediaPadding.bottom - dy - appBarApprox;
-      final newH = usable.clamp(200.0, 1200.0);
-      if ((_calculatedImageHeight == null) ||
-          ((_calculatedImageHeight! - newH).abs() > 1.0)) {
-        setState(() => _calculatedImageHeight = newH);
-      }
-    });
-
-    return AppScaffold(
-      title: _isEdit ? 'Editar categoría' : 'Nueva categoría',
-      actions: [
-        TextButton(
-          onPressed: _loading ? null : _submit,
-          child: const Text('Guardar'),
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _loading,
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              // Nombre + Switch + Descripción (responsivo)
-              Builder(
-                builder: (ctx) {
-                  final colorScheme = Theme.of(ctx).colorScheme;
-                  final isTablet = mediaSize.width >= 600;
-
-                  final nameField = TextFormField(
-                    controller: _nameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre *',
-                      hintText: 'ej. Fotografía',
-                      helperText: 'Nombre público de la categoría',
-                    ),
-                    textCapitalization: TextCapitalization.words,
-                    onChanged: _autoSlug,
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? 'Nombre requerido'
-                        : null,
-                  );
-
-                  final switchTile = DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: colorScheme.outline.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: SwitchListTile(
-                      title: const Text('Categoría activa'),
-                      subtitle: const Text('Visible en el portfolio'),
-                      value: _isActive,
-                      onChanged: (v) => setState(() => _isActive = v),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
-                      visualDensity: VisualDensity.compact,
-                      controlAffinity: ListTileControlAffinity.trailing,
-                    ),
-                  );
-
-                  if (isTablet) {
-                    return IntrinsicHeight(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                nameField,
-                                const SizedBox(height: 8),
-                                switchTile,
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _descriptionCtrl,
-                              decoration: const InputDecoration(
-                                labelText: 'Descripción',
-                                hintText: 'Breve descripción de esta categoría',
-                                helperText:
-                                    'Se muestra en la página de la categoría',
-                              ),
-                              maxLines: null,
-                              expands: true,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  // Mobile: apilado
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      nameField,
-                      const SizedBox(height: 8),
-                      switchTile,
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _descriptionCtrl,
-                        decoration: const InputDecoration(
-                          labelText: 'Descripción',
-                          hintText: 'Breve descripción de esta categoría',
-                          helperText: 'Se muestra en la página de la categoría',
-                        ),
-                        maxLines: 3,
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Thumbnail
-              // Wrapper con key para medir su posición en pantalla
-              Container(
-                key: _imageSlotKey,
-                child: ImageUploadWidget(
-                  label: 'Imagen de portada',
-                  currentImageUrl: _coverImageCtrl.text.isNotEmpty
-                      ? _coverImageCtrl.text
-                      : null,
-                  onImageSelected: (file) {
-                    setState(() => _pendingThumbnail = file);
-                  },
-                  onImageRemoved: () {
-                    setState(() {
-                      _pendingThumbnail = null;
-                      _coverImageCtrl.clear();
-                    });
-                  },
-                  height: imageHeight,
-                ),
-              ),
-
-              if (_isEdit) ...[
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.photo_library_outlined, size: 18),
-                  label: const Text('Seleccionar de la galería'),
-                  onPressed: _loading ? null : _pickFromGallery,
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 44),
-                  ),
-                ),
-              ],
-
-              const SizedBox(height: 24),
-
-              FilledButton(
-                onPressed: _loading ? null : _submit,
-                child: Text(
-                  _isEdit ? 'Actualizar categoría' : 'Crear categoría',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  void _rebuild(VoidCallback fn) => setState(fn);
 }

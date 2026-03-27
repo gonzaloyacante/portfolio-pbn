@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_spacing.dart';
 
 /// Opciones predefinidas de duración en minutos.
 const _durationPresets = <int>[15, 30, 45, 60, 90, 120, 150, 180, 240];

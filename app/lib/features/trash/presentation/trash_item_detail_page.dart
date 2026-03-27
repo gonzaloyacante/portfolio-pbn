@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/utils/app_logger.dart';
 import '../../../core/theme/app_colors.dart';
 
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/confirm_dialog.dart';
 import '../../calendar/providers/calendar_provider.dart';
 import '../../categories/providers/categories_provider.dart';
 import '../../contacts/providers/contacts_provider.dart';
@@ -17,126 +16,9 @@ import '../../services/providers/services_provider.dart';
 import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
 import '../providers/trash_provider.dart';
-import '../../../shared/widgets/app_card.dart';
 
-// ── Definición de campos por tipo ─────────────────────────────────────────────
-
-class _FieldDef {
-  const _FieldDef(this.key, this.label, this.icon, {this.fieldType});
-  final String key;
-  final String label;
-  final IconData icon;
-
-  /// null = texto plano, 'bool', 'date', 'rating', 'price'
-  final String? fieldType;
-}
-
-const _fieldsByType = <String, List<_FieldDef>>{
-  'project': [
-    _FieldDef('description', 'Descripción', Icons.description_outlined),
-    _FieldDef(
-      'isActive',
-      'Activo',
-      Icons.toggle_on_outlined,
-      fieldType: 'bool',
-    ),
-    _FieldDef('isFeatured', 'Destacado', Icons.star_border, fieldType: 'bool'),
-    _FieldDef(
-      'createdAt',
-      'Creado',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
-  'category': [
-    _FieldDef('description', 'Descripción', Icons.description_outlined),
-    _FieldDef(
-      'isActive',
-      'Activo',
-      Icons.toggle_on_outlined,
-      fieldType: 'bool',
-    ),
-    _FieldDef(
-      'createdAt',
-      'Creado',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
-  'service': [
-    _FieldDef('description', 'Descripción', Icons.description_outlined),
-    _FieldDef('price', 'Precio', Icons.euro_outlined, fieldType: 'price'),
-    _FieldDef('duration', 'Duración (min)', Icons.timer_outlined),
-    _FieldDef(
-      'isAvailable',
-      'Disponible',
-      Icons.check_circle_outline,
-      fieldType: 'bool',
-    ),
-    _FieldDef(
-      'isActive',
-      'Activo',
-      Icons.toggle_on_outlined,
-      fieldType: 'bool',
-    ),
-    _FieldDef(
-      'createdAt',
-      'Creado',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
-  'testimonial': [
-    _FieldDef('text', 'Testimonio', Icons.format_quote_outlined),
-    _FieldDef('position', 'Cargo', Icons.work_outline),
-    _FieldDef('company', 'Empresa', Icons.business_outlined),
-    _FieldDef('rating', 'Valoración', Icons.star_outline, fieldType: 'rating'),
-    _FieldDef(
-      'verified',
-      'Verificado',
-      Icons.verified_outlined,
-      fieldType: 'bool',
-    ),
-    _FieldDef(
-      'createdAt',
-      'Creado',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
-  'contact': [
-    _FieldDef('email', 'Email', Icons.email_outlined),
-    _FieldDef('phone', 'Teléfono', Icons.phone_outlined),
-    _FieldDef('subject', 'Asunto', Icons.subject_outlined),
-    _FieldDef('message', 'Mensaje', Icons.message_outlined),
-    _FieldDef('status', 'Estado', Icons.info_outline),
-    _FieldDef(
-      'createdAt',
-      'Recibido',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
-  'booking': [
-    _FieldDef('email', 'Email', Icons.email_outlined),
-    _FieldDef('phone', 'Teléfono', Icons.phone_outlined),
-    _FieldDef('notes', 'Notas', Icons.note_outlined),
-    _FieldDef('status', 'Estado', Icons.info_outline),
-    _FieldDef(
-      'startTime',
-      'Inicio',
-      Icons.schedule_outlined,
-      fieldType: 'date',
-    ),
-    _FieldDef('endTime', 'Fin', Icons.schedule_outlined, fieldType: 'date'),
-    _FieldDef(
-      'createdAt',
-      'Creado',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
-};
+part 'trash_field_defs.dart';
+part 'trash_item_detail_builders.dart';
 
 // ── Pantalla de detalle ────────────────────────────────────────────────────────
 
@@ -313,134 +195,6 @@ class TrashItemDetailPage extends ConsumerWidget {
       ),
     );
   }
-
-  // ── Info card con campos dinámicos ────────────────────────────────────────
-
-  Widget _buildInfoCard(BuildContext context, ColorScheme cs, TextTheme tt) {
-    final fields = _fieldsByType[item.type] ?? [];
-    final rows = <Widget>[];
-
-    for (final field in fields) {
-      final raw = item.rawData[field.key];
-      if (raw == null) continue;
-      final rendered = _renderField(field, raw);
-      if (rendered == null) continue;
-
-      if (rows.isNotEmpty) {
-        rows.add(
-          Divider(
-            height: 1,
-            indent: 44,
-            color: cs.onSurface.withValues(alpha: 0.07),
-          ),
-        );
-      }
-      rows.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                field.icon,
-                size: 18,
-                color: cs.primary.withValues(alpha: 0.75),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      field.label,
-                      style: tt.labelSmall?.copyWith(
-                        color: cs.onSurface.withValues(alpha: 0.55),
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    rendered,
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    if (rows.isEmpty) return const SizedBox.shrink();
-
-    return AppCard(
-      borderRadius: BorderRadius.circular(16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: rows,
-      ),
-    );
-  }
-
-  /// Convierte el valor de `rawData` en un widget legible según el tipo de campo.
-  Widget? _renderField(_FieldDef field, dynamic raw) {
-    switch (field.fieldType) {
-      case 'bool':
-        final value = raw == true || raw == 1 || raw == 'true';
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              value ? Icons.check_circle_outline : Icons.cancel_outlined,
-              size: 16,
-              color: value ? AppColors.success : AppColors.destructive,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              value ? 'Sí' : 'No',
-              style: TextStyle(
-                color: value ? AppColors.success : AppColors.destructive,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        );
-      case 'date':
-        try {
-          final dt = DateTime.parse(raw.toString()).toLocal();
-          return Text(_dateFmt.format(dt));
-        } catch (_) {
-          return Text(raw.toString());
-        }
-      case 'rating':
-        final rating =
-            (raw is num ? raw.toDouble() : double.tryParse(raw.toString())) ??
-            0.0;
-        return Row(
-          children: List.generate(5, (i) {
-            return Icon(
-              i < rating.round()
-                  ? Icons.star_rounded
-                  : Icons.star_outline_rounded,
-              size: 18,
-              color: AppColors.warning,
-            );
-          }),
-        );
-      case 'price':
-        final amount = raw is num ? raw : num.tryParse(raw.toString());
-        if (amount == null) return Text(raw.toString());
-        final currency = item.rawData['currency'] as String? ?? '€';
-        return Text(
-          '$currency ${amount.toStringAsFixed(2)}',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        );
-      default:
-        final text = raw.toString().trim();
-        if (text.isEmpty) return null;
-        return Text(text);
-    }
-  }
-
-  // ── Acciones ───────────────────────────────────────────────────────────────
 
   void _invalidateListByType(WidgetRef ref) {
     switch (item.type) {

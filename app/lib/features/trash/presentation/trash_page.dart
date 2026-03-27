@@ -5,13 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/utils/app_logger.dart';
-import '../../../shared/widgets/app_scaffold.dart';
 
 import '../../../core/router/route_names.dart';
-import '../../../shared/widgets/confirm_dialog.dart';
-import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 import '../../calendar/providers/calendar_provider.dart';
 import '../../categories/providers/categories_provider.dart';
 import '../../contacts/providers/contacts_provider.dart';

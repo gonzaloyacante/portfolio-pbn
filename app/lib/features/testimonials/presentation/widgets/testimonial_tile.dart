@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
-import '../../../../shared/widgets/app_card.dart';
-import '../../../../shared/widgets/status_badge.dart';
 import '../../data/testimonial_model.dart';
 import 'star_rating.dart';
 
@@ -142,49 +141,14 @@ class TestimonialTile extends StatelessWidget {
               ],
             ),
           ),
-          // ── Menu ────────────────────────────────────────
-          PopupMenuButton<String>(
-            iconSize: 20,
-            itemBuilder: (_) => [
-              const PopupMenuItem(
-                value: 'edit',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit_outlined, size: 18),
-                    SizedBox(width: 8),
-                    Text('Editar'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: colorScheme.error,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Eliminar',
-                      style: TextStyle(color: colorScheme.error),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (action) {
-              switch (action) {
-                case 'edit':
-                  context.pushNamed(
-                    RouteNames.testimonialEdit,
-                    pathParameters: {'id': item.id},
-                  );
-                case 'delete':
-                  onDelete(context, item);
-              }
-            },
+          // ── Ver detalle (sin acciones rápidas) ───────────
+          IconButton(
+            icon: const Icon(Icons.open_in_new, size: 20),
+            tooltip: 'Ver detalle',
+            onPressed: () => context.pushNamed(
+              RouteNames.testimonialEdit,
+              pathParameters: {'id': item.id},
+            ),
           ),
         ],
       ),

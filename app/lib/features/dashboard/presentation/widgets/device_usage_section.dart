@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/app_card.dart';
 
 class DeviceUsageSection extends StatelessWidget {
   const DeviceUsageSection({

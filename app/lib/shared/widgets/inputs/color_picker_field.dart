@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_spacing.dart';
 
 /// Paleta de colores preestablecidos para el selector visual.
 const _presetColors = <Color>[

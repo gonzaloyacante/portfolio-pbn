@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/config/app_constants.dart';
 import '../../../core/debug/debug_provider.dart';
 import '../../../core/theme/app_radius.dart';
-import '../../../shared/widgets/app_card.dart';
-import '../../../shared/widgets/app_scaffold.dart';
 
 /// Pantalla de ayuda — información de la app y guía de uso básica.
 class HelpPage extends ConsumerWidget {

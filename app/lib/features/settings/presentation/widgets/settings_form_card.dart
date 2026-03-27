@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../../shared/widgets/app_card.dart';
 
 /// Tarjeta de sección reutilizable para todos los formularios de Settings.
 class SettingsFormCard extends StatelessWidget {

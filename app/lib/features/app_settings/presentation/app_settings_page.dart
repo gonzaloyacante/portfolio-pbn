@@ -3,14 +3,14 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/widgets/app_scaffold.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/debug/debug_log_page.dart';
 import '../../../core/debug/debug_panel.dart';
 import '../../../core/debug/debug_provider.dart';
-import '../../../core/providers/app_preferences_provider.dart';
+import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../core/theme/theme_provider.dart';
 
 import '../../../core/utils/app_logger.dart';

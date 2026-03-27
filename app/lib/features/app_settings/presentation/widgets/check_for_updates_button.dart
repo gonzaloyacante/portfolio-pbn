@@ -4,7 +4,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../../core/updates/app_release_model.dart';
 import '../../../../core/updates/app_update_provider.dart';
 import '../../../../core/utils/app_logger.dart';
-import '../../../../shared/widgets/app_update_dialog.dart';
+import '../../../../core/updates/presentation/app_update_dialog.dart';
 
 /// Botón en la sección "Información" para verificar manualmente si hay una
 /// nueva versión disponible.

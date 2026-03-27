@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/utils/date_utils.dart';
-import '../../../../shared/widgets/app_card.dart';
 import '../../data/contact_model.dart';
 
 class ContactTile extends StatelessWidget {

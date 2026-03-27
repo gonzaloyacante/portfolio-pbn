@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/adaptive_grid.dart';
-import '../../../../shared/widgets/section_header.dart';
-import '../../../../shared/widgets/stat_card.dart';
 import '../../data/dashboard_repository.dart';
 import 'dashboard_charts.dart';
 import 'dashboard_greeting.dart';

@@ -8,9 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/utils/validators.dart';
-import '../../../shared/widgets/image_upload_widget.dart';
-import '../../../shared/widgets/loading_overlay.dart';
-import '../../../shared/widgets/shimmer_loader.dart';
+import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
 
@@ -135,13 +133,9 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
       }
     } finally {
       if (mounted) setState(() => _loading = false);

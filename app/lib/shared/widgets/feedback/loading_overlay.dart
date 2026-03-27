@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_card.dart';
+import '../app_card.dart';
 
 // ── LoadingOverlay ────────────────────────────────────────────────────────────
 

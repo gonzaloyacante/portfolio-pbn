@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
 
 /// Widget genérico de chips de filtro horizontalmente scrolleables.
 /// Reemplaza los `_FilterChip` privados duplicados en contacts y testimonials.

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_pbn/shared/widgets/empty_state.dart';
-import 'package:portfolio_pbn/shared/widgets/error_state.dart';
-import 'package:portfolio_pbn/shared/widgets/loading_overlay.dart';
-import 'package:portfolio_pbn/shared/widgets/status_badge.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
 
