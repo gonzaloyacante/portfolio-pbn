@@ -89,7 +89,7 @@ type ValidatedContactData = z.infer<typeof contactFormSchema>
 function buildSanitizedData(data: ValidatedContactData) {
   return {
     name: sanitizeText(data.name),
-    email: data.email.toLowerCase().trim(),
+    email: data.email ? data.email.toLowerCase().trim() : '',
     phone: data.phone ? sanitizeText(data.phone) : undefined,
     message: sanitizeText(data.message),
     responsePreference: data.responsePreference,
@@ -142,7 +142,7 @@ async function notifyAdminOfContact(sanitized: SanitizedData) {
   try {
     await emailService.notifyNewContact({
       name: sanitized.name,
-      email: sanitized.email,
+      email: sanitized.email ?? '',
       phone: sanitized.phone,
       message: sanitized.message,
       preference: sanitized.responsePreference,

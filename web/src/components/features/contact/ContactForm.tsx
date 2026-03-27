@@ -16,17 +16,39 @@ import { useSearchParams } from 'next/navigation'
 // Response preference type
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP'
 
-// Contact form schema with conditional phone validation
-const contactFormSchema = z.object({
-  name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-  email: z.email('Email inválido'),
-  phone: z.string().optional(),
-  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-  responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
-  privacy: z.boolean().refine((val) => val === true, {
-    message: 'Debes aceptar la política de privacidad',
-  }),
-})
+// Contact form schema with conditional email/phone validation
+const contactFormSchema = z
+  .object({
+    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
+    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
+    privacy: z.boolean().refine((val) => val === true, {
+      message: 'Debes aceptar la política de privacidad',
+    }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.responsePreference === 'EMAIL') {
+      if (!data.email?.trim()) {
+        ctx.addIssue({ code: 'custom', path: ['email'], message: 'El email es obligatorio' })
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+        ctx.addIssue({ code: 'custom', path: ['email'], message: 'Email inválido' })
+      }
+    } else if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      ctx.addIssue({ code: 'custom', path: ['email'], message: 'Email inválido' })
+    }
+    if (
+      (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
+      !data.phone?.trim()
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['phone'],
+        message: 'El teléfono es obligatorio para este tipo de contacto',
+      })
+    }
+  })
 
 type ContactFormData = z.infer<typeof contactFormSchema>
 
@@ -94,18 +116,9 @@ export default function ContactForm({
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      // Validate phone if preference requires it
-      if (
-        (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
-        !data.phone?.trim()
-      ) {
-        showToast.error('Por favor, ingresa tu teléfono para poder contactarte')
-        return
-      }
-
       const formData = new FormData()
       formData.append('name', data.name)
-      formData.append('email', data.email)
+      formData.append('email', data.email ?? '')
       formData.append('phone', data.phone || '')
       formData.append('message', data.message)
       formData.append('responsePreference', data.responsePreference)
@@ -192,7 +205,8 @@ export default function ContactForm({
 
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-semibold text-(--foreground)">
-              {emailLabel || 'Tu email'} *
+              {emailLabel || 'Tu email'}
+              {responsePreference === 'EMAIL' && ' *'}
             </label>
             <input
               {...register('email')}
@@ -220,6 +234,7 @@ export default function ContactForm({
             placeholder="+34 600 000 000"
             autoComplete="tel"
           />
+          {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
         </div>
 
         {/* Response Preference Selector */}

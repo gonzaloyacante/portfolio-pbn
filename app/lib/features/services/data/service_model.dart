@@ -119,7 +119,7 @@ class ServiceFormData {
     'slug': slug,
     if (description != null) 'description': description,
     if (shortDesc != null) 'shortDesc': shortDesc,
-    if (price != null) 'price': price,
+    if (price != null) 'price': double.tryParse(price!),
     'priceLabel': priceLabel,
     'currency': currency,
     if (duration != null) 'duration': duration,
@@ -134,6 +134,11 @@ class ServiceFormData {
     if (cancellationPolicy != null) 'cancellationPolicy': cancellationPolicy,
     if (metaTitle != null) 'metaTitle': metaTitle,
     if (metaDescription != null) 'metaDescription': metaDescription,
-    if (metaKeywords != null) 'metaKeywords': metaKeywords,
+    if (metaKeywords != null && metaKeywords!.isNotEmpty)
+      'metaKeywords': metaKeywords!
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList(),
   };
 }

@@ -130,6 +130,8 @@ export async function POST(req: Request) {
     const agg = await prisma.category.aggregate({ _max: { sortOrder: true } })
     const nextOrder = (agg._max.sortOrder ?? 0) + 1
 
+    // Neon HTTP adapter no soporta transacciones implícitas al usar _count en mutations.
+    // Creamos sin _count y devolvemos projectCount: 0 (categoría nueva siempre tiene 0 proyectos).
     const category = await prisma.category.create({
       data: {
         name,
@@ -140,7 +142,18 @@ export async function POST(req: Request) {
         isActive,
         sortOrder: nextOrder,
       },
-      select: CATEGORY_SELECT,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        thumbnailUrl: true,
+        coverImageUrl: true,
+        sortOrder: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })
 
     try {
@@ -155,7 +168,10 @@ export async function POST(req: Request) {
       })
     }
 
-    return NextResponse.json({ success: true, data: category }, { status: 201 })
+    return NextResponse.json(
+      { success: true, data: { ...category, projectCount: 0 } },
+      { status: 201 }
+    )
   } catch (err) {
     logger.error('[admin-categories-post] Error', {
       error: err instanceof Error ? err.message : String(err),

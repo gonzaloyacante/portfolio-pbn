@@ -39,46 +39,55 @@ async function main() {
   console.log(`   ✅ Admin: ${adminUser.email}`)
 
   // 2. Settings (Theme & Pages)
+  // All settings models are singletons identified by key='singleton'
+  // Use key-based upsert to handle existing records with any CUID id
   console.log('\n⚙️ Seeding Settings...')
+  const { id: _themeId, ...themeUpdate } = themeSettings
   await prisma.themeSettings.upsert({
-    where: { id: themeSettings.id },
-    update: themeSettings,
+    where: { key: 'singleton' },
+    update: themeUpdate,
     create: themeSettings,
   })
 
+  const { id: _homeId, ...homeUpdate } = homeSettings
   await prisma.homeSettings.upsert({
-    where: { id: homeSettings.id },
-    update: homeSettings,
+    where: { key: 'singleton' },
+    update: homeUpdate,
     create: homeSettings,
   })
 
+  const { id: _aboutId, ...aboutUpdate } = aboutSettings
   await prisma.aboutSettings.upsert({
-    where: { id: aboutSettings.id },
-    update: aboutSettings,
+    where: { key: 'singleton' },
+    update: aboutUpdate,
     create: aboutSettings,
   })
 
+  const { id: _contactId, ...contactUpdate } = contactSettings
   await prisma.contactSettings.upsert({
-    where: { id: contactSettings.id },
-    update: contactSettings,
+    where: { key: 'singleton' },
+    update: contactUpdate,
     create: contactSettings,
   })
 
+  const { id: _testimonialSettingsId, ...testimonialSettingsUpdate } = testimonialSettings
   await prisma.testimonialSettings.upsert({
-    where: { id: testimonialSettings.id },
-    update: testimonialSettings,
+    where: { key: 'singleton' },
+    update: testimonialSettingsUpdate,
     create: testimonialSettings,
   })
 
+  const { id: _projectSettingsId, ...projectSettingsUpdate } = projectSettings
   await prisma.projectSettings.upsert({
-    where: { id: projectSettings.id },
-    update: projectSettings,
+    where: { key: 'singleton' },
+    update: projectSettingsUpdate,
     create: projectSettings,
   })
 
+  const { id: _categorySettingsId, ...categorySettingsUpdate } = categorySettings
   await prisma.categorySettings.upsert({
-    where: { id: categorySettings.id },
-    update: categorySettings,
+    where: { key: 'singleton' },
+    update: categorySettingsUpdate,
     create: categorySettings,
   })
   console.log('   ✅ All settings created/updated')
