@@ -109,6 +109,7 @@ export async function submitPublicTestimonial(formData: FormData) {
       data: {
         name,
         text,
+        email: email || null,
         position: position || null,
         company: company || null,
         rating,
