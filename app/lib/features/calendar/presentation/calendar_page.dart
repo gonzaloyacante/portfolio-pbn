@@ -8,7 +8,6 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 
-import '../../../shared/widgets/app_card.dart';
 import 'widgets/booking_card.dart';
 import 'widgets/empty_day.dart';
 import '../../../core/router/route_names.dart';

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../auth/auth_provider.dart';
 import '../auth/auth_state.dart';
@@ -16,7 +17,6 @@ import '../utils/app_logger.dart';
 import 'debug_log_page.dart';
 import 'debug_provider.dart';
 import 'server_url_provider.dart';
-import '../../shared/widgets/app_card.dart';
 import '../theme/app_radius.dart';
 
 part 'debug_panel_cards.dart';

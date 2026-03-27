@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../../shared/widgets/app_card.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 class SectionCard extends StatelessWidget {
   const SectionCard({super.key, this.title, required this.children});

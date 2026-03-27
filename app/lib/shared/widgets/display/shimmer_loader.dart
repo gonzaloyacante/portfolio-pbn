@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../../core/providers/app_preferences_provider.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_breakpoints.dart';
-import '../../core/theme/app_radius.dart';
-import '../../core/theme/app_spacing.dart';
-import 'app_card.dart';
+import '../../../features/app_settings/providers/app_preferences_provider.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../app_card.dart';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // BASE LAYER — ShimmerLoader + ShimmerBox

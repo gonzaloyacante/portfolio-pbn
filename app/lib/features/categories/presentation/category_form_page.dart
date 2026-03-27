@@ -5,13 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_scaffold.dart';
-import '../../../shared/widgets/image_upload_widget.dart';
-import '../../../shared/widgets/loading_overlay.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';

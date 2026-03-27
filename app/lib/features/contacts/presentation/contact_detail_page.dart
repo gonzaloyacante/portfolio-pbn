@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../shared/widgets/widgets.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../../../core/theme/app_colors.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';

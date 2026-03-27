@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_pbn/shared/widgets/shimmer_loader.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
 

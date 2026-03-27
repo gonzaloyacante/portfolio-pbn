@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
@@ -10,9 +11,6 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/utils/validators.dart';
-import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/loading_overlay.dart';
-import '../../../shared/widgets/app_card.dart';
 
 // ── LoginPage ─────────────────────────────────────────────────────────────────
 

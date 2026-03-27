@@ -6,7 +6,6 @@ import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';

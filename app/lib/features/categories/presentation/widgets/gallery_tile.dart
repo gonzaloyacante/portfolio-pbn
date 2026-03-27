@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_radius.dart';
-import '../../../../shared/widgets/app_card.dart';
 import '../../data/category_model.dart';
 import 'gallery_badge.dart';
 

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../core/config/app_constants.dart';
-import '../../core/theme/app_breakpoints.dart';
-import '../../core/utils/app_logger.dart';
+import '../../../core/config/app_constants.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/utils/app_logger.dart';
 
 part 'image_upload_widget_previews.dart';
 part 'image_upload_widget_builders.dart';

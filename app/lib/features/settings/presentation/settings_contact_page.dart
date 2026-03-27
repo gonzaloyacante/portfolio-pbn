@@ -11,7 +11,6 @@ import '../../../shared/widgets/widgets.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../../../core/theme/app_radius.dart';
 
 class SettingsContactPage extends ConsumerStatefulWidget {

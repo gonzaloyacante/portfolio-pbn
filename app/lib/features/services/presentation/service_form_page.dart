@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/api/upload_service.dart';
-import '../../../shared/widgets/duration_picker_field.dart';
-import '../../../shared/widgets/image_upload_widget.dart';
-import '../../../shared/widgets/loading_overlay.dart';
 import '../data/service_model.dart';
 import '../data/services_repository.dart';
 import '../providers/services_provider.dart';

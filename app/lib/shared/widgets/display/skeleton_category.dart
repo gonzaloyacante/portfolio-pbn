@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_breakpoints.dart';
-import '../../core/theme/app_radius.dart';
-import 'app_card.dart';
+import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_radius.dart';
+import '../app_card.dart';
 import 'shimmer_loader.dart';
 
 // ── Categories ────────────────────────────────────────────────────────────────

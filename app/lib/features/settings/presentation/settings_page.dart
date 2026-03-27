@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/widgets/app_scaffold.dart';
 import 'widgets/settings_tile.dart';
 
 class SettingsPage extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../data/dashboard_repository.dart';
-import '../../../../shared/widgets/app_card.dart';
 import '../../../../core/theme/app_radius.dart';
 
 /// Gráfica de visitas diarias (LineChart), extraída para mantener `dashboard_page.dart` limpio.

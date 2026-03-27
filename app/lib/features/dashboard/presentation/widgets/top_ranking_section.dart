@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/app_card.dart';
 
 class TopRankingSection extends StatelessWidget {
   const TopRankingSection({super.key, required this.items});

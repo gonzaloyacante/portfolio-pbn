@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/utils/validators.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../../services/providers/services_provider.dart';
 import '../data/booking_model.dart';

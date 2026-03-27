@@ -7,7 +7,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/utils/currency_helper.dart';
 import '../../../shared/widgets/widgets.dart';
-import '../../../shared/widgets/app_card.dart';
 import '../data/booking_model.dart';
 import '../providers/calendar_provider.dart';
 import 'widgets/google_calendar_section.dart';

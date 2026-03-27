@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/router/route_names.dart';
+import '../../../core/router/route_names.dart';
 
 // ── NavItem ───────────────────────────────────────────────────────────────────
 

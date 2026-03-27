@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
-import '../../../../shared/widgets/app_card.dart';
 import '../../data/trash_model.dart';
 
 final _dateFmt = DateFormat('d MMM yyyy', 'es');

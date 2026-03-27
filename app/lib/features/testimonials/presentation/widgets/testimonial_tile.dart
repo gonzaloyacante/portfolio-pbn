@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
-import '../../../../shared/widgets/app_card.dart';
-import '../../../../shared/widgets/status_badge.dart';
 import '../../data/testimonial_model.dart';
 import 'star_rating.dart';
 

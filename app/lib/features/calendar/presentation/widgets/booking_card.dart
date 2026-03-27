@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_radius.dart';
-import '../../../../shared/widgets/app_card.dart';
-import '../../../../shared/widgets/status_badge.dart';
 import '../../data/booking_model.dart';
 
 class BookingCard extends ConsumerWidget {

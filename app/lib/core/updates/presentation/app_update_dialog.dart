@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 
-import '../../core/updates/app_release_model.dart';
-import '../../core/updates/app_update_repository.dart';
-import '../../core/utils/app_logger.dart';
+import '../app_release_model.dart';
+import '../app_update_repository.dart';
+import '../../utils/app_logger.dart';
 
 part 'app_update_dialog_phases.dart';
 

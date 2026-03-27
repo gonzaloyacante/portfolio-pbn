@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:portfolio_pbn/shared/widgets/stat_card.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 void main() {
   Widget buildCard({

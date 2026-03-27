@@ -226,6 +226,8 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 
 ### Arquitectura App (Clean Architecture + Feature-Based)
 
+> **INSPIRACIÓN**: Estructura idéntica al proyecto minipc — la referencia canónica de arquitectura para este proyecto.
+
 ```
 app/lib/
 ├── main.dart                      # Entry point: bootstrap() → ProviderScope → App()
@@ -267,6 +269,12 @@ app/lib/
 │   │   ├── app_colors.dart        # Paleta completa (réplica exacta de globals.css)
 │   │   ├── app_typography.dart    # TextStyles con Google Fonts
 │   │   └── theme_provider.dart    # Toggle light/dark + persistencia
+│   ├── updates/
+│   │   ├── app_update_model.dart  # Modelo de versión/release
+│   │   ├── app_update_repository.dart # Checks de nueva versión
+│   │   └── presentation/
+│   │       ├── app_update_dialog.dart       # Dialog principal de actualización
+│   │       └── app_update_dialog_phases.dart # Fases del proceso de update
 │   └── utils/
 │       ├── date_utils.dart        # Formateo español (dd 'de' MMMM, yyyy)
 │       ├── validators.dart        # Validaciones de formulario (alineadas con web)
@@ -274,23 +282,61 @@ app/lib/
 │       └── app_logger.dart        # Logger wrapper (sin print())
 │
 ├── shared/                        # Widgets y modelos reutilizables entre features
-│   ├── widgets/
-│   │   ├── app_scaffold.dart      # Scaffold adaptativo (drawer tablet / bottom nav phone)
-│   │   ├── app_drawer.dart        # Drawer lateral — réplica del AdminSidebar web
-│   │   ├── loading_overlay.dart
-│   │   ├── empty_state.dart
-│   │   ├── error_state.dart
-│   │   ├── stat_card.dart
-│   │   ├── confirm_dialog.dart
-│   │   ├── image_upload_widget.dart
-│   │   ├── draggable_list.dart
-│   │   ├── status_badge.dart
-│   │   ├── sync_indicator.dart    # Badge de operaciones pendientes offline
-│   │   └── shimmer_loader.dart
-│   └── models/
-│       ├── api_response.dart      # Wrapper genérico: { success, data?, error?, message? }
-│       ├── paginated_response.dart
-│       └── sync_operation.dart    # Operación encolada offline
+│   ├── models/
+│   │   ├── api_response.dart      # Wrapper genérico: { success, data?, error?, message? }
+│   │   ├── paginated_response.dart
+│   │   └── sync_operation.dart    # Operación encolada offline
+│   └── widgets/
+│       ├── widgets.dart           # Barrel principal — re-exporta todas las subcarpetas
+│       ├── adaptive_form_layout.dart  # Layout de formulario adaptativo
+│       ├── adaptive_grid.dart         # Grid responsivo
+│       ├── app_card.dart              # Card base del design system
+│       ├── draggable_list.dart        # Lista con drag & drop
+│       ├── layout/                # Estructura/navegación de la app
+│       │   ├── barrel.dart        # export 'app_scaffold.dart'; export 'app_drawer.dart'; ...
+│       │   ├── app_scaffold.dart  # Scaffold adaptativo (drawer tablet / bottom nav phone)
+│       │   ├── app_drawer.dart    # Drawer lateral — réplica del AdminSidebar web
+│       │   ├── app_drawer_widgets.dart  # Sub-widgets del drawer
+│       │   └── nav_items.dart     # Items de navegación
+│       ├── display/               # Widgets de presentación de datos
+│       │   ├── barrel.dart        # export 'section_header.dart'; export 'shimmer_loader.dart'; ...
+│       │   ├── section_header.dart
+│       │   ├── shimmer_loader.dart
+│       │   ├── stat_card.dart
+│       │   ├── status_badge.dart
+│       │   ├── sync_indicator.dart    # Badge de operaciones pendientes offline
+│       │   ├── fade_slide_in.dart     # Animación de entrada
+│       │   ├── pbn_splash_logo.dart   # Logo splash
+│       │   ├── skeleton_category.dart
+│       │   ├── skeleton_dashboard.dart
+│       │   ├── skeleton_misc.dart
+│       │   ├── skeleton_project.dart
+│       │   └── skeleton_service.dart
+│       ├── feedback/              # Widgets de feedback al usuario
+│       │   ├── barrel.dart        # export 'empty_state.dart'; export 'error_state.dart'; ...
+│       │   ├── empty_state.dart
+│       │   ├── error_state.dart
+│       │   ├── loading_overlay.dart
+│       │   ├── app_snack_bar.dart
+│       │   ├── confirm_dialog.dart
+│       │   └── help_tooltip.dart
+│       ├── inputs/                # Inputs y selectores de formulario
+│       │   ├── barrel.dart        # export 'app_search_bar.dart'; export 'app_filter_chips.dart'; ...
+│       │   ├── app_search_bar.dart
+│       │   ├── app_filter_chips.dart
+│       │   ├── color_field.dart
+│       │   ├── color_picker_field.dart
+│       │   ├── duration_picker_field.dart
+│       │   ├── emoji_icon_picker.dart
+│       │   ├── emoji_icon_picker_sheet.dart
+│       │   ├── font_picker_field.dart
+│       │   ├── font_picker_field_sheet.dart
+│       │   └── phone_input_field.dart
+│       └── media/                 # Upload y previsualización de imágenes
+│           ├── barrel.dart        # export 'image_upload_widget.dart'; ...
+│           ├── image_upload_widget.dart
+│           ├── image_upload_widget_builders.dart
+│           └── image_upload_widget_previews.dart
 │
 └── features/                      # Cada feature: presentation/ + data/ + providers/
     ├── auth/
@@ -302,10 +348,38 @@ app/lib/
     ├── contacts/
     ├── calendar/                  # Reservas + integración Google Calendar
     ├── settings/                  # Hub de settings: home, about, contact, theme, site
+    ├── app_settings/              # Preferencias de la app (notif, tema, servidor)
+    │   └── providers/
+    │       └── app_preferences_provider.dart  # ← Movido de core/providers/
     ├── trash/
     ├── account/
     └── help/
 ```
+
+---
+
+### Reglas de Arquitectura — ESTRICTAS (basadas en minipc)
+
+#### Pantallas
+- Una pantalla **solo orquesta** — llama widgets, escucha providers, maneja navegación
+- **PROHIBIDO** definir widgets dentro de una pantalla. Si cabe en la pantalla → extrae a `/widgets/`
+- **Límite máximo: 100 líneas por pantalla**. Si se supera → extraer builders en `*_builders.dart`
+
+#### Widgets
+- Cada widget = **un archivo**. Sin excepciones
+- **PROHIBIDO** clases privadas `_Widget` dentro de otro archivo como atajo
+- Si un widget tiene más de 20 líneas y se puede reusar → `shared/widgets/<subcarpeta>/`
+- Si un widget es específico de una feature → `features/<feature>/presentation/widgets/`
+- **Límite máximo: 150 líneas por widget**. Si se supera → extraer en archivos separados
+
+#### Providers
+- **Límite máximo: 150 líneas por provider**. Si se supera → extraer lógica a helpers
+
+#### Barrel files (patrón obligatorio para shared/widgets)
+- Cada subcarpeta tiene un `barrel.dart` que re-exporta todos sus archivos
+- El `widgets.dart` raíz re-exporta desde cada `barrel.dart` de subcarpeta
+- **Importación SIEMPRE desde el barrel**: `import 'package:portfolio_pbn/shared/widgets/widgets.dart'`
+- **PROHIBIDO** importar directamente desde subcarpetas en código de features
 
 ### Reglas de Dart/Flutter
 
