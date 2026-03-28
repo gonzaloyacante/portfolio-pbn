@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { deleteCategoryAction, reorderCategories } from '@/actions/cms/category'
-import { Button, Card, Badge } from '@/components/ui'
+import { Button, Card, Badge, useConfirmDialog } from '@/components/ui'
 import ViewToggle, { type ViewMode } from '@/components/layout/ViewToggle'
 import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
@@ -13,6 +14,7 @@ import type { Category } from '@/generated/prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
 import { TOAST_MESSAGES } from '@/lib/toast-messages'
+import { showToast } from '@/lib/toast'
 
 type CategoryWithCount = Category & {
   _count: { projects: number }
@@ -28,6 +30,28 @@ export default function CategoriesContent({
 }: CategoriesContentProps) {
   // State
   const [view, setView] = useState<ViewMode>('grid')
+  const router = useRouter()
+
+  // Confirmation Dialog
+  const { confirm, Dialog } = useConfirmDialog()
+
+  // Delete handler with confirmation
+  const handleDelete = async (categoryId: string, categoryName: string) => {
+    const isConfirmed = await confirm({
+      title: '¿Eliminar categoría?',
+      message: `"${categoryName}" será movida a la papelera. Sus proyectos no se eliminarán.`,
+      confirmText: 'Eliminar',
+      variant: 'danger',
+    })
+    if (!isConfirmed) return
+    try {
+      await deleteCategoryAction(categoryId)
+      showToast.success(TOAST_MESSAGES.categories.delete.success)
+      router.refresh()
+    } catch {
+      showToast.error(TOAST_MESSAGES.categories.delete.error)
+    }
+  }
 
   // Optimistic reordering using custom hook
   const { items: categories, handleReorder } = useOptimisticReorder<CategoryWithCount>({
@@ -107,15 +131,14 @@ export default function CategoriesContent({
                   Galería
                 </Link>
               </Button>
-              <form action={deleteCategoryAction.bind(null, category.id)}>
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  aria-label={`Eliminar categoría ${category.name}`}
-                >
-                  <Trash2 size={14} />
-                </Button>
-              </form>
+              <Button
+                variant="destructive"
+                size="sm"
+                aria-label={`Eliminar categoría ${category.name}`}
+                onClick={() => handleDelete(category.id, category.name)}
+              >
+                <Trash2 size={14} />
+              </Button>
             </div>
           </div>
         </Card>
@@ -194,16 +217,15 @@ export default function CategoriesContent({
               <Images size={16} />
             </Link>
           </Button>
-          <form action={deleteCategoryAction.bind(null, category.id)}>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-destructive"
-              aria-label={`Eliminar categoría ${category.name}`}
-            >
-              <Trash2 size={16} />
-            </Button>
-          </form>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-destructive"
+            aria-label={`Eliminar categoría ${category.name}`}
+            onClick={() => handleDelete(category.id, category.name)}
+          >
+            <Trash2 size={16} />
+          </Button>
         </div>
       </div>
     )
@@ -249,6 +271,7 @@ export default function CategoriesContent({
           )}
         </motion.div>
       </AnimatePresence>
+      <Dialog />
     </>
   )
 }

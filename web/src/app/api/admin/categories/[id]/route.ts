@@ -189,6 +189,21 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
+    // Verificar que no tenga proyectos activos antes de eliminar
+    const projectCount = await prisma.project.count({
+      where: { categoryId: id, deletedAt: null },
+    })
+
+    if (projectCount > 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: `No se puede eliminar la categoría porque contiene ${projectCount} proyecto${projectCount !== 1 ? 's' : ''}. Reasígnalos o elimínalos primero.`,
+        },
+        { status: 409 }
+      )
+    }
+
     // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
     const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
     const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined

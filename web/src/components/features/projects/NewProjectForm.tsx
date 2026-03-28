@@ -67,6 +67,15 @@ export default function NewProjectForm({ categories }: NewProjectFormProps) {
           <label className="flex cursor-pointer items-center gap-3">
             <input
               type="checkbox"
+              name="isActive"
+              defaultChecked
+              className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
+            />
+            <span className="text-sm font-medium text-(--foreground)">Activo (Visible)</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
               name="isFeatured"
               className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
             />
