@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { uploadImage, deleteImage } from '@/lib/cloudinary'
+import { uploadImage, deleteImage, generateThumbnailUrl } from '@/lib/cloudinary'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { logger } from '@/lib/logger'
@@ -171,6 +171,7 @@ export async function deleteProject(id: string) {
       data: {
         isDeleted: true,
         deletedAt: new Date(),
+        isActive: false,
       },
     })
 
@@ -195,6 +196,7 @@ export async function restoreProject(id: string) {
       data: {
         isDeleted: false,
         deletedAt: null,
+        isActive: true,
       },
     })
 
@@ -355,7 +357,7 @@ export async function deleteProjectImage(imageId: string) {
     // Recompute thumbnailUrl: use first remaining image or clear it
     const firstRemaining = await prisma.projectImage.findFirst({
       where: { projectId: image.projectId },
-      orderBy: { order: 'asc' },
+      orderBy: [{ isCover: 'desc' as const }, { order: 'asc' as const }],
       select: { url: true },
     })
     await prisma.project.update({
@@ -432,11 +434,15 @@ export async function updateCategory(id: string, formData: FormData) {
   await requireAdmin()
   await checkApiRateLimit()
 
+  const _toStringOrNull = (v: FormDataEntryValue | null): string | null =>
+    typeof v === 'string' && v !== '' ? v : null
+
   const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     description: formData.get('description'),
-    coverImageUrl: formData.get('coverImageUrl'),
+    coverImageUrl: _toStringOrNull(formData.get('coverImageUrl')),
+    thumbnailUrl: _toStringOrNull(formData.get('thumbnailUrl')),
   }
 
   const validation = categorySchema.safeParse(rawData)
@@ -444,11 +450,14 @@ export async function updateCategory(id: string, formData: FormData) {
     return { success: false, error: validation.error.issues[0].message }
   }
   const { name, slug, description, coverImageUrl } = validation.data
+  // Auto-generate thumbnailUrl from coverImageUrl if not explicitly provided
+  const thumbnailUrl =
+    validation.data.thumbnailUrl ?? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : null)
 
   try {
     await prisma.category.update({
       where: { id },
-      data: { name, slug, description, coverImageUrl: coverImageUrl || null },
+      data: { name, slug, description, coverImageUrl: coverImageUrl || null, thumbnailUrl },
     })
     _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)

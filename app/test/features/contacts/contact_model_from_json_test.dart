@@ -75,14 +75,6 @@ void main() {
       'repliedAt is null',
       () => expect(ContactItem.fromJson(base).repliedAt, isNull),
     );
-    test(
-      'leadScore is null',
-      () => expect(ContactItem.fromJson(base).leadScore, isNull),
-    );
-    test(
-      'leadSource is null',
-      () => expect(ContactItem.fromJson(base).leadSource, isNull),
-    );
   });
 
   group('ContactItem.fromJson — optional fields', () {
@@ -96,8 +88,6 @@ void main() {
       'priority': 'HIGH',
       'isRead': true,
       'isReplied': true,
-      'leadScore': 85,
-      'leadSource': 'instagram',
       'tags': ['vip', 'boda'],
       'createdAt': '2024-02-10T09:00:00Z',
       'updatedAt': '2024-02-12T10:00:00Z',
@@ -126,14 +116,6 @@ void main() {
     test(
       'parses isReplied = true',
       () => expect(ContactItem.fromJson(full()).isReplied, isTrue),
-    );
-    test(
-      'parses leadScore',
-      () => expect(ContactItem.fromJson(full()).leadScore, 85),
-    );
-    test(
-      'parses leadSource',
-      () => expect(ContactItem.fromJson(full()).leadSource, 'instagram'),
     );
     test(
       'parses tags list',
@@ -250,10 +232,6 @@ void main() {
       () => expect(ContactDetail.fromJson(base).tags, isEmpty),
     );
     test(
-      'assignedTo is null',
-      () => expect(ContactDetail.fromJson(base).assignedTo, isNull),
-    );
-    test(
       'adminNote is null',
       () => expect(ContactDetail.fromJson(base).adminNote, isNull),
     );
@@ -284,11 +262,8 @@ void main() {
       'phone': '+34 911 000 000',
       'subject': 'Subject text',
       'responsePreference': 'PHONE',
-      'leadScore': 92,
-      'leadSource': 'referral',
       'status': 'ARCHIVED',
       'priority': 'LOW',
-      'assignedTo': 'admin',
       'isRead': true,
       'isReplied': true,
       'replyText': 'We replied',
@@ -312,24 +287,8 @@ void main() {
       () => expect(ContactDetail.fromJson(full()).responsePreference, 'PHONE'),
     );
     test(
-      'parses leadScore',
-      () => expect(ContactDetail.fromJson(full()).leadScore, 92),
-    );
-    test(
-      'parses leadSource',
-      () => expect(ContactDetail.fromJson(full()).leadSource, 'referral'),
-    );
-    test(
       'parses status',
       () => expect(ContactDetail.fromJson(full()).status, 'ARCHIVED'),
-    );
-    test(
-      'parses priority',
-      () => expect(ContactDetail.fromJson(full()).priority, 'LOW'),
-    );
-    test(
-      'parses assignedTo',
-      () => expect(ContactDetail.fromJson(full()).assignedTo, 'admin'),
     );
     test(
       'parses isRead = true',

@@ -52,7 +52,15 @@ export default async function Home() {
 
       {/* Featured Projects Section */}
       {homeSettings?.showFeaturedProjects && (
-        <FeaturedProjects title={homeSettings.featuredTitle} count={homeSettings.featuredCount} />
+        <FeaturedProjects
+          title={homeSettings.featuredTitle}
+          count={homeSettings.featuredCount}
+          titleFont={homeSettings.featuredTitleFont}
+          titleFontUrl={homeSettings.featuredTitleFontUrl}
+          titleFontSize={homeSettings.featuredTitleFontSize}
+          titleColor={homeSettings.featuredTitleColor}
+          titleColorDark={homeSettings.featuredTitleColorDark}
+        />
       )}
     </main>
   )

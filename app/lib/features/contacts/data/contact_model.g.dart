@@ -22,8 +22,6 @@ _ContactItem _$ContactItemFromJson(Map<String, dynamic> json) => _ContactItem(
   repliedAt: json['repliedAt'] == null
       ? null
       : DateTime.parse(json['repliedAt'] as String),
-  leadScore: (json['leadScore'] as num?)?.toInt(),
-  leadSource: json['leadSource'] as String?,
   tags:
       (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
@@ -44,8 +42,6 @@ Map<String, dynamic> _$ContactItemToJson(_ContactItem instance) =>
       'isReplied': instance.isReplied,
       'readAt': instance.readAt?.toIso8601String(),
       'repliedAt': instance.repliedAt?.toIso8601String(),
-      'leadScore': instance.leadScore,
-      'leadSource': instance.leadSource,
       'tags': instance.tags,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
@@ -60,21 +56,16 @@ _ContactDetail _$ContactDetailFromJson(Map<String, dynamic> json) =>
       message: json['message'] as String,
       subject: json['subject'] as String?,
       responsePreference: json['responsePreference'] as String? ?? 'EMAIL',
-      leadScore: (json['leadScore'] as num?)?.toInt(),
-      leadSource: json['leadSource'] as String?,
       status: json['status'] as String? ?? 'NEW',
       priority: json['priority'] as String? ?? 'MEDIUM',
-      assignedTo: json['assignedTo'] as String?,
       isRead: json['isRead'] as bool? ?? false,
       readAt: json['readAt'] == null
           ? null
           : DateTime.parse(json['readAt'] as String),
-      readBy: json['readBy'] as String?,
       isReplied: json['isReplied'] as bool? ?? false,
       repliedAt: json['repliedAt'] == null
           ? null
           : DateTime.parse(json['repliedAt'] as String),
-      repliedBy: json['repliedBy'] as String?,
       replyText: json['replyText'] as String?,
       adminNote: json['adminNote'] as String?,
       tags:
@@ -98,17 +89,12 @@ Map<String, dynamic> _$ContactDetailToJson(_ContactDetail instance) =>
       'message': instance.message,
       'subject': instance.subject,
       'responsePreference': instance.responsePreference,
-      'leadScore': instance.leadScore,
-      'leadSource': instance.leadSource,
       'status': instance.status,
       'priority': instance.priority,
-      'assignedTo': instance.assignedTo,
       'isRead': instance.isRead,
       'readAt': instance.readAt?.toIso8601String(),
-      'readBy': instance.readBy,
       'isReplied': instance.isReplied,
       'repliedAt': instance.repliedAt?.toIso8601String(),
-      'repliedBy': instance.repliedBy,
       'replyText': instance.replyText,
       'adminNote': instance.adminNote,
       'tags': instance.tags,

@@ -73,6 +73,11 @@ async function restoreItem(type: TrashType, id: string) {
     updateData.isDeleted = false
   }
 
+  // project, category y service tienen isActive — restaurar a true
+  if (type === 'project' || type === 'category' || type === 'service') {
+    updateData.isActive = true
+  }
+
   // Para project, category y service aplicamos un-mangle del slug mangleado al borrar
   if ((type === 'project' || type === 'category' || type === 'service') && item.slug) {
     updateData.slug = await unmangleSlug(model, item.slug as string, id)

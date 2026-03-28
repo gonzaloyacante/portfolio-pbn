@@ -126,6 +126,8 @@ export async function POST(req: Request) {
       isFeatured = false,
     } = parsed.data as typeof parsed.data & { priceLabel?: string; currency?: string }
 
+    const resolvedCurrency = currency || 'EUR'
+
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     const existing = await prisma.service.findFirst({ where: { slug } })
     if (existing) {
@@ -147,14 +149,39 @@ export async function POST(req: Request) {
         shortDesc,
         price: price ?? null,
         priceLabel,
-        currency,
+        currency: resolvedCurrency,
         duration,
         imageUrl,
         isActive,
         isFeatured,
         sortOrder: nextOrder,
       },
-      select: SERVICE_SELECT,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        description: true,
+        shortDesc: true,
+        price: true,
+        priceLabel: true,
+        currency: true,
+        duration: true,
+        durationMinutes: true,
+        imageUrl: true,
+        isActive: true,
+        isFeatured: true,
+        isAvailable: true,
+        maxBookingsPerDay: true,
+        advanceNoticeDays: true,
+        sortOrder: true,
+        metaTitle: true,
+        metaDescription: true,
+        metaKeywords: true,
+        requirements: true,
+        cancellationPolicy: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     })
 
     try {

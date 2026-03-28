@@ -62,10 +62,6 @@ void main() {
       () => expect(TestimonialItem.fromJson(base).sortOrder, 0),
     );
     test(
-      'viewCount defaults to 0',
-      () => expect(TestimonialItem.fromJson(base).viewCount, 0),
-    );
-    test(
       'excerpt is null',
       () => expect(TestimonialItem.fromJson(base).excerpt, isNull),
     );
@@ -97,7 +93,6 @@ void main() {
       'status': 'APPROVED',
       'isActive': true,
       'sortOrder': 2,
-      'viewCount': 55,
       'createdAt': '2024-03-01T00:00:00Z',
       'updatedAt': '2024-03-05T00:00:00Z',
     };
@@ -144,10 +139,6 @@ void main() {
     test(
       'parses sortOrder',
       () => expect(TestimonialItem.fromJson(full()).sortOrder, 2),
-    );
-    test(
-      'parses viewCount',
-      () => expect(TestimonialItem.fromJson(full()).viewCount, 55),
     );
     test('createdAt parsed correctly', () {
       expect(TestimonialItem.fromJson(full()).createdAt.month, 3);
@@ -243,8 +234,8 @@ void main() {
       () => expect(TestimonialDetail.fromJson(base).projectId, isNull),
     );
     test(
-      'moderatedBy is null',
-      () => expect(TestimonialDetail.fromJson(base).moderatedBy, isNull),
+      'moderationNote is null',
+      () => expect(TestimonialDetail.fromJson(base).moderationNote, isNull),
     );
     test(
       'moderatedAt is null',
@@ -265,7 +256,7 @@ void main() {
       'avatarUrl': 'https://x.com/ava.jpg',
       'source': 'google',
       'projectId': 'proj-5',
-      'moderatedBy': 'admin',
+      'moderationNote': 'Looks good',
       'status': 'APPROVED',
       'featured': true,
       'createdAt': '2024-05-01T00:00:00Z',
@@ -292,8 +283,11 @@ void main() {
       () => expect(TestimonialDetail.fromJson(full()).projectId, 'proj-5'),
     );
     test(
-      'parses moderatedBy',
-      () => expect(TestimonialDetail.fromJson(full()).moderatedBy, 'admin'),
+      'parses moderationNote',
+      () => expect(
+        TestimonialDetail.fromJson(full()).moderationNote,
+        'Looks good',
+      ),
     );
     test(
       'parses status = APPROVED',

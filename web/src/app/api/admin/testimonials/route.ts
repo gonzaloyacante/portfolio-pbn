@@ -45,6 +45,7 @@ export async function GET(req: Request) {
     const search = searchParams.get('search') ?? undefined
     const status = searchParams.get('status') ?? undefined
     const featured = searchParams.get('featured')
+    const active = searchParams.get('active')
     const skip = (page - 1) * limit
 
     const where = {
@@ -58,6 +59,7 @@ export async function GET(req: Request) {
       }),
       ...(status && { status }),
       ...(featured !== null && featured !== undefined && { featured: featured === 'true' }),
+      ...(active !== null && active !== undefined && { isActive: active === 'true' }),
     }
 
     const [testimonials, total] = await Promise.all([

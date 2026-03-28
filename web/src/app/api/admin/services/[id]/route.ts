@@ -194,7 +194,7 @@ export async function DELETE(req: Request, { params }: Params) {
 
     await prisma.service.update({
       where: { id },
-      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
+      data: { deletedAt: new Date(), isActive: false, ...(mangledSlug && { slug: mangledSlug }) },
     })
 
     try {

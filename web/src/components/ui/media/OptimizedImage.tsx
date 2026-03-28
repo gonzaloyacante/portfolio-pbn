@@ -2,16 +2,10 @@
 
 import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
-import { getOptimizedUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
+import { getVariantUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
 
 const COMMON_SIZES = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\/([^/]+)\/image\/upload\/(v\d+\/)?(.+)$/
-
-// Simple lazy image state hook
-function useLazyImage() {
-  const [isInView, setIsInView] = useState(false)
-  return { isInView, setIsInView }
-}
+const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\//
 
 interface OptimizedImageProps {
   src: string
@@ -53,40 +47,11 @@ export function OptimizedImage({
   const [imageError, setImageError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const imgRef = useRef<HTMLDivElement>(null)
+  const [isInView, setIsInView] = useState(!lazy || priority)
 
-  const { isInView, setIsInView } = useLazyImage()
-
-  // Determine final image URL based on variant or default optimization
-  const finalSrc = variant
-    ? getOptimizedUrl(src, { width: width || 800, quality: quality || 'auto' }) // If variant logic needed, strictly use helper's getVariantUrl, but here we keep flex logic
-    : src // If not customized, let Next.js Image handle optimization or pass through
-
-  // But we want to enforce Cloudinary optimization if it IS a Cloudinary URL
+  // Use cloudinary-helper for URL optimization instead of manual construction
   const isCloudinary = CLOUDINARY_REGEX.test(src)
-  const optimizeCloudinary = isCloudinary && !src.includes('w_') // Avoid double optimizing if already has params
-
-  const optimizedSrc = optimizeCloudinary
-    ? (() => {
-        const match = src.match(CLOUDINARY_REGEX)
-        if (!match) return src
-
-        const [, cloudName, version, publicId] = match
-
-        // Construct new URL with transformations
-        // transformations format: f_auto,q_auto,w_...,h_...,c_...
-        const transformations = []
-        if (width || (fill ? 1200 : undefined)) {
-          transformations.push(`w_${width || (fill ? 1200 : undefined)}`)
-        }
-        if (quality || 'auto') {
-          transformations.push(`q_${quality || 'auto'}`)
-        }
-
-        const transformationString = transformations.join(',')
-
-        return `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}/${version || ''}${publicId}`
-      })()
-    : finalSrc
+  const optimizedSrc = isCloudinary && variant ? getVariantUrl(src, variant) : src
 
   // Generate blur placeholder automatically for Cloudinary images
   const computedBlurDataURL =
@@ -94,12 +59,9 @@ export function OptimizedImage({
       ? getBlurPlaceholderUrl(src)
       : blurDataURL
 
-  // Intersection Observer for lazy loading
+  // Intersection Observer for lazy loading (only when lazy=true and not priority)
   useEffect(() => {
-    if (!lazy || priority) {
-      setIsInView(true)
-      return
-    }
+    if (!lazy || priority || isInView) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -116,11 +78,7 @@ export function OptimizedImage({
     }
 
     return () => observer.disconnect()
-  }, [lazy, priority, setIsInView])
-
-  // Note: State resets automatically when src changes via React's reconciliation
-  // The loadState will be reset when image component is re-mounted or src changes
-  // If needed, parent can use key={src} to force full remount
+  }, [lazy, priority, isInView])
 
   const handleLoad = () => {
     setIsLoaded(true)
@@ -143,8 +101,7 @@ export function OptimizedImage({
     return (
       <div
         ref={imgRef}
-        className={`border-border flex items-center justify-center border ${transparentBackground ? 'bg-transparent' : 'bg-muted'} ${className} ${fill ? 'absolute inset-0' : 'h-64 w-full'} rounded-lg`} // Fixed height for errors
-        style={fill ? undefined : undefined} // Remove inline width/height to let CSS control error size
+        className={`border-border flex items-center justify-center border ${transparentBackground ? 'bg-transparent' : 'bg-muted'} ${className} ${fill ? 'absolute inset-0' : 'h-64 w-full'} rounded-lg`}
       >
         <div className="p-4 text-center">
           <div className="text-muted-foreground mx-auto mb-2 h-8 w-8">
@@ -169,15 +126,15 @@ export function OptimizedImage({
     >
       {(isInView || priority) && (
         <>
-          {/* Background Blurred Placeholder (Always visible until load) */}
-          {!transparentBackground && (computedBlurDataURL || placeholder === 'blur') && (
+          {/* Blur placeholder — always shown until image loads, regardless of transparentBackground */}
+          {(computedBlurDataURL || placeholder === 'blur') && (
             <Image
               src={computedBlurDataURL || defaultBlurDataURL}
               alt={alt}
               fill={fill}
               width={fill ? undefined : width}
               height={fill ? undefined : height}
-              className={`absolute inset-0 object-cover opacity-100 transition-opacity duration-700 ${isLoaded ? 'opacity-0' : ''}`}
+              className={`absolute inset-0 object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
               priority={true}
               aria-hidden="true"
             />
@@ -192,7 +149,7 @@ export function OptimizedImage({
             quality={quality}
             sizes={sizes}
             priority={priority}
-            className={`transition-all duration-300 ${isLoaded ? 'scale-100 opacity-100' : 'scale-105 opacity-0'} ${fill ? 'object-cover' : ''}`}
+            className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${fill ? 'object-cover' : ''}`}
             style={fill ? { objectFit: 'cover' } : undefined}
             onLoad={handleLoad}
             onError={handleError}

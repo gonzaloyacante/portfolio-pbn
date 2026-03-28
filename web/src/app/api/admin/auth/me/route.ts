@@ -126,9 +126,18 @@ export async function PATCH(req: Request) {
     }
 
     const hashed = await bcrypt.hash(newPassword, 12)
-    await prisma.user.update({ where: { id: userId }, data: { password: hashed } })
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashed, failedLoginCount: 0, lockedUntil: null },
+    })
 
-    logger.info('[admin-me] Password changed', { userId })
+    // Revoke all refresh tokens — password change invalidates all sessions
+    await prisma.refreshToken.updateMany({
+      where: { userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    })
+
+    logger.info('[admin-me] Password changed + all sessions revoked', { userId })
     return NextResponse.json({ success: true, message: 'Contraseña actualizada' })
   } catch (err) {
     logger.error('[admin-me PATCH] Error', {

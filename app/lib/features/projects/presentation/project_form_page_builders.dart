@@ -57,8 +57,6 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
           InlineError(message: _errorMsg!),
           const SizedBox(height: 16),
         ],
-        _gallerySection(),
-        const SizedBox(height: 20),
         _titleField(),
         const SizedBox(height: 12),
         _categoryField(),

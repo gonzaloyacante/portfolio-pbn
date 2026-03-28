@@ -234,16 +234,16 @@ export type HomeSettingsFormData = z.infer<typeof homeSettingsSchema>
 
 // About Settings (SRP: no longer contains testimonial fields)
 export const aboutSettingsSchema = z.object({
-  illustrationUrl: z.string().optional(),
-  illustrationAlt: z.string().optional(),
-  bioTitle: z.string().optional(),
-  bioIntro: z.string().optional(),
-  bioDescription: z.string().optional(),
-  profileImageUrl: z.string().optional(),
-  profileImageAlt: z.string().optional(),
-  profileImageShape: z.enum(['ellipse', 'circle', 'rounded', 'none']).optional(),
+  illustrationUrl: z.string().optional().nullable(),
+  illustrationAlt: z.string().optional().nullable(),
+  bioTitle: z.string().optional().nullable(),
+  bioIntro: z.string().optional().nullable(),
+  bioDescription: z.string().optional().nullable(),
+  profileImageUrl: z.string().optional().nullable(),
+  profileImageAlt: z.string().optional().nullable(),
+  profileImageShape: z.enum(['ellipse', 'circle', 'rounded', 'none']).optional().nullable(),
   skills: z.array(z.string()).optional(),
-  yearsExperience: z.number().optional(),
+  yearsExperience: z.number().optional().nullable(),
   certifications: z.array(z.string()).optional(),
 })
 
@@ -461,8 +461,8 @@ export const bookingApiSchema = z.object({
 // ── Contacts update ─────────────────────────────────────────────────────────
 
 export const contactUpdateApiSchema = z.object({
-  status: z.enum(['PENDING', 'READ', 'REPLIED', 'ARCHIVED']).optional(),
-  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'URGENT']).optional(),
+  status: z.enum(['NEW', 'IN_PROGRESS', 'REPLIED', 'CLOSED', 'SPAM']).optional(),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   isRead: z.boolean().optional(),
   replyText: z
     .string()

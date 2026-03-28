@@ -181,7 +181,7 @@ export async function getUnreadContactsCount() {
   await checkApiRateLimit()
 
   return await prisma.contact.count({
-    where: { isRead: false },
+    where: { isRead: false, deletedAt: null },
   })
 }
 

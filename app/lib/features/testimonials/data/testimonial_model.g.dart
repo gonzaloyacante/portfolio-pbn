@@ -20,7 +20,6 @@ _TestimonialItem _$TestimonialItemFromJson(Map<String, dynamic> json) =>
       status: json['status'] as String? ?? 'PENDING',
       isActive: json['isActive'] as bool? ?? true,
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
-      viewCount: (json['viewCount'] as num?)?.toInt() ?? 0,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -39,7 +38,6 @@ Map<String, dynamic> _$TestimonialItemToJson(_TestimonialItem instance) =>
       'status': instance.status,
       'isActive': instance.isActive,
       'sortOrder': instance.sortOrder,
-      'viewCount': instance.viewCount,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };
@@ -62,7 +60,7 @@ _TestimonialDetail _$TestimonialDetailFromJson(Map<String, dynamic> json) =>
       source: json['source'] as String?,
       projectId: json['projectId'] as String?,
       status: json['status'] as String? ?? 'PENDING',
-      moderatedBy: json['moderatedBy'] as String?,
+      moderationNote: json['moderationNote'] as String?,
       moderatedAt: json['moderatedAt'] == null
           ? null
           : DateTime.parse(json['moderatedAt'] as String),
@@ -91,7 +89,7 @@ Map<String, dynamic> _$TestimonialDetailToJson(_TestimonialDetail instance) =>
       'source': instance.source,
       'projectId': instance.projectId,
       'status': instance.status,
-      'moderatedBy': instance.moderatedBy,
+      'moderationNote': instance.moderationNote,
       'moderatedAt': instance.moderatedAt?.toIso8601String(),
       'isActive': instance.isActive,
       'sortOrder': instance.sortOrder,

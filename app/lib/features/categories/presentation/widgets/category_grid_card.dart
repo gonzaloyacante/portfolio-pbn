@@ -41,9 +41,10 @@ class CategoryGridCard extends StatelessWidget {
                     top: Radius.circular(8),
                   ),
                   child:
-                      item.thumbnailUrl != null && item.thumbnailUrl!.isNotEmpty
+                      (item.thumbnailUrl ?? item.coverImageUrl) != null &&
+                          (item.thumbnailUrl ?? item.coverImageUrl)!.isNotEmpty
                       ? CachedNetworkImage(
-                          imageUrl: item.thumbnailUrl!,
+                          imageUrl: (item.thumbnailUrl ?? item.coverImageUrl)!,
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,

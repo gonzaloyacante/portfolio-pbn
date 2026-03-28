@@ -35,6 +35,7 @@ const TESTIMONIAL_DETAIL_SELECT = {
   projectId: true,
   status: true,
   moderatedAt: true,
+  moderationNote: true,
   isActive: true,
   sortOrder: true,
   createdAt: true,

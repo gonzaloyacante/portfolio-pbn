@@ -78,7 +78,7 @@ export async function deleteProjectAction(projectId: string): Promise<void> {
   await checkApiRateLimit()
   await prisma.project.update({
     where: { id: projectId },
-    data: { isDeleted: true, deletedAt: new Date() },
+    data: { isDeleted: true, deletedAt: new Date(), isActive: false },
   })
   revalidatePath(ROUTES.admin.projects)
   revalidatePath(ROUTES.public.projects, 'layout')

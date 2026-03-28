@@ -62,18 +62,41 @@ abstract class ContactSettings with _$ContactSettings {
 abstract class ThemeSettings with _$ThemeSettings {
   const factory ThemeSettings({
     String? id,
+    // Light mode
     @Default('#6c0a0a') String primaryColor,
     @Default('#ffaadd') String secondaryColor,
     @Default('#fff1f9') String accentColor,
     @Default('#fff1f9') String backgroundColor,
     @Default('#000000') String textColor,
+    @Default('#ffaadd') String cardBgColor,
+    // Dark mode
     @Default('#ffaadd') String darkPrimaryColor,
     @Default('#6c0a0a') String darkSecondaryColor,
+    @Default('#000000') String darkAccentColor,
     @Default('#6c0a0a') String darkBackgroundColor,
     @Default('#fff1f9') String darkTextColor,
+    @Default('#ffaadd') String darkCardBgColor,
+    // Typography — Base
     @Default('Poppins') String headingFont,
+    String? headingFontUrl,
+    @Default(32) int headingFontSize,
     @Default('Open Sans') String bodyFont,
+    String? bodyFontUrl,
+    @Default(16) int bodyFontSize,
     @Default('Great Vibes') String scriptFont,
+    String? scriptFontUrl,
+    @Default(24) int scriptFontSize,
+    // Typography — Brand
+    String? brandFont,
+    String? brandFontUrl,
+    int? brandFontSize,
+    String? portfolioFont,
+    String? portfolioFontUrl,
+    int? portfolioFontSize,
+    String? signatureFont,
+    String? signatureFontUrl,
+    int? signatureFontSize,
+    // Layout
     @Default(40) int borderRadius,
     @Default(true) bool isActive,
   }) = _ThemeSettings;

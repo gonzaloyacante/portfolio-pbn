@@ -18,7 +18,18 @@ const RequestResetSchema = z.object({
 
 const ResetPasswordSchema = z.object({
   token: z.string().min(1, 'Token requerido'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  password: z
+    .string()
+    .min(8, 'La contraseña debe tener al menos 8 caracteres')
+    .refine((val) => /[A-Z]/.test(val), {
+      message: 'Debe contener al menos una mayúscula',
+    })
+    .refine((val) => /[a-z]/.test(val), {
+      message: 'Debe contener al menos una minúscula',
+    })
+    .refine((val) => /[0-9]/.test(val), {
+      message: 'Debe contener al menos un número',
+    }),
 })
 
 export async function requestPasswordReset(email: string) {
@@ -78,11 +89,31 @@ export async function resetPassword(token: string, password: string) {
       return { success: false, message: 'Token inválido o expirado.' }
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // Verify user is active and not deleted before allowing password reset
+    const user = await prisma.user.findFirst({
+      where: { email: storedToken.email, isActive: true, deletedAt: null },
+      select: { id: true },
+    })
+
+    if (!user) {
+      return { success: false, message: 'Token inválido o expirado.' }
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12)
 
     await prisma.user.update({
-      where: { email: storedToken.email },
-      data: { password: hashedPassword },
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        failedLoginCount: 0,
+        lockedUntil: null,
+      },
+    })
+
+    // Revoke all refresh tokens — password change invalidates all sessions
+    await prisma.refreshToken.updateMany({
+      where: { userId: user.id, revokedAt: null },
+      data: { revokedAt: new Date() },
     })
 
     await prisma.passwordResetToken.deleteMany({ where: { email: storedToken.email } })

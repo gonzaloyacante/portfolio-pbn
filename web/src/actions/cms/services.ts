@@ -384,7 +384,7 @@ export async function deleteService(id: string) {
     const mangledSlug = svc ? `${svc.slug}_deleted_${Date.now()}` : undefined
     await prisma.service.update({
       where: { id },
-      data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
+      data: { deletedAt: new Date(), isActive: false, ...(mangledSlug && { slug: mangledSlug }) },
     })
 
     revalidatePath(ROUTES.admin.services)

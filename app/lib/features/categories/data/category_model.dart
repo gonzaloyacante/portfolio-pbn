@@ -15,6 +15,7 @@ abstract class CategoryItem with _$CategoryItem {
     required String slug,
     String? description,
     String? thumbnailUrl,
+    String? coverImageUrl,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
     @Default(0) int projectCount,
@@ -76,8 +77,8 @@ class CategoryFormData {
   Map<String, dynamic> toJson() => {
     'name': name,
     'slug': slug,
-    if (description != null) 'description': description,
-    if (coverImageUrl != null) 'coverImageUrl': coverImageUrl,
+    'description': description,
+    'coverImageUrl': coverImageUrl,
     'isActive': isActive,
   };
 }

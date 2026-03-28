@@ -1,11 +1,10 @@
 import { prisma } from '@/lib/db'
-import { uploadImageAndCreateProject } from '@/actions/cms/content'
-import { Button, SmartField as FormField, ImageUpload, Card } from '@/components/ui'
+import { Button, Card } from '@/components/ui'
 import { PageHeader, Section } from '@/components/layout'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import { ROUTES } from '@/config/routes'
 import { FolderOpen, Plus } from 'lucide-react'
+import NewProjectForm from '@/components/features/projects/NewProjectForm'
 
 export default async function NewProjectPage() {
   const categories = await prisma.category.findMany({
@@ -52,65 +51,7 @@ export default async function NewProjectPage() {
       />
 
       <Section title="Información del Proyecto">
-        <form
-          action={async (formData) => {
-            'use server'
-            const result = await uploadImageAndCreateProject(formData)
-            if (result.success) {
-              redirect(ROUTES.admin.projects)
-            }
-          }}
-          className="space-y-6"
-        >
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormField label="Título" name="title" required />
-            <FormField
-              label="Categoría"
-              name="categoryId"
-              type="select"
-              required
-              options={categories.map((c) => ({ value: c.id, label: c.name }))}
-            />
-          </div>
-          <FormField label="Descripción" name="description" type="textarea" rows={4} />
-          <FormField
-            label="Extracto / Resumen"
-            name="excerpt"
-            type="textarea"
-            rows={2}
-            placeholder="Breve descripción para tarjetas y listados..."
-          />
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <FormField label="Cliente" name="client" placeholder="Nombre del cliente..." />
-            <FormField label="Duración" name="duration" placeholder="Ej: 2 horas, Todo el día..." />
-          </div>
-          <FormField label="Fecha" name="date" type="date" placeholder="YYYY-MM-DD" />
-          <div className="flex flex-wrap items-center gap-6">
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                name="isFeatured"
-                className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
-              />
-              <span className="text-sm font-medium text-(--foreground)">Destacado</span>
-            </label>
-            <label className="flex cursor-pointer items-center gap-3">
-              <input
-                type="checkbox"
-                name="isPinned"
-                className="h-4 w-4 rounded border text-(--primary) focus:ring-(--primary)"
-              />
-              <span className="text-sm font-medium text-(--foreground)">Fijado al inicio</span>
-            </label>
-          </div>
-          <ImageUpload name="images" label="Imágenes del proyecto" multiple mode="gallery" />
-
-          <div className="border-border flex justify-end gap-4 border-t pt-4">
-            <Button type="submit" size="lg">
-              Publicar Proyecto
-            </Button>
-          </div>
-        </form>
+        <NewProjectForm categories={categories} />
       </Section>
     </div>
   )

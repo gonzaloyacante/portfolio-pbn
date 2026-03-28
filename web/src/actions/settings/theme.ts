@@ -81,61 +81,67 @@ export const getThemeSettings = unstable_cache(
 )
 
 /**
- * Get theme values as CSS variable object
+ * Get theme values as CSS variable object (cached)
  */
-export async function getThemeValues(): Promise<Record<string, string>> {
-  try {
-    const settings = await getThemeSettings()
-    if (!settings) {
-      return DEFAULT_CSS_VARIABLES
+export const getThemeValues = unstable_cache(
+  async (): Promise<Record<string, string>> => {
+    try {
+      const settings = await getThemeSettings()
+      if (!settings) {
+        return DEFAULT_CSS_VARIABLES
+      }
+
+      return {
+        '--primary': settings.primaryColor,
+        '--secondary': settings.secondaryColor,
+        '--accent': settings.accentColor,
+        '--background': settings.backgroundColor,
+        '--foreground': settings.textColor,
+        '--card-bg': settings.cardBgColor,
+
+        '--dark-primary': settings.darkPrimaryColor,
+        '--dark-secondary': settings.darkSecondaryColor,
+        '--dark-accent': settings.darkAccentColor,
+        '--dark-background': settings.darkBackgroundColor,
+        '--dark-foreground': settings.darkTextColor,
+        '--dark-card-bg': settings.darkCardBgColor,
+
+        '--font-heading': settings.headingFont
+          ? `"${settings.headingFont}", sans-serif`
+          : 'inherit',
+        '--font-heading-size': `${settings.headingFontSize}px`,
+        '--font-script': settings.scriptFont ? `"${settings.scriptFont}", cursive` : 'inherit',
+        '--font-script-size': `${settings.scriptFontSize}px`,
+        '--font-body': settings.bodyFont ? `"${settings.bodyFont}", sans-serif` : 'inherit',
+        '--font-body-size': `${settings.bodyFontSize}px`,
+
+        '--font-brand': settings.brandFont ? `"${settings.brandFont}", sans-serif` : 'inherit',
+        '--font-brand-size': settings.brandFontSize ? `${settings.brandFontSize}px` : 'inherit',
+
+        '--font-portfolio': settings.portfolioFont
+          ? `"${settings.portfolioFont}", sans-serif`
+          : 'inherit',
+        '--font-portfolio-size': settings.portfolioFontSize
+          ? `${settings.portfolioFontSize}px`
+          : 'inherit',
+
+        '--font-signature': settings.signatureFont
+          ? `"${settings.signatureFont}", cursive`
+          : 'inherit',
+        '--font-signature-size': settings.signatureFontSize
+          ? `${settings.signatureFontSize}px`
+          : 'inherit',
+
+        '--radius': `${settings.borderRadius}px`,
+      }
+    } catch (error) {
+      logger.error('Error getting theme values:', { error: error })
+      return {}
     }
-
-    return {
-      '--primary': settings.primaryColor,
-      '--secondary': settings.secondaryColor,
-      '--accent': settings.accentColor,
-      '--background': settings.backgroundColor,
-      '--foreground': settings.textColor,
-      '--card-bg': settings.cardBgColor,
-
-      '--dark-primary': settings.darkPrimaryColor,
-      '--dark-secondary': settings.darkSecondaryColor,
-      '--dark-accent': settings.darkAccentColor,
-      '--dark-background': settings.darkBackgroundColor,
-      '--dark-foreground': settings.darkTextColor,
-      '--dark-card-bg': settings.darkCardBgColor,
-
-      '--font-heading': settings.headingFont ? `"${settings.headingFont}", sans-serif` : 'inherit',
-      '--font-heading-size': `${settings.headingFontSize}px`,
-      '--font-script': settings.scriptFont ? `"${settings.scriptFont}", cursive` : 'inherit',
-      '--font-script-size': `${settings.scriptFontSize}px`,
-      '--font-body': settings.bodyFont ? `"${settings.bodyFont}", sans-serif` : 'inherit',
-      '--font-body-size': `${settings.bodyFontSize}px`,
-
-      '--font-brand': settings.brandFont ? `"${settings.brandFont}", sans-serif` : 'inherit',
-      '--font-brand-size': settings.brandFontSize ? `${settings.brandFontSize}px` : 'inherit',
-
-      '--font-portfolio': settings.portfolioFont
-        ? `"${settings.portfolioFont}", sans-serif`
-        : 'inherit',
-      '--font-portfolio-size': settings.portfolioFontSize
-        ? `${settings.portfolioFontSize}px`
-        : 'inherit',
-
-      '--font-signature': settings.signatureFont
-        ? `"${settings.signatureFont}", cursive`
-        : 'inherit',
-      '--font-signature-size': settings.signatureFontSize
-        ? `${settings.signatureFontSize}px`
-        : 'inherit',
-
-      '--radius': `${settings.borderRadius}px`,
-    }
-  } catch (error) {
-    logger.error('Error getting theme values:', { error: error })
-    return {}
-  }
-}
+  },
+  ['theme-values'],
+  { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.themeSettings] }
+)
 
 /**
  * Update theme settings

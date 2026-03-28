@@ -21,7 +21,6 @@ abstract class TestimonialItem with _$TestimonialItem {
     @Default('PENDING') String status,
     @Default(true) bool isActive,
     @Default(0) int sortOrder,
-    @Default(0) int viewCount,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _TestimonialItem;
@@ -50,7 +49,7 @@ abstract class TestimonialDetail with _$TestimonialDetail {
     String? source,
     String? projectId,
     @Default('PENDING') String status,
-    String? moderatedBy,
+    String? moderationNote,
     DateTime? moderatedAt,
     @Default(true) bool isActive,
     @Default(0) int sortOrder,

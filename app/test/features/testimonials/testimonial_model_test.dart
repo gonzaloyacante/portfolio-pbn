@@ -26,7 +26,6 @@ void main() {
     test('status defaults to PENDING', () => expect(item.status, 'PENDING'));
     test('isActive defaults to true', () => expect(item.isActive, true));
     test('sortOrder defaults to 0', () => expect(item.sortOrder, 0));
-    test('viewCount defaults to 0', () => expect(item.viewCount, 0));
     test('excerpt defaults to null', () => expect(item.excerpt, isNull));
     test('position defaults to null', () => expect(item.position, isNull));
     test('company defaults to null', () => expect(item.company, isNull));
@@ -120,8 +119,8 @@ void main() {
     test('rating defaults to 5', () => expect(detail.rating, 5));
     test('status defaults to PENDING', () => expect(detail.status, 'PENDING'));
     test(
-      'moderatedBy defaults to null',
-      () => expect(detail.moderatedBy, isNull),
+      'moderationNote defaults to null',
+      () => expect(detail.moderationNote, isNull),
     );
     test('source defaults to null', () => expect(detail.source, isNull));
     test('projectId defaults to null', () => expect(detail.projectId, isNull));

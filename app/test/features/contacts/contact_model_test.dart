@@ -30,8 +30,6 @@ void main() {
     test('isReplied defaults to false', () => expect(item.isReplied, false));
     test('readAt defaults to null', () => expect(item.readAt, isNull));
     test('repliedAt defaults to null', () => expect(item.repliedAt, isNull));
-    test('leadScore defaults to null', () => expect(item.leadScore, isNull));
-    test('leadSource defaults to null', () => expect(item.leadSource, isNull));
     test('tags defaults to empty list', () => expect(item.tags, isEmpty));
   });
 
@@ -177,11 +175,6 @@ void main() {
       'responsePreference defaults to EMAIL',
       () => expect(detail.responsePreference, 'EMAIL'),
     );
-    test(
-      'assignedTo defaults to null',
-      () => expect(detail.assignedTo, isNull),
-    );
-    test('readBy defaults to null', () => expect(detail.readBy, isNull));
     test('replyText defaults to null', () => expect(detail.replyText, isNull));
     test('adminNote defaults to null', () => expect(detail.adminNote, isNull));
     test('ipAddress defaults to null', () => expect(detail.ipAddress, isNull));

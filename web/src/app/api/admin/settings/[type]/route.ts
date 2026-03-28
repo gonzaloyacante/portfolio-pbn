@@ -122,6 +122,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
 
     // Validate with type-specific Zod schema (partial for PATCH semantics)
     const schema = SETTINGS_SCHEMA_MAP[type]
+    let validatedBody: Record<string, unknown> = body as Record<string, unknown>
     if (schema) {
       const partialSchema =
         'partial' in schema ? (schema as ZodObject<ZodRawShape>).partial() : schema
@@ -132,9 +133,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
           { status: 400 }
         )
       }
+      validatedBody = parsed.data as Record<string, unknown>
     }
 
-    const settings = await upsertSettings(type, body as Record<string, unknown>)
+    const settings = await upsertSettings(type, validatedBody)
 
     // Invalidate caches by settings type
     switch (type) {

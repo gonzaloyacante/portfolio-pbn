@@ -1,13 +1,92 @@
+import type { Metadata } from 'next'
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransitionWrapper from '@/components/layout/PageTransitionWrapper'
-import { getThemeSettings } from '@/actions/settings/theme'
 import { getContactSettings } from '@/actions/settings/contact'
-import { getPageVisibility } from '@/actions/settings/site'
+import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
+
+const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])
+
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location || ''
+  const siteName = site?.siteName || ownerName
+
+  const defaultTitle = site?.defaultMetaTitle || `${ownerName} | Maquilladora Profesional`
+  const defaultDescription =
+    site?.defaultMetaDescription ||
+    `Portfolio de ${ownerName} - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social${location ? ` en ${location}` : ''}, España.`
+
+  const locationKeyword = location
+    ? `maquilladora ${location.toLowerCase()}`
+    : 'maquilladora profesional'
+  const favicon = site?.faviconUrl || '/favicon.ico'
+  const ogImage = site?.defaultOgImage || undefined
+
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: defaultTitle,
+      template: `%s | ${ownerName}`,
+    },
+    description: defaultDescription,
+    keywords: [
+      locationKeyword,
+      'maquillaje profesional',
+      'caracterización',
+      'efectos especiales',
+      'maquillaje audiovisual',
+      'maquillaje cine',
+      'maquillaje teatro',
+      ownerName,
+    ],
+    authors: [{ name: ownerName }],
+    creator: ownerName,
+    publisher: siteName,
+    formatDetection: {
+      email: false,
+      address: false,
+      telephone: false,
+    },
+    openGraph: {
+      type: 'website',
+      locale: 'es_ES',
+      url: SITE_URL,
+      siteName,
+      title: defaultTitle,
+      description: defaultDescription,
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: ownerName }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: defaultTitle,
+      description: defaultDescription,
+      ...(ogImage && { images: [ogImage] }),
+    },
+    robots: {
+      index: site?.allowIndexing ?? true,
+      follow: site?.allowIndexing ?? true,
+      googleBot: {
+        index: site?.allowIndexing ?? true,
+        follow: site?.allowIndexing ?? true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    icons: {
+      icon: favicon,
+      shortcut: favicon,
+      apple: '/icons/icon-192x192.png',
+    },
+    manifest: '/manifest.json',
+  }
+}
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [, contactSettings, visibility] = await Promise.all([
-    getThemeSettings(),
+  const [contactSettings, visibility] = await Promise.all([
     getContactSettings(),
     getPageVisibility(),
   ])

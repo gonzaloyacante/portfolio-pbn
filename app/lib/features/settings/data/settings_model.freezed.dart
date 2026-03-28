@@ -634,7 +634,12 @@ as bool,
 /// @nodoc
 mixin _$ThemeSettings {
 
- String? get id; String get primaryColor; String get secondaryColor; String get accentColor; String get backgroundColor; String get textColor; String get darkPrimaryColor; String get darkSecondaryColor; String get darkBackgroundColor; String get darkTextColor; String get headingFont; String get bodyFont; String get scriptFont; int get borderRadius; bool get isActive;
+ String? get id;// Light mode
+ String get primaryColor; String get secondaryColor; String get accentColor; String get backgroundColor; String get textColor; String get cardBgColor;// Dark mode
+ String get darkPrimaryColor; String get darkSecondaryColor; String get darkAccentColor; String get darkBackgroundColor; String get darkTextColor; String get darkCardBgColor;// Typography — Base
+ String get headingFont; String? get headingFontUrl; int get headingFontSize; String get bodyFont; String? get bodyFontUrl; int get bodyFontSize; String get scriptFont; String? get scriptFontUrl; int get scriptFontSize;// Typography — Brand
+ String? get brandFont; String? get brandFontUrl; int? get brandFontSize; String? get portfolioFont; String? get portfolioFontUrl; int? get portfolioFontSize; String? get signatureFont; String? get signatureFontUrl; int? get signatureFontSize;// Layout
+ int get borderRadius; bool get isActive;
 /// Create a copy of ThemeSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -647,16 +652,16 @@ $ThemeSettingsCopyWith<ThemeSettings> get copyWith => _$ThemeSettingsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.secondaryColor, secondaryColor) || other.secondaryColor == secondaryColor)&&(identical(other.accentColor, accentColor) || other.accentColor == accentColor)&&(identical(other.backgroundColor, backgroundColor) || other.backgroundColor == backgroundColor)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.darkPrimaryColor, darkPrimaryColor) || other.darkPrimaryColor == darkPrimaryColor)&&(identical(other.darkSecondaryColor, darkSecondaryColor) || other.darkSecondaryColor == darkSecondaryColor)&&(identical(other.darkBackgroundColor, darkBackgroundColor) || other.darkBackgroundColor == darkBackgroundColor)&&(identical(other.darkTextColor, darkTextColor) || other.darkTextColor == darkTextColor)&&(identical(other.headingFont, headingFont) || other.headingFont == headingFont)&&(identical(other.bodyFont, bodyFont) || other.bodyFont == bodyFont)&&(identical(other.scriptFont, scriptFont) || other.scriptFont == scriptFont)&&(identical(other.borderRadius, borderRadius) || other.borderRadius == borderRadius)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.secondaryColor, secondaryColor) || other.secondaryColor == secondaryColor)&&(identical(other.accentColor, accentColor) || other.accentColor == accentColor)&&(identical(other.backgroundColor, backgroundColor) || other.backgroundColor == backgroundColor)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.cardBgColor, cardBgColor) || other.cardBgColor == cardBgColor)&&(identical(other.darkPrimaryColor, darkPrimaryColor) || other.darkPrimaryColor == darkPrimaryColor)&&(identical(other.darkSecondaryColor, darkSecondaryColor) || other.darkSecondaryColor == darkSecondaryColor)&&(identical(other.darkAccentColor, darkAccentColor) || other.darkAccentColor == darkAccentColor)&&(identical(other.darkBackgroundColor, darkBackgroundColor) || other.darkBackgroundColor == darkBackgroundColor)&&(identical(other.darkTextColor, darkTextColor) || other.darkTextColor == darkTextColor)&&(identical(other.darkCardBgColor, darkCardBgColor) || other.darkCardBgColor == darkCardBgColor)&&(identical(other.headingFont, headingFont) || other.headingFont == headingFont)&&(identical(other.headingFontUrl, headingFontUrl) || other.headingFontUrl == headingFontUrl)&&(identical(other.headingFontSize, headingFontSize) || other.headingFontSize == headingFontSize)&&(identical(other.bodyFont, bodyFont) || other.bodyFont == bodyFont)&&(identical(other.bodyFontUrl, bodyFontUrl) || other.bodyFontUrl == bodyFontUrl)&&(identical(other.bodyFontSize, bodyFontSize) || other.bodyFontSize == bodyFontSize)&&(identical(other.scriptFont, scriptFont) || other.scriptFont == scriptFont)&&(identical(other.scriptFontUrl, scriptFontUrl) || other.scriptFontUrl == scriptFontUrl)&&(identical(other.scriptFontSize, scriptFontSize) || other.scriptFontSize == scriptFontSize)&&(identical(other.brandFont, brandFont) || other.brandFont == brandFont)&&(identical(other.brandFontUrl, brandFontUrl) || other.brandFontUrl == brandFontUrl)&&(identical(other.brandFontSize, brandFontSize) || other.brandFontSize == brandFontSize)&&(identical(other.portfolioFont, portfolioFont) || other.portfolioFont == portfolioFont)&&(identical(other.portfolioFontUrl, portfolioFontUrl) || other.portfolioFontUrl == portfolioFontUrl)&&(identical(other.portfolioFontSize, portfolioFontSize) || other.portfolioFontSize == portfolioFontSize)&&(identical(other.signatureFont, signatureFont) || other.signatureFont == signatureFont)&&(identical(other.signatureFontUrl, signatureFontUrl) || other.signatureFontUrl == signatureFontUrl)&&(identical(other.signatureFontSize, signatureFontSize) || other.signatureFontSize == signatureFontSize)&&(identical(other.borderRadius, borderRadius) || other.borderRadius == borderRadius)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,primaryColor,secondaryColor,accentColor,backgroundColor,textColor,darkPrimaryColor,darkSecondaryColor,darkBackgroundColor,darkTextColor,headingFont,bodyFont,scriptFont,borderRadius,isActive);
+int get hashCode => Object.hashAll([runtimeType,id,primaryColor,secondaryColor,accentColor,backgroundColor,textColor,cardBgColor,darkPrimaryColor,darkSecondaryColor,darkAccentColor,darkBackgroundColor,darkTextColor,darkCardBgColor,headingFont,headingFontUrl,headingFontSize,bodyFont,bodyFontUrl,bodyFontSize,scriptFont,scriptFontUrl,scriptFontSize,brandFont,brandFontUrl,brandFontSize,portfolioFont,portfolioFontUrl,portfolioFontSize,signatureFont,signatureFontUrl,signatureFontSize,borderRadius,isActive]);
 
 @override
 String toString() {
-  return 'ThemeSettings(id: $id, primaryColor: $primaryColor, secondaryColor: $secondaryColor, accentColor: $accentColor, backgroundColor: $backgroundColor, textColor: $textColor, darkPrimaryColor: $darkPrimaryColor, darkSecondaryColor: $darkSecondaryColor, darkBackgroundColor: $darkBackgroundColor, darkTextColor: $darkTextColor, headingFont: $headingFont, bodyFont: $bodyFont, scriptFont: $scriptFont, borderRadius: $borderRadius, isActive: $isActive)';
+  return 'ThemeSettings(id: $id, primaryColor: $primaryColor, secondaryColor: $secondaryColor, accentColor: $accentColor, backgroundColor: $backgroundColor, textColor: $textColor, cardBgColor: $cardBgColor, darkPrimaryColor: $darkPrimaryColor, darkSecondaryColor: $darkSecondaryColor, darkAccentColor: $darkAccentColor, darkBackgroundColor: $darkBackgroundColor, darkTextColor: $darkTextColor, darkCardBgColor: $darkCardBgColor, headingFont: $headingFont, headingFontUrl: $headingFontUrl, headingFontSize: $headingFontSize, bodyFont: $bodyFont, bodyFontUrl: $bodyFontUrl, bodyFontSize: $bodyFontSize, scriptFont: $scriptFont, scriptFontUrl: $scriptFontUrl, scriptFontSize: $scriptFontSize, brandFont: $brandFont, brandFontUrl: $brandFontUrl, brandFontSize: $brandFontSize, portfolioFont: $portfolioFont, portfolioFontUrl: $portfolioFontUrl, portfolioFontSize: $portfolioFontSize, signatureFont: $signatureFont, signatureFontUrl: $signatureFontUrl, signatureFontSize: $signatureFontSize, borderRadius: $borderRadius, isActive: $isActive)';
 }
 
 
@@ -667,7 +672,7 @@ abstract mixin class $ThemeSettingsCopyWith<$Res>  {
   factory $ThemeSettingsCopyWith(ThemeSettings value, $Res Function(ThemeSettings) _then) = _$ThemeSettingsCopyWithImpl;
 @useResult
 $Res call({
- String? id, String primaryColor, String secondaryColor, String accentColor, String backgroundColor, String textColor, String darkPrimaryColor, String darkSecondaryColor, String darkBackgroundColor, String darkTextColor, String headingFont, String bodyFont, String scriptFont, int borderRadius, bool isActive
+ String? id, String primaryColor, String secondaryColor, String accentColor, String backgroundColor, String textColor, String cardBgColor, String darkPrimaryColor, String darkSecondaryColor, String darkAccentColor, String darkBackgroundColor, String darkTextColor, String darkCardBgColor, String headingFont, String? headingFontUrl, int headingFontSize, String bodyFont, String? bodyFontUrl, int bodyFontSize, String scriptFont, String? scriptFontUrl, int scriptFontSize, String? brandFont, String? brandFontUrl, int? brandFontSize, String? portfolioFont, String? portfolioFontUrl, int? portfolioFontSize, String? signatureFont, String? signatureFontUrl, int? signatureFontSize, int borderRadius, bool isActive
 });
 
 
@@ -684,7 +689,7 @@ class _$ThemeSettingsCopyWithImpl<$Res>
 
 /// Create a copy of ThemeSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? primaryColor = null,Object? secondaryColor = null,Object? accentColor = null,Object? backgroundColor = null,Object? textColor = null,Object? darkPrimaryColor = null,Object? darkSecondaryColor = null,Object? darkBackgroundColor = null,Object? darkTextColor = null,Object? headingFont = null,Object? bodyFont = null,Object? scriptFont = null,Object? borderRadius = null,Object? isActive = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? primaryColor = null,Object? secondaryColor = null,Object? accentColor = null,Object? backgroundColor = null,Object? textColor = null,Object? cardBgColor = null,Object? darkPrimaryColor = null,Object? darkSecondaryColor = null,Object? darkAccentColor = null,Object? darkBackgroundColor = null,Object? darkTextColor = null,Object? darkCardBgColor = null,Object? headingFont = null,Object? headingFontUrl = freezed,Object? headingFontSize = null,Object? bodyFont = null,Object? bodyFontUrl = freezed,Object? bodyFontSize = null,Object? scriptFont = null,Object? scriptFontUrl = freezed,Object? scriptFontSize = null,Object? brandFont = freezed,Object? brandFontUrl = freezed,Object? brandFontSize = freezed,Object? portfolioFont = freezed,Object? portfolioFontUrl = freezed,Object? portfolioFontSize = freezed,Object? signatureFont = freezed,Object? signatureFontUrl = freezed,Object? signatureFontSize = freezed,Object? borderRadius = null,Object? isActive = null,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,primaryColor: null == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
@@ -692,14 +697,32 @@ as String,secondaryColor: null == secondaryColor ? _self.secondaryColor : second
 as String,accentColor: null == accentColor ? _self.accentColor : accentColor // ignore: cast_nullable_to_non_nullable
 as String,backgroundColor: null == backgroundColor ? _self.backgroundColor : backgroundColor // ignore: cast_nullable_to_non_nullable
 as String,textColor: null == textColor ? _self.textColor : textColor // ignore: cast_nullable_to_non_nullable
+as String,cardBgColor: null == cardBgColor ? _self.cardBgColor : cardBgColor // ignore: cast_nullable_to_non_nullable
 as String,darkPrimaryColor: null == darkPrimaryColor ? _self.darkPrimaryColor : darkPrimaryColor // ignore: cast_nullable_to_non_nullable
 as String,darkSecondaryColor: null == darkSecondaryColor ? _self.darkSecondaryColor : darkSecondaryColor // ignore: cast_nullable_to_non_nullable
+as String,darkAccentColor: null == darkAccentColor ? _self.darkAccentColor : darkAccentColor // ignore: cast_nullable_to_non_nullable
 as String,darkBackgroundColor: null == darkBackgroundColor ? _self.darkBackgroundColor : darkBackgroundColor // ignore: cast_nullable_to_non_nullable
 as String,darkTextColor: null == darkTextColor ? _self.darkTextColor : darkTextColor // ignore: cast_nullable_to_non_nullable
+as String,darkCardBgColor: null == darkCardBgColor ? _self.darkCardBgColor : darkCardBgColor // ignore: cast_nullable_to_non_nullable
 as String,headingFont: null == headingFont ? _self.headingFont : headingFont // ignore: cast_nullable_to_non_nullable
-as String,bodyFont: null == bodyFont ? _self.bodyFont : bodyFont // ignore: cast_nullable_to_non_nullable
-as String,scriptFont: null == scriptFont ? _self.scriptFont : scriptFont // ignore: cast_nullable_to_non_nullable
-as String,borderRadius: null == borderRadius ? _self.borderRadius : borderRadius // ignore: cast_nullable_to_non_nullable
+as String,headingFontUrl: freezed == headingFontUrl ? _self.headingFontUrl : headingFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,headingFontSize: null == headingFontSize ? _self.headingFontSize : headingFontSize // ignore: cast_nullable_to_non_nullable
+as int,bodyFont: null == bodyFont ? _self.bodyFont : bodyFont // ignore: cast_nullable_to_non_nullable
+as String,bodyFontUrl: freezed == bodyFontUrl ? _self.bodyFontUrl : bodyFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,bodyFontSize: null == bodyFontSize ? _self.bodyFontSize : bodyFontSize // ignore: cast_nullable_to_non_nullable
+as int,scriptFont: null == scriptFont ? _self.scriptFont : scriptFont // ignore: cast_nullable_to_non_nullable
+as String,scriptFontUrl: freezed == scriptFontUrl ? _self.scriptFontUrl : scriptFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,scriptFontSize: null == scriptFontSize ? _self.scriptFontSize : scriptFontSize // ignore: cast_nullable_to_non_nullable
+as int,brandFont: freezed == brandFont ? _self.brandFont : brandFont // ignore: cast_nullable_to_non_nullable
+as String?,brandFontUrl: freezed == brandFontUrl ? _self.brandFontUrl : brandFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,brandFontSize: freezed == brandFontSize ? _self.brandFontSize : brandFontSize // ignore: cast_nullable_to_non_nullable
+as int?,portfolioFont: freezed == portfolioFont ? _self.portfolioFont : portfolioFont // ignore: cast_nullable_to_non_nullable
+as String?,portfolioFontUrl: freezed == portfolioFontUrl ? _self.portfolioFontUrl : portfolioFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,portfolioFontSize: freezed == portfolioFontSize ? _self.portfolioFontSize : portfolioFontSize // ignore: cast_nullable_to_non_nullable
+as int?,signatureFont: freezed == signatureFont ? _self.signatureFont : signatureFont // ignore: cast_nullable_to_non_nullable
+as String?,signatureFontUrl: freezed == signatureFontUrl ? _self.signatureFontUrl : signatureFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,signatureFontSize: freezed == signatureFontSize ? _self.signatureFontSize : signatureFontSize // ignore: cast_nullable_to_non_nullable
+as int?,borderRadius: null == borderRadius ? _self.borderRadius : borderRadius // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -786,10 +809,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String primaryColor,  String secondaryColor,  String accentColor,  String backgroundColor,  String textColor,  String darkPrimaryColor,  String darkSecondaryColor,  String darkBackgroundColor,  String darkTextColor,  String headingFont,  String bodyFont,  String scriptFont,  int borderRadius,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String primaryColor,  String secondaryColor,  String accentColor,  String backgroundColor,  String textColor,  String cardBgColor,  String darkPrimaryColor,  String darkSecondaryColor,  String darkAccentColor,  String darkBackgroundColor,  String darkTextColor,  String darkCardBgColor,  String headingFont,  String? headingFontUrl,  int headingFontSize,  String bodyFont,  String? bodyFontUrl,  int bodyFontSize,  String scriptFont,  String? scriptFontUrl,  int scriptFontSize,  String? brandFont,  String? brandFontUrl,  int? brandFontSize,  String? portfolioFont,  String? portfolioFontUrl,  int? portfolioFontSize,  String? signatureFont,  String? signatureFontUrl,  int? signatureFontSize,  int borderRadius,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ThemeSettings() when $default != null:
-return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentColor,_that.backgroundColor,_that.textColor,_that.darkPrimaryColor,_that.darkSecondaryColor,_that.darkBackgroundColor,_that.darkTextColor,_that.headingFont,_that.bodyFont,_that.scriptFont,_that.borderRadius,_that.isActive);case _:
+return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentColor,_that.backgroundColor,_that.textColor,_that.cardBgColor,_that.darkPrimaryColor,_that.darkSecondaryColor,_that.darkAccentColor,_that.darkBackgroundColor,_that.darkTextColor,_that.darkCardBgColor,_that.headingFont,_that.headingFontUrl,_that.headingFontSize,_that.bodyFont,_that.bodyFontUrl,_that.bodyFontSize,_that.scriptFont,_that.scriptFontUrl,_that.scriptFontSize,_that.brandFont,_that.brandFontUrl,_that.brandFontSize,_that.portfolioFont,_that.portfolioFontUrl,_that.portfolioFontSize,_that.signatureFont,_that.signatureFontUrl,_that.signatureFontSize,_that.borderRadius,_that.isActive);case _:
   return orElse();
 
 }
@@ -807,10 +830,10 @@ return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentCol
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String primaryColor,  String secondaryColor,  String accentColor,  String backgroundColor,  String textColor,  String darkPrimaryColor,  String darkSecondaryColor,  String darkBackgroundColor,  String darkTextColor,  String headingFont,  String bodyFont,  String scriptFont,  int borderRadius,  bool isActive)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String primaryColor,  String secondaryColor,  String accentColor,  String backgroundColor,  String textColor,  String cardBgColor,  String darkPrimaryColor,  String darkSecondaryColor,  String darkAccentColor,  String darkBackgroundColor,  String darkTextColor,  String darkCardBgColor,  String headingFont,  String? headingFontUrl,  int headingFontSize,  String bodyFont,  String? bodyFontUrl,  int bodyFontSize,  String scriptFont,  String? scriptFontUrl,  int scriptFontSize,  String? brandFont,  String? brandFontUrl,  int? brandFontSize,  String? portfolioFont,  String? portfolioFontUrl,  int? portfolioFontSize,  String? signatureFont,  String? signatureFontUrl,  int? signatureFontSize,  int borderRadius,  bool isActive)  $default,) {final _that = this;
 switch (_that) {
 case _ThemeSettings():
-return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentColor,_that.backgroundColor,_that.textColor,_that.darkPrimaryColor,_that.darkSecondaryColor,_that.darkBackgroundColor,_that.darkTextColor,_that.headingFont,_that.bodyFont,_that.scriptFont,_that.borderRadius,_that.isActive);case _:
+return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentColor,_that.backgroundColor,_that.textColor,_that.cardBgColor,_that.darkPrimaryColor,_that.darkSecondaryColor,_that.darkAccentColor,_that.darkBackgroundColor,_that.darkTextColor,_that.darkCardBgColor,_that.headingFont,_that.headingFontUrl,_that.headingFontSize,_that.bodyFont,_that.bodyFontUrl,_that.bodyFontSize,_that.scriptFont,_that.scriptFontUrl,_that.scriptFontSize,_that.brandFont,_that.brandFontUrl,_that.brandFontSize,_that.portfolioFont,_that.portfolioFontUrl,_that.portfolioFontSize,_that.signatureFont,_that.signatureFontUrl,_that.signatureFontSize,_that.borderRadius,_that.isActive);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -827,10 +850,10 @@ return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentCol
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String primaryColor,  String secondaryColor,  String accentColor,  String backgroundColor,  String textColor,  String darkPrimaryColor,  String darkSecondaryColor,  String darkBackgroundColor,  String darkTextColor,  String headingFont,  String bodyFont,  String scriptFont,  int borderRadius,  bool isActive)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String primaryColor,  String secondaryColor,  String accentColor,  String backgroundColor,  String textColor,  String cardBgColor,  String darkPrimaryColor,  String darkSecondaryColor,  String darkAccentColor,  String darkBackgroundColor,  String darkTextColor,  String darkCardBgColor,  String headingFont,  String? headingFontUrl,  int headingFontSize,  String bodyFont,  String? bodyFontUrl,  int bodyFontSize,  String scriptFont,  String? scriptFontUrl,  int scriptFontSize,  String? brandFont,  String? brandFontUrl,  int? brandFontSize,  String? portfolioFont,  String? portfolioFontUrl,  int? portfolioFontSize,  String? signatureFont,  String? signatureFontUrl,  int? signatureFontSize,  int borderRadius,  bool isActive)?  $default,) {final _that = this;
 switch (_that) {
 case _ThemeSettings() when $default != null:
-return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentColor,_that.backgroundColor,_that.textColor,_that.darkPrimaryColor,_that.darkSecondaryColor,_that.darkBackgroundColor,_that.darkTextColor,_that.headingFont,_that.bodyFont,_that.scriptFont,_that.borderRadius,_that.isActive);case _:
+return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentColor,_that.backgroundColor,_that.textColor,_that.cardBgColor,_that.darkPrimaryColor,_that.darkSecondaryColor,_that.darkAccentColor,_that.darkBackgroundColor,_that.darkTextColor,_that.darkCardBgColor,_that.headingFont,_that.headingFontUrl,_that.headingFontSize,_that.bodyFont,_that.bodyFontUrl,_that.bodyFontSize,_that.scriptFont,_that.scriptFontUrl,_that.scriptFontSize,_that.brandFont,_that.brandFontUrl,_that.brandFontSize,_that.portfolioFont,_that.portfolioFontUrl,_that.portfolioFontSize,_that.signatureFont,_that.signatureFontUrl,_that.signatureFontSize,_that.borderRadius,_that.isActive);case _:
   return null;
 
 }
@@ -842,22 +865,45 @@ return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentCol
 @JsonSerializable()
 
 class _ThemeSettings implements ThemeSettings {
-  const _ThemeSettings({this.id, this.primaryColor = '#6c0a0a', this.secondaryColor = '#ffaadd', this.accentColor = '#fff1f9', this.backgroundColor = '#fff1f9', this.textColor = '#000000', this.darkPrimaryColor = '#ffaadd', this.darkSecondaryColor = '#6c0a0a', this.darkBackgroundColor = '#6c0a0a', this.darkTextColor = '#fff1f9', this.headingFont = 'Poppins', this.bodyFont = 'Open Sans', this.scriptFont = 'Great Vibes', this.borderRadius = 40, this.isActive = true});
+  const _ThemeSettings({this.id, this.primaryColor = '#6c0a0a', this.secondaryColor = '#ffaadd', this.accentColor = '#fff1f9', this.backgroundColor = '#fff1f9', this.textColor = '#000000', this.cardBgColor = '#ffaadd', this.darkPrimaryColor = '#ffaadd', this.darkSecondaryColor = '#6c0a0a', this.darkAccentColor = '#000000', this.darkBackgroundColor = '#6c0a0a', this.darkTextColor = '#fff1f9', this.darkCardBgColor = '#ffaadd', this.headingFont = 'Poppins', this.headingFontUrl, this.headingFontSize = 32, this.bodyFont = 'Open Sans', this.bodyFontUrl, this.bodyFontSize = 16, this.scriptFont = 'Great Vibes', this.scriptFontUrl, this.scriptFontSize = 24, this.brandFont, this.brandFontUrl, this.brandFontSize, this.portfolioFont, this.portfolioFontUrl, this.portfolioFontSize, this.signatureFont, this.signatureFontUrl, this.signatureFontSize, this.borderRadius = 40, this.isActive = true});
   factory _ThemeSettings.fromJson(Map<String, dynamic> json) => _$ThemeSettingsFromJson(json);
 
 @override final  String? id;
+// Light mode
 @override@JsonKey() final  String primaryColor;
 @override@JsonKey() final  String secondaryColor;
 @override@JsonKey() final  String accentColor;
 @override@JsonKey() final  String backgroundColor;
 @override@JsonKey() final  String textColor;
+@override@JsonKey() final  String cardBgColor;
+// Dark mode
 @override@JsonKey() final  String darkPrimaryColor;
 @override@JsonKey() final  String darkSecondaryColor;
+@override@JsonKey() final  String darkAccentColor;
 @override@JsonKey() final  String darkBackgroundColor;
 @override@JsonKey() final  String darkTextColor;
+@override@JsonKey() final  String darkCardBgColor;
+// Typography — Base
 @override@JsonKey() final  String headingFont;
+@override final  String? headingFontUrl;
+@override@JsonKey() final  int headingFontSize;
 @override@JsonKey() final  String bodyFont;
+@override final  String? bodyFontUrl;
+@override@JsonKey() final  int bodyFontSize;
 @override@JsonKey() final  String scriptFont;
+@override final  String? scriptFontUrl;
+@override@JsonKey() final  int scriptFontSize;
+// Typography — Brand
+@override final  String? brandFont;
+@override final  String? brandFontUrl;
+@override final  int? brandFontSize;
+@override final  String? portfolioFont;
+@override final  String? portfolioFontUrl;
+@override final  int? portfolioFontSize;
+@override final  String? signatureFont;
+@override final  String? signatureFontUrl;
+@override final  int? signatureFontSize;
+// Layout
 @override@JsonKey() final  int borderRadius;
 @override@JsonKey() final  bool isActive;
 
@@ -874,16 +920,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.secondaryColor, secondaryColor) || other.secondaryColor == secondaryColor)&&(identical(other.accentColor, accentColor) || other.accentColor == accentColor)&&(identical(other.backgroundColor, backgroundColor) || other.backgroundColor == backgroundColor)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.darkPrimaryColor, darkPrimaryColor) || other.darkPrimaryColor == darkPrimaryColor)&&(identical(other.darkSecondaryColor, darkSecondaryColor) || other.darkSecondaryColor == darkSecondaryColor)&&(identical(other.darkBackgroundColor, darkBackgroundColor) || other.darkBackgroundColor == darkBackgroundColor)&&(identical(other.darkTextColor, darkTextColor) || other.darkTextColor == darkTextColor)&&(identical(other.headingFont, headingFont) || other.headingFont == headingFont)&&(identical(other.bodyFont, bodyFont) || other.bodyFont == bodyFont)&&(identical(other.scriptFont, scriptFont) || other.scriptFont == scriptFont)&&(identical(other.borderRadius, borderRadius) || other.borderRadius == borderRadius)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.primaryColor, primaryColor) || other.primaryColor == primaryColor)&&(identical(other.secondaryColor, secondaryColor) || other.secondaryColor == secondaryColor)&&(identical(other.accentColor, accentColor) || other.accentColor == accentColor)&&(identical(other.backgroundColor, backgroundColor) || other.backgroundColor == backgroundColor)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.cardBgColor, cardBgColor) || other.cardBgColor == cardBgColor)&&(identical(other.darkPrimaryColor, darkPrimaryColor) || other.darkPrimaryColor == darkPrimaryColor)&&(identical(other.darkSecondaryColor, darkSecondaryColor) || other.darkSecondaryColor == darkSecondaryColor)&&(identical(other.darkAccentColor, darkAccentColor) || other.darkAccentColor == darkAccentColor)&&(identical(other.darkBackgroundColor, darkBackgroundColor) || other.darkBackgroundColor == darkBackgroundColor)&&(identical(other.darkTextColor, darkTextColor) || other.darkTextColor == darkTextColor)&&(identical(other.darkCardBgColor, darkCardBgColor) || other.darkCardBgColor == darkCardBgColor)&&(identical(other.headingFont, headingFont) || other.headingFont == headingFont)&&(identical(other.headingFontUrl, headingFontUrl) || other.headingFontUrl == headingFontUrl)&&(identical(other.headingFontSize, headingFontSize) || other.headingFontSize == headingFontSize)&&(identical(other.bodyFont, bodyFont) || other.bodyFont == bodyFont)&&(identical(other.bodyFontUrl, bodyFontUrl) || other.bodyFontUrl == bodyFontUrl)&&(identical(other.bodyFontSize, bodyFontSize) || other.bodyFontSize == bodyFontSize)&&(identical(other.scriptFont, scriptFont) || other.scriptFont == scriptFont)&&(identical(other.scriptFontUrl, scriptFontUrl) || other.scriptFontUrl == scriptFontUrl)&&(identical(other.scriptFontSize, scriptFontSize) || other.scriptFontSize == scriptFontSize)&&(identical(other.brandFont, brandFont) || other.brandFont == brandFont)&&(identical(other.brandFontUrl, brandFontUrl) || other.brandFontUrl == brandFontUrl)&&(identical(other.brandFontSize, brandFontSize) || other.brandFontSize == brandFontSize)&&(identical(other.portfolioFont, portfolioFont) || other.portfolioFont == portfolioFont)&&(identical(other.portfolioFontUrl, portfolioFontUrl) || other.portfolioFontUrl == portfolioFontUrl)&&(identical(other.portfolioFontSize, portfolioFontSize) || other.portfolioFontSize == portfolioFontSize)&&(identical(other.signatureFont, signatureFont) || other.signatureFont == signatureFont)&&(identical(other.signatureFontUrl, signatureFontUrl) || other.signatureFontUrl == signatureFontUrl)&&(identical(other.signatureFontSize, signatureFontSize) || other.signatureFontSize == signatureFontSize)&&(identical(other.borderRadius, borderRadius) || other.borderRadius == borderRadius)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,primaryColor,secondaryColor,accentColor,backgroundColor,textColor,darkPrimaryColor,darkSecondaryColor,darkBackgroundColor,darkTextColor,headingFont,bodyFont,scriptFont,borderRadius,isActive);
+int get hashCode => Object.hashAll([runtimeType,id,primaryColor,secondaryColor,accentColor,backgroundColor,textColor,cardBgColor,darkPrimaryColor,darkSecondaryColor,darkAccentColor,darkBackgroundColor,darkTextColor,darkCardBgColor,headingFont,headingFontUrl,headingFontSize,bodyFont,bodyFontUrl,bodyFontSize,scriptFont,scriptFontUrl,scriptFontSize,brandFont,brandFontUrl,brandFontSize,portfolioFont,portfolioFontUrl,portfolioFontSize,signatureFont,signatureFontUrl,signatureFontSize,borderRadius,isActive]);
 
 @override
 String toString() {
-  return 'ThemeSettings(id: $id, primaryColor: $primaryColor, secondaryColor: $secondaryColor, accentColor: $accentColor, backgroundColor: $backgroundColor, textColor: $textColor, darkPrimaryColor: $darkPrimaryColor, darkSecondaryColor: $darkSecondaryColor, darkBackgroundColor: $darkBackgroundColor, darkTextColor: $darkTextColor, headingFont: $headingFont, bodyFont: $bodyFont, scriptFont: $scriptFont, borderRadius: $borderRadius, isActive: $isActive)';
+  return 'ThemeSettings(id: $id, primaryColor: $primaryColor, secondaryColor: $secondaryColor, accentColor: $accentColor, backgroundColor: $backgroundColor, textColor: $textColor, cardBgColor: $cardBgColor, darkPrimaryColor: $darkPrimaryColor, darkSecondaryColor: $darkSecondaryColor, darkAccentColor: $darkAccentColor, darkBackgroundColor: $darkBackgroundColor, darkTextColor: $darkTextColor, darkCardBgColor: $darkCardBgColor, headingFont: $headingFont, headingFontUrl: $headingFontUrl, headingFontSize: $headingFontSize, bodyFont: $bodyFont, bodyFontUrl: $bodyFontUrl, bodyFontSize: $bodyFontSize, scriptFont: $scriptFont, scriptFontUrl: $scriptFontUrl, scriptFontSize: $scriptFontSize, brandFont: $brandFont, brandFontUrl: $brandFontUrl, brandFontSize: $brandFontSize, portfolioFont: $portfolioFont, portfolioFontUrl: $portfolioFontUrl, portfolioFontSize: $portfolioFontSize, signatureFont: $signatureFont, signatureFontUrl: $signatureFontUrl, signatureFontSize: $signatureFontSize, borderRadius: $borderRadius, isActive: $isActive)';
 }
 
 
@@ -894,7 +940,7 @@ abstract mixin class _$ThemeSettingsCopyWith<$Res> implements $ThemeSettingsCopy
   factory _$ThemeSettingsCopyWith(_ThemeSettings value, $Res Function(_ThemeSettings) _then) = __$ThemeSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String primaryColor, String secondaryColor, String accentColor, String backgroundColor, String textColor, String darkPrimaryColor, String darkSecondaryColor, String darkBackgroundColor, String darkTextColor, String headingFont, String bodyFont, String scriptFont, int borderRadius, bool isActive
+ String? id, String primaryColor, String secondaryColor, String accentColor, String backgroundColor, String textColor, String cardBgColor, String darkPrimaryColor, String darkSecondaryColor, String darkAccentColor, String darkBackgroundColor, String darkTextColor, String darkCardBgColor, String headingFont, String? headingFontUrl, int headingFontSize, String bodyFont, String? bodyFontUrl, int bodyFontSize, String scriptFont, String? scriptFontUrl, int scriptFontSize, String? brandFont, String? brandFontUrl, int? brandFontSize, String? portfolioFont, String? portfolioFontUrl, int? portfolioFontSize, String? signatureFont, String? signatureFontUrl, int? signatureFontSize, int borderRadius, bool isActive
 });
 
 
@@ -911,7 +957,7 @@ class __$ThemeSettingsCopyWithImpl<$Res>
 
 /// Create a copy of ThemeSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? primaryColor = null,Object? secondaryColor = null,Object? accentColor = null,Object? backgroundColor = null,Object? textColor = null,Object? darkPrimaryColor = null,Object? darkSecondaryColor = null,Object? darkBackgroundColor = null,Object? darkTextColor = null,Object? headingFont = null,Object? bodyFont = null,Object? scriptFont = null,Object? borderRadius = null,Object? isActive = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? primaryColor = null,Object? secondaryColor = null,Object? accentColor = null,Object? backgroundColor = null,Object? textColor = null,Object? cardBgColor = null,Object? darkPrimaryColor = null,Object? darkSecondaryColor = null,Object? darkAccentColor = null,Object? darkBackgroundColor = null,Object? darkTextColor = null,Object? darkCardBgColor = null,Object? headingFont = null,Object? headingFontUrl = freezed,Object? headingFontSize = null,Object? bodyFont = null,Object? bodyFontUrl = freezed,Object? bodyFontSize = null,Object? scriptFont = null,Object? scriptFontUrl = freezed,Object? scriptFontSize = null,Object? brandFont = freezed,Object? brandFontUrl = freezed,Object? brandFontSize = freezed,Object? portfolioFont = freezed,Object? portfolioFontUrl = freezed,Object? portfolioFontSize = freezed,Object? signatureFont = freezed,Object? signatureFontUrl = freezed,Object? signatureFontSize = freezed,Object? borderRadius = null,Object? isActive = null,}) {
   return _then(_ThemeSettings(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,primaryColor: null == primaryColor ? _self.primaryColor : primaryColor // ignore: cast_nullable_to_non_nullable
@@ -919,14 +965,32 @@ as String,secondaryColor: null == secondaryColor ? _self.secondaryColor : second
 as String,accentColor: null == accentColor ? _self.accentColor : accentColor // ignore: cast_nullable_to_non_nullable
 as String,backgroundColor: null == backgroundColor ? _self.backgroundColor : backgroundColor // ignore: cast_nullable_to_non_nullable
 as String,textColor: null == textColor ? _self.textColor : textColor // ignore: cast_nullable_to_non_nullable
+as String,cardBgColor: null == cardBgColor ? _self.cardBgColor : cardBgColor // ignore: cast_nullable_to_non_nullable
 as String,darkPrimaryColor: null == darkPrimaryColor ? _self.darkPrimaryColor : darkPrimaryColor // ignore: cast_nullable_to_non_nullable
 as String,darkSecondaryColor: null == darkSecondaryColor ? _self.darkSecondaryColor : darkSecondaryColor // ignore: cast_nullable_to_non_nullable
+as String,darkAccentColor: null == darkAccentColor ? _self.darkAccentColor : darkAccentColor // ignore: cast_nullable_to_non_nullable
 as String,darkBackgroundColor: null == darkBackgroundColor ? _self.darkBackgroundColor : darkBackgroundColor // ignore: cast_nullable_to_non_nullable
 as String,darkTextColor: null == darkTextColor ? _self.darkTextColor : darkTextColor // ignore: cast_nullable_to_non_nullable
+as String,darkCardBgColor: null == darkCardBgColor ? _self.darkCardBgColor : darkCardBgColor // ignore: cast_nullable_to_non_nullable
 as String,headingFont: null == headingFont ? _self.headingFont : headingFont // ignore: cast_nullable_to_non_nullable
-as String,bodyFont: null == bodyFont ? _self.bodyFont : bodyFont // ignore: cast_nullable_to_non_nullable
-as String,scriptFont: null == scriptFont ? _self.scriptFont : scriptFont // ignore: cast_nullable_to_non_nullable
-as String,borderRadius: null == borderRadius ? _self.borderRadius : borderRadius // ignore: cast_nullable_to_non_nullable
+as String,headingFontUrl: freezed == headingFontUrl ? _self.headingFontUrl : headingFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,headingFontSize: null == headingFontSize ? _self.headingFontSize : headingFontSize // ignore: cast_nullable_to_non_nullable
+as int,bodyFont: null == bodyFont ? _self.bodyFont : bodyFont // ignore: cast_nullable_to_non_nullable
+as String,bodyFontUrl: freezed == bodyFontUrl ? _self.bodyFontUrl : bodyFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,bodyFontSize: null == bodyFontSize ? _self.bodyFontSize : bodyFontSize // ignore: cast_nullable_to_non_nullable
+as int,scriptFont: null == scriptFont ? _self.scriptFont : scriptFont // ignore: cast_nullable_to_non_nullable
+as String,scriptFontUrl: freezed == scriptFontUrl ? _self.scriptFontUrl : scriptFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,scriptFontSize: null == scriptFontSize ? _self.scriptFontSize : scriptFontSize // ignore: cast_nullable_to_non_nullable
+as int,brandFont: freezed == brandFont ? _self.brandFont : brandFont // ignore: cast_nullable_to_non_nullable
+as String?,brandFontUrl: freezed == brandFontUrl ? _self.brandFontUrl : brandFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,brandFontSize: freezed == brandFontSize ? _self.brandFontSize : brandFontSize // ignore: cast_nullable_to_non_nullable
+as int?,portfolioFont: freezed == portfolioFont ? _self.portfolioFont : portfolioFont // ignore: cast_nullable_to_non_nullable
+as String?,portfolioFontUrl: freezed == portfolioFontUrl ? _self.portfolioFontUrl : portfolioFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,portfolioFontSize: freezed == portfolioFontSize ? _self.portfolioFontSize : portfolioFontSize // ignore: cast_nullable_to_non_nullable
+as int?,signatureFont: freezed == signatureFont ? _self.signatureFont : signatureFont // ignore: cast_nullable_to_non_nullable
+as String?,signatureFontUrl: freezed == signatureFontUrl ? _self.signatureFontUrl : signatureFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,signatureFontSize: freezed == signatureFontSize ? _self.signatureFontSize : signatureFontSize // ignore: cast_nullable_to_non_nullable
+as int?,borderRadius: null == borderRadius ? _self.borderRadius : borderRadius // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
