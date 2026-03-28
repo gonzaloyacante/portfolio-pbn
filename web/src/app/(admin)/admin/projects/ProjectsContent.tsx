@@ -134,7 +134,7 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
             {/* Actions */}
             <div className="border-border mt-2 flex gap-2 border-t pt-3">
               <Button asChild size="sm" variant="primary" className="flex-1">
-                <Link href={`/admin/proyectos/${project.id}/editar`}>
+                <Link href={`/admin/projects/${project.id}/edit`}>
                   <Pencil size={14} className="mr-1.5" /> Editar
                 </Link>
               </Button>
@@ -217,7 +217,7 @@ export default function ProjectsContent({ projects, categories }: ProjectsConten
             aria-label={`Editar proyecto ${project.title}`}
             title="Editar"
           >
-            <Link href={`/admin/proyectos/${project.id}/editar`}>
+            <Link href={`/admin/projects/${project.id}/edit`}>
               <Pencil size={16} />
             </Link>
           </Button>

@@ -351,7 +351,7 @@ export async function deleteProjectImage(imageId: string) {
     })
     if (!image) throw new Error('Image not found')
 
-    await deleteImage(image.publicId)
+    // Delete from DB first to avoid orphaned records if Cloudinary fails
     await prisma.projectImage.delete({ where: { id: imageId } })
 
     // Recompute thumbnailUrl: use first remaining image or clear it
@@ -363,6 +363,14 @@ export async function deleteProjectImage(imageId: string) {
     await prisma.project.update({
       where: { id: image.projectId },
       data: { thumbnailUrl: firstRemaining?.url ?? '' },
+    })
+
+    // Delete from Cloudinary non-blocking — failure doesn't affect the response
+    deleteImage(image.publicId).catch((err: Error) => {
+      logger.warn('deleteProjectImage: Cloudinary delete failed (non-blocking)', {
+        publicId: image.publicId,
+        error: err.message,
+      })
     })
 
     _revalidatePublicContent()

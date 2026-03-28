@@ -54,6 +54,8 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   bool _isLoading = false;
   String? _errorMsg;
   int? _pendingCoverIndex;
+  bool _initialized =
+      false; // Tracks whether form was populated from server data
 
   // Galería de imágenes
   List<ProjectImage> _existingImages = [];
@@ -150,27 +152,27 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
   }
 
   void _populateForm(ProjectDetail project) {
-    if (_data.title.isEmpty) {
-      _data.title = project.title;
-      _data.slug = project.slug;
-      _data.description = project.description;
-      _data.excerpt = project.excerpt;
-      _data.thumbnailUrl = project.thumbnailUrl ?? '';
-      _data.videoUrl = project.videoUrl;
-      _data.date = DateTime.tryParse(project.date);
-      _data.duration = project.duration;
-      _data.client = project.client;
-      _data.location = project.location;
-      _data.tags = List.from(project.tags);
-      _data.metaTitle = project.metaTitle;
-      _data.metaDescription = project.metaDescription;
-      _data.categoryId = project.categoryId;
-      _data.isFeatured = project.isFeatured;
-      _data.isPinned = project.isPinned;
-      _data.isActive = project.isActive;
-      // Cargar galería existente (solo una vez)
-      _existingImages = project.images.toList();
-    }
+    if (_initialized) return;
+    _initialized = true;
+    _data.title = project.title;
+    _data.slug = project.slug;
+    _data.description = project.description;
+    _data.excerpt = project.excerpt;
+    _data.thumbnailUrl = project.thumbnailUrl ?? '';
+    _data.videoUrl = project.videoUrl;
+    _data.date = DateTime.tryParse(project.date);
+    _data.duration = project.duration;
+    _data.client = project.client;
+    _data.location = project.location;
+    _data.tags = List.from(project.tags);
+    _data.metaTitle = project.metaTitle;
+    _data.metaDescription = project.metaDescription;
+    _data.categoryId = project.categoryId;
+    _data.isFeatured = project.isFeatured;
+    _data.isPinned = project.isPinned;
+    _data.isActive = project.isActive;
+    // Cargar galería existente (solo una vez)
+    _existingImages = project.images.toList();
   }
 
   void _autoSlug(String title) {
