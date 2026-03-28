@@ -324,7 +324,7 @@ export function HeroContent({
               }}
             >
               {mainImage ? (
-                <FadeIn delay={0.5} className="relative w-full" disabled={isEditor}>
+                <div className="relative w-full">
                   <div
                     className={cn(
                       'relative overflow-hidden transition-all duration-500',
@@ -357,7 +357,7 @@ export function HeroContent({
                       </div>
                     )}
                   </div>
-                </FadeIn>
+                </div>
               ) : (
                 <div className="bg-primary/5 border-primary/20 flex h-64 w-full items-center justify-center border-2 border-dashed lg:h-96">
                   <span className="text-primary/40">Sin Imagen Destacada</span>

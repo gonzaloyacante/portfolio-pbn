@@ -58,11 +58,11 @@ const securityHeaders = [
       // Styles: inline (Next.js/Tailwind) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel
-      "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com",
+      "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com",
       // Fonts: self, data URIs, Google Fonts CDN
       "font-src 'self' data: https://fonts.gstatic.com",
       // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation
-      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io",
+      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io",
       // Media: Cloudinary (videos)
       "media-src 'self' https://res.cloudinary.com",
       // Objects: none (no Flash/plugins)
@@ -82,6 +82,8 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // Enable source maps in production for better Sentry stack traces and Lighthouse audits
+  productionBrowserSourceMaps: true,
   // Security headers
   async headers() {
     return [

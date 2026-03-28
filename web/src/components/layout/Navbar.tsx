@@ -58,7 +58,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
         {/* Logo - visible en pantallas grandes */}
         <Link
           href={ROUTES.home}
-            className="font-script text-foreground mb-4 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
+          className="font-script text-foreground mb-4 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
         >
           {displayBrand}
         </Link>
@@ -78,6 +78,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
                   <motion.span
                     layoutId="navbar-active-bg"
                     className="bg-primary absolute inset-0 rounded-none"
+                    initial={false}
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}

@@ -154,9 +154,9 @@ export default async function ProjectsPage() {
         ) : (
           <div className="flex flex-col items-center justify-center rounded-[3rem] bg-(--card-bg) py-24 text-center">
             <span className="mb-4 text-6xl">🎨</span>
-            <h3 className="font-heading mb-2 text-2xl font-bold text-(--foreground)">
+            <h2 className="font-heading mb-2 text-2xl font-bold text-(--foreground)">
               Próximamente
-            </h3>
+            </h2>
             <p className="text-muted-foreground">
               Estamos preparando proyectos increíbles para mostrarte.
             </p>

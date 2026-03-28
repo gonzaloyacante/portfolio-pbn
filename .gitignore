@@ -208,3 +208,4 @@ migrate_working_dir/
 # IDE configs (keep them ignored unless intentionally tracked)
 .idea/
 .vscode/
+.unlighthouse
