@@ -76,7 +76,7 @@ export default async function ProjectsPage() {
           <h1 className="font-heading mb-4 text-4xl font-bold tracking-tight text-(--foreground) uppercase sm:text-5xl lg:text-6xl">
             Portfolio
           </h1>
-          <p className="font-body max-w-xl text-lg text-(--text-body) lg:mx-0">
+          <p className="font-body text-muted-foreground max-w-xl text-lg lg:mx-0">
             Una selección de mis mejores trabajos organizados por categoría.
           </p>
         </div>
@@ -157,7 +157,7 @@ export default async function ProjectsPage() {
             <h3 className="font-heading mb-2 text-2xl font-bold text-(--foreground)">
               Próximamente
             </h3>
-            <p className="text-(--text-body)">
+            <p className="text-muted-foreground">
               Estamos preparando proyectos increíbles para mostrarte.
             </p>
           </div>

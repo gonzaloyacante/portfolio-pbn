@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence, Variants } from 'framer-motion'
+import { motion, AnimatePresence, Variants, useReducedMotion } from 'framer-motion'
 import { ReactNode } from 'react'
 
 /**
@@ -36,8 +36,10 @@ export function FadeIn({
   disabled?: boolean
 }) {
   const isMounted = useIsMounted()
+  const shouldReduceMotion = useReducedMotion()
 
-  if (disabled || !isMounted) return <div className={className}>{children}</div>
+  if (disabled || !isMounted || shouldReduceMotion)
+    return <div className={className}>{children}</div>
 
   return (
     <motion.div
@@ -72,8 +74,10 @@ export function SlideIn({
   disabled?: boolean
 }) {
   const isMounted = useIsMounted()
+  const shouldReduceMotion = useReducedMotion()
 
-  if (disabled || !isMounted) return <div className={className}>{children}</div>
+  if (disabled || !isMounted || shouldReduceMotion)
+    return <div className={className}>{children}</div>
 
   const directions = {
     left: { x: -50, y: 0 },
@@ -113,8 +117,10 @@ export function ScaleIn({
   disabled?: boolean
 }) {
   const isMounted = useIsMounted()
+  const shouldReduceMotion = useReducedMotion()
 
-  if (disabled || !isMounted) return <div className={className}>{children}</div>
+  if (disabled || !isMounted || shouldReduceMotion)
+    return <div className={className}>{children}</div>
 
   return (
     <motion.div
@@ -143,8 +149,9 @@ export function StaggerChildren({
   staggerDelay?: number
 }) {
   const isMounted = useIsMounted()
+  const shouldReduceMotion = useReducedMotion()
 
-  if (!isMounted) return <div className={className}>{children}</div>
+  if (!isMounted || shouldReduceMotion) return <div className={className}>{children}</div>
 
   return (
     <motion.div

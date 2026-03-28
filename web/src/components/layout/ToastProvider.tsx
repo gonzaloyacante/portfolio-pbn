@@ -18,13 +18,13 @@ export default function ToastProvider() {
         success: {
           iconTheme: {
             primary: 'var(--color-primary)',
-            secondary: '#fff',
+            secondary: 'var(--card)',
           },
         },
         error: {
           iconTheme: {
             primary: STATUS_COLORS.danger,
-            secondary: '#fff',
+            secondary: 'var(--card)',
           },
         },
       }}

@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
 import { getVariantUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
+import { NEUTRAL } from '@/lib/design-tokens'
 
 const COMMON_SIZES = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\//
@@ -93,7 +94,7 @@ export function OptimizedImage({
   // Fallback SVG placeholder
   const defaultBlurDataURL = `data:image/svg+xml;base64,${Buffer.from(
     `<svg width="${width || 100}" height="${height || 100}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#f3f4f6"/>
+      <rect width="100%" height="100%" fill="${NEUTRAL.gray100}"/>
     </svg>`
   ).toString('base64')}`
 

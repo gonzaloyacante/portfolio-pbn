@@ -45,7 +45,9 @@ class ShimmerLoader extends ConsumerWidget {
 
     return Shimmer.fromColors(
       baseColor: isDark ? AppColors.darkMuted : AppColors.lightBorder,
-      highlightColor: isDark ? const Color(0xFF3A2020) : AppColors.lightMuted,
+      highlightColor: isDark
+          ? AppColors.darkShimmerHighlight
+          : AppColors.lightMuted,
       child: child,
     );
   }

@@ -51,7 +51,7 @@ function CertificationList({ certifications }: { certifications: string[] }) {
   return (
     <FadeIn delay={0.7} className="mt-6">
       <h3 className="font-heading mb-3 text-lg font-semibold text-(--foreground)">Formación</h3>
-      <ul className="list-inside list-disc space-y-1 text-sm text-(--text-body)">
+      <ul className="text-foreground list-inside list-disc space-y-1 text-sm">
         {certifications.map((cert, index) => (
           <li key={index}>{cert}</li>
         ))}

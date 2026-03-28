@@ -165,7 +165,7 @@ export default function ContactForm({
         <h3 className="font-heading mb-3 text-2xl font-bold text-(--foreground)">
           {successTitle || '¡Mensaje enviado!'}
         </h3>
-        <p className="mb-6 text-(--text-body)">
+        <p className="text-foreground mb-6">
           {successMessage || 'Gracias por contactarme. Te responderé lo antes posible.'}
         </p>
         <Button onClick={handleSendAnother} variant="outline" className="rounded-xl">
@@ -196,7 +196,7 @@ export default function ContactForm({
             <input
               {...register('name')}
               id="name"
-              className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+              className="text-foreground placeholder:text-foreground/50 w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
               placeholder="Tu nombre completo"
               autoComplete="name"
             />
@@ -212,7 +212,7 @@ export default function ContactForm({
               {...register('email')}
               type="email"
               id="email"
-              className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+              className="text-foreground placeholder:text-foreground/50 w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
               placeholder="tu@email.com"
               autoComplete="email"
             />
@@ -230,7 +230,7 @@ export default function ContactForm({
             {...register('phone')}
             type="tel"
             id="phone"
-            className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+            className="text-foreground placeholder:text-foreground/50 w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
             placeholder="+34 600 000 000"
             autoComplete="tel"
           />
@@ -287,7 +287,7 @@ export default function ContactForm({
             {...register('message')}
             id="message"
             rows={5}
-            className="w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--text-body) transition-all placeholder:text-(--text-body)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+            className="text-foreground placeholder:text-foreground/50 w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
           />
@@ -302,7 +302,7 @@ export default function ContactForm({
             id="privacy"
             className="mt-1 h-4 w-4 rounded border-2 border-(--primary)/30 text-(--primary) focus:ring-2 focus:ring-(--primary)/20"
           />
-          <label htmlFor="privacy" className="text-sm text-(--text-body)/80">
+          <label htmlFor="privacy" className="text-foreground/80 text-sm">
             He leído y acepto la{' '}
             <Link
               href={ROUTES.public.privacy}
@@ -337,7 +337,7 @@ export default function ContactForm({
           )}
         </Button>
 
-        <p className="text-center text-xs text-(--text-body)/60">* Campos obligatorios</p>
+        <p className="text-foreground/60 text-center text-xs">* Campos obligatorios</p>
       </form>
     </motion.div>
   )
@@ -362,7 +362,7 @@ function PreferenceButton({
       className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${
         active
           ? 'border-(--primary) bg-(--primary)/10 text-(--primary)'
-          : 'border-(--primary)/20 bg-(--background) text-(--text-body) hover:border-(--primary)/50'
+          : 'text-foreground border-(--primary)/20 bg-(--background) hover:border-(--primary)/50'
       }`}
     >
       {icon}

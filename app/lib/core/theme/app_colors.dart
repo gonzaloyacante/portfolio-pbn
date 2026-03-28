@@ -24,6 +24,7 @@ class AppColors {
   static const Color darkMuted = Color(0xFF2A1015);
   static const Color darkAccent = Color(0xFF2A1015);
   static const Color darkBorder = Color(0xFF2A1015);
+  static const Color darkShimmerHighlight = Color(0xFF3A2020);
 
   // ── Semánticos (igual en ambos modos) ────────────────────────────────────
   // ── Colores de categorías de entidades ─────────────────────────────────────
