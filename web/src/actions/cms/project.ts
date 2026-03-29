@@ -9,6 +9,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 import { z } from 'zod'
+import { deleteProject } from '@/actions/cms/content'
 
 interface ActionResult {
   success: boolean
@@ -71,18 +72,13 @@ export async function setProjectThumbnail(
 }
 
 /**
- * Delete a project (soft delete)
+ * Delete a project (soft delete via core content function for proper slug mangling)
  */
 export async function deleteProjectAction(projectId: string): Promise<void> {
-  await requireAdmin()
-  await checkApiRateLimit()
-  await prisma.project.update({
-    where: { id: projectId },
-    data: { isDeleted: true, deletedAt: new Date(), isActive: false },
-  })
-  revalidatePath(ROUTES.admin.projects)
-  revalidatePath(ROUTES.public.projects, 'layout')
-  revalidateTag(CACHE_TAGS.projects, 'max')
+  const result = await deleteProject(projectId)
+  if (!result.success) {
+    throw new Error(result.error)
+  }
 }
 
 /**
