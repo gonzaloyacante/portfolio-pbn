@@ -41,6 +41,40 @@ export function generateCoverUrl(originalUrl: string): string {
   return originalUrl.replace('/image/upload/', `/image/upload/${COVER_TRANSFORM}/`)
 }
 
+/**
+ * Extrae el publicId interno de Cloudinary a partir de cualquier URL generada.
+ * Sirve para poder invocar `deleteImage(publicId)` en entidades que sólo guardaron
+ * la URL en formato string (como Categories `coverImageUrl` o Services `imageUrl`).
+ *
+ * Ignora transformaciones (ej. `c_fill,w_800`) y versiones (ej. `v171...`).
+ */
+export function extractPublicIdUrl(url: string | null | undefined): string | null {
+  if (!url || !url.includes('res.cloudinary.com')) return null
+  try {
+    const parts = url.split('/upload/')
+    if (parts.length < 2) return null
+
+    let path = parts[1]
+    const segments = path.split('/')
+
+    // Filtrar segmentos de transformaciones (con comas) y versiones (empiezan por v y números)
+    const cleanlySegments = segments.filter((seg) => !seg.includes(',') && !/^v\d+$/.test(seg))
+
+    path = cleanlySegments.join('/')
+
+    // Quitar la extensión del archivo
+    const lastDotIndex = path.lastIndexOf('.')
+    if (lastDotIndex !== -1) {
+      path = path.substring(0, lastDotIndex)
+    }
+
+    return path
+  } catch (error) {
+    logger.error('Error extracting publicId from URL', { url, error })
+    return null
+  }
+}
+
 // ── Subida ────────────────────────────────────────────────────────────────────
 
 /**

@@ -6,6 +6,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 
 const VALID_TYPES = ['project', 'category', 'service', 'testimonial', 'contact', 'booking'] as const
 type TrashType = (typeof VALID_TYPES)[number]
@@ -88,9 +89,58 @@ async function restoreItem(type: TrashType, id: string) {
 
 async function purgeItem(type: TrashType, id: string) {
   const model = getModel(type)
-  const item = await model.findFirst({ where: { id, deletedAt: { not: null } } })
-  if (!item) return null
-  return model.delete({ where: { id } })
+  const publicIdsToDelete: string[] = []
+
+  // Pre-fetch dependencias ricas en media antes de borrarlas para recolectar sus assets huérfanos
+  if (type === 'project') {
+    const project = await prisma.project.findFirst({
+      where: { id, deletedAt: { not: null } },
+      include: { images: true },
+    })
+    if (!project) return null
+    project.images.forEach((img) => publicIdsToDelete.push(img.publicId))
+  } else if (type === 'category') {
+    const category = await prisma.category.findFirst({
+      where: { id, deletedAt: { not: null } },
+    })
+    if (!category) return null
+    if (category.coverImageUrl) {
+      const pid = extractPublicIdUrl(category.coverImageUrl)
+      if (pid) publicIdsToDelete.push(pid)
+    }
+  } else if (type === 'service') {
+    const service = await prisma.service.findFirst({
+      where: { id, deletedAt: { not: null } },
+    })
+    if (!service) return null
+    if (service.imageUrl) {
+      const pid = extractPublicIdUrl(service.imageUrl)
+      if (pid) publicIdsToDelete.push(pid)
+    }
+    for (const url of service.galleryUrls) {
+      const pid = extractPublicIdUrl(url)
+      if (pid) publicIdsToDelete.push(pid)
+    }
+  } else {
+    const item = await model.findFirst({ where: { id, deletedAt: { not: null } } })
+    if (!item) return null
+  }
+
+  // 1. Borrar registro central de la base de datos
+  const result = await model.delete({ where: { id } })
+
+  // 2. Ejecutar limpieza de Cloudinary no-bloqueante para evitar memory leaks cósmicos
+  if (publicIdsToDelete.length > 0) {
+    deleteMultipleImages(publicIdsToDelete).catch((err) => {
+      logger.error('[trash] Error sweeping Cloudinary images for purged item', {
+        type,
+        id,
+        error: err instanceof Error ? err.message : String(err),
+      })
+    })
+  }
+
+  return result
 }
 
 /** Invalidate caches for the given entity type */
