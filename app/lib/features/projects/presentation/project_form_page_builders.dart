@@ -175,7 +175,7 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
       Expanded(
         child: TextFormField(
           initialValue: _data.client,
-          decoration: const InputDecoration(labelText: 'Cliente'),
+          decoration: const InputDecoration(labelText: 'Cliente (opcional)'),
           textInputAction: TextInputAction.next,
           maxLength: 100,
           onSaved: (v) =>
@@ -187,8 +187,8 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
         child: TextFormField(
           initialValue: _data.duration,
           decoration: const InputDecoration(
-            labelText: 'Duración',
-            hintText: '2 semanas',
+            labelText: 'Duración (opcional)',
+            hintText: 'Ej. 2 semanas',
           ),
           textInputAction: TextInputAction.next,
           maxLength: 100,
