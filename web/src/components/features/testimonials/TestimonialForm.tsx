@@ -53,7 +53,13 @@ export default function TestimonialForm() {
         <Input label="Empresa / Negocio" name="company" placeholder="ej. Studio Creativo" />
       </div>
 
-      <Input label="Email (opcional)" name="email" type="email" placeholder="tu@email.com" />
+      <Input
+        label="Email (opcional)"
+        name="email"
+        type="email"
+        inputMode="email"
+        placeholder="tu@email.com"
+      />
 
       <div>
         <label className="text-foreground mb-2 block text-sm font-medium">Tu calificación *</label>

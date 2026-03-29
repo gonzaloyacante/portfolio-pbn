@@ -19,17 +19,18 @@ const publicTestimonialLimiter = createRateLimiter(RATE_LIMITS.TESTIMONIAL)
 import { z } from 'zod'
 
 const TestimonialSchema = z.object({
-  name: z.string().min(1, 'El nombre es obligatorio'),
+  name: z.string().trim().min(1, 'El nombre es obligatorio').max(100),
   text: z
     .string()
+    .trim()
     .min(20, 'El testimonio debe tener al menos 20 caracteres')
-    .max(500, 'El testimonio no puede superar los 500 caracteres'),
-  position: z.string().optional(),
-  company: z.string().optional(),
-  website: z.string().url().optional().or(z.literal('')),
-  avatarUrl: z.string().url().optional().or(z.literal('')),
-  email: z.string().email().optional().or(z.literal('')),
-  phone: z.string().optional(),
+    .max(1000, 'El testimonio no puede superar los 1000 caracteres'),
+  position: z.string().trim().max(100).optional(),
+  company: z.string().trim().max(100).optional(),
+  website: z.string().trim().url().max(200).optional().or(z.literal('')),
+  avatarUrl: z.string().trim().url().max(500).optional().or(z.literal('')),
+  email: z.string().trim().email().max(150).optional().or(z.literal('')),
+  phone: z.string().trim().max(30).optional(),
   rating: z.number().min(1).max(5).default(5),
   // Admin fields
   isActive: z.boolean().optional(),

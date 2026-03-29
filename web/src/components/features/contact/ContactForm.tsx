@@ -1,10 +1,10 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { sendContactEmail } from '@/actions/user/contact'
-import { Button } from '@/components/ui'
+import { Button, PhoneInput } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
@@ -21,7 +21,11 @@ const contactFormSchema = z
   .object({
     name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
     email: z.string().optional(),
-    phone: z.string().optional(),
+    phone: z
+      .string()
+      .regex(/^\+[1-9]\d{1,14}$/, 'Teléfono internacional inválido (+34...)')
+      .optional()
+      .or(z.literal('')),
     message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
     responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
     privacy: z.boolean().refine((val) => val === true, {
@@ -88,6 +92,7 @@ export default function ContactForm({
     reset,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
@@ -211,8 +216,9 @@ export default function ContactForm({
             <input
               {...register('email')}
               type="email"
+              inputMode="email"
               id="email"
-              className="text-foreground placeholder:text-foreground/50 w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+              className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
               placeholder="tu@email.com"
               autoComplete="email"
             />
@@ -221,21 +227,20 @@ export default function ContactForm({
         </div>
 
         {/* Phone */}
-        <div>
-          <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-(--foreground)">
-            {phoneLabel || 'Tu teléfono'}
-            {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') && ' *'}
-          </label>
-          <input
-            {...register('phone')}
-            type="tel"
-            id="phone"
-            className="text-foreground placeholder:text-foreground/50 w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
-            placeholder="+34 600 000 000"
-            autoComplete="tel"
-          />
-          {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
-        </div>
+        <Controller
+          name="phone"
+          control={control}
+          render={({ field }) => (
+            <PhoneInput
+              label={`${phoneLabel || 'Tu teléfono'}${
+                responsePreference === 'PHONE' || responsePreference === 'WHATSAPP' ? ' *' : ''
+              }`}
+              value={field.value || ''}
+              onChange={field.onChange}
+              error={errors.phone?.message}
+            />
+          )}
+        />
 
         {/* Response Preference Selector */}
         <fieldset>

@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'package:intl_phone_field/intl_phone_field.dart';
+
 import '../../../core/api/upload_service.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
@@ -27,7 +29,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
   final _nameCtrl = TextEditingController();
   final _textCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  final _phoneCtrl = TextEditingController();
+  String? _completePhone;
   final _positionCtrl = TextEditingController();
   final _companyCtrl = TextEditingController();
   final _avatarCtrl = TextEditingController();
@@ -49,7 +51,6 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
       _nameCtrl,
       _textCtrl,
       _emailCtrl,
-      _phoneCtrl,
       _positionCtrl,
       _companyCtrl,
       _avatarCtrl,
@@ -65,7 +66,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
     _nameCtrl.text = d.name;
     _textCtrl.text = d.text;
     _emailCtrl.text = d.email ?? '';
-    _phoneCtrl.text = d.phone ?? '';
+    _completePhone = d.phone;
     _positionCtrl.text = d.position ?? '';
     _companyCtrl.text = d.company ?? '';
     _avatarCtrl.text = d.avatarUrl ?? '';
@@ -97,7 +98,9 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
         name: _nameCtrl.text.trim(),
         text: _textCtrl.text.trim(),
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
-        phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
+        phone: (_completePhone?.trim().isEmpty ?? true)
+            ? null
+            : _completePhone!.trim(),
         position: _positionCtrl.text.trim().isEmpty
             ? null
             : _positionCtrl.text.trim(),
@@ -196,11 +199,18 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: TextFormField(
-                    controller: _phoneCtrl,
-                    decoration: const InputDecoration(labelText: 'Teléfono'),
+                  child: IntlPhoneField(
+                    decoration: const InputDecoration(
+                      labelText: 'Teléfono',
+                      counterText: '',
+                    ),
+                    initialValue: _completePhone,
+                    initialCountryCode: 'ES',
+                    invalidNumberMessage: 'Número de teléfono inválido',
                     keyboardType: TextInputType.phone,
-                    validator: AppValidators.phone,
+                    onChanged: (phone) {
+                      _completePhone = phone.completeNumber;
+                    },
                   ),
                 ),
               ],

@@ -274,6 +274,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
             label="Agregar más fotos"
             multiple
             mode="gallery"
+            folder="portfolio/projects/gallery"
             onChange={(urls, publicIds) => {
               if (urls.length > 0) {
                 // ImageUpload sends ALL images in its state, not just new ones

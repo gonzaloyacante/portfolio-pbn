@@ -135,7 +135,7 @@ export default function CategoryCoverSelector({
             <ImageUpload
               name="coverImageUpload" // Temporary name, we handle value via onSelect
               label="Subir Imagen de Portada"
-              folder="categories"
+              folder="portfolio/categories"
               maxFiles={1}
               mode="single"
               onChange={(urls) => {

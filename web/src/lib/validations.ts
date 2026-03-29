@@ -11,10 +11,18 @@ import { z } from 'zod'
 // Contact Form (Public)
 export const contactFormSchema = z
   .object({
-    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
-    email: z.string().optional(),
-    phone: z.string().optional(),
-    message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres').max(2000),
+    name: z
+      .string()
+      .trim()
+      .min(2, 'El nombre debe tener al menos 2 caracteres')
+      .max(100, 'El nombre excede el límite permitido'),
+    email: z.string().trim().optional(),
+    phone: z.string().trim().max(30).optional(),
+    message: z
+      .string()
+      .trim()
+      .min(10, 'El mensaje debe tener al menos 10 caracteres')
+      .max(2000, 'El mensaje es demasiado largo'),
     responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
     privacy: z.boolean().refine((val) => val === true, {
       message: 'Debes aceptar la política de privacidad',
@@ -46,11 +54,15 @@ export type ContactFormData = z.infer<typeof contactFormSchema>
 
 // Testimonial Form (Public)
 export const testimonialFormSchema = z.object({
-  name: z.string().min(2, 'El nombre es obligatorio'),
-  text: z.string().min(10, 'El testimonio debe tener al menos 10 caracteres'),
-  position: z.string().optional(),
+  name: z.string().trim().min(2, 'El nombre es obligatorio').max(100),
+  text: z
+    .string()
+    .trim()
+    .min(10, 'El testimonio debe tener al menos 10 caracteres')
+    .max(1000, 'Testimonio demasiado largo'),
+  position: z.string().trim().max(100).optional(),
   rating: z.number().min(1).max(5).default(5),
-  avatarUrl: z.string().optional(),
+  avatarUrl: z.string().trim().optional(),
 })
 
 export type TestimonialFormData = z.infer<typeof testimonialFormSchema>
@@ -312,23 +324,28 @@ export type CategorySettingsFormData = z.infer<typeof categorySettingsSchema>
 
 // Project
 export const projectFormSchema = z.object({
-  title: z.string().min(3).max(200),
-  description: z.string().optional().nullable(),
+  title: z.string().trim().min(3).max(200, 'El título es muy largo'),
+  description: z.string().trim().optional().nullable(),
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string(), // date input returns string
   thumbnailUrl: z.string().optional().nullable(),
   // Extended fields
-  excerpt: z.string().optional().nullable(),
-  videoUrl: z.string().optional().nullable(),
-  duration: z.string().optional().nullable(),
-  client: z.string().optional().nullable(),
-  location: z.string().optional().nullable(),
-  tags: z.string().optional().nullable(), // Comma separated string from form
+  excerpt: z
+    .string()
+    .trim()
+    .max(300, 'El resumen no debe exceder los 300 caracteres')
+    .optional()
+    .nullable(),
+  videoUrl: z.string().trim().optional().nullable(),
+  duration: z.string().trim().max(100).optional().nullable(),
+  client: z.string().trim().max(100).optional().nullable(),
+  location: z.string().trim().max(200).optional().nullable(),
+  tags: z.string().trim().max(300).optional().nullable(), // Comma separated string from form
   // SEO
-  metaTitle: z.string().optional().nullable(),
-  metaDescription: z.string().optional().nullable(),
-  metaKeywords: z.string().optional().nullable(), // Comma separated string
-  canonicalUrl: z.string().optional().nullable(),
+  metaTitle: z.string().trim().max(100).optional().nullable(),
+  metaDescription: z.string().trim().max(250).optional().nullable(),
+  metaKeywords: z.string().trim().max(300).optional().nullable(), // Comma separated string
+  canonicalUrl: z.string().trim().optional().nullable(),
   // Settings
   layout: z.string().optional().nullable(),
   isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(), // Handle boolean or string 'on'/'true'
@@ -340,21 +357,26 @@ export type ProjectFormData = z.infer<typeof projectFormSchema>
 
 // Project API schema (receives arrays for tags/metaKeywords, proper booleans)
 export const projectApiSchema = z.object({
-  title: z.string().min(3).max(200),
-  description: z.string().optional().nullable(),
+  title: z.string().trim().min(3).max(200, 'El título es muy largo'),
+  description: z.string().trim().optional().nullable(),
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string().optional(), // Defaults to today on the server if not provided
   thumbnailUrl: z.string().optional().nullable(),
-  excerpt: z.string().optional().nullable(),
-  videoUrl: z.string().optional().nullable(),
-  duration: z.string().optional().nullable(),
-  client: z.string().optional().nullable(),
-  location: z.string().optional().nullable(),
-  tags: z.array(z.string()).optional(),
-  metaTitle: z.string().optional().nullable(),
-  metaDescription: z.string().optional().nullable(),
-  metaKeywords: z.array(z.string()).optional(),
-  canonicalUrl: z.string().optional().nullable(),
+  excerpt: z
+    .string()
+    .trim()
+    .max(300, 'El resumen no debe exceder los 300 caracteres')
+    .optional()
+    .nullable(),
+  videoUrl: z.string().trim().optional().nullable(),
+  duration: z.string().trim().max(100).optional().nullable(),
+  client: z.string().trim().max(100).optional().nullable(),
+  location: z.string().trim().max(200).optional().nullable(),
+  tags: z.array(z.string().trim()).optional(),
+  metaTitle: z.string().trim().max(100).optional().nullable(),
+  metaDescription: z.string().trim().max(250).optional().nullable(),
+  metaKeywords: z.array(z.string().trim()).optional(),
+  canonicalUrl: z.string().trim().optional().nullable(),
   layout: z.string().optional().nullable(),
   isFeatured: z.boolean().optional(),
   isPinned: z.boolean().optional(),
@@ -362,12 +384,18 @@ export const projectApiSchema = z.object({
 
 // Category
 export const categorySchema = z.object({
-  name: z.string().min(1, 'El nombre es obligatorio'),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'El nombre es obligatorio')
+    .max(100, 'El nombre no debe exceder los 100 caracteres'),
   slug: z
     .string()
+    .trim()
     .min(1, 'El slug es obligatorio')
+    .max(120, 'El slug es muy largo')
     .regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
-  description: z.string().optional(),
+  description: z.string().trim().max(500, 'La descripción es muy larga').optional().nullable(),
   coverImageUrl: z.string().optional().nullable(),
   thumbnailUrl: z.string().optional().nullable(),
   sortOrder: z.number().optional(),
@@ -397,18 +425,20 @@ export const pushUnregisterSchema = z.object({
 // ── Services ────────────────────────────────────────────────────────────────
 
 export const serviceApiSchema = z.object({
-  name: z.string().min(1, 'El nombre es obligatorio'),
+  name: z.string().trim().min(1, 'El nombre es obligatorio').max(150),
   slug: z
     .string()
+    .trim()
     .min(1, 'El slug es obligatorio')
+    .max(160)
     .regex(/^[a-z0-9-]+$/, 'Slug inválido'),
-  description: z.string().optional().nullable(),
-  shortDesc: z.string().optional().nullable(),
+  description: z.string().trim().max(2000).optional().nullable(),
+  shortDesc: z.string().trim().max(300).optional().nullable(),
   price: z.number().optional().nullable(),
-  priceLabel: z.string().optional().nullable(),
-  currency: z.string().optional().nullable(),
-  duration: z.string().optional().nullable(),
-  imageUrl: z.string().optional().nullable(),
+  priceLabel: z.string().trim().max(50).optional().nullable(),
+  currency: z.string().trim().max(10).optional().nullable(),
+  duration: z.string().trim().max(100).optional().nullable(),
+  imageUrl: z.string().trim().optional().nullable(),
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
 })
@@ -422,20 +452,20 @@ export const categoryApiSchema = categorySchema.extend({
 // ── Testimonials (API — extends base) ───────────────────────────────────────
 
 export const testimonialApiSchema = z.object({
-  name: z.string().min(1, 'El nombre es obligatorio'),
-  text: z.string().min(1, 'El texto es obligatorio'),
-  excerpt: z.string().optional().nullable(),
-  position: z.string().optional().nullable(),
-  company: z.string().optional().nullable(),
-  email: z.string().optional().nullable(),
-  phone: z.string().optional().nullable(),
-  website: z.string().optional().nullable(),
-  avatarUrl: z.string().optional().nullable(),
+  name: z.string().trim().min(1, 'El nombre es obligatorio').max(100),
+  text: z.string().trim().min(1, 'El texto es obligatorio').max(1500),
+  excerpt: z.string().trim().max(300).optional().nullable(),
+  position: z.string().trim().max(100).optional().nullable(),
+  company: z.string().trim().max(100).optional().nullable(),
+  email: z.string().trim().email().max(150).optional().nullable(),
+  phone: z.string().trim().max(30).optional().nullable(),
+  website: z.string().trim().url().max(200).optional().nullable(),
+  avatarUrl: z.string().trim().optional().nullable(),
   rating: z.number().min(1).max(5).optional(),
   verified: z.boolean().optional(),
   featured: z.boolean().optional(),
-  source: z.string().optional().nullable(),
-  projectId: z.string().optional().nullable(),
+  source: z.string().trim().max(50).optional().nullable(),
+  projectId: z.string().trim().optional().nullable(),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED']).optional(),
   isActive: z.boolean().optional(),
 })
@@ -443,18 +473,24 @@ export const testimonialApiSchema = z.object({
 // ── Bookings ────────────────────────────────────────────────────────────────
 
 export const bookingApiSchema = z.object({
-  date: z.string().min(1, 'La fecha es obligatoria'),
-  endDate: z.string().optional().nullable(),
-  clientName: z.string().min(1, 'El nombre del cliente es obligatorio'),
-  clientEmail: z.string().email('Email inválido'),
-  clientPhone: z.string().optional().nullable(),
-  clientNotes: z.string().optional().nullable(),
+  date: z.string().trim().min(1, 'La fecha es obligatoria'),
+  endDate: z.string().trim().optional().nullable(),
+  clientName: z.string().trim().min(1, 'El nombre del cliente es obligatorio').max(100),
+  clientEmail: z.string().trim().email('Email inválido').max(150),
+  clientPhone: z
+    .string()
+    .trim()
+    .regex(/^\+[1-9]\d{1,14}$/, 'Teléfono internacional inválido (+34...)')
+    .max(30)
+    .optional()
+    .nullable(),
+  clientNotes: z.string().trim().max(1000).optional().nullable(),
   guestCount: z.number().optional().nullable(),
-  serviceId: z.string().min(1, 'El servicio es obligatorio'),
-  adminNotes: z.string().optional().nullable(),
+  serviceId: z.string().trim().min(1, 'El servicio es obligatorio'),
+  adminNotes: z.string().trim().max(1000).optional().nullable(),
   totalAmount: z.number().optional().nullable(),
-  paymentStatus: z.string().optional().nullable(),
-  paymentMethod: z.string().optional().nullable(),
+  paymentStatus: z.string().trim().max(50).optional().nullable(),
+  paymentMethod: z.string().trim().max(50).optional().nullable(),
   status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW']).optional(),
 })
 

@@ -135,7 +135,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
             <ImageUpload
               name="galleryUrls"
               label="Galería de Imágenes"
-              folder="services"
+              folder="portfolio/services"
               value={service?.galleryUrls || []}
               multiple
               mode="gallery"

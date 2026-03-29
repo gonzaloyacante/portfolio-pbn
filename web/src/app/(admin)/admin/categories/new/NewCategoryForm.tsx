@@ -83,7 +83,7 @@ export function NewCategoryForm() {
           <ImageUpload
             name="coverImageUrl"
             label="Imagen de Portada (Opcional)"
-            folder="categories"
+            folder="portfolio/categories"
             mode="single"
           />
         </div>

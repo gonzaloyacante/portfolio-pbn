@@ -165,6 +165,15 @@ export async function deleteProject(id: string) {
   await checkApiRateLimit()
 
   try {
+    // Fetch project to retrieve its original slug
+    const project = await prisma.project.findUnique({
+      where: { id },
+      select: { slug: true },
+    })
+    if (!project) throw new Error('Project not found')
+
+    const mangledSlug = `${project.slug}_deleted_${Date.now()}`
+
     // Soft delete - mark as deleted instead of removing
     await prisma.project.update({
       where: { id },
@@ -172,6 +181,7 @@ export async function deleteProject(id: string) {
         isDeleted: true,
         deletedAt: new Date(),
         isActive: false,
+        slug: mangledSlug, // Mangle slug to allow creating new project with same name
       },
     })
 

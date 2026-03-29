@@ -17,6 +17,7 @@ export { GoogleFontPicker } from './forms/GoogleFontPicker'
 export { default as IconPicker } from './forms/IconPicker'
 export { default as FontPicker } from './forms/FontPicker'
 export { default as PasswordStrengthMeter } from './forms/PasswordStrengthMeter'
+export { default as PhoneInput } from './forms/PhoneInput'
 
 // Data Display
 export { default as Card } from './data-display/Card'

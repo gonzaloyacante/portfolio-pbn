@@ -15,13 +15,15 @@ import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 // ============================================
 
 const ServiceSchema = z.object({
-  name: z.string().min(1, 'El nombre es obligatorio'),
+  name: z.string().trim().min(1, 'El nombre es obligatorio').max(150, 'Nombre muy largo'),
   slug: z
     .string()
+    .trim()
     .min(1, 'El slug es obligatorio')
+    .max(160, 'Slug muy largo')
     .regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
-  description: z.string().optional(),
-  shortDesc: z.string().optional(),
+  description: z.string().trim().max(2000, 'Descripción muy larga').optional(),
+  shortDesc: z.string().trim().max(300, 'Resumen muy largo').optional(),
 
   // Pricing
   price: z.coerce.number().optional().nullable(),

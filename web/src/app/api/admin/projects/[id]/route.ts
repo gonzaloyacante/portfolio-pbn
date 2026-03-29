@@ -198,6 +198,8 @@ export async function DELETE(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }
 
+    const mangledSlug = `${existing.slug}_deleted_${Date.now()}`
+
     await prisma.project.update({
       where: { id },
       data: {
@@ -205,6 +207,7 @@ export async function DELETE(req: Request, { params }: Params) {
         deletedAt: new Date(),
         deletedBy: auth.payload.userId,
         isActive: false,
+        slug: mangledSlug,
       },
     })
 

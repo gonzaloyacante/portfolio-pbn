@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import 'package:intl_phone_field/intl_phone_field.dart';
+
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../../services/providers/services_provider.dart';
@@ -23,7 +25,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
   final _clientNameCtrl = TextEditingController();
   final _clientEmailCtrl = TextEditingController();
-  final _clientPhoneCtrl = TextEditingController();
+  String? _completeClientPhone;
   final _notesCtrl = TextEditingController();
   final _guestCountCtrl = TextEditingController();
 
@@ -34,7 +36,6 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   void dispose() {
     _clientNameCtrl.dispose();
     _clientEmailCtrl.dispose();
-    _clientPhoneCtrl.dispose();
     _notesCtrl.dispose();
     _guestCountCtrl.dispose();
     super.dispose();
@@ -90,9 +91,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         date: _date!,
         clientName: _clientNameCtrl.text.trim(),
         clientEmail: _clientEmailCtrl.text.trim(),
-        clientPhone: _clientPhoneCtrl.text.trim().isEmpty
+        clientPhone: (_completeClientPhone?.trim().isEmpty ?? true)
             ? null
-            : _clientPhoneCtrl.text.trim(),
+            : _completeClientPhone!.trim(),
         guestCount: int.tryParse(_guestCountCtrl.text.trim()) ?? 1,
         clientNotes: _notesCtrl.text.trim().isEmpty
             ? null
@@ -213,11 +214,17 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                       validator: AppValidators.email,
                     ),
                     const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _clientPhoneCtrl,
+                    IntlPhoneField(
+                      decoration: const InputDecoration(
+                        labelText: 'Teléfono',
+                        counterText: '',
+                      ),
+                      initialCountryCode: 'ES',
+                      invalidNumberMessage: 'Número de teléfono inválido',
                       keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(labelText: 'Teléfono'),
-                      validator: AppValidators.phone,
+                      onChanged: (phone) {
+                        _completeClientPhone = phone.completeNumber;
+                      },
                     ),
                     const SizedBox(height: 12),
                     TextFormField(

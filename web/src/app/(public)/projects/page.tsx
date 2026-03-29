@@ -125,7 +125,7 @@ export default async function ProjectsPage() {
 
                     {/* Content */}
                     <div className="absolute inset-x-0 bottom-0 p-3 sm:p-6 lg:p-8">
-                      <h2 className="font-heading translate-y-2 text-base leading-tight font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-2xl lg:text-3xl">
+                      <h2 className="font-heading line-clamp-2 translate-y-2 text-base leading-tight font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-2xl lg:text-3xl">
                         {category.name}
                       </h2>
 
