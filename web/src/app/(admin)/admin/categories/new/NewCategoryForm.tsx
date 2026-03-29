@@ -57,12 +57,13 @@ export function NewCategoryForm() {
             name="name"
             placeholder="Ej: FX, Maquillaje social..."
             required
+            maxLength={100}
             className="w-full"
           />
         </div>
 
         {/* Slug is auto-generated from Name (hidden from the form) */}
-        <input type="hidden" name="slug" />
+        <input type="hidden" name="slug" maxLength={120} />
 
         {/* Description */}
         <div className="space-y-2">
@@ -74,6 +75,7 @@ export function NewCategoryForm() {
             name="description"
             placeholder="Describe esta categoría..."
             rows={4}
+            maxLength={500}
             className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
           />
         </div>

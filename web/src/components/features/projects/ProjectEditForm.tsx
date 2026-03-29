@@ -179,7 +179,7 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {/* Manual integration of SmartField with React Hook Form */}
           <div>
-            <SmartField label="Título" {...register('title')} required />
+            <SmartField label="Título" {...register('title')} required maxLength={200} />
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-(--foreground)">Categoría</label>
@@ -209,14 +209,21 @@ export default function ProjectEditForm({ project, categories }: ProjectEditForm
           {...register('excerpt')}
           type="textarea"
           rows={2}
+          maxLength={300}
           placeholder="Breve descripción para tarjetas y listados..."
         />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <SmartField label="Cliente" {...register('client')} placeholder="Nombre del cliente..." />
+          <SmartField
+            label="Cliente"
+            {...register('client')}
+            placeholder="Nombre del cliente..."
+            maxLength={100}
+          />
           <SmartField
             label="Duración"
             {...register('duration')}
             placeholder="Ej: 2 horas, Todo el día..."
+            maxLength={100}
           />
         </div>
         <div className="flex flex-wrap items-center gap-6">

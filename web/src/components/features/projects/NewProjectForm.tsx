@@ -41,7 +41,7 @@ export default function NewProjectForm({ categories }: NewProjectFormProps) {
         )}
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField label="Título" name="title" required />
+          <FormField label="Título" name="title" required maxLength={200} />
           <FormField
             label="Categoría"
             name="categoryId"
@@ -56,11 +56,22 @@ export default function NewProjectForm({ categories }: NewProjectFormProps) {
           name="excerpt"
           type="textarea"
           rows={2}
+          maxLength={300}
           placeholder="Breve descripción para tarjetas y listados..."
         />
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <FormField label="Cliente" name="client" placeholder="Nombre del cliente..." />
-          <FormField label="Duración" name="duration" placeholder="Ej: 2 horas, Todo el día..." />
+          <FormField
+            label="Cliente"
+            name="client"
+            placeholder="Nombre del cliente..."
+            maxLength={100}
+          />
+          <FormField
+            label="Duración"
+            name="duration"
+            placeholder="Ej: 2 horas, Todo el día..."
+            maxLength={100}
+          />
         </div>
         <FormField label="Fecha" name="date" type="date" placeholder="YYYY-MM-DD" />
         <div className="flex flex-wrap items-center gap-6">

@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
-import { generateThumbnailUrl } from '@/lib/cloudinary'
+import { generateThumbnailUrl, extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -129,6 +129,11 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     }
 
+    const previousService = await prisma.service.findUnique({
+      where: { id },
+      select: { imageUrl: true },
+    })
+
     const service = await prisma.service.update({
       where: { id },
       data: {
@@ -156,6 +161,22 @@ export async function PATCH(req: Request, { params }: Params) {
       },
       select: SERVICE_FULL_SELECT,
     })
+
+    // Cloud Wipe: If the main image changed, delete the old one from Cloudinary
+    if (imageUrl !== undefined) {
+      if (previousService?.imageUrl && previousService.imageUrl !== (imageUrl || null)) {
+        const pId = extractPublicIdUrl(previousService.imageUrl)
+        if (pId) {
+          deleteMultipleImages([pId]).catch((err: Error) =>
+            logger.warn('[admin-service-patch] Orphan sweep failed', {
+              id,
+              publicId: pId,
+              error: err.message,
+            })
+          )
+        }
+      }
+    }
 
     try {
       revalidatePath(ROUTES.admin.services)

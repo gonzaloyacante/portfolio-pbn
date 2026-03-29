@@ -83,12 +83,13 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
               defaultValue={category.name}
               placeholder="Ej: FX, Maquillaje social..."
               required
+              maxLength={100}
               className="w-full"
             />
           </div>
 
           {/* Slug: hidden from UI to avoid accidental edits. Preserved in form data. */}
-          <input type="hidden" name="slug" defaultValue={category.slug} />
+          <input type="hidden" name="slug" defaultValue={category.slug} maxLength={120} />
 
           {/* Description */}
           <div className="space-y-2">
@@ -101,6 +102,7 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
               defaultValue={category.description || ''}
               placeholder="Describe esta categoría..."
               rows={4}
+              maxLength={500}
               className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
           </div>

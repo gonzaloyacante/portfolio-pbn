@@ -1,7 +1,13 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { uploadImage, deleteImage, generateThumbnailUrl } from '@/lib/cloudinary'
+import {
+  uploadImage,
+  deleteImage,
+  deleteMultipleImages,
+  generateThumbnailUrl,
+  extractPublicIdUrl,
+} from '@/lib/cloudinary'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { logger } from '@/lib/logger'
@@ -471,10 +477,33 @@ export async function updateCategory(id: string, formData: FormData) {
     validation.data.thumbnailUrl ?? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : null)
 
   try {
+    const previousCategory = await prisma.category.findUnique({
+      where: { id },
+      select: { coverImageUrl: true },
+    })
+
     await prisma.category.update({
       where: { id },
       data: { name, slug, description, coverImageUrl: coverImageUrl || null, thumbnailUrl },
     })
+
+    // Cloud Wipe: If the cover image changed, delete the old one from Cloudinary
+    if (
+      previousCategory?.coverImageUrl &&
+      previousCategory.coverImageUrl !== (coverImageUrl || null)
+    ) {
+      const pId = extractPublicIdUrl(previousCategory.coverImageUrl)
+      if (pId) {
+        deleteMultipleImages([pId]).catch((err: Error) =>
+          logger.warn('[updateCategory] Orphan sweep failed', {
+            id,
+            publicId: pId,
+            error: err.message,
+          })
+        )
+      }
+    }
+
     _revalidatePublicContent()
     revalidatePath(ROUTES.admin.projects)
     revalidatePath(ROUTES.admin.categories)

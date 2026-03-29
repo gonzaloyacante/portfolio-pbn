@@ -61,6 +61,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                       helperText: 'Nombre público de la categoría',
                     ),
                     textCapitalization: TextCapitalization.words,
+                    maxLength: 100,
                     onChanged: _autoSlug,
                     validator: (v) => (v == null || v.trim().isEmpty)
                         ? 'Nombre requerido'
@@ -113,6 +114,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                                 helperText:
                                     'Se muestra en la página de la categoría',
                               ),
+                              maxLength: 500,
                               maxLines: null,
                               expands: true,
                             ),
@@ -137,6 +139,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                           hintText: 'Breve descripción de esta categoría',
                           helperText: 'Se muestra en la página de la categoría',
                         ),
+                        maxLength: 500,
                         maxLines: 3,
                       ),
                     ],

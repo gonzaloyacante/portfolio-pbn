@@ -137,6 +137,7 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
       helperText: 'Nombre del proyecto en el portfolio',
     ),
     textInputAction: TextInputAction.next,
+    maxLength: 200,
     onChanged: _autoSlug,
     onSaved: (v) => _data.title = v?.trim() ?? '',
     validator: (v) =>
@@ -164,6 +165,7 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
       alignLabelWithHint: true,
       helperText: 'Resumen corto para listados y tarjetas',
     ),
+    maxLength: 300,
     onSaved: (v) =>
         _data.excerpt = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
   );
@@ -175,6 +177,7 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
           initialValue: _data.client,
           decoration: const InputDecoration(labelText: 'Cliente'),
           textInputAction: TextInputAction.next,
+          maxLength: 100,
           onSaved: (v) =>
               _data.client = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
         ),
@@ -188,6 +191,7 @@ extension _ProjectFormPageBuilders on _ProjectFormPageState {
             hintText: '2 semanas',
           ),
           textInputAction: TextInputAction.next,
+          maxLength: 100,
           onSaved: (v) =>
               _data.duration = (v?.trim().isEmpty ?? true) ? null : v!.trim(),
         ),

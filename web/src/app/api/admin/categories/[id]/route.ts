@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
-import { generateThumbnailUrl } from '@/lib/cloudinary'
+import { generateThumbnailUrl, extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -109,7 +109,6 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     }
 
-    // Si se actualiza coverImageUrl sin thumbnailUrl explícito → regenerar thumbnail.
     const resolvedThumbnailUrl =
       thumbnailUrl !== undefined
         ? thumbnailUrl
@@ -118,6 +117,11 @@ export async function PATCH(req: Request, { params }: Params) {
             ? generateThumbnailUrl(coverImageUrl)
             : null
           : undefined
+
+    const previousCategory = await prisma.category.findUnique({
+      where: { id },
+      select: { coverImageUrl: true },
+    })
 
     // Neon HTTP adapter no soporta transacciones implícitas al usar _count en mutations.
     // Actualizamos sin _count y luego consultamos el count por separado.
@@ -154,6 +158,25 @@ export async function PATCH(req: Request, { params }: Params) {
       },
     })
     const projectCount = await prisma.project.count({ where: { categoryId: id, deletedAt: null } })
+
+    // Cloud Wipe: If the cover image changed, delete the old one from Cloudinary
+    if (coverImageUrl !== undefined) {
+      if (
+        previousCategory?.coverImageUrl &&
+        previousCategory.coverImageUrl !== (coverImageUrl || null)
+      ) {
+        const pId = extractPublicIdUrl(previousCategory.coverImageUrl)
+        if (pId) {
+          deleteMultipleImages([pId]).catch((err: Error) =>
+            logger.warn('[admin-category-patch] Orphan sweep failed', {
+              id,
+              publicId: pId,
+              error: err.message,
+            })
+          )
+        }
+      }
+    }
 
     try {
       revalidatePath(ROUTES.public.projects, 'layout')
