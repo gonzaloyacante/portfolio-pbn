@@ -50,11 +50,6 @@ const ServiceSchema = z.object({
   isFeatured: z.boolean().default(false),
   sortOrder: z.coerce.number().int().default(0),
 
-  // SEO
-  metaTitle: z.string().optional(),
-  metaDescription: z.string().optional(),
-  metaKeywords: z.string().optional(),
-
   // Experience
   requirements: z.string().optional(),
   cancellationPolicy: z.string().optional(),
@@ -157,10 +152,6 @@ export async function createService(formData: FormData) {
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
     sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
-    // SEO
-    metaTitle: formData.get('metaTitle'),
-    metaDescription: formData.get('metaDescription'),
-    metaKeywords: formData.get('metaKeywords'),
     // Experience
     requirements: formData.get('requirements'),
     cancellationPolicy: formData.get('cancellationPolicy'),
@@ -202,12 +193,6 @@ export async function createService(formData: FormData) {
             .map((u) => u.trim())
             .filter(Boolean)
         : []
-    const keywordList = data.metaKeywords
-      ? data.metaKeywords
-          .split(',')
-          .map((k) => k.trim())
-          .filter(Boolean)
-      : []
 
     await prisma.service.create({
       data: {
@@ -230,9 +215,6 @@ export async function createService(formData: FormData) {
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
-        metaTitle: data.metaTitle,
-        metaDescription: data.metaDescription,
-        metaKeywords: keywordList,
         requirements: data.requirements,
         cancellationPolicy: data.cancellationPolicy,
       },
@@ -289,10 +271,6 @@ export async function updateService(id: string, formData: FormData) {
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
     sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
-    // SEO
-    metaTitle: formData.get('metaTitle'),
-    metaDescription: formData.get('metaDescription'),
-    metaKeywords: formData.get('metaKeywords'),
     // Experience
     requirements: formData.get('requirements'),
     cancellationPolicy: formData.get('cancellationPolicy'),
@@ -333,12 +311,6 @@ export async function updateService(id: string, formData: FormData) {
             .map((u) => u.trim())
             .filter(Boolean)
         : []
-    const keywordList = data.metaKeywords
-      ? data.metaKeywords
-          .split(',')
-          .map((k) => k.trim())
-          .filter(Boolean)
-      : []
 
     const newImageUrl = data.imageUrl || galleryList[0] || null
 
@@ -369,9 +341,6 @@ export async function updateService(id: string, formData: FormData) {
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         sortOrder: data.sortOrder,
-        metaTitle: data.metaTitle,
-        metaDescription: data.metaDescription,
-        metaKeywords: keywordList,
         requirements: data.requirements,
         cancellationPolicy: data.cancellationPolicy,
       },

@@ -329,7 +329,7 @@ export const projectFormSchema = z.object({
   categoryId: z.string().min(1, 'Categoría requerida'),
   date: z.string(), // date input returns string
   thumbnailUrl: z.string().optional().nullable(),
-  // Extended fields
+  // Content
   excerpt: z
     .string()
     .trim()
@@ -339,23 +339,15 @@ export const projectFormSchema = z.object({
   videoUrl: z.string().trim().optional().nullable(),
   duration: z.string().trim().max(100).optional().nullable(),
   client: z.string().trim().max(100).optional().nullable(),
-  location: z.string().trim().max(200).optional().nullable(),
-  tags: z.string().trim().max(300).optional().nullable(), // Comma separated string from form
-  // SEO
-  metaTitle: z.string().trim().max(100).optional().nullable(),
-  metaDescription: z.string().trim().max(250).optional().nullable(),
-  metaKeywords: z.string().trim().max(300).optional().nullable(), // Comma separated string
-  canonicalUrl: z.string().trim().optional().nullable(),
   // Settings
-  layout: z.string().optional().nullable(),
-  isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(), // Handle boolean or string 'on'/'true'
+  isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(),
   isPinned: z.union([z.boolean(), z.string()]).optional().nullable(),
   isActive: z.union([z.boolean(), z.string()]).optional().nullable(),
 })
 
 export type ProjectFormData = z.infer<typeof projectFormSchema>
 
-// Project API schema (receives arrays for tags/metaKeywords, proper booleans)
+// Project API schema (receives arrays, proper booleans — used by Flutter app)
 export const projectApiSchema = z.object({
   title: z.string().trim().min(3).max(200, 'El título es muy largo'),
   description: z.string().trim().optional().nullable(),
@@ -371,13 +363,6 @@ export const projectApiSchema = z.object({
   videoUrl: z.string().trim().optional().nullable(),
   duration: z.string().trim().max(100).optional().nullable(),
   client: z.string().trim().max(100).optional().nullable(),
-  location: z.string().trim().max(200).optional().nullable(),
-  tags: z.array(z.string().trim()).optional(),
-  metaTitle: z.string().trim().max(100).optional().nullable(),
-  metaDescription: z.string().trim().max(250).optional().nullable(),
-  metaKeywords: z.array(z.string().trim()).optional(),
-  canonicalUrl: z.string().trim().optional().nullable(),
-  layout: z.string().optional().nullable(),
   isFeatured: z.boolean().optional(),
   isPinned: z.boolean().optional(),
 })
@@ -600,19 +585,11 @@ export const uploadDeleteSchema = z.object({
 export const projectPatchSchema = projectApiSchema
   .extend({
     slug: z.string().optional(),
-    ogImage: z.string().optional().nullable(),
     isActive: z.boolean().optional(),
   })
   .partial()
 
-export const categoryPatchSchema = categoryApiSchema
-  .extend({
-    metaTitle: z.string().optional().nullable(),
-    metaDescription: z.string().optional().nullable(),
-    metaKeywords: z.array(z.string()).optional(),
-    ogImage: z.string().optional().nullable(),
-  })
-  .partial()
+export const categoryPatchSchema = categoryApiSchema.partial()
 
 export const servicePatchSchema = serviceApiSchema
   .extend({
@@ -622,9 +599,6 @@ export const servicePatchSchema = serviceApiSchema
     maxBookingsPerDay: z.number().optional().nullable(),
     advanceNoticeDays: z.number().optional().nullable(),
     sortOrder: z.number().optional(),
-    metaTitle: z.string().optional().nullable(),
-    metaDescription: z.string().optional().nullable(),
-    metaKeywords: z.array(z.string()).optional(),
     requirements: z.string().optional().nullable(),
     cancellationPolicy: z.string().optional().nullable(),
   })

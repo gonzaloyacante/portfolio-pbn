@@ -876,7 +876,8 @@ $ProjectCategoryCopyWith<$Res> get category {
 /// @nodoc
 mixin _$ProjectDetail {
 
- String get id; String get title; String get slug; String get description; String? get excerpt; String? get thumbnailUrl; String? get videoUrl; String get date; String? get duration; String? get client; String? get location; List<String> get tags; String? get metaTitle; String? get metaDescription; List<String> get metaKeywords; String? get ogImage; String get categoryId; int get sortOrder; bool get isFeatured; bool get isPinned; bool get isActive; int get viewCount; int get likeCount; String? get publishedAt; String get createdAt; String get updatedAt; ProjectCategory get category; List<ProjectImage> get images;
+ String get id; String get title; String get slug; String get description; String? get excerpt; String? get thumbnailUrl; String? get videoUrl;// Optional video showcase (future use)
+ String get date; String? get duration; String? get client; String get categoryId; int get sortOrder; bool get isFeatured; bool get isPinned; bool get isActive; int get viewCount; String? get publishedAt; String get createdAt; String get updatedAt; ProjectCategory get category; List<ProjectImage> get images;
 /// Create a copy of ProjectDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -889,16 +890,16 @@ $ProjectDetailCopyWith<ProjectDetail> get copyWith => _$ProjectDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&(identical(other.date, date) || other.date == date)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.client, client) || other.client == client)&&(identical(other.location, location) || other.location == location)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.metaTitle, metaTitle) || other.metaTitle == metaTitle)&&(identical(other.metaDescription, metaDescription) || other.metaDescription == metaDescription)&&const DeepCollectionEquality().equals(other.metaKeywords, metaKeywords)&&(identical(other.ogImage, ogImage) || other.ogImage == ogImage)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.images, images));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&(identical(other.date, date) || other.date == date)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.client, client) || other.client == client)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.images, images));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,slug,description,excerpt,thumbnailUrl,videoUrl,date,duration,client,location,const DeepCollectionEquality().hash(tags),metaTitle,metaDescription,const DeepCollectionEquality().hash(metaKeywords),ogImage,categoryId,sortOrder,isFeatured,isPinned,isActive,viewCount,likeCount,publishedAt,createdAt,updatedAt,category,const DeepCollectionEquality().hash(images)]);
+int get hashCode => Object.hashAll([runtimeType,id,title,slug,description,excerpt,thumbnailUrl,videoUrl,date,duration,client,categoryId,sortOrder,isFeatured,isPinned,isActive,viewCount,publishedAt,createdAt,updatedAt,category,const DeepCollectionEquality().hash(images)]);
 
 @override
 String toString() {
-  return 'ProjectDetail(id: $id, title: $title, slug: $slug, description: $description, excerpt: $excerpt, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, date: $date, duration: $duration, client: $client, location: $location, tags: $tags, metaTitle: $metaTitle, metaDescription: $metaDescription, metaKeywords: $metaKeywords, ogImage: $ogImage, categoryId: $categoryId, sortOrder: $sortOrder, isFeatured: $isFeatured, isPinned: $isPinned, isActive: $isActive, viewCount: $viewCount, likeCount: $likeCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt, category: $category, images: $images)';
+  return 'ProjectDetail(id: $id, title: $title, slug: $slug, description: $description, excerpt: $excerpt, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, date: $date, duration: $duration, client: $client, categoryId: $categoryId, sortOrder: $sortOrder, isFeatured: $isFeatured, isPinned: $isPinned, isActive: $isActive, viewCount: $viewCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt, category: $category, images: $images)';
 }
 
 
@@ -909,7 +910,7 @@ abstract mixin class $ProjectDetailCopyWith<$Res>  {
   factory $ProjectDetailCopyWith(ProjectDetail value, $Res Function(ProjectDetail) _then) = _$ProjectDetailCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String slug, String description, String? excerpt, String? thumbnailUrl, String? videoUrl, String date, String? duration, String? client, String? location, List<String> tags, String? metaTitle, String? metaDescription, List<String> metaKeywords, String? ogImage, String categoryId, int sortOrder, bool isFeatured, bool isPinned, bool isActive, int viewCount, int likeCount, String? publishedAt, String createdAt, String updatedAt, ProjectCategory category, List<ProjectImage> images
+ String id, String title, String slug, String description, String? excerpt, String? thumbnailUrl, String? videoUrl, String date, String? duration, String? client, String categoryId, int sortOrder, bool isFeatured, bool isPinned, bool isActive, int viewCount, String? publishedAt, String createdAt, String updatedAt, ProjectCategory category, List<ProjectImage> images
 });
 
 
@@ -926,7 +927,7 @@ class _$ProjectDetailCopyWithImpl<$Res>
 
 /// Create a copy of ProjectDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? slug = null,Object? description = null,Object? excerpt = freezed,Object? thumbnailUrl = freezed,Object? videoUrl = freezed,Object? date = null,Object? duration = freezed,Object? client = freezed,Object? location = freezed,Object? tags = null,Object? metaTitle = freezed,Object? metaDescription = freezed,Object? metaKeywords = null,Object? ogImage = freezed,Object? categoryId = null,Object? sortOrder = null,Object? isFeatured = null,Object? isPinned = null,Object? isActive = null,Object? viewCount = null,Object? likeCount = null,Object? publishedAt = freezed,Object? createdAt = null,Object? updatedAt = null,Object? category = null,Object? images = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? slug = null,Object? description = null,Object? excerpt = freezed,Object? thumbnailUrl = freezed,Object? videoUrl = freezed,Object? date = null,Object? duration = freezed,Object? client = freezed,Object? categoryId = null,Object? sortOrder = null,Object? isFeatured = null,Object? isPinned = null,Object? isActive = null,Object? viewCount = null,Object? publishedAt = freezed,Object? createdAt = null,Object? updatedAt = null,Object? category = null,Object? images = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -938,19 +939,12 @@ as String?,videoUrl: freezed == videoUrl ? _self.videoUrl : videoUrl // ignore: 
 as String?,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as String?,client: freezed == client ? _self.client : client // ignore: cast_nullable_to_non_nullable
-as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,metaTitle: freezed == metaTitle ? _self.metaTitle : metaTitle // ignore: cast_nullable_to_non_nullable
-as String?,metaDescription: freezed == metaDescription ? _self.metaDescription : metaDescription // ignore: cast_nullable_to_non_nullable
-as String?,metaKeywords: null == metaKeywords ? _self.metaKeywords : metaKeywords // ignore: cast_nullable_to_non_nullable
-as List<String>,ogImage: freezed == ogImage ? _self.ogImage : ogImage // ignore: cast_nullable_to_non_nullable
 as String?,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,isFeatured: null == isFeatured ? _self.isFeatured : isFeatured // ignore: cast_nullable_to_non_nullable
 as bool,isPinned: null == isPinned ? _self.isPinned : isPinned // ignore: cast_nullable_to_non_nullable
 as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,viewCount: null == viewCount ? _self.viewCount : viewCount // ignore: cast_nullable_to_non_nullable
-as int,likeCount: null == likeCount ? _self.likeCount : likeCount // ignore: cast_nullable_to_non_nullable
 as int,publishedAt: freezed == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
@@ -1050,10 +1044,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String slug,  String description,  String? excerpt,  String? thumbnailUrl,  String? videoUrl,  String date,  String? duration,  String? client,  String? location,  List<String> tags,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  String categoryId,  int sortOrder,  bool isFeatured,  bool isPinned,  bool isActive,  int viewCount,  int likeCount,  String? publishedAt,  String createdAt,  String updatedAt,  ProjectCategory category,  List<ProjectImage> images)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String slug,  String description,  String? excerpt,  String? thumbnailUrl,  String? videoUrl,  String date,  String? duration,  String? client,  String categoryId,  int sortOrder,  bool isFeatured,  bool isPinned,  bool isActive,  int viewCount,  String? publishedAt,  String createdAt,  String updatedAt,  ProjectCategory category,  List<ProjectImage> images)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectDetail() when $default != null:
-return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,_that.thumbnailUrl,_that.videoUrl,_that.date,_that.duration,_that.client,_that.location,_that.tags,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.categoryId,_that.sortOrder,_that.isFeatured,_that.isPinned,_that.isActive,_that.viewCount,_that.likeCount,_that.publishedAt,_that.createdAt,_that.updatedAt,_that.category,_that.images);case _:
+return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,_that.thumbnailUrl,_that.videoUrl,_that.date,_that.duration,_that.client,_that.categoryId,_that.sortOrder,_that.isFeatured,_that.isPinned,_that.isActive,_that.viewCount,_that.publishedAt,_that.createdAt,_that.updatedAt,_that.category,_that.images);case _:
   return orElse();
 
 }
@@ -1071,10 +1065,10 @@ return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String slug,  String description,  String? excerpt,  String? thumbnailUrl,  String? videoUrl,  String date,  String? duration,  String? client,  String? location,  List<String> tags,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  String categoryId,  int sortOrder,  bool isFeatured,  bool isPinned,  bool isActive,  int viewCount,  int likeCount,  String? publishedAt,  String createdAt,  String updatedAt,  ProjectCategory category,  List<ProjectImage> images)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String slug,  String description,  String? excerpt,  String? thumbnailUrl,  String? videoUrl,  String date,  String? duration,  String? client,  String categoryId,  int sortOrder,  bool isFeatured,  bool isPinned,  bool isActive,  int viewCount,  String? publishedAt,  String createdAt,  String updatedAt,  ProjectCategory category,  List<ProjectImage> images)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectDetail():
-return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,_that.thumbnailUrl,_that.videoUrl,_that.date,_that.duration,_that.client,_that.location,_that.tags,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.categoryId,_that.sortOrder,_that.isFeatured,_that.isPinned,_that.isActive,_that.viewCount,_that.likeCount,_that.publishedAt,_that.createdAt,_that.updatedAt,_that.category,_that.images);case _:
+return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,_that.thumbnailUrl,_that.videoUrl,_that.date,_that.duration,_that.client,_that.categoryId,_that.sortOrder,_that.isFeatured,_that.isPinned,_that.isActive,_that.viewCount,_that.publishedAt,_that.createdAt,_that.updatedAt,_that.category,_that.images);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1091,10 +1085,10 @@ return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String slug,  String description,  String? excerpt,  String? thumbnailUrl,  String? videoUrl,  String date,  String? duration,  String? client,  String? location,  List<String> tags,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  String categoryId,  int sortOrder,  bool isFeatured,  bool isPinned,  bool isActive,  int viewCount,  int likeCount,  String? publishedAt,  String createdAt,  String updatedAt,  ProjectCategory category,  List<ProjectImage> images)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String slug,  String description,  String? excerpt,  String? thumbnailUrl,  String? videoUrl,  String date,  String? duration,  String? client,  String categoryId,  int sortOrder,  bool isFeatured,  bool isPinned,  bool isActive,  int viewCount,  String? publishedAt,  String createdAt,  String updatedAt,  ProjectCategory category,  List<ProjectImage> images)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectDetail() when $default != null:
-return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,_that.thumbnailUrl,_that.videoUrl,_that.date,_that.duration,_that.client,_that.location,_that.tags,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.categoryId,_that.sortOrder,_that.isFeatured,_that.isPinned,_that.isActive,_that.viewCount,_that.likeCount,_that.publishedAt,_that.createdAt,_that.updatedAt,_that.category,_that.images);case _:
+return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,_that.thumbnailUrl,_that.videoUrl,_that.date,_that.duration,_that.client,_that.categoryId,_that.sortOrder,_that.isFeatured,_that.isPinned,_that.isActive,_that.viewCount,_that.publishedAt,_that.createdAt,_that.updatedAt,_that.category,_that.images);case _:
   return null;
 
 }
@@ -1106,7 +1100,7 @@ return $default(_that.id,_that.title,_that.slug,_that.description,_that.excerpt,
 @JsonSerializable()
 
 class _ProjectDetail implements ProjectDetail {
-  const _ProjectDetail({required this.id, required this.title, required this.slug, required this.description, this.excerpt, this.thumbnailUrl, this.videoUrl, required this.date, this.duration, this.client, this.location, final  List<String> tags = const [], this.metaTitle, this.metaDescription, final  List<String> metaKeywords = const [], this.ogImage, required this.categoryId, this.sortOrder = 0, this.isFeatured = false, this.isPinned = false, this.isActive = true, this.viewCount = 0, this.likeCount = 0, this.publishedAt, required this.createdAt, required this.updatedAt, required this.category, final  List<ProjectImage> images = const []}): _tags = tags,_metaKeywords = metaKeywords,_images = images;
+  const _ProjectDetail({required this.id, required this.title, required this.slug, required this.description, this.excerpt, this.thumbnailUrl, this.videoUrl, required this.date, this.duration, this.client, required this.categoryId, this.sortOrder = 0, this.isFeatured = false, this.isPinned = false, this.isActive = true, this.viewCount = 0, this.publishedAt, required this.createdAt, required this.updatedAt, required this.category, final  List<ProjectImage> images = const []}): _images = images;
   factory _ProjectDetail.fromJson(Map<String, dynamic> json) => _$ProjectDetailFromJson(json);
 
 @override final  String id;
@@ -1116,34 +1110,16 @@ class _ProjectDetail implements ProjectDetail {
 @override final  String? excerpt;
 @override final  String? thumbnailUrl;
 @override final  String? videoUrl;
+// Optional video showcase (future use)
 @override final  String date;
 @override final  String? duration;
 @override final  String? client;
-@override final  String? location;
- final  List<String> _tags;
-@override@JsonKey() List<String> get tags {
-  if (_tags is EqualUnmodifiableListView) return _tags;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_tags);
-}
-
-@override final  String? metaTitle;
-@override final  String? metaDescription;
- final  List<String> _metaKeywords;
-@override@JsonKey() List<String> get metaKeywords {
-  if (_metaKeywords is EqualUnmodifiableListView) return _metaKeywords;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_metaKeywords);
-}
-
-@override final  String? ogImage;
 @override final  String categoryId;
 @override@JsonKey() final  int sortOrder;
 @override@JsonKey() final  bool isFeatured;
 @override@JsonKey() final  bool isPinned;
 @override@JsonKey() final  bool isActive;
 @override@JsonKey() final  int viewCount;
-@override@JsonKey() final  int likeCount;
 @override final  String? publishedAt;
 @override final  String createdAt;
 @override final  String updatedAt;
@@ -1169,16 +1145,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&(identical(other.date, date) || other.date == date)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.client, client) || other.client == client)&&(identical(other.location, location) || other.location == location)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.metaTitle, metaTitle) || other.metaTitle == metaTitle)&&(identical(other.metaDescription, metaDescription) || other.metaDescription == metaDescription)&&const DeepCollectionEquality().equals(other._metaKeywords, _metaKeywords)&&(identical(other.ogImage, ogImage) || other.ogImage == ogImage)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._images, _images));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.videoUrl, videoUrl) || other.videoUrl == videoUrl)&&(identical(other.date, date) || other.date == date)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.client, client) || other.client == client)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured)&&(identical(other.isPinned, isPinned) || other.isPinned == isPinned)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.publishedAt, publishedAt) || other.publishedAt == publishedAt)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other._images, _images));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,title,slug,description,excerpt,thumbnailUrl,videoUrl,date,duration,client,location,const DeepCollectionEquality().hash(_tags),metaTitle,metaDescription,const DeepCollectionEquality().hash(_metaKeywords),ogImage,categoryId,sortOrder,isFeatured,isPinned,isActive,viewCount,likeCount,publishedAt,createdAt,updatedAt,category,const DeepCollectionEquality().hash(_images)]);
+int get hashCode => Object.hashAll([runtimeType,id,title,slug,description,excerpt,thumbnailUrl,videoUrl,date,duration,client,categoryId,sortOrder,isFeatured,isPinned,isActive,viewCount,publishedAt,createdAt,updatedAt,category,const DeepCollectionEquality().hash(_images)]);
 
 @override
 String toString() {
-  return 'ProjectDetail(id: $id, title: $title, slug: $slug, description: $description, excerpt: $excerpt, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, date: $date, duration: $duration, client: $client, location: $location, tags: $tags, metaTitle: $metaTitle, metaDescription: $metaDescription, metaKeywords: $metaKeywords, ogImage: $ogImage, categoryId: $categoryId, sortOrder: $sortOrder, isFeatured: $isFeatured, isPinned: $isPinned, isActive: $isActive, viewCount: $viewCount, likeCount: $likeCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt, category: $category, images: $images)';
+  return 'ProjectDetail(id: $id, title: $title, slug: $slug, description: $description, excerpt: $excerpt, thumbnailUrl: $thumbnailUrl, videoUrl: $videoUrl, date: $date, duration: $duration, client: $client, categoryId: $categoryId, sortOrder: $sortOrder, isFeatured: $isFeatured, isPinned: $isPinned, isActive: $isActive, viewCount: $viewCount, publishedAt: $publishedAt, createdAt: $createdAt, updatedAt: $updatedAt, category: $category, images: $images)';
 }
 
 
@@ -1189,7 +1165,7 @@ abstract mixin class _$ProjectDetailCopyWith<$Res> implements $ProjectDetailCopy
   factory _$ProjectDetailCopyWith(_ProjectDetail value, $Res Function(_ProjectDetail) _then) = __$ProjectDetailCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String slug, String description, String? excerpt, String? thumbnailUrl, String? videoUrl, String date, String? duration, String? client, String? location, List<String> tags, String? metaTitle, String? metaDescription, List<String> metaKeywords, String? ogImage, String categoryId, int sortOrder, bool isFeatured, bool isPinned, bool isActive, int viewCount, int likeCount, String? publishedAt, String createdAt, String updatedAt, ProjectCategory category, List<ProjectImage> images
+ String id, String title, String slug, String description, String? excerpt, String? thumbnailUrl, String? videoUrl, String date, String? duration, String? client, String categoryId, int sortOrder, bool isFeatured, bool isPinned, bool isActive, int viewCount, String? publishedAt, String createdAt, String updatedAt, ProjectCategory category, List<ProjectImage> images
 });
 
 
@@ -1206,7 +1182,7 @@ class __$ProjectDetailCopyWithImpl<$Res>
 
 /// Create a copy of ProjectDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? slug = null,Object? description = null,Object? excerpt = freezed,Object? thumbnailUrl = freezed,Object? videoUrl = freezed,Object? date = null,Object? duration = freezed,Object? client = freezed,Object? location = freezed,Object? tags = null,Object? metaTitle = freezed,Object? metaDescription = freezed,Object? metaKeywords = null,Object? ogImage = freezed,Object? categoryId = null,Object? sortOrder = null,Object? isFeatured = null,Object? isPinned = null,Object? isActive = null,Object? viewCount = null,Object? likeCount = null,Object? publishedAt = freezed,Object? createdAt = null,Object? updatedAt = null,Object? category = null,Object? images = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? slug = null,Object? description = null,Object? excerpt = freezed,Object? thumbnailUrl = freezed,Object? videoUrl = freezed,Object? date = null,Object? duration = freezed,Object? client = freezed,Object? categoryId = null,Object? sortOrder = null,Object? isFeatured = null,Object? isPinned = null,Object? isActive = null,Object? viewCount = null,Object? publishedAt = freezed,Object? createdAt = null,Object? updatedAt = null,Object? category = null,Object? images = null,}) {
   return _then(_ProjectDetail(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -1218,19 +1194,12 @@ as String?,videoUrl: freezed == videoUrl ? _self.videoUrl : videoUrl // ignore: 
 as String?,date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as String,duration: freezed == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as String?,client: freezed == client ? _self.client : client // ignore: cast_nullable_to_non_nullable
-as String?,location: freezed == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
-as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
-as List<String>,metaTitle: freezed == metaTitle ? _self.metaTitle : metaTitle // ignore: cast_nullable_to_non_nullable
-as String?,metaDescription: freezed == metaDescription ? _self.metaDescription : metaDescription // ignore: cast_nullable_to_non_nullable
-as String?,metaKeywords: null == metaKeywords ? _self._metaKeywords : metaKeywords // ignore: cast_nullable_to_non_nullable
-as List<String>,ogImage: freezed == ogImage ? _self.ogImage : ogImage // ignore: cast_nullable_to_non_nullable
 as String?,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,isFeatured: null == isFeatured ? _self.isFeatured : isFeatured // ignore: cast_nullable_to_non_nullable
 as bool,isPinned: null == isPinned ? _self.isPinned : isPinned // ignore: cast_nullable_to_non_nullable
 as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,viewCount: null == viewCount ? _self.viewCount : viewCount // ignore: cast_nullable_to_non_nullable
-as int,likeCount: null == likeCount ? _self.likeCount : likeCount // ignore: cast_nullable_to_non_nullable
 as int,publishedAt: freezed == publishedAt ? _self.publishedAt : publishedAt // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable

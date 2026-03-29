@@ -164,10 +164,6 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
     _data.date = DateTime.tryParse(project.date);
     _data.duration = project.duration;
     _data.client = project.client;
-    _data.location = project.location;
-    _data.tags = List.from(project.tags);
-    _data.metaTitle = project.metaTitle;
-    _data.metaDescription = project.metaDescription;
     _data.categoryId = project.categoryId;
     _data.isFeatured = project.isFeatured;
     _data.isPinned = project.isPinned;

@@ -533,216 +533,130 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
 
   // ── Hero Preview ──────────────────────────────────────────────────────────
 
+  // ── Hero Preview ──────────────────────────────────────────────────────────
+
   Widget _buildHeroPreview(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final theme = Theme.of(context);
-    final title1 = _title1Ctrl.text.isNotEmpty ? _title1Ctrl.text : 'Make-up';
-    final title2 = _title2Ctrl.text.isNotEmpty ? _title2Ctrl.text : 'Portfolio';
-    final owner = _ownerNameCtrl.text.isNotEmpty
-        ? _ownerNameCtrl.text
-        : 'Paola Bolívar Nievas';
-    final cta = _ctaTextCtrl.text.isNotEmpty
-        ? _ctaTextCtrl.text
-        : 'Ver proyectos';
-    final hasPending = _pendingHeroImage != null;
-    final hasUrl = _heroImageCtrl.text.isNotEmpty;
 
-    Widget buildImage() {
-      if (hasPending) {
-        return Image.file(_pendingHeroImage!, fit: BoxFit.cover);
-      }
-      if (hasUrl) {
-        return CachedNetworkImage(
-          imageUrl: _heroImageCtrl.text,
-          fit: BoxFit.cover,
-          errorWidget: (_, url, error) =>
-              PreviewImagePlaceholder(color: colorScheme),
-        );
-      }
-      return PreviewImagePlaceholder(color: colorScheme);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+    // Toolbar superior con controles de Dispositivo y Tema
+    Widget buildToolbar() {
+      return Container(
+        margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 100),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(Icons.web_outlined, size: 16, color: colorScheme.primary),
-            const SizedBox(width: 6),
-            Text(
-              'Vista previa',
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
+            Row(
+              children: [
+                Icon(Icons.web_outlined, size: 16, color: colorScheme.primary),
+                const SizedBox(width: 6),
+                Text(
+                  'Vista previa en vivo',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                // Toggle Dark/Light Mode
+                IconButton(
+                  iconSize: 18,
+                  tooltip: _previewDarkMode ? 'Modo Claro' : 'Modo Oscuro',
+                  icon: Icon(
+                    _previewDarkMode ? Icons.dark_mode : Icons.light_mode,
+                  ),
+                  onPressed: () {
+                    _togglePreviewDarkMode();
+                  },
+                ),
+                const SizedBox(width: 4),
+                // Segmented Button para Devices
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(
+                      value: 'mobile',
+                      icon: Icon(Icons.phone_android, size: 16),
+                    ),
+                    ButtonSegment(
+                      value: 'tablet',
+                      icon: Icon(Icons.tablet_mac, size: 16),
+                    ),
+                    ButtonSegment(
+                      value: 'desktop',
+                      icon: Icon(Icons.desktop_mac, size: 16),
+                    ),
+                  ],
+                  selected: {_previewDevice},
+                  onSelectionChanged: (Set<String> newSelection) {
+                    _setPreviewDevice(newSelection.first);
+                  },
+                  showSelectedIcon: false,
+                  style: SegmentedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.sm),
-        // Website mockup — 2-column layout matching the web HeroContent
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final w = constraints.maxWidth;
-            final s = math.max(0.5, math.min(1.0, w / 400));
+      );
+    }
 
-            return DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: colorScheme.outline.withValues(alpha: 80 / 255),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 16 / 255),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        buildToolbar(),
+        const SizedBox(height: AppSpacing.xs),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 25 / 255),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Browser chrome bar
-                    Container(
-                      height: 20 * s,
-                      padding: EdgeInsets.symmetric(horizontal: 8 * s),
-                      color: colorScheme.surfaceContainerHighest,
-                      child: Row(
-                        children: [
-                          for (final c in const [
-                            Color(0xFFFF5F57),
-                            Color(0xFFFFBD2E),
-                            Color(0xFF28CA41),
-                          ])
-                            Padding(
-                              padding: EdgeInsets.only(right: 3 * s),
-                              child: CircleAvatar(
-                                radius: 3 * s,
-                                backgroundColor: c,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    // Hero section — 2-column grid (5 / 7) like web
-                    Container(
-                      color: AppColors.lightBackground,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16 * s,
-                        vertical: 20 * s,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Left column: titles + owner signature
-                            Expanded(
-                              flex: 5,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Title 1 — Great Vibes (decorative)
-                                  Text(
-                                    title1,
-                                    style: GoogleFonts.greatVibes(
-                                      fontSize: 26 * s,
-                                      color: AppColors.lightPrimary,
-                                      height: 0.9,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  // Title 2 — Poppins bold, accent tint
-                                  Text(
-                                    title2,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 20 * s,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.lightPrimary.withValues(
-                                        alpha: 50 / 255,
-                                      ),
-                                      height: 1.0,
-                                      letterSpacing: -0.5,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: 16 * s),
-                                  // Owner signature
-                                  Text(
-                                    owner,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 7 * s,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 2.0,
-                                      color: AppColors.lightForeground,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 8 * s),
-                            // Right column: hero image + CTA
-                            Expanded(
-                              flex: 7,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  AspectRatio(
-                                    aspectRatio: 4 / 5,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(
-                                        12 * s,
-                                      ),
-                                      child: buildImage(),
-                                    ),
-                                  ),
-                                  SizedBox(height: 8 * s),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10 * s,
-                                      vertical: 5 * s,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.lightPrimary,
-                                      borderRadius: BorderRadius.circular(
-                                        14 * s,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      cta,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9 * s,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
+            ],
+          ),
+          child: LiveHeroPreview(
+            vals: _vals,
+            extraCtrls: _extraCtrls,
+            title1: _title1Ctrl.text.isNotEmpty ? _title1Ctrl.text : 'Make-up',
+            title2: _title2Ctrl.text.isNotEmpty
+                ? _title2Ctrl.text
+                : 'Portfolio',
+            owner: _ownerNameCtrl.text.isNotEmpty
+                ? _ownerNameCtrl.text
+                : 'Paola Bolívar Nievas',
+            cta: _ctaTextCtrl.text.isNotEmpty
+                ? _ctaTextCtrl.text
+                : 'Ver Portfolio',
+            pendingHeroImage: _pendingHeroImage,
+            currentHeroImageUrl: _heroImageCtrl.text,
+            pendingIllustration: _pendingIllustration,
+            currentIllustrationUrl: _extraCtrls['illustrationUrl']?.text ?? '',
+            device: _previewDevice,
+            isDarkMode: _previewDarkMode,
+          ),
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.md),
         Text(
-          'Se actualiza en tiempo real mientras editas',
+          "El simulador escala el viewport (${_previewDevice == 'mobile'
+              ? '390px'
+              : _previewDevice == 'tablet'
+              ? '768px'
+              : '1200px'}) a esta caja en tiempo real. Utilízalo para probar los overrides móviles.",
           style: theme.textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurface.withValues(alpha: 100 / 255),
+            color: colorScheme.onSurface.withValues(alpha: 150 / 255),
             fontStyle: FontStyle.italic,
           ),
           textAlign: TextAlign.center,

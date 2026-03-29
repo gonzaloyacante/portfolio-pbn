@@ -67,7 +67,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
     { id: 'pricing', label: 'Precios' },
     { id: 'schedule', label: 'Agenda' },
     { id: 'details', label: 'Detalles' },
-    { id: 'seo', label: 'SEO' },
   ]
 
   return (
@@ -259,23 +258,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
           type="textarea"
           defaultValue={service?.cancellationPolicy || ''}
           rows={3}
-        />
-      </div>
-
-      {/* --- SEO --- */}
-      <div className={activeTab === 'seo' ? 'block space-y-4' : 'hidden'}>
-        <FormField label="Meta Title" name="metaTitle" defaultValue={service?.metaTitle || ''} />
-        <FormField
-          label="Meta Description"
-          name="metaDescription"
-          type="textarea"
-          defaultValue={service?.metaDescription || ''}
-          rows={2}
-        />
-        <FormField
-          label="Keywords (sep. por coma)"
-          name="metaKeywords"
-          defaultValue={service?.metaKeywords?.join(', ') || ''}
         />
       </div>
 

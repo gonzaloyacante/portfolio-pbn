@@ -1,11 +1,7 @@
 import 'dart:io';
-import 'dart:math' as math;
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -13,7 +9,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/widgets.dart';
@@ -23,7 +18,7 @@ import 'widgets/settings_form_card.dart';
 import 'widgets/collapsible_preview.dart';
 import 'widgets/featured_count_picker.dart';
 import 'widgets/hero_image_picker.dart';
-import 'widgets/preview_image_placeholder.dart';
+import 'widgets/live_hero_preview.dart';
 import 'widgets/sticky_preview_column.dart';
 
 part 'settings_home_page_builders.dart';
@@ -58,6 +53,18 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
   // Illustration
   File? _pendingIllustration;
+
+  // Preview options
+  String _previewDevice = 'desktop'; // desktop, tablet, mobile
+  bool _previewDarkMode = false;
+
+  void _setPreviewDevice(String device) {
+    setState(() => _previewDevice = device);
+  }
+
+  void _togglePreviewDarkMode() {
+    setState(() => _previewDarkMode = !_previewDarkMode);
+  }
 
   // Extended design fields (fonts, font URLs, colors, caption, alt texts)
   final Map<String, TextEditingController> _extraCtrls = {};

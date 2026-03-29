@@ -216,14 +216,6 @@ export async function getProjectBySlug(slug: string) {
             date: true,
             duration: true,
             client: true,
-            location: true,
-            tags: true,
-            // SEO
-            metaTitle: true,
-            metaDescription: true,
-            metaKeywords: true,
-            ogImage: true,
-            canonicalUrl: true,
             // Header
             layout: true,
             category: {

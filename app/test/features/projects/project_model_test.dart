@@ -123,19 +123,14 @@ void main() {
     );
 
     test('stores id', () => expect(detail.id, 'p1'));
-    test('tags defaults to empty list', () => expect(detail.tags, isEmpty));
     test('images defaults to empty list', () => expect(detail.images, isEmpty));
-    test(
-      'metaKeywords defaults to empty list',
-      () => expect(detail.metaKeywords, isEmpty),
-    );
     test(
       'isFeatured defaults to false',
       () => expect(detail.isFeatured, false),
     );
     test('isPinned defaults to false', () => expect(detail.isPinned, false));
     test('isActive defaults to true', () => expect(detail.isActive, true));
-    test('likeCount defaults to 0', () => expect(detail.likeCount, 0));
+    test('viewCount defaults to 0', () => expect(detail.viewCount, 0));
     test('videoUrl defaults to null', () => expect(detail.videoUrl, isNull));
   });
 
@@ -172,7 +167,6 @@ void main() {
       expect(form.slug, '');
       expect(form.description, '');
       expect(form.categoryId, '');
-      expect(form.tags, isEmpty);
       expect(form.isFeatured, false);
       expect(form.isPinned, false);
     });
@@ -184,11 +178,11 @@ void main() {
         description: 'Desc',
         categoryId: 'c1',
         isFeatured: true,
-        tags: ['tag1', 'tag2'],
+        client: 'Paola',
       );
       expect(form.title, 'My Project');
       expect(form.isFeatured, true);
-      expect(form.tags, ['tag1', 'tag2']);
+      expect(form.client, 'Paola');
     });
 
     test('toJson includes required fields', () {
@@ -212,7 +206,7 @@ void main() {
       final json = form.toJson();
       expect(json.containsKey('excerpt'), false);
       expect(json.containsKey('videoUrl'), false);
-      expect(json.containsKey('metaTitle'), false);
+      expect(json.containsKey('duration'), false);
     });
   });
 }

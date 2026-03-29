@@ -62,6 +62,8 @@ abstract class ProjectListItem with _$ProjectListItem {
 // ── ProjectDetail ─────────────────────────────────────────────────────────────
 
 /// Modelo completo para la vista/edición de proyecto.
+/// Sincronizado 100% con el schema de Prisma (sin campos SEO — se generan
+/// automáticamente en la web pública a partir del title y description).
 @freezed
 abstract class ProjectDetail with _$ProjectDetail {
   const factory ProjectDetail({
@@ -71,23 +73,16 @@ abstract class ProjectDetail with _$ProjectDetail {
     required String description,
     String? excerpt,
     String? thumbnailUrl,
-    String? videoUrl,
+    String? videoUrl, // Optional video showcase (future use)
     required String date,
     String? duration,
     String? client,
-    String? location,
-    @Default([]) List<String> tags,
-    String? metaTitle,
-    String? metaDescription,
-    @Default([]) List<String> metaKeywords,
-    String? ogImage,
     required String categoryId,
     @Default(0) int sortOrder,
     @Default(false) bool isFeatured,
     @Default(false) bool isPinned,
     @Default(true) bool isActive,
     @Default(0) int viewCount,
-    @Default(0) int likeCount,
     String? publishedAt,
     required String createdAt,
     required String updatedAt,
@@ -102,6 +97,7 @@ abstract class ProjectDetail with _$ProjectDetail {
 // ── ProjectFormData ───────────────────────────────────────────────────────────
 
 /// Datos del formulario de creación/edición.
+/// Sincronizado 100% con Prisma y con el formulario de la Web Admin.
 class ProjectFormData {
   ProjectFormData({
     this.title = '',
@@ -113,10 +109,6 @@ class ProjectFormData {
     this.date,
     this.duration,
     this.client,
-    this.location,
-    this.tags = const [],
-    this.metaTitle,
-    this.metaDescription,
     this.categoryId = '',
     this.isFeatured = false,
     this.isPinned = false,
@@ -132,10 +124,6 @@ class ProjectFormData {
   DateTime? date;
   String? duration;
   String? client;
-  String? location;
-  List<String> tags;
-  String? metaTitle;
-  String? metaDescription;
   String categoryId;
   bool isFeatured;
   bool isPinned;
@@ -151,10 +139,6 @@ class ProjectFormData {
     if (date != null) 'date': date!.toIso8601String(),
     'duration': duration,
     'client': client,
-    'location': location,
-    'tags': tags,
-    'metaTitle': metaTitle,
-    'metaDescription': metaDescription,
     'categoryId': categoryId,
     'isFeatured': isFeatured,
     'isPinned': isPinned,

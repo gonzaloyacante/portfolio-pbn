@@ -216,16 +216,6 @@ void main() {
       expect(detail.description, 'A description');
     });
 
-    test('defaults tags to empty list', () {
-      final detail = ProjectDetail.fromJson(full());
-      expect(detail.tags, isEmpty);
-    });
-
-    test('defaults metaKeywords to empty list', () {
-      final detail = ProjectDetail.fromJson(full());
-      expect(detail.metaKeywords, isEmpty);
-    });
-
     test('defaults images to empty list', () {
       final detail = ProjectDetail.fromJson(full());
       expect(detail.images, isEmpty);
@@ -241,15 +231,9 @@ void main() {
       expect(detail.isActive, isTrue);
     });
 
-    test('defaults likeCount to 0', () {
+    test('defaults viewCount to 0', () {
       final detail = ProjectDetail.fromJson(full());
-      expect(detail.likeCount, 0);
-    });
-
-    test('parses tags when provided', () {
-      final data = full()..['tags'] = ['flutter', 'dart'];
-      final detail = ProjectDetail.fromJson(data);
-      expect(detail.tags, ['flutter', 'dart']);
+      expect(detail.viewCount, 0);
     });
 
     test('parses images list with nested objects', () {
@@ -268,13 +252,11 @@ void main() {
       final data = full()
         ..['excerpt'] = 'Excerpt text'
         ..['client'] = 'Client A'
-        ..['location'] = 'Madrid'
         ..['duration'] = '3 months'
         ..['videoUrl'] = 'https://youtube.com/watch?v=x';
       final detail = ProjectDetail.fromJson(data);
       expect(detail.excerpt, 'Excerpt text');
       expect(detail.client, 'Client A');
-      expect(detail.location, 'Madrid');
       expect(detail.duration, '3 months');
       expect(detail.videoUrl, 'https://youtube.com/watch?v=x');
     });

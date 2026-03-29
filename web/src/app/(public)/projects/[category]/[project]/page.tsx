@@ -44,15 +44,14 @@ export async function generateMetadata({
   }
 
   return {
-    title: project.metaTitle || `${project.title} | Portfolio PBN`,
-    description: project.metaDescription || project.description.substring(0, 160),
-    keywords: project.metaKeywords,
+    title: `${project.title} | Portfolio PBN`,
+    description: project.description?.substring(0, 160) || '',
     alternates: {
-      canonical: project.canonicalUrl || `/proyectos/${categorySlug}/${projectSlug}`,
+      canonical: `/proyectos/${categorySlug}/${projectSlug}`,
     },
     openGraph: {
-      title: project.metaTitle || project.title,
-      description: project.metaDescription || project.description.substring(0, 160),
+      title: project.title,
+      description: project.description?.substring(0, 160) || '',
       images: project.thumbnailUrl
         ? [{ url: project.thumbnailUrl, width: 1200, height: 630, alt: project.title }]
         : [],
@@ -63,8 +62,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: project.metaTitle || project.title,
-      description: project.metaDescription || project.description.substring(0, 160),
+      title: project.title,
+      description: project.description?.substring(0, 160) || '',
       images: project.thumbnailUrl ? [project.thumbnailUrl] : [],
     },
   }
@@ -172,12 +171,6 @@ export default async function ProjectDetailPage({
                   <span className="text-sm">{project.client}</span>
                 </div>
               )}
-              {project.location && (
-                <div className="text-muted-foreground flex items-start gap-2 opacity-80">
-                  <span className="text-sm font-bold">Ubicación:</span>
-                  <span className="text-sm">{project.location}</span>
-                </div>
-              )}
               {project.duration && (
                 <div className="text-muted-foreground flex items-start gap-2 opacity-80">
                   <span className="text-sm font-bold">Duración:</span>
@@ -185,19 +178,6 @@ export default async function ProjectDetailPage({
                 </div>
               )}
             </div>
-
-            {project.tags && project.tags.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-2">
-                {project.tags.map((tag, i) => (
-                  <span
-                    key={i}
-                    className="bg-muted/50 text-muted-foreground rounded px-2 py-1 text-xs tracking-wide uppercase"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Description */}

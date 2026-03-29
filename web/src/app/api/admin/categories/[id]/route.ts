@@ -24,10 +24,6 @@ const CATEGORY_FULL_SELECT = {
   description: true,
   thumbnailUrl: true,
   coverImageUrl: true,
-  metaTitle: true,
-  metaDescription: true,
-  metaKeywords: true,
-  ogImage: true,
   sortOrder: true,
   isActive: true,
   createdAt: true,
@@ -81,19 +77,8 @@ export async function PATCH(req: Request, { params }: Params) {
         { status: 400 }
       )
     }
-    const {
-      name,
-      slug,
-      description,
-      thumbnailUrl,
-      coverImageUrl,
-      isActive,
-      sortOrder,
-      metaTitle,
-      metaDescription,
-      metaKeywords,
-      ogImage,
-    } = parsed.data
+    const { name, slug, description, thumbnailUrl, coverImageUrl, isActive, sortOrder } =
+      parsed.data
 
     // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
@@ -135,10 +120,6 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(coverImageUrl !== undefined && { coverImageUrl }),
         ...(isActive !== undefined && { isActive }),
         ...(sortOrder !== undefined && { sortOrder }),
-        ...(metaTitle !== undefined && { metaTitle }),
-        ...(metaDescription !== undefined && { metaDescription }),
-        ...(metaKeywords !== undefined && { metaKeywords }),
-        ...(ogImage !== undefined && { ogImage }),
       },
       select: {
         id: true,
@@ -147,10 +128,6 @@ export async function PATCH(req: Request, { params }: Params) {
         description: true,
         thumbnailUrl: true,
         coverImageUrl: true,
-        metaTitle: true,
-        metaDescription: true,
-        metaKeywords: true,
-        ogImage: true,
         sortOrder: true,
         isActive: true,
         createdAt: true,

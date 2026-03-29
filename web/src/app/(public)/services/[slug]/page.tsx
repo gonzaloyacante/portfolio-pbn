@@ -32,18 +32,14 @@ interface ServicePageProps {
 
 type ServiceForMetadata = {
   name: string
-  metaTitle?: string | null
-  metaDescription?: string | null
-  metaKeywords?: string[] | null
   shortDesc?: string | null
   description?: string | null
   imageUrl?: string | null
 }
 
 function _resolveServiceMeta(service: ServiceForMetadata, slug: string) {
-  const title = service.metaTitle || `${service.name} - Servicios`
-  const description =
-    service.metaDescription || service.shortDesc || service.description?.slice(0, 160) || ''
+  const title = `${service.name} - Servicios`
+  const description = service.shortDesc || service.description?.slice(0, 160) || ''
   const images = service.imageUrl
     ? [{ url: service.imageUrl, width: 1200, height: 630, alt: service.name }]
     : ([] as { url: string; width: number; height: number; alt: string }[])
@@ -55,10 +51,9 @@ function buildServiceMetadata(service: ServiceForMetadata, slug: string): Metada
   return {
     title: meta.title,
     description: meta.description,
-    keywords: service.metaKeywords,
     alternates: { canonical: meta.canonicalUrl },
     openGraph: {
-      title: service.metaTitle || service.name,
+      title: service.name,
       description: meta.description,
       type: 'website',
       locale: 'es_ES',
@@ -66,7 +61,7 @@ function buildServiceMetadata(service: ServiceForMetadata, slug: string): Metada
     },
     twitter: {
       card: 'summary_large_image',
-      title: service.metaTitle || service.name,
+      title: service.name,
       description: meta.description,
       images: service.imageUrl ? [service.imageUrl] : [],
     },
