@@ -45,6 +45,18 @@ export async function POST(req: Request, { params }: Params) {
       return NextResponse.json({ success: false, error: 'Proyecto no encontrado' }, { status: 404 })
     }
 
+    // Hard ceiling for DOM performance and Payload stability.
+    const imageCount = await prisma.projectImage.count({
+      where: { projectId: id },
+    })
+
+    if (imageCount >= 50) {
+      return NextResponse.json(
+        { success: false, error: 'Límite máximo de 50 imágenes por proyecto alcanzado' },
+        { status: 403 }
+      )
+    }
+
     const body = await req.json()
     const parsed = AddImageSchema.safeParse(body)
     if (!parsed.success) {

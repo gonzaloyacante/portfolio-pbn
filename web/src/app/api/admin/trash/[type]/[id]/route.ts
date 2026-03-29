@@ -182,6 +182,8 @@ function revalidateForType(type: TrashType) {
       revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.categories)
       revalidateTag(CACHE_TAGS.categories, 'max')
+      revalidateTag(CACHE_TAGS.projects, 'max')
+      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
       break
     case 'service':
       revalidatePath(ROUTES.public.services, 'layout')

@@ -24,7 +24,8 @@ const ReorderImagesSchema = z.object({
         order: z.number().int().min(0),
       })
     )
-    .min(1),
+    .min(1)
+    .max(50, 'Demasiadas imágenes para reordenar a la vez'),
 })
 
 // ── PUT ──────────────────────────────────────────────────────────────────────

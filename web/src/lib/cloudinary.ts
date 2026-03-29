@@ -139,14 +139,23 @@ export const deleteImage = async (publicId: string) => {
 
 /**
  * Eliminar múltiples imágenes de Cloudinary
+ * Cloudinary API limits bulk deletion to 100 public_ids per request.
  * @param publicIds - Array de IDs públicos
  */
 export const deleteMultipleImages = async (publicIds: string[]) => {
   if (publicIds.length === 0) return
 
   try {
-    const result = await cloudinary.api.delete_resources(publicIds)
-    return result
+    const CHUNK_SIZE = 100
+    const chunks = []
+
+    for (let i = 0; i < publicIds.length; i += CHUNK_SIZE) {
+      chunks.push(publicIds.slice(i, i + CHUNK_SIZE))
+    }
+
+    const results = await Promise.all(chunks.map((chunk) => cloudinary.api.delete_resources(chunk)))
+
+    return results
   } catch (error) {
     logger.error('Error deleting multiple images from Cloudinary:', { error: error })
     throw error
