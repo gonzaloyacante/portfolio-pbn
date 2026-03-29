@@ -7,6 +7,7 @@ import { createService, updateService } from '@/actions/cms/services'
 import { Button, ImageUpload } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
+import { generateSlug } from '@/lib/string-utils'
 import { Service } from '@/generated/prisma/client'
 
 interface ServiceFormProps {
@@ -21,16 +22,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
   const [activeTab, setActiveTab] = useState('general')
   const isEditing = !!service
 
-  function slugify(text?: string) {
-    return (text || '')
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9\s-]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
-
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setIsLoading(true)
@@ -39,7 +30,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
       const fd = new FormData(form)
       if (!fd.get('slug')) {
         const name = (fd.get('name') || '') as string
-        fd.set('slug', slugify(name))
+        fd.set('slug', generateSlug(name))
       }
       await handleSubmit(fd)
     } finally {

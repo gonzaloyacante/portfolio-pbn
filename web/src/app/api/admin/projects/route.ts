@@ -12,6 +12,7 @@ import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { projectApiSchema } from '@/lib/validations'
+import { generateSlug } from '@/lib/string-utils'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -138,11 +139,8 @@ export async function POST(req: Request) {
       )
     }
 
-    // Generar slug a partir del title
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
+    // Generar slug SEO-friendly e internacional a partir del title
+    const slug = generateSlug(title)
 
     // Date: usar la provista o default a hoy
     const resolvedDate = date ?? new Date().toISOString()

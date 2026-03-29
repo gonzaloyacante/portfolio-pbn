@@ -9,6 +9,7 @@ import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { projectFormSchema, categorySchema } from '@/lib/validations'
+import { generateSlug } from '@/lib/string-utils'
 
 /**
  * Invalida toda la caché pública relacionada con proyectos y categorías.
@@ -115,10 +116,7 @@ export async function uploadImageAndCreateProject(formData: FormData) {
     await prisma.project.create({
       data: {
         title,
-        slug: title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/(^-|-$)/g, ''),
+        slug: generateSlug(title),
         description: description || '',
         date: date ? new Date(date) : new Date(),
         thumbnailUrl: validImages[0]?.url || '',
