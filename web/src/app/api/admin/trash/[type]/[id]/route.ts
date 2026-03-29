@@ -98,15 +98,39 @@ async function purgeItem(type: TrashType, id: string) {
       include: { images: true },
     })
     if (!project) return null
+    if (project.thumbnailUrl) {
+      const pid = extractPublicIdUrl(project.thumbnailUrl)
+      if (pid) publicIdsToDelete.push(pid)
+    }
     project.images.forEach((img) => publicIdsToDelete.push(img.publicId))
   } else if (type === 'category') {
     const category = await prisma.category.findFirst({
       where: { id, deletedAt: { not: null } },
+      include: {
+        projects: {
+          include: { images: true },
+        },
+      },
     })
     if (!category) return null
+
+    // 1. Category's own cover or thumbnail (they share fields occasionally or use cover)
     if (category.coverImageUrl) {
       const pid = extractPublicIdUrl(category.coverImageUrl)
       if (pid) publicIdsToDelete.push(pid)
+    }
+    if (category.thumbnailUrl) {
+      const pid = extractPublicIdUrl(category.thumbnailUrl)
+      if (pid) publicIdsToDelete.push(pid)
+    }
+
+    // 2. All child projects that will be cascade-deleted
+    for (const project of category.projects) {
+      if (project.thumbnailUrl) {
+        const pid = extractPublicIdUrl(project.thumbnailUrl)
+        if (pid) publicIdsToDelete.push(pid)
+      }
+      project.images.forEach((img) => publicIdsToDelete.push(img.publicId))
     }
   } else if (type === 'service') {
     const service = await prisma.service.findFirst({
