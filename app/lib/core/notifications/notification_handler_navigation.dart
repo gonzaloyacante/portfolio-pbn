@@ -44,40 +44,17 @@ extension _NotificationHandlerNavigation on NotificationHandler {
 
   /// Gestiona un mensaje FCM de tipo `app_update`.
   ///
-  /// Si el payload contiene datos de release válidos (versión + URL),
-  /// muestra el diálogo directamente via el contexto del Navigator.
-  /// Si los datos son incompletos, dispara una nueva comprobación al servidor.
+  /// Si el payload de actualización es recibido, navega inmediatamente
+  /// a la pantalla de actualizaciones, la cual se encargará de re-comprobar
+  /// con el servidor y mostrar el UI correspondiente al usuario.
   void _handleAppUpdateData(Map<String, dynamic> data) {
-    // Convertir todos los valores a String (FCM los envía como dynamic)
-    final stringData = data.map((k, v) => MapEntry(k, v?.toString() ?? ''));
-
-    final version = stringData['version'] ?? '';
-    final downloadUrl = stringData['downloadUrl'] ?? '';
-
-    if (version.isEmpty ||
-        downloadUrl.isEmpty ||
-        !downloadUrl.startsWith('https://')) {
-      // Datos insuficientes en el FCM → re-comprobar desde el servidor
-      AppLogger.info(
-        'NotificationHandler: datos de update incompletos en FCM → '
-        'disparando comprobación al servidor',
-      );
-      triggerUpdateCheckGlobal();
-      return;
-    }
-
-    // Datos OK en el FCM → construir release y mostrar diálogo directamente
-    final release = AppRelease.fromFcmData(stringData);
-    final mandatory = stringData['mandatory'] == 'true';
-
     AppLogger.info(
-      'NotificationHandler: mostrando diálogo para v${release.version}',
+      'NotificationHandler: mensaje app_update detectado, redirigiendo a /app-update',
     );
-
     // Usamos addPostFrameCallback para asegurarnos de que el Navigator
-    // ya está montado antes de llamar a showDialog.
+    // ya está montado antes de hacer push.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      showUpdateDialogFromData(release, mandatory);
+      _router.pushNamed(RouteNames.appUpdate);
     });
   }
 

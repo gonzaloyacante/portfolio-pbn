@@ -124,6 +124,42 @@ class AppUpdateRepository {
     }
   }
 
+  // ── getExistingApk ────────────────────────────────────────────────────────
+
+  /// Verifica si el APK de [release] ya fue descargado previamente y su
+  /// integridad SHA-256 es correcta. Si es válido, lo retorna listo para
+  /// instalar. De lo contrario, lo elimina y retorna null.
+  Future<File?> getExistingApk(AppRelease release) async {
+    final savePath = await _apkSavePath(release.version, release.versionCode);
+    final file = File(savePath);
+
+    if (!file.existsSync()) return null;
+
+    final expectedChecksum = release.checksumSha256;
+    if (expectedChecksum == null || expectedChecksum.isEmpty) {
+      // Si no tenemos forma de verificar, descartamos el archivo por seguridad
+      AppLogger.warn(
+        'AppUpdateRepository: APK existente pero no hay checksum en la release. '
+        'Obligando re-descarga.',
+      );
+      _tryDelete(savePath);
+      return null;
+    }
+
+    try {
+      await _verifySha256(file, expectedChecksum);
+      AppLogger.info(
+        'AppUpdateRepository: APK local existente verificado correctamente ✓ '
+        '(v${release.version})',
+      );
+      return file;
+    } catch (_) {
+      // El SHA-256 no coincidió (descarga corrupta o parcial)
+      _tryDelete(savePath);
+      return null;
+    }
+  }
+
   // ── downloadApk ───────────────────────────────────────────────────────────
 
   /// Descarga el APK de [release] con reporte de progreso.

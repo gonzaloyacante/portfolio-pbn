@@ -61,6 +61,9 @@ class RouteNames {
 
   // ── Preferencias de la App ────────────────────────────────────────────────
   static const String appSettings = 'app-settings';
+
+  // ── Actualizaciones ───────────────────────────────────────────────────────
+  static const String appUpdate = 'app-update';
 }
 
 /// Paths de ruta.
@@ -100,4 +103,5 @@ class RoutePaths {
   static const String account = '/account';
   static const String help = '/help';
   static const String appSettings = '/app-settings';
+  static const String appUpdate = '/app-update';
 }

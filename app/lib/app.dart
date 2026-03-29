@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portfolio_pbn/core/router/route_names.dart';
 
 import 'core/auth/auth_provider.dart';
 import 'features/app_settings/providers/app_preferences_provider.dart';
@@ -16,7 +17,6 @@ import 'core/sync/sync_manager.dart';
 import 'core/updates/app_release_model.dart';
 import 'core/updates/app_update_provider.dart';
 import 'core/utils/app_logger.dart';
-import 'core/updates/presentation/app_update_dialog.dart';
 
 /// Widget raíz de la aplicación.
 /// Conecta el router (GoRouter) con el sistema de temas (light/dark).
@@ -58,13 +58,6 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
       // Permite disparar checks de actualización desde el FCM handler,
       // que corre fuera del árbol de widgets.
       initAppUpdateContainer(ProviderScope.containerOf(context));
-
-      // ── Registrar callback para mostrar el diálogo de actualización ────
-      // La notification_handler llama a showUpdateDialogFromData() cuando
-      // recibe un FCM de tipo 'app_update' con datos completos.
-      setShowUpdateDialogCallback((AppRelease release, bool mandatory) {
-        _showUpdateDialog(release, mandatory: mandatory);
-      });
     });
   }
 
@@ -84,29 +77,6 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
     WidgetsBinding.instance.removeObserver(this);
     clearShowUpdateDialogCallback();
     super.dispose();
-  }
-
-  // ── _showUpdateDialog ────────────────────────────────────────────────────
-
-  /// Muestra el diálogo de actualización in-app.
-  /// Verifica que el contexto del Navigator esté disponible antes de llamar.
-  Future<void> _showUpdateDialog(
-    AppRelease release, {
-    required bool mandatory,
-  }) async {
-    final context = routerNavigatorKey.currentContext;
-    if (context == null || !context.mounted) {
-      AppLogger.warn('App._showUpdateDialog: contexto no disponible');
-      return;
-    }
-    AppLogger.info(
-      'App: mostrando diálogo de actualización para v${release.version}',
-    );
-    await AppUpdateDialog.show(
-      context,
-      release: release,
-      forceUpdate: mandatory,
-    );
   }
 
   @override
@@ -145,7 +115,7 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
       }
     });
 
-    // Escuchar el resultado del check de actualización y mostrar diálogo.
+    // Escuchar el resultado del check de actualización y navegar a la pantalla de actualización.
     // autoDispose implica que se recalcula solo cuando hay suscriptores;
     // este listen actúa como "suscriptor permanente" mientras App esté vivo.
     ref.listen<AsyncValue<AppUpdateStatus>>(appUpdateStatusProvider, (
@@ -158,7 +128,9 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
             'App: nueva versión detectada v${status.release.version}'
             ' (forzada: ${status.forceUpdate})',
           );
-          _showUpdateDialog(status.release, mandatory: status.forceUpdate);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            router.pushNamed(RouteNames.appUpdate);
+          });
         }
       });
       next.whenOrNull(

@@ -33,6 +33,7 @@ import '../../features/services/presentation/service_form_page.dart';
 import '../../features/services/presentation/services_list_page.dart';
 import '../../features/testimonials/presentation/testimonial_form_page.dart';
 import '../../features/testimonials/presentation/testimonials_list_page.dart';
+import '../../features/app_update/presentation/app_update_page.dart';
 import '../auth/auth_provider.dart';
 import '../auth/auth_state.dart';
 import 'route_names.dart';
@@ -382,5 +383,12 @@ final List<RouteBase> _routes = [
     name: RouteNames.appSettings,
     pageBuilder: (context, state) =>
         _fadePage(state: state, child: const AppSettingsPage()),
+  ),
+  // ── Actualizaciones ───────────────────────────────────────────────────────
+  GoRoute(
+    path: RoutePaths.appUpdate,
+    name: RouteNames.appUpdate,
+    pageBuilder: (context, state) =>
+        _fadePage(state: state, child: const AppUpdatePage()),
   ),
 ];
