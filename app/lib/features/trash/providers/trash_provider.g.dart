@@ -9,48 +9,6 @@ part of 'trash_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(trashRepository)
-final trashRepositoryProvider = TrashRepositoryProvider._();
-
-final class TrashRepositoryProvider
-    extends
-        $FunctionalProvider<TrashRepository, TrashRepository, TrashRepository>
-    with $Provider<TrashRepository> {
-  TrashRepositoryProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'trashRepositoryProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$trashRepositoryHash();
-
-  @$internal
-  @override
-  $ProviderElement<TrashRepository> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  TrashRepository create(Ref ref) {
-    return trashRepository(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(TrashRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<TrashRepository>(value),
-    );
-  }
-}
-
-String _$trashRepositoryHash() => r'eb6e4903b4a5298babbc425a71e0c5a731e45230';
-
 @ProviderFor(trashItems)
 final trashItemsProvider = TrashItemsProvider._();
 

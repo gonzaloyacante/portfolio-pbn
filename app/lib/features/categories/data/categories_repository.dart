@@ -3,14 +3,23 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/api/endpoints.dart';
+import '../../../core/sync/offline_first_mixin.dart';
+import '../../../core/sync/sync_queue.dart';
 import '../../../shared/models/api_response.dart';
+import '../../../shared/models/offline_result.dart';
 import '../../../shared/models/paginated_response.dart';
 import 'category_model.dart';
 
 part 'categories_repository.g.dart';
 
-class CategoriesRepository {
-  const CategoriesRepository(this._client);
+// ── CategoriesRepository ──────────────────────────────────────────────────────
+
+class CategoriesRepository with OfflineFirstMixin {
+  CategoriesRepository({required this.ref, required ApiClient client})
+    : _client = client;
+
+  @override
+  final Ref ref;
 
   final ApiClient _client;
 
@@ -66,58 +75,72 @@ class CategoriesRepository {
 
   // ── Create ────────────────────────────────────────────────────────────────
 
-  Future<CategoryDetail> createCategory(CategoryFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(
-      Endpoints.categories,
-      data: data.toJson(),
-    );
-
-    final apiResponse = ApiResponse<CategoryDetail>.fromJson(
-      resp,
-      (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
-    );
-
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al crear categoría');
-    }
-    return apiResponse.data!;
-  }
+  Future<MutationResult<CategoryDetail>> createCategory(
+    CategoryFormData data,
+  ) => mutateOnlineOrEnqueue(
+    operation: SyncOperationType.create,
+    resource: 'categories',
+    payload: data.toJson(),
+    onOnline: () async {
+      final resp = await _client.post<Map<String, dynamic>>(
+        Endpoints.categories,
+        data: data.toJson(),
+      );
+      final apiResponse = ApiResponse<CategoryDetail>.fromJson(
+        resp,
+        (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
+      );
+      if (!apiResponse.success || apiResponse.data == null) {
+        throw Exception(apiResponse.error ?? 'Error al crear categoría');
+      }
+      return apiResponse.data!;
+    },
+  );
 
   // ── Update ────────────────────────────────────────────────────────────────
 
-  Future<CategoryDetail> updateCategory(
+  Future<MutationResult<CategoryDetail>> updateCategory(
     String id,
     Map<String, dynamic> data,
-  ) async {
-    final resp = await _client.patch<Map<String, dynamic>>(
-      Endpoints.category(id),
-      data: data,
-    );
-
-    final apiResponse = ApiResponse<CategoryDetail>.fromJson(
-      resp,
-      (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
-    );
-
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al actualizar categoría');
-    }
-    return apiResponse.data!;
-  }
+  ) => mutateOnlineOrEnqueue(
+    operation: SyncOperationType.update,
+    resource: 'categories',
+    resourceId: id,
+    payload: data,
+    onOnline: () async {
+      final resp = await _client.patch<Map<String, dynamic>>(
+        Endpoints.category(id),
+        data: data,
+      );
+      final apiResponse = ApiResponse<CategoryDetail>.fromJson(
+        resp,
+        (json) => CategoryDetail.fromJson(json as Map<String, dynamic>),
+      );
+      if (!apiResponse.success || apiResponse.data == null) {
+        throw Exception(apiResponse.error ?? 'Error al actualizar categoría');
+      }
+      return apiResponse.data!;
+    },
+  );
 
   // ── Delete ────────────────────────────────────────────────────────────────
 
-  Future<void> deleteCategory(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(
-      Endpoints.category(id),
-    );
-
-    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
-
-    if (!apiResponse.success) {
-      throw Exception(apiResponse.error ?? 'Error al eliminar categoría');
-    }
-  }
+  Future<MutationResult<void>> deleteCategory(String id) =>
+      mutateOnlineOrEnqueue(
+        operation: SyncOperationType.delete,
+        resource: 'categories',
+        resourceId: id,
+        payload: {},
+        onOnline: () async {
+          final resp = await _client.delete<Map<String, dynamic>>(
+            Endpoints.category(id),
+          );
+          final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+          if (!apiResponse.success) {
+            throw Exception(apiResponse.error ?? 'Error al eliminar categoría');
+          }
+        },
+      );
 
   // ── Gallery ───────────────────────────────────────────────────────────────
 
@@ -142,7 +165,6 @@ class CategoriesRepository {
   }
 
   /// Actualiza el [categoryGalleryOrder] de cada imagen.
-  /// [items] es una lista de pares (id, order) con el nuevo orden deseado.
   Future<void> updateGalleryOrder(
     String categoryId,
     List<({String id, int order})> items,
@@ -164,6 +186,5 @@ class CategoriesRepository {
 
 @Riverpod(keepAlive: true)
 CategoriesRepository categoriesRepository(Ref ref) {
-  final client = ref.watch(apiClientProvider);
-  return CategoriesRepository(client);
+  return CategoriesRepository(ref: ref, client: ref.watch(apiClientProvider));
 }

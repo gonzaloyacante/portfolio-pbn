@@ -8,6 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/utils/app_logger.dart';
+import '../../../shared/models/offline_result.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../../categories/providers/categories_provider.dart';
 import '../data/project_model.dart';
@@ -245,18 +246,53 @@ class _ProjectFormPageState extends ConsumerState<ProjectFormPage> {
       }
 
       final repo = ref.read(projectsRepositoryProvider);
-      String projectId;
+      // late is safe: OfflineEnqueuedResult branches always return early.
+      late String projectId;
 
       if (widget.isEditing) {
-        final updated = await repo.updateProject(
+        final result = await repo.updateProject(
           widget.projectId!,
           _data.toJson(),
         );
-        projectId = updated.id;
-        ref.invalidate(projectDetailProvider(widget.projectId!));
+        switch (result) {
+          case LiveResult(:final data):
+            projectId = data.id;
+            ref.invalidate(projectDetailProvider(widget.projectId!));
+          case OfflineEnqueuedResult():
+            ref.invalidate(projectsListProvider);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    '✈️ Sin conexión — cambios guardados. Se sincronizarán al reconectarte.',
+                  ),
+                  duration: Duration(seconds: 4),
+                ),
+              );
+              context.pop();
+            }
+            return;
+        }
       } else {
-        final created = await repo.createProject(_data);
-        projectId = created.id;
+        final result = await repo.createProject(_data);
+        switch (result) {
+          case LiveResult(:final data):
+            projectId = data.id;
+          case OfflineEnqueuedResult():
+            ref.invalidate(projectsListProvider);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    '✈️ Sin conexión — proyecto guardado. Se publicará al reconectarte.',
+                  ),
+                  duration: Duration(seconds: 4),
+                ),
+              );
+              context.pop();
+            }
+            return;
+        }
       }
 
       // 2. Eliminar imágenes marcadas para eliminar.

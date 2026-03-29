@@ -1,10 +1,13 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:portfolio_pbn/core/api/api_client.dart';
 import 'package:portfolio_pbn/core/api/api_exceptions.dart';
 import 'package:portfolio_pbn/core/api/endpoints.dart';
+import 'package:portfolio_pbn/core/network/connectivity_provider.dart';
 import 'package:portfolio_pbn/features/projects/data/project_model.dart';
 import 'package:portfolio_pbn/features/projects/data/projects_repository.dart';
+import 'package:portfolio_pbn/shared/models/offline_result.dart';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -85,7 +88,16 @@ void main() {
 
   setUp(() {
     client = MockApiClient();
-    repo = ProjectsRepository(client);
+    final container = ProviderContainer(
+      overrides: [
+        // Force online so mutations always take the live path in tests.
+        isOnlineProvider.overrideWith((ref) => true),
+        // Inject the mock API client.
+        apiClientProvider.overrideWithValue(client),
+      ],
+    );
+    addTearDown(container.dispose);
+    repo = container.read(projectsRepositoryProvider);
   });
 
   // ── getProjects ─────────────────────────────────────────────────────────
@@ -195,7 +207,7 @@ void main() {
   // ── createProject ───────────────────────────────────────────────────────
 
   group('createProject', () {
-    test('sends form data and returns created project', () async {
+    test('sends form data and returns LiveResult when online', () async {
       final formData = ProjectFormData(
         title: 'New Project',
         description: 'Description',
@@ -213,7 +225,9 @@ void main() {
 
       final result = await repo.createProject(formData);
 
-      expect(result.id, 'p-new');
+      expect(result, isA<LiveResult<ProjectListItem>>());
+      final live = result as LiveResult<ProjectListItem>;
+      expect(live.data.id, 'p-new');
       verify(
         () => client.post<Map<String, dynamic>>(
           Endpoints.projects,
@@ -226,7 +240,7 @@ void main() {
   // ── updateProject ──────────────────────────────────────────────────────
 
   group('updateProject', () {
-    test('sends changes and returns updated detail', () async {
+    test('sends changes and returns LiveResult when online', () async {
       when(
         () => client.patch<Map<String, dynamic>>(
           Endpoints.project('p-1'),
@@ -236,7 +250,9 @@ void main() {
 
       final result = await repo.updateProject('p-1', {'title': 'Updated'});
 
-      expect(result.id, 'p-1');
+      expect(result, isA<LiveResult<ProjectDetail>>());
+      final live = result as LiveResult<ProjectDetail>;
+      expect(live.data.id, 'p-1');
       verify(
         () => client.patch<Map<String, dynamic>>(
           Endpoints.project('p-1'),

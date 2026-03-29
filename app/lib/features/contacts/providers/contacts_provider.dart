@@ -1,19 +1,15 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:portfolio_pbn/core/api/api_client.dart';
 import 'package:portfolio_pbn/shared/models/paginated_response.dart';
 
 import '../data/contact_model.dart';
 import '../data/contacts_repository.dart';
 
+// Re-export the repository provider so pages that import this file can access
+// contactsRepositoryProvider without an additional import.
+export '../data/contacts_repository.dart' show contactsRepositoryProvider;
+
 part 'contacts_provider.g.dart';
-
-// ── Repositorio ───────────────────────────────────────────────────────────────
-
-@Riverpod(keepAlive: true)
-ContactsRepository contactsRepository(Ref ref) {
-  return ContactsRepository(ref.watch(apiClientProvider));
-}
 
 // ── Lista ─────────────────────────────────────────────────────────────────────
 

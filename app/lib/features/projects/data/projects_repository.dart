@@ -3,7 +3,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/api/endpoints.dart';
+import '../../../core/sync/offline_first_mixin.dart';
+import '../../../core/sync/sync_queue.dart';
 import '../../../shared/models/api_response.dart';
+import '../../../shared/models/offline_result.dart';
 import '../../../shared/models/paginated_response.dart';
 import 'project_model.dart';
 
@@ -12,8 +15,16 @@ part 'projects_repository.g.dart';
 // ── ProjectsRepository ────────────────────────────────────────────────────────
 
 /// Accede a los endpoints de proyectos del panel de administración.
-class ProjectsRepository {
-  const ProjectsRepository(this._client);
+///
+/// Las mutaciones (create, update, delete) siguen el patrón **Network-First**:
+/// - Online  → ejecuta la llamada REST en tiempo real → devuelve [LiveResult].
+/// - Offline → encola en SQLite via [SyncQueue] → devuelve [OfflineEnqueuedResult].
+class ProjectsRepository with OfflineFirstMixin {
+  ProjectsRepository({required this.ref, required ApiClient client})
+    : _client = client;
+
+  @override
+  final Ref ref;
 
   final ApiClient _client;
 
@@ -70,52 +81,71 @@ class ProjectsRepository {
 
   // ── Create ──────────────────────────────────────────────────────────────────
 
-  Future<ProjectListItem> createProject(ProjectFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(
-      Endpoints.projects,
-      data: data.toJson(),
-    );
-    final apiResponse = ApiResponse<ProjectListItem>.fromJson(
-      resp,
-      (json) => ProjectListItem.fromJson(json as Map<String, dynamic>),
-    );
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al crear proyecto');
-    }
-    return apiResponse.data!;
-  }
+  Future<MutationResult<ProjectListItem>> createProject(ProjectFormData data) =>
+      mutateOnlineOrEnqueue(
+        operation: SyncOperationType.create,
+        resource: 'projects',
+        payload: data.toJson(),
+        onOnline: () async {
+          final resp = await _client.post<Map<String, dynamic>>(
+            Endpoints.projects,
+            data: data.toJson(),
+          );
+          final apiResponse = ApiResponse<ProjectListItem>.fromJson(
+            resp,
+            (json) => ProjectListItem.fromJson(json as Map<String, dynamic>),
+          );
+          if (!apiResponse.success || apiResponse.data == null) {
+            throw Exception(apiResponse.error ?? 'Error al crear proyecto');
+          }
+          return apiResponse.data!;
+        },
+      );
 
   // ── Update ──────────────────────────────────────────────────────────────────
 
-  Future<ProjectDetail> updateProject(
+  Future<MutationResult<ProjectDetail>> updateProject(
     String id,
     Map<String, dynamic> changes,
-  ) async {
-    final resp = await _client.patch<Map<String, dynamic>>(
-      Endpoints.project(id),
-      data: changes,
-    );
-    final apiResponse = ApiResponse<ProjectDetail>.fromJson(
-      resp,
-      (json) => ProjectDetail.fromJson(json as Map<String, dynamic>),
-    );
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al actualizar proyecto');
-    }
-    return apiResponse.data!;
-  }
+  ) => mutateOnlineOrEnqueue(
+    operation: SyncOperationType.update,
+    resource: 'projects',
+    resourceId: id,
+    payload: changes,
+    onOnline: () async {
+      final resp = await _client.patch<Map<String, dynamic>>(
+        Endpoints.project(id),
+        data: changes,
+      );
+      final apiResponse = ApiResponse<ProjectDetail>.fromJson(
+        resp,
+        (json) => ProjectDetail.fromJson(json as Map<String, dynamic>),
+      );
+      if (!apiResponse.success || apiResponse.data == null) {
+        throw Exception(apiResponse.error ?? 'Error al actualizar proyecto');
+      }
+      return apiResponse.data!;
+    },
+  );
 
   // ── Delete ──────────────────────────────────────────────────────────────────
 
-  Future<void> deleteProject(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(
-      Endpoints.project(id),
-    );
-    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
-    if (!apiResponse.success) {
-      throw Exception(apiResponse.error ?? 'Error al eliminar proyecto');
-    }
-  }
+  Future<MutationResult<void>> deleteProject(String id) =>
+      mutateOnlineOrEnqueue(
+        operation: SyncOperationType.delete,
+        resource: 'projects',
+        resourceId: id,
+        payload: {},
+        onOnline: () async {
+          final resp = await _client.delete<Map<String, dynamic>>(
+            Endpoints.project(id),
+          );
+          final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+          if (!apiResponse.success) {
+            throw Exception(apiResponse.error ?? 'Error al eliminar proyecto');
+          }
+        },
+      );
 
   // ── Reorder ─────────────────────────────────────────────────────────────────
 
@@ -133,7 +163,8 @@ class ProjectsRepository {
       throw Exception(apiResponse.error ?? 'Error al reordenar proyectos');
     }
   }
-  // ── Images
+
+  // ── Images ──────────────────────────────────────────────────────────────────
 
   /// Añade una imagen a la galería del proyecto.
   Future<void> addProjectImage(
@@ -189,5 +220,5 @@ class ProjectsRepository {
 
 @Riverpod(keepAlive: true)
 ProjectsRepository projectsRepository(Ref ref) {
-  return ProjectsRepository(ref.watch(apiClientProvider));
+  return ProjectsRepository(ref: ref, client: ref.watch(apiClientProvider));
 }

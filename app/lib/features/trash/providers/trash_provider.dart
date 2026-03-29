@@ -1,15 +1,13 @@
-import 'package:portfolio_pbn/core/api/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/trash_model.dart';
 import '../data/trash_repository.dart';
 
-part 'trash_provider.g.dart';
+// Re-export the repository provider so pages that import this file can access
+// trashRepositoryProvider without an additional import.
+export '../data/trash_repository.dart' show trashRepositoryProvider;
 
-@Riverpod(keepAlive: true)
-TrashRepository trashRepository(Ref ref) {
-  return TrashRepository(ref.watch(apiClientProvider));
-}
+part 'trash_provider.g.dart';
 
 @riverpod
 Future<Map<String, List<TrashItem>>> trashItems(Ref ref) async {

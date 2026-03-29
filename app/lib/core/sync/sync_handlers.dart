@@ -61,6 +61,35 @@ class _ResourceSyncHandler extends SyncHandler {
   }
 }
 
+// ── _TrashSyncHandler ─────────────────────────────────────────────────────────
+
+/// Handler especial para la papelera, cuyos endpoints son
+/// `/api/admin/trash/{type}/{id}` (non-standard path pattern).
+///
+/// El payload debe contener `{"type": "project"|"category"|...}`.
+class _TrashSyncHandler extends SyncHandler {
+  const _TrashSyncHandler({required this.client});
+
+  final ApiClient client;
+
+  @override
+  Future<void> execute(SyncOperationsTableData op) async {
+    final payload = jsonDecode(op.payload) as Map<String, dynamic>;
+    final type = payload['type'] as String? ?? '';
+    final id = op.resourceId ?? '';
+    AppLogger.info('TrashSyncHandler: ${op.operation} [$type/$id]');
+
+    switch (op.operation) {
+      case 'update': // restore
+        await client.patch<dynamic>(Endpoints.trashTypedItem(type, id));
+      case 'delete': // purge
+        await client.delete<dynamic>(Endpoints.trashTypedItem(type, id));
+      default:
+        AppLogger.warn('TrashSyncHandler: unknown operation ${op.operation}');
+    }
+  }
+}
+
 // ── SyncHandlerRegistry ───────────────────────────────────────────────────────
 
 /// Registro central de handlers por nombre de recurso.
@@ -93,6 +122,20 @@ class SyncHandlerRegistry {
           collectionPath: Endpoints.testimonials,
           itemPath: Endpoints.testimonial,
         ),
+        'contacts': _ResourceSyncHandler(
+          name: 'Contact',
+          // Contacts are never created from admin side, only updated/deleted.
+          client: client,
+          collectionPath: Endpoints.contacts,
+          itemPath: Endpoints.contact,
+        ),
+        'bookings': _ResourceSyncHandler(
+          name: 'Booking',
+          client: client,
+          collectionPath: Endpoints.bookings,
+          itemPath: Endpoints.booking,
+        ),
+        'trash': _TrashSyncHandler(client: client),
       };
 
   final Map<String, SyncHandler> _handlers;

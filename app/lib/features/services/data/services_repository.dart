@@ -3,14 +3,21 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/api/endpoints.dart';
+import '../../../core/sync/offline_first_mixin.dart';
+import '../../../core/sync/sync_queue.dart';
 import '../../../shared/models/api_response.dart';
+import '../../../shared/models/offline_result.dart';
 import '../../../shared/models/paginated_response.dart';
 import 'service_model.dart';
 
 part 'services_repository.g.dart';
 
-class ServicesRepository {
-  const ServicesRepository(this._client);
+class ServicesRepository with OfflineFirstMixin {
+  ServicesRepository({required this.ref, required ApiClient client})
+    : _client = client;
+
+  @override
+  final Ref ref;
 
   final ApiClient _client;
 
@@ -60,58 +67,70 @@ class ServicesRepository {
     return apiResponse.data!;
   }
 
-  Future<ServiceDetail> createService(ServiceFormData data) async {
-    final resp = await _client.post<Map<String, dynamic>>(
-      Endpoints.services,
-      data: data.toJson(),
-    );
+  Future<MutationResult<ServiceDetail>> createService(ServiceFormData data) =>
+      mutateOnlineOrEnqueue(
+        operation: SyncOperationType.create,
+        resource: 'services',
+        payload: data.toJson(),
+        onOnline: () async {
+          final resp = await _client.post<Map<String, dynamic>>(
+            Endpoints.services,
+            data: data.toJson(),
+          );
+          final apiResponse = ApiResponse<ServiceDetail>.fromJson(
+            resp,
+            (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
+          );
+          if (!apiResponse.success || apiResponse.data == null) {
+            throw Exception(apiResponse.error ?? 'Error al crear servicio');
+          }
+          return apiResponse.data!;
+        },
+      );
 
-    final apiResponse = ApiResponse<ServiceDetail>.fromJson(
-      resp,
-      (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
-    );
-
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al crear servicio');
-    }
-    return apiResponse.data!;
-  }
-
-  Future<ServiceDetail> updateService(
+  Future<MutationResult<ServiceDetail>> updateService(
     String id,
     Map<String, dynamic> data,
-  ) async {
-    final resp = await _client.patch<Map<String, dynamic>>(
-      Endpoints.service(id),
-      data: data,
-    );
+  ) => mutateOnlineOrEnqueue(
+    operation: SyncOperationType.update,
+    resource: 'services',
+    resourceId: id,
+    payload: data,
+    onOnline: () async {
+      final resp = await _client.patch<Map<String, dynamic>>(
+        Endpoints.service(id),
+        data: data,
+      );
+      final apiResponse = ApiResponse<ServiceDetail>.fromJson(
+        resp,
+        (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
+      );
+      if (!apiResponse.success || apiResponse.data == null) {
+        throw Exception(apiResponse.error ?? 'Error al actualizar servicio');
+      }
+      return apiResponse.data!;
+    },
+  );
 
-    final apiResponse = ApiResponse<ServiceDetail>.fromJson(
-      resp,
-      (json) => ServiceDetail.fromJson(json as Map<String, dynamic>),
-    );
-
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al actualizar servicio');
-    }
-    return apiResponse.data!;
-  }
-
-  Future<void> deleteService(String id) async {
-    final resp = await _client.delete<Map<String, dynamic>>(
-      Endpoints.service(id),
-    );
-
-    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
-
-    if (!apiResponse.success) {
-      throw Exception(apiResponse.error ?? 'Error al eliminar servicio');
-    }
-  }
+  Future<MutationResult<void>> deleteService(String id) =>
+      mutateOnlineOrEnqueue(
+        operation: SyncOperationType.delete,
+        resource: 'services',
+        resourceId: id,
+        payload: {},
+        onOnline: () async {
+          final resp = await _client.delete<Map<String, dynamic>>(
+            Endpoints.service(id),
+          );
+          final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+          if (!apiResponse.success) {
+            throw Exception(apiResponse.error ?? 'Error al eliminar servicio');
+          }
+        },
+      );
 }
 
 @Riverpod(keepAlive: true)
 ServicesRepository servicesRepository(Ref ref) {
-  final client = ref.watch(apiClientProvider);
-  return ServicesRepository(client);
+  return ServicesRepository(ref: ref, client: ref.watch(apiClientProvider));
 }

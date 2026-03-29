@@ -9,54 +9,6 @@ part of 'testimonials_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(testimonialsRepository)
-final testimonialsRepositoryProvider = TestimonialsRepositoryProvider._();
-
-final class TestimonialsRepositoryProvider
-    extends
-        $FunctionalProvider<
-          TestimonialsRepository,
-          TestimonialsRepository,
-          TestimonialsRepository
-        >
-    with $Provider<TestimonialsRepository> {
-  TestimonialsRepositoryProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'testimonialsRepositoryProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$testimonialsRepositoryHash();
-
-  @$internal
-  @override
-  $ProviderElement<TestimonialsRepository> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  TestimonialsRepository create(Ref ref) {
-    return testimonialsRepository(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(TestimonialsRepository value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<TestimonialsRepository>(value),
-    );
-  }
-}
-
-String _$testimonialsRepositoryHash() =>
-    r'e94f722b88b969f8719007a53495ce4eb3b88d12';
-
 @ProviderFor(testimonialsList)
 final testimonialsListProvider = TestimonialsListFamily._();
 

@@ -1,19 +1,15 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:portfolio_pbn/core/api/api_client.dart';
 import 'package:portfolio_pbn/shared/models/paginated_response.dart';
 
 import '../data/booking_model.dart';
 import '../data/bookings_repository.dart';
 
+// Re-export the repository provider so pages that import this file can access
+// bookingsRepositoryProvider without an additional import.
+export '../data/bookings_repository.dart' show bookingsRepositoryProvider;
+
 part 'calendar_provider.g.dart';
-
-// ── Repositorio ───────────────────────────────────────────────────────────────
-
-@Riverpod(keepAlive: true)
-BookingsRepository bookingsRepository(Ref ref) {
-  return BookingsRepository(ref.watch(apiClientProvider));
-}
 
 // ── Lista mensual (carga el mes cargado en el calendario) ─────────────────────
 

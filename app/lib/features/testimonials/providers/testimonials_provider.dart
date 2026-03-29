@@ -1,19 +1,16 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:portfolio_pbn/core/api/api_client.dart';
 import 'package:portfolio_pbn/shared/models/paginated_response.dart';
 
 import '../data/testimonial_model.dart';
 import '../data/testimonials_repository.dart';
 
+// Re-export the repository provider so pages that import this file can access
+// testimonialsRepositoryProvider without an additional import.
+export '../data/testimonials_repository.dart'
+    show testimonialsRepositoryProvider;
+
 part 'testimonials_provider.g.dart';
-
-// ── Repositorio ───────────────────────────────────────────────────────────────
-
-@Riverpod(keepAlive: true)
-TestimonialsRepository testimonialsRepository(Ref ref) {
-  return TestimonialsRepository(ref.watch(apiClientProvider));
-}
 
 // ── Lista ─────────────────────────────────────────────────────────────────────
 
