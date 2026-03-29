@@ -4,11 +4,13 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { z } from 'zod'
+import { pricingTierSchema } from '@/lib/validations'
 
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 
 // ============================================
 // VALIDATION SCHEMA
@@ -174,13 +176,20 @@ export async function createService(formData: FormData) {
   try {
     // Process specialized fields
     let tiersJson = undefined
-    try {
-      if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
-    } catch (e) {
-      logger.warn('Invalid pricingTiers JSON in createService', {
-        input: data.pricingTiers,
-        error: e,
-      })
+    if (data.pricingTiers) {
+      try {
+        const parsed = JSON.parse(data.pricingTiers)
+        tiersJson = pricingTierSchema.parse(parsed)
+      } catch (e) {
+        logger.warn('Invalid pricingTiers JSON in createService', {
+          input: data.pricingTiers,
+          error: e,
+        })
+        return {
+          success: false,
+          error: 'Formato inválido en Niveles de Precio (Asegúrate de usar JSON válido)',
+        }
+      }
     }
 
     // Prefer multiple inputs `galleryUrls` (from ImageUpload hidden inputs). Fallback to CSV string.
@@ -299,13 +308,20 @@ export async function updateService(id: string, formData: FormData) {
   try {
     // Process specialized fields
     let tiersJson = undefined
-    try {
-      if (data.pricingTiers) tiersJson = JSON.parse(data.pricingTiers)
-    } catch (e) {
-      logger.warn('Invalid pricingTiers JSON in updateService', {
-        input: data.pricingTiers,
-        error: e,
-      })
+    if (data.pricingTiers) {
+      try {
+        const parsed = JSON.parse(data.pricingTiers)
+        tiersJson = pricingTierSchema.parse(parsed)
+      } catch (e) {
+        logger.warn('Invalid pricingTiers JSON in updateService', {
+          input: data.pricingTiers,
+          error: e,
+        })
+        return {
+          success: false,
+          error: 'Formato inválido en Niveles de Precio (Asegúrate de usar JSON válido)',
+        }
+      }
     }
 
     const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
@@ -324,6 +340,13 @@ export async function updateService(id: string, formData: FormData) {
           .filter(Boolean)
       : []
 
+    const newImageUrl = data.imageUrl || galleryList[0] || null
+
+    const previousService = await prisma.service.findUnique({
+      where: { id },
+      select: { imageUrl: true, galleryUrls: true },
+    })
+
     await prisma.service.update({
       where: { id },
       data: {
@@ -340,7 +363,7 @@ export async function updateService(id: string, formData: FormData) {
         isAvailable: data.isAvailable,
         maxBookingsPerDay: data.maxBookingsPerDay,
         advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || galleryList[0] || null,
+        imageUrl: newImageUrl,
         galleryUrls: galleryList,
         videoUrl: data.videoUrl || null,
         isActive: data.isActive,
@@ -353,6 +376,36 @@ export async function updateService(id: string, formData: FormData) {
         cancellationPolicy: data.cancellationPolicy,
       },
     })
+
+    // Cloud Wipe: Find removed images and permanently delete them from Cloudinary
+    if (previousService) {
+      const publicIdsToDelete: string[] = []
+
+      // Check if main imageUrl was replaced/removed
+      if (previousService.imageUrl && previousService.imageUrl !== newImageUrl) {
+        const pId = extractPublicIdUrl(previousService.imageUrl)
+        if (pId) publicIdsToDelete.push(pId)
+      }
+
+      // Check if any gallery image was removed
+      const newGallerySet = new Set(galleryList)
+      previousService.galleryUrls.forEach((oldUrl) => {
+        if (!newGallerySet.has(oldUrl)) {
+          const pId = extractPublicIdUrl(oldUrl)
+          if (pId && !publicIdsToDelete.includes(pId)) publicIdsToDelete.push(pId)
+        }
+      })
+
+      if (publicIdsToDelete.length > 0) {
+        deleteMultipleImages(publicIdsToDelete).catch((err: Error) =>
+          logger.warn('[updateService] Orphan sweep failed', {
+            id,
+            publicIds: publicIdsToDelete,
+            error: err.message,
+          })
+        )
+      }
+    }
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services, 'layout')

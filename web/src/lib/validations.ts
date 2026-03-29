@@ -424,6 +424,14 @@ export const pushUnregisterSchema = z.object({
 
 // ── Services ────────────────────────────────────────────────────────────────
 
+export const pricingTierSchema = z.array(
+  z.object({
+    name: z.string().trim().min(1, 'El nombre del plan es obligatorio').max(100),
+    price: z.number().min(0, 'El precio no puede ser negativo'),
+    features: z.array(z.string().trim().min(1).max(100)).optional(),
+  })
+)
+
 export const serviceApiSchema = z.object({
   name: z.string().trim().min(1, 'El nombre es obligatorio').max(150),
   slug: z
