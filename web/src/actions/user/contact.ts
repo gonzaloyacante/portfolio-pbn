@@ -167,7 +167,8 @@ async function notifyPushNewContact(contactId: string, sanitized: SanitizedData)
 // Admin actions
 export async function getContacts() {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   return await prisma.contact.findMany({
     where: { deletedAt: null },
@@ -178,7 +179,8 @@ export async function getContacts() {
 
 export async function getUnreadContactsCount() {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   return await prisma.contact.count({
     where: { isRead: false, deletedAt: null },
@@ -187,7 +189,8 @@ export async function getUnreadContactsCount() {
 
 export async function markContactAsRead(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   await prisma.contact.update({
     where: { id },
@@ -198,7 +201,8 @@ export async function markContactAsRead(id: string) {
 
 export async function markContactAsReplied(id: string, adminNote?: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   await prisma.contact.update({
     where: { id },
@@ -215,7 +219,8 @@ export async function markContactAsReplied(id: string, adminNote?: string) {
 
 export async function deleteContact(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   await prisma.contact.update({
     where: { id },

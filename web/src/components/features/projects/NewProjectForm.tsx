@@ -22,11 +22,15 @@ export default function NewProjectForm({ categories }: NewProjectFormProps) {
     const formData = new FormData(e.currentTarget)
 
     startTransition(async () => {
-      const result = await uploadImageAndCreateProject(formData)
-      if (result.success) {
-        router.push(ROUTES.admin.projects)
-      } else {
-        setError(result.error ?? 'Error al crear el proyecto')
+      try {
+        const result = await uploadImageAndCreateProject(formData)
+        if (result.success) {
+          router.push(ROUTES.admin.projects)
+        } else {
+          setError(result.error ?? 'Error al crear el proyecto')
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error inesperado al crear el proyecto')
       }
     })
   }

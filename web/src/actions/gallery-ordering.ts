@@ -27,7 +27,8 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
   try {
     // Security: Require admin + rate limit
     await requireAdmin()
-    await checkApiRateLimit()
+    const rl = await checkApiRateLimit()
+    if (rl) return { success: false, error: rl.error }
 
     // Validate input
     const validated = updateGalleryOrderSchema.parse(input)
@@ -76,7 +77,8 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
   try {
     // Security: Require admin + rate limit
     await requireAdmin()
-    await checkApiRateLimit()
+    const rl2 = await checkApiRateLimit()
+    if (rl2) return { success: false, error: rl2.error }
 
     // Verify category exists
     const category = await prisma.category.findUnique({

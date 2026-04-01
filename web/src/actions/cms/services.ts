@@ -126,7 +126,8 @@ export const getServices = unstable_cache(
  */
 export async function createService(formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const rawData = {
     name: formData.get('name'),
@@ -245,7 +246,8 @@ export async function createService(formData: FormData) {
  */
 export async function updateService(id: string, formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const rawData = {
     name: formData.get('name'),
@@ -400,7 +402,8 @@ export async function updateService(id: string, formData: FormData) {
  */
 export async function deleteService(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     // Soft delete: marcar como eliminado y liberar slug único para reutilización
@@ -427,7 +430,8 @@ export async function deleteService(id: string) {
  */
 export async function toggleService(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const service = await prisma.service.findUnique({ where: { id } })
@@ -456,7 +460,8 @@ export async function toggleService(id: string) {
  */
 export async function reorderServices(orderedIds: string[]) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     await prisma.$transaction(

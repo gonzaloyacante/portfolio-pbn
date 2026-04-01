@@ -38,7 +38,8 @@ export async function requestPasswordReset(email: string) {
     return { success: false, message: result.error.issues[0].message }
   }
 
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, message: rl.error }
 
   try {
     const user = await prisma.user.findUnique({ where: { email } })

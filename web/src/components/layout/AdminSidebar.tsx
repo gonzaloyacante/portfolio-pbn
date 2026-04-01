@@ -46,6 +46,7 @@ export default function AdminSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={false}
               className={`flex cursor-pointer items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                 isActive
                   ? 'bg-primary text-primary-foreground shadow-md'

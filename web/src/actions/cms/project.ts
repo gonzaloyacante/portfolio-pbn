@@ -23,7 +23,8 @@ const ReorderProjectsSchema = z.array(z.string().cuid()).min(1)
  */
 export async function reorderProjects(projectIds: string[]): Promise<void> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   const parsed = ReorderProjectsSchema.safeParse(projectIds)
   if (!parsed.success) {
@@ -52,7 +53,8 @@ export async function setProjectThumbnail(
   thumbnailUrl: string
 ): Promise<ActionResult> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     await prisma.project.update({
@@ -86,7 +88,8 @@ export async function deleteProjectAction(projectId: string): Promise<void> {
  */
 export async function toggleProjectActive(projectId: string): Promise<ActionResult> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const project = await prisma.project.findUnique({

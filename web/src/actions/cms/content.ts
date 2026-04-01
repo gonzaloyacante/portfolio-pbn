@@ -96,7 +96,8 @@ async function _processFormImages(formData: FormData, startOrder = 0): Promise<_
 
 export async function uploadImageAndCreateProject(formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const validation = projectFormSchema.safeParse(_readProjectFormData(formData))
   if (!validation.success) {
@@ -152,7 +153,8 @@ export async function uploadImageAndCreateProject(formData: FormData) {
 
 export async function deleteProject(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     // Fetch project to retrieve its original slug
@@ -188,7 +190,8 @@ export async function deleteProject(id: string) {
 
 export async function restoreProject(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     await prisma.project.update({
@@ -213,7 +216,8 @@ export async function restoreProject(id: string) {
 
 export async function permanentlyDeleteProject(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const project = await prisma.project.findUnique({
@@ -241,7 +245,8 @@ export async function permanentlyDeleteProject(id: string) {
 
 export async function updateProject(id: string, formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const validation = projectFormSchema.safeParse(_readProjectFormData(formData))
   if (!validation.success) {
@@ -311,7 +316,8 @@ export async function reorderProjectImages(
   items: { id: string; order: number }[]
 ) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     await prisma.$transaction(
@@ -335,7 +341,8 @@ export async function reorderProjectImages(
 
 export async function deleteProjectImage(imageId: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const image = await prisma.projectImage.findUnique({
@@ -380,7 +387,8 @@ export async function deleteProjectImage(imageId: string) {
 
 export async function createCategory(formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   // File inputs (even empty ones) send File objects via native form submit.
   // Filter them out — only accept string URLs from hidden inputs.
@@ -440,7 +448,8 @@ export async function createCategory(formData: FormData) {
 
 export async function updateCategory(id: string, formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const _toStringOrNull = (v: FormDataEntryValue | null): string | null =>
     typeof v === 'string' && v !== '' ? v : null
@@ -511,7 +520,8 @@ export async function updateCategory(id: string, formData: FormData) {
 
 export async function deleteCategory(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     // Verificar que no tenga proyectos activos antes de eliminar

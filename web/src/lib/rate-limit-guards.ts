@@ -47,15 +47,20 @@ export async function checkSettingsRateLimit(userId: string) {
 
 /**
  * Guard: Check Rate Limit for General API / Uploads
- * Throws error if limit exceeded
+ * Returns { allowed: false, error: string } if limit exceeded instead of throwing.
  */
-export async function checkApiRateLimit(ip?: string) {
+export async function checkApiRateLimit(
+  ip?: string
+): Promise<{ allowed: false; error: string } | void> {
   const clientIp = ip || (await getClientIp())
   const result = await apiLimiter.check(clientIp)
 
   if (!result.allowed) {
     logger.warn(`Rate limit exceeded for API. IP: ${clientIp}`)
-    throw new Error(`Demasiadas solicitudes. Reset en ${result.resetIn}s`)
+    return {
+      allowed: false,
+      error: `Demasiadas solicitudes. Intenta de nuevo en ${result.resetIn}s`,
+    }
   }
 
   apiLimiter

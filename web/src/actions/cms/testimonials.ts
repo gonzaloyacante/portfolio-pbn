@@ -42,7 +42,8 @@ const TestimonialSchema = z.object({
 
 export async function createTestimonial(formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const rawData = {
     name: formData.get('name'),
@@ -147,7 +148,8 @@ export async function submitPublicTestimonial(formData: FormData) {
 
 export async function updateTestimonial(id: string, formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const rawData = {
     name: formData.get('name'),
@@ -208,7 +210,8 @@ export async function updateTestimonial(id: string, formData: FormData) {
 
 export async function deleteTestimonial(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     await prisma.testimonial.update({
@@ -230,7 +233,8 @@ export async function deleteTestimonial(id: string) {
 
 export async function toggleTestimonial(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const testimonial = await prisma.testimonial.findUnique({ where: { id } })

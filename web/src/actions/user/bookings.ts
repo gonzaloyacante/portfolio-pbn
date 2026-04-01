@@ -21,7 +21,8 @@ const BookingSchema = z.object({
 })
 
 export async function createBooking(formData: FormData) {
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const rawData = {
     date: formData.get('date'),
@@ -125,7 +126,8 @@ export async function updateBookingStatus(
   status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED'
 ) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     await prisma.booking.update({

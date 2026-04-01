@@ -14,7 +14,8 @@ const ReorderCategoriesSchema = z.array(z.string().cuid()).min(1)
 
 export async function deleteCategoryAction(categoryId: string): Promise<void> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
   await deleteCategory(categoryId)
   revalidatePath(ROUTES.admin.categories)
   // _revalidatePublicContent ya fue llamado dentro de deleteCategory
@@ -22,7 +23,8 @@ export async function deleteCategoryAction(categoryId: string): Promise<void> {
 
 export async function reorderCategories(categoryIds: string[]): Promise<void> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
 
   const parsed = ReorderCategoriesSchema.safeParse(categoryIds)
   if (!parsed.success) {

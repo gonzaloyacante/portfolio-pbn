@@ -112,6 +112,7 @@ export default function AdminMobileHeader() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    prefetch={false}
                     onClick={() => setIsOpen(false)}
                     className={`flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 active:scale-[0.98] ${
                       isActive
