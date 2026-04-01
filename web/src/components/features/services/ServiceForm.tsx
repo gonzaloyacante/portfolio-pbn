@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/config/routes'
 import { createService, updateService } from '@/actions/cms/services'
-import { Button, ImageUpload } from '@/components/ui'
+import { Button, ImageUpload, DurationField } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { generateSlug } from '@/lib/string-utils'
@@ -193,21 +193,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
 
       {/* --- SCHEDULE --- */}
       <div className={activeTab === 'schedule' ? 'block space-y-4' : 'hidden'}>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <FormField
-            label="Duración (Texto)"
-            name="duration"
-            defaultValue={service?.duration || ''}
-            placeholder="2 horas"
-          />
-          <FormField
-            label="Duración (Minutos)"
-            name="durationMinutes"
-            type="number"
-            defaultValue={service?.durationMinutes?.toString()}
-            placeholder="120"
-          />
-        </div>
+        <DurationField service={service} />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <FormField
             label="Max. Reservas por Día"

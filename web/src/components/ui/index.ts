@@ -18,6 +18,7 @@ export { default as IconPicker } from './forms/IconPicker'
 export { default as FontPicker } from './forms/FontPicker'
 export { default as PasswordStrengthMeter } from './forms/PasswordStrengthMeter'
 export { default as PhoneInput } from './forms/PhoneInput'
+export { default as DurationField } from './forms/DurationField'
 
 // Data Display
 export { default as Card } from './data-display/Card'
