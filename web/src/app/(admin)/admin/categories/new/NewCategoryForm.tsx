@@ -16,18 +16,8 @@ export function NewCategoryForm() {
     e.preventDefault()
     setError(null)
     const formData = new FormData(e.currentTarget)
-    // Auto-generate slug if not provided (hide slug input from UI)
-    const name = (formData.get('name') as string) || ''
-    if (!formData.get('slug') && name) {
-      const slug = name
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/(^-|-$)/g, '')
-      formData.set('slug', slug)
-    }
+    // Slug is intentionally left empty — the server action generates it via generateSlug()
+    // using NFD normalization which correctly handles Spanish characters (é, á, ñ, etc.)
     startTransition(async () => {
       const result = await createCategory(formData)
       if (result.success) {

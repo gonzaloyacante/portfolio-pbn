@@ -101,7 +101,7 @@ export default function NewProjectForm({ categories }: NewProjectFormProps) {
             <span className="text-sm font-medium text-(--foreground)">Fijado al inicio</span>
           </label>
         </div>
-        <ImageUpload name="images" label="Imágenes del proyecto" multiple mode="gallery" />
+        <ImageUpload name="images" label="Imágenes del proyecto *" multiple mode="gallery" />
 
         <div className="border-border flex justify-end gap-4 border-t pt-4">
           <Button asChild type="button" variant="ghost" disabled={isPending}>
