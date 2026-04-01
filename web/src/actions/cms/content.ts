@@ -389,7 +389,14 @@ export async function createCategory(formData: FormData) {
 
   const rawData = {
     name: formData.get('name'),
-    slug: formData.get('slug'),
+    // Auto-generate slug on the server using the robust generateSlug utility
+    // (which handles Spanish characters, accents and ñ correctly via NFD normalization)
+    slug: (() => {
+      const s = formData.get('slug')
+      if (typeof s === 'string' && s.trim() !== '') return s.trim()
+      const n = formData.get('name')
+      return typeof n === 'string' ? generateSlug(n) : ''
+    })(),
     description: formData.get('description'),
     coverImageUrl: _toStringOrNull(formData.get('coverImageUrl')),
     thumbnailUrl: _toStringOrNull(formData.get('thumbnailUrl')),

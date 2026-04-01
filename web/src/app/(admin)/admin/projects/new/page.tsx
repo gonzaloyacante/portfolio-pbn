@@ -8,12 +8,12 @@ import NewProjectForm from '@/components/features/projects/NewProjectForm'
 
 export default async function NewProjectPage() {
   const categories = await prisma.category.findMany({
-    where: { isActive: true, deletedAt: null },
+    where: { deletedAt: null },
     orderBy: { name: 'asc' },
     select: { id: true, name: true },
   })
 
-  // Sin categorías activas → mostrar estado vacío con CTA
+  // Sin categorías → mostrar estado vacío con CTA
   if (categories.length === 0) {
     return (
       <div className="mx-auto max-w-4xl space-y-8">
@@ -26,10 +26,10 @@ export default async function NewProjectPage() {
             <FolderOpen className="text-muted-foreground h-8 w-8" />
           </div>
           <div className="space-y-2">
-            <h3 className="text-foreground text-lg font-semibold">No hay categorías disponibles</h3>
+            <h3 className="text-foreground text-lg font-semibold">No hay categorías creadas</h3>
             <p className="text-muted-foreground max-w-md text-sm">
-              Para crear un proyecto necesitas al menos una categoría activa. Crea una categoría
-              primero y luego vuelve aquí.
+              Para crear un proyecto necesitas al menos una categoría. Crea una categoría primero y
+              luego vuelve aquí.
             </p>
           </div>
           <Button asChild className="gap-2">

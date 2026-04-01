@@ -18,7 +18,7 @@ export default async function ProjectsManagementPage() {
       orderBy: { sortOrder: 'asc' }, // Prioritize manual order
     }),
     prisma.category.findMany({
-      where: { deletedAt: null, isActive: true },
+      where: { deletedAt: null },
       orderBy: { name: 'asc' },
       select: { id: true, name: true },
     }),

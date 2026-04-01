@@ -58,7 +58,7 @@ portfolio-pbn/             # Raíz del monorepo
 | **Framework**       | Next.js 16 (App Router)  | Server Actions y Server Components por defecto.           |
 | **Lenguaje**        | TypeScript               | **Strict Mode**. Prohibido `any` y `@ts-ignore`.          |
 | **Base de Datos**   | PostgreSQL (Neon Tech)   | Usar Pooling. Branching: `main` (prod) / `develop` (dev). |
-| **ORM**             | Prisma                   | Schema en `prisma/schema/*.prisma` (multi-file schema).   |
+| **ORM**             | Prisma + `PrismaPg`      | Schema en `prisma/schema/*.prisma`. Adaptador `@prisma/adapter-pg` + `pg` Pool en `db.ts`. Las transacciones con `prisma.$transaction()` funcionan correctamente con este adaptador. |
 | **Estilos**         | Tailwind CSS 4           | Variables CSS en `globals.css`. Prohibido hardcodear HEX. |
 | **Componentes**     | Radix/Shadcn modificados | `@/components/ui`. Iconos: `lucide-react`.                |
 | **Forms**           | React Hook Form + Zod    | Schema único en `src/lib/validations.ts`.                 |
@@ -111,7 +111,7 @@ web/src/
 ├── lib/            # Singletons, Helpers, Validaciones.
 │   ├── auth.ts     # NextAuth config
 │   ├── jwt-admin.ts # JWT custom para API Flutter (jose)
-│   ├── db.ts       # Prisma client singleton (Neon pooling)
+│   ├── db.ts       # Prisma client singleton (PrismaPg adapter + Neon pooling)
 │   ├── validations.ts # Todos los Zod schemas
 │   ├── cloudinary.ts
 │   ├── email-service.ts
@@ -192,6 +192,8 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 - ❌ Strings hardcodeados para rutas
 - ❌ Llamar a Server Actions directamente desde Flutter (usar endpoints `/api/admin/*`)
 - ❌ **Mostrar el `slug` en cualquier UI admin** — el slug es metadata interna autogenerada. NUNCA mostrarlo como texto visible al administrador en ningún componente, lista, card o formulario. Solo puede usarse internamente en href de navegación a la web pública.
+- ❌ **Filtrar categorías por `isActive: true` en contexto admin** — En páginas de administración (crear/editar proyectos, listados admin), las queries de categorías deben usar `where: { deletedAt: null }` sin filtrar por `isActive`. El filtro `isActive: true` solo aplica a queries públicas (`getPaginatedProjects`, `getProjectsByCategory`, etc.). Filtrar por `isActive` en admin causa falsos negativos: "no hay categorías" cuando sí existen pero están inactivas.
+- ❌ **Generar slugs en el cliente** — NUNCA generar slugs en el navegador con `.replace(/[^a-z0-9\s-]/g, '')` u otras expresiones sin NFD normalization. Los caracteres españoles (á, é, í, ó, ú, ñ) se eliminan silenciosamente. Siempre generar slugs server-side: enviar campo vacío desde el formulario y dejar que el Server Action llame a `generateSlug(name)` de `@/lib/string-utils` (usa `normalize('NFD')`). El slug en formularios de creación debe ser `<input type="hidden" name="slug" value="">` — la generación es responsabilidad del servidor.
 
 ---
 
