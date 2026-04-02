@@ -90,13 +90,6 @@ class CategoryGridCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${item.projectCount} proyecto${item.projectCount == 1 ? '' : 's'}',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurface,
-                      ),
-                    ),
                   ],
                 ),
               ),

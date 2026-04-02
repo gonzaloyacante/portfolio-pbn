@@ -5,38 +5,38 @@ void main() {
   // ── TrashItem.fromMap ─────────────────────────────────────────────────────
 
   group('TrashItem.fromMap — using title field', () {
-    Map<String, dynamic> project() => {
-      'id': 'proj-1',
+    Map<String, dynamic> category() => {
+      'id': 'cat-1',
       'title': 'Wedding Shoot',
       'deletedAt': '2024-06-01T10:00:00Z',
     };
 
     test(
       'parses id',
-      () => expect(TrashItem.fromMap('project', project()).id, 'proj-1'),
+      () => expect(TrashItem.fromMap('category', category()).id, 'cat-1'),
     );
     test(
       'parses type',
-      () => expect(TrashItem.fromMap('project', project()).type, 'project'),
+      () => expect(TrashItem.fromMap('category', category()).type, 'category'),
     );
     test(
       'displayName uses title',
       () => expect(
-        TrashItem.fromMap('project', project()).displayName,
+        TrashItem.fromMap('category', category()).displayName,
         'Wedding Shoot',
       ),
     );
     test(
       'deletedAt is DateTime',
       () => expect(
-        TrashItem.fromMap('project', project()).deletedAt,
+        TrashItem.fromMap('category', category()).deletedAt,
         isA<DateTime>(),
       ),
     );
     test('deletedAt parsed correctly', () {
-      expect(TrashItem.fromMap('project', project()).deletedAt.year, 2024);
-      expect(TrashItem.fromMap('project', project()).deletedAt.month, 6);
-      expect(TrashItem.fromMap('project', project()).deletedAt.day, 1);
+      expect(TrashItem.fromMap('category', category()).deletedAt.year, 2024);
+      expect(TrashItem.fromMap('category', category()).deletedAt.month, 6);
+      expect(TrashItem.fromMap('category', category()).deletedAt.day, 1);
     });
   });
 
@@ -102,7 +102,7 @@ void main() {
     };
 
     test('title takes priority over name', () {
-      expect(TrashItem.fromMap('project', both).displayName, 'Title Wins');
+      expect(TrashItem.fromMap('category', both).displayName, 'Title Wins');
     });
   });
 
@@ -138,14 +138,14 @@ void main() {
   });
 
   group('TrashItem — copyWith', () {
-    final base = TrashItem.fromMap('project', {
+    final base = TrashItem.fromMap('category', {
       'id': 'cp-1',
       'title': 'Original',
       'deletedAt': '2024-01-01T00:00:00Z',
     });
 
     test('copyWith type changes type', () {
-      expect(base.copyWith(type: 'category').type, 'category');
+      expect(base.copyWith(type: 'service').type, 'service');
     });
 
     test('copyWith displayName changes displayName', () {
@@ -154,17 +154,13 @@ void main() {
 
     test('original unchanged after copyWith', () {
       final _ = base.copyWith(type: 'other');
-      expect(base.type, 'project');
+      expect(base.type, 'category');
     });
   });
 
   // ── trashTypeLabel ────────────────────────────────────────────────────────
 
   group('trashTypeLabel', () {
-    test(
-      'project → "Proyecto"',
-      () => expect(trashTypeLabel('project'), 'Proyecto'),
-    );
     test(
       'category → "Categoría"',
       () => expect(trashTypeLabel('category'), 'Categoría'),
@@ -192,7 +188,7 @@ void main() {
     test('empty string returns empty', () => expect(trashTypeLabel(''), ''));
     test(
       'uppercase unknown returns itself',
-      () => expect(trashTypeLabel('PROJECT'), 'PROJECT'),
+      () => expect(trashTypeLabel('UNKNOWN_TYPE'), 'UNKNOWN_TYPE'),
     );
   });
 }

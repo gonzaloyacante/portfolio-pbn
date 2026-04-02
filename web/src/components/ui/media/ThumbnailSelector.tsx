@@ -22,7 +22,7 @@ interface ThumbnailSelectorProps {
 
 /**
  * ThumbnailSelector - Grid selector for choosing a thumbnail from available images
- * Used in Category/Project create/edit forms
+ * Used in Category create/edit forms
  */
 export default function ThumbnailSelector({
   images,

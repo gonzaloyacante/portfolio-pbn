@@ -8,18 +8,14 @@ void main() {
   group('StatCard — renders label and value', () {
     testWidgets('shows label text', (tester) async {
       await tester.pumpWidget(
-        _wrap(
-          const StatCard(icon: Icons.star, label: 'Proyectos', value: '24'),
-        ),
+        _wrap(const StatCard(icon: Icons.star, label: 'Imágenes', value: '24')),
       );
-      expect(find.text('Proyectos'), findsOneWidget);
+      expect(find.text('Imágenes'), findsOneWidget);
     });
 
     testWidgets('shows value text', (tester) async {
       await tester.pumpWidget(
-        _wrap(
-          const StatCard(icon: Icons.star, label: 'Proyectos', value: '24'),
-        ),
+        _wrap(const StatCard(icon: Icons.star, label: 'Imágenes', value: '24')),
       );
       expect(find.text('24'), findsOneWidget);
     });
@@ -38,7 +34,7 @@ void main() {
         _wrap(
           const StatCard(
             icon: Icons.star,
-            label: 'Proyectos',
+            label: 'Imágenes',
             value: '42',
             trend: '+3 este mes',
             trendPositive: true,
@@ -53,7 +49,7 @@ void main() {
         _wrap(
           const StatCard(
             icon: Icons.star,
-            label: 'Proyectos',
+            label: 'Imágenes',
             value: '42',
             trend: '-2 este mes',
             trendPositive: false,

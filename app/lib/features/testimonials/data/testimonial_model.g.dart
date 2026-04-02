@@ -58,7 +58,7 @@ _TestimonialDetail _$TestimonialDetailFromJson(Map<String, dynamic> json) =>
       verified: json['verified'] as bool? ?? false,
       featured: json['featured'] as bool? ?? false,
       source: json['source'] as String?,
-      projectId: json['projectId'] as String?,
+      categoryId: json['categoryId'] as String?,
       status: json['status'] as String? ?? 'PENDING',
       moderationNote: json['moderationNote'] as String?,
       moderatedAt: json['moderatedAt'] == null
@@ -87,7 +87,7 @@ Map<String, dynamic> _$TestimonialDetailToJson(_TestimonialDetail instance) =>
       'verified': instance.verified,
       'featured': instance.featured,
       'source': instance.source,
-      'projectId': instance.projectId,
+      'categoryId': instance.categoryId,
       'status': instance.status,
       'moderationNote': instance.moderationNote,
       'moderatedAt': instance.moderatedAt?.toIso8601String(),

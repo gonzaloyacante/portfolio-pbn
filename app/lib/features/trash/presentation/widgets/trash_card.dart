@@ -7,7 +7,6 @@ import '../../data/trash_model.dart';
 final _dateFmt = DateFormat('d MMM yyyy', 'es');
 
 IconData trashTypeIcon(String type) => switch (type) {
-  'project' => Icons.work_outline,
   'category' => Icons.category_outlined,
   'service' => Icons.home_repair_service_outlined,
   'testimonial' => Icons.star_border,

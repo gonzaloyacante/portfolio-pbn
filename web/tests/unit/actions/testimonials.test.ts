@@ -100,7 +100,7 @@ const makeTestimonial = (overrides: Partial<Testimonial> = {}): Testimonial => (
   isActive: true,
   sortOrder: 0,
   source: null,
-  projectId: null,
+  categoryId: null,
   status: 'PENDING',
   moderatedBy: null,
   moderatedAt: null,

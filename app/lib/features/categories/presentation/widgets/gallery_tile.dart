@@ -4,7 +4,6 @@ import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_radius.dart';
 import '../../data/category_model.dart';
-import 'gallery_badge.dart';
 
 class GalleryTile extends StatelessWidget {
   const GalleryTile({
@@ -48,7 +47,7 @@ class GalleryTile extends StatelessWidget {
                 width: 72,
                 height: 72,
                 child: CachedNetworkImage(
-                  imageUrl: item.thumbnailUrl,
+                  imageUrl: item.url,
                   fit: BoxFit.cover,
                   placeholder: (ctx2, url) => ColoredBox(
                     color: scheme.surfaceContainerHighest,
@@ -77,53 +76,13 @@ class GalleryTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.alt ?? item.projectTitle,
+                      'Imagen #${item.order}',
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.folder_outlined,
-                          size: 12,
-                          color: scheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            item.projectTitle,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: scheme.onSurface.withValues(alpha: 0.5),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (item.isCover || item.isHero)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 3),
-                        child: Wrap(
-                          spacing: 4,
-                          children: [
-                            if (item.isCover)
-                              GalleryBadge(
-                                label: 'Portada',
-                                color: scheme.primary,
-                              ),
-                            if (item.isHero)
-                              GalleryBadge(
-                                label: 'Hero',
-                                color: scheme.tertiary,
-                              ),
-                          ],
-                        ),
-                      ),
                   ],
                 ),
               ),

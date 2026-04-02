@@ -26,7 +26,7 @@ export interface SiteSettingsData {
   maintenanceMode: boolean
   maintenanceMessage: string | null
   showAboutPage: boolean
-  showProjectsPage: boolean
+  showGalleryPage: boolean
   showServicesPage: boolean
   showContactPage: boolean
   allowIndexing: boolean
@@ -35,7 +35,7 @@ export interface SiteSettingsData {
 /** Minimal visibility-only data for Navbar / Footer / middleware */
 export interface PageVisibility {
   showAboutPage: boolean
-  showProjectsPage: boolean
+  showGalleryPage: boolean
   showServicesPage: boolean
   showContactPage: boolean
   maintenanceMode: boolean
@@ -55,7 +55,7 @@ const siteSettingsSchema = z.object({
   maintenanceMode: z.boolean().optional(),
   maintenanceMessage: z.string().max(500).nullable().optional(),
   showAboutPage: z.boolean().optional(),
-  showProjectsPage: z.boolean().optional(),
+  showGalleryPage: z.boolean().optional(),
   showServicesPage: z.boolean().optional(),
   showContactPage: z.boolean().optional(),
   allowIndexing: z.boolean().optional(),
@@ -87,7 +87,7 @@ export const getSiteSettings = unstable_cache(
           maintenanceMode: true,
           maintenanceMessage: true,
           showAboutPage: true,
-          showProjectsPage: true,
+          showGalleryPage: true,
           showServicesPage: true,
           showContactPage: true,
           allowIndexing: true,
@@ -113,7 +113,7 @@ export const getPageVisibility = unstable_cache(
         where: { isActive: true },
         select: {
           showAboutPage: true,
-          showProjectsPage: true,
+          showGalleryPage: true,
           showServicesPage: true,
           showContactPage: true,
           maintenanceMode: true,
@@ -123,7 +123,7 @@ export const getPageVisibility = unstable_cache(
       return (
         settings ?? {
           showAboutPage: true,
-          showProjectsPage: true,
+          showGalleryPage: true,
           showServicesPage: false,
           showContactPage: true,
           maintenanceMode: false,
@@ -133,7 +133,7 @@ export const getPageVisibility = unstable_cache(
     } catch {
       return {
         showAboutPage: true,
-        showProjectsPage: true,
+        showGalleryPage: true,
         showServicesPage: false,
         showContactPage: true,
         maintenanceMode: false,

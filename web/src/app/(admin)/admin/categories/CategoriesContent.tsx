@@ -17,8 +17,8 @@ import { TOAST_MESSAGES } from '@/lib/toast-messages'
 import { showToast } from '@/lib/toast'
 
 type CategoryWithCount = Category & {
-  _count: { projects: number }
-  projects: { thumbnailUrl: string | null }[]
+  _count: { images: number }
+  images: { url: string }[]
 }
 
 interface CategoriesContentProps {
@@ -39,7 +39,7 @@ export default function CategoriesContent({
   const handleDelete = async (categoryId: string, categoryName: string) => {
     const isConfirmed = await confirm({
       title: '¿Eliminar categoría?',
-      message: `"${categoryName}" será movida a la papelera. Sus proyectos no se eliminarán.`,
+      message: `"${categoryName}" será movida a la papelera. Sus imágenes no se eliminarán.`,
       confirmText: 'Eliminar',
       variant: 'danger',
     })
@@ -62,9 +62,8 @@ export default function CategoriesContent({
     errorMessage: TOAST_MESSAGES.categories.reorder.error,
   })
   const renderCategoryItem = (category: CategoryWithCount, isDragging: boolean) => {
-    // Priority: explicit category cover → category thumbnail → first project thumbnail → empty
-    const thumbnailUrl =
-      category.coverImageUrl || category.thumbnailUrl || category.projects[0]?.thumbnailUrl
+    // Priority: explicit category cover → first gallery image → empty
+    const thumbnailUrl = category.coverImageUrl || category.images[0]?.url
 
     if (view === 'grid') {
       return (
@@ -104,14 +103,14 @@ export default function CategoriesContent({
             )}
 
             <div className="text-muted-foreground flex gap-3 text-xs">
-              <span>🖼️ {category._count.projects} proyectos</span>
+              <span>🖼️ {category._count.images} imágenes</span>
             </div>
 
             {/* Actions */}
             <div className="border-border mt-auto flex gap-2 border-t pt-4">
               <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
                 <Link
-                  href={`${ROUTES.public.projects}/${category.slug}`}
+                  href={`${ROUTES.public.portfolio}/${category.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -182,7 +181,7 @@ export default function CategoriesContent({
           </div>
 
           <div className="text-muted-foreground mt-1 text-xs">
-            {category._count.projects} proyectos
+            {category._count.images} imágenes
           </div>
         </div>
 
@@ -195,7 +194,7 @@ export default function CategoriesContent({
             aria-label={`Ver categoría ${category.name} en público`}
           >
             <Link
-              href={`${ROUTES.public.projects}/${category.slug}`}
+              href={`${ROUTES.public.portfolio}/${category.slug}`}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -259,7 +258,7 @@ export default function CategoriesContent({
               <span className="mb-4 text-6xl">📁</span>
               <h3 className="text-foreground mb-2 text-2xl font-bold">No hay categorías</h3>
               <p className="text-muted-foreground mb-6">
-                Crea tu primera categoría para organizar tus proyectos
+                Crea tu primera categoría para organizar tu portfolio
               </p>
               <Button asChild className="gap-2">
                 <Link href={ROUTES.admin.newCategory}>

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CategoryItem {
 
- String get id; String get name; String get slug; String? get description; String? get thumbnailUrl; String? get coverImageUrl; int get sortOrder; bool get isActive; int get projectCount; String get createdAt; String get updatedAt;
+ String get id; String get name; String get slug; String? get description; String? get thumbnailUrl; String? get coverImageUrl; int get sortOrder; bool get isActive; String get createdAt; String get updatedAt;
 /// Create a copy of CategoryItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $CategoryItemCopyWith<CategoryItem> get copyWith => _$CategoryItemCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.projectCount, projectCount) || other.projectCount == projectCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,sortOrder,isActive,projectCount,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,sortOrder,isActive,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'CategoryItem(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, sortOrder: $sortOrder, isActive: $isActive, projectCount: $projectCount, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'CategoryItem(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, sortOrder: $sortOrder, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $CategoryItemCopyWith<$Res>  {
   factory $CategoryItemCopyWith(CategoryItem value, $Res Function(CategoryItem) _then) = _$CategoryItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, int sortOrder, bool isActive, int projectCount, String createdAt, String updatedAt
+ String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, int sortOrder, bool isActive, String createdAt, String updatedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$CategoryItemCopyWithImpl<$Res>
 
 /// Create a copy of CategoryItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? sortOrder = null,Object? isActive = null,Object? projectCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? sortOrder = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -75,8 +75,7 @@ as String?,thumbnailUrl: freezed == thumbnailUrl ? _self.thumbnailUrl : thumbnai
 as String?,coverImageUrl: freezed == coverImageUrl ? _self.coverImageUrl : coverImageUrl // ignore: cast_nullable_to_non_nullable
 as String?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,projectCount: null == projectCount ? _self.projectCount : projectCount // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -163,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  int sortOrder,  bool isActive,  int projectCount,  String createdAt,  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  int sortOrder,  bool isActive,  String createdAt,  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CategoryItem() when $default != null:
-return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.sortOrder,_that.isActive,_that.projectCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.sortOrder,_that.isActive,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -184,10 +183,10 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnail
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  int sortOrder,  bool isActive,  int projectCount,  String createdAt,  String updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  int sortOrder,  bool isActive,  String createdAt,  String updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _CategoryItem():
-return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.sortOrder,_that.isActive,_that.projectCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.sortOrder,_that.isActive,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +203,10 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnail
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  int sortOrder,  bool isActive,  int projectCount,  String createdAt,  String updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  int sortOrder,  bool isActive,  String createdAt,  String updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _CategoryItem() when $default != null:
-return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.sortOrder,_that.isActive,_that.projectCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.sortOrder,_that.isActive,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -219,7 +218,7 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnail
 @JsonSerializable()
 
 class _CategoryItem implements CategoryItem {
-  const _CategoryItem({required this.id, required this.name, required this.slug, this.description, this.thumbnailUrl, this.coverImageUrl, this.sortOrder = 0, this.isActive = true, this.projectCount = 0, required this.createdAt, required this.updatedAt});
+  const _CategoryItem({required this.id, required this.name, required this.slug, this.description, this.thumbnailUrl, this.coverImageUrl, this.sortOrder = 0, this.isActive = true, required this.createdAt, required this.updatedAt});
   factory _CategoryItem.fromJson(Map<String, dynamic> json) => _$CategoryItemFromJson(json);
 
 @override final  String id;
@@ -230,7 +229,6 @@ class _CategoryItem implements CategoryItem {
 @override final  String? coverImageUrl;
 @override@JsonKey() final  int sortOrder;
 @override@JsonKey() final  bool isActive;
-@override@JsonKey() final  int projectCount;
 @override final  String createdAt;
 @override final  String updatedAt;
 
@@ -247,16 +245,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.projectCount, projectCount) || other.projectCount == projectCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,sortOrder,isActive,projectCount,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,sortOrder,isActive,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'CategoryItem(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, sortOrder: $sortOrder, isActive: $isActive, projectCount: $projectCount, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'CategoryItem(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, sortOrder: $sortOrder, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -267,7 +265,7 @@ abstract mixin class _$CategoryItemCopyWith<$Res> implements $CategoryItemCopyWi
   factory _$CategoryItemCopyWith(_CategoryItem value, $Res Function(_CategoryItem) _then) = __$CategoryItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, int sortOrder, bool isActive, int projectCount, String createdAt, String updatedAt
+ String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, int sortOrder, bool isActive, String createdAt, String updatedAt
 });
 
 
@@ -284,7 +282,7 @@ class __$CategoryItemCopyWithImpl<$Res>
 
 /// Create a copy of CategoryItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? sortOrder = null,Object? isActive = null,Object? projectCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? sortOrder = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_CategoryItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -294,8 +292,7 @@ as String?,thumbnailUrl: freezed == thumbnailUrl ? _self.thumbnailUrl : thumbnai
 as String?,coverImageUrl: freezed == coverImageUrl ? _self.coverImageUrl : coverImageUrl // ignore: cast_nullable_to_non_nullable
 as String?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,projectCount: null == projectCount ? _self.projectCount : projectCount // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -308,7 +305,7 @@ as String,
 /// @nodoc
 mixin _$CategoryDetail {
 
- String get id; String get name; String get slug; String? get description; String? get thumbnailUrl; String? get coverImageUrl; String? get metaTitle; String? get metaDescription; List<String> get metaKeywords; String? get ogImage; int get sortOrder; bool get isActive; int get projectCount; String get createdAt; String get updatedAt;
+ String get id; String get name; String get slug; String? get description; String? get thumbnailUrl; String? get coverImageUrl; String? get metaTitle; String? get metaDescription; List<String> get metaKeywords; String? get ogImage; int get sortOrder; bool get isActive; String get createdAt; String get updatedAt;
 /// Create a copy of CategoryDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -321,16 +318,16 @@ $CategoryDetailCopyWith<CategoryDetail> get copyWith => _$CategoryDetailCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.metaTitle, metaTitle) || other.metaTitle == metaTitle)&&(identical(other.metaDescription, metaDescription) || other.metaDescription == metaDescription)&&const DeepCollectionEquality().equals(other.metaKeywords, metaKeywords)&&(identical(other.ogImage, ogImage) || other.ogImage == ogImage)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.projectCount, projectCount) || other.projectCount == projectCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoryDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.metaTitle, metaTitle) || other.metaTitle == metaTitle)&&(identical(other.metaDescription, metaDescription) || other.metaDescription == metaDescription)&&const DeepCollectionEquality().equals(other.metaKeywords, metaKeywords)&&(identical(other.ogImage, ogImage) || other.ogImage == ogImage)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,metaTitle,metaDescription,const DeepCollectionEquality().hash(metaKeywords),ogImage,sortOrder,isActive,projectCount,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,metaTitle,metaDescription,const DeepCollectionEquality().hash(metaKeywords),ogImage,sortOrder,isActive,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'CategoryDetail(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, metaTitle: $metaTitle, metaDescription: $metaDescription, metaKeywords: $metaKeywords, ogImage: $ogImage, sortOrder: $sortOrder, isActive: $isActive, projectCount: $projectCount, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'CategoryDetail(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, metaTitle: $metaTitle, metaDescription: $metaDescription, metaKeywords: $metaKeywords, ogImage: $ogImage, sortOrder: $sortOrder, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -341,7 +338,7 @@ abstract mixin class $CategoryDetailCopyWith<$Res>  {
   factory $CategoryDetailCopyWith(CategoryDetail value, $Res Function(CategoryDetail) _then) = _$CategoryDetailCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, String? metaTitle, String? metaDescription, List<String> metaKeywords, String? ogImage, int sortOrder, bool isActive, int projectCount, String createdAt, String updatedAt
+ String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, String? metaTitle, String? metaDescription, List<String> metaKeywords, String? ogImage, int sortOrder, bool isActive, String createdAt, String updatedAt
 });
 
 
@@ -358,7 +355,7 @@ class _$CategoryDetailCopyWithImpl<$Res>
 
 /// Create a copy of CategoryDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? metaTitle = freezed,Object? metaDescription = freezed,Object? metaKeywords = null,Object? ogImage = freezed,Object? sortOrder = null,Object? isActive = null,Object? projectCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? metaTitle = freezed,Object? metaDescription = freezed,Object? metaKeywords = null,Object? ogImage = freezed,Object? sortOrder = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -372,8 +369,7 @@ as String?,metaKeywords: null == metaKeywords ? _self.metaKeywords : metaKeyword
 as List<String>,ogImage: freezed == ogImage ? _self.ogImage : ogImage // ignore: cast_nullable_to_non_nullable
 as String?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,projectCount: null == projectCount ? _self.projectCount : projectCount // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -460,10 +456,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  int sortOrder,  bool isActive,  int projectCount,  String createdAt,  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  int sortOrder,  bool isActive,  String createdAt,  String updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CategoryDetail() when $default != null:
-return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.sortOrder,_that.isActive,_that.projectCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.sortOrder,_that.isActive,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -481,10 +477,10 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnail
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  int sortOrder,  bool isActive,  int projectCount,  String createdAt,  String updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  int sortOrder,  bool isActive,  String createdAt,  String updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _CategoryDetail():
-return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.sortOrder,_that.isActive,_that.projectCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.sortOrder,_that.isActive,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -501,10 +497,10 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnail
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  int sortOrder,  bool isActive,  int projectCount,  String createdAt,  String updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String slug,  String? description,  String? thumbnailUrl,  String? coverImageUrl,  String? metaTitle,  String? metaDescription,  List<String> metaKeywords,  String? ogImage,  int sortOrder,  bool isActive,  String createdAt,  String updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _CategoryDetail() when $default != null:
-return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.sortOrder,_that.isActive,_that.projectCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnailUrl,_that.coverImageUrl,_that.metaTitle,_that.metaDescription,_that.metaKeywords,_that.ogImage,_that.sortOrder,_that.isActive,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -516,7 +512,7 @@ return $default(_that.id,_that.name,_that.slug,_that.description,_that.thumbnail
 @JsonSerializable()
 
 class _CategoryDetail implements CategoryDetail {
-  const _CategoryDetail({required this.id, required this.name, required this.slug, this.description, this.thumbnailUrl, this.coverImageUrl, this.metaTitle, this.metaDescription, final  List<String> metaKeywords = const [], this.ogImage, this.sortOrder = 0, this.isActive = true, this.projectCount = 0, required this.createdAt, required this.updatedAt}): _metaKeywords = metaKeywords;
+  const _CategoryDetail({required this.id, required this.name, required this.slug, this.description, this.thumbnailUrl, this.coverImageUrl, this.metaTitle, this.metaDescription, final  List<String> metaKeywords = const [], this.ogImage, this.sortOrder = 0, this.isActive = true, required this.createdAt, required this.updatedAt}): _metaKeywords = metaKeywords;
   factory _CategoryDetail.fromJson(Map<String, dynamic> json) => _$CategoryDetailFromJson(json);
 
 @override final  String id;
@@ -537,7 +533,6 @@ class _CategoryDetail implements CategoryDetail {
 @override final  String? ogImage;
 @override@JsonKey() final  int sortOrder;
 @override@JsonKey() final  bool isActive;
-@override@JsonKey() final  int projectCount;
 @override final  String createdAt;
 @override final  String updatedAt;
 
@@ -554,16 +549,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.metaTitle, metaTitle) || other.metaTitle == metaTitle)&&(identical(other.metaDescription, metaDescription) || other.metaDescription == metaDescription)&&const DeepCollectionEquality().equals(other._metaKeywords, _metaKeywords)&&(identical(other.ogImage, ogImage) || other.ogImage == ogImage)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.projectCount, projectCount) || other.projectCount == projectCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoryDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.slug, slug) || other.slug == slug)&&(identical(other.description, description) || other.description == description)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.coverImageUrl, coverImageUrl) || other.coverImageUrl == coverImageUrl)&&(identical(other.metaTitle, metaTitle) || other.metaTitle == metaTitle)&&(identical(other.metaDescription, metaDescription) || other.metaDescription == metaDescription)&&const DeepCollectionEquality().equals(other._metaKeywords, _metaKeywords)&&(identical(other.ogImage, ogImage) || other.ogImage == ogImage)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,metaTitle,metaDescription,const DeepCollectionEquality().hash(_metaKeywords),ogImage,sortOrder,isActive,projectCount,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,slug,description,thumbnailUrl,coverImageUrl,metaTitle,metaDescription,const DeepCollectionEquality().hash(_metaKeywords),ogImage,sortOrder,isActive,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'CategoryDetail(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, metaTitle: $metaTitle, metaDescription: $metaDescription, metaKeywords: $metaKeywords, ogImage: $ogImage, sortOrder: $sortOrder, isActive: $isActive, projectCount: $projectCount, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'CategoryDetail(id: $id, name: $name, slug: $slug, description: $description, thumbnailUrl: $thumbnailUrl, coverImageUrl: $coverImageUrl, metaTitle: $metaTitle, metaDescription: $metaDescription, metaKeywords: $metaKeywords, ogImage: $ogImage, sortOrder: $sortOrder, isActive: $isActive, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -574,7 +569,7 @@ abstract mixin class _$CategoryDetailCopyWith<$Res> implements $CategoryDetailCo
   factory _$CategoryDetailCopyWith(_CategoryDetail value, $Res Function(_CategoryDetail) _then) = __$CategoryDetailCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, String? metaTitle, String? metaDescription, List<String> metaKeywords, String? ogImage, int sortOrder, bool isActive, int projectCount, String createdAt, String updatedAt
+ String id, String name, String slug, String? description, String? thumbnailUrl, String? coverImageUrl, String? metaTitle, String? metaDescription, List<String> metaKeywords, String? ogImage, int sortOrder, bool isActive, String createdAt, String updatedAt
 });
 
 
@@ -591,7 +586,7 @@ class __$CategoryDetailCopyWithImpl<$Res>
 
 /// Create a copy of CategoryDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? metaTitle = freezed,Object? metaDescription = freezed,Object? metaKeywords = null,Object? ogImage = freezed,Object? sortOrder = null,Object? isActive = null,Object? projectCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? slug = null,Object? description = freezed,Object? thumbnailUrl = freezed,Object? coverImageUrl = freezed,Object? metaTitle = freezed,Object? metaDescription = freezed,Object? metaKeywords = null,Object? ogImage = freezed,Object? sortOrder = null,Object? isActive = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_CategoryDetail(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -605,8 +600,7 @@ as String?,metaKeywords: null == metaKeywords ? _self._metaKeywords : metaKeywor
 as List<String>,ogImage: freezed == ogImage ? _self.ogImage : ogImage // ignore: cast_nullable_to_non_nullable
 as String?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
-as bool,projectCount: null == projectCount ? _self.projectCount : projectCount // ignore: cast_nullable_to_non_nullable
-as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as String,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -619,7 +613,7 @@ as String,
 /// @nodoc
 mixin _$GalleryImageItem {
 
- String get id; String get url; String get thumbnailUrl; String? get publicId; String? get alt; String? get caption; int? get width; int? get height; bool get isCover; bool get isHero; int? get categoryGalleryOrder; String get projectId; String get projectTitle; String get projectSlug;
+ String get id; String get url; String? get publicId; int get order; String get categoryId;
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -632,16 +626,16 @@ $GalleryImageItemCopyWith<GalleryImageItem> get copyWith => _$GalleryImageItemCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.alt, alt) || other.alt == alt)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.isCover, isCover) || other.isCover == isCover)&&(identical(other.isHero, isHero) || other.isHero == isHero)&&(identical(other.categoryGalleryOrder, categoryGalleryOrder) || other.categoryGalleryOrder == categoryGalleryOrder)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.projectTitle, projectTitle) || other.projectTitle == projectTitle)&&(identical(other.projectSlug, projectSlug) || other.projectSlug == projectSlug));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,url,thumbnailUrl,publicId,alt,caption,width,height,isCover,isHero,categoryGalleryOrder,projectId,projectTitle,projectSlug);
+int get hashCode => Object.hash(runtimeType,id,url,publicId,order,categoryId);
 
 @override
 String toString() {
-  return 'GalleryImageItem(id: $id, url: $url, thumbnailUrl: $thumbnailUrl, publicId: $publicId, alt: $alt, caption: $caption, width: $width, height: $height, isCover: $isCover, isHero: $isHero, categoryGalleryOrder: $categoryGalleryOrder, projectId: $projectId, projectTitle: $projectTitle, projectSlug: $projectSlug)';
+  return 'GalleryImageItem(id: $id, url: $url, publicId: $publicId, order: $order, categoryId: $categoryId)';
 }
 
 
@@ -652,7 +646,7 @@ abstract mixin class $GalleryImageItemCopyWith<$Res>  {
   factory $GalleryImageItemCopyWith(GalleryImageItem value, $Res Function(GalleryImageItem) _then) = _$GalleryImageItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String url, String thumbnailUrl, String? publicId, String? alt, String? caption, int? width, int? height, bool isCover, bool isHero, int? categoryGalleryOrder, String projectId, String projectTitle, String projectSlug
+ String id, String url, String? publicId, int order, String categoryId
 });
 
 
@@ -669,22 +663,13 @@ class _$GalleryImageItemCopyWithImpl<$Res>
 
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? url = null,Object? thumbnailUrl = null,Object? publicId = freezed,Object? alt = freezed,Object? caption = freezed,Object? width = freezed,Object? height = freezed,Object? isCover = null,Object? isHero = null,Object? categoryGalleryOrder = freezed,Object? projectId = null,Object? projectTitle = null,Object? projectSlug = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? url = null,Object? publicId = freezed,Object? order = null,Object? categoryId = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String,publicId: freezed == publicId ? _self.publicId : publicId // ignore: cast_nullable_to_non_nullable
-as String?,alt: freezed == alt ? _self.alt : alt // ignore: cast_nullable_to_non_nullable
-as String?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
-as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
-as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
-as int?,isCover: null == isCover ? _self.isCover : isCover // ignore: cast_nullable_to_non_nullable
-as bool,isHero: null == isHero ? _self.isHero : isHero // ignore: cast_nullable_to_non_nullable
-as bool,categoryGalleryOrder: freezed == categoryGalleryOrder ? _self.categoryGalleryOrder : categoryGalleryOrder // ignore: cast_nullable_to_non_nullable
-as int?,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as String,projectTitle: null == projectTitle ? _self.projectTitle : projectTitle // ignore: cast_nullable_to_non_nullable
-as String,projectSlug: null == projectSlug ? _self.projectSlug : projectSlug // ignore: cast_nullable_to_non_nullable
+as String?,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -770,10 +755,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String url,  String thumbnailUrl,  String? publicId,  String? alt,  String? caption,  int? width,  int? height,  bool isCover,  bool isHero,  int? categoryGalleryOrder,  String projectId,  String projectTitle,  String projectSlug)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String url,  String? publicId,  int order,  String categoryId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GalleryImageItem() when $default != null:
-return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_that.caption,_that.width,_that.height,_that.isCover,_that.isHero,_that.categoryGalleryOrder,_that.projectId,_that.projectTitle,_that.projectSlug);case _:
+return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId);case _:
   return orElse();
 
 }
@@ -791,10 +776,10 @@ return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String url,  String thumbnailUrl,  String? publicId,  String? alt,  String? caption,  int? width,  int? height,  bool isCover,  bool isHero,  int? categoryGalleryOrder,  String projectId,  String projectTitle,  String projectSlug)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String url,  String? publicId,  int order,  String categoryId)  $default,) {final _that = this;
 switch (_that) {
 case _GalleryImageItem():
-return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_that.caption,_that.width,_that.height,_that.isCover,_that.isHero,_that.categoryGalleryOrder,_that.projectId,_that.projectTitle,_that.projectSlug);case _:
+return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -811,10 +796,10 @@ return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String url,  String thumbnailUrl,  String? publicId,  String? alt,  String? caption,  int? width,  int? height,  bool isCover,  bool isHero,  int? categoryGalleryOrder,  String projectId,  String projectTitle,  String projectSlug)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String url,  String? publicId,  int order,  String categoryId)?  $default,) {final _that = this;
 switch (_that) {
 case _GalleryImageItem() when $default != null:
-return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_that.caption,_that.width,_that.height,_that.isCover,_that.isHero,_that.categoryGalleryOrder,_that.projectId,_that.projectTitle,_that.projectSlug);case _:
+return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId);case _:
   return null;
 
 }
@@ -826,23 +811,14 @@ return $default(_that.id,_that.url,_that.thumbnailUrl,_that.publicId,_that.alt,_
 @JsonSerializable()
 
 class _GalleryImageItem implements GalleryImageItem {
-  const _GalleryImageItem({required this.id, required this.url, required this.thumbnailUrl, this.publicId, this.alt, this.caption, this.width, this.height, this.isCover = false, this.isHero = false, this.categoryGalleryOrder, required this.projectId, required this.projectTitle, required this.projectSlug});
+  const _GalleryImageItem({required this.id, required this.url, this.publicId, required this.order, required this.categoryId});
   factory _GalleryImageItem.fromJson(Map<String, dynamic> json) => _$GalleryImageItemFromJson(json);
 
 @override final  String id;
 @override final  String url;
-@override final  String thumbnailUrl;
 @override final  String? publicId;
-@override final  String? alt;
-@override final  String? caption;
-@override final  int? width;
-@override final  int? height;
-@override@JsonKey() final  bool isCover;
-@override@JsonKey() final  bool isHero;
-@override final  int? categoryGalleryOrder;
-@override final  String projectId;
-@override final  String projectTitle;
-@override final  String projectSlug;
+@override final  int order;
+@override final  String categoryId;
 
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
@@ -857,16 +833,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.alt, alt) || other.alt == alt)&&(identical(other.caption, caption) || other.caption == caption)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.isCover, isCover) || other.isCover == isCover)&&(identical(other.isHero, isHero) || other.isHero == isHero)&&(identical(other.categoryGalleryOrder, categoryGalleryOrder) || other.categoryGalleryOrder == categoryGalleryOrder)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.projectTitle, projectTitle) || other.projectTitle == projectTitle)&&(identical(other.projectSlug, projectSlug) || other.projectSlug == projectSlug));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,url,thumbnailUrl,publicId,alt,caption,width,height,isCover,isHero,categoryGalleryOrder,projectId,projectTitle,projectSlug);
+int get hashCode => Object.hash(runtimeType,id,url,publicId,order,categoryId);
 
 @override
 String toString() {
-  return 'GalleryImageItem(id: $id, url: $url, thumbnailUrl: $thumbnailUrl, publicId: $publicId, alt: $alt, caption: $caption, width: $width, height: $height, isCover: $isCover, isHero: $isHero, categoryGalleryOrder: $categoryGalleryOrder, projectId: $projectId, projectTitle: $projectTitle, projectSlug: $projectSlug)';
+  return 'GalleryImageItem(id: $id, url: $url, publicId: $publicId, order: $order, categoryId: $categoryId)';
 }
 
 
@@ -877,7 +853,7 @@ abstract mixin class _$GalleryImageItemCopyWith<$Res> implements $GalleryImageIt
   factory _$GalleryImageItemCopyWith(_GalleryImageItem value, $Res Function(_GalleryImageItem) _then) = __$GalleryImageItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String url, String thumbnailUrl, String? publicId, String? alt, String? caption, int? width, int? height, bool isCover, bool isHero, int? categoryGalleryOrder, String projectId, String projectTitle, String projectSlug
+ String id, String url, String? publicId, int order, String categoryId
 });
 
 
@@ -894,22 +870,13 @@ class __$GalleryImageItemCopyWithImpl<$Res>
 
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? url = null,Object? thumbnailUrl = null,Object? publicId = freezed,Object? alt = freezed,Object? caption = freezed,Object? width = freezed,Object? height = freezed,Object? isCover = null,Object? isHero = null,Object? categoryGalleryOrder = freezed,Object? projectId = null,Object? projectTitle = null,Object? projectSlug = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? url = null,Object? publicId = freezed,Object? order = null,Object? categoryId = null,}) {
   return _then(_GalleryImageItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
-as String,thumbnailUrl: null == thumbnailUrl ? _self.thumbnailUrl : thumbnailUrl // ignore: cast_nullable_to_non_nullable
 as String,publicId: freezed == publicId ? _self.publicId : publicId // ignore: cast_nullable_to_non_nullable
-as String?,alt: freezed == alt ? _self.alt : alt // ignore: cast_nullable_to_non_nullable
-as String?,caption: freezed == caption ? _self.caption : caption // ignore: cast_nullable_to_non_nullable
-as String?,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
-as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
-as int?,isCover: null == isCover ? _self.isCover : isCover // ignore: cast_nullable_to_non_nullable
-as bool,isHero: null == isHero ? _self.isHero : isHero // ignore: cast_nullable_to_non_nullable
-as bool,categoryGalleryOrder: freezed == categoryGalleryOrder ? _self.categoryGalleryOrder : categoryGalleryOrder // ignore: cast_nullable_to_non_nullable
-as int?,projectId: null == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as String,projectTitle: null == projectTitle ? _self.projectTitle : projectTitle // ignore: cast_nullable_to_non_nullable
-as String,projectSlug: null == projectSlug ? _self.projectSlug : projectSlug // ignore: cast_nullable_to_non_nullable
+as String?,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
+as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

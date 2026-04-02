@@ -143,8 +143,8 @@ void main() {
       () => expect(s.showServicesPage, false),
     );
     test(
-      'showProjectsPage defaults to true',
-      () => expect(s.showProjectsPage, true),
+      'showGalleryPage defaults to true',
+      () => expect(s.showGalleryPage, true),
     );
     test(
       'showContactPage defaults to true',

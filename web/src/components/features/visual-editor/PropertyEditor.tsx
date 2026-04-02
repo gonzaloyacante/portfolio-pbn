@@ -232,13 +232,13 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Show Featured Projects Toggle */}
+      {/* Show Featured Images Toggle */}
       {fields.showFeatured && (
         <div className="flex items-center justify-between rounded-lg border p-3">
           <div>
-            <p className="text-sm font-medium">Mostrar proyectos destacados</p>
+            <p className="text-sm font-medium">Mostrar imágenes destacadas</p>
             <p className="text-muted-foreground text-xs">
-              Muestra la sección de proyectos bajo el hero
+              Muestra la sección de imágenes destacadas bajo el hero
             </p>
           </div>
           <Switch
@@ -253,7 +253,7 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
       {/* Featured Count */}
       {fields.featuredCount && (
         <EditorSliderControl
-          label="Número de proyectos destacados"
+          label="Número de imágenes destacadas"
           value={(settings[fields.featuredCount] as number) ?? 6}
           onChange={(val: number) => onUpdate(fields.featuredCount as keyof HomeSettingsData, val)}
           min={1}

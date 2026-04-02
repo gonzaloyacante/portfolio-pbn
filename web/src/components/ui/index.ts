@@ -27,7 +27,6 @@ export { default as DataTable } from './data-display/DataTable'
 export { default as StatCard } from './data-display/StatCard'
 export { default as FilterBar } from './data-display/FilterBar'
 export { default as PreviewCard } from './data-display/PreviewCard'
-export { default as ProjectCard } from './data-display/ProjectCard'
 export { default as CategoryCard } from './data-display/CategoryCard'
 
 // Overlay
@@ -61,7 +60,7 @@ export {
   SkeletonAnalyticsChart,
   SkeletonSmallCard,
   SkeletonTable,
-  SkeletonProjectGrid,
+  SkeletonImageGrid,
   SkeletonCategoryGrid,
   SkeletonServiceList,
   SkeletonTestimonialList,
@@ -69,7 +68,6 @@ export {
   SkeletonContactList,
   SkeletonDashboardPage,
   SkeletonContactsPage,
-  SkeletonProjectsPage,
   SkeletonCategoriesPage,
   SkeletonServicesPage,
   SkeletonTestimonialsPage,

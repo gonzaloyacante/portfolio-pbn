@@ -15,8 +15,6 @@ import '../../features/categories/presentation/categories_list_page.dart';
 import '../../features/categories/presentation/category_form_page.dart';
 import '../../features/categories/presentation/category_gallery_page.dart';
 import '../../features/dashboard/presentation/dashboard_page.dart';
-import '../../features/projects/presentation/project_form_page.dart';
-import '../../features/projects/presentation/projects_list_page.dart';
 import '../../features/calendar/presentation/booking_detail_page.dart';
 import '../../features/calendar/presentation/booking_form_page.dart';
 import '../../features/calendar/presentation/calendar_page.dart';
@@ -166,26 +164,6 @@ final List<RouteBase> _routes = [
     name: RouteNames.dashboard,
     pageBuilder: (context, state) =>
         _fadePage(state: state, child: const DashboardPage()),
-  ),
-  GoRoute(
-    path: RoutePaths.projects,
-    name: RouteNames.projects,
-    pageBuilder: (context, state) =>
-        _fadePage(state: state, child: const ProjectsListPage()),
-  ),
-  GoRoute(
-    path: RoutePaths.projectNew,
-    name: RouteNames.projectNew,
-    pageBuilder: (context, state) =>
-        _fadePage(state: state, child: const ProjectFormPage()),
-  ),
-  GoRoute(
-    path: RoutePaths.projectEdit,
-    name: RouteNames.projectEdit,
-    pageBuilder: (context, state) => _fadePage(
-      state: state,
-      child: ProjectFormPage(projectId: state.pathParameters['id']),
-    ),
   ),
   // ── Categorías ────────────────────────────────────────────────────────────
   GoRoute(

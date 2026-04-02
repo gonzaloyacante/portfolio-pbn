@@ -8,14 +8,14 @@ void main() {
     final deletedAt = DateTime(2024, 6, 15, 12, 0);
     final item = TrashItem(
       id: 'tr1',
-      type: 'project',
-      displayName: 'Mi Proyecto',
+      type: 'category',
+      displayName: 'Mi Categoría',
       deletedAt: deletedAt,
     );
 
     test('stores id', () => expect(item.id, 'tr1'));
-    test('stores type', () => expect(item.type, 'project'));
-    test('stores displayName', () => expect(item.displayName, 'Mi Proyecto'));
+    test('stores type', () => expect(item.type, 'category'));
+    test('stores displayName', () => expect(item.displayName, 'Mi Categoría'));
     test('stores deletedAt', () => expect(item.deletedAt, deletedAt));
   });
 
@@ -27,22 +27,22 @@ void main() {
     };
 
     test('uses title as displayName', () {
-      final item = TrashItem.fromMap('project', json);
+      final item = TrashItem.fromMap('category', json);
       expect(item.displayName, 'Retrato 2024');
     });
 
     test('stores correct type', () {
-      final item = TrashItem.fromMap('project', json);
-      expect(item.type, 'project');
+      final item = TrashItem.fromMap('category', json);
+      expect(item.type, 'category');
     });
 
     test('stores correct id', () {
-      final item = TrashItem.fromMap('project', json);
+      final item = TrashItem.fromMap('category', json);
       expect(item.id, 'p1');
     });
 
     test('parses deletedAt', () {
-      final item = TrashItem.fromMap('project', json);
+      final item = TrashItem.fromMap('category', json);
       expect(item.deletedAt.year, 2024);
       expect(item.deletedAt.month, 6);
     });
@@ -89,13 +89,13 @@ void main() {
     test('same values are equal', () {
       final a = TrashItem(
         id: 't1',
-        type: 'project',
+        type: 'category',
         displayName: 'P',
         deletedAt: deleted,
       );
       final b = TrashItem(
         id: 't1',
-        type: 'project',
+        type: 'category',
         displayName: 'P',
         deletedAt: deleted,
       );
@@ -105,13 +105,13 @@ void main() {
     test('different id makes not equal', () {
       final a = TrashItem(
         id: 't1',
-        type: 'project',
+        type: 'category',
         displayName: 'P',
         deletedAt: deleted,
       );
       final b = TrashItem(
         id: 't2',
-        type: 'project',
+        type: 'category',
         displayName: 'P',
         deletedAt: deleted,
       );
@@ -122,10 +122,6 @@ void main() {
   // ── trashTypeLabel ──────────────────────────────────────────────────────
 
   group('trashTypeLabel', () {
-    test(
-      'project → Proyecto',
-      () => expect(trashTypeLabel('project'), 'Proyecto'),
-    );
     test(
       'category → Categoría',
       () => expect(trashTypeLabel('category'), 'Categoría'),

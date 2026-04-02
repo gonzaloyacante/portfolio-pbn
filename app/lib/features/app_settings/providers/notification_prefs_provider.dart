@@ -10,7 +10,6 @@ class NotificationPrefsState {
     this.contactsEnabled = true,
     this.bookingsEnabled = true,
     this.bookingRemindersEnabled = true,
-    this.projectsEnabled = true,
     this.servicesEnabled = true,
     this.testimonialsEnabled = true,
     this.systemEnabled = true,
@@ -25,9 +24,6 @@ class NotificationPrefsState {
   /// Recordatorios de reservas próximas (24h / 1h antes).
   final bool bookingRemindersEnabled;
 
-  /// Alertas de proyectos publicados o actualizados.
-  final bool projectsEnabled;
-
   /// Alertas de nuevos servicios publicados.
   final bool servicesEnabled;
 
@@ -41,7 +37,6 @@ class NotificationPrefsState {
     bool? contactsEnabled,
     bool? bookingsEnabled,
     bool? bookingRemindersEnabled,
-    bool? projectsEnabled,
     bool? servicesEnabled,
     bool? testimonialsEnabled,
     bool? systemEnabled,
@@ -51,7 +46,6 @@ class NotificationPrefsState {
       bookingsEnabled: bookingsEnabled ?? this.bookingsEnabled,
       bookingRemindersEnabled:
           bookingRemindersEnabled ?? this.bookingRemindersEnabled,
-      projectsEnabled: projectsEnabled ?? this.projectsEnabled,
       servicesEnabled: servicesEnabled ?? this.servicesEnabled,
       testimonialsEnabled: testimonialsEnabled ?? this.testimonialsEnabled,
       systemEnabled: systemEnabled ?? this.systemEnabled,
@@ -84,7 +78,6 @@ class NotificationPrefsNotifier extends Notifier<NotificationPrefsState> {
       contactsEnabled: prefs.contactsEnabled,
       bookingsEnabled: prefs.bookingsEnabled,
       bookingRemindersEnabled: prefs.bookingRemindersEnabled,
-      projectsEnabled: prefs.projectsEnabled,
       servicesEnabled: prefs.servicesEnabled,
       testimonialsEnabled: prefs.testimonialsEnabled,
       systemEnabled: prefs.systemEnabled,
@@ -113,14 +106,6 @@ class NotificationPrefsNotifier extends Notifier<NotificationPrefsState> {
     state = state.copyWith(bookingRemindersEnabled: enabled);
     await (await NotificationPrefs.init()).set(
       NotifPrefKeys.notifBookingReminders,
-      enabled: enabled,
-    );
-  }
-
-  Future<void> setProjects({required bool enabled}) async {
-    state = state.copyWith(projectsEnabled: enabled);
-    await (await NotificationPrefs.init()).set(
-      NotifPrefKeys.notifProjects,
       enabled: enabled,
     );
   }

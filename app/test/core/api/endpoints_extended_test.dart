@@ -33,41 +33,6 @@ void main() {
     });
   });
 
-  // ── Project endpoints ─────────────────────────────────────────────────────
-
-  group('Endpoints — Projects', () {
-    test(
-      'projects static constant',
-      () => expect(Endpoints.projects, '/api/admin/projects'),
-    );
-    test('project(id) returns correct path', () {
-      expect(Endpoints.project('p-1'), '/api/admin/projects/p-1');
-    });
-    test('project(id) with special char id', () {
-      expect(Endpoints.project('abc-123'), '/api/admin/projects/abc-123');
-    });
-    test('projectsReorder contains reorder', () {
-      expect(Endpoints.projectsReorder, contains('reorder'));
-    });
-    test('projectImages(id) returns correct path', () {
-      expect(Endpoints.projectImages('p-2'), '/api/admin/projects/p-2/images');
-    });
-    test('projectImage(id, imageId) returns correct path', () {
-      expect(
-        Endpoints.projectImage('p-2', 'img-1'),
-        '/api/admin/projects/p-2/images/img-1',
-      );
-    });
-    test('project path includes id', () {
-      const id = 'unique-project-id';
-      expect(Endpoints.project(id), contains(id));
-    });
-    test('projectImages path includes id', () {
-      const id = 'proj-99';
-      expect(Endpoints.projectImages(id), contains(id));
-    });
-  });
-
   // ── Category endpoints ────────────────────────────────────────────────────
 
   group('Endpoints — Categories', () {
@@ -209,8 +174,8 @@ void main() {
     });
     test('trashTypedItem(type, id) correct path', () {
       expect(
-        Endpoints.trashTypedItem('project', 'p-5'),
-        '/api/admin/trash/project/p-5',
+        Endpoints.trashTypedItem('category', 'cat-5'),
+        '/api/admin/trash/category/cat-5',
       );
     });
     test('trashTypedItem includes type and id', () {
@@ -259,7 +224,6 @@ void main() {
 
   group('Endpoints — General contract', () {
     test('all dynamic methods return non-empty strings', () {
-      expect(Endpoints.project('x'), isNotEmpty);
       expect(Endpoints.category('x'), isNotEmpty);
       expect(Endpoints.service('x'), isNotEmpty);
       expect(Endpoints.testimonial('x'), isNotEmpty);
@@ -269,7 +233,6 @@ void main() {
       expect(Endpoints.trashItem('x'), isNotEmpty);
     });
     test('dynamic methods with empty id produce slash', () {
-      expect(Endpoints.project(''), endsWith('/'));
       expect(Endpoints.category(''), endsWith('/'));
     });
   });

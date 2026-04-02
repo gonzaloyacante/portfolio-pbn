@@ -39,10 +39,10 @@ vi.mock('@/lib/cache-tags', () => ({
     aboutSettings: 'about-settings',
     contactSettings: 'contact-settings',
     siteSettings: 'site-settings',
-    projectSettings: 'project-settings',
+
     categorySettings: 'category-settings',
     testimonialSettings: 'testimonial-settings',
-    projects: 'projects',
+
     testimonials: 'testimonials',
     categories: 'categories',
     social: 'social',
@@ -57,13 +57,11 @@ vi.mock('@/config/routes', () => ({
     admin: {
       about: '/admin/sobre-mi',
       settings: '/admin/configuracion',
-      projects: '/admin/proyectos',
     },
     public: {
       home: '/',
       about: '/sobre-mi',
       contact: '/contacto',
-      projects: '/proyectos',
     },
   },
 }))

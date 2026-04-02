@@ -5,7 +5,7 @@ import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 void main() {
   Widget buildCard({
     IconData icon = Icons.star,
-    String label = 'Proyectos',
+    String label = 'Imágenes',
     String value = '12',
     String? trend,
     bool? trendPositive,

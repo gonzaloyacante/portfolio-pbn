@@ -23,7 +23,7 @@ class NavItem {
   /// Si `true`, aparece en la barra de navegación inferior (móvil).
   final bool isMainNav;
 
-  /// Rutas hijas que activan el highlight del padre (ej. project-new → projects).
+  /// Rutas hijas que activan el highlight del padre (ej. gallery-new → portfolio).
   final List<String> childRoutes;
 
   /// Sub-items de navegación anidada (se muestran expandibles en el drawer).
@@ -46,14 +46,6 @@ const List<NavItem> kAppNavItems = [
     selectedIcon: Icons.dashboard,
     label: 'Dashboard',
     isMainNav: true,
-  ),
-  NavItem(
-    routeName: RouteNames.projects,
-    icon: Icons.photo_library_outlined,
-    selectedIcon: Icons.photo_library,
-    label: 'Proyectos',
-    isMainNav: true,
-    childRoutes: [RouteNames.projectNew, RouteNames.projectEdit],
   ),
   NavItem(
     routeName: RouteNames.categories,

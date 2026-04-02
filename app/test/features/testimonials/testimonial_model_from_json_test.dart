@@ -230,8 +230,8 @@ void main() {
       () => expect(TestimonialDetail.fromJson(base).source, isNull),
     );
     test(
-      'projectId is null',
-      () => expect(TestimonialDetail.fromJson(base).projectId, isNull),
+      'categoryId is null',
+      () => expect(TestimonialDetail.fromJson(base).categoryId, isNull),
     );
     test(
       'moderationNote is null',
@@ -255,7 +255,7 @@ void main() {
       'website': 'https://elena.com',
       'avatarUrl': 'https://x.com/ava.jpg',
       'source': 'google',
-      'projectId': 'proj-5',
+      'categoryId': 'cat-5',
       'moderationNote': 'Looks good',
       'status': 'APPROVED',
       'featured': true,
@@ -279,8 +279,8 @@ void main() {
       () => expect(TestimonialDetail.fromJson(full()).source, 'google'),
     );
     test(
-      'parses projectId',
-      () => expect(TestimonialDetail.fromJson(full()).projectId, 'proj-5'),
+      'parses categoryId',
+      () => expect(TestimonialDetail.fromJson(full()).categoryId, 'proj-5'),
     );
     test(
       'parses moderationNote',

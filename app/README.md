@@ -15,7 +15,6 @@ lib/
 └── features/      # cada feature: presentation/ + data/ + providers/
     ├── auth/
     ├── dashboard/
-    ├── projects/
     ├── categories/
     ├── services/
     ├── testimonials/
@@ -59,7 +58,7 @@ El sistema de notificaciones push usa FCM. Los permisos se solicitan al hacer lo
 - Mensajes de contacto
 - Nuevas reservas
 - Recordatorios de reservas (24h / 1h antes)
-- Proyectos publicados
+- Imágenes de galería publicadas
 - Servicios actualizados
 - Testimoniales recibidos
 - Alertas del sistema

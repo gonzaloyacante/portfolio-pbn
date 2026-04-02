@@ -40,10 +40,10 @@ class DashboardContent extends StatelessWidget {
             children: [
               StatCard(
                 icon: Icons.photo_library_outlined,
-                label: 'Proyectos',
-                value: stats.totalProjects.toString(),
+                label: 'Imágenes',
+                value: stats.totalImages.toString(),
                 color: AppColors.lightPrimary,
-                onTap: () => context.goNamed(RouteNames.projects),
+                onTap: () => context.goNamed(RouteNames.categories),
               ),
               StatCard(
                 icon: Icons.category_outlined,
@@ -143,22 +143,24 @@ class DashboardContent extends StatelessWidget {
           ),
         ],
 
-        // ── Sección: Top proyectos ────────────────────────────────────────
-        if (stats.topProjects.isNotEmpty) ...[
+        // ── Sección: Top categorías ────────────────────────────────────
+        if (stats.topCategories.isNotEmpty) ...[
           SliverPadding(
             padding: padding.copyWith(
               top: AppSpacing.lg,
               bottom: AppSpacing.sm,
             ),
             sliver: const SliverToBoxAdapter(
-              child: SectionHeader(title: 'Top proyectos (30d)'),
+              child: SectionHeader(title: 'Top categorías (30d)'),
             ),
           ),
           SliverPadding(
             padding: padding.copyWith(top: 0),
             sliver: SliverToBoxAdapter(
               child: TopRankingSection(
-                items: [for (final p in stats.topProjects) (p.label, p.count)],
+                items: [
+                  for (final p in stats.topCategories) (p.label, p.count),
+                ],
               ),
             ),
           ),

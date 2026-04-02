@@ -8,12 +8,12 @@ import 'package:flutter/material.dart';
 /// ```dart
 /// final confirmed = await ConfirmDialog.show(
 ///   context,
-///   title: 'Eliminar proyecto',
+///   title: 'Eliminar imagen',
 ///   message: '¿Estás segura? Esta acción no se puede deshacer.',
 ///   confirmLabel: 'Eliminar',
 ///   isDestructive: true,
 /// );
-/// if (confirmed) { await deleteProject(id); }
+/// if (confirmed) { await deleteCategory(id); }
 /// ```
 class ConfirmDialog extends StatelessWidget {
   const ConfirmDialog({

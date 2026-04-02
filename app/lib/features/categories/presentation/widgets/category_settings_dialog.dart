@@ -20,7 +20,6 @@ class CategorySettingsDialog extends StatefulWidget {
 
 class _CategorySettingsDialogState extends State<CategorySettingsDialog> {
   late bool _showDescription;
-  late bool _showProjectCount;
   late int _gridColumns;
   late bool _isActive;
   bool _saving = false;
@@ -29,7 +28,6 @@ class _CategorySettingsDialogState extends State<CategorySettingsDialog> {
   void initState() {
     super.initState();
     _showDescription = widget.initial.showDescription;
-    _showProjectCount = widget.initial.showProjectCount;
     _gridColumns = widget.initial.gridColumns;
     _isActive = widget.initial.isActive;
   }
@@ -40,7 +38,6 @@ class _CategorySettingsDialogState extends State<CategorySettingsDialog> {
       await widget.onSave(
         CategoryDisplaySettings(
           showDescription: _showDescription,
-          showProjectCount: _showProjectCount,
           gridColumns: _gridColumns,
           isActive: _isActive,
         ),
@@ -97,12 +94,6 @@ class _CategorySettingsDialogState extends State<CategorySettingsDialog> {
             ),
             value: _showDescription,
             onChanged: (v) => setState(() => _showDescription = v),
-          ),
-          SwitchListTile(
-            title: const Text('Mostrar cantidad de proyectos'),
-            subtitle: const Text('Número de proyectos en cada categoría'),
-            value: _showProjectCount,
-            onChanged: (v) => setState(() => _showProjectCount = v),
           ),
           const SizedBox(height: 8),
           Row(

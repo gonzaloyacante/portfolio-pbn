@@ -11,17 +11,10 @@ interface BaseTrashItem {
   deletedAt?: Date | string | null
 }
 
-interface TrashProject extends BaseTrashItem {
-  title: string
-  images?: { url: string }[]
-  category?: { name: string } | null
-}
-
 interface TrashCategory extends BaseTrashItem {
   name: string
   description?: string | null
   coverImageUrl?: string | null
-  thumbnailUrl?: string | null
 }
 
 interface TrashService extends BaseTrashItem {
@@ -37,16 +30,15 @@ interface TrashTestimonial extends BaseTrashItem {
 }
 
 interface TrashTabsProps {
-  projects: TrashProject[]
   categories: TrashCategory[]
   services: TrashService[]
   testimonials: TrashTestimonial[]
 }
 
-export function TrashTabs({ projects, categories, services, testimonials }: TrashTabsProps) {
+export function TrashTabs({ categories, services, testimonials }: TrashTabsProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [activeTab, setActiveTab] = useState('projects')
+  const [activeTab, setActiveTab] = useState('categories')
 
   const handleRestore = async (type: string, id: string) => {
     try {
@@ -106,7 +98,7 @@ export function TrashTabs({ projects, categories, services, testimonials }: Tras
       >
         {/* Thumbnail */}
         {image && (
-          <div className="bg-muted relative h-28 w-full flex-shrink-0 overflow-hidden rounded-lg md:w-32">
+          <div className="bg-muted relative h-28 w-full shrink-0 overflow-hidden rounded-lg md:w-32">
             <Image src={image} alt={title} fill className="object-cover" />
           </div>
         )}
@@ -172,38 +164,15 @@ export function TrashTabs({ projects, categories, services, testimonials }: Tras
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="mb-6 flex h-auto flex-wrap justify-start gap-2">
-        <TabsTrigger value="projects">Proyectos ({projects.length})</TabsTrigger>
         <TabsTrigger value="categories">Categorías ({categories.length})</TabsTrigger>
         <TabsTrigger value="services">Servicios ({services.length})</TabsTrigger>
         <TabsTrigger value="testimonials">Testimonios ({testimonials.length})</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="projects" className="mt-0">
-        {renderList(
-          projects,
-          (p) =>
-            renderItem(
-              'project',
-              p,
-              p.images?.[0]?.url,
-              p.title,
-              p.category?.name ? 'Categoría: ' + p.category.name : 'Sin categoría'
-            ),
-          'No hay proyectos en la papelera'
-        )}
-      </TabsContent>
-
       <TabsContent value="categories" className="mt-0">
         {renderList(
           categories,
-          (c) =>
-            renderItem(
-              'category',
-              c,
-              c.coverImageUrl || c.thumbnailUrl,
-              c.name,
-              c.description || ''
-            ),
+          (c) => renderItem('category', c, c.coverImageUrl, c.name, c.description || ''),
           'No hay categorías en la papelera'
         )}
       </TabsContent>

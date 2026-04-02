@@ -102,9 +102,9 @@ export function SkeletonTable({ rows = 6, cols = 4 }: { rows?: number; cols?: nu
   )
 }
 
-// ── Card grid (proyectos / categorías) ───────────────────────────────────────
+// ── Card grid (portfolio / categorías) ─────────────────────────────────────
 
-export function SkeletonProjectGrid({ count = 6 }: { count?: number }) {
+export function SkeletonImageGrid({ count = 6 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, i) => (
@@ -267,22 +267,6 @@ export function SkeletonContactsPage() {
         <Skeleton className="h-20 w-28 rounded-2xl" />
       </div>
       <SkeletonContactList count={6} />
-    </div>
-  )
-}
-
-export function SkeletonProjectsPage() {
-  return (
-    <div className="mx-auto max-w-6xl space-y-8">
-      <SkeletonPageHeader />
-      <div className="flex justify-end gap-4">
-        <Skeleton className="h-10 w-32 rounded-xl" />
-        <Skeleton className="h-10 w-44 rounded-xl" />
-      </div>
-      <div className="space-y-4">
-        <Skeleton className="h-6 w-40 rounded" />
-        <SkeletonProjectGrid count={6} />
-      </div>
     </div>
   )
 }

@@ -16,7 +16,6 @@ vi.mock('@/lib/db', () => ({
     contactSettings: { ...mockModel },
     themeSettings: { ...mockModel },
     siteSettings: { ...mockModel },
-    projectSettings: { ...mockModel },
     testimonialSettings: { ...mockModel },
     categorySettings: { ...mockModel },
   },
@@ -196,7 +195,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
     const res = await PATCH(
       makeRequest(`${BASE_URL}/home`, {
         method: 'PATCH',
-        body: { heroTitle: 'Updated Title', showFeaturedProjects: true, featuredCount: 3 },
+        body: { heroTitle: 'Updated Title', showFeaturedImages: true, featuredCount: 3 },
       }),
       { params }
     )
@@ -216,7 +215,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
     const res = await PATCH(
       makeRequest(`${BASE_URL}/home`, {
         method: 'PATCH',
-        body: { heroTitle: 'New', showFeaturedProjects: true, featuredCount: 3 },
+        body: { heroTitle: 'New', showFeaturedImages: true, featuredCount: 3 },
       }),
       { params }
     )
@@ -243,7 +242,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
           updatedAt: '2020-01-01',
           isActive: false,
           heroTitle: 'Valid Field',
-          showFeaturedProjects: true,
+          showFeaturedImages: true,
           featuredCount: 3,
         },
       }),
@@ -275,7 +274,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
     const res = await PATCH(
       makeRequest(`${BASE_URL}/home`, {
         method: 'PATCH',
-        body: { heroTitle: 'X', showFeaturedProjects: true, featuredCount: 3 },
+        body: { heroTitle: 'X', showFeaturedImages: true, featuredCount: 3 },
       }),
       { params }
     )

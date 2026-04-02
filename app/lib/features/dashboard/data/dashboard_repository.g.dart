@@ -48,7 +48,7 @@ Map<String, dynamic> _$CityStatToJson(_CityStat instance) => <String, dynamic>{
 
 _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
     _DashboardStats(
-      totalProjects: (json['totalProjects'] as num?)?.toInt() ?? 0,
+      totalImages: (json['totalImages'] as num?)?.toInt() ?? 0,
       totalCategories: (json['totalCategories'] as num?)?.toInt() ?? 0,
       totalServices: (json['totalServices'] as num?)?.toInt() ?? 0,
       totalTestimonials: (json['totalTestimonials'] as num?)?.toInt() ?? 0,
@@ -68,8 +68,8 @@ _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
               ?.map((e) => LocationStat.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      topProjects:
-          (json['topProjects'] as List<dynamic>?)
+      topCategories:
+          (json['topCategories'] as List<dynamic>?)
               ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
@@ -77,7 +77,7 @@ _DashboardStats _$DashboardStatsFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
     <String, dynamic>{
-      'totalProjects': instance.totalProjects,
+      'totalImages': instance.totalImages,
       'totalCategories': instance.totalCategories,
       'totalServices': instance.totalServices,
       'totalTestimonials': instance.totalTestimonials,
@@ -89,7 +89,7 @@ Map<String, dynamic> _$DashboardStatsToJson(_DashboardStats instance) =>
       'uniqueVisitors30d': instance.uniqueVisitors30d,
       'deviceUsage': instance.deviceUsage,
       'topLocations': instance.topLocations,
-      'topProjects': instance.topProjects,
+      'topCategories': instance.topCategories,
     };
 
 _ChartDataPoint _$ChartDataPointFromJson(Map<String, dynamic> json) =>

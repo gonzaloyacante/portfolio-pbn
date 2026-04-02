@@ -7,9 +7,9 @@ vi.mock('@/lib/db', () => ({
     category: {
       findUnique: vi.fn(),
     },
-    projectImage: {
+    categoryImage: {
       update: vi.fn(),
-      updateMany: vi.fn(),
+      findMany: vi.fn(),
     },
     $transaction: vi.fn(),
   },
@@ -29,7 +29,7 @@ import { prisma } from '@/lib/db'
 
 const mockPrisma = prisma as {
   category: { findUnique: ReturnType<typeof vi.fn> }
-  projectImage: { update: ReturnType<typeof vi.fn>; updateMany: ReturnType<typeof vi.fn> }
+  categoryImage: { update: ReturnType<typeof vi.fn>; findMany: ReturnType<typeof vi.fn> }
   $transaction: ReturnType<typeof vi.fn>
 }
 
@@ -106,20 +106,8 @@ describe('resetCategoryGalleryOrder', () => {
     vi.clearAllMocks()
   })
 
-  it('returns error when category is not found', async () => {
-    mockPrisma.category.findUnique.mockResolvedValue(null)
-
-    const result = await resetCategoryGalleryOrder(VALID_CUID)
-    expect(result.success).toBe(false)
-    expect(result.error).toBe('Categoría no encontrada')
-  })
-
   it('returns error when category has no images', async () => {
-    mockPrisma.category.findUnique.mockResolvedValue({
-      id: VALID_CUID,
-      slug: 'empty',
-      projects: [],
-    })
+    mockPrisma.categoryImage.findMany.mockResolvedValue([])
 
     const result = await resetCategoryGalleryOrder(VALID_CUID)
     expect(result.success).toBe(false)
@@ -127,22 +115,11 @@ describe('resetCategoryGalleryOrder', () => {
   })
 
   it('resets orders and returns success when images exist', async () => {
-    mockPrisma.category.findUnique.mockResolvedValue({
-      id: VALID_CUID,
-      slug: 'retrato',
-      projects: [
-        {
-          images: [{ id: 'img-1' }, { id: 'img-2' }],
-        },
-      ],
-    })
-    mockPrisma.projectImage.updateMany.mockResolvedValue({ count: 2 })
+    mockPrisma.categoryImage.findMany.mockResolvedValue([{ id: 'img-1' }, { id: 'img-2' }])
+    mockPrisma.$transaction.mockResolvedValue([])
+    mockPrisma.category.findUnique.mockResolvedValue({ id: VALID_CUID, slug: 'retrato' })
 
     const result = await resetCategoryGalleryOrder(VALID_CUID)
     expect(result.success).toBe(true)
-    expect(mockPrisma.projectImage.updateMany).toHaveBeenCalledWith({
-      where: { id: { in: ['img-1', 'img-2'] } },
-      data: { categoryGalleryOrder: null },
-    })
   })
 })

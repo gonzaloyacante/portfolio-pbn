@@ -11,7 +11,7 @@ import '../../../core/theme/app_spacing.dart';
 /// Uso:
 /// ```dart
 /// AppSearchBar(
-///   hint: 'Buscar proyectos...',
+///   hint: 'Buscar categorías...',
 ///   onChanged: (q) => ref.read(searchQueryProvider.notifier).state = q,
 /// )
 /// ```

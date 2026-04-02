@@ -6,7 +6,6 @@ part 'app_preferences_provider.g.dart';
 // ── Keys ─────────────────────────────────────────────────────────────────────
 
 abstract class _PrefKeys {
-  static const String projectsViewMode = 'pref_projects_view_mode';
   static const String servicesViewMode = 'pref_services_view_mode';
   static const String categoriesViewMode = 'pref_categories_view_mode';
   static const String categoryGalleryViewMode =
@@ -49,40 +48,6 @@ Future<SharedPreferences> sharedPreferences(Ref ref) =>
     SharedPreferences.getInstance();
 
 // ── ViewMode providers ────────────────────────────────────────────────────────
-
-/// Vista seleccionada para la lista de proyectos (grid o list).
-@riverpod
-class ProjectsViewMode extends _$ProjectsViewMode {
-  @override
-  ViewMode build() {
-    _load();
-    return ViewMode.grid;
-  }
-
-  Future<void> _load() async {
-    final prefs = await ref.read(sharedPreferencesProvider.future);
-    final stored = prefs.getString(_PrefKeys.projectsViewMode);
-    if (stored != null) {
-      state = ViewMode.values.firstWhere(
-        (e) => e.name == stored,
-        orElse: () => ViewMode.grid,
-      );
-    }
-  }
-
-  Future<void> toggle() async {
-    final next = state == ViewMode.grid ? ViewMode.list : ViewMode.grid;
-    state = next;
-    final prefs = await ref.read(sharedPreferencesProvider.future);
-    await prefs.setString(_PrefKeys.projectsViewMode, next.name);
-  }
-
-  Future<void> set(ViewMode mode) async {
-    state = mode;
-    final prefs = await ref.read(sharedPreferencesProvider.future);
-    await prefs.setString(_PrefKeys.projectsViewMode, mode.name);
-  }
-}
 
 /// Vista seleccionada para la lista de servicios (grid o list).
 @riverpod
@@ -146,7 +111,7 @@ class CategoriesViewMode extends _$CategoriesViewMode {
   }
 }
 
-/// Vista seleccionada para la galería de proyectos de una categoría (grid o list).
+/// Vista seleccionada para la galería de imágenes de una categoría (grid o list).
 @riverpod
 class CategoryGalleryViewMode extends _$CategoryGalleryViewMode {
   @override

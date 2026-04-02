@@ -2,24 +2,6 @@
  * Centralized toast messages for consistency across the admin panel
  */
 export const TOAST_MESSAGES = {
-  projects: {
-    reorder: {
-      success: 'Orden actualizado',
-      error: 'Error al reordenar proyectos',
-    },
-    delete: {
-      success: 'Proyecto eliminado',
-      error: 'Error al eliminar proyecto',
-    },
-    create: {
-      success: 'Proyecto creado exitosamente',
-      error: 'Error al crear proyecto',
-    },
-    update: {
-      success: 'Proyecto actualizado',
-      error: 'Error al actualizar proyecto',
-    },
-  },
   categories: {
     reorder: {
       success: 'Orden actualizado',

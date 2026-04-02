@@ -28,7 +28,7 @@ export default function SortableImage({ id, url, onDelete }: SortableImageProps)
 
       <Image
         src={url}
-        alt="Project image"
+        alt="Imagen de galería"
         fill
         className="object-cover transition-transform group-hover:scale-105"
       />

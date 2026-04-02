@@ -3,9 +3,9 @@ import { motion } from 'framer-motion'
 // import { OptimizedImage } from '@/components/ui' // Unused
 
 interface PreviewCardProps {
-  variant: 'project' | 'category'
+  variant: 'image' | 'category'
   title: string
-  subtitle?: string // Category name or "X proyectos"
+  subtitle?: string // Category name or image count
   showTitle?: boolean
   showSubtitle?: boolean
   image?: string // Mock image override
@@ -22,13 +22,13 @@ export default function PreviewCard({
   showTitle = true,
   showSubtitle = true,
 }: PreviewCardProps) {
-  // Styles based on src/app/(public)/projects/page.tsx (Categories)
-  // and src/components/public/CategoryGallery.tsx (Projects/Images)
+  // Styles based on src/app/(public)/portfolio/page.tsx
+  // and src/components/public/CategoryGallery.tsx (Images)
 
   const isCategory = variant === 'category'
 
   // Category Card Style: rounded-[2.5rem], aspect-[4/5]
-  // Project Image Style: rounded-xl, varies but mostly aspect-square or masonry
+  // Gallery Image Style: rounded-xl, varies but mostly aspect-square or masonry
   const containerClasses = clsx(
     'relative overflow-hidden shadow-lg transition-transform group hover:scale-[1.02] bg-card',
     isCategory ? 'rounded-[2.5rem] aspect-[4/5]' : 'rounded-2xl aspect-square'
@@ -55,7 +55,7 @@ export default function PreviewCard({
           isCategory ? 'inset-x-0 bottom-0' : 'inset-x-0 right-0 bottom-0 left-0'
         )}
       >
-        {/* Subtitle (Category Name for Project, or Count for Category) */}
+        {/* Subtitle (Category name or image count) */}
         {showSubtitle && subtitle && (
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -63,8 +63,8 @@ export default function PreviewCard({
             className={clsx(
               'mb-1 font-medium',
               isCategory
-                ? 'text-primary text-xs tracking-wider uppercase' // e.g. "EXPLORAR" or count (if we used count)
-                : 'text-primary text-[10px] font-bold tracking-wider uppercase' // Category Name on Project
+                ? 'text-primary text-xs tracking-wider uppercase'
+                : 'text-primary text-[10px] font-bold tracking-wider uppercase'
             )}
           >
             {subtitle}

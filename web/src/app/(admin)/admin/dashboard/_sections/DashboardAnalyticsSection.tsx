@@ -1,7 +1,7 @@
 import { getAnalyticsDashboardData } from '@/actions/analytics'
 import VisitsChart from '@/components/features/dashboard/VisitsChart'
 import DeviceUsage from '@/components/features/dashboard/DeviceUsage'
-import TopProjects from '@/components/features/dashboard/TopProjects'
+import TopCategories from '@/components/features/dashboard/TopCategories'
 import TopLocations from '@/components/features/dashboard/TopLocations'
 
 export default async function DashboardAnalyticsSection() {
@@ -22,7 +22,7 @@ export default async function DashboardAnalyticsSection() {
           <DeviceUsage
             deviceUsage={analyticsData?.deviceUsage ?? { mobile: 0, tablet: 0, desktop: 0 }}
           />
-          <TopProjects projects={analyticsData?.topProjects ?? []} />
+          <TopCategories categories={analyticsData?.topCategories ?? []} />
         </div>
       </div>
       <TopLocations locations={analyticsData?.topLocations ?? []} />

@@ -62,7 +62,7 @@ export const homeSettings = {
 
   // CTA Button
   ctaText: 'Ver Portfolio',
-  ctaLink: '/proyectos',
+  ctaLink: '/portfolio',
   ctaFont: null,
   ctaFontUrl: null,
   ctaFontSize: 24,
@@ -91,8 +91,8 @@ export const homeSettings = {
   ctaMobileOffsetY: 0,
   ctaMobileFontSize: 18,
 
-  // Featured Projects Section
-  showFeaturedProjects: true,
+  // Featured Images Section
+  showFeaturedImages: true,
   featuredTitle: 'Trabajos Destacados',
   featuredTitleFont: null,
   featuredTitleFontUrl: null,
@@ -117,9 +117,9 @@ export const aboutSettings = {
     'Maquilladora especializada en audiovisuales, llevo formándome desde 2021 adquiriendo títulos como técnica en estética y belleza, y técnica en caracterización y maquillaje profesional.',
   bioDescription: `A lo largo de mis estudios y experiencia he trabajado en distintos entornos creativos que me han permitido desarrollar habilidades tanto en maquillaje social como en caracterización, efectos especiales, peluquería de plató y creación de personajes.
 
-Mi meta es establecerme como maquilladora y caracterizadora profesional en la industria del cine y la televisión, contribuyendo a proyectos que inspiren y cautiven al público.
+Mi meta es establecerme como maquilladora y caracterizadora profesional en la industria del cine y la televisión, contribuyendo a producciones que inspiren y cautiven al público.
 
-En este portfolio, encontrarás mis trabajos y proyectos, cada uno fruto de dedicación, creatividad y amor por mi profesión.`,
+En este portfolio, encontrarás mis trabajos, cada uno fruto de dedicación, creatividad y amor por mi profesión.`,
 
   // Profile Image (to be set via admin)
   profileImageUrl: null,
@@ -193,18 +193,9 @@ export const testimonialSettings = {
   isActive: true,
 }
 
-export const projectSettings = {
-  id: 'default-projects',
-  showCardTitles: true,
-  showCardCategory: true,
-  gridColumns: 3,
-  isActive: true,
-}
-
 export const categorySettings = {
   id: 'default-categories',
   showDescription: true,
-  showProjectCount: true,
   gridColumns: 4,
   isActive: true,
 }

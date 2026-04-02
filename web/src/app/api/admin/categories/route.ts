@@ -8,7 +8,6 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
-import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -19,13 +18,12 @@ const CATEGORY_SELECT = {
   name: true,
   slug: true,
   description: true,
-  thumbnailUrl: true,
   coverImageUrl: true,
   sortOrder: true,
   isActive: true,
   createdAt: true,
   updatedAt: true,
-  _count: { select: { projects: { where: { deletedAt: null } } } },
+  _count: { select: { images: true } },
 } as const
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -66,7 +64,7 @@ export async function GET(req: Request) {
 
     const mapped = categories.map(({ _count, ...cat }) => ({
       ...cat,
-      projectCount: _count.projects,
+      imageCount: _count.images,
     }))
 
     return NextResponse.json({
@@ -109,11 +107,7 @@ export async function POST(req: Request) {
     }
 
     const { name, slug, description, isActive = true } = parsed.data
-    // Si sólo se proporciona coverImageUrl, generar thumbnailUrl automáticamente.
-    // Si sólo se proporciona thumbnailUrl, usarlo como coverImageUrl también.
-    const coverImageUrl = parsed.data.coverImageUrl ?? parsed.data.thumbnailUrl ?? undefined
-    const thumbnailUrl =
-      parsed.data.thumbnailUrl ?? (coverImageUrl ? generateThumbnailUrl(coverImageUrl) : undefined)
+    const coverImageUrl = parsed.data.coverImageUrl ?? undefined
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
     // para evitar P2002 al crear (el @unique de DB no discrimina deletedAt)
@@ -131,13 +125,12 @@ export async function POST(req: Request) {
     const nextOrder = (agg._max.sortOrder ?? 0) + 1
 
     // Neon HTTP adapter no soporta transacciones implícitas al usar _count en mutations.
-    // Creamos sin _count y devolvemos projectCount: 0 (categoría nueva siempre tiene 0 proyectos).
+    // Creamos sin _count y devolvemos imageCount: 0 (categoría nueva siempre tiene 0 imagenes).
     const category = await prisma.category.create({
       data: {
         name,
         slug,
         description,
-        thumbnailUrl,
         coverImageUrl,
         isActive,
         sortOrder: nextOrder,
@@ -147,7 +140,6 @@ export async function POST(req: Request) {
         name: true,
         slug: true,
         description: true,
-        thumbnailUrl: true,
         coverImageUrl: true,
         sortOrder: true,
         isActive: true,
@@ -157,11 +149,9 @@ export async function POST(req: Request) {
     })
 
     try {
-      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.public.portfolio, 'layout')
       revalidatePath(ROUTES.admin.categories)
       revalidateTag(CACHE_TAGS.categories, 'max')
-      revalidateTag(CACHE_TAGS.projects, 'max')
-      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-categories-post] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),
@@ -169,7 +159,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(
-      { success: true, data: { ...category, projectCount: 0 } },
+      { success: true, data: { ...category, imageCount: 0 } },
       { status: 201 }
     )
   } catch (err) {

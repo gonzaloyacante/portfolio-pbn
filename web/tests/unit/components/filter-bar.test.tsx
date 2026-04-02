@@ -25,7 +25,7 @@ describe('FilterBar', () => {
 
   it('renders search input', () => {
     render(<FilterBar {...defaultProps} />)
-    expect(screen.getByPlaceholderText('Buscar proyectos...')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Buscar...')).toBeInTheDocument()
   })
 
   it('renders category select', () => {
@@ -47,7 +47,7 @@ describe('FilterBar', () => {
 
   it('calls onSearchChange when typing in search', () => {
     render(<FilterBar {...defaultProps} />)
-    const input = screen.getByPlaceholderText('Buscar proyectos...')
+    const input = screen.getByPlaceholderText('Buscar...')
     fireEvent.change(input, { target: { value: 'retrato' } })
     expect(defaultProps.onSearchChange).toHaveBeenCalledWith('retrato')
   })
@@ -99,7 +99,7 @@ describe('FilterBar', () => {
   it('hides desktop clear button when no active filters', () => {
     render(<FilterBar {...defaultProps} />)
     // No active filters → totalCount badge shown instead
-    const badge = screen.getByText('20 proyectos')
+    const badge = screen.getByText('20 elementos')
     expect(badge).toBeInTheDocument()
   })
 

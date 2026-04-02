@@ -11,7 +11,6 @@ import {
   aboutSettingsSchema,
   contactSettingsSchema,
   themeEditorSchema,
-  projectSettingsSchema,
   testimonialSettingsSchema,
   categorySettingsSchema,
 } from '@/lib/validations'
@@ -33,7 +32,6 @@ const SETTINGS_MODELS = {
   contact: prisma.contactSettings as unknown as SettingsModel,
   theme: prisma.themeSettings as unknown as SettingsModel,
   site: prisma.siteSettings as unknown as SettingsModel,
-  project: prisma.projectSettings as unknown as SettingsModel,
   testimonial: prisma.testimonialSettings as unknown as SettingsModel,
   category: prisma.categorySettings as unknown as SettingsModel,
 } satisfies Record<string, SettingsModel>
@@ -46,7 +44,6 @@ const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
   about: aboutSettingsSchema,
   contact: contactSettingsSchema,
   theme: themeEditorSchema,
-  project: projectSettingsSchema,
   testimonial: testimonialSettingsSchema,
   category: categorySettingsSchema,
 }
@@ -163,19 +160,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         revalidatePath('/', 'layout')
         revalidateTag(CACHE_TAGS.siteSettings, 'max')
         break
-      case 'project':
-        revalidatePath(ROUTES.home)
-        revalidatePath(ROUTES.public.projects, 'layout')
-        revalidatePath(ROUTES.admin.projects)
-        revalidateTag(CACHE_TAGS.projectSettings, 'max')
-        break
       case 'testimonial':
         revalidatePath(ROUTES.home)
         revalidatePath(ROUTES.public.about, 'layout')
         revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
         break
       case 'category':
-        revalidatePath(ROUTES.public.projects, 'layout')
+        revalidatePath(ROUTES.public.portfolio, 'layout')
         revalidatePath(ROUTES.admin.categories)
         revalidateTag(CACHE_TAGS.categorySettings, 'max')
         break

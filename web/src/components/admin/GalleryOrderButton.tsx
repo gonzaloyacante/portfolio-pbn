@@ -16,8 +16,7 @@ interface GalleryImage {
   url: string
   width?: number | null
   height?: number | null
-  title: string
-  projectSlug: string
+  title?: string
 }
 
 interface GalleryOrderButtonProps {

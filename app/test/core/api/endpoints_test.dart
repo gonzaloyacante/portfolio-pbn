@@ -20,31 +20,6 @@ void main() {
     });
   });
 
-  group('Endpoints — projects', () {
-    test('projects constant is correct', () {
-      expect(Endpoints.projects, '/api/admin/projects');
-    });
-
-    test('project(id) returns correct URL', () {
-      expect(Endpoints.project('abc123'), '/api/admin/projects/abc123');
-    });
-
-    test('projectsReorder is correct', () {
-      expect(Endpoints.projectsReorder, '/api/admin/projects/reorder');
-    });
-
-    test('projectImages(id) returns correct URL', () {
-      expect(Endpoints.projectImages('p1'), '/api/admin/projects/p1/images');
-    });
-
-    test('projectImage(id, imageId) returns correct URL', () {
-      expect(
-        Endpoints.projectImage('p1', 'img1'),
-        '/api/admin/projects/p1/images/img1',
-      );
-    });
-  });
-
   group('Endpoints — categories', () {
     test('categories constant is correct', () {
       expect(Endpoints.categories, '/api/admin/categories');
@@ -134,8 +109,8 @@ void main() {
 
     test('trashTypedItem returns correct URL', () {
       expect(
-        Endpoints.trashTypedItem('project', 'p1'),
-        '/api/admin/trash/project/p1',
+        Endpoints.trashTypedItem('category', 'cat-1'),
+        '/api/admin/trash/category/cat-1',
       );
     });
   });
@@ -167,7 +142,6 @@ void main() {
       final constants = [
         Endpoints.authLogin,
         Endpoints.authRefresh,
-        Endpoints.projects,
         Endpoints.categories,
         Endpoints.services,
         Endpoints.testimonials,
@@ -193,7 +167,6 @@ void main() {
     });
 
     test('dynamic functions produce URLs starting with /api/admin', () {
-      expect(Endpoints.project('x'), startsWith('/api/admin'));
       expect(Endpoints.category('x'), startsWith('/api/admin'));
       expect(Endpoints.service('x'), startsWith('/api/admin'));
       expect(Endpoints.testimonial('x'), startsWith('/api/admin'));

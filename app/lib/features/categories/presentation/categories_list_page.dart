@@ -112,7 +112,6 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
                           .read(settingsRepositoryProvider)
                           .updateCategorySettings({
                             'showDescription': updated.showDescription,
-                            'showProjectCount': updated.showProjectCount,
                             'gridColumns': updated.gridColumns,
                           });
                       ref.invalidate(categoryDisplaySettingsProvider);
@@ -141,7 +140,6 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
                       .read(settingsRepositoryProvider)
                       .updateCategorySettings({
                         'showDescription': updated.showDescription,
-                        'showProjectCount': updated.showProjectCount,
                         'gridColumns': updated.gridColumns,
                       });
                   ref.invalidate(categoryDisplaySettingsProvider);

@@ -317,7 +317,7 @@ as DateTime,
 /// @nodoc
 mixin _$TestimonialDetail {
 
- String get id; String get name; String get text; String? get excerpt; String? get email; String? get phone; String? get position; String? get company; String? get website; String? get avatarUrl; int get rating; bool get verified; bool get featured; String? get source; String? get projectId; String get status; String? get moderationNote; DateTime? get moderatedAt; bool get isActive; int get sortOrder; int get viewCount; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; String get text; String? get excerpt; String? get email; String? get phone; String? get position; String? get company; String? get website; String? get avatarUrl; int get rating; bool get verified; bool get featured; String? get source; String? get categoryId; String get status; String? get moderationNote; DateTime? get moderatedAt; bool get isActive; int get sortOrder; int get viewCount; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of TestimonialDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -330,16 +330,16 @@ $TestimonialDetailCopyWith<TestimonialDetail> get copyWith => _$TestimonialDetai
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestimonialDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.text, text) || other.text == text)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.position, position) || other.position == position)&&(identical(other.company, company) || other.company == company)&&(identical(other.website, website) || other.website == website)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.verified, verified) || other.verified == verified)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.source, source) || other.source == source)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationNote, moderationNote) || other.moderationNote == moderationNote)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestimonialDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.text, text) || other.text == text)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.position, position) || other.position == position)&&(identical(other.company, company) || other.company == company)&&(identical(other.website, website) || other.website == website)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.verified, verified) || other.verified == verified)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.source, source) || other.source == source)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationNote, moderationNote) || other.moderationNote == moderationNote)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,text,excerpt,email,phone,position,company,website,avatarUrl,rating,verified,featured,source,projectId,status,moderationNote,moderatedAt,isActive,sortOrder,viewCount,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,text,excerpt,email,phone,position,company,website,avatarUrl,rating,verified,featured,source,categoryId,status,moderationNote,moderatedAt,isActive,sortOrder,viewCount,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'TestimonialDetail(id: $id, name: $name, text: $text, excerpt: $excerpt, email: $email, phone: $phone, position: $position, company: $company, website: $website, avatarUrl: $avatarUrl, rating: $rating, verified: $verified, featured: $featured, source: $source, projectId: $projectId, status: $status, moderationNote: $moderationNote, moderatedAt: $moderatedAt, isActive: $isActive, sortOrder: $sortOrder, viewCount: $viewCount, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'TestimonialDetail(id: $id, name: $name, text: $text, excerpt: $excerpt, email: $email, phone: $phone, position: $position, company: $company, website: $website, avatarUrl: $avatarUrl, rating: $rating, verified: $verified, featured: $featured, source: $source, categoryId: $categoryId, status: $status, moderationNote: $moderationNote, moderatedAt: $moderatedAt, isActive: $isActive, sortOrder: $sortOrder, viewCount: $viewCount, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -350,7 +350,7 @@ abstract mixin class $TestimonialDetailCopyWith<$Res>  {
   factory $TestimonialDetailCopyWith(TestimonialDetail value, $Res Function(TestimonialDetail) _then) = _$TestimonialDetailCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String text, String? excerpt, String? email, String? phone, String? position, String? company, String? website, String? avatarUrl, int rating, bool verified, bool featured, String? source, String? projectId, String status, String? moderationNote, DateTime? moderatedAt, bool isActive, int sortOrder, int viewCount, DateTime createdAt, DateTime updatedAt
+ String id, String name, String text, String? excerpt, String? email, String? phone, String? position, String? company, String? website, String? avatarUrl, int rating, bool verified, bool featured, String? source, String? categoryId, String status, String? moderationNote, DateTime? moderatedAt, bool isActive, int sortOrder, int viewCount, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -367,7 +367,7 @@ class _$TestimonialDetailCopyWithImpl<$Res>
 
 /// Create a copy of TestimonialDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? text = null,Object? excerpt = freezed,Object? email = freezed,Object? phone = freezed,Object? position = freezed,Object? company = freezed,Object? website = freezed,Object? avatarUrl = freezed,Object? rating = null,Object? verified = null,Object? featured = null,Object? source = freezed,Object? projectId = freezed,Object? status = null,Object? moderationNote = freezed,Object? moderatedAt = freezed,Object? isActive = null,Object? sortOrder = null,Object? viewCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? text = null,Object? excerpt = freezed,Object? email = freezed,Object? phone = freezed,Object? position = freezed,Object? company = freezed,Object? website = freezed,Object? avatarUrl = freezed,Object? rating = null,Object? verified = null,Object? featured = null,Object? source = freezed,Object? categoryId = freezed,Object? status = null,Object? moderationNote = freezed,Object? moderatedAt = freezed,Object? isActive = null,Object? sortOrder = null,Object? viewCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -383,7 +383,7 @@ as String?,rating: null == rating ? _self.rating : rating // ignore: cast_nullab
 as int,verified: null == verified ? _self.verified : verified // ignore: cast_nullable_to_non_nullable
 as bool,featured: null == featured ? _self.featured : featured // ignore: cast_nullable_to_non_nullable
 as bool,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
-as String?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as String?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,moderationNote: freezed == moderationNote ? _self.moderationNote : moderationNote // ignore: cast_nullable_to_non_nullable
 as String?,moderatedAt: freezed == moderatedAt ? _self.moderatedAt : moderatedAt // ignore: cast_nullable_to_non_nullable
@@ -477,10 +477,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String text,  String? excerpt,  String? email,  String? phone,  String? position,  String? company,  String? website,  String? avatarUrl,  int rating,  bool verified,  bool featured,  String? source,  String? projectId,  String status,  String? moderationNote,  DateTime? moderatedAt,  bool isActive,  int sortOrder,  int viewCount,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String text,  String? excerpt,  String? email,  String? phone,  String? position,  String? company,  String? website,  String? avatarUrl,  int rating,  bool verified,  bool featured,  String? source,  String? categoryId,  String status,  String? moderationNote,  DateTime? moderatedAt,  bool isActive,  int sortOrder,  int viewCount,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TestimonialDetail() when $default != null:
-return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.phone,_that.position,_that.company,_that.website,_that.avatarUrl,_that.rating,_that.verified,_that.featured,_that.source,_that.projectId,_that.status,_that.moderationNote,_that.moderatedAt,_that.isActive,_that.sortOrder,_that.viewCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.phone,_that.position,_that.company,_that.website,_that.avatarUrl,_that.rating,_that.verified,_that.featured,_that.source,_that.categoryId,_that.status,_that.moderationNote,_that.moderatedAt,_that.isActive,_that.sortOrder,_that.viewCount,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -498,10 +498,10 @@ return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.p
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String text,  String? excerpt,  String? email,  String? phone,  String? position,  String? company,  String? website,  String? avatarUrl,  int rating,  bool verified,  bool featured,  String? source,  String? projectId,  String status,  String? moderationNote,  DateTime? moderatedAt,  bool isActive,  int sortOrder,  int viewCount,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String text,  String? excerpt,  String? email,  String? phone,  String? position,  String? company,  String? website,  String? avatarUrl,  int rating,  bool verified,  bool featured,  String? source,  String? categoryId,  String status,  String? moderationNote,  DateTime? moderatedAt,  bool isActive,  int sortOrder,  int viewCount,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _TestimonialDetail():
-return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.phone,_that.position,_that.company,_that.website,_that.avatarUrl,_that.rating,_that.verified,_that.featured,_that.source,_that.projectId,_that.status,_that.moderationNote,_that.moderatedAt,_that.isActive,_that.sortOrder,_that.viewCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.phone,_that.position,_that.company,_that.website,_that.avatarUrl,_that.rating,_that.verified,_that.featured,_that.source,_that.categoryId,_that.status,_that.moderationNote,_that.moderatedAt,_that.isActive,_that.sortOrder,_that.viewCount,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -518,10 +518,10 @@ return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.p
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String text,  String? excerpt,  String? email,  String? phone,  String? position,  String? company,  String? website,  String? avatarUrl,  int rating,  bool verified,  bool featured,  String? source,  String? projectId,  String status,  String? moderationNote,  DateTime? moderatedAt,  bool isActive,  int sortOrder,  int viewCount,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String text,  String? excerpt,  String? email,  String? phone,  String? position,  String? company,  String? website,  String? avatarUrl,  int rating,  bool verified,  bool featured,  String? source,  String? categoryId,  String status,  String? moderationNote,  DateTime? moderatedAt,  bool isActive,  int sortOrder,  int viewCount,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _TestimonialDetail() when $default != null:
-return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.phone,_that.position,_that.company,_that.website,_that.avatarUrl,_that.rating,_that.verified,_that.featured,_that.source,_that.projectId,_that.status,_that.moderationNote,_that.moderatedAt,_that.isActive,_that.sortOrder,_that.viewCount,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.phone,_that.position,_that.company,_that.website,_that.avatarUrl,_that.rating,_that.verified,_that.featured,_that.source,_that.categoryId,_that.status,_that.moderationNote,_that.moderatedAt,_that.isActive,_that.sortOrder,_that.viewCount,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -533,7 +533,7 @@ return $default(_that.id,_that.name,_that.text,_that.excerpt,_that.email,_that.p
 @JsonSerializable()
 
 class _TestimonialDetail implements TestimonialDetail {
-  const _TestimonialDetail({required this.id, required this.name, required this.text, this.excerpt, this.email, this.phone, this.position, this.company, this.website, this.avatarUrl, this.rating = 5, this.verified = false, this.featured = false, this.source, this.projectId, this.status = 'PENDING', this.moderationNote, this.moderatedAt, this.isActive = true, this.sortOrder = 0, this.viewCount = 0, required this.createdAt, required this.updatedAt});
+  const _TestimonialDetail({required this.id, required this.name, required this.text, this.excerpt, this.email, this.phone, this.position, this.company, this.website, this.avatarUrl, this.rating = 5, this.verified = false, this.featured = false, this.source, this.categoryId, this.status = 'PENDING', this.moderationNote, this.moderatedAt, this.isActive = true, this.sortOrder = 0, this.viewCount = 0, required this.createdAt, required this.updatedAt});
   factory _TestimonialDetail.fromJson(Map<String, dynamic> json) => _$TestimonialDetailFromJson(json);
 
 @override final  String id;
@@ -550,7 +550,7 @@ class _TestimonialDetail implements TestimonialDetail {
 @override@JsonKey() final  bool verified;
 @override@JsonKey() final  bool featured;
 @override final  String? source;
-@override final  String? projectId;
+@override final  String? categoryId;
 @override@JsonKey() final  String status;
 @override final  String? moderationNote;
 @override final  DateTime? moderatedAt;
@@ -573,16 +573,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestimonialDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.text, text) || other.text == text)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.position, position) || other.position == position)&&(identical(other.company, company) || other.company == company)&&(identical(other.website, website) || other.website == website)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.verified, verified) || other.verified == verified)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.source, source) || other.source == source)&&(identical(other.projectId, projectId) || other.projectId == projectId)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationNote, moderationNote) || other.moderationNote == moderationNote)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestimonialDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.text, text) || other.text == text)&&(identical(other.excerpt, excerpt) || other.excerpt == excerpt)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.position, position) || other.position == position)&&(identical(other.company, company) || other.company == company)&&(identical(other.website, website) || other.website == website)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.rating, rating) || other.rating == rating)&&(identical(other.verified, verified) || other.verified == verified)&&(identical(other.featured, featured) || other.featured == featured)&&(identical(other.source, source) || other.source == source)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.status, status) || other.status == status)&&(identical(other.moderationNote, moderationNote) || other.moderationNote == moderationNote)&&(identical(other.moderatedAt, moderatedAt) || other.moderatedAt == moderatedAt)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,text,excerpt,email,phone,position,company,website,avatarUrl,rating,verified,featured,source,projectId,status,moderationNote,moderatedAt,isActive,sortOrder,viewCount,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,text,excerpt,email,phone,position,company,website,avatarUrl,rating,verified,featured,source,categoryId,status,moderationNote,moderatedAt,isActive,sortOrder,viewCount,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'TestimonialDetail(id: $id, name: $name, text: $text, excerpt: $excerpt, email: $email, phone: $phone, position: $position, company: $company, website: $website, avatarUrl: $avatarUrl, rating: $rating, verified: $verified, featured: $featured, source: $source, projectId: $projectId, status: $status, moderationNote: $moderationNote, moderatedAt: $moderatedAt, isActive: $isActive, sortOrder: $sortOrder, viewCount: $viewCount, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'TestimonialDetail(id: $id, name: $name, text: $text, excerpt: $excerpt, email: $email, phone: $phone, position: $position, company: $company, website: $website, avatarUrl: $avatarUrl, rating: $rating, verified: $verified, featured: $featured, source: $source, categoryId: $categoryId, status: $status, moderationNote: $moderationNote, moderatedAt: $moderatedAt, isActive: $isActive, sortOrder: $sortOrder, viewCount: $viewCount, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -593,7 +593,7 @@ abstract mixin class _$TestimonialDetailCopyWith<$Res> implements $TestimonialDe
   factory _$TestimonialDetailCopyWith(_TestimonialDetail value, $Res Function(_TestimonialDetail) _then) = __$TestimonialDetailCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String text, String? excerpt, String? email, String? phone, String? position, String? company, String? website, String? avatarUrl, int rating, bool verified, bool featured, String? source, String? projectId, String status, String? moderationNote, DateTime? moderatedAt, bool isActive, int sortOrder, int viewCount, DateTime createdAt, DateTime updatedAt
+ String id, String name, String text, String? excerpt, String? email, String? phone, String? position, String? company, String? website, String? avatarUrl, int rating, bool verified, bool featured, String? source, String? categoryId, String status, String? moderationNote, DateTime? moderatedAt, bool isActive, int sortOrder, int viewCount, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -610,7 +610,7 @@ class __$TestimonialDetailCopyWithImpl<$Res>
 
 /// Create a copy of TestimonialDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? text = null,Object? excerpt = freezed,Object? email = freezed,Object? phone = freezed,Object? position = freezed,Object? company = freezed,Object? website = freezed,Object? avatarUrl = freezed,Object? rating = null,Object? verified = null,Object? featured = null,Object? source = freezed,Object? projectId = freezed,Object? status = null,Object? moderationNote = freezed,Object? moderatedAt = freezed,Object? isActive = null,Object? sortOrder = null,Object? viewCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? text = null,Object? excerpt = freezed,Object? email = freezed,Object? phone = freezed,Object? position = freezed,Object? company = freezed,Object? website = freezed,Object? avatarUrl = freezed,Object? rating = null,Object? verified = null,Object? featured = null,Object? source = freezed,Object? categoryId = freezed,Object? status = null,Object? moderationNote = freezed,Object? moderatedAt = freezed,Object? isActive = null,Object? sortOrder = null,Object? viewCount = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_TestimonialDetail(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -626,7 +626,7 @@ as String?,rating: null == rating ? _self.rating : rating // ignore: cast_nullab
 as int,verified: null == verified ? _self.verified : verified // ignore: cast_nullable_to_non_nullable
 as bool,featured: null == featured ? _self.featured : featured // ignore: cast_nullable_to_non_nullable
 as bool,source: freezed == source ? _self.source : source // ignore: cast_nullable_to_non_nullable
-as String?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
+as String?,categoryId: freezed == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String?,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as String,moderationNote: freezed == moderationNote ? _self.moderationNote : moderationNote // ignore: cast_nullable_to_non_nullable
 as String?,moderatedAt: freezed == moderatedAt ? _self.moderatedAt : moderatedAt // ignore: cast_nullable_to_non_nullable

@@ -18,7 +18,7 @@ class MockSyncQueueRepository extends Mock implements SyncQueueRepository {}
 SyncOperationsTableData _fakeOp({
   String id = 'op-1',
   String operation = 'create',
-  String resource = 'projects',
+  String resource = 'categories',
   String? resourceId,
   String payload = '{"title":"Test"}',
 }) {
@@ -49,7 +49,6 @@ void main() {
 
   group('SyncHandlerRegistry', () {
     test('returns handler for registered resources', () {
-      expect(registry.handlerFor('projects'), isNotNull);
       expect(registry.handlerFor('categories'), isNotNull);
       expect(registry.handlerFor('services'), isNotNull);
       expect(registry.handlerFor('testimonials'), isNotNull);
@@ -67,16 +66,17 @@ void main() {
     test('sends POST to collection endpoint', () async {
       when(
         () => client.post<dynamic>(
-          Endpoints.projects,
+          Endpoints.categories,
           data: any<Map<String, dynamic>>(named: 'data'),
         ),
       ).thenAnswer((_) async => <String, dynamic>{});
 
-      final handler = registry.handlerFor('projects')!;
+      final handler = registry.handlerFor('categories')!;
       await handler.execute(_fakeOp(operation: 'create'));
 
       verify(
-        () => client.post<dynamic>(Endpoints.projects, data: {'title': 'Test'}),
+        () =>
+            client.post<dynamic>(Endpoints.categories, data: {'title': 'Test'}),
       ).called(1);
     });
   });
@@ -90,7 +90,7 @@ void main() {
         ),
       ).thenAnswer((_) async => <String, dynamic>{});
 
-      final handler = registry.handlerFor('projects')!;
+      final handler = registry.handlerFor('categories')!;
       await handler.execute(
         _fakeOp(
           operation: 'update',
@@ -101,7 +101,7 @@ void main() {
 
       verify(
         () => client.patch<dynamic>(
-          Endpoints.project('proj-42'),
+          Endpoints.category('proj-42'),
           data: {'title': 'Updated'},
         ),
       ).called(1);
@@ -114,13 +114,13 @@ void main() {
         () => client.delete<dynamic>(any()),
       ).thenAnswer((_) async => <String, dynamic>{});
 
-      final handler = registry.handlerFor('projects')!;
+      final handler = registry.handlerFor('categories')!;
       await handler.execute(
         _fakeOp(operation: 'delete', resourceId: 'proj-99', payload: '{}'),
       );
 
       verify(
-        () => client.delete<dynamic>(Endpoints.project('proj-99')),
+        () => client.delete<dynamic>(Endpoints.category('proj-99')),
       ).called(1);
     });
   });
@@ -131,12 +131,12 @@ void main() {
     test('propagates ConflictException (409)', () {
       when(
         () => client.post<dynamic>(
-          Endpoints.projects,
+          Endpoints.categories,
           data: any<Map<String, dynamic>>(named: 'data'),
         ),
       ).thenThrow(const ConflictException());
 
-      final handler = registry.handlerFor('projects')!;
+      final handler = registry.handlerFor('categories')!;
       expect(
         () => handler.execute(_fakeOp(operation: 'create')),
         throwsA(isA<ConflictException>()),
@@ -148,7 +148,7 @@ void main() {
         () => client.delete<dynamic>(any<String>()),
       ).thenThrow(const NotFoundException());
 
-      final handler = registry.handlerFor('projects')!;
+      final handler = registry.handlerFor('categories')!;
       expect(
         () => handler.execute(
           _fakeOp(operation: 'delete', resourceId: 'gone', payload: '{}'),

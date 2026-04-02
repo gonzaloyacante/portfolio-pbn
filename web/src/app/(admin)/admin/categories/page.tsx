@@ -1,33 +1,21 @@
 import { prisma } from '@/lib/db'
-import { getCategorySettings, updateCategorySettings } from '@/actions/settings/categories'
 import { Button } from '@/components/ui'
 import { PageHeader } from '@/components/layout'
-import LazyVisualConfigModal from '@/components/features/projects/LazyVisualConfigModal'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { Plus } from 'lucide-react'
 import CategoriesContent from './CategoriesContent'
 
 export default async function CategoriesPage() {
-  const [categories, settings] = await Promise.all([
+  const [categories] = await Promise.all([
     prisma.category.findMany({
       where: { deletedAt: null },
       include: {
-        projects: {
-          where: { isActive: true, deletedAt: null },
-          take: 1,
-          orderBy: { date: 'desc' },
-          select: { thumbnailUrl: true },
-        },
-        _count: {
-          select: {
-            projects: { where: { isActive: true, deletedAt: null } },
-          },
-        },
+        images: { take: 1, orderBy: { order: 'asc' }, select: { url: true } },
+        _count: { select: { images: true } },
       },
       orderBy: { sortOrder: 'asc' },
     }),
-    getCategorySettings(),
   ])
 
   return (
@@ -36,52 +24,14 @@ export default async function CategoriesPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <PageHeader
           title="📁 Gestión de Categorías"
-          description="Administra las categorías de tus proyectos"
+          description="Administra las categorías y galerías del portfolio"
         />
-        <div className="flex gap-3">
-          <LazyVisualConfigModal
-            initialSettings={settings}
-            onSave={updateCategorySettings}
-            title="Configurar Tarjetas de Categoría"
-            description="Personaliza cómo se ven las categorías en /proyectos."
-            previewVariant="category"
-            triggerLabel="Config. Visual"
-            fields={[
-              {
-                key: 'showProjectCount',
-                label: 'Mostrar Cantidad',
-                description: 'Ej: 8 Proyectos',
-                type: 'boolean',
-              },
-              {
-                key: 'isActive',
-                label: 'Activo',
-                description: 'Habilitar sección de categorías (mostrar/ocultar)',
-                type: 'boolean',
-              },
-              {
-                key: 'showDescription',
-                label: 'Mostrar Descripción',
-                description: 'Descripción de la categoría',
-                type: 'boolean',
-              },
-              {
-                key: 'gridColumns',
-                label: 'Columnas',
-                description: 'Número de columnas (1-4)',
-                type: 'number',
-                min: 1,
-                max: 4,
-              },
-            ]}
-          />
-          <Button asChild className="gap-2">
-            <Link href={ROUTES.admin.newCategory}>
-              <Plus size={16} />
-              Nueva Categoría
-            </Link>
-          </Button>
-        </div>
+        <Button asChild className="gap-2">
+          <Link href={ROUTES.admin.newCategory}>
+            <Plus size={16} />
+            Nueva Categoría
+          </Link>
+        </Button>
       </div>
 
       {/* Client Component with the list */}

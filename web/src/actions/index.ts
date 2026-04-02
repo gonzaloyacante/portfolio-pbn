@@ -4,8 +4,6 @@
  */
 
 // CMS (Content Management)
-export * from './cms/projects'
-export * from './cms/project'
 export * from './cms/category'
 export * from './cms/services'
 export * from './cms/testimonials'
@@ -26,6 +24,5 @@ export * from './settings/home'
 export * from './settings/about'
 export * from './settings/contact'
 export * from './settings/social'
-export * from './settings/projects'
 export * from './settings/categories'
 export * from './settings/testimonials'

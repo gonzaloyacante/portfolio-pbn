@@ -74,7 +74,7 @@ portfolio-pbn/             # Raíz del monorepo
 ```
 web/src/
 ├── actions/        # Server Actions (mutations). 100% Inglés.
-│   ├── cms/        # CRUD de proyectos, categorías, servicios, testimonios
+│   ├── cms/        # CRUD de imágenes de galería, categorías, servicios, testimonios
 │   ├── settings/   # Gestión de configuraciones (theme, home, about, contact, etc.)
 │   ├── user/       # Auth, contacto, reservas
 │   ├── analytics/  # Eventos y datos de analytics
@@ -131,8 +131,8 @@ web/src/
 
 ### Rutas Web
 
-- **Internals (código)**: 100% Inglés (`/projects`, `/contact`)
-- **URLs Públicas**: 100% Español (`/proyectos`, `/contacto`)
+- **Internals (código)**: 100% Inglés (`/portfolio`, `/contact`)
+- **URLs Públicas**: 100% Español (`/portfolio`, `/contacto`)
 - **Nunca** usar strings hardcodeados. Siempre usar el objeto `ROUTES` de `src/config/routes.ts`.
 
 ### Base de Datos (Neon Branching)
@@ -192,7 +192,7 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 - ❌ Strings hardcodeados para rutas
 - ❌ Llamar a Server Actions directamente desde Flutter (usar endpoints `/api/admin/*`)
 - ❌ **Mostrar el `slug` en cualquier UI admin** — el slug es metadata interna autogenerada. NUNCA mostrarlo como texto visible al administrador en ningún componente, lista, card o formulario. Solo puede usarse internamente en href de navegación a la web pública.
-- ❌ **Filtrar categorías por `isActive: true` en contexto admin** — En páginas de administración (crear/editar proyectos, listados admin), las queries de categorías deben usar `where: { deletedAt: null }` sin filtrar por `isActive`. El filtro `isActive: true` solo aplica a queries públicas (`getPaginatedProjects`, `getProjectsByCategory`, etc.). Filtrar por `isActive` en admin causa falsos negativos: "no hay categorías" cuando sí existen pero están inactivas.
+- ❌ **Filtrar categorías por `isActive: true` en contexto admin** — En páginas de administración (crear/editar categorías, listados admin), las queries de categorías deben usar `where: { deletedAt: null }` sin filtrar por `isActive`. El filtro `isActive: true` solo aplica a queries públicas (`getPaginatedCategories`, `getImagesByCategory`, etc.). Filtrar por `isActive` en admin causa falsos negativos: "no hay categorías" cuando sí existen pero están inactivas.
 - ❌ **Generar slugs en el cliente** — NUNCA generar slugs en el navegador con `.replace(/[^a-z0-9\s-]/g, '')` u otras expresiones sin NFD normalization. Los caracteres españoles (á, é, í, ó, ú, ñ) se eliminan silenciosamente. Siempre generar slugs server-side: enviar campo vacío desde el formulario y dejar que el Server Action llame a `generateSlug(name)` de `@/lib/string-utils` (usa `normalize('NFD')`). El slug en formularios de creación debe ser `<input type="hidden" name="slug" value="">` — la generación es responsabilidad del servidor.
 
 ---

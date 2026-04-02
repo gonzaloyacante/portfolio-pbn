@@ -65,7 +65,7 @@ extension _NotificationHandlerNavigation on NotificationHandler {
   /// Mapeo:
   /// - `contacts`    → [ContactDetailPage] (con id) o [ContactsListPage]
   /// - `calendar`    → [BookingDetailPage] (con id) o [CalendarPage]
-  /// - `projects`    → [ProjectsListPage]
+  /// - `categories`  → [CategoriesListPage]
   /// - `services`    → [ServicesListPage]
   /// - `testimonials`→ [TestimonialsListPage]
   /// - default       → [DashboardPage]
@@ -86,8 +86,8 @@ extension _NotificationHandlerNavigation on NotificationHandler {
         } else {
           _router.goNamed(RouteNames.calendar);
         }
-      case 'projects':
-        _router.goNamed(RouteNames.projects);
+      case 'categories':
+        _router.goNamed(RouteNames.categories);
       case 'services':
         _router.goNamed(RouteNames.services);
       case 'testimonials':

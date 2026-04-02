@@ -10,12 +10,12 @@ void main() {
       await tester.pumpWidget(
         _wrap(
           const ConfirmDialog(
-            title: 'Eliminar proyecto',
+            title: 'Eliminar categoría',
             message: '¿Confirmar eliminación?',
           ),
         ),
       );
-      expect(find.text('Eliminar proyecto'), findsOneWidget);
+      expect(find.text('Eliminar categoría'), findsOneWidget);
     });
 
     testWidgets('shows message text', (tester) async {

@@ -29,7 +29,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
 
   bool _maintenanceMode = false;
   bool _showAbout = true;
-  bool _showProjects = true;
+  bool _showGallery = true;
   bool _showServices = false;
   bool _showContact = true;
 
@@ -53,7 +53,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
     _maintenanceMsgCtrl.text = s.maintenanceMessage ?? '';
     _maintenanceMode = s.maintenanceMode;
     _showAbout = s.showAboutPage;
-    _showProjects = s.showProjectsPage;
+    _showGallery = s.showGalleryPage;
     _showServices = s.showServicesPage;
     _showContact = s.showContactPage;
   }
@@ -71,7 +71,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'maintenanceMode': _maintenanceMode,
         'maintenanceMessage': _nullIfEmpty(_maintenanceMsgCtrl.text),
         'showAboutPage': _showAbout,
-        'showProjectsPage': _showProjects,
+        'showGalleryPage': _showGallery,
         'showServicesPage': _showServices,
         'showContactPage': _showContact,
       });
@@ -199,9 +199,9 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                       contentPadding: EdgeInsets.zero,
                     ),
                     SwitchListTile(
-                      title: const Text('Proyectos'),
-                      value: _showProjects,
-                      onChanged: (v) => setState(() => _showProjects = v),
+                      title: const Text('Portfolio'),
+                      value: _showGallery,
+                      onChanged: (v) => setState(() => _showGallery = v),
                       contentPadding: EdgeInsets.zero,
                     ),
                     SwitchListTile(

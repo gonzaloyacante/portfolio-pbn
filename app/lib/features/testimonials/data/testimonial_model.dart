@@ -47,7 +47,7 @@ abstract class TestimonialDetail with _$TestimonialDetail {
     @Default(false) bool verified,
     @Default(false) bool featured,
     String? source,
-    String? projectId,
+    String? categoryId,
     @Default('PENDING') String status,
     String? moderationNote,
     DateTime? moderatedAt,
@@ -77,7 +77,7 @@ class TestimonialFormData {
   final bool verified;
   final bool featured;
   final String? source;
-  final String? projectId;
+  final String? categoryId;
   final String status;
   final bool isActive;
 
@@ -95,7 +95,7 @@ class TestimonialFormData {
     this.verified = false,
     this.featured = false,
     this.source,
-    this.projectId,
+    this.categoryId,
     this.status = 'PENDING',
     this.isActive = true,
   });
@@ -114,7 +114,7 @@ class TestimonialFormData {
     'verified': verified,
     'featured': featured,
     if (source != null) 'source': source,
-    if (projectId != null) 'projectId': projectId,
+    if (categoryId != null) 'categoryId': categoryId,
     'status': status,
     'isActive': isActive,
   };

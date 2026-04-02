@@ -29,7 +29,7 @@ interface ConfirmDialogProps extends ConfirmDialogOptions {
  *
  * <ConfirmDialog
  *   open={confirmOpen}
- *   title="¿Eliminar proyecto?"
+ *   title="¿Eliminar categoría?"
  *   message="Esta acción no se puede deshacer"
  *   confirmText="Eliminar"
  *   variant="danger"

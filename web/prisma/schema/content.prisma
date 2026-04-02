@@ -22,7 +22,7 @@ model Testimonial {
   featured       Boolean   @default(false) // Show in hero/featured section
   // Source tracking
   source         String? // "website", "instagram", "referral"
-  projectId      String? // Link to related project (optional)
+  categoryId     String? // Link to related category (optional)
   // Moderation
   status         String    @default("PENDING") // PENDING, APPROVED, REJECTED
   moderatedAt    DateTime?

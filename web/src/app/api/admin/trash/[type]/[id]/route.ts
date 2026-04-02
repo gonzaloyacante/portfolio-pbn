@@ -8,7 +8,7 @@ import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 
-const VALID_TYPES = ['project', 'category', 'service', 'testimonial', 'contact', 'booking'] as const
+const VALID_TYPES = ['category', 'service', 'testimonial', 'contact', 'booking'] as const
 type TrashType = (typeof VALID_TYPES)[number]
 
 function isValidType(t: string): t is TrashType {
@@ -25,7 +25,6 @@ type TrashItemModel = {
 }
 
 const TRASH_MODELS: Record<TrashType, TrashItemModel> = {
-  project: prisma.project as unknown as TrashItemModel,
   category: prisma.category as unknown as TrashItemModel,
   service: prisma.service as unknown as TrashItemModel,
   testimonial: prisma.testimonial as unknown as TrashItemModel,
@@ -69,18 +68,13 @@ async function restoreItem(type: TrashType, id: string) {
 
   const updateData: Record<string, unknown> = { deletedAt: null }
 
-  // Los proyectos usan isDeleted (bool) además de deletedAt — hay que restaurar ambos
-  if (type === 'project') {
-    updateData.isDeleted = false
-  }
-
-  // project, category y service tienen isActive — restaurar a true
-  if (type === 'project' || type === 'category' || type === 'service') {
+  // category y service tienen isActive — restaurar a true
+  if (type === 'category' || type === 'service') {
     updateData.isActive = true
   }
 
-  // Para project, category y service aplicamos un-mangle del slug mangleado al borrar
-  if ((type === 'project' || type === 'category' || type === 'service') && item.slug) {
+  // Para category y service aplicamos un-mangle del slug mangleado al borrar
+  if ((type === 'category' || type === 'service') && item.slug) {
     updateData.slug = await unmangleSlug(model, item.slug as string, id)
   }
 
@@ -92,46 +86,18 @@ async function purgeItem(type: TrashType, id: string) {
   const publicIdsToDelete: string[] = []
 
   // Pre-fetch dependencias ricas en media antes de borrarlas para recolectar sus assets huérfanos
-  if (type === 'project') {
-    const project = await prisma.project.findFirst({
+  if (type === 'category') {
+    const category = await prisma.category.findFirst({
       where: { id, deletedAt: { not: null } },
       include: { images: true },
     })
-    if (!project) return null
-    if (project.thumbnailUrl) {
-      const pid = extractPublicIdUrl(project.thumbnailUrl)
-      if (pid) publicIdsToDelete.push(pid)
-    }
-    project.images.forEach((img) => publicIdsToDelete.push(img.publicId))
-  } else if (type === 'category') {
-    const category = await prisma.category.findFirst({
-      where: { id, deletedAt: { not: null } },
-      include: {
-        projects: {
-          include: { images: true },
-        },
-      },
-    })
     if (!category) return null
 
-    // 1. Category's own cover or thumbnail (they share fields occasionally or use cover)
     if (category.coverImageUrl) {
       const pid = extractPublicIdUrl(category.coverImageUrl)
       if (pid) publicIdsToDelete.push(pid)
     }
-    if (category.thumbnailUrl) {
-      const pid = extractPublicIdUrl(category.thumbnailUrl)
-      if (pid) publicIdsToDelete.push(pid)
-    }
-
-    // 2. All child projects that will be cascade-deleted
-    for (const project of category.projects) {
-      if (project.thumbnailUrl) {
-        const pid = extractPublicIdUrl(project.thumbnailUrl)
-        if (pid) publicIdsToDelete.push(pid)
-      }
-      project.images.forEach((img) => publicIdsToDelete.push(img.publicId))
-    }
+    category.images.forEach((img) => publicIdsToDelete.push(img.publicId))
   } else if (type === 'service') {
     const service = await prisma.service.findFirst({
       where: { id, deletedAt: { not: null } },
@@ -171,19 +137,10 @@ async function purgeItem(type: TrashType, id: string) {
 function revalidateForType(type: TrashType) {
   revalidatePath(ROUTES.admin.trash)
   switch (type) {
-    case 'project':
-      revalidatePath(ROUTES.public.projects, 'layout')
-      revalidatePath(ROUTES.admin.projects)
-      revalidatePath(ROUTES.home)
-      revalidateTag(CACHE_TAGS.projects, 'max')
-      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
-      break
     case 'category':
-      revalidatePath(ROUTES.public.projects, 'layout')
       revalidatePath(ROUTES.admin.categories)
       revalidateTag(CACHE_TAGS.categories, 'max')
-      revalidateTag(CACHE_TAGS.projects, 'max')
-      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
+      revalidateTag(CACHE_TAGS.categoryImages, 'max')
       break
     case 'service':
       revalidatePath(ROUTES.public.services, 'layout')

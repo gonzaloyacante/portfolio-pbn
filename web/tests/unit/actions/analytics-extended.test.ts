@@ -21,7 +21,7 @@ vi.mock('@/lib/db', () => ({
       aggregate: vi.fn(),
       findFirst: vi.fn().mockResolvedValue(null),
     },
-    project: {
+    category: {
       findMany: vi.fn(),
     },
   },
@@ -269,10 +269,9 @@ describe('getAnalyticsDashboardData', () => {
       .mockResolvedValueOnce(30) // detailVisits
       .mockResolvedValueOnce(5) // contactLeads
     vi.mocked(prisma.analyticLog.groupBy)
-      .mockResolvedValueOnce([]) // topProjectsRaw
+      .mockResolvedValueOnce([]) // topCategoriesRaw
       .mockResolvedValueOnce([]) // deviceGroups
       .mockResolvedValueOnce([]) // topLocationsRaw
-    vi.mocked(prisma.project.findMany).mockResolvedValue([])
 
     const { getAnalyticsDashboardData } = await import('@/actions/analytics')
     const result = await getAnalyticsDashboardData()
@@ -282,7 +281,7 @@ describe('getAnalyticsDashboardData', () => {
     expect(result?.detailVisits).toBe(30)
     expect(result?.contactLeads).toBe(5)
     expect(result?.trendData).toBeDefined()
-    expect(result?.topProjects).toBeDefined()
+    expect(result?.topCategories).toBeDefined()
     expect(result?.deviceUsage).toBeDefined()
     expect(result?.topLocations).toBeDefined()
   })
@@ -291,7 +290,6 @@ describe('getAnalyticsDashboardData', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
     vi.mocked(prisma.analyticLog.groupBy).mockResolvedValue([] as never)
-    vi.mocked(prisma.project.findMany).mockResolvedValue([])
 
     const { getAnalyticsDashboardData } = await import('@/actions/analytics')
     const result = await getAnalyticsDashboardData()
@@ -299,27 +297,27 @@ describe('getAnalyticsDashboardData', () => {
     expect(result?.trendData).toHaveLength(7)
   })
 
-  it('should map projects to titles', async () => {
+  it('should map categories to names', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
     vi.mocked(prisma.analyticLog.groupBy)
       .mockResolvedValueOnce([
-        { entityId: 'proj-1', _count: { entityId: 10 } },
-        { entityId: 'proj-2', _count: { entityId: 5 } },
+        { entityId: 'cat-1', _count: { entityId: 10 } },
+        { entityId: 'cat-2', _count: { entityId: 5 } },
       ] as never)
       .mockResolvedValueOnce([]) // deviceGroups
       .mockResolvedValueOnce([]) // topLocations
-    vi.mocked(prisma.project.findMany).mockResolvedValue([
-      { id: 'proj-1', title: 'My Project' },
-      { id: 'proj-2', title: 'Another' },
+    vi.mocked(prisma.category.findMany).mockResolvedValue([
+      { id: 'cat-1', name: 'Retratos' },
+      { id: 'cat-2', name: 'Bodas' },
     ] as never)
 
     const { getAnalyticsDashboardData } = await import('@/actions/analytics')
     const result = await getAnalyticsDashboardData()
 
-    expect(result?.topProjects).toEqual([
-      { title: 'My Project', count: 10 },
-      { title: 'Another', count: 5 },
+    expect(result?.topCategories).toEqual([
+      { title: 'Retratos', count: 10 },
+      { title: 'Bodas', count: 5 },
     ])
   })
 
@@ -327,13 +325,12 @@ describe('getAnalyticsDashboardData', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
     vi.mocked(prisma.analyticLog.groupBy)
-      .mockResolvedValueOnce([]) // topProjects
+      .mockResolvedValueOnce([]) // topImages
       .mockResolvedValueOnce([
         { device: 'mobile', _count: { device: 40 } },
         { device: 'desktop', _count: { device: 60 } },
       ] as never)
       .mockResolvedValueOnce([]) // topLocations
-    vi.mocked(prisma.project.findMany).mockResolvedValue([])
 
     const { getAnalyticsDashboardData } = await import('@/actions/analytics')
     const result = await getAnalyticsDashboardData()
@@ -345,13 +342,12 @@ describe('getAnalyticsDashboardData', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.analyticLog.count).mockResolvedValue(0)
     vi.mocked(prisma.analyticLog.groupBy)
-      .mockResolvedValueOnce([]) // topProjects
+      .mockResolvedValueOnce([]) // topImages
       .mockResolvedValueOnce([]) // deviceGroups
       .mockResolvedValueOnce([
         { city: 'Madrid', country: 'ES', _count: { city: 20 } },
         { city: null, country: 'US', _count: { city: 10 } },
       ] as never)
-    vi.mocked(prisma.project.findMany).mockResolvedValue([])
 
     const { getAnalyticsDashboardData } = await import('@/actions/analytics')
     const result = await getAnalyticsDashboardData()

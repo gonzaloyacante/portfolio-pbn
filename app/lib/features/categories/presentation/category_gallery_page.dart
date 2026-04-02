@@ -122,7 +122,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                     ),
                     SizedBox(height: 12),
                     Text(
-                      'Esta categoría no tiene imágenes de proyectos todavía.',
+                      'Esta categoría no tiene imágenes todavía.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: Colors.grey),
                     ),
@@ -213,7 +213,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       builder: (ctx) => AlertDialog(
         title: const Text('Restablecer orden'),
         content: const Text(
-          '¿Restablecer al orden predeterminado (por orden dentro del proyecto)?'
+          '¿Restablecer al orden predeterminado (por orden de subida)?'
           '\nSe perderá el orden personalizado.',
         ),
         actions: [

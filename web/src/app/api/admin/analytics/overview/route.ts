@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
     const [
-      totalProjects,
+      totalImages,
       totalCategories,
       totalServices,
       totalTestimonials,
@@ -33,9 +33,9 @@ export async function GET(req: Request) {
       uniqueVisitors30d,
       deviceUsageRaw,
       topCountriesRaw,
-      topProjectsRaw,
+      topViewsRaw,
     ] = await Promise.all([
-      prisma.project.count({ where: { deletedAt: null } }),
+      prisma.categoryImage.count(),
       prisma.category.count({ where: { deletedAt: null } }),
       prisma.service.count({ where: { deletedAt: null } }),
       prisma.testimonial.count({ where: { deletedAt: null } }),
@@ -48,7 +48,6 @@ export async function GET(req: Request) {
       }),
       // Total de elementos en la papelera (soft-deleted)
       Promise.all([
-        prisma.project.count({ where: { deletedAt: { not: null } } }),
         prisma.category.count({ where: { deletedAt: { not: null } } }),
         prisma.service.count({ where: { deletedAt: { not: null } } }),
         prisma.testimonial.count({ where: { deletedAt: { not: null } } }),
@@ -99,12 +98,12 @@ export async function GET(req: Request) {
         orderBy: { _count: { id: 'desc' } },
         take: 12,
       }),
-      // Top proyectos vistos (últimos 30 días)
+      // Top categorias vistos (últimos 30 días)
       prisma.analyticLog.groupBy({
         by: ['entityId'],
         where: {
           timestamp: { gte: thirtyDaysAgo },
-          entityType: 'project',
+          entityType: 'Category',
           isBot: false,
           entityId: { not: null },
         },
@@ -238,28 +237,26 @@ export async function GET(req: Request) {
       }
     })
 
-    // ── Batch: Resolver nombres de proyectos ─────────────────────────────
-    const projectIds = topProjectsRaw
-      .map((r) => r.entityId)
-      .filter((id): id is string => id !== null)
-    const projectRecords =
-      projectIds.length > 0
-        ? await prisma.project.findMany({
-            where: { id: { in: projectIds } },
-            select: { id: true, title: true },
+    // ── Batch: Resolver nombres de categorías ───────────────────────────────────────────
+    const categoryIds = topViewsRaw.map((r) => r.entityId).filter((id): id is string => id !== null)
+    const categoryRecords =
+      categoryIds.length > 0
+        ? await prisma.category.findMany({
+            where: { id: { in: categoryIds } },
+            select: { id: true, name: true },
           })
         : []
-    const projectTitleMap = new Map(projectRecords.map((p) => [p.id, p.title]))
+    const categoryNameMap = new Map(categoryRecords.map((c) => [c.id, c.name]))
 
-    const topProjects = topProjectsRaw.map(({ entityId, _count }) => ({
-      label: (entityId ? projectTitleMap.get(entityId) : null) ?? entityId ?? 'Desconocido',
+    const topCategories = topViewsRaw.map(({ entityId, _count }) => ({
+      label: (entityId ? categoryNameMap.get(entityId) : null) ?? entityId ?? 'Desconocido',
       count: _count._all,
     }))
 
     return NextResponse.json({
       success: true,
       data: {
-        totalProjects,
+        totalImages,
         totalCategories,
         totalServices,
         totalTestimonials,
@@ -271,7 +268,7 @@ export async function GET(req: Request) {
         uniqueVisitors30d,
         deviceUsage,
         topLocations,
-        topProjects,
+        topCategories,
       },
     })
   } catch (err) {

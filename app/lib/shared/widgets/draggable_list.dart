@@ -9,12 +9,12 @@ import 'package:flutter/material.dart';
 ///
 /// Uso:
 /// ```dart
-/// DraggableList<Project>(
-///   items: projects,
+/// DraggableList<Category>(
+///   items: categories,
 ///   onReorder: (oldIndex, newIndex) {
-///     ref.read(projectsProvider.notifier).reorder(oldIndex, newIndex);
+///     ref.read(categoriesProvider.notifier).reorder(oldIndex, newIndex);
 ///   },
-///   itemBuilder: (item, index, isDragging) => ProjectListTile(project: item),
+///   itemBuilder: (item, index, isDragging) => CategoryTile(category: item),
 ///   keyBuilder: (item) => item.id,
 /// )
 /// ```

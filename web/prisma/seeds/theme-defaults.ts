@@ -229,10 +229,10 @@ export const themeDefaults = [
   {
     key: 'layout_grid_columns',
     category: 'layout',
-    label: 'Columnas de Grid - Proyectos',
+    label: 'Columnas de Grid - Portfolio',
     value: '3',
     type: 'select',
-    description: 'Número de columnas para grid de proyectos (desktop)',
+    description: 'Número de columnas para grid de imágenes (desktop)',
     options: JSON.stringify([
       { label: '2 columnas', value: '2' },
       { label: '3 columnas', value: '3' },
@@ -296,20 +296,20 @@ Maquilladora especializada en audiovisuales, llevo formándome desde 2021 adquir
 
 A lo largo de mis estudios y experiencia he trabajado en distintos entornos creativos que me han permitido desarrollar habilidades tanto en maquillaje social como en caracterización, efectos especiales, peluquería de plató y creación de personajes.
 
-Mi meta es establecerme como maquilladora y caracterizadora profesional en la industria del cine y la televisión, contribuyendo a proyectos que inspiren y cautiven al público.
+Mi meta es establecerme como maquilladora y caracterizadora profesional en la industria del cine y la televisión, contribuyendo a producciones que inspiren y cautiven al público.
 
-En este portfolio, encontrarás mis trabajos y proyectos, cada uno fruto de dedicación, creatividad y amor por mi profesión.`,
+En este portfolio, encontrarás mis trabajos, cada uno fruto de dedicación, creatividad y amor por mi profesión.`,
       showImage: true,
       imagePosition: 'right',
     }),
   },
 
-  // ========== PROJECTS PAGE ==========
+  // ========== PORTFOLIO/GALLERY PAGE ==========
   {
-    pageKey: 'projects',
+    pageKey: 'portfolio',
     sectionKey: 'hero',
     content: JSON.stringify({
-      title: 'Proyectos',
+      title: 'Portfolio',
       description: 'Explora mi trabajo en diferentes categorías',
       layout: 'grid',
     }),

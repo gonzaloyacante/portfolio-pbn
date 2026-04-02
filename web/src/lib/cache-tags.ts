@@ -4,23 +4,17 @@
  */
 
 export const CACHE_TAGS = {
-  // Projects
-  projects: 'projects',
-  project: (id: string) => `project-${id}`,
-  projectBySlug: (slug: string) => `project-slug-${slug}`,
-  featuredProjects: 'featured-projects',
-  projectsByCategory: (categoryId: string) => `projects-category-${categoryId}`,
-
   // Categories
   categories: 'categories',
   category: (id: string) => `category-${id}`,
+  categoryImages: 'category-images',
+  categoryImage: (id: string) => `category-image-${id}`,
 
   // Settings
   siteSettings: 'site-settings',
   homeSettings: 'home-settings',
   aboutSettings: 'about-settings',
   contactSettings: 'contact-settings',
-  projectSettings: 'project-settings',
   categorySettings: 'category-settings',
   testimonialSettings: 'testimonial-settings',
   themeSettings: 'theme-settings',

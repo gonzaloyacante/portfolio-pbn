@@ -17,7 +17,6 @@ interface EditCategoryFormProps {
     description: string | null
     coverImageUrl: string | null
     sortOrder: number
-    _count: { projects: number }
   }
   updateAction: (id: string, formData: FormData) => Promise<{ success: boolean; error?: string }>
 }
@@ -53,10 +52,6 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
           </Button>
           <div>
             <h1 className="text-foreground text-2xl font-bold">✏️ Editar: {category.name}</h1>
-            <p className="text-muted-foreground text-sm">
-              {category._count.projects} proyecto{category._count.projects !== 1 ? 's' : ''} en esta
-              categoría
-            </p>
           </div>
         </div>
 
@@ -121,8 +116,7 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
           <div className="border-border bg-muted/30 rounded-lg border p-4">
             <h4 className="text-foreground mb-2 text-sm font-semibold">Estadísticas</h4>
             <div className="text-muted-foreground space-y-1 text-sm">
-              <p>🖼️ Proyectos: {category._count.projects}</p>
-              <p>📋 Orden: #{category.sortOrder}</p>
+              <p> Orden: #{category.sortOrder}</p>
             </div>
           </div>
 

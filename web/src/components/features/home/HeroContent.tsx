@@ -140,7 +140,7 @@ export function HeroContent({
   const ownerName = s.ownerNameText || 'Paola Bolívar Nievas'
 
   const ctaText = s.ctaText || 'Ver Portfolio'
-  const ctaLink = s.ctaLink || '/proyectos'
+  const ctaLink = s.ctaLink || '/portfolio'
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const mainImageAlt = s.heroMainImageAlt || 'Hero Image'
   const caption = s.heroMainImageCaption

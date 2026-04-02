@@ -5,7 +5,7 @@ import 'package:drift/drift.dart';
 /// Tabla de operaciones pendientes de sincronización con el servidor.
 ///
 /// Cuando la app está offline y el usuario realiza una acción (ej: crear
-/// un proyecto), la operación se guarda aquí. Al recuperar la conexión,
+/// una imagen), la operación se guarda aquí. Al recuperar la conexión,
 /// [SyncManager] procesa la cola en orden FIFO.
 class SyncOperationsTable extends Table {
   @override
@@ -17,7 +17,7 @@ class SyncOperationsTable extends Table {
   /// Tipo de operación: create | update | delete | upload.
   TextColumn get operation => text()();
 
-  /// Recurso afectado: projects | categories | services | testimonials | etc.
+  /// Recurso afectado: categories | services | testimonials | etc.
   TextColumn get resource => text()();
 
   /// ID del recurso en el servidor (null para creaciones).

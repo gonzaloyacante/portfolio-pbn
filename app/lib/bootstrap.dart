@@ -37,7 +37,7 @@ Future<void> bootstrap() async {
   await initializeDateFormatting('es');
 
   // 1. Variables de entorno ─────────────────────────────────────────────────
-  // Carga .env desde la raíz del proyecto Flutter (asset bundleado).
+  // Carga .env desde la raíz de la app Flutter (asset bundleado).
   // En producción, el script distribute-prod.sh copia .env.production sobre .env
   // antes de compilar, garantizando los valores correctos en el APK.
   try {

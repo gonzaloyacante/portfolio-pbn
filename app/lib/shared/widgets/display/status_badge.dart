@@ -3,7 +3,7 @@ import 'package:portfolio_pbn/core/theme/app_colors.dart';
 
 // ── Status ────────────────────────────────────────────────────────────────────
 
-/// Estados posibles de un recurso (contacto, reserva, proyecto, etc.)
+/// Estados posibles de un recurso (contacto, reserva, imagen, etc.)
 enum AppStatus {
   active,
   inactive,

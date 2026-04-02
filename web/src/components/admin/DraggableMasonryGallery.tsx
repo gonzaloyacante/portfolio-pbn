@@ -29,7 +29,6 @@ interface GalleryImage {
   width?: number | null
   height?: number | null
   title?: string
-  projectSlug?: string
 }
 
 interface DraggableMasonryGalleryProps {
@@ -230,13 +229,6 @@ function ImageCard({ image, index, isDragging = false, dragHandleProps }: ImageC
       <div className="absolute top-3 right-3 flex h-10 min-w-[2.5rem] items-center justify-center rounded-lg bg-(--primary) px-3 font-bold text-white shadow-lg">
         #{index + 1}
       </div>
-
-      {/* Project Title Tag (if applicable) */}
-      {image.projectSlug && (
-        <div className="absolute bottom-3 left-3 rounded-md bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm">
-          {image.title}
-        </div>
-      )}
     </div>
   )
 }

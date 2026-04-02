@@ -18,7 +18,6 @@ abstract class CategoryItem with _$CategoryItem {
     String? coverImageUrl,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
-    @Default(0) int projectCount,
     required String createdAt,
     required String updatedAt,
   }) = _CategoryItem;
@@ -45,7 +44,6 @@ abstract class CategoryDetail with _$CategoryDetail {
     String? ogImage,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
-    @Default(0) int projectCount,
     required String createdAt,
     required String updatedAt,
   }) = _CategoryDetail;
@@ -85,25 +83,16 @@ class CategoryFormData {
 
 // ── GalleryImageItem ────────────────────────────────────────────────────────────
 
-/// Imagen de un proyecto que pertenece a la galería de su categoría.
-/// El campo [categoryGalleryOrder] es independiente del orden dentro del proyecto.
+/// Imagen de la galería de una categoría.
+/// Corresponde exactamente al modelo `CategoryImage` del backend.
 @freezed
 abstract class GalleryImageItem with _$GalleryImageItem {
   const factory GalleryImageItem({
     required String id,
     required String url,
-    required String thumbnailUrl,
     String? publicId,
-    String? alt,
-    String? caption,
-    int? width,
-    int? height,
-    @Default(false) bool isCover,
-    @Default(false) bool isHero,
-    int? categoryGalleryOrder,
-    required String projectId,
-    required String projectTitle,
-    required String projectSlug,
+    required int order,
+    required String categoryId,
   }) = _GalleryImageItem;
 
   factory GalleryImageItem.fromJson(Map<String, dynamic> json) =>

@@ -34,7 +34,7 @@ class HelpPage extends ConsumerWidget {
                 label: 'Descripción',
                 value:
                     'Panel de administración de ${AppConstants.ownerFullName}. '
-                    'Gestiona proyectos, servicios, testimonios, '
+                    'Gestiona el portfolio, servicios, testimonios, '
                     'contactos, reservas y configuración del sitio.',
               ),
             ],
@@ -49,13 +49,13 @@ class HelpPage extends ConsumerWidget {
                 value: 'Resumen de actividad y métricas principales.',
               ),
               _HelpItem(
-                label: 'Proyectos',
-                value:
-                    'Gestiona el portfolio: título, descripción, imágenes y categoría.',
+                label: 'Portfolio',
+                value: 'Gestiona las categorías y sus galerías de imágenes.',
               ),
               _HelpItem(
                 label: 'Categorías',
-                value: 'Organiza los proyectos por tipo de trabajo.',
+                value:
+                    'Organiza el portfolio por tipo de trabajo y galería de imágenes.',
               ),
               _HelpItem(
                 label: 'Servicios',
@@ -91,10 +91,10 @@ class HelpPage extends ConsumerWidget {
             title: 'Preguntas frecuentes',
             children: [
               _HelpItem(
-                label: '¿Cómo publicar un proyecto?',
+                label: '¿Cómo subir imágenes a una categoría?',
                 value:
-                    'Ve a Proyectos → "+" → completa el formulario y guarda. '
-                    'El proyecto aparecerá en el sitio web inmediatamente.',
+                    'Ve a Categorías → edita la categoría → sección Galería → '
+                    'sube las imágenes. Aparecerán en el sitio web inmediatamente.',
               ),
               _HelpItem(
                 label: '¿Cómo restaurar un elemento eliminado?',

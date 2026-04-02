@@ -125,10 +125,7 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
   ) {
     final img = _items![index];
     final scheme = Theme.of(context).colorScheme;
-    final aspectRatio =
-        (img.width != null && img.height != null && img.height! > 0)
-        ? img.width! / img.height!
-        : 0.8;
+    const double aspectRatio = 0.8;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),

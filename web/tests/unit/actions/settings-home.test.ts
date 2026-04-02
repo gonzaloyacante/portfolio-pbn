@@ -39,10 +39,8 @@ vi.mock('@/lib/cache-tags', () => ({
     aboutSettings: 'about-settings',
     contactSettings: 'contact-settings',
     siteSettings: 'site-settings',
-    projectSettings: 'project-settings',
     categorySettings: 'category-settings',
     testimonialSettings: 'testimonial-settings',
-    projects: 'projects',
     testimonials: 'testimonials',
     categories: 'categories',
     social: 'social',
@@ -57,13 +55,12 @@ vi.mock('@/config/routes', () => ({
     admin: {
       home: '/admin/inicio',
       settings: '/admin/configuracion',
-      projects: '/admin/proyectos',
     },
     public: {
       home: '/',
       about: '/sobre-mi',
       contact: '/contacto',
-      projects: '/proyectos',
+      portfolio: '/portfolio',
     },
   },
 }))
@@ -127,8 +124,8 @@ const mockHomeSettings = {
   illustrationOffsetX: 0,
   illustrationOffsetY: 0,
   illustrationRotation: 0,
-  ctaText: 'Ver proyectos',
-  ctaLink: '/proyectos',
+  ctaText: 'Ver portfolio',
+  ctaLink: '/portfolio',
   ctaFont: null,
   ctaFontUrl: null,
   ctaFontSize: 18,
@@ -154,7 +151,7 @@ const mockHomeSettings = {
   ctaMobileOffsetX: 0,
   ctaMobileOffsetY: 0,
   ctaMobileFontSize: 16,
-  showFeaturedProjects: true,
+  showFeaturedImages: true,
   featuredTitle: 'Destacados',
   featuredTitleFont: null,
   featuredTitleFontUrl: null,
@@ -225,7 +222,7 @@ describe('Settings: Home Actions', () => {
       expect(result).toBeDefined()
       expect(Object.keys(result!).length).toBeGreaterThan(30)
       expect(result!.heroTitle1Text).toBe('Bienvenida')
-      expect(result!.showFeaturedProjects).toBe(true)
+      expect(result!.showFeaturedImages).toBe(true)
       expect(result!.featuredCount).toBe(3)
     })
   })

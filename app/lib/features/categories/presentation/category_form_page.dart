@@ -128,9 +128,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       if (images.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'No hay imágenes en la galería de proyectos de esta categoría.',
-            ),
+            content: Text('No hay imágenes en la galería de esta categoría.'),
           ),
         );
         return;
@@ -195,7 +193,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: CachedNetworkImage(
-                                imageUrl: img.thumbnailUrl,
+                                imageUrl: img.url,
                                 fit: BoxFit.cover,
                                 placeholder: (ctx2, url) => const ColoredBox(
                                   color: AppColors.lightBorder,

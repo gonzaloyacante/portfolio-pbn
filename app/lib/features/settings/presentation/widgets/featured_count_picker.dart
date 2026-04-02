@@ -20,7 +20,7 @@ class FeaturedCountPicker extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Cantidad de proyectos a mostrar',
+          'Cantidad de imágenes a mostrar',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: AppSpacing.sm),

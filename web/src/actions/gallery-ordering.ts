@@ -25,16 +25,13 @@ const updateGalleryOrderSchema = z.object({
  */
 export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGalleryOrderSchema>) {
   try {
-    // Security: Require admin + rate limit
     await requireAdmin()
     const rl = await checkApiRateLimit()
     if (rl) return { success: false, error: rl.error }
 
-    // Validate input
     const validated = updateGalleryOrderSchema.parse(input)
     const { categoryId, imageOrders } = validated
 
-    // Verify category exists
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
     })
@@ -43,20 +40,18 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
       return { success: false, error: 'Categoría no encontrada' }
     }
 
-    // Batch update all images in a transaction
     await prisma.$transaction(
       imageOrders.map(({ imageId, order }) =>
-        prisma.projectImage.update({
+        prisma.categoryImage.update({
           where: { id: imageId },
-          data: { categoryGalleryOrder: order },
+          data: { order },
         })
       )
     )
 
-    // Revalidate category page and all its project subroutes
-    revalidatePath(`${ROUTES.public.projects}/${category.slug}`, 'layout')
+    revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`, 'layout')
     revalidatePath(ROUTES.admin.categories)
-    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
 
     return { success: true }
   } catch (error) {
@@ -71,46 +66,43 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
 }
 
 /**
- * Reset gallery order for a category (set all to NULL)
+ * Reset gallery order for a category (sequential from 0)
  */
 export async function resetCategoryGalleryOrder(categoryId: string) {
   try {
-    // Security: Require admin + rate limit
     await requireAdmin()
     const rl2 = await checkApiRateLimit()
     if (rl2) return { success: false, error: rl2.error }
 
-    // Verify category exists
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-      include: {
-        projects: {
-          include: { images: true },
-        },
-      },
+    const images = await prisma.categoryImage.findMany({
+      where: { categoryId },
+      orderBy: { order: 'asc' },
+      select: { id: true },
     })
 
-    if (!category) {
-      return { success: false, error: 'Categoría no encontrada' }
-    }
-
-    // Get all image IDs from all projects in this category
-    const imageIds = category.projects.flatMap((project) => project.images.map((img) => img.id))
-
-    if (imageIds.length === 0) {
+    if (images.length === 0) {
       return { success: false, error: 'No hay imágenes en esta categoría' }
     }
 
-    // Reset all to NULL
-    await prisma.projectImage.updateMany({
-      where: { id: { in: imageIds } },
-      data: { categoryGalleryOrder: null },
+    await prisma.$transaction(
+      images.map((img, index) =>
+        prisma.categoryImage.update({
+          where: { id: img.id },
+          data: { order: index },
+        })
+      )
+    )
+
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { slug: true },
     })
 
-    // Revalidate
-    revalidatePath(`${ROUTES.public.projects}/${category.slug}`, 'layout')
+    if (category) {
+      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`, 'layout')
+    }
     revalidatePath(ROUTES.admin.categories)
-    revalidateTag(CACHE_TAGS.projects, 'max')
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
 
     return { success: true }
   } catch (error) {

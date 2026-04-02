@@ -39,10 +39,8 @@ vi.mock('@/lib/cache-tags', () => ({
     aboutSettings: 'about-settings',
     contactSettings: 'contact-settings',
     siteSettings: 'site-settings',
-    projectSettings: 'project-settings',
     categorySettings: 'category-settings',
     testimonialSettings: 'testimonial-settings',
-    projects: 'projects',
     testimonials: 'testimonials',
     categories: 'categories',
     social: 'social',
@@ -56,13 +54,12 @@ vi.mock('@/config/routes', () => ({
     home: '/',
     admin: {
       settings: '/admin/configuracion',
-      projects: '/admin/proyectos',
     },
     public: {
       home: '/',
       about: '/sobre-mi',
       contact: '/contacto',
-      projects: '/proyectos',
+      portfolio: '/portfolio',
     },
   },
 }))
@@ -95,7 +92,7 @@ const mockSiteSettings = {
   defaultWhatsapp: '+34 600 000 000',
   maintenanceMode: false,
   showAboutPage: true,
-  showProjectsPage: true,
+  showGalleryPage: true,
   showServicesPage: false,
   showContactPage: true,
   allowIndexing: true,
@@ -104,7 +101,7 @@ const mockSiteSettings = {
 
 const mockVisibility = {
   showAboutPage: true,
-  showProjectsPage: true,
+  showGalleryPage: true,
   showServicesPage: false,
   showContactPage: true,
   maintenanceMode: false,
@@ -191,7 +188,7 @@ describe('Settings: Site Actions', () => {
       const result = await getPageVisibility()
 
       expect(result.showAboutPage).toBe(true)
-      expect(result.showProjectsPage).toBe(true)
+      expect(result.showGalleryPage).toBe(true)
       expect(result.showServicesPage).toBe(false)
       expect(result.showContactPage).toBe(true)
       expect(result.maintenanceMode).toBe(false)
@@ -205,7 +202,7 @@ describe('Settings: Site Actions', () => {
       const result = await getPageVisibility()
 
       expect(result.showAboutPage).toBe(true)
-      expect(result.showProjectsPage).toBe(true)
+      expect(result.showGalleryPage).toBe(true)
       expect(result.showServicesPage).toBe(false)
       expect(result.showContactPage).toBe(true)
       expect(result.maintenanceMode).toBe(false)

@@ -17,24 +17,24 @@ interface TutorialSection {
 
 const tutorials: TutorialSection[] = [
   {
-    id: 'proyectos',
+    id: 'portfolio',
     icon: '🎨',
-    title: 'Gestión de Proyectos',
-    description: 'Aprende a crear, editar y organizar tus trabajos de maquillaje',
+    title: 'Gestión del Portfolio',
+    description: 'Aprende a crear, editar y organizar las categorías y sus galerías',
     steps: [
-      'Ve a "Gestión → Proyectos" en el menú lateral',
-      'Haz clic en "Nuevo Proyecto" para crear uno desde cero',
-      'Completa los campos: título, descripción, categoría y fecha',
-      'Sube imágenes arrastrándolas o haciendo clic en la zona de upload',
-      'Reordena las fotos arrastrándolas con el mouse (la primera será la portada)',
-      'Guarda los cambios haciendo clic en "Guardar Proyecto"',
-      'Para editar, haz clic en el proyecto desde la lista y modifica lo que necesites',
+      'Ve a "Portfolio → Categorías" en el menú lateral',
+      'Haz clic en "Nueva Categoría" para crear una desde cero',
+      'Completa los campos: nombre y descripción (opcional)',
+      'Sube imágenes a la galería de la categoría arrastrándolas o usando el botón de upload',
+      'Reordena las fotos arrastrándolas con el mouse (la primera puede usarse como portada)',
+      'Guarda los cambios haciendo clic en "Guardar"',
+      'Para editar, haz clic en la categoría desde la lista y modifica lo que necesites',
     ],
     tips: [
       'Usa imágenes de alta calidad (mínimo 1200x800px) para mejor impacto visual',
-      'La primera imagen del proyecto se usa como miniatura en la galería principal',
-      'Puedes marcar un proyecto como "Inactivo" si no quieres que se muestre temporalmente',
-      'Los proyectos eliminados van a "Papelera" y pueden recuperarse durante 30 días',
+      'La primera imagen de la galería se sugiere automáticamente como portada',
+      'Puedes marcar una categoría como "Inactiva" si no quieres que se muestre temporalmente',
+      'Las categorías eliminadas van a "Papelera" y pueden recuperarse durante 30 días',
     ],
   },
   {
@@ -47,12 +47,12 @@ const tutorials: TutorialSection[] = [
       'Tamaño ideal: entre 1200x800px y 2400x1600px para balance calidad/velocidad',
       'Arrastra las imágenes a la zona de upload o haz clic para seleccionar',
       'Las imágenes se suben automáticamente a Cloudinary (optimización gratuita)',
-      'Reordena arrastrando: la primera imagen es la portada del proyecto',
+      'Reordena arrastrando: la primera imagen puede usarse como portada de la categoría',
       'Para eliminar una imagen, haz clic en el ícono de basura',
     ],
     tips: [
       'Cloudinary optimiza automáticamente tus imágenes (convierte a WebP/AVIF)',
-      'Puedes subir hasta 10 imágenes por proyecto',
+      'Puedes subir múltiples imágenes por categoría',
       'Si una imagen pesa más de 5MB, se comprimirá automáticamente sin perder calidad visible',
       'Las fotos borradas se eliminan de forma permanente de Cloudinary (no se pueden recuperar)',
     ],
@@ -65,15 +65,15 @@ const tutorials: TutorialSection[] = [
     steps: [
       'Ve a "Gestión → Categorías" en el menú',
       'Crea categorías como "Novia", "Editorial", "Social", "Caracterización", etc.',
-      'Cada categoría puede tener un nombre y descripción',
+      'Cada categoría tiene un nombre, descripción y su propia galería de imágenes',
       'El "slug" se genera automáticamente del nombre (ej: "Maquillaje de Novia" → "maquillaje-de-novia")',
-      'Asigna proyectos a categorías desde el formulario de edición de proyecto',
-      'Las categorías se muestran como filtros en la página pública de proyectos',
+      'Sube las imágenes directamente desde el formulario de edición de la categoría',
+      'Las categorías se muestran como secciones en la página pública del portfolio',
     ],
     tips: [
       'Usa nombres cortos y descriptivos (máximo 3 palabras)',
-      'Las categorías sin proyectos no se muestran en el sitio público',
-      'No puedes eliminar una categoría si tiene proyectos asignados (reasígnalos primero)',
+      'Las categorías sin imágenes no se muestran en el sitio público',
+      'Puedes eliminar una categoría aunque tenga imágenes (las imágenes también se eliminarán)',
     ],
   },
   {
@@ -83,14 +83,14 @@ const tutorials: TutorialSection[] = [
     description: 'Comprende el comportamiento de tus visitantes',
     steps: [
       'Las estadísticas están integradas en el "Dashboard" (página de inicio del admin)',
-      'Visualiza visitas totales, proyectos vistos y leads de los últimos 7 días',
+      'Visualiza visitas totales, imágenes vistas y leads de los últimos 7 días',
       'El gráfico muestra la tendencia de visitas por día',
-      'Consulta qué proyectos son los más populares',
+      'Consulta qué categorías son las más populares',
       'Ve qué dispositivos usan tus visitantes (móvil vs escritorio)',
     ],
     tips: [
       '"Visitas" cuenta cada vez que alguien accede a una página',
-      '"Proyectos Vistos" son las veces que se abrió el detalle de un trabajo',
+      '"Imágenes Vistas" son las veces que se abrió el detalle de una categoría',
       '"Leads" son los mensajes recibidos a través del formulario de contacto',
       'Las alertas te muestran mensajes sin leer, testimonios pendientes y papelera',
     ],
@@ -192,13 +192,13 @@ const tutorials: TutorialSection[] = [
     id: 'papelera',
     icon: '🗑️',
     title: 'Papelera',
-    description: 'Recupera proyectos eliminados',
+    description: 'Recupera elementos eliminados',
     steps: [
       'Ve a "Papelera" en el menú lateral',
-      'Verás los proyectos que has eliminado',
-      'Puedes restaurar un proyecto haciendo clic en "Restaurar"',
+      'Verás las categorías, servicios y otros elementos que has eliminado',
+      'Puedes restaurar un elemento haciendo clic en "Restaurar"',
       'O eliminarlo permanentemente con "Eliminar"',
-      'Los proyectos se eliminan automáticamente después de 30 días',
+      'Los elementos se eliminan automáticamente después de 30 días',
     ],
     tips: [
       'Revisa la papelera antes de que pasen 30 días si necesitas recuperar algo',
@@ -337,10 +337,10 @@ export default function AyudaPage() {
         <div className="space-y-4">
           <details className="border-border group bg-card rounded-2xl border p-4">
             <summary className="text-foreground cursor-pointer font-semibold">
-              ¿Puedo recuperar un proyecto eliminado?
+              ¿Puedo recuperar un elemento eliminado?
             </summary>
             <p className="text-foreground mt-2 text-sm">
-              Sí, los proyectos eliminados usan <strong>soft delete</strong> (eliminación suave).
+              Sí, los elementos eliminados usan <strong>soft delete</strong> (eliminación suave).
               Permanecen en la base de datos durante 30 días y pueden ser restaurados desde la
               sección de &quot;Papelera&quot;.
             </p>
@@ -348,11 +348,11 @@ export default function AyudaPage() {
 
           <details className="border-border group bg-card rounded-2xl border p-4">
             <summary className="text-foreground cursor-pointer font-semibold">
-              ¿Cuántas imágenes puedo subir por proyecto?
+              ¿Cuántas imágenes puedo subir por categoría?
             </summary>
             <p className="text-foreground mt-2 text-sm">
-              Puedes subir hasta <strong>10 imágenes</strong> por proyecto. Si necesitas más,
-              considera dividir el trabajo en múltiples proyectos relacionados.
+              Puedes subir múltiples imágenes por categoría sin límite fijo. Las imágenes se
+              optimizan automáticamente en Cloudinary.
             </p>
           </details>
 
@@ -383,8 +383,8 @@ export default function AyudaPage() {
               ¿Por qué no puedo eliminar una categoría?
             </summary>
             <p className="text-foreground mt-2 text-sm">
-              No puedes eliminar una categoría si tiene proyectos asignados. Primero reasigna esos
-              proyectos a otra categoría o elimínalos.
+              Las categorías se pueden eliminar en cualquier momento. Sus imágenes también se
+              eliminarán (con posibilidad de recuperarlas desde Papelera por 30 días).
             </p>
           </details>
         </div>

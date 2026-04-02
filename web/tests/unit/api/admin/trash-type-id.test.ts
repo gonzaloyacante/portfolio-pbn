@@ -4,7 +4,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    project: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
     category: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
     service: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
     testimonial: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
@@ -60,8 +59,8 @@ describe('PATCH /api/admin/trash/[type]/[id]', () => {
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    const res = await PATCH(makeRequest(`${BASE_URL}/project/item-1`, { method: 'PATCH' }), {
+    const params = Promise.resolve({ type: 'category', id: 'item-1' })
+    const res = await PATCH(makeRequest(`${BASE_URL}/category/item-1`, { method: 'PATCH' }), {
       params,
     })
     expect(res.status).toBe(401)
@@ -78,78 +77,6 @@ describe('PATCH /api/admin/trash/[type]/[id]', () => {
     expect(res.status).toBe(400)
     expect(json.success).toBe(false)
     expect(json.error).toContain('inválido')
-  })
-
-  it('restores item (sets deletedAt to null)', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockResolvedValueOnce(mockDeletedItem as any)
-    vi.mocked(prisma.project.update).mockResolvedValueOnce({
-      ...mockDeletedItem,
-      deletedAt: null,
-    } as any)
-
-    const { PATCH } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    const res = await PATCH(makeRequest(`${BASE_URL}/project/item-1`, { method: 'PATCH' }), {
-      params,
-    })
-    const json = await res.json()
-
-    expect(res.status).toBe(200)
-    expect(json.success).toBe(true)
-    expect(prisma.project.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: 'item-1' },
-        data: { deletedAt: null, isDeleted: false },
-      })
-    )
-  })
-
-  it('returns 404 for non-existent item', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockResolvedValueOnce(null)
-
-    const { PATCH } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'non-existent' })
-    const res = await PATCH(makeRequest(`${BASE_URL}/project/non-existent`, { method: 'PATCH' }), {
-      params,
-    })
-    const json = await res.json()
-
-    expect(res.status).toBe(404)
-    expect(json.success).toBe(false)
-    expect(json.error).toContain('no encontrado')
-  })
-
-  it('only operates on already-deleted items', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockResolvedValueOnce(mockDeletedItem as any)
-    vi.mocked(prisma.project.update).mockResolvedValueOnce({} as any)
-
-    const { PATCH } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    await PATCH(makeRequest(`${BASE_URL}/project/item-1`, { method: 'PATCH' }), { params })
-
-    expect(prisma.project.findFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: 'item-1', deletedAt: { not: null } },
-      })
-    )
-  })
-
-  it('returns 500 on DB error', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockRejectedValueOnce(new Error('DB error'))
-
-    const { PATCH } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    const res = await PATCH(makeRequest(`${BASE_URL}/project/item-1`, { method: 'PATCH' }), {
-      params,
-    })
-    const json = await res.json()
-
-    expect(res.status).toBe(500)
-    expect(json.success).toBe(false)
   })
 
   it('supports category type', async () => {
@@ -189,8 +116,8 @@ describe('DELETE /api/admin/trash/[type]/[id]', () => {
     } as any)
 
     const { DELETE } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    const res = await DELETE(makeRequest(`${BASE_URL}/project/item-1`, { method: 'DELETE' }), {
+    const params = Promise.resolve({ type: 'category', id: 'item-1' })
+    const res = await DELETE(makeRequest(`${BASE_URL}/category/item-1`, { method: 'DELETE' }), {
       params,
     })
     expect(res.status).toBe(401)
@@ -209,42 +136,6 @@ describe('DELETE /api/admin/trash/[type]/[id]', () => {
     expect(json.error).toContain('inválido')
   })
 
-  it('permanently removes item', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockResolvedValueOnce(mockDeletedItem as any)
-    vi.mocked(prisma.project.delete).mockResolvedValueOnce({} as any)
-
-    const { DELETE } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    const res = await DELETE(makeRequest(`${BASE_URL}/project/item-1`, { method: 'DELETE' }), {
-      params,
-    })
-    const json = await res.json()
-
-    expect(res.status).toBe(200)
-    expect(json.success).toBe(true)
-    expect(prisma.project.delete).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: 'item-1' } })
-    )
-  })
-
-  it('returns 404 for non-existent item', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockResolvedValueOnce(null)
-
-    const { DELETE } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'non-existent' })
-    const res = await DELETE(
-      makeRequest(`${BASE_URL}/project/non-existent`, { method: 'DELETE' }),
-      { params }
-    )
-    const json = await res.json()
-
-    expect(res.status).toBe(404)
-    expect(json.success).toBe(false)
-    expect(json.error).toContain('no encontrado')
-  })
-
   it('only deletes already-deleted items', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(mockDeletedItem as any)
@@ -259,20 +150,5 @@ describe('DELETE /api/admin/trash/[type]/[id]', () => {
         where: { id: 'item-1', deletedAt: { not: null } },
       })
     )
-  })
-
-  it('returns 500 on DB error', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.findFirst).mockRejectedValueOnce(new Error('DB error'))
-
-    const { DELETE } = await import('@/app/api/admin/trash/[type]/[id]/route')
-    const params = Promise.resolve({ type: 'project', id: 'item-1' })
-    const res = await DELETE(makeRequest(`${BASE_URL}/project/item-1`, { method: 'DELETE' }), {
-      params,
-    })
-    const json = await res.json()
-
-    expect(res.status).toBe(500)
-    expect(json.success).toBe(false)
   })
 })

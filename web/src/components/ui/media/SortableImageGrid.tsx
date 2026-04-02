@@ -23,15 +23,15 @@ import { GripVertical, Trash2, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useConfirmDialog } from '@/components/ui'
 
-interface ProjectImage {
+interface CategoryImage {
   id: string
   url: string
   order: number
 }
 
 interface SortableImageGridProps {
-  projectId: string
-  images: ProjectImage[]
+  categoryId: string
+  images: CategoryImage[]
   currentThumbnail: string | null
   onReorder: (imageIds: string[]) => Promise<void>
   onDelete: (imageId: string) => Promise<void>
@@ -44,7 +44,7 @@ export default function SortableImageGrid({
   onReorder,
   onDelete,
   onSetThumbnail,
-}: Omit<SortableImageGridProps, 'projectId'>) {
+}: Omit<SortableImageGridProps, 'categoryId'>) {
   const [localImages, setLocalImages] = useState(images)
   const dndContextId = useId()
 
@@ -83,7 +83,7 @@ export default function SortableImageGrid({
 
   return (
     <div className="space-y-4">
-      <h3 className="text-foreground text-lg font-medium">Imágenes del Proyecto</h3>
+      <h3 className="text-foreground text-lg font-medium">Imágenes de la Categoría</h3>
 
       <DndContext
         id={dndContextId}
@@ -129,7 +129,7 @@ export default function SortableImageGrid({
 }
 
 interface SortableImageProps {
-  image: ProjectImage
+  image: CategoryImage
   isThumbnail: boolean
   onDelete: () => void
   onSetThumbnail: () => void
@@ -158,7 +158,7 @@ function SortableImage({ image, isThumbnail, onDelete, onSetThumbnail }: Sortabl
       {/* Image */}
       <Image
         src={image.url}
-        alt="Imagen del proyecto"
+        alt="Imagen de la galería"
         fill
         className="object-cover"
         sizes="200px"

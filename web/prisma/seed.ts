@@ -8,11 +8,10 @@ import {
   aboutSettings,
   contactSettings,
   testimonialSettings,
-  projectSettings,
   categorySettings,
 } from './seeds/settings'
 import { categories, services, testimonials, socialLinks } from './seeds/content'
-import { projects } from './seeds/projects'
+import { galleryImagesByCategorySlug } from './seeds/gallery-images'
 
 const _adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter: _adapter })
@@ -77,13 +76,6 @@ async function main() {
     create: testimonialSettings,
   })
 
-  const { id: _projectSettingsId, ...projectSettingsUpdate } = projectSettings
-  await prisma.projectSettings.upsert({
-    where: { key: 'singleton' },
-    update: projectSettingsUpdate,
-    create: projectSettings,
-  })
-
   const { id: _categorySettingsId, ...categorySettingsUpdate } = categorySettings
   await prisma.categorySettings.upsert({
     where: { key: 'singleton' },
@@ -135,64 +127,35 @@ async function main() {
   }
   console.log(`   ✅ ${testimonials.length} testimonials`)
 
-  // 5. Projects (with error handling)
-  console.log('\n🎨 Seeding Projects...')
-  let projectCount = 0
+  // 5. Gallery Images (per category)
+  console.log('\n🖼️  Seeding Gallery Images...')
   let imageCount = 0
 
-  for (const project of projects) {
-    const { images, categorySlug, ...projectData } = project
-
-    // Find category ID
-    const category = await prisma.category.findUnique({
-      where: { slug: categorySlug },
-    })
+  for (const [categorySlug, images] of Object.entries(galleryImagesByCategorySlug)) {
+    const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
 
     if (!category) {
-      console.warn(`   ⚠️  Category ${categorySlug} not found for project ${project.title}`)
+      console.warn(`   ⚠️  Category "${categorySlug}" not found — skipping images`)
       continue
     }
 
-    try {
-      // Upsert project
-      const createdProject = await prisma.project.upsert({
-        where: { slug: projectData.slug },
-        update: {
-          ...projectData,
-          categoryId: category.id,
-        },
-        create: {
-          ...projectData,
+    // Clear existing seed images to avoid duplicates on re-seed
+    await prisma.categoryImage.deleteMany({ where: { categoryId: category.id } })
+
+    for (const img of images) {
+      await prisma.categoryImage.create({
+        data: {
+          url: img.url,
+          publicId: img.publicId,
+          order: img.order,
           categoryId: category.id,
         },
       })
-
-      // Delete existing images to reset order
-      await prisma.projectImage.deleteMany({
-        where: { projectId: createdProject.id },
-      })
-
-      // Create images for project
-      for (const img of images) {
-        await prisma.projectImage.create({
-          data: {
-            url: img.url,
-            alt: img.alt,
-            order: img.order,
-            publicId: `seed-${projectData.slug}-${img.order}`, // Fake publicId
-            projectId: createdProject.id,
-          },
-        })
-        imageCount++
-      }
-
-      projectCount++
-    } catch (error) {
-      console.error(`   ❌ Error seeding project ${project.title}:`, error)
+      imageCount++
     }
+    console.log(`   ✅ ${images.length} images → ${categorySlug}`)
   }
-  console.log(`   ✅ ${projectCount} projects`)
-  console.log(`   ✅ ${imageCount} images`)
+  console.log(`   ✅ ${imageCount} total images`)
 
   console.log('\n🎉 Seeding Completed Successfully!')
   console.log(
@@ -201,7 +164,6 @@ async function main() {
   console.log(`   🔗 Social links: ${socialLinks.length}`)
   console.log(`   💼 Services: ${services.length}`)
   console.log(`   💬 Testimonials: ${testimonials.length}`)
-  console.log(`   🎨 Projects: ${projectCount}`)
   console.log(`   🖼️ Images: ${imageCount}`)
 }
 

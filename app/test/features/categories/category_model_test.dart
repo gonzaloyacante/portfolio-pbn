@@ -26,7 +26,6 @@ void main() {
     );
     test('sortOrder defaults to 0', () => expect(item.sortOrder, 0));
     test('isActive defaults to true', () => expect(item.isActive, true));
-    test('projectCount defaults to 0', () => expect(item.projectCount, 0));
   });
 
   group('CategoryItem — with optional fields', () {
@@ -37,7 +36,6 @@ void main() {
       description: 'Diseño gráfico',
       sortOrder: 2,
       isActive: false,
-      projectCount: 5,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
     );
@@ -48,7 +46,6 @@ void main() {
     );
     test('stores sortOrder', () => expect(item.sortOrder, 2));
     test('stores isActive=false', () => expect(item.isActive, false));
-    test('stores projectCount', () => expect(item.projectCount, 5));
   });
 
   group('CategoryItem — equality', () {

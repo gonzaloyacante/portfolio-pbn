@@ -6,9 +6,7 @@ import {
   aboutSettingsSchema,
   testimonialSettingsSchema,
   contactSettingsSchema,
-  projectSettingsSchema,
   categorySettingsSchema,
-  projectFormSchema,
   categorySchema,
   loginSchema,
 } from '@/lib/validations'
@@ -289,83 +287,6 @@ describe('themeEditorSchema — extended', () => {
 })
 
 // ============================================
-// projectFormSchema — edge cases
-// ============================================
-
-describe('projectFormSchema — extended', () => {
-  const valid = { title: 'My Project', categoryId: 'cat-1', date: '2025-01-01' }
-
-  it('passes with minimal required fields', () => {
-    expect(projectFormSchema.safeParse(valid).success).toBe(true)
-  })
-
-  it('fails when title is less than 3 chars', () => {
-    const result = projectFormSchema.safeParse({ ...valid, title: 'Ab' })
-    expect(result.success).toBe(false)
-  })
-
-  it('fails when title exceeds 200 chars', () => {
-    const result = projectFormSchema.safeParse({ ...valid, title: 'X'.repeat(201) })
-    expect(result.success).toBe(false)
-  })
-
-  it('fails when categoryId is empty', () => {
-    const result = projectFormSchema.safeParse({ ...valid, categoryId: '' })
-    expect(result.success).toBe(false)
-  })
-
-  it('passes with description as null', () => {
-    const result = projectFormSchema.safeParse({ ...valid, description: null })
-    expect(result.success).toBe(true)
-  })
-
-  it('passes with all optional fields present', () => {
-    const result = projectFormSchema.safeParse({
-      ...valid,
-      description: 'Some description',
-      thumbnailUrl: 'https://img.test/thumb.jpg',
-      excerpt: 'Short excerpt',
-      videoUrl: 'https://youtube.com/watch?v=abc',
-      duration: '2h',
-      client: 'Client X',
-      location: 'Madrid',
-      tags: 'tag1,tag2',
-      metaTitle: 'SEO Title',
-      metaDescription: 'SEO Description',
-      metaKeywords: 'kw1,kw2',
-      canonicalUrl: 'https://example.com/project',
-      layout: 'grid',
-      isFeatured: true,
-      isPinned: false,
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('accepts isFeatured as string', () => {
-    const result = projectFormSchema.safeParse({ ...valid, isFeatured: 'true' })
-    expect(result.success).toBe(true)
-  })
-
-  it('accepts isPinned as boolean', () => {
-    const result = projectFormSchema.safeParse({ ...valid, isPinned: true })
-    expect(result.success).toBe(true)
-  })
-
-  it('handles XSS in title', () => {
-    const result = projectFormSchema.safeParse({
-      ...valid,
-      title: '<img src=x onerror=alert(1)>',
-    })
-    expect(result.success).toBe(true) // Zod doesn't sanitize
-  })
-
-  it('handles very long description in optional field', () => {
-    const result = projectFormSchema.safeParse({ ...valid, description: 'D'.repeat(10000) })
-    expect(result.success).toBe(true) // no max on description
-  })
-})
-
-// ============================================
 // categorySchema — edge cases
 // ============================================
 
@@ -567,37 +488,8 @@ describe('contactSettingsSchema — extended', () => {
 })
 
 // ============================================
-// projectSettingsSchema & categorySettingsSchema
+// categorySettingsSchema
 // ============================================
-
-describe('projectSettingsSchema — extended', () => {
-  it('passes with valid values', () => {
-    const result = projectSettingsSchema.safeParse({
-      showCardTitles: true,
-      showCardCategory: false,
-      gridColumns: 3,
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('fails when gridColumns is 0', () => {
-    const result = projectSettingsSchema.safeParse({
-      showCardTitles: true,
-      showCardCategory: true,
-      gridColumns: 0,
-    })
-    expect(result.success).toBe(false)
-  })
-
-  it('fails when gridColumns > 4', () => {
-    const result = projectSettingsSchema.safeParse({
-      showCardTitles: true,
-      showCardCategory: true,
-      gridColumns: 5,
-    })
-    expect(result.success).toBe(false)
-  })
-})
 
 describe('categorySettingsSchema — extended', () => {
   it('passes with defaults', () => {
@@ -605,7 +497,6 @@ describe('categorySettingsSchema — extended', () => {
     expect(result.success).toBe(true)
     if (result.success) {
       expect(result.data.showDescription).toBe(true)
-      expect(result.data.showProjectCount).toBe(true)
       expect(result.data.gridColumns).toBe(4)
     }
   })

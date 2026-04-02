@@ -25,8 +25,8 @@ interface UseOptimisticReorderReturn<T> {
  * @example
  * ```tsx
  * const { items, handleReorder, isReordering } = useOptimisticReorder({
- *   initialItems: projects,
- *   reorderAction: reorderProjects,
+ *   initialItems: categories,
+ *   reorderAction: reorderCategories,
  *   getId: (p) => p.id,
  *   successMessage: 'Orden actualizado',
  *   errorMessage: 'Error al reordenar'

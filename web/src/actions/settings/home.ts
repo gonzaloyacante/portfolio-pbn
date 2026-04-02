@@ -95,7 +95,7 @@ export interface HomeSettingsData {
   ctaMobileOffsetY: number | null
   ctaMobileFontSize: number | null
   // Sección destacados
-  showFeaturedProjects: boolean
+  showFeaturedImages: boolean
   featuredTitle: string | null
   featuredTitleFont: string | null
   featuredTitleFontUrl: string | null
@@ -270,7 +270,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
         ctaMobileFontSize: (cleanData.ctaMobileFontSize as number) ?? 16,
 
         // Sección destacados
-        showFeaturedProjects: (cleanData.showFeaturedProjects as boolean) ?? false,
+        showFeaturedImages: (cleanData.showFeaturedImages as boolean) ?? false,
         featuredTitle: (cleanData.featuredTitle as string) ?? undefined,
         featuredTitleFont: (cleanData.featuredTitleFont as string) ?? undefined,
         featuredTitleFontUrl: (cleanData.featuredTitleFontUrl as string) ?? undefined,

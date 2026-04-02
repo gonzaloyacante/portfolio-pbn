@@ -12,11 +12,6 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
   const { id } = await params
   const category = await prisma.category.findUnique({
     where: { id },
-    include: {
-      _count: {
-        select: { projects: { where: { isActive: true, deletedAt: null } } },
-      },
-    },
   })
 
   if (!category) {
@@ -32,7 +27,6 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
         description: category.description,
         coverImageUrl: category.coverImageUrl,
         sortOrder: category.sortOrder,
-        _count: category._count,
       }}
       updateAction={updateCategory}
     />

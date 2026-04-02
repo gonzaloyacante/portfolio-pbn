@@ -28,7 +28,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
 
   // — Visibilidad de páginas
   const [showAboutPage, setShowAboutPage] = useState(settings?.showAboutPage ?? true)
-  const [showProjectsPage, setShowProjectsPage] = useState(settings?.showProjectsPage ?? true)
+  const [showGalleryPage, setShowGalleryPage] = useState(settings?.showGalleryPage ?? true)
   const [showServicesPage, setShowServicesPage] = useState(settings?.showServicesPage ?? false)
   const [showContactPage, setShowContactPage] = useState(settings?.showContactPage ?? true)
   const [allowIndexing, setAllowIndexing] = useState(settings?.allowIndexing ?? true)
@@ -42,7 +42,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         maintenanceMode,
         maintenanceMessage: maintenanceMessage.trim() || null,
         showAboutPage,
-        showProjectsPage,
+        showGalleryPage,
         showServicesPage,
         showContactPage,
         allowIndexing,
@@ -140,7 +140,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         <div className="grid gap-3 sm:grid-cols-2">
           {[
             { label: 'Sobre Mí', value: showAboutPage, setter: setShowAboutPage },
-            { label: 'Proyectos', value: showProjectsPage, setter: setShowProjectsPage },
+            { label: 'Portfolio', value: showGalleryPage, setter: setShowGalleryPage },
             { label: 'Servicios', value: showServicesPage, setter: setShowServicesPage },
             { label: 'Contacto', value: showContactPage, setter: setShowContactPage },
           ].map(({ label, value, setter }) => (

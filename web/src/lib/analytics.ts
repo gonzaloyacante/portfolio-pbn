@@ -54,9 +54,9 @@ class AnalyticsManager {
     // Determine page type based on URL — check detail before list to avoid false match
     let eventType: string = ANALYTIC_EVENTS.PAGE_VIEW
     if (url === ROUTES.home) eventType = ANALYTIC_EVENTS.HOME_VIEW
-    else if (url.startsWith(ROUTES.public.projects + '/'))
-      eventType = ANALYTIC_EVENTS.PROJECT_DETAIL_VIEW
-    else if (url.startsWith(ROUTES.public.projects)) eventType = ANALYTIC_EVENTS.PROJECTS_VIEW
+    else if (url.startsWith(ROUTES.public.portfolio + '/'))
+      eventType = ANALYTIC_EVENTS.GALLERY_DETAIL_VIEW
+    else if (url.startsWith(ROUTES.public.portfolio)) eventType = ANALYTIC_EVENTS.GALLERY_VIEW
     else if (url.startsWith(ROUTES.public.about)) eventType = ANALYTIC_EVENTS.ABOUT_VIEW
     else if (url.startsWith(ROUTES.public.contact)) eventType = ANALYTIC_EVENTS.CONTACT_VIEW
 

@@ -13,22 +13,6 @@ class _FieldDef {
 }
 
 const _fieldsByType = <String, List<_FieldDef>>{
-  'project': [
-    _FieldDef('description', 'Descripción', Icons.description_outlined),
-    _FieldDef(
-      'isActive',
-      'Activo',
-      Icons.toggle_on_outlined,
-      fieldType: 'bool',
-    ),
-    _FieldDef('isFeatured', 'Destacado', Icons.star_border, fieldType: 'bool'),
-    _FieldDef(
-      'createdAt',
-      'Creado',
-      Icons.calendar_today_outlined,
-      fieldType: 'date',
-    ),
-  ],
   'category': [
     _FieldDef('description', 'Descripción', Icons.description_outlined),
     _FieldDef(

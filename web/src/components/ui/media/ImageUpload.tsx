@@ -518,7 +518,7 @@ export default function ImageUpload({
   name,
   multiple = false,
   label = 'Subir Imágenes',
-  folder = 'projects',
+  folder = 'gallery',
   value = [],
   currentImage,
   onChange,
