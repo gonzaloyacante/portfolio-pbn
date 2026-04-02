@@ -123,7 +123,7 @@ abstract class SiteSettings with _$SiteSettings {
     @Default(false) bool maintenanceMode,
     String? maintenanceMessage,
     @Default(true) bool showAboutPage,
-    @Default(true) bool showProjectsPage,
+    @Default(true) bool showGalleryPage,
     @Default(false) bool showServicesPage,
     @Default(true) bool showContactPage,
     @Default(true) bool allowIndexing,
@@ -224,8 +224,8 @@ abstract class HomeSettings with _$HomeSettings {
     int? ctaMobileOffsetY,
     int? ctaMobileFontSize,
 
-    // ── Proyectos destacados ──
-    @Default(true) bool showFeaturedProjects,
+    // ── Imágenes destacadas ──
+    @Default(true) bool showFeaturedImages,
     String? featuredTitle,
     String? featuredTitleFont,
     String? featuredTitleFontUrl,
@@ -249,7 +249,6 @@ abstract class CategoryDisplaySettings with _$CategoryDisplaySettings {
   const factory CategoryDisplaySettings({
     String? id,
     @Default(true) bool showDescription,
-    @Default(true) bool showProjectCount,
     @Default(4) int gridColumns,
     @Default(true) bool isActive,
   }) = _CategoryDisplaySettings;

@@ -49,10 +49,6 @@ void main() {
       () => expect(CategoryItem.fromJson(base).isActive, isTrue),
     );
     test(
-      'projectCount defaults to 0',
-      () => expect(CategoryItem.fromJson(base).projectCount, 0),
-    );
-    test(
       'description is null',
       () => expect(CategoryItem.fromJson(base).description, isNull),
     );
@@ -71,7 +67,6 @@ void main() {
       'thumbnailUrl': 'https://x.com/thumb.jpg',
       'sortOrder': 5,
       'isActive': false,
-      'projectCount': 12,
       'viewCount': 340,
       'createdAt': '2024-02-01T00:00:00Z',
       'updatedAt': '2024-02-15T00:00:00Z',
@@ -98,10 +93,6 @@ void main() {
     test(
       'parses isActive = false',
       () => expect(CategoryItem.fromJson(full()).isActive, isFalse),
-    );
-    test(
-      'parses projectCount',
-      () => expect(CategoryItem.fromJson(full()).projectCount, 12),
     );
   });
 
@@ -201,7 +192,6 @@ void main() {
       'metaKeywords': ['estudio', 'foto'],
       'ogImage': 'https://x.com/og.jpg',
       'sortOrder': 3,
-      'projectCount': 8,
       'viewCount': 200,
       'createdAt': '2024-01-01T00:00:00Z',
       'updatedAt': '2024-01-01T00:00:00Z',
@@ -242,10 +232,6 @@ void main() {
     test(
       'parses sortOrder',
       () => expect(CategoryDetail.fromJson(full()).sortOrder, 3),
-    );
-    test(
-      'parses projectCount',
-      () => expect(CategoryDetail.fromJson(full()).projectCount, 8),
     );
   });
 

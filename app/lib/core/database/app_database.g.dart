@@ -263,7 +263,7 @@ class SyncOperationsTableData extends DataClass
   /// Tipo de operación: create | update | delete | upload.
   final String operation;
 
-  /// Recurso afectado: projects | categories | services | testimonials | etc.
+  /// Recurso afectado: categories | services | testimonials | etc.
   final String resource;
 
   /// ID del recurso en el servidor (null para creaciones).

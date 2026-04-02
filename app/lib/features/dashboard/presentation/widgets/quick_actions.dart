@@ -19,12 +19,6 @@ class QuickActions extends StatelessWidget {
       runSpacing: AppSpacing.sm,
       children: [
         _QuickActionButton(
-          icon: Icons.add_photo_alternate_outlined,
-          label: 'Nuevo proyecto',
-          color: AppColors.lightPrimary,
-          onTap: () => context.goNamed(RouteNames.projectNew),
-        ),
-        _QuickActionButton(
           icon: Icons.category_outlined,
           label: 'Nueva categoría',
           color: AppColors.categoriesColor,

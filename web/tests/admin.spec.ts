@@ -53,15 +53,14 @@ test.describe('Admin Panel - Authenticated', () => {
 
     const sidebar = page.locator('aside')
     await expect(sidebar.getByRole('link', { name: 'Dashboard' })).toBeVisible()
-    await expect(sidebar.getByRole('link', { name: 'Proyectos' })).toBeVisible()
     await expect(sidebar.getByRole('link', { name: 'Categorías' })).toBeVisible()
     await expect(sidebar.getByRole('link', { name: 'Testimonios' })).toBeVisible()
   })
 
-  test('should navigate to projects management', async ({ page }) => {
+  test('should navigate to gallery management', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 })
-    await page.locator('aside').getByRole('link', { name: 'Proyectos' }).click()
-    await expect(page).toHaveURL(/\/admin\/proyectos/, { timeout: 10000 })
+    await page.locator('aside').getByRole('link', { name: 'Galería' }).click()
+    await expect(page).toHaveURL(/\/admin\/categorias/, { timeout: 10000 })
     await expect(page.getByRole('heading').first()).toBeVisible({ timeout: 10000 })
   })
 
@@ -87,9 +86,9 @@ test.describe('Public Pages', () => {
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   })
 
-  test('should display projects page with categories', async ({ page }) => {
-    await page.goto('/proyectos')
-    expect(page.url()).toContain('/proyectos')
+  test('should display portfolio page', async ({ page }) => {
+    await page.goto('/portfolio')
+    expect(page.url()).toContain('/portfolio')
   })
 
   test('should load about page', async ({ page }) => {
@@ -135,8 +134,8 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL(/\/sobre-mi/)
 
     // Navegar a Proyectos
-    await page.getByRole('link', { name: /proyectos/i }).click()
-    await expect(page).toHaveURL(/\/proyectos/)
+    await page.getByRole('link', { name: /portfolio/i }).click()
+    await expect(page).toHaveURL(/\/portfolio/)
 
     // Navegar a Contacto
     await page.getByRole('link', { name: /contacto/i }).click()
@@ -165,7 +164,7 @@ test.describe('Responsive Design', () => {
 
     await expect(page.getByRole('link', { name: /inicio/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /sobre mi/i })).toBeVisible()
-    await expect(page.getByRole('link', { name: /proyectos/i })).toBeVisible()
+    await expect(page.getByRole('link', { name: /portfolio/i })).toBeVisible()
     await expect(page.getByRole('link', { name: /contacto/i })).toBeVisible()
   })
 })

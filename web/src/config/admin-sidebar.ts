@@ -2,7 +2,6 @@ import { ROUTES } from '@/config/routes'
 import {
   LayoutDashboard,
   Home,
-  ImageIcon,
   Folder,
   Sparkles,
   MessageSquare,
@@ -31,11 +30,6 @@ export const menuItems: SidebarItem[] = [
     href: ROUTES.admin.home,
     label: 'Inicio',
     icon: Home,
-  },
-  {
-    href: ROUTES.admin.projects,
-    label: 'Proyectos',
-    icon: ImageIcon,
   },
   {
     href: ROUTES.admin.categories,

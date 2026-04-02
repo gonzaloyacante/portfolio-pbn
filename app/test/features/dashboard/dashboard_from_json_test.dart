@@ -7,7 +7,7 @@ void main() {
   group('DashboardStats.fromJson — defaults', () {
     test('empty json gives all zeros', () {
       final s = DashboardStats.fromJson({});
-      expect(s.totalProjects, 0);
+      expect(s.totalImages, 0);
       expect(s.totalCategories, 0);
       expect(s.totalServices, 0);
       expect(s.totalTestimonials, 0);
@@ -19,7 +19,7 @@ void main() {
 
   group('DashboardStats.fromJson — full data', () {
     Map<String, dynamic> full() => {
-      'totalProjects': 25,
+      'totalImages': 25,
       'totalCategories': 8,
       'totalServices': 12,
       'totalTestimonials': 50,
@@ -29,8 +29,8 @@ void main() {
     };
 
     test(
-      'parses totalProjects',
-      () => expect(DashboardStats.fromJson(full()).totalProjects, 25),
+      'parses totalImages',
+      () => expect(DashboardStats.fromJson(full()).totalImages, 25),
     );
     test(
       'parses totalCategories',
@@ -63,9 +63,9 @@ void main() {
       expect(DashboardStats.fromJson({}), DashboardStats.fromJson({}));
     });
 
-    test('copyWith totalProjects', () {
+    test('copyWith totalImages', () {
       final s = DashboardStats.fromJson({});
-      expect(s.copyWith(totalProjects: 10).totalProjects, 10);
+      expect(s.copyWith(totalImages: 10).totalImages, 10);
     });
 
     test('copyWith newContacts', () {
@@ -74,26 +74,23 @@ void main() {
     });
 
     test('copyWith leaves other fields unchanged', () {
-      final s = DashboardStats.fromJson({
-        'totalProjects': 5,
-        'totalServices': 3,
-      });
+      final s = DashboardStats.fromJson({'totalImages': 5, 'totalServices': 3});
       final updated = s.copyWith(newContacts: 2);
-      expect(updated.totalProjects, 5);
+      expect(updated.totalImages, 5);
       expect(updated.totalServices, 3);
     });
 
     test('different values not equal', () {
-      final a = DashboardStats.fromJson({'totalProjects': 1});
-      final b = DashboardStats.fromJson({'totalProjects': 2});
+      final a = DashboardStats.fromJson({'totalImages': 1});
+      final b = DashboardStats.fromJson({'totalImages': 2});
       expect(a, isNot(b));
     });
   });
 
   group('DashboardStats.toJson', () {
-    test('toJson has totalProjects key', () {
-      final j = DashboardStats.fromJson({'totalProjects': 5}).toJson();
-      expect(j['totalProjects'], 5);
+    test('toJson has totalImages key', () {
+      final j = DashboardStats.fromJson({'totalImages': 5}).toJson();
+      expect(j['totalImages'], 5);
     });
     test('toJson round-trips totalCategories', () {
       final j = DashboardStats.fromJson({'totalCategories': 3}).toJson();
@@ -101,7 +98,7 @@ void main() {
     });
     test('all keys present in toJson', () {
       final j = DashboardStats.fromJson({}).toJson();
-      expect(j.containsKey('totalProjects'), isTrue);
+      expect(j.containsKey('totalImages'), isTrue);
       expect(j.containsKey('newContacts'), isTrue);
       expect(j.containsKey('pendingBookings'), isTrue);
     });

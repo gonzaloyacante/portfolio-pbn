@@ -8,26 +8,20 @@ export const dynamic = 'force-dynamic'
 export default async function PapeleraPage() {
   await requireAdmin()
 
-  const [deletedProjects, deletedCategories, deletedServices, deletedTestimonials] =
-    await Promise.all([
-      prisma.project.findMany({
-        where: { deletedAt: { not: null } },
-        include: { category: true, images: { take: 1 } },
-        orderBy: { deletedAt: 'desc' },
-      }),
-      prisma.category.findMany({
-        where: { deletedAt: { not: null } },
-        orderBy: { deletedAt: 'desc' },
-      }),
-      prisma.service.findMany({
-        where: { deletedAt: { not: null } },
-        orderBy: { deletedAt: 'desc' },
-      }),
-      prisma.testimonial.findMany({
-        where: { deletedAt: { not: null } },
-        orderBy: { deletedAt: 'desc' },
-      }),
-    ])
+  const [deletedCategories, deletedServices, deletedTestimonials] = await Promise.all([
+    prisma.category.findMany({
+      where: { deletedAt: { not: null } },
+      orderBy: { deletedAt: 'desc' },
+    }),
+    prisma.service.findMany({
+      where: { deletedAt: { not: null } },
+      orderBy: { deletedAt: 'desc' },
+    }),
+    prisma.testimonial.findMany({
+      where: { deletedAt: { not: null } },
+      orderBy: { deletedAt: 'desc' },
+    }),
+  ])
 
   return (
     <div className="space-y-8">
@@ -47,7 +41,6 @@ export default async function PapeleraPage() {
       </div>
 
       <TrashTabs
-        projects={deletedProjects}
         categories={deletedCategories}
         services={deletedServices}
         testimonials={deletedTestimonials}

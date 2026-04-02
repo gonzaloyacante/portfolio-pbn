@@ -11,7 +11,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../calendar/providers/calendar_provider.dart';
 import '../../categories/providers/categories_provider.dart';
 import '../../contacts/providers/contacts_provider.dart';
-import '../../projects/providers/projects_provider.dart';
 import '../../services/providers/services_provider.dart';
 import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
@@ -198,8 +197,6 @@ class TrashItemDetailPage extends ConsumerWidget {
 
   void _invalidateListByType(WidgetRef ref) {
     switch (item.type) {
-      case 'project':
-        ref.invalidate(projectsListProvider);
       case 'category':
         ref.invalidate(categoriesListProvider);
       case 'service':
@@ -306,7 +303,6 @@ class TrashItemDetailPage extends ConsumerWidget {
 // ── Helper: icono por tipo ─────────────────────────────────────────────────────
 
 IconData _trashTypeIcon(String type) => switch (type) {
-  'project' => Icons.work_outline,
   'category' => Icons.category_outlined,
   'service' => Icons.home_repair_service_outlined,
   'testimonial' => Icons.star_border,

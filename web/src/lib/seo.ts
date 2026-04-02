@@ -66,63 +66,6 @@ export function generateMetadata({
   }
 }
 
-// Generate Project Metadata
-export function generateProjectMetadata({
-  project,
-}: {
-  project: {
-    title: string
-    description: string | null
-    slug: string
-    images: { url: string }[]
-    category: { name: string }
-    date: Date
-  }
-}): Metadata {
-  const title = project.title
-  const description =
-    project.description || `Proyecto de maquillaje ${project.category.name}: ${project.title}`
-  const image = project.images[0]?.url || seoConfig.defaultImage
-  const url = `/proyecto/${project.slug}`
-
-  return generateMetadata({
-    title,
-    description,
-    image,
-    url,
-  })
-}
-
-// Generate Project JSON-LD (VisualArtwork / CreativeWork)
-export function generateProjectJsonLd(
-  project: {
-    title: string
-    description: string | null
-    slug: string
-    images: { url: string }[]
-    category: { name: string }
-    date: Date
-  },
-  ownerName = 'Paola Bolívar Nievas'
-) {
-  const images = project.images.map((img) => img.url)
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'VisualArtwork',
-    name: project.title,
-    description: project.description || '',
-    image: images,
-    url: `${seoConfig.siteUrl}/proyecto/${project.slug}`,
-    artist: {
-      '@type': 'Person',
-      name: ownerName,
-    },
-    artform: project.category.name,
-    dateCreated: project.date.toISOString(),
-  }
-}
-
 // Generate Person JSON-LD (Home Page)
 export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', location = 'Málaga') {
   return {

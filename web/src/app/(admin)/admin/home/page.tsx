@@ -14,7 +14,7 @@ export default async function HomeSettingsPage() {
     <div className="mx-auto max-w-4xl space-y-8">
       <PageHeader
         title="🏠 Página de Inicio"
-        description="Configura la sección Hero, ilustraciones y proyectos destacados."
+        description="Configura la sección Hero, ilustraciones e imágenes destacadas."
       />
 
       <HomeEditor settings={settings} />

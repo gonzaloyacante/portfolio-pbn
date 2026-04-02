@@ -12,7 +12,7 @@ import '../../core/theme/app_spacing.dart';
 ///   mediumCols: 3,
 ///   expandedCols: 4,
 ///   childAspectRatio: 0.85,
-///   children: items.map((i) => ProjectCard(i)).toList(),
+///   children: items.map((i) => CategoryCard(i)).toList(),
 /// )
 /// ```
 ///

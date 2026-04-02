@@ -10,8 +10,7 @@ interface GalleryImage {
   id: string
   url: string
   alt: string
-  title: string // Project title for context
-  projectSlug: string
+  title: string // Image title
   width?: number | null
   height?: number | null
 }

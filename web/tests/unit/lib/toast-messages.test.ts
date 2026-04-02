@@ -3,7 +3,6 @@ import { TOAST_MESSAGES } from '@/lib/toast-messages'
 
 describe('toast-messages', () => {
   it('has messages for all main entities', () => {
-    expect(TOAST_MESSAGES.projects).toBeDefined()
     expect(TOAST_MESSAGES.categories).toBeDefined()
     expect(TOAST_MESSAGES.images).toBeDefined()
     expect(TOAST_MESSAGES.testimonials).toBeDefined()
@@ -11,7 +10,7 @@ describe('toast-messages', () => {
   })
 
   it('each entity CRUD action has success and error messages', () => {
-    const crudEntities = ['projects', 'categories', 'testimonials', 'services'] as const
+    const crudEntities = ['categories', 'testimonials', 'services'] as const
     crudEntities.forEach((entity) => {
       const messages = TOAST_MESSAGES[entity]
       expect(messages.create.success).toBeTruthy()

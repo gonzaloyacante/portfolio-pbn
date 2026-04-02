@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ROUTES.home,
     ROUTES.public.about,
     ROUTES.public.contact,
-    ROUTES.public.projects,
+    ROUTES.public.portfolio,
     ROUTES.public.services,
     ROUTES.public.privacy,
   ].map((route) => ({
@@ -18,27 +18,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(),
     changeFrequency: 'daily' as const,
     priority: route === ROUTES.home ? 1 : 0.8,
-  }))
-
-  // Dynamic projects
-  const projects = await prisma.project.findMany({
-    where: { deletedAt: null, isActive: true },
-    select: {
-      slug: true,
-      updatedAt: true,
-      category: {
-        select: {
-          slug: true,
-        },
-      },
-    },
-  })
-
-  const projectRoutes = projects.map((project) => ({
-    url: `${baseUrl}${ROUTES.public.projects}/${project.category.slug}/${project.slug}`,
-    lastModified: project.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
   }))
 
   // Dynamic categories
@@ -50,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })
 
   const categoryRoutes = categories.map((category) => ({
-    url: `${baseUrl}${ROUTES.public.projects}/${category.slug}`,
+    url: `${baseUrl}${ROUTES.public.portfolio}/${category.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,
@@ -72,5 +51,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...routes, ...categoryRoutes, ...projectRoutes, ...serviceRoutes]
+  return [...routes, ...categoryRoutes, ...serviceRoutes]
 }

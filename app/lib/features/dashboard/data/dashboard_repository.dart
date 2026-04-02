@@ -48,7 +48,7 @@ abstract class CityStat with _$CityStat {
 @freezed
 abstract class DashboardStats with _$DashboardStats {
   const factory DashboardStats({
-    @Default(0) int totalProjects,
+    @Default(0) int totalImages,
     @Default(0) int totalCategories,
     @Default(0) int totalServices,
     @Default(0) int totalTestimonials,
@@ -67,8 +67,8 @@ abstract class DashboardStats with _$DashboardStats {
     /// Top países/ciudades por visitas (últimos 30 días).
     @Default([]) List<LocationStat> topLocations,
 
-    /// Top proyectos más vistos (últimos 30 días).
-    @Default([]) List<ChartDataPoint> topProjects,
+    /// Top categorías más vistas (últimos 30 días).
+    @Default([]) List<ChartDataPoint> topCategories,
   }) = _DashboardStats;
 
   factory DashboardStats.fromJson(Map<String, dynamic> json) =>

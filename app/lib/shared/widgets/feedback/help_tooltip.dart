@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// ```dart
 /// Row(children: [
 ///   Text('Nombre'),
-///   HelpTooltip('El nombre público del proyecto.'),
+///   HelpTooltip('El nombre público de la categoría.'),
 /// ])
 /// ```
 class HelpTooltip extends StatelessWidget {
@@ -49,7 +49,7 @@ class HelpTooltip extends StatelessWidget {
 ///
 /// Uso:
 /// ```dart
-/// FormFieldLabel('Nombre', help: 'El nombre público del proyecto.')
+/// FormFieldLabel('Nombre', help: 'El nombre público de la categoría.')
 /// Column(children: [
 ///   FormFieldLabel('Slug', help: 'Identificador único en la URL.'),
 ///   TextFormField(...),

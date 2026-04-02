@@ -10,9 +10,6 @@ export const ROUTES = {
     home: '/admin/inicio',
     contacts: '/admin/contactos',
     contactSettings: '/admin/contactos/configuracion',
-    projects: '/admin/proyectos',
-    newProject: '/admin/proyectos/nuevo',
-    editProject: (id: string) => `/admin/proyectos/${id}/editar` as const,
     categories: '/admin/categorias',
     newCategory: '/admin/categorias/nueva',
     editCategory: (id: string) => `/admin/categorias/${id}/editar` as const,
@@ -33,7 +30,7 @@ export const ROUTES = {
   },
   public: {
     about: '/sobre-mi',
-    projects: '/proyectos',
+    portfolio: '/portfolio',
     services: '/servicios',
     serviceDetail: (slug: string) => `/servicios/${slug}` as const,
     contact: '/contacto',

@@ -5,7 +5,7 @@ import 'package:drift/drift.dart';
 /// Tabla genérica de caché local.
 ///
 /// Cada fila es un par clave/valor JSON con timestamp de caducidad.
-/// La clave debe ser única (p.ej. "projects_list", "projects_detail_:id").
+/// La clave debe ser única (p.ej. "gallery_list", "categories_detail_:id").
 class CacheTable extends Table {
   /// Identificador único de la entrada de caché.
   TextColumn get cacheKey => text()();

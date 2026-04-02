@@ -35,9 +35,9 @@ const _kChannelDesc =
 /// Convención de datos `data` en el payload FCM:
 /// ```json
 /// {
-///   "screen": "contacts" | "calendar" | "projects" | "dashboard",
+///   "screen": "contacts" | "calendar" | "portfolio" | "dashboard",
 ///   "id":     "<entity-id>",        // navegación directa al detalle
-///   "type":   "contact" | "booking" | "project" | ...
+///   "type":   "contact" | "booking" | "category" | ...
 /// }
 /// ```
 ///
@@ -269,7 +269,6 @@ class NotificationHandler {
         'contact' => !prefs.contactsEnabled,
         'booking' => !prefs.bookingsEnabled,
         'booking_reminder' => !prefs.bookingRemindersEnabled,
-        'project' => !prefs.projectsEnabled,
         'service' => !prefs.servicesEnabled,
         'testimonial' => !prefs.testimonialsEnabled,
         'system' => !prefs.systemEnabled,

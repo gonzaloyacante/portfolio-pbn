@@ -31,7 +31,6 @@ abstract class TrashItem with _$TrashItem {
 /// Etiqueta legible para cada tipo.
 String trashTypeLabel(String type) {
   const labels = {
-    'project': 'Proyecto',
     'category': 'Categoría',
     'service': 'Servicio',
     'testimonial': 'Testimonio',

@@ -158,7 +158,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           controller: _ctaTextCtrl,
           decoration: const InputDecoration(
             labelText: 'Texto del botón',
-            hintText: 'Ej: "Ver proyectos"',
+            hintText: 'Ej: "Ver portfolio"',
             prefixIcon: Icon(Icons.smart_button_outlined),
           ),
         ),
@@ -168,7 +168,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           keyboardType: TextInputType.url,
           decoration: const InputDecoration(
             labelText: 'Enlace destino',
-            hintText: 'Ej: "/proyectos"',
+            hintText: 'Ej: "/portfolio"',
             prefixIcon: Icon(Icons.link_outlined),
           ),
         ),
@@ -206,11 +206,11 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
     );
   }
 
-  // ── Section 5: Featured Projects ──────────────────────────────────────────
+  // ── Section 5: Featured Images ──────────────────────────────────────────
 
   Widget _buildFeaturedSection() {
     return SettingsFormCard(
-      title: 'Proyectos destacados',
+      title: 'Imágenes destacadas',
       leadingIcon: Icons.star_outline_rounded,
       children: [
         SwitchListTile(
@@ -240,9 +240,9 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           ),
           const SizedBox(height: AppSpacing.md),
           OutlinedButton.icon(
-            onPressed: () => context.pushNamed(RouteNames.projects),
+            onPressed: () => context.pushNamed(RouteNames.categories),
             icon: const Icon(Icons.open_in_new_rounded, size: 16),
-            label: const Text('Ordenar proyectos →'),
+            label: const Text('Ver categorías →'),
           ),
         ],
       ],

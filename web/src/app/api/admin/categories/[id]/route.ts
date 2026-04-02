@@ -9,7 +9,7 @@ import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { CACHE_TAGS } from '@/lib/cache-tags'
-import { generateThumbnailUrl, extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
+import { extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
@@ -22,13 +22,12 @@ const CATEGORY_FULL_SELECT = {
   name: true,
   slug: true,
   description: true,
-  thumbnailUrl: true,
   coverImageUrl: true,
   sortOrder: true,
   isActive: true,
   createdAt: true,
   updatedAt: true,
-  _count: { select: { projects: { where: { deletedAt: null } } } },
+  _count: { select: { images: true } },
 }
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -52,7 +51,7 @@ export async function GET(req: Request, { params }: Params) {
     }
 
     const { _count, ...cat } = category
-    return NextResponse.json({ success: true, data: { ...cat, projectCount: _count.projects } })
+    return NextResponse.json({ success: true, data: { ...cat, imageCount: _count.images } })
   } catch (err) {
     logger.error('[admin-category-get] Error', {
       error: err instanceof Error ? err.message : String(err),
@@ -77,8 +76,7 @@ export async function PATCH(req: Request, { params }: Params) {
         { status: 400 }
       )
     }
-    const { name, slug, description, thumbnailUrl, coverImageUrl, isActive, sortOrder } =
-      parsed.data
+    const { name, slug, description, coverImageUrl, isActive, sortOrder } = parsed.data
 
     // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
@@ -94,15 +92,6 @@ export async function PATCH(req: Request, { params }: Params) {
       }
     }
 
-    const resolvedThumbnailUrl =
-      thumbnailUrl !== undefined
-        ? thumbnailUrl
-        : coverImageUrl !== undefined
-          ? coverImageUrl
-            ? generateThumbnailUrl(coverImageUrl)
-            : null
-          : undefined
-
     const previousCategory = await prisma.category.findUnique({
       where: { id },
       select: { coverImageUrl: true },
@@ -116,7 +105,6 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(name !== undefined && { name }),
         ...(slug !== undefined && { slug }),
         ...(description !== undefined && { description }),
-        ...(resolvedThumbnailUrl !== undefined && { thumbnailUrl: resolvedThumbnailUrl }),
         ...(coverImageUrl !== undefined && { coverImageUrl }),
         ...(isActive !== undefined && { isActive }),
         ...(sortOrder !== undefined && { sortOrder }),
@@ -126,7 +114,6 @@ export async function PATCH(req: Request, { params }: Params) {
         name: true,
         slug: true,
         description: true,
-        thumbnailUrl: true,
         coverImageUrl: true,
         sortOrder: true,
         isActive: true,
@@ -134,7 +121,7 @@ export async function PATCH(req: Request, { params }: Params) {
         updatedAt: true,
       },
     })
-    const projectCount = await prisma.project.count({ where: { categoryId: id, deletedAt: null } })
+    const imageCount = await prisma.categoryImage.count({ where: { categoryId: id } })
 
     // Cloud Wipe: If the cover image changed, delete the old one from Cloudinary
     if (coverImageUrl !== undefined) {
@@ -156,19 +143,16 @@ export async function PATCH(req: Request, { params }: Params) {
     }
 
     try {
-      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.public.portfolio, 'layout')
       revalidatePath(ROUTES.admin.categories)
-      revalidatePath(ROUTES.admin.projects)
       revalidateTag(CACHE_TAGS.categories, 'max')
-      revalidateTag(CACHE_TAGS.projects, 'max')
-      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-patch] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),
       })
     }
 
-    return NextResponse.json({ success: true, data: { ...category, projectCount } })
+    return NextResponse.json({ success: true, data: { ...category, imageCount } })
   } catch (err) {
     logger.error('[admin-category-patch] Error', {
       error: err instanceof Error ? err.message : String(err),
@@ -189,21 +173,6 @@ export async function DELETE(req: Request, { params }: Params) {
   try {
     const { id } = await params
 
-    // Verificar que no tenga proyectos activos antes de eliminar
-    const projectCount = await prisma.project.count({
-      where: { categoryId: id, deletedAt: null },
-    })
-
-    if (projectCount > 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: `No se puede eliminar la categoría porque contiene ${projectCount} proyecto${projectCount !== 1 ? 's' : ''}. Reasígnalos o elimínalos primero.`,
-        },
-        { status: 409 }
-      )
-    }
-
     // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
     const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
     const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
@@ -214,12 +183,9 @@ export async function DELETE(req: Request, { params }: Params) {
     })
 
     try {
-      revalidatePath(ROUTES.public.projects, 'layout')
+      revalidatePath(ROUTES.public.portfolio, 'layout')
       revalidatePath(ROUTES.admin.categories)
-      revalidatePath(ROUTES.admin.projects)
       revalidateTag(CACHE_TAGS.categories, 'max')
-      revalidateTag(CACHE_TAGS.projects, 'max')
-      revalidateTag(CACHE_TAGS.featuredProjects, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-delete] Revalidation failed (data saved)', {
         error: revalErr instanceof Error ? revalErr.message : String(revalErr),

@@ -15,7 +15,6 @@ abstract final class NotifPrefKeys {
   static const String notifBookingReminders = 'notif_booking_reminders';
 
   // ── Contenido del sitio ───────────────────────────────────────────────────
-  static const String notifProjects = 'notif_projects';
   static const String notifServices = 'notif_services';
   static const String notifTestimonials = 'notif_testimonials';
 
@@ -87,7 +86,6 @@ class NotificationPrefs {
   bool get bookingsEnabled => isEnabled(NotifPrefKeys.notifBookings);
   bool get bookingRemindersEnabled =>
       isEnabled(NotifPrefKeys.notifBookingReminders);
-  bool get projectsEnabled => isEnabled(NotifPrefKeys.notifProjects);
   bool get servicesEnabled => isEnabled(NotifPrefKeys.notifServices);
   bool get testimonialsEnabled => isEnabled(NotifPrefKeys.notifTestimonials);
   bool get systemEnabled => isEnabled(NotifPrefKeys.notifSystem);

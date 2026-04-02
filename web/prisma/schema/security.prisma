@@ -5,9 +5,9 @@
 /// Analytics event tracking with aggregation support
 model AnalyticLog {
   id              String   @id @default(uuid())
-  eventType       String // page_view, project_view, contact_submit, download, etc
-  entityId        String? // ID of related entity (project, category, etc)
-  entityType      String? // project, category, contact, booking
+  eventType       String // page_view, gallery_view, contact_submit, download, etc
+  entityId        String? // ID of related entity (category, service, etc)
+  entityType      String? // category, contact, booking
   // Event data
   eventData       Json? // Flexible JSON for event-specific data
   // Session tracking

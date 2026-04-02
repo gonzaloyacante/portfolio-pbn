@@ -13,7 +13,7 @@ class SettingsPage extends StatelessWidget {
     SettingsItem(
       icon: Icons.home_outlined,
       title: 'Página de inicio',
-      subtitle: 'Hero, imagen, CTA y proyectos destacados',
+      subtitle: 'Hero, imagen, CTA e imágenes destacadas',
       routeName: RouteNames.settingsHome,
     ),
     SettingsItem(

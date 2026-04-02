@@ -123,7 +123,10 @@ void main() {
       () => expect(detail.moderationNote, isNull),
     );
     test('source defaults to null', () => expect(detail.source, isNull));
-    test('projectId defaults to null', () => expect(detail.projectId, isNull));
+    test(
+      'categoryId defaults to null',
+      () => expect(detail.categoryId, isNull),
+    );
   });
 
   // ── TestimonialFormData ─────────────────────────────────────────────────

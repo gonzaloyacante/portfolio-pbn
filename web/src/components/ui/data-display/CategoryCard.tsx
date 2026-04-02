@@ -17,7 +17,7 @@ interface CategoryCardProps {
 export default function CategoryCard({ name, slug, count = 0 }: CategoryCardProps) {
   return (
     <Link
-      href={`/proyectos/${slug}`}
+      href={`/portfolio/${slug}`}
       className="group relative flex aspect-square flex-col items-center justify-center rounded-[2.5rem] bg-(--card-bg) p-8 text-center shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
     >
       <h3 className="font-heading text-lg font-bold text-(--foreground) sm:text-xl md:text-2xl">
@@ -26,7 +26,7 @@ export default function CategoryCard({ name, slug, count = 0 }: CategoryCardProp
 
       {count > 0 && (
         <p className="font-body mt-2 text-sm text-(--foreground)/70">
-          {count} {count === 1 ? 'proyecto' : 'proyectos'}
+          {count} {count === 1 ? 'imagen' : 'imágenes'}
         </p>
       )}
     </Link>

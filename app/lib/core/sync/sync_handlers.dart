@@ -35,7 +35,7 @@ class _ResourceSyncHandler extends SyncHandler {
   final String name;
   final ApiClient client;
 
-  /// Path de la colección, ej. `/api/admin/projects`
+  /// Path de la colección, ej. `/api/admin/categories`
   final String collectionPath;
 
   /// Función que devuelve el path de un ítem a partir de su id.
@@ -66,7 +66,7 @@ class _ResourceSyncHandler extends SyncHandler {
 /// Handler especial para la papelera, cuyos endpoints son
 /// `/api/admin/trash/{type}/{id}` (non-standard path pattern).
 ///
-/// El payload debe contener `{"type": "project"|"category"|...}`.
+/// El payload debe contener `{"type": "category"|...}`.
 class _TrashSyncHandler extends SyncHandler {
   const _TrashSyncHandler({required this.client});
 
@@ -98,12 +98,6 @@ class _TrashSyncHandler extends SyncHandler {
 class SyncHandlerRegistry {
   SyncHandlerRegistry(ApiClient client)
     : _handlers = {
-        'projects': _ResourceSyncHandler(
-          name: 'Project',
-          client: client,
-          collectionPath: Endpoints.projects,
-          itemPath: Endpoints.project,
-        ),
         'categories': _ResourceSyncHandler(
           name: 'Category',
           client: client,

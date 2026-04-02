@@ -69,8 +69,8 @@ export default function FilterBar(props: FilterBarProps) {
             type="text"
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Buscar proyectos..."
-            aria-label="Buscar proyectos"
+            placeholder="Buscar..."
+            aria-label="Buscar elementos"
             className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border py-2 pr-4 pl-10 text-sm focus:ring-2 focus:outline-none"
           />
           {searchTerm && (
@@ -130,7 +130,7 @@ export default function FilterBar(props: FilterBarProps) {
         {/* Count Badge (desktop) */}
         {!hasActiveFilters && (
           <Badge variant="outline" className="hidden lg:flex">
-            {totalCount} proyectos
+            {totalCount} {totalCount === 1 ? 'elemento' : 'elementos'}
           </Badge>
         )}
       </div>

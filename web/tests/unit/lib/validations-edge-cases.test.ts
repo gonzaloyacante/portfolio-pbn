@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   contactFormSchema,
   testimonialFormSchema,
-  projectFormSchema,
   categorySchema,
   homeSettingsSchema,
   contactSettingsSchema,
@@ -218,89 +217,6 @@ describe('testimonialFormSchema — edge cases', () => {
 })
 
 // ============================================
-// projectFormSchema — edge cases
-// ============================================
-
-describe('projectFormSchema — edge cases', () => {
-  it('rejects title shorter than 3 chars', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'AB',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-    })
-    expect(result.success).toBe(false)
-  })
-
-  it('rejects title exceeding 200 chars', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'A'.repeat(201),
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-    })
-    expect(result.success).toBe(false)
-  })
-
-  it('accepts title of exactly 3 chars', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'ABC',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('isFeatured accepts boolean true', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'My Project',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-      isFeatured: true,
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('isFeatured accepts string "true"', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'My Project',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-      isFeatured: 'true',
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('isPinned accepts boolean false', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'My Project',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-      isPinned: false,
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('description can be null', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'My Project',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-      description: null,
-    })
-    expect(result.success).toBe(true)
-  })
-
-  it('excerpt can be null', () => {
-    const result = projectFormSchema.safeParse({
-      title: 'My Project',
-      categoryId: 'cat-1',
-      date: '2025-01-01',
-      excerpt: null,
-    })
-    expect(result.success).toBe(true)
-  })
-})
-
-// ============================================
 // categorySchema — edge cases
 // ============================================
 
@@ -347,23 +263,23 @@ describe('categorySchema — slug validation', () => {
 
 describe('homeSettingsSchema — deep validation', () => {
   it('rejects featuredCount of 0', () => {
-    const result = homeSettingsSchema.safeParse({ showFeaturedProjects: true, featuredCount: 0 })
+    const result = homeSettingsSchema.safeParse({ showFeaturedImages: true, featuredCount: 0 })
     expect(result.success).toBe(false)
   })
 
   it('rejects featuredCount over 20', () => {
-    const result = homeSettingsSchema.safeParse({ showFeaturedProjects: true, featuredCount: 21 })
+    const result = homeSettingsSchema.safeParse({ showFeaturedImages: true, featuredCount: 21 })
     expect(result.success).toBe(false)
   })
 
   it('accepts featuredCount of 1', () => {
-    const result = homeSettingsSchema.safeParse({ showFeaturedProjects: false, featuredCount: 1 })
+    const result = homeSettingsSchema.safeParse({ showFeaturedImages: false, featuredCount: 1 })
     expect(result.success).toBe(true)
   })
 
   it('accepts heroTitle colors as 6-char hex', () => {
     const result = homeSettingsSchema.safeParse({
-      showFeaturedProjects: false,
+      showFeaturedImages: false,
       featuredCount: 3,
       heroTitle1Color: '#FF00AA',
     })
@@ -372,7 +288,7 @@ describe('homeSettingsSchema — deep validation', () => {
 
   it('rejects heroTitle colors with invalid format', () => {
     const result = homeSettingsSchema.safeParse({
-      showFeaturedProjects: false,
+      showFeaturedImages: false,
       featuredCount: 3,
       heroTitle1Color: 'red',
     })
@@ -381,7 +297,7 @@ describe('homeSettingsSchema — deep validation', () => {
 
   it('illustrationOpacity max is 100', () => {
     const result = homeSettingsSchema.safeParse({
-      showFeaturedProjects: false,
+      showFeaturedImages: false,
       featuredCount: 3,
       illustrationOpacity: 101,
     })
@@ -390,7 +306,7 @@ describe('homeSettingsSchema — deep validation', () => {
 
   it('illustrationOpacity min is 0', () => {
     const result = homeSettingsSchema.safeParse({
-      showFeaturedProjects: false,
+      showFeaturedImages: false,
       featuredCount: 3,
       illustrationOpacity: 0,
     })

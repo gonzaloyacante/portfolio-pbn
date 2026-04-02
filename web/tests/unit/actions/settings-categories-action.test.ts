@@ -39,10 +39,8 @@ vi.mock('@/lib/cache-tags', () => ({
     aboutSettings: 'about-settings',
     contactSettings: 'contact-settings',
     siteSettings: 'site-settings',
-    projectSettings: 'project-settings',
     categorySettings: 'category-settings',
     testimonialSettings: 'testimonial-settings',
-    projects: 'projects',
     testimonials: 'testimonials',
     categories: 'categories',
     social: 'social',
@@ -62,7 +60,7 @@ vi.mock('@/config/routes', () => ({
       home: '/',
       about: '/sobre-mi',
       contact: '/contacto',
-      projects: '/proyectos',
+      portfolio: '/portfolio',
     },
   },
 }))
@@ -85,7 +83,6 @@ vi.mock('next/headers', () => ({
 const mockCategorySettings = {
   id: 'category-settings-1',
   showDescription: true,
-  showProjectCount: true,
   gridColumns: 4,
 }
 
@@ -145,7 +142,6 @@ describe('Settings: Categories Actions', () => {
       const result = await getCategorySettings()
 
       expect(result!.showDescription).toBe(true)
-      expect(result!.showProjectCount).toBe(true)
       expect(result!.gridColumns).toBe(4)
     })
   })
@@ -161,7 +157,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
         showDescription: false,
-        showProjectCount: true,
         gridColumns: 3,
       })
 
@@ -176,7 +171,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 
@@ -193,7 +187,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 
@@ -209,7 +202,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 
@@ -225,7 +217,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 
@@ -241,7 +232,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 
@@ -259,7 +249,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 0,
       })
 
@@ -274,7 +263,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 
@@ -288,7 +276,6 @@ describe('Settings: Categories Actions', () => {
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
         showDescription: true,
-        showProjectCount: true,
         gridColumns: 4,
       })
 

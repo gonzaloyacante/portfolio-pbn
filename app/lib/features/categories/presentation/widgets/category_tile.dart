@@ -93,24 +93,6 @@ class CategoryTile extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.photo_library_outlined,
-                          size: 13,
-                          color: scheme.onSurface,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          '${item.projectCount} proyectos',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -152,21 +134,20 @@ class CategoryTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (item.projectCount > 0)
-                  PopupMenuItem(
-                    value: 'gallery',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.photo_library_outlined,
-                          size: 18,
-                          color: scheme.onSurface,
-                        ),
-                        const SizedBox(width: 10),
-                        const Text('Ver galería'),
-                      ],
-                    ),
+                PopupMenuItem(
+                  value: 'gallery',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.photo_library_outlined,
+                        size: 18,
+                        color: scheme.onSurface,
+                      ),
+                      const SizedBox(width: 10),
+                      const Text('Ver galería'),
+                    ],
                   ),
+                ),
                 const PopupMenuItem(
                   value: 'delete',
                   child: Row(

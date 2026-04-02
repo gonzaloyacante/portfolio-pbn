@@ -10,9 +10,6 @@ vi.mock('@/lib/db', () => ({
     category: {
       update: vi.fn(),
     },
-    project: {
-      findMany: vi.fn(),
-    },
   },
 }))
 
@@ -32,7 +29,7 @@ vi.mock('next/cache', () => ({
 vi.mock('@/config/routes', () => ({
   ROUTES: {
     admin: { categories: '/admin/categorias' },
-    public: { projects: '/proyectos' },
+    public: { portfolio: '/portfolio' },
   },
 }))
 
@@ -75,7 +72,7 @@ describe('Category Actions', () => {
       expect(revalidatePath).toHaveBeenCalledWith('/admin/categorias')
     })
 
-    it('should revalidate public projects path', async () => {
+    it('should revalidate public portfolio path', async () => {
       const { revalidatePath } = await import('next/cache')
       const { deleteCategoryAction } = await import('@/actions/cms/category')
 
@@ -86,10 +83,10 @@ describe('Category Actions', () => {
     })
 
     it('should propagate errors from deleteCategory', async () => {
-      mockDeleteCategory.mockRejectedValueOnce(new Error('Category has projects'))
+      mockDeleteCategory.mockRejectedValueOnce(new Error('Category has images'))
       const { deleteCategoryAction } = await import('@/actions/cms/category')
 
-      await expect(deleteCategoryAction('cat-bad')).rejects.toThrow('Category has projects')
+      await expect(deleteCategoryAction('cat-bad')).rejects.toThrow('Category has images')
     })
   })
 
@@ -162,102 +159,6 @@ describe('Category Actions', () => {
       await reorderCategories(['a', 'b', 'c', 'd'])
 
       expect(updateFn).toHaveBeenCalledTimes(4)
-    })
-  })
-
-  // ── getCategoryImages ──────────────────
-  describe('getCategoryImages', () => {
-    it('should return images for a valid category', async () => {
-      const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findMany).mockResolvedValue([
-        {
-          title: 'Boda García',
-          images: [
-            { id: 'img-1', url: 'https://example.com/img1.jpg', publicId: 'pub-1' },
-            { id: 'img-2', url: 'https://example.com/img2.jpg', publicId: 'pub-2' },
-          ],
-        },
-      ] as never)
-
-      const { getCategoryImages } = await import('@/actions/cms/category')
-      const result = await getCategoryImages('cat-1')
-
-      expect(result.success).toBe(true)
-      expect(result.data).toHaveLength(2)
-    })
-
-    it('should flatten images from multiple projects', async () => {
-      const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findMany).mockResolvedValue([
-        {
-          title: 'Proyecto A',
-          images: [{ id: 'img-1', url: 'url1', publicId: 'pub-1' }],
-        },
-        {
-          title: 'Proyecto B',
-          images: [
-            { id: 'img-2', url: 'url2', publicId: 'pub-2' },
-            { id: 'img-3', url: 'url3', publicId: 'pub-3' },
-          ],
-        },
-      ] as never)
-
-      const { getCategoryImages } = await import('@/actions/cms/category')
-      const result = await getCategoryImages('cat-multi')
-
-      expect(result.success).toBe(true)
-      expect(result.data).toHaveLength(3)
-    })
-
-    it('should include projectTitle in each image', async () => {
-      const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findMany).mockResolvedValue([
-        {
-          title: 'Boda López',
-          images: [{ id: 'img-1', url: 'url1', publicId: 'pub-1' }],
-        },
-      ] as never)
-
-      const { getCategoryImages } = await import('@/actions/cms/category')
-      const result = await getCategoryImages('cat-1')
-
-      expect(result.data?.[0]).toHaveProperty('projectTitle', 'Boda López')
-    })
-
-    it('should return empty data for category with no projects', async () => {
-      const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findMany).mockResolvedValue([])
-
-      const { getCategoryImages } = await import('@/actions/cms/category')
-      const result = await getCategoryImages('cat-empty')
-
-      expect(result.success).toBe(true)
-      expect(result.data).toHaveLength(0)
-    })
-
-    it('should return success:false on DB error', async () => {
-      const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findMany).mockRejectedValue(new Error('DB Down'))
-
-      const { getCategoryImages } = await import('@/actions/cms/category')
-      const result = await getCategoryImages('cat-1')
-
-      expect(result.success).toBe(false)
-      expect(result.error).toBe('Database error')
-    })
-
-    it('should only fetch non-deleted projects', async () => {
-      const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.project.findMany).mockResolvedValue([])
-
-      const { getCategoryImages } = await import('@/actions/cms/category')
-      await getCategoryImages('cat-1')
-
-      expect(prisma.project.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { categoryId: 'cat-1', deletedAt: null },
-        })
-      )
     })
   })
 })

@@ -98,7 +98,7 @@ export type NotificationType =
   | 'contact'
   | 'booking'
   | 'booking_reminder'
-  | 'project'
+  | 'gallery'
   | 'service'
   | 'testimonial'
   | 'system'

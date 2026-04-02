@@ -197,7 +197,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       fontSize: 'featuredTitleFontSize',
       color: 'featuredTitleColor',
       colorDark: 'featuredTitleColorDark',
-      showFeatured: 'showFeaturedProjects',
+      showFeatured: 'showFeaturedImages',
       featuredCount: 'featuredCount',
     },
     defaults: {

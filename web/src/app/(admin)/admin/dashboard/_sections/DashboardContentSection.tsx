@@ -9,7 +9,7 @@ export default async function DashboardContentSection() {
   const [session, stats] = await Promise.all([auth(), getDashboardContentStats()])
 
   const {
-    projectsCount,
+    imagesCount,
     categoriesCount,
     testimonialsCount,
     deletedCount,
@@ -20,8 +20,8 @@ export default async function DashboardContentSection() {
   const userName = session?.user?.name || 'Administrador'
 
   const contentStats = [
-    { label: 'Proyectos', value: projectsCount, icon: '🎨', href: ROUTES.admin.projects },
-    { label: 'Categorías', value: categoriesCount, icon: '📁', href: ROUTES.admin.projects },
+    { label: 'Imágenes', value: imagesCount, icon: '🎨', href: ROUTES.admin.categories },
+    { label: 'Categorías', value: categoriesCount, icon: '📁', href: ROUTES.admin.categories },
     { label: 'Testimonios', value: testimonialsCount, icon: '💬', href: ROUTES.admin.testimonials },
     {
       label: 'Mensajes',

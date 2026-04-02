@@ -26,10 +26,10 @@ enum ImagePickerSource { gallery, camera }
 /// Uso:
 /// ```dart
 /// ImageUploadWidget(
-///   currentImageUrl: project.coverImage,
+///   currentImageUrl: category.coverImage,
 ///   aspectRatio: CropAspectRatio(ratioX: 16, ratioY: 9),
 ///   label: 'Imagen de portada',
-///   onImageSelected: (file) => ref.read(projectFormProvider.notifier).setCover(file),
+///   onImageSelected: (file) => ref.read(categoryFormProvider.notifier).setCover(file),
 /// )
 /// ```
 class ImageUploadWidget extends StatefulWidget {

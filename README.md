@@ -2,7 +2,7 @@
 
 **Portfolio profesional + CMS completo de Paola Bolívar Nievas** — Maquilladora profesional especializada en audiovisuales, FX, teatro y caracterización.
 
-Monorepo con dos sub-proyectos independientes:
+Monorepo con dos componentes independientes:
 - **`web/`** — Sitio público Next.js 16 (PWA) + panel de administración web
 - **`app/`** — App nativa Flutter para administración desde tablet/móvil
 
@@ -39,7 +39,7 @@ Monorepo con dos sub-proyectos independientes:
 
 ## Descripción del proyecto
 
-Portfolio dinámico para una maquilladora profesional. El sitio público muestra proyectos organizados por categorías y permite a los visitantes contactar o hacer reservas. Toda la gestión de contenido (proyectos, categorías, servicios, testimoniales, reservas) se realiza desde dos herramientas de administración: el panel web y la app nativa Flutter.
+Portfolio dinámico para una maquilladora profesional. El sitio público muestra una galería de imágenes organizada por categorías y permite a los visitantes contactar o hacer reservas. Toda la gestión de contenido (imágenes de galería, categorías, servicios, testimoniales, reservas) se realiza desde dos herramientas de administración: el panel web y la app nativa Flutter.
 
 **Flujo de administración:**
 
@@ -63,7 +63,7 @@ portfolio-pbn/
 ├── web/                  # Next.js 16 — sitio público + CMS web
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── (public)/       # Rutas SEO en español (/proyectos, /contacto...)
+│   │   │   ├── (public)/       # Rutas SEO en español (/portfolio, /contacto...)
 │   │   │   ├── (admin)/        # Panel CMS protegido (/admin/...)
 │   │   │   └── api/
 │   │   │       ├── admin/      # REST para app Flutter (JWT custom)
@@ -143,7 +143,7 @@ App nativa Android/iOS para que la administradora gestione el portfolio desde su
 ### Funcionalidades
 
 - Dashboard con estadísticas en tiempo real
-- Gestión completa de proyectos, categorías, servicios y testimoniales
+- Gestión completa de imágenes, categorías, servicios y testimoniales
 - Bandeja de mensajes de contacto con estados
 - Calendario de reservas con vista mensual
 - Notificaciones push con deep links, activables por tipo
@@ -182,7 +182,7 @@ Las notificaciones se envían via FCM HTTP v1 desde el servidor Next.js. Cada ti
 | `contact` | Nuevo mensaje del formulario público |
 | `booking` | Nueva reserva creada |
 | `booking_reminder` | Recordatorio 24h / 1h antes de una reserva |
-| `project` | Proyecto publicado o actualizado |
+| `gallery` | Imagen de galería publicada o actualizada |
 | `service` | Servicio añadido o modificado |
 | `testimonial` | Nuevo testimonial recibido |
 | `system` | Alertas de sistema (sync, actualizaciones de app) |

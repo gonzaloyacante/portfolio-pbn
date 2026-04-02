@@ -11,15 +11,6 @@ void main() {
       'dashboard',
       () => expect(RoutePaths.dashboard.startsWith('/'), isTrue),
     );
-    test('projects', () => expect(RoutePaths.projects.startsWith('/'), isTrue));
-    test(
-      'projectNew',
-      () => expect(RoutePaths.projectNew.startsWith('/'), isTrue),
-    );
-    test(
-      'projectEdit',
-      () => expect(RoutePaths.projectEdit.startsWith('/'), isTrue),
-    );
     test(
       'categories',
       () => expect(RoutePaths.categories.startsWith('/'), isTrue),
@@ -107,18 +98,6 @@ void main() {
     test(
       'dashboard is /dashboard',
       () => expect(RoutePaths.dashboard, '/dashboard'),
-    );
-    test(
-      'projects is /projects',
-      () => expect(RoutePaths.projects, '/projects'),
-    );
-    test(
-      'projectNew is /projects/new',
-      () => expect(RoutePaths.projectNew, '/projects/new'),
-    );
-    test(
-      'projectEdit has :id param',
-      () => expect(RoutePaths.projectEdit.contains(':id'), isTrue),
     );
     test(
       'categories is /categories',
@@ -214,12 +193,6 @@ void main() {
   });
 
   group('RoutePaths — parent-child relationships', () {
-    test('projectNew starts with projectsPath', () {
-      expect(RoutePaths.projectNew.startsWith(RoutePaths.projects), isTrue);
-    });
-    test('projectEdit starts with projectsPath', () {
-      expect(RoutePaths.projectEdit.startsWith(RoutePaths.projects), isTrue);
-    });
     test('categoryNew starts with categoriesPath', () {
       expect(RoutePaths.categoryNew.startsWith(RoutePaths.categories), isTrue);
     });
@@ -291,9 +264,6 @@ void main() {
       RouteNames.login,
       RouteNames.splash,
       RouteNames.dashboard,
-      RouteNames.projects,
-      RouteNames.projectNew,
-      RouteNames.projectEdit,
       RouteNames.categories,
       RouteNames.categoryNew,
       RouteNames.categoryEdit,

@@ -17,7 +17,7 @@ import '../app_card.dart';
 /// ```dart
 /// StatCard(
 ///   icon: Icons.photo_library_outlined,
-///   label: 'Proyectos',
+///   label: 'Imágenes',
 ///   value: '24',
 ///   trend: '+3 este mes',
 ///   trendPositive: true,

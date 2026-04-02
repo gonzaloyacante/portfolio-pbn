@@ -129,7 +129,7 @@ export async function POST(req: Request) {
       verified = false,
       featured = false,
       source,
-      projectId,
+      categoryId,
       status = 'PENDING',
       isActive = true,
     } = parsed.data as typeof parsed.data & {
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
         verified,
         featured,
         source,
-        projectId,
+        categoryId,
         status,
         isActive,
         sortOrder: nextOrder,

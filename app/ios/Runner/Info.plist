@@ -41,11 +41,11 @@
 
 	<!-- Cámara: requerido por image_picker y image_cropper -->
 	<key>NSCameraUsageDescription</key>
-	<string>PBN Admin necesita acceso a la cámara para fotografiar proyectos y servicios directamente desde la app.</string>
+	<string>PBN Admin necesita acceso a la cámara para fotografiar imágenes de galería y servicios directamente desde la app.</string>
 
 	<!-- Galería de fotos (lectura): requerido por image_picker -->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>PBN Admin necesita acceso a tus fotos para seleccionar imágenes de proyectos, servicios y testimonios.</string>
+	<string>PBN Admin necesita acceso a tus fotos para seleccionar imágenes de la galería, servicios y testimonios.</string>
 
 	<!-- Galería de fotos (escritura): guardar imágenes recortadas -->
 	<key>NSPhotoLibraryAddUsageDescription</key>

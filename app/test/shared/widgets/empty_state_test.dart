@@ -11,11 +11,11 @@ void main() {
         _wrap(
           const EmptyState(
             icon: Icons.photo_library_outlined,
-            title: 'Sin proyectos',
+            title: 'Sin imágenes',
           ),
         ),
       );
-      expect(find.text('Sin proyectos'), findsOneWidget);
+      expect(find.text('Sin imágenes'), findsOneWidget);
     });
 
     testWidgets('renders icon', (tester) async {
@@ -23,7 +23,7 @@ void main() {
         _wrap(
           const EmptyState(
             icon: Icons.photo_library_outlined,
-            title: 'Sin proyectos',
+            title: 'Sin imágenes',
           ),
         ),
       );

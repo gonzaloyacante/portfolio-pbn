@@ -10,11 +10,6 @@ class RouteNames {
   // ── Dashboard ─────────────────────────────────────────────────────────────
   static const String dashboard = 'dashboard';
 
-  // ── Proyectos ─────────────────────────────────────────────────────────────
-  static const String projects = 'projects';
-  static const String projectNew = 'project-new';
-  static const String projectEdit = 'project-edit';
-
   // ── Categorías ────────────────────────────────────────────────────────────
   static const String categories = 'categories';
   static const String categoryNew = 'category-new';
@@ -73,9 +68,6 @@ class RoutePaths {
   static const String login = '/login';
   static const String splash = '/splash';
   static const String dashboard = '/dashboard';
-  static const String projects = '/projects';
-  static const String projectNew = '/projects/new';
-  static const String projectEdit = '/projects/:id/edit';
   static const String categories = '/categories';
   static const String categoryNew = '/categories/new';
   static const String categoryEdit = '/categories/:id/edit';

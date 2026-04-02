@@ -11,7 +11,6 @@ import '../../../shared/widgets/widgets.dart';
 import '../../calendar/providers/calendar_provider.dart';
 import '../../categories/providers/categories_provider.dart';
 import '../../contacts/providers/contacts_provider.dart';
-import '../../projects/providers/projects_provider.dart';
 import '../../services/providers/services_provider.dart';
 import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
@@ -155,8 +154,6 @@ class TrashPage extends ConsumerWidget {
   /// para que las listas reflejen la restauración o eliminación.
   void _invalidateListByType(WidgetRef ref, String type) {
     switch (type) {
-      case 'project':
-        ref.invalidate(projectsListProvider);
       case 'category':
         ref.invalidate(categoriesListProvider);
       case 'service':

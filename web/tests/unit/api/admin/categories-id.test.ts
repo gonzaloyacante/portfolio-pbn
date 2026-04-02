@@ -48,7 +48,7 @@ const mockCategoryFull = {
   ogImage: null,
   sortOrder: 1,
   isActive: true,
-  _count: { projects: 5 },
+  _count: { images: 5 },
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -161,7 +161,7 @@ describe('PATCH /api/admin/categories/[id]', () => {
     vi.mocked(prisma.category.update).mockResolvedValueOnce({
       ...mockCategoryFull,
       name: 'Updated Name',
-      _count: { projects: 5 },
+      _count: { images: 5 },
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/categories/[id]/route')
@@ -203,7 +203,7 @@ describe('PATCH /api/admin/categories/[id]', () => {
     vi.mocked(prisma.category.update).mockResolvedValueOnce({
       ...mockCategoryFull,
       isActive: false,
-      _count: { projects: 5 },
+      _count: { images: 5 },
     } as any)
 
     const { PATCH } = await import('@/app/api/admin/categories/[id]/route')

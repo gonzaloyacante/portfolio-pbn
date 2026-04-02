@@ -46,13 +46,12 @@ const VALID_TYPES = [
   'contact',
   'theme',
   'site',
-  'project',
   'testimonial',
   'category',
 ] as const
 
 const VALID_BODY_PER_TYPE: Record<string, Record<string, unknown>> = {
-  home: { showFeaturedProjects: true, featuredCount: 3 },
+  home: { showFeaturedImages: true, featuredCount: 3 },
   about: { title: 'New title' },
   contact: { email: 'test@example.com', showSocialLinks: false },
   theme: {
@@ -80,7 +79,6 @@ const VALID_BODY_PER_TYPE: Record<string, Record<string, unknown>> = {
     borderRadius: 40,
   },
   site: { title: 'New title' },
-  project: { showCardTitles: true, showCardCategory: true, gridColumns: 3 },
   testimonial: { showOnAbout: true, maxDisplay: 5 },
   category: { showDescription: true },
 }

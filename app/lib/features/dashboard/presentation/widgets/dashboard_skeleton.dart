@@ -93,7 +93,7 @@ class DashboardSkeleton extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xl),
 
-            // ── Top proyectos (ranking) ────────────────────────────────────
+            // ── Top categorías (ranking) ────────────────────────────────────
             Padding(
               padding: padding.copyWith(bottom: AppSpacing.sm),
               child: const ShimmerBox(width: 120, height: 18, borderRadius: 6),

@@ -47,7 +47,7 @@ const mockCategory = {
   coverImageUrl: null,
   sortOrder: 1,
   isActive: true,
-  _count: { projects: 5 },
+  _count: { images: 5 },
   createdAt: new Date(),
   updatedAt: new Date(),
 }

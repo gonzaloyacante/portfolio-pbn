@@ -5,9 +5,9 @@ void main() {
   // ── DashboardStats ──────────────────────────────────────────────────────────
 
   group('DashboardStats — construction defaults', () {
-    test('totalProjects defaults to 0', () {
+    test('totalImages defaults to 0', () {
       const s = DashboardStats();
-      expect(s.totalProjects, 0);
+      expect(s.totalImages, 0);
     });
 
     test('totalCategories defaults to 0', () {
@@ -42,9 +42,9 @@ void main() {
   });
 
   group('DashboardStats — custom values', () {
-    test('stores totalProjects correctly', () {
-      const s = DashboardStats(totalProjects: 12);
-      expect(s.totalProjects, 12);
+    test('stores totalImages correctly', () {
+      const s = DashboardStats(totalImages: 12);
+      expect(s.totalImages, 12);
     });
 
     test('stores totalCategories correctly', () {
@@ -79,7 +79,7 @@ void main() {
 
     test('stores all fields simultaneously', () {
       const s = DashboardStats(
-        totalProjects: 12,
+        totalImages: 12,
         totalCategories: 5,
         totalServices: 8,
         totalTestimonials: 30,
@@ -87,7 +87,7 @@ void main() {
         pendingBookings: 3,
         pageViews30d: 1500,
       );
-      expect(s.totalProjects, 12);
+      expect(s.totalImages, 12);
       expect(s.totalCategories, 5);
       expect(s.totalServices, 8);
       expect(s.totalTestimonials, 30);
@@ -99,8 +99,8 @@ void main() {
 
   group('DashboardStats — Freezed equality', () {
     test('two identical instances are equal', () {
-      const a = DashboardStats(totalProjects: 5);
-      const b = DashboardStats(totalProjects: 5);
+      const a = DashboardStats(totalImages: 5);
+      const b = DashboardStats(totalImages: 5);
       expect(a, equals(b));
     });
 
@@ -110,9 +110,9 @@ void main() {
       expect(a, equals(b));
     });
 
-    test('instances with different totalProjects are not equal', () {
-      const a = DashboardStats(totalProjects: 5);
-      const b = DashboardStats(totalProjects: 10);
+    test('instances with different totalImages are not equal', () {
+      const a = DashboardStats(totalImages: 5);
+      const b = DashboardStats(totalImages: 10);
       expect(a, isNot(equals(b)));
     });
 
@@ -124,9 +124,9 @@ void main() {
   });
 
   group('DashboardStats — copyWith', () {
-    test('copyWith updates totalProjects', () {
-      const s = DashboardStats(totalProjects: 5);
-      expect(s.copyWith(totalProjects: 10).totalProjects, 10);
+    test('copyWith updates totalImages', () {
+      const s = DashboardStats(totalImages: 5);
+      expect(s.copyWith(totalImages: 10).totalImages, 10);
     });
 
     test('copyWith updates totalCategories', () {
@@ -140,15 +140,15 @@ void main() {
     });
 
     test('copyWith preserves unchanged fields', () {
-      const s = DashboardStats(totalProjects: 10, newContacts: 3);
+      const s = DashboardStats(totalImages: 10, newContacts: 3);
       final updated = s.copyWith(totalCategories: 5);
-      expect(updated.totalProjects, 10);
+      expect(updated.totalImages, 10);
       expect(updated.newContacts, 3);
       expect(updated.totalCategories, 5);
     });
 
     test('copyWith with no args returns identical', () {
-      const s = DashboardStats(totalProjects: 7, pageViews30d: 200);
+      const s = DashboardStats(totalImages: 7, pageViews30d: 200);
       final updated = s.copyWith();
       expect(updated, equals(s));
     });
@@ -157,7 +157,7 @@ void main() {
   group('DashboardStats — fromJson', () {
     test('parses all fields from json', () {
       final s = DashboardStats.fromJson({
-        'totalProjects': 15,
+        'totalImages': 15,
         'totalCategories': 6,
         'totalServices': 9,
         'totalTestimonials': 25,
@@ -165,7 +165,7 @@ void main() {
         'pendingBookings': 2,
         'pageViews30d': 2000,
       });
-      expect(s.totalProjects, 15);
+      expect(s.totalImages, 15);
       expect(s.totalCategories, 6);
       expect(s.totalServices, 9);
       expect(s.totalTestimonials, 25);
@@ -176,22 +176,19 @@ void main() {
 
     test('fromJson with empty map uses defaults', () {
       final s = DashboardStats.fromJson({});
-      expect(s.totalProjects, 0);
+      expect(s.totalImages, 0);
       expect(s.pendingBookings, 0);
     });
 
     test('fromJson with zero values', () {
-      final s = DashboardStats.fromJson({
-        'totalProjects': 0,
-        'pageViews30d': 0,
-      });
-      expect(s.totalProjects, 0);
+      final s = DashboardStats.fromJson({'totalImages': 0, 'pageViews30d': 0});
+      expect(s.totalImages, 0);
       expect(s.pageViews30d, 0);
     });
 
     test('fromJson result equals constructed instance', () {
       final fromJson = DashboardStats.fromJson({
-        'totalProjects': 5,
+        'totalImages': 5,
         'totalCategories': 2,
         'totalServices': 3,
         'totalTestimonials': 10,
@@ -200,7 +197,7 @@ void main() {
         'pageViews30d': 500,
       });
       const constructed = DashboardStats(
-        totalProjects: 5,
+        totalImages: 5,
         totalCategories: 2,
         totalServices: 3,
         totalTestimonials: 10,

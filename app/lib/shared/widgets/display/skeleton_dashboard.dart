@@ -38,7 +38,7 @@ class SkeletonStatCard extends StatelessWidget {
   }
 }
 
-/// Esqueleto de sección de ranking (top projects, top locations).
+/// Esqueleto de sección de ranking (top images, top locations).
 class SkeletonRankingItem extends StatelessWidget {
   const SkeletonRankingItem({super.key});
 

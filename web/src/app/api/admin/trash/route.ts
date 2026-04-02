@@ -4,7 +4,7 @@ import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 
-const TRASH_TYPES = ['project', 'category', 'service', 'testimonial', 'contact', 'booking'] as const
+const TRASH_TYPES = ['category', 'service', 'testimonial', 'contact', 'booking'] as const
 
 type TrashType = (typeof TRASH_TYPES)[number]
 
@@ -17,7 +17,6 @@ type TrashModel = {
 }
 
 const TRASH_MODELS: Record<TrashType, TrashModel> = {
-  project: prisma.project as unknown as TrashModel,
   category: prisma.category as unknown as TrashModel,
   service: prisma.service as unknown as TrashModel,
   testimonial: prisma.testimonial as unknown as TrashModel,

@@ -2,12 +2,12 @@
  * Toast Notifications - Sistema unificado
  *
  * Wrapper de react-hot-toast con opciones predeterminadas coherentes
- * con el design system del proyecto. Reemplaza el doble sistema anterior
+ * con el design system. Reemplaza el doble sistema anterior
  * (react-hot-toast directo + hook useToast).
  *
  * Uso:
  *   import { showToast } from '@/lib/toast'
- *   showToast.success('Guardado', 'Proyecto')
+ *   showToast.success('Guardado', 'Categoría')
  *   showToast.error('No se pudo guardar')
  */
 

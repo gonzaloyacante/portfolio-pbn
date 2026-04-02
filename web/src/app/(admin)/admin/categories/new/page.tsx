@@ -7,7 +7,7 @@ import { NewCategoryForm } from './NewCategoryForm'
 
 export const metadata = {
   title: 'Nueva Categoría | Admin',
-  description: 'Crear una nueva categoria de proyectos',
+  description: 'Crear una nueva categoría del portfolio',
 }
 
 export default function NewCategoryPage() {
@@ -22,7 +22,7 @@ export default function NewCategoryPage() {
         </Button>
         <PageHeader
           title="📁 Nueva Categoría"
-          description="Crea una nueva categoría para organizar tus proyectos"
+          description="Crea una nueva categoría con su galería de imágenes"
         />
       </div>
 

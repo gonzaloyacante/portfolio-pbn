@@ -63,7 +63,7 @@ export const services = [
     name: 'Maquillaje para Sesiones Fotográficas',
     slug: 'maquillaje-editorial',
     description:
-      'Maquillaje creativo y de tendencia para sesiones fotográficas de moda, publicidad o portfolios. Adaptable al concepto artístico del proyecto.',
+      'Maquillaje creativo y de tendencia para sesiones fotográficas de moda, publicidad o portfolios. Adaptable al concepto artístico de cada sesión.',
     priceLabel: 'consultar',
     duration: 'Media jornada o jornada completa',
     isActive: true,
@@ -77,7 +77,7 @@ export const services = [
       'Bigotes, barbas, flequillos y pelucas picadas a mano pelo a pelo en tul HD. Uso de pelo natural o kanekalon según necesidad.',
     price: 80,
     priceLabel: 'desde',
-    duration: 'Variable según proyecto',
+    duration: 'Variable según trabajo',
     isActive: true,
     isFeatured: false,
     sortOrder: 4,

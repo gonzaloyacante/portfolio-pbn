@@ -2,7 +2,7 @@ import { getHomeSettings } from '@/actions/settings/home'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings } from '@/actions/settings/site'
 import HeroSection from '@/components/features/home/HeroSection'
-import FeaturedProjects from '@/components/features/home/FeaturedProjects'
+import FeaturedCategories from '@/components/features/home/FeaturedCategories'
 import { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * Homepage
  * - Hero Section (Dynamic)
- * - Featured Projects Grid (Dynamic)
+ * - Featured Galleries Grid (Dynamic)
  * - Testimonials moved to About Page
  */
 export default async function Home() {
@@ -50,9 +50,9 @@ export default async function Home() {
       {/* Hero Section */}
       <HeroSection settings={homeSettings} />
 
-      {/* Featured Projects Section */}
-      {homeSettings?.showFeaturedProjects && (
-        <FeaturedProjects
+      {/* Featured Images Section */}
+      {homeSettings?.showFeaturedImages && (
+        <FeaturedCategories
           title={homeSettings.featuredTitle}
           count={homeSettings.featuredCount}
           titleFont={homeSettings.featuredTitleFont}

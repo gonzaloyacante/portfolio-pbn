@@ -8,5 +8,5 @@ export 'pbn_splash_logo.dart';
 export 'skeleton_category.dart';
 export 'skeleton_dashboard.dart';
 export 'skeleton_misc.dart';
-export 'skeleton_project.dart';
+
 export 'skeleton_service.dart';

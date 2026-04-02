@@ -6,7 +6,6 @@ import {
   aboutSettingsSchema,
   testimonialSettingsSchema,
   contactSettingsSchema,
-  projectSettingsSchema,
   categorySettingsSchema,
   categorySchema,
   loginSchema,
@@ -244,68 +243,6 @@ describe('contactSettingsSchema — exhaustive', () => {
 })
 
 // ============================================
-// projectSettingsSchema
-// ============================================
-
-describe('projectSettingsSchema — exhaustive', () => {
-  it('passes with all booleans and gridColumns', () => {
-    expect(
-      projectSettingsSchema.safeParse({
-        showCardTitles: true,
-        showCardCategory: true,
-        gridColumns: 3,
-      }).success
-    ).toBe(true)
-  })
-
-  it('fails when showCardTitles is missing', () => {
-    expect(
-      projectSettingsSchema.safeParse({ showCardCategory: true, gridColumns: 2 }).success
-    ).toBe(false)
-  })
-
-  it('fails when gridColumns is 0', () => {
-    expect(
-      projectSettingsSchema.safeParse({
-        showCardTitles: true,
-        showCardCategory: true,
-        gridColumns: 0,
-      }).success
-    ).toBe(false)
-  })
-
-  it('fails when gridColumns exceeds 4', () => {
-    expect(
-      projectSettingsSchema.safeParse({
-        showCardTitles: true,
-        showCardCategory: true,
-        gridColumns: 5,
-      }).success
-    ).toBe(false)
-  })
-
-  it('passes with gridColumns = 1', () => {
-    expect(
-      projectSettingsSchema.safeParse({
-        showCardTitles: false,
-        showCardCategory: false,
-        gridColumns: 1,
-      }).success
-    ).toBe(true)
-  })
-
-  it('passes with gridColumns = 4', () => {
-    expect(
-      projectSettingsSchema.safeParse({
-        showCardTitles: true,
-        showCardCategory: true,
-        gridColumns: 4,
-      }).success
-    ).toBe(true)
-  })
-})
-
-// ============================================
 // categorySettingsSchema
 // ============================================
 
@@ -315,7 +252,6 @@ describe('categorySettingsSchema — exhaustive', () => {
     expect(r.success).toBe(true)
     if (r.success) {
       expect(r.data.showDescription).toBe(true)
-      expect(r.data.showProjectCount).toBe(true)
       expect(r.data.gridColumns).toBe(4)
     }
   })
@@ -323,7 +259,6 @@ describe('categorySettingsSchema — exhaustive', () => {
   it('overrides defaults', () => {
     const r = categorySettingsSchema.safeParse({
       showDescription: false,
-      showProjectCount: false,
       gridColumns: 2,
     })
     expect(r.success).toBe(true)
@@ -401,29 +336,29 @@ describe('categorySchema — edge cases', () => {
 // ============================================
 
 describe('homeSettingsSchema — selected paths', () => {
-  const minValid = { showFeaturedProjects: true, featuredCount: 4 }
+  const minValid = { showFeaturedImages: true, featuredCount: 4 }
 
   it('passes with minimal required fields', () => {
     expect(homeSettingsSchema.safeParse(minValid).success).toBe(true)
   })
 
-  it('fails when showFeaturedProjects is missing', () => {
+  it('fails when showFeaturedImages is missing', () => {
     expect(homeSettingsSchema.safeParse({ featuredCount: 4 }).success).toBe(false)
   })
 
   it('fails when featuredCount is missing', () => {
-    expect(homeSettingsSchema.safeParse({ showFeaturedProjects: true }).success).toBe(false)
+    expect(homeSettingsSchema.safeParse({ showFeaturedImages: true }).success).toBe(false)
   })
 
   it('fails when featuredCount is 0', () => {
     expect(
-      homeSettingsSchema.safeParse({ showFeaturedProjects: true, featuredCount: 0 }).success
+      homeSettingsSchema.safeParse({ showFeaturedImages: true, featuredCount: 0 }).success
     ).toBe(false)
   })
 
   it('fails when featuredCount exceeds 20', () => {
     expect(
-      homeSettingsSchema.safeParse({ showFeaturedProjects: true, featuredCount: 21 }).success
+      homeSettingsSchema.safeParse({ showFeaturedImages: true, featuredCount: 21 }).success
     ).toBe(false)
   })
 

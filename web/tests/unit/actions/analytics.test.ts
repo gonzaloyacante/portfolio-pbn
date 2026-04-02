@@ -20,9 +20,6 @@ vi.mock('@/lib/db', () => ({
         },
       }),
     },
-    project: {
-      findMany: vi.fn().mockResolvedValue([]),
-    },
   },
 }))
 
@@ -208,11 +205,11 @@ describe('Analytics Actions', () => {
       const { prisma } = await import('@/lib/db')
       const { recordAnalyticEvent } = await import('@/actions/analytics/index')
 
-      await recordAnalyticEvent('PROJECT_DETAIL_VIEW', 'proj-1', 'Project')
+      await recordAnalyticEvent('GALLERY_VIEW', 'cat-1', 'Category')
 
       const createCall = vi.mocked(prisma.analyticLog.create).mock.calls[0][0]
-      expect(createCall.data.entityId).toBe('proj-1')
-      expect(createCall.data.entityType).toBe('Project')
+      expect(createCall.data.entityId).toBe('cat-1')
+      expect(createCall.data.entityType).toBe('Category')
     })
 
     it('passes optional fields from options', async () => {
@@ -240,7 +237,6 @@ describe('Analytics Actions', () => {
       vi.mocked(prisma.analyticLog.count).mockResolvedValue(10 as never)
       vi.mocked(prisma.analyticLog.findMany).mockResolvedValue([] as never)
       vi.mocked(prisma.analyticLog.groupBy).mockResolvedValue([] as never)
-      vi.mocked(prisma.project.findMany).mockResolvedValue([] as never)
 
       const { getAnalyticsDashboardData } = await import('@/actions/analytics/index')
       const result = await getAnalyticsDashboardData()
@@ -248,7 +244,7 @@ describe('Analytics Actions', () => {
       expect(result).toBeDefined()
       expect(result).toHaveProperty('totalVisits')
       expect(result).toHaveProperty('trendData')
-      expect(result).toHaveProperty('topProjects')
+      expect(result).toHaveProperty('topCategories')
       expect(result).toHaveProperty('deviceUsage')
     })
 

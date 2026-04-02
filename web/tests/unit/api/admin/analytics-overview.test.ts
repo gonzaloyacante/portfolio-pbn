@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    project: { count: vi.fn(), findUnique: vi.fn(), findMany: vi.fn() },
+    categoryImage: { count: vi.fn() },
     category: { count: vi.fn() },
     service: { count: vi.fn() },
     testimonial: { count: vi.fn() },
@@ -38,19 +38,19 @@ function makeRequest(url: string, opts: { method?: string; body?: unknown } = {}
 const BASE_URL = 'http://localhost/api/admin/analytics/overview'
 
 /**
- * Setup all prisma mocks needed for the 13 parallel queries in the route.
+ * Setup all prisma mocks needed for the parallel queries in the route.
  * Call order in Promise.all:
- *   project.count(active), category.count(active), service.count(active),
+ *   categoryImage.count(active), category.count(active), service.count(active),
  *   testimonial.count(active), contact.count(unread), booking.count(pending),
  *   testimonial.count(pendingTestimonials),
- *   [trash: project.count, category.count, service.count, testimonial.count, contact.count, booking.count],
+ *   [trash: category.count, service.count, testimonial.count, contact.count, booking.count],
  *   analyticLog.count(pageViews), analyticLog.count(uniqueVisitors),
- *   analyticLog.groupBy(device), analyticLog.groupBy(countries), analyticLog.groupBy(projects)
+ *   analyticLog.groupBy(device), analyticLog.groupBy(countries), analyticLog.groupBy(images)
  */
 async function setupDefaultMocks(overrides: Record<string, number> = {}) {
   const { prisma } = await import('@/lib/db')
   const v = {
-    totalProjects: 0,
+    totalImages: 0,
     totalCategories: 0,
     totalServices: 0,
     totalTestimonials: 0,
@@ -62,7 +62,7 @@ async function setupDefaultMocks(overrides: Record<string, number> = {}) {
     ...overrides,
   }
   // Active counts
-  vi.mocked(prisma.project.count).mockResolvedValueOnce(v.totalProjects)
+  vi.mocked(prisma.categoryImage.count).mockResolvedValueOnce(v.totalImages)
   vi.mocked(prisma.category.count).mockResolvedValueOnce(v.totalCategories)
   vi.mocked(prisma.service.count).mockResolvedValueOnce(v.totalServices)
   vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(v.totalTestimonials)
@@ -70,8 +70,7 @@ async function setupDefaultMocks(overrides: Record<string, number> = {}) {
   vi.mocked(prisma.booking.count).mockResolvedValueOnce(v.pendingBookings)
   // pendingTestimonials
   vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(v.pendingTestimonials)
-  // Trash counts (6 models)
-  vi.mocked(prisma.project.count).mockResolvedValueOnce(0)
+  // Trash counts (5 models)
   vi.mocked(prisma.category.count).mockResolvedValueOnce(0)
   vi.mocked(prisma.service.count).mockResolvedValueOnce(0)
   vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
@@ -80,7 +79,7 @@ async function setupDefaultMocks(overrides: Record<string, number> = {}) {
   // analyticLog counts
   vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(v.pageViews30d)
   vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(v.uniqueVisitors30d)
-  // groupBy: device, countries, projects — all empty
+  // groupBy: device, countries, images — all empty
   vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
   vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
   vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
@@ -116,7 +115,7 @@ describe('GET /api/admin/analytics/overview', () => {
 
   it('returns all counters on success', async () => {
     await setupDefaultMocks({
-      totalProjects: 10,
+      totalImages: 10,
       totalCategories: 5,
       totalServices: 8,
       totalTestimonials: 12,
@@ -132,7 +131,7 @@ describe('GET /api/admin/analytics/overview', () => {
 
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
-    expect(json.data.totalProjects).toBe(10)
+    expect(json.data.totalImages).toBe(10)
     expect(json.data.totalCategories).toBe(5)
     expect(json.data.totalServices).toBe(8)
     expect(json.data.totalTestimonials).toBe(12)
@@ -142,7 +141,7 @@ describe('GET /api/admin/analytics/overview', () => {
     expect(json.data.uniqueVisitors30d).toBe(100)
     expect(json.data.deviceUsage).toEqual({})
     expect(json.data.topLocations).toEqual([])
-    expect(json.data.topProjects).toEqual([])
+    expect(json.data.topCategories).toEqual([])
   })
 
   it('returns zero for empty DB', async () => {
@@ -152,7 +151,7 @@ describe('GET /api/admin/analytics/overview', () => {
     const res = await GET(makeRequest(BASE_URL))
     const json = await res.json()
 
-    expect(json.data.totalProjects).toBe(0)
+    expect(json.data.totalImages).toBe(0)
     expect(json.data.newContacts).toBe(0)
     expect(json.data.pendingBookings).toBe(0)
     expect(json.data.pageViews30d).toBe(0)
@@ -205,7 +204,7 @@ describe('GET /api/admin/analytics/overview', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.project.count).mockRejectedValueOnce(new Error('DB down'))
+    vi.mocked(prisma.categoryImage.count).mockRejectedValueOnce(new Error('DB down'))
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
     const res = await GET(makeRequest(BASE_URL))

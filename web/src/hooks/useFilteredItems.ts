@@ -15,7 +15,7 @@ interface UseFilteredItemsOptions<T> {
  * @example
  * ```tsx
  * const filtered = useFilteredItems({
- *   items: projects,
+ *   items: categories,
  *   filters: {
  *     category: (p) => !categoryId || p.categoryId === categoryId,
  *     search: (p) => !search || p.title.toLowerCase().includes(search),

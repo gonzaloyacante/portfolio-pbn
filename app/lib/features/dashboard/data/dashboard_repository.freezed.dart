@@ -574,11 +574,11 @@ as double?,
 /// @nodoc
 mixin _$DashboardStats {
 
- int get totalProjects; int get totalCategories; int get totalServices; int get totalTestimonials; int get newContacts; int get pendingBookings; int get pendingTestimonials; int get trashCount; int get pageViews30d;/// Visitantes únicos (sesiones distintas, sin contar cada página que navegan).
+ int get totalImages; int get totalCategories; int get totalServices; int get totalTestimonials; int get newContacts; int get pendingBookings; int get pendingTestimonials; int get trashCount; int get pageViews30d;/// Visitantes únicos (sesiones distintas, sin contar cada página que navegan).
  int get uniqueVisitors30d;/// Visitas por tipo de dispositivo: { "mobile": N, "desktop": N, "tablet": N, "unknown": N }
  Map<String, int> get deviceUsage;/// Top países/ciudades por visitas (últimos 30 días).
- List<LocationStat> get topLocations;/// Top proyectos más vistos (últimos 30 días).
- List<ChartDataPoint> get topProjects;
+ List<LocationStat> get topLocations;/// Top categorías más vistas (últimos 30 días).
+ List<ChartDataPoint> get topCategories;
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -591,16 +591,16 @@ $DashboardStatsCopyWith<DashboardStats> get copyWith => _$DashboardStatsCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d)&&(identical(other.uniqueVisitors30d, uniqueVisitors30d) || other.uniqueVisitors30d == uniqueVisitors30d)&&const DeepCollectionEquality().equals(other.deviceUsage, deviceUsage)&&const DeepCollectionEquality().equals(other.topLocations, topLocations)&&const DeepCollectionEquality().equals(other.topProjects, topProjects));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DashboardStats&&(identical(other.totalImages, totalImages) || other.totalImages == totalImages)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d)&&(identical(other.uniqueVisitors30d, uniqueVisitors30d) || other.uniqueVisitors30d == uniqueVisitors30d)&&const DeepCollectionEquality().equals(other.deviceUsage, deviceUsage)&&const DeepCollectionEquality().equals(other.topLocations, topLocations)&&const DeepCollectionEquality().equals(other.topCategories, topCategories));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d,uniqueVisitors30d,const DeepCollectionEquality().hash(deviceUsage),const DeepCollectionEquality().hash(topLocations),const DeepCollectionEquality().hash(topProjects));
+int get hashCode => Object.hash(runtimeType,totalImages,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d,uniqueVisitors30d,const DeepCollectionEquality().hash(deviceUsage),const DeepCollectionEquality().hash(topLocations),const DeepCollectionEquality().hash(topCategories));
 
 @override
 String toString() {
-  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d, uniqueVisitors30d: $uniqueVisitors30d, deviceUsage: $deviceUsage, topLocations: $topLocations, topProjects: $topProjects)';
+  return 'DashboardStats(totalImages: $totalImages, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d, uniqueVisitors30d: $uniqueVisitors30d, deviceUsage: $deviceUsage, topLocations: $topLocations, topCategories: $topCategories)';
 }
 
 
@@ -611,7 +611,7 @@ abstract mixin class $DashboardStatsCopyWith<$Res>  {
   factory $DashboardStatsCopyWith(DashboardStats value, $Res Function(DashboardStats) _then) = _$DashboardStatsCopyWithImpl;
 @useResult
 $Res call({
- int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d, int uniqueVisitors30d, Map<String, int> deviceUsage, List<LocationStat> topLocations, List<ChartDataPoint> topProjects
+ int totalImages, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d, int uniqueVisitors30d, Map<String, int> deviceUsage, List<LocationStat> topLocations, List<ChartDataPoint> topCategories
 });
 
 
@@ -628,9 +628,9 @@ class _$DashboardStatsCopyWithImpl<$Res>
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,Object? uniqueVisitors30d = null,Object? deviceUsage = null,Object? topLocations = null,Object? topProjects = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? totalImages = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,Object? uniqueVisitors30d = null,Object? deviceUsage = null,Object? topLocations = null,Object? topCategories = null,}) {
   return _then(_self.copyWith(
-totalProjects: null == totalProjects ? _self.totalProjects : totalProjects // ignore: cast_nullable_to_non_nullable
+totalImages: null == totalImages ? _self.totalImages : totalImages // ignore: cast_nullable_to_non_nullable
 as int,totalCategories: null == totalCategories ? _self.totalCategories : totalCategories // ignore: cast_nullable_to_non_nullable
 as int,totalServices: null == totalServices ? _self.totalServices : totalServices // ignore: cast_nullable_to_non_nullable
 as int,totalTestimonials: null == totalTestimonials ? _self.totalTestimonials : totalTestimonials // ignore: cast_nullable_to_non_nullable
@@ -642,7 +642,7 @@ as int,pageViews30d: null == pageViews30d ? _self.pageViews30d : pageViews30d //
 as int,uniqueVisitors30d: null == uniqueVisitors30d ? _self.uniqueVisitors30d : uniqueVisitors30d // ignore: cast_nullable_to_non_nullable
 as int,deviceUsage: null == deviceUsage ? _self.deviceUsage : deviceUsage // ignore: cast_nullable_to_non_nullable
 as Map<String, int>,topLocations: null == topLocations ? _self.topLocations : topLocations // ignore: cast_nullable_to_non_nullable
-as List<LocationStat>,topProjects: null == topProjects ? _self.topProjects : topProjects // ignore: cast_nullable_to_non_nullable
+as List<LocationStat>,topCategories: null == topCategories ? _self.topCategories : topCategories // ignore: cast_nullable_to_non_nullable
 as List<ChartDataPoint>,
   ));
 }
@@ -728,10 +728,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  int uniqueVisitors30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topProjects)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int totalImages,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  int uniqueVisitors30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topCategories)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DashboardStats() when $default != null:
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.uniqueVisitors30d,_that.deviceUsage,_that.topLocations,_that.topProjects);case _:
+return $default(_that.totalImages,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.uniqueVisitors30d,_that.deviceUsage,_that.topLocations,_that.topCategories);case _:
   return orElse();
 
 }
@@ -749,10 +749,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  int uniqueVisitors30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topProjects)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int totalImages,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  int uniqueVisitors30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topCategories)  $default,) {final _that = this;
 switch (_that) {
 case _DashboardStats():
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.uniqueVisitors30d,_that.deviceUsage,_that.topLocations,_that.topProjects);case _:
+return $default(_that.totalImages,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.uniqueVisitors30d,_that.deviceUsage,_that.topLocations,_that.topCategories);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -769,10 +769,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalProjects,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  int uniqueVisitors30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topProjects)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int totalImages,  int totalCategories,  int totalServices,  int totalTestimonials,  int newContacts,  int pendingBookings,  int pendingTestimonials,  int trashCount,  int pageViews30d,  int uniqueVisitors30d,  Map<String, int> deviceUsage,  List<LocationStat> topLocations,  List<ChartDataPoint> topCategories)?  $default,) {final _that = this;
 switch (_that) {
 case _DashboardStats() when $default != null:
-return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.uniqueVisitors30d,_that.deviceUsage,_that.topLocations,_that.topProjects);case _:
+return $default(_that.totalImages,_that.totalCategories,_that.totalServices,_that.totalTestimonials,_that.newContacts,_that.pendingBookings,_that.pendingTestimonials,_that.trashCount,_that.pageViews30d,_that.uniqueVisitors30d,_that.deviceUsage,_that.topLocations,_that.topCategories);case _:
   return null;
 
 }
@@ -784,10 +784,10 @@ return $default(_that.totalProjects,_that.totalCategories,_that.totalServices,_t
 @JsonSerializable()
 
 class _DashboardStats implements DashboardStats {
-  const _DashboardStats({this.totalProjects = 0, this.totalCategories = 0, this.totalServices = 0, this.totalTestimonials = 0, this.newContacts = 0, this.pendingBookings = 0, this.pendingTestimonials = 0, this.trashCount = 0, this.pageViews30d = 0, this.uniqueVisitors30d = 0, final  Map<String, int> deviceUsage = const {}, final  List<LocationStat> topLocations = const [], final  List<ChartDataPoint> topProjects = const []}): _deviceUsage = deviceUsage,_topLocations = topLocations,_topProjects = topProjects;
+  const _DashboardStats({this.totalImages = 0, this.totalCategories = 0, this.totalServices = 0, this.totalTestimonials = 0, this.newContacts = 0, this.pendingBookings = 0, this.pendingTestimonials = 0, this.trashCount = 0, this.pageViews30d = 0, this.uniqueVisitors30d = 0, final  Map<String, int> deviceUsage = const {}, final  List<LocationStat> topLocations = const [], final  List<ChartDataPoint> topCategories = const []}): _deviceUsage = deviceUsage,_topLocations = topLocations,_topCategories = topCategories;
   factory _DashboardStats.fromJson(Map<String, dynamic> json) => _$DashboardStatsFromJson(json);
 
-@override@JsonKey() final  int totalProjects;
+@override@JsonKey() final  int totalImages;
 @override@JsonKey() final  int totalCategories;
 @override@JsonKey() final  int totalServices;
 @override@JsonKey() final  int totalTestimonials;
@@ -816,13 +816,13 @@ class _DashboardStats implements DashboardStats {
   return EqualUnmodifiableListView(_topLocations);
 }
 
-/// Top proyectos más vistos (últimos 30 días).
- final  List<ChartDataPoint> _topProjects;
-/// Top proyectos más vistos (últimos 30 días).
-@override@JsonKey() List<ChartDataPoint> get topProjects {
-  if (_topProjects is EqualUnmodifiableListView) return _topProjects;
+/// Top categorías más vistas (últimos 30 días).
+ final  List<ChartDataPoint> _topCategories;
+/// Top categorías más vistas (últimos 30 días).
+@override@JsonKey() List<ChartDataPoint> get topCategories {
+  if (_topCategories is EqualUnmodifiableListView) return _topCategories;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_topProjects);
+  return EqualUnmodifiableListView(_topCategories);
 }
 
 
@@ -839,16 +839,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardStats&&(identical(other.totalProjects, totalProjects) || other.totalProjects == totalProjects)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d)&&(identical(other.uniqueVisitors30d, uniqueVisitors30d) || other.uniqueVisitors30d == uniqueVisitors30d)&&const DeepCollectionEquality().equals(other._deviceUsage, _deviceUsage)&&const DeepCollectionEquality().equals(other._topLocations, _topLocations)&&const DeepCollectionEquality().equals(other._topProjects, _topProjects));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DashboardStats&&(identical(other.totalImages, totalImages) || other.totalImages == totalImages)&&(identical(other.totalCategories, totalCategories) || other.totalCategories == totalCategories)&&(identical(other.totalServices, totalServices) || other.totalServices == totalServices)&&(identical(other.totalTestimonials, totalTestimonials) || other.totalTestimonials == totalTestimonials)&&(identical(other.newContacts, newContacts) || other.newContacts == newContacts)&&(identical(other.pendingBookings, pendingBookings) || other.pendingBookings == pendingBookings)&&(identical(other.pendingTestimonials, pendingTestimonials) || other.pendingTestimonials == pendingTestimonials)&&(identical(other.trashCount, trashCount) || other.trashCount == trashCount)&&(identical(other.pageViews30d, pageViews30d) || other.pageViews30d == pageViews30d)&&(identical(other.uniqueVisitors30d, uniqueVisitors30d) || other.uniqueVisitors30d == uniqueVisitors30d)&&const DeepCollectionEquality().equals(other._deviceUsage, _deviceUsage)&&const DeepCollectionEquality().equals(other._topLocations, _topLocations)&&const DeepCollectionEquality().equals(other._topCategories, _topCategories));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,totalProjects,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d,uniqueVisitors30d,const DeepCollectionEquality().hash(_deviceUsage),const DeepCollectionEquality().hash(_topLocations),const DeepCollectionEquality().hash(_topProjects));
+int get hashCode => Object.hash(runtimeType,totalImages,totalCategories,totalServices,totalTestimonials,newContacts,pendingBookings,pendingTestimonials,trashCount,pageViews30d,uniqueVisitors30d,const DeepCollectionEquality().hash(_deviceUsage),const DeepCollectionEquality().hash(_topLocations),const DeepCollectionEquality().hash(_topCategories));
 
 @override
 String toString() {
-  return 'DashboardStats(totalProjects: $totalProjects, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d, uniqueVisitors30d: $uniqueVisitors30d, deviceUsage: $deviceUsage, topLocations: $topLocations, topProjects: $topProjects)';
+  return 'DashboardStats(totalImages: $totalImages, totalCategories: $totalCategories, totalServices: $totalServices, totalTestimonials: $totalTestimonials, newContacts: $newContacts, pendingBookings: $pendingBookings, pendingTestimonials: $pendingTestimonials, trashCount: $trashCount, pageViews30d: $pageViews30d, uniqueVisitors30d: $uniqueVisitors30d, deviceUsage: $deviceUsage, topLocations: $topLocations, topCategories: $topCategories)';
 }
 
 
@@ -859,7 +859,7 @@ abstract mixin class _$DashboardStatsCopyWith<$Res> implements $DashboardStatsCo
   factory _$DashboardStatsCopyWith(_DashboardStats value, $Res Function(_DashboardStats) _then) = __$DashboardStatsCopyWithImpl;
 @override @useResult
 $Res call({
- int totalProjects, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d, int uniqueVisitors30d, Map<String, int> deviceUsage, List<LocationStat> topLocations, List<ChartDataPoint> topProjects
+ int totalImages, int totalCategories, int totalServices, int totalTestimonials, int newContacts, int pendingBookings, int pendingTestimonials, int trashCount, int pageViews30d, int uniqueVisitors30d, Map<String, int> deviceUsage, List<LocationStat> topLocations, List<ChartDataPoint> topCategories
 });
 
 
@@ -876,9 +876,9 @@ class __$DashboardStatsCopyWithImpl<$Res>
 
 /// Create a copy of DashboardStats
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? totalProjects = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,Object? uniqueVisitors30d = null,Object? deviceUsage = null,Object? topLocations = null,Object? topProjects = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? totalImages = null,Object? totalCategories = null,Object? totalServices = null,Object? totalTestimonials = null,Object? newContacts = null,Object? pendingBookings = null,Object? pendingTestimonials = null,Object? trashCount = null,Object? pageViews30d = null,Object? uniqueVisitors30d = null,Object? deviceUsage = null,Object? topLocations = null,Object? topCategories = null,}) {
   return _then(_DashboardStats(
-totalProjects: null == totalProjects ? _self.totalProjects : totalProjects // ignore: cast_nullable_to_non_nullable
+totalImages: null == totalImages ? _self.totalImages : totalImages // ignore: cast_nullable_to_non_nullable
 as int,totalCategories: null == totalCategories ? _self.totalCategories : totalCategories // ignore: cast_nullable_to_non_nullable
 as int,totalServices: null == totalServices ? _self.totalServices : totalServices // ignore: cast_nullable_to_non_nullable
 as int,totalTestimonials: null == totalTestimonials ? _self.totalTestimonials : totalTestimonials // ignore: cast_nullable_to_non_nullable
@@ -890,7 +890,7 @@ as int,pageViews30d: null == pageViews30d ? _self.pageViews30d : pageViews30d //
 as int,uniqueVisitors30d: null == uniqueVisitors30d ? _self.uniqueVisitors30d : uniqueVisitors30d // ignore: cast_nullable_to_non_nullable
 as int,deviceUsage: null == deviceUsage ? _self._deviceUsage : deviceUsage // ignore: cast_nullable_to_non_nullable
 as Map<String, int>,topLocations: null == topLocations ? _self._topLocations : topLocations // ignore: cast_nullable_to_non_nullable
-as List<LocationStat>,topProjects: null == topProjects ? _self._topProjects : topProjects // ignore: cast_nullable_to_non_nullable
+as List<LocationStat>,topCategories: null == topCategories ? _self._topCategories : topCategories // ignore: cast_nullable_to_non_nullable
 as List<ChartDataPoint>,
   ));
 }

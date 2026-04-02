@@ -15,9 +15,9 @@ part 'cache_manager.g.dart';
 /// Uso típico:
 /// ```dart
 /// final cache = ref.read(cacheManagerProvider);
-/// final json = await cache.get('projects_list');
-/// await cache.set('projects_list', payload: jsonEncode(data));
-/// await cache.invalidate('projects_list');
+/// final json = await cache.get('gallery_list');
+/// await cache.set('gallery_list', payload: jsonEncode(data));
+/// await cache.invalidate('gallery_list');
 /// ```
 class CacheManager {
   const CacheManager(this._db);
@@ -120,7 +120,7 @@ CacheManager cacheManager(Ref ref) {
 
 /// Constantes de claves de caché para evitar strings mágicos.
 abstract class CacheKeys {
-  static const String projectsList = 'projects_list';
+  static const String galleryList = 'gallery_list';
   static const String categoriesList = 'categories_list';
   static const String servicesList = 'services_list';
   static const String testimonialsList = 'testimonials_list';
@@ -132,7 +132,7 @@ abstract class CacheKeys {
   static const String settingsTheme = 'settings_theme';
   static const String dashboardStats = 'dashboard_stats';
 
-  static String projectDetail(String id) => 'projects_detail_$id';
+  static String galleryDetail(String id) => 'gallery_detail_$id';
   static String categoryDetail(String id) => 'categories_detail_$id';
   static String serviceDetail(String id) => 'services_detail_$id';
 }

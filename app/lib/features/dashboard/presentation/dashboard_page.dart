@@ -108,10 +108,10 @@ class DashboardPage extends ConsumerWidget {
                   children: [
                     StatCard(
                       icon: Icons.photo_library_outlined,
-                      label: 'Proyectos',
-                      value: stats.totalProjects.toString(),
+                      label: 'Imágenes',
+                      value: stats.totalImages.toString(),
                       color: AppColors.lightPrimary,
-                      onTap: () => context.goNamed(RouteNames.projects),
+                      onTap: () => context.goNamed(RouteNames.categories),
                     ),
                     StatCard(
                       icon: Icons.category_outlined,
@@ -247,7 +247,7 @@ class DashboardPage extends ConsumerWidget {
                     ),
             ),
 
-            // ── Sección: Top proyectos / Ranking ──────────────────────────
+            // ── Sección: Top categorías / Ranking ──────────────────────────
             statsAsync.when(
               loading: () => SliverPadding(
                 padding: padding.copyWith(top: AppSpacing.lg, bottom: 0),
@@ -283,7 +283,7 @@ class DashboardPage extends ConsumerWidget {
                   ),
                 ),
               ),
-              data: (stats) => stats.topProjects.isEmpty
+              data: (stats) => stats.topCategories.isEmpty
                   ? const SliverToBoxAdapter(child: SizedBox.shrink())
                   : SliverPadding(
                       padding: padding.copyWith(top: AppSpacing.lg, bottom: 0),
@@ -291,11 +291,11 @@ class DashboardPage extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SectionHeader(title: 'Top proyectos (30d)'),
+                            const SectionHeader(title: 'Top categorías (30d)'),
                             const SizedBox(height: AppSpacing.sm),
                             TopRankingSection(
                               items: [
-                                for (final p in stats.topProjects)
+                                for (final p in stats.topCategories)
                                   (p.label, p.count),
                               ],
                             ),

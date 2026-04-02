@@ -16,21 +16,6 @@ void main() {
     );
   });
 
-  group('RouteNames — projects', () {
-    test(
-      'projects == "projects"',
-      () => expect(RouteNames.projects, 'projects'),
-    );
-    test(
-      'projectNew == "project-new"',
-      () => expect(RouteNames.projectNew, 'project-new'),
-    );
-    test(
-      'projectEdit == "project-edit"',
-      () => expect(RouteNames.projectEdit, 'project-edit'),
-    );
-  });
-
   group('RouteNames — categories', () {
     test(
       'categories == "categories"',
@@ -150,9 +135,6 @@ void main() {
         RouteNames.login,
         RouteNames.splash,
         RouteNames.dashboard,
-        RouteNames.projects,
-        RouteNames.projectNew,
-        RouteNames.projectEdit,
         RouteNames.categories,
         RouteNames.categoryNew,
         RouteNames.categoryEdit,
@@ -225,25 +207,6 @@ void main() {
     test(
       'dashboard == "/dashboard"',
       () => expect(RoutePaths.dashboard, '/dashboard'),
-    );
-  });
-
-  group('RoutePaths — projects', () {
-    test(
-      'projects == "/projects"',
-      () => expect(RoutePaths.projects, '/projects'),
-    );
-    test(
-      'projectNew == "/projects/new"',
-      () => expect(RoutePaths.projectNew, '/projects/new'),
-    );
-    test(
-      'projectEdit contains ":id"',
-      () => expect(RoutePaths.projectEdit, contains(':id')),
-    );
-    test(
-      'projectEdit starts with "/projects/"',
-      () => expect(RoutePaths.projectEdit.startsWith('/projects/'), true),
     );
   });
 
@@ -379,9 +342,6 @@ void main() {
         RoutePaths.login,
         RoutePaths.splash,
         RoutePaths.dashboard,
-        RoutePaths.projects,
-        RoutePaths.projectNew,
-        RoutePaths.projectEdit,
         RoutePaths.categories,
         RoutePaths.categoryNew,
         RoutePaths.categoryEdit,
@@ -441,10 +401,6 @@ void main() {
   });
 
   group('RoutePaths — parametrized path helpers', () {
-    test('projectEdit pattern is /projects/:id/edit', () {
-      expect(RoutePaths.projectEdit, '/projects/:id/edit');
-    });
-
     test('categoryEdit pattern is /categories/:id/edit', () {
       expect(RoutePaths.categoryEdit, '/categories/:id/edit');
     });

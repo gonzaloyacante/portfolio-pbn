@@ -61,10 +61,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Ver Proyectos",
-      "short_name": "Proyectos",
-      "description": "Ver galería de proyectos de maquillaje",
-      "url": "/proyectos",
+      "name": "Ver Portfolio",
+      "short_name": "Portfolio",
+      "description": "Ver galería de trabajos de maquillaje",
+      "url": "/portfolio",
       "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
     },
     {

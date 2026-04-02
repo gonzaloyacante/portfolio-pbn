@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 /// Uso:
 /// ```dart
 /// ErrorState(
-///   message: 'No se pudo cargar los proyectos',
-///   onRetry: () => ref.invalidate(projectsProvider),
+///   message: 'No se pudo cargar las imágenes',
+///   onRetry: () => ref.invalidate(galleryProvider),
 /// )
 /// ```
 class ErrorState extends StatelessWidget {

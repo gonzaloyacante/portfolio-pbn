@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest'
 import {
-  projectFormSchema,
   contactFormSchema,
   themeEditorSchema,
   categorySchema,
@@ -43,79 +42,6 @@ const validTheme = {
 }
 
 describe('Validation Schemas', () => {
-  // ==========================================
-  // projectFormSchema
-  // ==========================================
-  describe('projectFormSchema', () => {
-    it('should validate a valid project', () => {
-      const validProject = {
-        title: 'Test Project',
-        description: 'A test project description',
-        categoryId: 'cat-123',
-        date: new Date().toISOString(),
-        thumbnailUrl: 'https://example.com/thumb.jpg',
-        isFeatured: false,
-      }
-
-      const result = projectFormSchema.safeParse(validProject)
-      expect(result.success).toBe(true)
-    })
-
-    it('should require title of minimum 3 characters', () => {
-      const invalidProject = {
-        title: 'AB',
-        categoryId: 'cat-123',
-        date: new Date().toISOString(),
-      }
-
-      const result = projectFormSchema.safeParse(invalidProject)
-      expect(result.success).toBe(false)
-      if (!result.success) {
-        expect(result.error.issues.some((i) => i.path.includes('title'))).toBe(true)
-      }
-    })
-
-    it('should require categoryId', () => {
-      const invalidProject = {
-        title: 'Valid Title',
-        date: new Date().toISOString(),
-        categoryId: '',
-      }
-
-      const result = projectFormSchema.safeParse(invalidProject)
-      expect(result.success).toBe(false)
-    })
-
-    it('should accept optional fields as undefined', () => {
-      const minimalProject = {
-        title: 'Valid Title Here',
-        categoryId: 'cat-123',
-        date: new Date().toISOString(),
-      }
-
-      const result = projectFormSchema.safeParse(minimalProject)
-      expect(result.success).toBe(true)
-    })
-
-    it('should accept isFeatured as boolean or string', () => {
-      const withBoolean = {
-        title: 'Test Project',
-        categoryId: 'cat-123',
-        date: new Date().toISOString(),
-        isFeatured: true,
-      }
-      const withString = {
-        title: 'Test Project',
-        categoryId: 'cat-123',
-        date: new Date().toISOString(),
-        isFeatured: 'on',
-      }
-
-      expect(projectFormSchema.safeParse(withBoolean).success).toBe(true)
-      expect(projectFormSchema.safeParse(withString).success).toBe(true)
-    })
-  })
-
   // ==========================================
   // contactFormSchema
   // ==========================================
@@ -256,7 +182,7 @@ describe('Validation Schemas', () => {
       const validCategory = {
         name: 'Audiovisual',
         slug: 'audiovisual',
-        description: 'Proyectos audiovisuales',
+        description: 'Audiovisuales y belleza',
         sortOrder: 1,
       }
 

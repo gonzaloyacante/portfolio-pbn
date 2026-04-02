@@ -10,9 +10,9 @@ void main() {
   group('ErrorState — renders required content', () {
     testWidgets('shows message text', (tester) async {
       await tester.pumpWidget(
-        _wrap(const ErrorState(message: 'No se pudo cargar los proyectos')),
+        _wrap(const ErrorState(message: 'No se pudo cargar las imágenes')),
       );
-      expect(find.text('No se pudo cargar los proyectos'), findsOneWidget);
+      expect(find.text('No se pudo cargar las imágenes'), findsOneWidget);
     });
 
     testWidgets('shows static heading "Algo salió mal"', (tester) async {

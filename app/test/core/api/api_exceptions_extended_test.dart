@@ -210,8 +210,8 @@ void main() {
     );
     test('custom message', () {
       expect(
-        const NotFoundException(message: 'Project not found').message,
-        'Project not found',
+        const NotFoundException(message: 'Category not found').message,
+        'Category not found',
       );
     });
     test('toString includes type', () {

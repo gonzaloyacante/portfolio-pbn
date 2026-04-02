@@ -9,16 +9,6 @@ class Endpoints {
   static const String authLogout = '/api/admin/auth/logout';
   static const String authMe = '/api/admin/auth/me';
 
-  // ── Proyectos ─────────────────────────────────────────────────────────────
-  static const String projects = '/api/admin/projects';
-  static String project(String id) => '/api/admin/projects/$id';
-  static const String projectsReorder = '/api/admin/projects/reorder';
-  static String projectImages(String id) => '/api/admin/projects/$id/images';
-  static String projectImagesReorder(String id) =>
-      '/api/admin/projects/$id/images/reorder';
-  static String projectImage(String id, String imageId) =>
-      '/api/admin/projects/$id/images/$imageId';
-
   // ── Categorías ────────────────────────────────────────────────────────────
   static const String categories = '/api/admin/categories';
   static String category(String id) => '/api/admin/categories/$id';

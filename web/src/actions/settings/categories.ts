@@ -55,7 +55,6 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
       // Manual mapping for strict Creation
       const createData: Prisma.CategorySettingsCreateInput = {
         showDescription: (cleanData.showDescription as boolean) ?? true,
-        showProjectCount: (cleanData.showProjectCount as boolean) ?? true,
         gridColumns: (cleanData.gridColumns as number) ?? 4,
         isActive: (cleanData.isActive as boolean) ?? true,
       }
@@ -65,7 +64,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
       })
     }
 
-    revalidatePath(ROUTES.public.projects, 'layout')
+    revalidatePath(ROUTES.public.portfolio, 'layout')
     revalidatePath(ROUTES.admin.categories)
     revalidateTag(CACHE_TAGS.categorySettings, 'max')
     return { success: true }

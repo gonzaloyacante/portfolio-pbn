@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 /// ```dart
 /// EmptyState(
 ///   icon: Icons.photo_library_outlined,
-///   title: 'Sin proyectos',
-///   subtitle: 'Crea tu primer proyecto para que aparezca aquí.',
-///   action: AppButton(label: 'Crear proyecto', onPressed: () {}),
+///   title: 'Sin imágenes',
+///   subtitle: 'Sube tu primera imagen para que aparezca aquí.',
+///   action: AppButton(label: 'Subir imagen', onPressed: () {}),
 /// )
 /// ```
 class EmptyState extends StatelessWidget {

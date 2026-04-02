@@ -179,7 +179,7 @@ _SiteSettings _$SiteSettingsFromJson(Map<String, dynamic> json) =>
       maintenanceMode: json['maintenanceMode'] as bool? ?? false,
       maintenanceMessage: json['maintenanceMessage'] as String?,
       showAboutPage: json['showAboutPage'] as bool? ?? true,
-      showProjectsPage: json['showProjectsPage'] as bool? ?? true,
+      showGalleryPage: json['showGalleryPage'] as bool? ?? true,
       showServicesPage: json['showServicesPage'] as bool? ?? false,
       showContactPage: json['showContactPage'] as bool? ?? true,
       allowIndexing: json['allowIndexing'] as bool? ?? true,
@@ -201,7 +201,7 @@ Map<String, dynamic> _$SiteSettingsToJson(_SiteSettings instance) =>
       'maintenanceMode': instance.maintenanceMode,
       'maintenanceMessage': instance.maintenanceMessage,
       'showAboutPage': instance.showAboutPage,
-      'showProjectsPage': instance.showProjectsPage,
+      'showGalleryPage': instance.showGalleryPage,
       'showServicesPage': instance.showServicesPage,
       'showContactPage': instance.showContactPage,
       'allowIndexing': instance.allowIndexing,
@@ -286,7 +286,7 @@ _HomeSettings _$HomeSettingsFromJson(
   ctaMobileOffsetX: (json['ctaMobileOffsetX'] as num?)?.toInt(),
   ctaMobileOffsetY: (json['ctaMobileOffsetY'] as num?)?.toInt(),
   ctaMobileFontSize: (json['ctaMobileFontSize'] as num?)?.toInt(),
-  showFeaturedProjects: json['showFeaturedProjects'] as bool? ?? true,
+  showFeaturedImages: json['showFeaturedImages'] as bool? ?? true,
   featuredTitle: json['featuredTitle'] as String?,
   featuredTitleFont: json['featuredTitleFont'] as String?,
   featuredTitleFontUrl: json['featuredTitleFontUrl'] as String?,
@@ -369,7 +369,7 @@ Map<String, dynamic> _$HomeSettingsToJson(_HomeSettings instance) =>
       'ctaMobileOffsetX': instance.ctaMobileOffsetX,
       'ctaMobileOffsetY': instance.ctaMobileOffsetY,
       'ctaMobileFontSize': instance.ctaMobileFontSize,
-      'showFeaturedProjects': instance.showFeaturedProjects,
+      'showFeaturedImages': instance.showFeaturedImages,
       'featuredTitle': instance.featuredTitle,
       'featuredTitleFont': instance.featuredTitleFont,
       'featuredTitleFontUrl': instance.featuredTitleFontUrl,
@@ -385,7 +385,6 @@ _CategoryDisplaySettings _$CategoryDisplaySettingsFromJson(
 ) => _CategoryDisplaySettings(
   id: json['id'] as String?,
   showDescription: json['showDescription'] as bool? ?? true,
-  showProjectCount: json['showProjectCount'] as bool? ?? true,
   gridColumns: (json['gridColumns'] as num?)?.toInt() ?? 4,
   isActive: json['isActive'] as bool? ?? true,
 );
@@ -395,7 +394,6 @@ Map<String, dynamic> _$CategoryDisplaySettingsToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'showDescription': instance.showDescription,
-  'showProjectCount': instance.showProjectCount,
   'gridColumns': instance.gridColumns,
   'isActive': instance.isActive,
 };

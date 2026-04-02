@@ -122,10 +122,8 @@ const nextConfig: NextConfig = {
       // PÚBLICAS
       // ----------------------------
       { source: '/sobre-mi', destination: '/about' },
-      { source: '/proyectos', destination: '/projects' },
-      { source: '/proyectos/:slug*', destination: '/projects/:slug*' }, // Si usas slugs
-      // Si tienes ruta singular para detalle:
-      { source: '/proyecto/:slug', destination: '/project/:slug' },
+      { source: '/proyectos', destination: '/portfolio' },
+      { source: '/proyectos/:slug*', destination: '/portfolio/:slug*' },
 
       { source: '/contacto', destination: '/contact' },
       { source: '/servicios', destination: '/services' },
@@ -139,11 +137,10 @@ const nextConfig: NextConfig = {
       { source: '/admin/panel', destination: '/admin/dashboard' },
       { source: '/admin/inicio', destination: '/admin/home' },
 
-      // Proyectos
-      { source: '/admin/proyectos', destination: '/admin/projects' },
-      { source: '/admin/proyectos/nuevo', destination: '/admin/projects/new' },
-      { source: '/admin/proyectos/:id/editar', destination: '/admin/projects/:id/edit' },
-      // { source: '/admin/proyectos/configuracion', destination: '/admin/projects/settings' }, // REMOVED (Merged into /projects)
+      // Portfolio / Categorías (old proyectos redirects)
+      { source: '/admin/proyectos', destination: '/admin/categories' },
+      { source: '/admin/proyectos/nuevo', destination: '/admin/categories/new' },
+      { source: '/admin/proyectos/:id/editar', destination: '/admin/categories/:id/edit' },
 
       // Categorías
       { source: '/admin/categorias', destination: '/admin/categories' },

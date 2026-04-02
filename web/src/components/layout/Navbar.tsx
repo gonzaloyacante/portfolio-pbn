@@ -18,7 +18,7 @@ import type { PageVisibility } from '@/actions/settings/site'
 const allNavItems = [
   { href: ROUTES.home, label: 'Inicio', key: 'home' as const },
   { href: ROUTES.public.about, label: 'Sobre mi', key: 'about' as const },
-  { href: ROUTES.public.projects, label: 'Proyectos', key: 'projects' as const },
+  { href: ROUTES.public.portfolio, label: 'Portfolio', key: 'galleries' as const },
   { href: ROUTES.public.services, label: 'Servicios', key: 'services' as const },
   { href: ROUTES.public.contact, label: 'Contacto', key: 'contact' as const },
 ]
@@ -37,7 +37,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
     return allNavItems.filter((item) => {
       if (item.key === 'home') return true
       if (item.key === 'about') return visibility.showAboutPage
-      if (item.key === 'projects') return visibility.showProjectsPage
+      if (item.key === 'galleries') return visibility.showGalleryPage
       if (item.key === 'services') return visibility.showServicesPage
       if (item.key === 'contact') return visibility.showContactPage
       return true

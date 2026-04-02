@@ -7,8 +7,8 @@ import '../../../core/theme/app_spacing.dart';
 /// Uso:
 /// ```dart
 /// SectionHeader(
-///   title: 'Proyectos recientes',
-///   subtitle: '12 proyectos publicados',
+///   title: 'Imágenes recientes',
+///   subtitle: '12 imágenes publicadas',
 ///   trailing: TextButton(onPressed: ..., child: Text('Ver todo')),
 /// )
 /// ```

@@ -144,7 +144,7 @@ class CategoriesRepository with OfflineFirstMixin {
 
   // ── Gallery ───────────────────────────────────────────────────────────────
 
-  /// Obtiene todas las imágenes de proyectos de una categoría,
+  /// Obtiene todas las imágenes de una categoría,
   /// ordenadas por [categoryGalleryOrder] (nulos al final).
   Future<List<GalleryImageItem>> getCategoryGallery(String categoryId) async {
     final resp = await _client.get<Map<String, dynamic>>(

@@ -231,7 +231,7 @@ export default function CategoryGalleryEditor({
       <div className="flex flex-col items-center justify-center py-24 text-center">
         <span className="mb-4 text-6xl">🖼️</span>
         <h3 className="text-foreground mb-2 text-2xl font-bold">Sin imágenes</h3>
-        <p className="text-muted-foreground">Esta categoría no tiene imágenes en sus proyectos.</p>
+        <p className="text-muted-foreground">Esta categoría no tiene imágenes en la galería.</p>
         <Button asChild variant="outline" className="mt-6 gap-2">
           <Link href={ROUTES.admin.categories}>
             <ArrowLeft size={16} />

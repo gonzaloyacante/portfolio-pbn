@@ -24,10 +24,6 @@ describe('ROUTES config', () => {
     expect(typeof ROUTES.admin.dashboard).toBe('string')
   })
 
-  it('admin has projects route', () => {
-    expect(ROUTES.admin.projects).toBeDefined()
-  })
-
   it('admin has categories route', () => {
     expect(ROUTES.admin.categories).toBeDefined()
   })
@@ -53,8 +49,8 @@ describe('ROUTES config', () => {
     expect(ROUTES.public.contact).toBeDefined()
   })
 
-  it('public has projects route', () => {
-    expect(ROUTES.public.projects).toBeDefined()
+  it('public has portfolio route', () => {
+    expect(ROUTES.public.portfolio).toBeDefined()
   })
 
   it('serviceDetail generates correct URL', () => {

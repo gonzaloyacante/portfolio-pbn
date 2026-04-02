@@ -58,14 +58,6 @@ class NotificationsPrefSection extends ConsumerWidget {
           colorScheme: colorScheme,
         ),
         NotifToggleTile(
-          icon: Icons.photo_library_outlined,
-          label: 'Proyectos',
-          subtitle: 'Al publicar o actualizar un proyecto',
-          value: prefs.projectsEnabled,
-          colorScheme: colorScheme,
-          onChanged: (v) => notifier.setProjects(enabled: v),
-        ),
-        NotifToggleTile(
           icon: Icons.design_services_outlined,
           label: 'Servicios',
           subtitle: 'Al añadir o modificar un servicio',

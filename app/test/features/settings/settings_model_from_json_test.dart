@@ -228,8 +228,8 @@ void main() {
     test('defaults showAboutPage to true', () {
       expect(SiteSettings.fromJson({}).showAboutPage, isTrue);
     });
-    test('defaults showProjectsPage to true', () {
-      expect(SiteSettings.fromJson({}).showProjectsPage, isTrue);
+    test('defaults showGalleryPage to true', () {
+      expect(SiteSettings.fromJson({}).showGalleryPage, isTrue);
     });
     test('parses maintenanceMode = true', () {
       expect(

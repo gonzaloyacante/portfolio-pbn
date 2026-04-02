@@ -224,7 +224,7 @@ export const homeSettingsSchema = z.object({
   ctaMobileFontSize: z.number().min(10).max(32).optional().nullable(),
 
   // Sección destacados
-  showFeaturedProjects: z.boolean(),
+  showFeaturedImages: z.boolean(),
   featuredTitle: z.string().optional().nullable(),
   featuredTitleFont: z.string().optional().nullable(),
   featuredTitleFontUrl: z.string().optional().nullable(),
@@ -299,19 +299,9 @@ export const contactSettingsSchema = z.object({
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>
 
-// Project Display Settings
-export const projectSettingsSchema = z.object({
-  showCardTitles: z.boolean(),
-  showCardCategory: z.boolean(),
-  gridColumns: z.number().min(1).max(4),
-})
-
-export type ProjectSettingsFormData = z.infer<typeof projectSettingsSchema>
-
 // Category Display Settings
 export const categorySettingsSchema = z.object({
   showDescription: z.boolean().default(true),
-  showProjectCount: z.boolean().default(true),
   gridColumns: z.number().min(1).max(5).default(4),
   isActive: z.boolean().default(true),
 })
@@ -321,51 +311,6 @@ export type CategorySettingsFormData = z.infer<typeof categorySettingsSchema>
 // ============================================
 // DATA MODELS
 // ============================================
-
-// Project
-export const projectFormSchema = z.object({
-  title: z.string().trim().min(3).max(200, 'El título es muy largo'),
-  description: z.string().trim().optional().nullable(),
-  categoryId: z.string().min(1, 'Categoría requerida'),
-  date: z.string(), // date input returns string
-  thumbnailUrl: z.string().optional().nullable(),
-  // Content
-  excerpt: z
-    .string()
-    .trim()
-    .max(300, 'El resumen no debe exceder los 300 caracteres')
-    .optional()
-    .nullable(),
-  videoUrl: z.string().trim().optional().nullable(),
-  duration: z.string().trim().max(100).optional().nullable(),
-  client: z.string().trim().max(100).optional().nullable(),
-  // Settings
-  isFeatured: z.union([z.boolean(), z.string()]).optional().nullable(),
-  isPinned: z.union([z.boolean(), z.string()]).optional().nullable(),
-  isActive: z.union([z.boolean(), z.string()]).optional().nullable(),
-})
-
-export type ProjectFormData = z.infer<typeof projectFormSchema>
-
-// Project API schema (receives arrays, proper booleans — used by Flutter app)
-export const projectApiSchema = z.object({
-  title: z.string().trim().min(3).max(200, 'El título es muy largo'),
-  description: z.string().trim().optional().nullable(),
-  categoryId: z.string().min(1, 'Categoría requerida'),
-  date: z.string().optional(), // Defaults to today on the server if not provided
-  thumbnailUrl: z.string().optional().nullable(),
-  excerpt: z
-    .string()
-    .trim()
-    .max(300, 'El resumen no debe exceder los 300 caracteres')
-    .optional()
-    .nullable(),
-  videoUrl: z.string().trim().optional().nullable(),
-  duration: z.string().trim().max(100).optional().nullable(),
-  client: z.string().trim().max(100).optional().nullable(),
-  isFeatured: z.boolean().optional(),
-  isPinned: z.boolean().optional(),
-})
 
 // Category
 export const categorySchema = z.object({
@@ -382,7 +327,6 @@ export const categorySchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
   description: z.string().trim().max(500, 'La descripción es muy larga').optional().nullable(),
   coverImageUrl: z.string().optional().nullable(),
-  thumbnailUrl: z.string().optional().nullable(),
   sortOrder: z.number().optional(),
 })
 
@@ -458,7 +402,7 @@ export const testimonialApiSchema = z.object({
   verified: z.boolean().optional(),
   featured: z.boolean().optional(),
   source: z.string().trim().max(50).optional().nullable(),
-  projectId: z.string().trim().optional().nullable(),
+  categoryId: z.string().trim().optional().nullable(),
   status: z.enum(['PENDING', 'APPROVED', 'REJECTED']).optional(),
   isActive: z.boolean().optional(),
 })
@@ -581,13 +525,6 @@ export const uploadDeleteSchema = z.object({
 })
 
 // ── Partial schemas for PATCH endpoints ─────────────────────────────────────
-
-export const projectPatchSchema = projectApiSchema
-  .extend({
-    slug: z.string().optional(),
-    isActive: z.boolean().optional(),
-  })
-  .partial()
 
 export const categoryPatchSchema = categoryApiSchema.partial()
 

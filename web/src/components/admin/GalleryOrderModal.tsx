@@ -15,7 +15,6 @@ interface GalleryImage {
   width?: number | null
   height?: number | null
   title?: string
-  projectSlug?: string
 }
 
 interface GalleryOrderModalProps {
@@ -88,7 +87,7 @@ export default function GalleryOrderModal({
     const isConfirmed = await confirm({
       title: '¿Restablecer orden?',
       message:
-        '¿Estás seguro de que quieres restablecer el orden a la configuración predeterminada? Esto deshará cualquier orden manual y usará el orden del proyecto.',
+        '¿Estás seguro de que quieres restablecer el orden a la configuración predeterminada? Esto deshará cualquier orden manual y usará el orden de subida.',
       confirmText: 'Sí, restablecer',
       cancelText: 'Cancelar',
       variant: 'danger',

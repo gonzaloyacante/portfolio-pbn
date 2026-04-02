@@ -18,7 +18,6 @@ interface GalleryImage {
   id: string
   url: string
   publicId: string
-  projectTitle: string
 }
 
 export default function CategoryCoverSelector({
@@ -103,7 +102,7 @@ export default function CategoryCoverSelector({
                   >
                     <Image
                       src={img.url}
-                      alt={img.projectTitle}
+                      alt="Imagen de galería"
                       fill
                       className="object-cover"
                       sizes="150px"
@@ -116,15 +115,15 @@ export default function CategoryCoverSelector({
                       </div>
                     )}
                     <div className="absolute right-0 bottom-0 left-0 truncate bg-black/60 p-1 text-center text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {img.projectTitle}
+                      {img.url.split('/').pop()?.split('.')[0] ?? 'imagen'}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-muted-foreground py-8 text-center">
-                <p>No hay proyectos con imágenes en esta categoría.</p>
-                <p className="text-sm">Sube una imagen nueva o agrega proyectos primero.</p>
+                <p>No hay imágenes en esta categoría.</p>
+                <p className="text-sm">Sube una imagen nueva.</p>
               </div>
             )}
           </div>
@@ -143,7 +142,8 @@ export default function CategoryCoverSelector({
               }}
             />
             <p className="text-muted-foreground mt-2 text-center text-xs">
-              Esta imagen se subirá independientemente y no estará vinculada a ningún proyecto.
+              Esta imagen se subirá independientemente y no estará vinculada a ninguna galería
+              específica.
             </p>
           </Card>
         </TabsContent>

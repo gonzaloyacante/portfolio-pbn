@@ -138,7 +138,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     _heroImageAltCtrl.text = s.heroMainImageAlt ?? '';
     _ctaTextCtrl.text = s.ctaText ?? '';
     _ctaLinkCtrl.text = s.ctaLink ?? '';
-    _showFeatured = s.showFeaturedProjects;
+    _showFeatured = s.showFeaturedImages;
     _featuredTitleCtrl.text = s.featuredTitle ?? '';
     _featuredCount = s.featuredCount.clamp(1, 9);
 
@@ -330,7 +330,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
         'ctaLink': _nullIfEmpty(_ctaLinkCtrl.text),
         'featuredTitle': _nullIfEmpty(_featuredTitleCtrl.text),
         // Non-text state
-        'showFeaturedProjects': _showFeatured,
+        'showFeaturedImages': _showFeatured,
         'featuredCount': _featuredCount,
         // Extra text controllers (fonts, colors, caption, alt…)
         for (final e in _extraCtrls.entries) e.key: _nullIfEmpty(e.value.text),

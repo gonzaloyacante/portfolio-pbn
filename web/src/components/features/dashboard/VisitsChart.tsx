@@ -34,7 +34,7 @@ export default function VisitsChart({
             </div>
             <div className="bg-card border-border rounded-2xl border p-4 text-center">
               <p className="text-primary text-3xl font-bold">{detailVisits}</p>
-              <p className="text-muted-foreground text-sm font-medium">Proyectos vistos</p>
+              <p className="text-muted-foreground text-sm font-medium">Imágenes vistas</p>
             </div>
             <div className="bg-card border-border rounded-2xl border p-4 text-center">
               <p className="text-primary text-3xl font-bold">{contactLeads}</p>

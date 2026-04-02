@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/category_model.dart';
-import 'gallery_badge.dart';
 
 class GalleryGridTile extends StatelessWidget {
   const GalleryGridTile({super.key, required this.item, this.position});
@@ -14,10 +13,7 @@ class GalleryGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    final aspectRatio =
-        (item.width != null && item.height != null && item.height! > 0)
-        ? item.width! / item.height!
-        : 0.8;
+    const double aspectRatio = 0.8;
 
     return AspectRatio(
       aspectRatio: aspectRatio,
@@ -25,7 +21,7 @@ class GalleryGridTile extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           CachedNetworkImage(
-            imageUrl: item.thumbnailUrl,
+            imageUrl: item.url,
             fit: BoxFit.cover,
             placeholder: (_, _) => ColoredBox(
               color: scheme.surfaceContainerHighest,
@@ -44,20 +40,6 @@ class GalleryGridTile extends StatelessWidget {
               ),
             ),
           ),
-          if (item.isCover || item.isHero)
-            Positioned(
-              bottom: 6,
-              left: 6,
-              child: Wrap(
-                spacing: 3,
-                children: [
-                  if (item.isCover)
-                    GalleryBadge(label: 'Portada', color: scheme.primary),
-                  if (item.isHero)
-                    GalleryBadge(label: 'Hero', color: scheme.tertiary),
-                ],
-              ),
-            ),
           if (position != null)
             Positioned(
               top: 6,

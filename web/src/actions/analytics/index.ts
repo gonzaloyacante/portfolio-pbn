@@ -187,22 +187,22 @@ export async function recordAnalyticEvent(
 const _fetchDashboardContentStats = unstable_cache(
   async () => {
     const [
-      projectsCount,
+      imagesCount,
       categoriesCount,
       testimonialsCount,
       deletedCount,
       contactsCount,
       pendingTestimonials,
     ] = await Promise.all([
-      prisma.project.count({ where: { deletedAt: null } }),
+      prisma.categoryImage.count(),
       prisma.category.count(),
       prisma.testimonial.count({ where: { isActive: true } }),
-      prisma.project.count({ where: { deletedAt: { not: null } } }),
+      prisma.category.count({ where: { deletedAt: { not: null } } }),
       prisma.contact.count({ where: { isRead: false } }),
       prisma.testimonial.count({ where: { isActive: false } }),
     ])
     return {
-      projectsCount,
+      imagesCount,
       categoriesCount,
       testimonialsCount,
       deletedCount,
@@ -213,12 +213,7 @@ const _fetchDashboardContentStats = unstable_cache(
   ['dashboard-content-stats'],
   {
     revalidate: CACHE_DURATIONS.SHORT * 2,
-    tags: [
-      CACHE_TAGS.projects,
-      CACHE_TAGS.categories,
-      CACHE_TAGS.testimonials,
-      CACHE_TAGS.contacts,
-    ],
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.testimonials, CACHE_TAGS.contacts],
   }
 )
 
@@ -242,7 +237,7 @@ const _fetchAnalyticsDashboardData = unstable_cache(
       detailVisits,
       contactLeads,
       trendRaw,
-      topProjectsRaw,
+      topViewsRaw,
       deviceGroups,
       topLocationsRaw,
     ] = await Promise.all([
@@ -250,9 +245,9 @@ const _fetchAnalyticsDashboardData = unstable_cache(
       prisma.analyticLog.count({
         where: { ...where7d, eventType: { endsWith: '_VIEW' }, isBot: false },
       }),
-      // 2. Project detail clicks
+      // 2. Category gallery views
       prisma.analyticLog.count({
-        where: { ...where7d, eventType: 'PROJECT_DETAIL_VIEW', isBot: false },
+        where: { ...where7d, eventType: 'CATEGORY_VIEW', isBot: false },
       }),
       // 3. Contact form leads
       prisma.analyticLog.count({
@@ -268,13 +263,13 @@ const _fetchAnalyticsDashboardData = unstable_cache(
         GROUP BY DATE_TRUNC('day', timestamp)
         ORDER BY date ASC
       `,
-      // 5. Top projects by view count
+      // 5. Top categories by view count
       prisma.analyticLog.groupBy({
         by: ['entityId'],
         where: {
           ...where7d,
-          eventType: 'PROJECT_DETAIL_VIEW',
-          entityType: 'Project',
+          eventType: 'CATEGORY_VIEW',
+          entityType: 'Category',
           entityId: { not: null },
           isBot: false,
         },
@@ -301,21 +296,21 @@ const _fetchAnalyticsDashboardData = unstable_cache(
     // --- Build trend map from DB aggregation ---
     const trendData = buildTrendData(trendRaw)
 
-    // --- Process top projects ---
-    const projectIds = topProjectsRaw.map((r) => r.entityId).filter(Boolean) as string[]
-    const projectsMap = new Map(
+    // --- Process top categories ---
+    const categoryIds = topViewsRaw.map((r) => r.entityId).filter(Boolean) as string[]
+    const categoriesMap = new Map(
       (
-        await prisma.project.findMany({
-          where: { id: { in: projectIds } },
-          select: { id: true, title: true },
+        await prisma.category.findMany({
+          where: { id: { in: categoryIds } },
+          select: { id: true, name: true },
         })
-      ).map((p) => [p.id, p.title])
+      ).map((p) => [p.id, p.name])
     )
-    const topProjects = topProjectsRaw
+    const topCategories = topViewsRaw
       .map((item) => {
         if (!item.entityId) return null
         return {
-          title: projectsMap.get(item.entityId) ?? 'Proyecto desconocido',
+          title: categoriesMap.get(item.entityId) ?? 'Categoría desconocida',
           count: item._count.entityId,
         }
       })
@@ -339,7 +334,7 @@ const _fetchAnalyticsDashboardData = unstable_cache(
       detailVisits,
       contactLeads,
       trendData,
-      topProjects,
+      topCategories,
       deviceUsage,
       topLocations,
     }

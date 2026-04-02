@@ -11,10 +11,17 @@ export function NewCategoryForm() {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const [coverUrl, setCoverUrl] = useState<string>('')
+  const [coverError, setCoverError] = useState<string | null>(null)
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
+    setCoverError(null)
+    if (!coverUrl) {
+      setCoverError('La imagen de portada es obligatoria')
+      return
+    }
     const formData = new FormData(e.currentTarget)
     // Slug is intentionally left empty — the server action generates it via generateSlug()
     // using NFD normalization which correctly handles Spanish characters (é, á, ñ, etc.)
@@ -74,10 +81,15 @@ export function NewCategoryForm() {
         <div className="space-y-2">
           <ImageUpload
             name="coverImageUrl"
-            label="Imagen de Portada (Opcional)"
+            label="Imagen de Portada *"
             folder="portfolio/categories"
             mode="single"
+            onChange={(urls) => {
+              setCoverUrl(urls[0] ?? '')
+              if (urls[0]) setCoverError(null)
+            }}
           />
+          {coverError && <p className="text-destructive text-sm">{coverError}</p>}
         </div>
 
         {/* Actions */}
