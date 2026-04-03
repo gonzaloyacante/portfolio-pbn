@@ -55,8 +55,15 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
           </div>
         </div>
 
-        {/* Gallery Order Button */}
-        <GalleryOrderButton categoryId={category.id} categoryName={category.name} />
+        {/* Gestionar galería (pantalla completa) */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={() => router.push(ROUTES.admin.categoryGallery(category.id))}
+        >
+          Ordenar / Gestionar Galería
+        </Button>
       </div>
 
       <Card className="p-8">

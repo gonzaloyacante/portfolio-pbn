@@ -184,6 +184,51 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
 
               const SizedBox(height: 24),
 
+              // Sección separada para gestionar la galería (no confundir con la portada)
+              const SizedBox(height: 16),
+              Text('Galería', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.photo_album_outlined, size: 18),
+                label: const Text('Gestionar galería'),
+                onPressed: _loading
+                    ? null
+                    : () async {
+                        if (!_isEdit) return;
+                        final result = await context.pushNamed(
+                          RouteNames.categoryGallery,
+                          pathParameters: {'id': widget.categoryId!},
+                          queryParameters: {'name': _nameCtrl.text},
+                        );
+
+                        if (result == true) {
+                          if (!mounted) return;
+                          // Usar post-frame callback para evitar advertencias de
+                          // uso de BuildContext tras await.
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            try {
+                              ref.invalidate(
+                                categoryDetailProvider(widget.categoryId!),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Galería actualizada, recargando...',
+                                  ),
+                                ),
+                              );
+                            } catch (_) {}
+                          });
+                        }
+                      },
+
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 44),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
               FilledButton(
                 onPressed: _loading ? null : _submit,
                 child: Text(

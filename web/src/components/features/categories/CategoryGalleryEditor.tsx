@@ -22,6 +22,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { motion } from 'framer-motion'
 import { updateCategoryGalleryOrder, resetCategoryGalleryOrder } from '@/actions/gallery-ordering'
 import { Button } from '@/components/ui'
+import ImageUpload from '@/components/ui/media/ImageUpload'
 import { OptimizedImage } from '@/components/ui'
 import { Save, RotateCcw, GripVertical, Check, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -266,6 +267,38 @@ export default function CategoryGalleryEditor({
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Upload directly to gallery */}
+          <div className="mr-2">
+            <ImageUpload
+              name="category-gallery-upload"
+              folder={`portfolio/categories`}
+              mode="gallery"
+              multiple={true}
+              maxFiles={100}
+              onChange={async (urls, publicIds) => {
+                if (!urls || urls.length === 0) return
+                try {
+                  const payload = urls.map((u, i) => ({ url: u, publicId: publicIds[i] }))
+                  const res = await fetch(`/api/admin/categories/${categoryId}/gallery`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ images: payload }),
+                    credentials: 'include',
+                  })
+                  const data = await res.json()
+                  if (data.success) {
+                    showToast.success('Imágenes agregadas a la galería')
+                    router.refresh()
+                  } else {
+                    showToast.error(data.error ?? 'Error al agregar imágenes')
+                  }
+                } catch (err) {
+                  showToast.error('Error al agregar imágenes a la galería')
+                }
+              }}
+            />
+          </div>
+
           {isDirty && (
             <motion.span
               initial={{ opacity: 0, x: 10 }}

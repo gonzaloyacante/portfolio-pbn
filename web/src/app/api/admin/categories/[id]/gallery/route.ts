@@ -8,6 +8,9 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { revalidatePath, revalidateTag } from 'next/cache'
+import { CACHE_TAGS } from '@/lib/cache-tags'
+import { ROUTES } from '@/config/routes'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -44,6 +47,63 @@ export async function GET(req: Request, { params }: Params) {
     logger.error('GET category gallery error', err as Record<string, unknown>)
     return NextResponse.json(
       { success: false, error: 'Error al obtener la galería' },
+      { status: 500 }
+    )
+  }
+}
+
+// ── POST (Agregar imágenes a la galería) ───────────────────────────────────
+export async function POST(req: Request, { params }: Params) {
+  const auth = await withAdminJwt(req)
+  if (!auth.ok) return auth.response
+
+  try {
+    const { id: categoryId } = await params
+
+    const body = await req.json()
+    const images: { url: string; publicId: string }[] = body?.images
+
+    if (!Array.isArray(images) || images.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'El campo "images" es requerido y debe ser un array' },
+        { status: 400 }
+      )
+    }
+
+    // Verificar que la categoría existe
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, deletedAt: null },
+      select: { id: true },
+    })
+    if (!category) {
+      return NextResponse.json(
+        { success: false, error: 'Categoría no encontrada' },
+        { status: 404 }
+      )
+    }
+
+    // Calcular el siguiente índice de orden disponible
+    const currentCount = await prisma.categoryImage.count({ where: { categoryId } })
+
+    const toCreate = images.map((img, i) => ({
+      url: img.url,
+      publicId: img.publicId,
+      categoryId,
+      order: currentCount + i,
+    }))
+
+    await prisma.categoryImage.createMany({ data: toCreate })
+
+    // Revalidate
+    revalidatePath(ROUTES.admin.categories)
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+
+    logger.info(`${images.length} image(s) added to category: ${categoryId}`)
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    logger.error('POST category gallery add error', err as Record<string, unknown>)
+    return NextResponse.json(
+      { success: false, error: 'Error al agregar imágenes a la galería' },
       { status: 500 }
     )
   }

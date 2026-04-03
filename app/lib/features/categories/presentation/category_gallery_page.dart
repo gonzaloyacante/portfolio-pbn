@@ -73,7 +73,18 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           onPressed: () =>
               ref.read(categoryGalleryViewModeProvider.notifier).toggle(),
         ),
-        if (_dirty)
+        if (_dirty) ...[
+          TextButton.icon(
+            onPressed: _saving ? null : _saveAndReturn,
+            icon: _saving
+                ? const SizedBox.square(
+                    dimension: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.save_outlined, size: 18),
+            label: const Text('Guardar'),
+          ),
+          const SizedBox(width: 8),
           TextButton.icon(
             onPressed: _saving ? null : _saveOrder,
             icon: _saving
@@ -84,6 +95,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                 : const Icon(Icons.save_outlined, size: 18),
             label: const Text('Guardar orden'),
           ),
+        ],
         if (_items != null && _items!.isNotEmpty)
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
@@ -205,6 +217,17 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  Future<void> _saveAndReturn() async {
+    // Guarda el orden (si es necesario) y vuelve a la pantalla previa.
+    await _saveOrder();
+    if (!mounted) return;
+
+    // Al volver, la página de formulario quedará tal como estaba en la pila
+    // (estado preservado). Enviamos true como resultado para que el form
+    // pueda refrescar si lo necesita.
+    Navigator.of(context).pop(true);
   }
 
   Future<void> _resetOrder() async {
