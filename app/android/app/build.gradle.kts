@@ -98,8 +98,6 @@ android {
         jniLibs {
             // Preserve native libs for all ABIs (avoid them being stripped by AGP)
             useLegacyPackaging = true
-n            // Ensure any libsqlite3.so from AARs is included (pick first if duplicates)
-            pickFirst("**/libsqlite3.so")
         }
         resources {
             excludes += listOf(
