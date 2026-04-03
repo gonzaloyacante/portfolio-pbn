@@ -1,61 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/sync/sync_manager.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-
-// ── SyncIndicator ─────────────────────────────────────────────────────────────
-
-/// Indicador del estado de sincronización offline.
-///
-/// Muestra un spinner durante la sync, ícono de error si falla, o nada si idle.
-/// Se coloca habitualmente en el AppBar o en el drawer header.
-class SyncIndicator extends ConsumerWidget {
-  const SyncIndicator({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final syncStatus = ref.watch(syncManagerProvider);
-    return _SyncIndicatorContent(syncStatus: syncStatus);
-  }
-}
-
-class _SyncIndicatorContent extends StatelessWidget {
-  const _SyncIndicatorContent({required this.syncStatus});
-
-  final SyncStatus syncStatus;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return switch (syncStatus) {
-      SyncStatus.syncing => Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: colorScheme.primary,
-          ),
-        ),
-      ),
-      SyncStatus.error => Tooltip(
-        message: 'Error de sincronización. Toca para reintentar.',
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Icon(
-            Icons.sync_problem_rounded,
-            color: colorScheme.error,
-            size: 22,
-          ),
-        ),
-      ),
-      SyncStatus.idle => const SizedBox.shrink(),
-    };
-  }
-}
 
 // ── OfflineBanner ─────────────────────────────────────────────────────────────
 

@@ -11,8 +11,6 @@ import '../auth/auth_provider.dart';
 import '../auth/auth_state.dart';
 import '../auth/token_storage.dart';
 import '../config/env_config.dart';
-import '../database/app_database.dart';
-import '../sync/sync_queue.dart';
 import '../utils/app_logger.dart';
 import 'debug_log_page.dart';
 import 'debug_provider.dart';
@@ -20,13 +18,6 @@ import 'server_url_provider.dart';
 import '../theme/app_radius.dart';
 
 part 'debug_panel_cards.dart';
-
-// ── Provider auxiliar ─────────────────────────────────────────────────────────
-
-/// Conteo reactivo de operaciones sync pendientes (solo para debug panel).
-final pendingSyncCountProvider = StreamProvider.autoDispose<int>((ref) {
-  return ref.watch(syncQueueProvider).watchPendingCount();
-});
 
 // ── DebugPanel ────────────────────────────────────────────────────────────────
 
@@ -60,7 +51,6 @@ class DebugPanel extends ConsumerStatefulWidget {
 
 class _DebugPanelState extends ConsumerState<DebugPanel> {
   bool _clearingCache = false;
-  bool _clearingDb = false;
 
   // ── Acciones ──────────────────────────────────────────────────────────────
 
@@ -103,41 +93,6 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
     }
   }
 
-  Future<void> _clearDatabase() async {
-    setState(() => _clearingDb = true);
-    try {
-      final db = ref.read(appDatabaseProvider);
-      await db.close();
-      final dbDir = await getApplicationDocumentsDirectory();
-      final dbFile = File('${dbDir.path}/portfolio_pbn.db');
-      if (dbFile.existsSync()) {
-        await dbFile.delete();
-        AppLogger.warn('[Debug] Base de datos local eliminada');
-        if (mounted) {
-          _showSnack('🗑️ DB local eliminada. Reinicia la app.');
-        }
-      } else {
-        if (mounted) _showSnack('DB no encontrada en disco.');
-      }
-    } catch (e) {
-      AppLogger.error('[Debug] Error al eliminar DB', e);
-      if (mounted) _showSnack('❌ Error al eliminar la DB');
-    } finally {
-      if (mounted) setState(() => _clearingDb = false);
-    }
-  }
-
-  Future<void> _clearSyncQueue() async {
-    try {
-      final queue = ref.read(syncQueueProvider);
-      await queue.clearAll();
-      AppLogger.info('[Debug] Cola de sync vaciada');
-      if (mounted) _showSnack('✅ Cola de sync vaciada');
-    } catch (e) {
-      AppLogger.error('[Debug] Error al vaciar sync queue', e);
-    }
-  }
-
   void _copyToClipboard(String text, String label) {
     Clipboard.setData(ClipboardData(text: text));
     _showSnack('📋 $label copiado');
@@ -160,7 +115,6 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
   Widget build(BuildContext context) {
     final buildInfoAsync = ref.watch(appBuildInfoProvider);
     final authAsync = ref.watch(authProvider);
-    final pendingSync = ref.watch(pendingSyncCountProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return DraggableScrollableSheet(
@@ -235,19 +189,10 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                   ),
                   const SizedBox(height: 12),
 
-                  // ── Sync Status ─────────────────────────────────────
-                  _SyncInfoCard(
-                    pendingCount: pendingSync,
-                    onClearQueue: _clearSyncQueue,
-                  ),
-                  const SizedBox(height: 12),
-
                   // ── Acciones de Debug ───────────────────────────────
                   _DebugActionsCard(
                     clearingCache: _clearingCache,
-                    clearingDb: _clearingDb,
                     onClearCache: _clearCache,
-                    onClearDatabase: _clearDatabase,
                     onOpenLogs: () {
                       // Navigator.push used intentionally — debug-only page
                       // not registered in GoRouter (excluded from production).

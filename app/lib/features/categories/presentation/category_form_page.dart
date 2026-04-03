@@ -10,7 +10,6 @@ import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../shared/models/offline_result.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import '../providers/categories_provider.dart';
@@ -255,48 +254,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       );
 
       if (_isEdit) {
-        final result = await repo.updateCategory(
-          widget.categoryId!,
-          formData.toJson(),
-        );
-        switch (result) {
-          case LiveResult():
-            ref.invalidate(categoryDetailProvider(widget.categoryId!));
-          case OfflineEnqueuedResult():
-            ref.invalidate(categoriesListProvider);
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    '✈️ Sin conexión — cambios guardados. Se sincronizarán al reconectarte.',
-                  ),
-                  duration: Duration(seconds: 4),
-                ),
-              );
-              context.pop();
-            }
-            return;
-        }
+        await repo.updateCategory(widget.categoryId!, formData.toJson());
+        ref.invalidate(categoryDetailProvider(widget.categoryId!));
       } else {
-        final result = await repo.createCategory(formData);
-        switch (result) {
-          case LiveResult():
-            break; // continúa el flujo normal
-          case OfflineEnqueuedResult():
-            ref.invalidate(categoriesListProvider);
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    '✈️ Sin conexión — categoría guardada. Se publicará al reconectarte.',
-                  ),
-                  duration: Duration(seconds: 4),
-                ),
-              );
-              context.pop();
-            }
-            return;
-        }
+        await repo.createCategory(formData);
       }
 
       ref.invalidate(categoriesListProvider);

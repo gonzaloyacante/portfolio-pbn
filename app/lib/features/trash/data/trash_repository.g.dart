@@ -49,4 +49,4 @@ final class TrashRepositoryProvider
   }
 }
 
-String _$trashRepositoryHash() => r'73e7156b2ee4af6335e2c3e4ee930b95aae941f9';
+String _$trashRepositoryHash() => r'5442ac005f333b7ff3f22d18c89307126a4b6564';

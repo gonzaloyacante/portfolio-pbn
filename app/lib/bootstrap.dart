@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,10 +26,10 @@ import 'firebase_options.dart';
 /// NOTA: Requiere `android/app/google-services.json` e
 /// `ios/Runner/GoogleService-Info.plist` para Firebase (ficheros gitignored).
 Future<void> bootstrap() async {
-  // 0. Google Fonts — en release deshabilitar descarga de fuentes en runtime ──
-  // En producción las fuentes debería estar bundleadas en assets.
-  // allowRuntimeFetching = true solo en debug para facilitar el desarrollo.
-  GoogleFonts.config.allowRuntimeFetching = kDebugMode;
+  // 0. Google Fonts — permitir descarga de fuentes en runtime.
+  // La app usa Google Fonts online para ciertas fuentes; habilitamos la
+  // descarga en runtime para evitar fallos si la fuente no está bundleada.
+  GoogleFonts.config.allowRuntimeFetching = true;
 
   // Inicializar datos de locale para español (table_calendar, intl, etc.)
   await initializeDateFormatting('es_ES');

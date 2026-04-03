@@ -344,62 +344,17 @@ class _AuthStateContent extends StatelessWidget {
   }
 }
 
-// ── Tarjeta: Sync Info ────────────────────────────────────────────────────────
-
-class _SyncInfoCard extends StatelessWidget {
-  const _SyncInfoCard({required this.pendingCount, required this.onClearQueue});
-
-  final AsyncValue<int> pendingCount;
-  final VoidCallback onClearQueue;
-
-  @override
-  Widget build(BuildContext context) {
-    return _DebugCard(
-      title: 'Offline Sync',
-      icon: Icons.sync,
-      children: [
-        pendingCount.when(
-          data: (count) => Row(
-            children: [
-              Expanded(
-                child: _InfoRow(
-                  label: 'Pendientes',
-                  value: count.toString(),
-                  valueColor: count > 0 ? Colors.orange : Colors.green,
-                ),
-              ),
-              if (count > 0)
-                TextButton.icon(
-                  icon: const Icon(Icons.clear_all, size: 16),
-                  label: const Text('Vaciar'),
-                  onPressed: onClearQueue,
-                  style: TextButton.styleFrom(foregroundColor: Colors.orange),
-                ),
-            ],
-          ),
-          loading: () => const LinearProgressIndicator(),
-          error: (e, _) => Text('Error: $e'),
-        ),
-      ],
-    );
-  }
-}
-
 // ── Tarjeta: Debug Actions ────────────────────────────────────────────────────
 
 class _DebugActionsCard extends StatelessWidget {
   const _DebugActionsCard({
     required this.clearingCache,
-    required this.clearingDb,
     required this.onClearCache,
-    required this.onClearDatabase,
     required this.onOpenLogs,
   });
 
   final bool clearingCache;
-  final bool clearingDb;
   final VoidCallback onClearCache;
-  final VoidCallback onClearDatabase;
   final VoidCallback onOpenLogs;
 
   @override
@@ -413,13 +368,6 @@ class _DebugActionsCard extends StatelessWidget {
           label: 'Limpiar caché',
           loading: clearingCache,
           onTap: onClearCache,
-        ),
-        _ActionButton(
-          icon: Icons.storage_outlined,
-          label: 'Borrar DB local',
-          loading: clearingDb,
-          onTap: onClearDatabase,
-          color: Colors.red,
         ),
         _ActionButton(
           icon: Icons.article_outlined,
@@ -562,14 +510,12 @@ class _ActionButton extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.loading = false,
-    this.color,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
   final bool loading;
-  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -586,10 +532,7 @@ class _ActionButton extends StatelessWidget {
               : Icon(icon, size: 16),
           label: Text(label),
           onPressed: loading ? null : onTap,
-          style: OutlinedButton.styleFrom(
-            foregroundColor: color,
-            alignment: Alignment.centerLeft,
-          ),
+          style: OutlinedButton.styleFrom(alignment: Alignment.centerLeft),
         ),
       ),
     );

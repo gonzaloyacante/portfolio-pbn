@@ -55,4 +55,4 @@ final class BookingsRepositoryProvider
 }
 
 String _$bookingsRepositoryHash() =>
-    r'b877ad633bf840d9b5da199ee46dd0bc22bba7b5';
+    r'49266abd04ccaca27e62c65b8847107d29d79542';
