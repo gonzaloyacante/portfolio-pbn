@@ -39,9 +39,7 @@ export default function CategoryGallery({
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1280) setColumns(4)
-      else if (window.innerWidth >= 1024) setColumns(3)
-      else if (window.innerWidth >= 768) setColumns(2)
+      if (window.innerWidth >= 1024) setColumns(3)
       else setColumns(2)
     }
     handleResize()
@@ -78,18 +76,7 @@ export default function CategoryGallery({
   return (
     <>
       {/* Grid */}
-      <div
-        className={cn(
-          'grid gap-4',
-          columns === 1
-            ? 'grid-cols-1'
-            : columns === 2
-              ? 'grid-cols-2'
-              : columns === 3
-                ? 'grid-cols-3'
-                : 'grid-cols-4'
-        )}
-      >
+      <div className={cn('grid gap-4', columns === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
         {distributedImages.map((columnImages, colIndex) => (
           <div key={colIndex} className="flex flex-col gap-4">
             {columnImages.map((img) => (
