@@ -68,6 +68,82 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
     }
   }
 
+  Future<void> _toggleServiceActive(BuildContext ctx, ServiceItem item) async {
+    try {
+      await ref.read(servicesRepositoryProvider).updateService(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(servicesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Servicio desactivado' : 'Servicio activado',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
+  }
+
+  void _showServiceActions(BuildContext ctx, ServiceItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.serviceEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleServiceActive(ctx, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewMode = ref.watch(servicesViewModeProvider);
@@ -159,9 +235,18 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                                   delay: Duration(
                                     milliseconds: (i * 40).clamp(0, 300),
                                   ),
-                                  child: ServiceGridCard(
-                                    item: paginated.data[i],
-                                    onDelete: _delete,
+                                  child: GestureDetector(
+                                    onLongPress: () {
+                                      HapticFeedback.mediumImpact();
+                                      _showServiceActions(
+                                        ctx,
+                                        paginated.data[i],
+                                      );
+                                    },
+                                    child: ServiceGridCard(
+                                      item: paginated.data[i],
+                                      onDelete: _delete,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -195,9 +280,18 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                                       await _delete(ctx, paginated.data[i]);
                                       return false;
                                     },
-                                    child: ServiceTile(
-                                      item: paginated.data[i],
-                                      onDelete: _delete,
+                                    child: GestureDetector(
+                                      onLongPress: () {
+                                        HapticFeedback.mediumImpact();
+                                        _showServiceActions(
+                                          ctx,
+                                          paginated.data[i],
+                                        );
+                                      },
+                                      child: ServiceTile(
+                                        item: paginated.data[i],
+                                        onDelete: _delete,
+                                      ),
                                     ),
                                   ),
                                 ),

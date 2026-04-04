@@ -70,6 +70,85 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
     }
   }
 
+  Future<void> _toggleCategoryActive(
+    BuildContext ctx,
+    CategoryItem item,
+  ) async {
+    try {
+      await ref.read(categoriesRepositoryProvider).updateCategory(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(categoriesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Categoría desactivada' : 'Categoría activada',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
+  }
+
+  void _showCategoryActions(BuildContext ctx, CategoryItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.categoryEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleCategoryActive(ctx, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _showSettingsDialog(BuildContext context) async {
     CategoryDisplaySettings current;
     try {
@@ -252,7 +331,13 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
               await _delete(ctx, items[i]);
               return false;
             },
-            child: CategoryTile(item: items[i], onDelete: _delete),
+            child: GestureDetector(
+              onLongPress: () {
+                HapticFeedback.mediumImpact();
+                _showCategoryActions(ctx, items[i]);
+              },
+              child: CategoryTile(item: items[i], onDelete: _delete),
+            ),
           ),
         ),
       ),
@@ -274,7 +359,13 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: CategoryGridCard(item: items[i], onDelete: _delete),
+          child: GestureDetector(
+            onLongPress: () {
+              HapticFeedback.mediumImpact();
+              _showCategoryActions(ctx, items[i]);
+            },
+            child: CategoryGridCard(item: items[i], onDelete: _delete),
+          ),
         ),
       ),
     );

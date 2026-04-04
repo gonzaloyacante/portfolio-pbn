@@ -62,6 +62,97 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
     }
   }
 
+  Future<void> _changeTestimonialStatus(
+    BuildContext ctx,
+    TestimonialItem item,
+    String newStatus,
+  ) async {
+    try {
+      await ref.read(testimonialsRepositoryProvider).updateTestimonial(
+        item.id,
+        {'status': newStatus},
+      );
+      ref.invalidate(testimonialsListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              newStatus == 'APPROVED'
+                  ? 'Testimonio aprobado'
+                  : 'Testimonio rechazado',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
+  }
+
+  void _showTestimonialActions(BuildContext ctx, TestimonialItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.testimonialEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            if (item.status != 'APPROVED')
+              ListTile(
+                leading: const Icon(Icons.check_circle_outline),
+                title: const Text('Aprobar'),
+                onTap: () {
+                  Navigator.of(sheetCtx).pop();
+                  _changeTestimonialStatus(ctx, item, 'APPROVED');
+                },
+              ),
+            if (item.status != 'REJECTED')
+              ListTile(
+                leading: const Icon(
+                  Icons.cancel_outlined,
+                  color: AppColors.destructive,
+                ),
+                title: const Text('Rechazar'),
+                onTap: () {
+                  Navigator.of(sheetCtx).pop();
+                  _changeTestimonialStatus(ctx, item, 'REJECTED');
+                },
+              ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   AppStatus _statusFromString(String status) => switch (status) {
     'APPROVED' => AppStatus.approved,
     'REJECTED' => AppStatus.rejected,
@@ -153,10 +244,19 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                                 await _delete(ctx, paginated.data[i]);
                                 return false;
                               },
-                              child: TestimonialTile(
-                                item: paginated.data[i],
-                                statusOf: _statusFromString,
-                                onDelete: _delete,
+                              child: GestureDetector(
+                                onLongPress: () {
+                                  HapticFeedback.mediumImpact();
+                                  _showTestimonialActions(
+                                    ctx,
+                                    paginated.data[i],
+                                  );
+                                },
+                                child: TestimonialTile(
+                                  item: paginated.data[i],
+                                  statusOf: _statusFromString,
+                                  onDelete: _delete,
+                                ),
                               ),
                             ),
                           ),
