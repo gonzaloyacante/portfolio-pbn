@@ -32,7 +32,14 @@ export const metadata: Metadata = {
  * Portfolio Page - Category Grid
  * Design: Grid 1x 2x 4x for 4 items balance.
  */
-export default async function PortfolioPage() {
+export default async function PortfolioPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>
+}) {
+  const sp = await searchParams
+  const activeCategory = sp.category ?? null
+
   const [categories, categorySettings] = await Promise.all([
     prisma.category.findMany({
       where: { isActive: true, deletedAt: null },
@@ -49,6 +56,10 @@ export default async function PortfolioPage() {
   const showCount = false
   const showDesc = categorySettings?.showDescription ?? false
 
+  const filteredCategories = activeCategory
+    ? categories.filter((c) => c.slug === activeCategory)
+    : categories
+
   return (
     <section className="w-full bg-(--background) transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12 lg:px-16 lg:py-12">
@@ -62,12 +73,33 @@ export default async function PortfolioPage() {
           </p>
         </div>
 
+        {/* Category Filter Chips */}
+        {categories.length > 1 && (
+          <div className="mb-6 flex flex-wrap gap-2 sm:mb-8">
+            <Link
+              href={ROUTES.public.portfolio}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${!activeCategory ? 'bg-(--primary) text-white' : 'bg-(--muted) text-(--foreground) hover:bg-(--primary)/10'}`}
+            >
+              Todas
+            </Link>
+            {categories.map((cat) => (
+              <Link
+                key={cat.id}
+                href={`${ROUTES.public.portfolio}?category=${cat.slug}`}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${activeCategory === cat.slug ? 'bg-(--primary) text-white' : 'bg-(--muted) text-(--foreground) hover:bg-(--primary)/10'}`}
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        )}
+
         {/* Categories Grid */}
-        {categories.length > 0 ? (
+        {filteredCategories.length > 0 ? (
           <StaggerChildren
             className={`grid gap-3 sm:gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-2 lg:grid-cols-4' : ''} `}
           >
-            {categories.map((category) => {
+            {filteredCategories.map((category) => {
               const cardImageUrl = category.coverImageUrl ?? category.images[0]?.url ?? null
 
               return (
