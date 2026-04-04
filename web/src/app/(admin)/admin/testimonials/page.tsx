@@ -1,5 +1,11 @@
 import { prisma } from '@/lib/db'
-import { createTestimonial, deleteTestimonial, toggleTestimonial } from '@/actions/cms/testimonials'
+import {
+  createTestimonial,
+  deleteTestimonial,
+  toggleTestimonial,
+  approveTestimonial,
+  rejectTestimonial,
+} from '@/actions/cms/testimonials'
 import { Button, Card, Badge } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
@@ -121,22 +127,51 @@ export default async function TestimonialsPage() {
                     <Link href={ROUTES.admin.editTestimonial(t.id)}>✏️</Link>
                   </Button>
 
-                  {/* Toggle Active/Inactive */}
-                  <form
-                    action={async () => {
-                      'use server'
-                      await toggleTestimonial(t.id)
-                    }}
-                  >
-                    <Button
-                      type="submit"
-                      variant={t.isActive ? 'secondary' : 'primary'}
-                      size="sm"
-                      className="shadow-sm"
+                  {/* Approve / Reject for PENDING */}
+                  {t.status === 'PENDING' && (
+                    <>
+                      <form
+                        action={async () => {
+                          'use server'
+                          await approveTestimonial(t.id)
+                        }}
+                      >
+                        <Button type="submit" variant="primary" size="sm" className="shadow-sm">
+                          ✓ Aprobar
+                        </Button>
+                      </form>
+                      <form
+                        action={async () => {
+                          'use server'
+                          await rejectTestimonial(t.id)
+                        }}
+                      >
+                        <Button type="submit" variant="destructive" size="sm" className="shadow-sm">
+                          ✕ Rechazar
+                        </Button>
+                      </form>
+                    </>
+                  )}
+
+                  {/* Toggle Active/Inactive for non-PENDING */}
+                  {t.status !== 'PENDING' && (
+                    <form
+                      action={async () => {
+                        'use server'
+                        await toggleTestimonial(t.id)
+                      }}
                     >
-                      {t.isActive ? '🔒 Ocultar' : '✅ Aprobar'}
-                    </Button>
-                  </form>
+                      <Button
+                        type="submit"
+                        variant={t.isActive ? 'secondary' : 'primary'}
+                        size="sm"
+                        className="shadow-sm"
+                      >
+                        {t.isActive ? '🔒 Ocultar' : '👁️ Mostrar'}
+                      </Button>
+                    </form>
+                  )}
+
                   {/* Delete */}
                   <form
                     action={async () => {
