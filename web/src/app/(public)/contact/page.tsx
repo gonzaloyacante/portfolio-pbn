@@ -162,6 +162,28 @@ export default async function ContactPage() {
             )}
           </div>
 
+          {/* Instagram Widget Desktop */}
+          {contactSettings?.showInstagram && contactSettings?.instagram && (
+            <a
+              href={contactSettings.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-primary/20 hover:border-primary/60 mb-6 flex w-full max-w-xs items-center gap-4 rounded-2xl border bg-gradient-to-r from-pink-50 to-purple-50 px-5 py-4 transition-all hover:scale-[1.02] dark:from-pink-950/20 dark:to-purple-950/20"
+            >
+              <Instagram className="text-primary h-8 w-8 flex-shrink-0" />
+              <div className="min-w-0">
+                <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                  Sígueme en Instagram
+                </p>
+                <p className="text-foreground truncate font-semibold">
+                  {contactSettings.instagramUsername
+                    ? `@${contactSettings.instagramUsername.replace(/^@/, '')}`
+                    : 'Instagram'}
+                </p>
+              </div>
+            </a>
+          )}
+
           {/* Social Links Desktop */}
           {contactSettings?.showSocialLinks && socialLinks.length > 0 && (
             <div className="flex flex-wrap justify-start gap-4">
@@ -216,6 +238,28 @@ export default async function ContactPage() {
                 </a>
               ))}
           </div>
+
+          {/* Instagram Widget Mobile */}
+          {contactSettings?.showInstagram && contactSettings?.instagram && (
+            <a
+              href={contactSettings.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-primary/20 hover:border-primary/60 mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border bg-gradient-to-r from-pink-50 to-purple-50 px-5 py-4 transition-all hover:scale-[1.02] lg:hidden dark:from-pink-950/20 dark:to-purple-950/20"
+            >
+              <Instagram className="text-primary h-6 w-6 flex-shrink-0" />
+              <div>
+                <p className="text-muted-foreground text-xs tracking-widest uppercase">
+                  Sígueme en Instagram
+                </p>
+                <p className="text-foreground font-semibold">
+                  {contactSettings.instagramUsername
+                    ? `@${contactSettings.instagramUsername.replace(/^@/, '')}`
+                    : 'Instagram'}
+                </p>
+              </div>
+            </a>
+          )}
         </div>
       </div>
 
