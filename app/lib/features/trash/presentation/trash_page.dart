@@ -17,11 +17,20 @@ import '../data/trash_model.dart';
 import '../providers/trash_provider.dart';
 import 'widgets/trash_section.dart';
 
-class TrashPage extends ConsumerWidget {
+class TrashPage extends ConsumerStatefulWidget {
   const TrashPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TrashPage> createState() => _TrashPageState();
+}
+
+class _TrashPageState extends ConsumerState<TrashPage> {
+  String _searchQuery = '';
+
+  void _onSearch(String value) => setState(() => _searchQuery = value.trim());
+
+  @override
+  Widget build(BuildContext context) {
     final trashAsync = ref.watch(trashItemsProvider);
 
     return AppScaffold(
@@ -33,15 +42,54 @@ class TrashPage extends ConsumerWidget {
           onRetry: () => ref.invalidate(trashItemsProvider),
         ),
         data: (grouped) {
-          final allItems = grouped.values.expand((list) => list).toList();
+          final normalizedQuery = _searchQuery.toLowerCase();
+          final filteredGrouped = normalizedQuery.isEmpty
+              ? grouped
+              : Map.fromEntries(
+                  grouped.entries
+                      .map(
+                        (e) => MapEntry(
+                          e.key,
+                          e.value
+                              .where(
+                                (item) => item.displayName
+                                    .toLowerCase()
+                                    .contains(normalizedQuery),
+                              )
+                              .toList(),
+                        ),
+                      )
+                      .where((e) => e.value.isNotEmpty),
+                );
+          final allItems = filteredGrouped.values
+              .expand((list) => list)
+              .toList();
           if (allItems.isEmpty) {
+            if (normalizedQuery.isNotEmpty) {
+              return Column(
+                children: [
+                  AppSearchBar(
+                    hint: 'Buscar en papelera...',
+                    onChanged: _onSearch,
+                  ),
+                  const Expanded(
+                    child: EmptyState(
+                      icon: Icons.search_off_outlined,
+                      title: 'Sin resultados',
+                      subtitle:
+                          'No hay elementos que coincidan con la búsqueda',
+                    ),
+                  ),
+                ],
+              );
+            }
             return const EmptyState(
               icon: Icons.delete_outline,
               title: 'Papelera vacía',
               subtitle: 'No hay elementos eliminados',
             );
           }
-          final sections = grouped.entries
+          final sections = filteredGrouped.entries
               .where((e) => e.value.isNotEmpty)
               .toList();
 
@@ -62,8 +110,8 @@ class TrashPage extends ConsumerWidget {
                         RouteNames.trashDetail,
                         extra: item,
                       ),
-                      onRestore: (item) => _restore(context, ref, item),
-                      onPurge: (item) => _purge(context, ref, item),
+                      onRestore: (item) => _restore(context, item),
+                      onPurge: (item) => _purge(context, item),
                     ),
                   );
                 }
@@ -94,8 +142,8 @@ class TrashPage extends ConsumerWidget {
                                 RouteNames.trashDetail,
                                 extra: item,
                               ),
-                              onRestore: (item) => _restore(context, ref, item),
-                              onPurge: (item) => _purge(context, ref, item),
+                              onRestore: (item) => _restore(context, item),
+                              onPurge: (item) => _purge(context, item),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -108,8 +156,8 @@ class TrashPage extends ConsumerWidget {
                                 RouteNames.trashDetail,
                                 extra: item,
                               ),
-                              onRestore: (item) => _restore(context, ref, item),
-                              onPurge: (item) => _purge(context, ref, item),
+                              onRestore: (item) => _restore(context, item),
+                              onPurge: (item) => _purge(context, item),
                             ),
                           ),
                         ],
@@ -127,8 +175,8 @@ class TrashPage extends ConsumerWidget {
                           RouteNames.trashDetail,
                           extra: item,
                         ),
-                        onRestore: (item) => _restore(context, ref, item),
-                        onPurge: (item) => _purge(context, ref, item),
+                        onRestore: (item) => _restore(context, item),
+                        onPurge: (item) => _purge(context, item),
                       ),
                     );
                     i++;
@@ -141,7 +189,14 @@ class TrashPage extends ConsumerWidget {
                   horizontal: 16,
                   vertical: 12,
                 ),
-                children: rows,
+                children: [
+                  AppSearchBar(
+                    hint: 'Buscar en papelera...',
+                    onChanged: _onSearch,
+                  ),
+                  const SizedBox(height: 8),
+                  ...rows,
+                ],
               );
             },
           );
@@ -152,7 +207,7 @@ class TrashPage extends ConsumerWidget {
 
   /// Invalida el provider de lista correspondiente al tipo de elemento,
   /// para que las listas reflejen la restauración o eliminación.
-  void _invalidateListByType(WidgetRef ref, String type) {
+  void _invalidateListByType(String type) {
     switch (type) {
       case 'category':
         ref.invalidate(categoriesListProvider);
@@ -167,11 +222,7 @@ class TrashPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _restore(
-    BuildContext context,
-    WidgetRef ref,
-    TrashItem item,
-  ) async {
+  Future<void> _restore(BuildContext context, TrashItem item) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Restaurar elemento',
@@ -187,7 +238,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .restore(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
-      _invalidateListByType(ref, item.type);
+      _invalidateListByType(item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -206,11 +257,7 @@ class TrashPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _purge(
-    BuildContext context,
-    WidgetRef ref,
-    TrashItem item,
-  ) async {
+  Future<void> _purge(BuildContext context, TrashItem item) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar permanentemente',
@@ -226,7 +273,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .purge(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
-      _invalidateListByType(ref, item.type);
+      _invalidateListByType(item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
