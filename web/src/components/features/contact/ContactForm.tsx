@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ROUTES } from '@/config/routes'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 // Response preference type
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP'
@@ -85,6 +86,7 @@ export default function ContactForm({
   const [submitted, setSubmitted] = useState(false)
   const searchParams = useSearchParams()
   const serviceName = searchParams.get('service')
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   const {
     register,
@@ -121,6 +123,8 @@ export default function ContactForm({
 
   const onSubmit = async (data: ContactFormData) => {
     try {
+      const token = executeRecaptcha ? await executeRecaptcha('contact_form') : ''
+
       const formData = new FormData()
       formData.append('name', data.name)
       formData.append('email', data.email ?? '')
@@ -128,6 +132,7 @@ export default function ContactForm({
       formData.append('message', data.message)
       formData.append('responsePreference', data.responsePreference)
       formData.append('privacy', data.privacy ? 'on' : 'off')
+      formData.append('recaptchaToken', token)
 
       const result = await sendContactEmail(formData)
 

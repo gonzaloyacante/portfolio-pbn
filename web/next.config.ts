@@ -53,24 +53,24 @@ const securityHeaders = [
     key: 'Content-Security-Policy',
     value: [
       "default-src 'self'",
-      // Scripts: Next.js (unsafe-inline para hydration), Sentry, Google Analytics, Vercel Live
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live https://*.vercel.live",
+      // Scripts: Next.js (unsafe-inline para hydration), Sentry, Google Analytics, Vercel Live, reCAPTCHA
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live https://*.vercel.live https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/",
       // Styles: inline (Next.js/Tailwind) + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel
       "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com",
       // Fonts: self, data URIs, Google Fonts CDN
       "font-src 'self' data: https://fonts.gstatic.com",
-      // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation
-      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io",
+      // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation, reCAPTCHA
+      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/",
       // Media: Cloudinary (videos)
       "media-src 'self' https://res.cloudinary.com",
       // Objects: none (no Flash/plugins)
       "object-src 'none'",
       // Workers: Next.js + PWA service worker
       "worker-src 'self' blob:",
-      // Frames: Vercel Live (preview comments toolbar)
-      'frame-src https://vercel.live',
+      // Frames: Vercel Live (preview comments toolbar), reCAPTCHA
+      'frame-src https://vercel.live https://www.google.com/recaptcha/ https://recaptcha.google.com/',
       // Base URI: only self
       "base-uri 'self'",
       // Form actions: only self (Server Actions)

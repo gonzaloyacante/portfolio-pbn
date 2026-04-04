@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 /**
  * TestimonialForm - Refactored to use UI components
@@ -13,12 +14,15 @@ export default function TestimonialForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [rating, setRating] = useState(5)
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true)
     formData.set('rating', rating.toString())
 
     try {
+      const token = executeRecaptcha ? await executeRecaptcha('testimonial_form') : ''
+      formData.set('recaptchaToken', token)
       const result = await submitPublicTestimonial(formData)
 
       if (result.success) {

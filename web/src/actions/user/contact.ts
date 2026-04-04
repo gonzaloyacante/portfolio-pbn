@@ -14,6 +14,7 @@ import { createRateLimiter } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/lib/rate-limit-config'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { verifyRecaptchaToken } from '@/lib/recaptcha'
 
 /**
  * Acciones de contacto con validación robusta y rate limiting
@@ -49,6 +50,12 @@ function sanitizeText(text: string): string {
 }
 
 export async function sendContactEmail(formData: FormData) {
+  const recaptchaToken = formData.get('recaptchaToken') as string
+  const isHuman = await verifyRecaptchaToken(recaptchaToken)
+  if (!isHuman) {
+    return { success: false, message: 'Verificación de seguridad fallida. Inténtalo de nuevo.' }
+  }
+
   const rawData = {
     name: formData.get('name') as string,
     email: formData.get('email') as string,

@@ -12,6 +12,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { createRateLimiter } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/lib/rate-limit-config'
+import { verifyRecaptchaToken } from '@/lib/recaptcha'
 
 // Rate limiter para el formulario público de testimonios
 const publicTestimonialLimiter = createRateLimiter(RATE_LIMITS.TESTIMONIAL)
@@ -79,6 +80,12 @@ export async function createTestimonial(formData: FormData) {
  * Create testimonial from public form (goes to moderation)
  */
 export async function submitPublicTestimonial(formData: FormData) {
+  const recaptchaToken = formData.get('recaptchaToken') as string
+  const isHuman = await verifyRecaptchaToken(recaptchaToken)
+  if (!isHuman) {
+    return { success: false, error: 'Verificación de seguridad fallida. Inténtalo de nuevo.' }
+  }
+
   const rawData = {
     name: formData.get('name'),
     text: formData.get('text'),
