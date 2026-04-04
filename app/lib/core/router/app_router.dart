@@ -275,6 +275,14 @@ final List<RouteBase> _routes = [
       child: BookingDetailPage(bookingId: state.pathParameters['id']!),
     ),
   ),
+  GoRoute(
+    path: RoutePaths.bookingEdit,
+    name: RouteNames.bookingEdit,
+    pageBuilder: (context, state) => _fadePage(
+      state: state,
+      child: BookingFormPage(bookingId: state.pathParameters['id']),
+    ),
+  ),
   // ── Settings ──────────────────────────────────────────────────────────────
   GoRoute(
     path: RoutePaths.settings,

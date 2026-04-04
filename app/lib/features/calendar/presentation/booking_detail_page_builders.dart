@@ -17,6 +17,14 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
           centerTitle: false,
           actions: [
             IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Editar',
+              onPressed: () => context.pushNamed(
+                RouteNames.bookingEdit,
+                pathParameters: {'id': widget.bookingId},
+              ),
+            ),
+            IconButton(
               icon: const Icon(Icons.delete_outline),
               tooltip: 'Eliminar',
               onPressed: _delete,

@@ -14,7 +14,9 @@ import '../providers/calendar_provider.dart';
 import '../../../core/theme/app_radius.dart';
 
 class BookingFormPage extends ConsumerStatefulWidget {
-  const BookingFormPage({super.key});
+  const BookingFormPage({super.key, this.bookingId});
+
+  final String? bookingId;
 
   @override
   ConsumerState<BookingFormPage> createState() => _BookingFormPageState();
@@ -24,6 +26,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   final _formKey = GlobalKey<FormState>();
   bool _saving = false;
   bool _isDirty = false;
+  bool _prefilled = false;
+
+  bool get _isEdit => widget.bookingId != null;
 
   final _clientNameCtrl = TextEditingController();
   final _clientEmailCtrl = TextEditingController();
@@ -41,6 +46,18 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _notesCtrl.dispose();
     _guestCountCtrl.dispose();
     super.dispose();
+  }
+
+  void _populate(BookingDetail detail) {
+    if (_prefilled) return;
+    _clientNameCtrl.text = detail.clientName;
+    _clientEmailCtrl.text = detail.clientEmail;
+    _guestCountCtrl.text = detail.guestCount > 1 ? '${detail.guestCount}' : '';
+    _notesCtrl.text = detail.clientNotes ?? '';
+    _completeClientPhone = detail.clientPhone;
+    _date = detail.date;
+    _serviceId = detail.serviceId;
+    _prefilled = true;
   }
 
   void _markDirty() {
@@ -69,8 +86,8 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     final today = DateTime(now.year, now.month, now.day);
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: _date != null && _date!.isAfter(today) ? _date! : today,
-      firstDate: today,
+      initialDate: _date ?? today,
+      firstDate: _isEdit ? DateTime(2020) : today,
       lastDate: DateTime(2035),
     );
     if (pickedDate == null || !mounted) return;
@@ -123,7 +140,12 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             : _notesCtrl.text.trim(),
         serviceId: _serviceId!,
       );
-      await repo.createBooking(data);
+      if (_isEdit) {
+        await repo.updateBooking(widget.bookingId!, data.toJson());
+        ref.invalidate(bookingDetailProvider(widget.bookingId!));
+      } else {
+        await repo.createBooking(data);
+      }
       ref.invalidate(bookingsListProvider);
       if (mounted) {
         HapticFeedback.lightImpact();
@@ -133,8 +155,12 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No se pudo crear la reserva. Inténtalo de nuevo.'),
+          SnackBar(
+            content: Text(
+              _isEdit
+                  ? 'No se pudo actualizar la reserva. Inténtalo de nuevo.'
+                  : 'No se pudo crear la reserva. Inténtalo de nuevo.',
+            ),
           ),
         );
         setState(() => _saving = false);
@@ -183,6 +209,45 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isEdit && !_prefilled) {
+      final async = ref.watch(bookingDetailProvider(widget.bookingId!));
+      return async.when(
+        loading: () => Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+              tooltip: 'Volver',
+            ),
+            title: const Text('Editar reserva'),
+          ),
+          body: const Center(child: CircularProgressIndicator()),
+        ),
+        error: (e, _) => Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
+              tooltip: 'Volver',
+            ),
+            title: const Text('Editar reserva'),
+          ),
+          body: ErrorState(
+            message: 'No se pudo cargar la reserva',
+            onRetry: () =>
+                ref.invalidate(bookingDetailProvider(widget.bookingId!)),
+          ),
+        ),
+        data: (detail) {
+          _populate(detail);
+          return _buildFormScaffold(context);
+        },
+      );
+    }
+    return _buildFormScaffold(context);
+  }
+
+  Widget _buildFormScaffold(BuildContext context) {
     final dateLabel = _date == null
         ? 'Seleccionar fecha y hora'
         : '${_date!.day}/${_date!.month}/${_date!.year}  '
@@ -202,7 +267,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
               onPressed: () => _maybeLeave(context),
               tooltip: 'Volver',
             ),
-            title: const Text('Nueva reserva'),
+            title: Text(_isEdit ? 'Editar reserva' : 'Nueva reserva'),
             centerTitle: false,
             actions: [
               TextButton(onPressed: _submit, child: const Text('GUARDAR')),
@@ -338,7 +403,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                 FilledButton.icon(
                   onPressed: _submit,
                   icon: const Icon(Icons.save_outlined),
-                  label: const Text('Crear reserva'),
+                  label: Text(_isEdit ? 'Guardar cambios' : 'Crear reserva'),
                 ),
                 const SizedBox(height: 16),
               ],

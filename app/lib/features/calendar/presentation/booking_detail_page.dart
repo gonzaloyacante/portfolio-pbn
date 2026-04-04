@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/router/route_names.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/booking_model.dart';
