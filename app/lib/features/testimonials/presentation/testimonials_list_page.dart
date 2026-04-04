@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_colors.dart';
 
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
@@ -132,10 +134,30 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                             delay: Duration(
                               milliseconds: (i * 40).clamp(0, 300),
                             ),
-                            child: TestimonialTile(
-                              item: paginated.data[i],
-                              statusOf: _statusFromString,
-                              onDelete: _delete,
+                            child: Dismissible(
+                              key: Key(paginated.data[i].id),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                color: AppColors.destructive,
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(
+                                  right: AppSpacing.lg,
+                                ),
+                                child: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              confirmDismiss: (_) async {
+                                HapticFeedback.mediumImpact();
+                                await _delete(ctx, paginated.data[i]);
+                                return false;
+                              },
+                              child: TestimonialTile(
+                                item: paginated.data[i],
+                                statusOf: _statusFromString,
+                                onDelete: _delete,
+                              ),
                             ),
                           ),
                         ),

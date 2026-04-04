@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -7,6 +8,7 @@ import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 
@@ -236,7 +238,22 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: CategoryTile(item: items[i], onDelete: _delete),
+          child: Dismissible(
+            key: Key(items[i].id),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: AppColors.destructive,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: AppSpacing.lg),
+              child: const Icon(Icons.delete_outline, color: Colors.white),
+            ),
+            confirmDismiss: (_) async {
+              HapticFeedback.mediumImpact();
+              await _delete(ctx, items[i]);
+              return false;
+            },
+            child: CategoryTile(item: items[i], onDelete: _delete),
+          ),
         ),
       ),
     );
