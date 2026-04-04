@@ -157,6 +157,9 @@ model ContactSettings {
   email            String?
   phone            String?
   whatsapp         String?
+  instagram        String? // URL del perfil de Instagram
+  instagramUsername String? @default("") // @username para mostrar
+  showInstagram    Boolean  @default(true)
   location         String?
   // Form Configuration
   formTitle        String?  @default("Envíame un mensaje")

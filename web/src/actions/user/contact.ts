@@ -61,7 +61,12 @@ export async function sendContactEmail(formData: FormData) {
     email: formData.get('email') as string,
     phone: formData.get('phone') as string,
     message: formData.get('message') as string,
-    responsePreference: formData.get('responsePreference') as 'EMAIL' | 'PHONE' | 'WHATSAPP',
+    responsePreference: formData.get('responsePreference') as
+      | 'EMAIL'
+      | 'PHONE'
+      | 'WHATSAPP'
+      | 'INSTAGRAM',
+    instagramUser: (formData.get('instagramUser') as string | undefined) || undefined,
     privacy: formData.get('privacy') === 'on',
   }
 
@@ -100,6 +105,7 @@ function buildSanitizedData(data: ValidatedContactData) {
     phone: data.phone ? sanitizeText(data.phone) : undefined,
     message: sanitizeText(data.message),
     responsePreference: data.responsePreference,
+    instagramUser: data.instagramUser ? sanitizeText(data.instagramUser) : undefined,
   }
 }
 

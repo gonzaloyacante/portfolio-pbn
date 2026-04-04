@@ -23,7 +23,8 @@ export const contactFormSchema = z
       .trim()
       .min(10, 'El mensaje debe tener al menos 10 caracteres')
       .max(2000, 'El mensaje es demasiado largo'),
-    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
+    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP', 'INSTAGRAM']),
+    instagramUser: z.string().trim().max(50).optional(),
     privacy: z.boolean().refine((val) => val === true, {
       message: 'Debes aceptar la política de privacidad',
     }),
@@ -46,6 +47,13 @@ export const contactFormSchema = z
         code: 'custom',
         path: ['phone'],
         message: 'El teléfono es obligatorio para este tipo de contacto',
+      })
+    }
+    if (data.responsePreference === 'INSTAGRAM' && !data.instagramUser?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['instagramUser'],
+        message: 'El usuario de Instagram es obligatorio',
       })
     }
   })
