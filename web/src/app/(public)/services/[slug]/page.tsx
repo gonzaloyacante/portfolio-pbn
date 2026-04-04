@@ -1,5 +1,4 @@
 import { getServiceBySlug, getServices } from '@/actions/cms/services'
-import { getContactSettings } from '@/actions/settings/contact'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -79,10 +78,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
   const { slug } = await params
-  const [service, contactSettings] = await Promise.all([
-    getServiceBySlug(slug),
-    getContactSettings(),
-  ])
+  const service = await getServiceBySlug(slug)
 
   if (!service || !service.isActive) {
     notFound()
@@ -244,19 +240,6 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             <div className="flex flex-col gap-3">
               <Button asChild size="lg" className="w-full">
                 <Link href={`/contacto?subject=Reserva ${service.name}`}>Agendar Cita</Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="w-full">
-                <Link
-                  href={
-                    contactSettings?.whatsapp
-                      ? `https://wa.me/${contactSettings.whatsapp.replace(/\D/g, '')}?text=Hola, info sobre ${service.name}`
-                      : `/contacto?subject=Consulta sobre ${service.name}`
-                  }
-                  target={contactSettings?.whatsapp ? '_blank' : undefined}
-                  rel={contactSettings?.whatsapp ? 'noopener noreferrer' : undefined}
-                >
-                  Consultar por WhatsApp
-                </Link>
               </Button>
             </div>
 
