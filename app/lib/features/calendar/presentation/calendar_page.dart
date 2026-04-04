@@ -198,6 +198,12 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     );
     final dayListContent = loading
         ? const SkeletonCalendarList()
+        : (bookings?.isEmpty ?? false)
+        ? const EmptyState(
+            icon: Icons.calendar_today_outlined,
+            title: 'Sin reservas',
+            subtitle: 'No hay reservas en el período seleccionado',
+          )
         : dayItems.isEmpty
         ? const EmptyDay()
         : ListView.separated(
