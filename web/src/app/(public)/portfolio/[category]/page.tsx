@@ -87,12 +87,11 @@ export default async function CategoryGalleryPage({
     <section className="bg-background w-full transition-colors duration-500">
       <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
       <JsonLd
-        type="CollectionPage"
+        type="ImageGallery"
         data={{
           name: category.name,
           description: category.description || `Galería de ${category.name}`,
           url: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.public.portfolio}/${category.slug}`,
-          image: allImages[0]?.url,
         }}
       />
 

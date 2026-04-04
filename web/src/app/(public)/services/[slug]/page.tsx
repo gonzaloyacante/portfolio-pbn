@@ -105,7 +105,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           description: service.shortDesc || service.description?.slice(0, 160) || service.name,
           url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios/${slug}`,
           image: service.imageUrl ?? undefined,
-          priceRange: tiers.length > 0 ? `${tiers[0].price}€` : undefined,
+          offers: tiers.map((t) => ({ name: t.name, price: t.price })),
         }}
       />
       {/* Hero Section */}
