@@ -199,20 +199,33 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     final dayListContent = loading
         ? const SkeletonCalendarList()
         : (bookings?.isEmpty ?? false)
-        ? const EmptyState(
-            icon: Icons.calendar_today_outlined,
-            title: 'Sin reservas',
-            subtitle: 'No hay reservas en el período seleccionado',
+        ? ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: const [
+              EmptyState(
+                icon: Icons.calendar_today_outlined,
+                title: 'Sin reservas',
+                subtitle: 'No hay reservas en el período seleccionado',
+              ),
+            ],
           )
         : dayItems.isEmpty
-        ? const EmptyDay()
+        ? ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: const [EmptyDay()],
+          )
         : ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
             itemCount: dayItems.length,
             separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (_, i) =>
                 RepaintBoundary(child: BookingCard(dayItems[i])),
           );
+    final refreshedDayList = RefreshIndicator(
+      onRefresh: () async => ref.invalidate(bookingsListProvider),
+      child: dayListContent,
+    );
 
     if (isExpanded) {
       return Row(
@@ -238,7 +251,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                 const SizedBox(height: AppSpacing.base),
                 dayHeader,
                 const SizedBox(height: AppSpacing.sm),
-                Expanded(child: dayListContent),
+                Expanded(child: refreshedDayList),
               ],
             ),
           ),
@@ -256,7 +269,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         const SizedBox(height: AppSpacing.sm),
         dayHeader,
         const SizedBox(height: AppSpacing.sm),
-        Expanded(child: dayListContent),
+        Expanded(child: refreshedDayList),
       ],
     );
   }

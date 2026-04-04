@@ -184,19 +184,23 @@ class _TrashPageState extends ConsumerState<TrashPage> {
                 }
               }
 
-              return ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                children: [
-                  AppSearchBar(
-                    hint: 'Buscar en papelera...',
-                    onChanged: _onSearch,
+              return RefreshIndicator(
+                onRefresh: () async => ref.invalidate(trashItemsProvider),
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                  const SizedBox(height: 8),
-                  ...rows,
-                ],
+                  children: [
+                    AppSearchBar(
+                      hint: 'Buscar en papelera...',
+                      onChanged: _onSearch,
+                    ),
+                    const SizedBox(height: 8),
+                    ...rows,
+                  ],
+                ),
               );
             },
           );
