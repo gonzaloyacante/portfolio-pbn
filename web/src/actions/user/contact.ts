@@ -241,3 +241,43 @@ export async function deleteContact(id: string) {
   })
   revalidatePath(ROUTES.admin.contacts)
 }
+
+export async function exportContactsToCSV(): Promise<string> {
+  await requireAdmin()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
+
+  const contacts = await prisma.contact.findMany({
+    where: { deletedAt: null },
+    orderBy: { createdAt: 'desc' },
+    select: {
+      name: true,
+      email: true,
+      phone: true,
+      message: true,
+      subject: true,
+      responsePreference: true,
+      status: true,
+      isRead: true,
+      createdAt: true,
+    },
+  })
+
+  const escape = (v: string) => `"${v.replace(/"/g, '""')}"`
+
+  const header = 'Nombre,Email,Teléfono,Asunto,Mensaje,Preferencia contacto,Estado,Leído,Fecha\n'
+  const rows = contacts.map((c) =>
+    [
+      escape(c.name),
+      escape(c.email),
+      escape(c.phone ?? ''),
+      escape(c.subject ?? ''),
+      escape(c.message),
+      escape(c.responsePreference),
+      escape(c.status),
+      c.isRead ? 'Sí' : 'No',
+      escape(c.createdAt.toISOString()),
+    ].join(',')
+  )
+  return header + rows.join('\n')
+}

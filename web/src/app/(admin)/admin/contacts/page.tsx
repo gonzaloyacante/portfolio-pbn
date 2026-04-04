@@ -1,5 +1,6 @@
 import { getContacts } from '@/actions/user/contact'
 import ContactList from '@/components/features/contact/ContactList'
+import ExportContactsButton from '@/components/features/contact/ExportContactsButton'
 import { Button } from '@/components/ui'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
@@ -18,6 +19,7 @@ export default async function AdminContactsPage() {
         </div>
 
         <div className="flex items-center gap-4">
+          <ExportContactsButton />
           <Button asChild variant="outline" size="sm">
             <Link href={ROUTES.admin.contactSettings}>Configurar</Link>
           </Button>
