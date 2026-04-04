@@ -22,6 +22,7 @@ class BookingFormPage extends ConsumerStatefulWidget {
 class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   final _formKey = GlobalKey<FormState>();
   bool _saving = false;
+  bool _isDirty = false;
 
   final _clientNameCtrl = TextEditingController();
   final _clientEmailCtrl = TextEditingController();
@@ -39,6 +40,27 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _notesCtrl.dispose();
     _guestCountCtrl.dispose();
     super.dispose();
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
   }
 
   Future<void> _pickDateTime() async {
@@ -165,148 +187,158 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
     return LoadingOverlay(
       isLoading: _saving,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
-          ),
-          title: const Text('Nueva reserva'),
-          centerTitle: false,
-          actions: [
-            TextButton(onPressed: _submit, child: const Text('GUARDAR')),
-          ],
-        ),
-        body: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              // ── Datos del cliente ────────────────────────────────────────
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Datos del cliente',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _clientNameCtrl,
-                      decoration: const InputDecoration(labelText: 'Nombre *'),
-                      textCapitalization: TextCapitalization.words,
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return 'Obligatorio';
-                        if (v.trim().length < 2) return 'Mínimo 2 caracteres';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _clientEmailCtrl,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(labelText: 'Email *'),
-                      validator: AppValidators.email,
-                    ),
-                    const SizedBox(height: 12),
-                    IntlPhoneField(
-                      decoration: const InputDecoration(
-                        labelText: 'Teléfono',
-                        counterText: '',
-                      ),
-                      initialCountryCode: 'ES',
-                      invalidNumberMessage: 'Número de teléfono inválido',
-                      keyboardType: TextInputType.phone,
-                      onChanged: (phone) {
-                        _completeClientPhone = phone.completeNumber;
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _guestCountCtrl,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Nº de asistentes',
-                      ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) return null;
-                        final n = int.tryParse(v.trim());
-                        if (n == null || n < 1) return 'Mínimo 1 asistente';
-                        if (n > 999) return 'Máximo 999 asistentes';
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              // ── Fecha y hora ─────────────────────────────────────────────
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                padding: EdgeInsets.zero,
-                child: ListTile(
-                  leading: const Icon(Icons.calendar_month_outlined),
-                  title: Text(dateLabel),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: _pickDateTime,
-                ),
-              ),
-              const SizedBox(height: 12),
-              // ── Servicio ─────────────────────────────────────────────────
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Servicio',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildServiceSelector(),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              // ── Notas ────────────────────────────────────────────────────
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Notas',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: _notesCtrl,
-                      maxLines: 4,
-                      decoration: const InputDecoration(
-                        hintText: 'Observaciones, peticiones especiales…',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: _submit,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Crear reserva'),
-              ),
-              const SizedBox(height: 16),
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool didPop, dynamic result) =>
+            _maybeLeave(context),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => _maybeLeave(context),
+              tooltip: 'Volver',
+            ),
+            title: const Text('Nueva reserva'),
+            centerTitle: false,
+            actions: [
+              TextButton(onPressed: _submit, child: const Text('GUARDAR')),
             ],
+          ),
+          body: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                // ── Datos del cliente ────────────────────────────────────────
+                AppCard(
+                  borderRadius: AppRadius.forCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Datos del cliente',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _clientNameCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Nombre *',
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        onChanged: (_) => _markDirty(),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) {
+                            return 'Obligatorio';
+                          }
+                          if (v.trim().length < 2) return 'Mínimo 2 caracteres';
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _clientEmailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(labelText: 'Email *'),
+                        validator: AppValidators.email,
+                      ),
+                      const SizedBox(height: 12),
+                      IntlPhoneField(
+                        decoration: const InputDecoration(
+                          labelText: 'Teléfono',
+                          counterText: '',
+                        ),
+                        initialCountryCode: 'ES',
+                        invalidNumberMessage: 'Número de teléfono inválido',
+                        keyboardType: TextInputType.phone,
+                        onChanged: (phone) {
+                          _completeClientPhone = phone.completeNumber;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _guestCountCtrl,
+                        keyboardType: TextInputType.number,
+                        decoration: const InputDecoration(
+                          labelText: 'Nº de asistentes',
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return null;
+                          final n = int.tryParse(v.trim());
+                          if (n == null || n < 1) return 'Mínimo 1 asistente';
+                          if (n > 999) return 'Máximo 999 asistentes';
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // ── Fecha y hora ─────────────────────────────────────────────
+                AppCard(
+                  borderRadius: AppRadius.forCard,
+                  padding: EdgeInsets.zero,
+                  child: ListTile(
+                    leading: const Icon(Icons.calendar_month_outlined),
+                    title: Text(dateLabel),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: _pickDateTime,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // ── Servicio ─────────────────────────────────────────────────
+                AppCard(
+                  borderRadius: AppRadius.forCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Servicio',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildServiceSelector(),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // ── Notas ────────────────────────────────────────────────────
+                AppCard(
+                  borderRadius: AppRadius.forCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Notas',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _notesCtrl,
+                        maxLines: 4,
+                        decoration: const InputDecoration(
+                          hintText: 'Observaciones, peticiones especiales…',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: _submit,
+                  icon: const Icon(Icons.save_outlined),
+                  label: const Text('Crear reserva'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),

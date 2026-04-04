@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_breakpoints.dart';
@@ -20,6 +21,7 @@ class SettingsSitePage extends ConsumerStatefulWidget {
 class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   final _siteNameCtrl = TextEditingController();
   final _siteTaglineCtrl = TextEditingController();
@@ -34,7 +36,51 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   bool _showContact = true;
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _siteNameCtrl,
+      _siteTaglineCtrl,
+      _metaTitleCtrl,
+      _metaDescCtrl,
+      _maintenanceMsgCtrl,
+    ]) {
+      c.addListener(_markDirty);
+    }
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
+  @override
   void dispose() {
+    for (final c in [
+      _siteNameCtrl,
+      _siteTaglineCtrl,
+      _metaTitleCtrl,
+      _metaDescCtrl,
+      _maintenanceMsgCtrl,
+    ]) {
+      c.removeListener(_markDirty);
+    }
     _siteNameCtrl.dispose();
     _siteTaglineCtrl.dispose();
     _metaTitleCtrl.dispose();
@@ -76,7 +122,10 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'showContactPage': _showContact,
       });
       ref.invalidate(siteSettingsProvider);
-      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
+      if (mounted) {
+        setState(() => _isDirty = false);
+        AppSnackBar.success(context, 'Configuración guardada');
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
@@ -94,28 +143,33 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   Widget build(BuildContext context) {
     final async = ref.watch(siteSettingsProvider);
 
-    return AppScaffold(
-      title: 'Sitio Web',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(siteSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Sitio Web',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(siteSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
+          ),
         ),
       ),
     );

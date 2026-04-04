@@ -24,6 +24,7 @@ class SettingsContactPage extends ConsumerStatefulWidget {
 class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   final _pageTitleCtrl = TextEditingController();
   final _ownerNameCtrl = TextEditingController();
@@ -38,7 +39,53 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   bool _showLocation = true;
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _pageTitleCtrl,
+      _ownerNameCtrl,
+      _emailCtrl,
+      _phoneCtrl,
+      _whatsappCtrl,
+      _locationCtrl,
+    ]) {
+      c.addListener(_markDirty);
+    }
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
+  @override
   void dispose() {
+    for (final c in [
+      _pageTitleCtrl,
+      _ownerNameCtrl,
+      _emailCtrl,
+      _phoneCtrl,
+      _whatsappCtrl,
+      _locationCtrl,
+    ]) {
+      c.removeListener(_markDirty);
+    }
     _pageTitleCtrl.dispose();
     _ownerNameCtrl.dispose();
     _emailCtrl.dispose();
@@ -83,7 +130,10 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
         'showLocation': _showLocation,
       });
       ref.invalidate(contactSettingsProvider);
-      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
+      if (mounted) {
+        setState(() => _isDirty = false);
+        AppSnackBar.success(context, 'Configuración guardada');
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
@@ -98,28 +148,33 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   Widget build(BuildContext context) {
     final async = ref.watch(contactSettingsProvider);
 
-    return AppScaffold(
-      title: 'Contacto',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(contactSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Contacto',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(contactSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
+          ),
         ),
       ),
     );

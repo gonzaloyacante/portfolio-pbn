@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_breakpoints.dart';
@@ -20,6 +21,7 @@ class SettingsThemePage extends ConsumerStatefulWidget {
 class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   // ── Light colors ────────────────────────────────────────────────────────
   final _primaryCtrl = TextEditingController();
@@ -73,7 +75,31 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
     }
   }
 
-  void _refresh() => setState(() {});
+  void _refresh() {
+    _markDirty();
+    setState(() {});
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
 
   @override
   void dispose() {
@@ -189,7 +215,10 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
         'borderRadius': _intOrNull(_borderRadiusCtrl.text),
       });
       ref.invalidate(themeSettingsProvider);
-      if (mounted) AppSnackBar.success(context, 'Tema guardado correctamente');
+      if (mounted) {
+        setState(() => _isDirty = false);
+        AppSnackBar.success(context, 'Tema guardado correctamente');
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
@@ -204,28 +233,33 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
   Widget build(BuildContext context) {
     final async = ref.watch(themeSettingsProvider);
 
-    return AppScaffold(
-      title: 'Tema',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(themeSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Tema',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(themeSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
+          ),
         ),
       ),
     );

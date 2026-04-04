@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_breakpoints.dart';
@@ -21,6 +22,7 @@ class SettingsAboutPage extends ConsumerStatefulWidget {
 class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   File? _pendingProfileImage;
 
@@ -38,7 +40,49 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _bioTitleCtrl,
+      _bioIntroCtrl,
+      _bioDescCtrl,
+      _profileImageCtrl,
+    ]) {
+      c.addListener(_markDirty);
+    }
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
+  @override
   void dispose() {
+    for (final c in [
+      _bioTitleCtrl,
+      _bioIntroCtrl,
+      _bioDescCtrl,
+      _profileImageCtrl,
+    ]) {
+      c.removeListener(_markDirty);
+    }
     _bioTitleCtrl.dispose();
     _bioIntroCtrl.dispose();
     _bioDescCtrl.dispose();
@@ -153,7 +197,10 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
       });
 
       ref.invalidate(aboutSettingsProvider);
-      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
+      if (mounted) {
+        setState(() => _isDirty = false);
+        AppSnackBar.success(context, 'Configuración guardada');
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
@@ -172,28 +219,33 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   Widget build(BuildContext context) {
     final async = ref.watch(aboutSettingsProvider);
 
-    return AppScaffold(
-      title: 'Sobre mí',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(aboutSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Sobre mí',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(aboutSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
+          ),
         ),
       ),
     );
