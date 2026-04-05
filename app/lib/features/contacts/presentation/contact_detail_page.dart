@@ -23,14 +23,12 @@ class ContactDetailPage extends ConsumerStatefulWidget {
 }
 
 class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
-  final _replyCtrl = TextEditingController();
   final _noteCtrl = TextEditingController();
   bool _loading = false;
   bool _populated = false;
 
   @override
   void dispose() {
-    _replyCtrl.dispose();
     _noteCtrl.dispose();
     super.dispose();
   }
@@ -38,7 +36,6 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
   void _populate(ContactDetail detail) {
     if (_populated) return;
     _populated = true;
-    _replyCtrl.text = detail.replyText ?? '';
     _noteCtrl.text = detail.adminNote ?? '';
   }
 
@@ -46,8 +43,6 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     setState(() => _loading = true);
     try {
       final updates = <String, dynamic>{
-        if (_replyCtrl.text.trim().isNotEmpty)
-          'replyText': _replyCtrl.text.trim(),
         if (_noteCtrl.text.trim().isNotEmpty)
           'adminNote': _noteCtrl.text.trim(),
         if (status != null) 'status': status,

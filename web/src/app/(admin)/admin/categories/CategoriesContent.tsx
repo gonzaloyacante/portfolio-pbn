@@ -9,7 +9,7 @@ import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
-import { Plus, ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
+import { Plus, ExternalLink, Pencil, Trash2, Images, Search } from 'lucide-react'
 import type { Category } from '@/generated/prisma/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
@@ -30,6 +30,7 @@ export default function CategoriesContent({
 }: CategoriesContentProps) {
   // State
   const [view, setView] = useState<ViewMode>('grid')
+  const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
 
   // Confirmation Dialog
@@ -61,6 +62,14 @@ export default function CategoriesContent({
     successMessage: TOAST_MESSAGES.categories.reorder.success,
     errorMessage: TOAST_MESSAGES.categories.reorder.error,
   })
+
+  const filteredCategories = searchQuery
+    ? categories.filter(
+        (c) =>
+          c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (c.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+      )
+    : categories
   const renderCategoryItem = (category: CategoryWithCount, isDragging: boolean) => {
     // Priority: explicit category cover → first gallery image → empty
     const thumbnailUrl = category.coverImageUrl || category.images[0]?.url
@@ -232,7 +241,20 @@ export default function CategoriesContent({
 
   return (
     <>
-      <div className="mb-6 flex justify-end">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1 sm:max-w-xs">
+          <Search
+            size={16}
+            className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
+          />
+          <input
+            type="search"
+            placeholder="Buscar categorías..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-xl border py-2 pr-4 pl-9 text-sm focus:outline-none"
+          />
+        </div>
         <ViewToggle defaultView="grid" onViewChange={setView} storageKey="admin-categories-view" />
       </div>
 
@@ -244,9 +266,9 @@ export default function CategoriesContent({
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
-          {categories.length > 0 ? (
+          {filteredCategories.length > 0 ? (
             <SortableGrid
-              items={categories}
+              items={filteredCategories}
               getItemId={(c) => c.id}
               onReorder={handleReorder}
               renderItem={renderCategoryItem}
@@ -255,17 +277,23 @@ export default function CategoriesContent({
             />
           ) : (
             <Card className="flex flex-col items-center justify-center py-24 text-center">
-              <span className="mb-4 text-6xl">📁</span>
-              <h3 className="text-foreground mb-2 text-2xl font-bold">No hay categorías</h3>
+              <span className="mb-4 text-6xl">{searchQuery ? '🔍' : '📁'}</span>
+              <h3 className="text-foreground mb-2 text-2xl font-bold">
+                {searchQuery ? 'Sin resultados' : 'No hay categorías'}
+              </h3>
               <p className="text-muted-foreground mb-6">
-                Crea tu primera categoría para organizar tu portfolio
+                {searchQuery
+                  ? `No se encontraron categorías para "${searchQuery}"`
+                  : 'Crea tu primera categoría para organizar tu portfolio'}
               </p>
-              <Button asChild className="gap-2">
-                <Link href={ROUTES.admin.newCategory}>
-                  <Plus size={16} />
-                  Nueva Categoría
-                </Link>
-              </Button>
+              {!searchQuery && (
+                <Button asChild className="gap-2">
+                  <Link href={ROUTES.admin.newCategory}>
+                    <Plus size={16} />
+                    Nueva Categoría
+                  </Link>
+                </Button>
+              )}
             </Card>
           )}
         </motion.div>

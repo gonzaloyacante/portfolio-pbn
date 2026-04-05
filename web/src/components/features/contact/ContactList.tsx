@@ -1,13 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { markContactAsRead, markContactAsReplied, deleteContact } from '@/actions/user/contact'
+import { Copy, Check } from 'lucide-react'
+import { markContactAsRead, deleteContact } from '@/actions/user/contact'
 import { useConfirmDialog } from '@/components/ui'
 
 interface Contact {
   id: string
   name: string
   email: string
+  phone: string | null
   message: string
   isRead: boolean
   isReplied: boolean
@@ -22,10 +24,20 @@ interface ContactListProps {
 
 export default function ContactList({ contacts }: ContactListProps) {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
-  const [adminNote, setAdminNote] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [filter, setFilter] = useState<'all' | 'unread' | 'replied'>('all')
+  const [copiedField, setCopiedField] = useState<string | null>(null)
+
+  const handleCopy = (value: string, field: string) => {
+    navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        setCopiedField(field)
+        setTimeout(() => setCopiedField(null), 2000)
+      })
+      .catch(() => {})
+  }
 
   const ITEMS_PER_PAGE = 20
 
@@ -44,14 +56,6 @@ export default function ContactList({ contacts }: ContactListProps) {
   const handleMarkAsRead = async (id: string) => {
     setIsLoading(true)
     await markContactAsRead(id)
-    setIsLoading(false)
-  }
-
-  const handleMarkAsReplied = async (id: string) => {
-    setIsLoading(true)
-    await markContactAsReplied(id, adminNote)
-    setAdminNote('')
-    setSelectedContact(null)
     setIsLoading(false)
   }
 
@@ -188,12 +192,46 @@ export default function ContactList({ contacts }: ContactListProps) {
             <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
               <div>
                 <h2 className="text-foreground text-2xl font-bold">{selectedContact.name}</h2>
-                <a
-                  href={`mailto:${selectedContact.email}`}
-                  className="text-primary font-medium hover:underline"
-                >
-                  {selectedContact.email}
-                </a>
+                <div className="mt-1 flex items-center gap-2">
+                  <a
+                    href={`mailto:${selectedContact.email}`}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    {selectedContact.email}
+                  </a>
+                  <button
+                    onClick={() => handleCopy(selectedContact.email, 'email')}
+                    title="Copiar email"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {copiedField === 'email' ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {selectedContact.phone && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <a
+                      href={`tel:${selectedContact.phone.replace(/\s+/g, '')}`}
+                      className="text-muted-foreground text-sm hover:underline"
+                    >
+                      {selectedContact.phone}
+                    </a>
+                    <button
+                      onClick={() => handleCopy(selectedContact.phone!, 'phone')}
+                      title="Copiar teléfono"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {copiedField === 'phone' ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                )}
                 <p className="text-muted-foreground mt-1 text-sm">
                   {formatDate(selectedContact.createdAt)}
                 </p>
@@ -236,28 +274,6 @@ export default function ContactList({ contacts }: ContactListProps) {
                     {selectedContact.adminNote}
                   </p>
                 </div>
-              </div>
-            )}
-
-            {!selectedContact.isReplied && (
-              <div>
-                <h3 className="text-foreground mb-3 font-bold">
-                  Agregar nota / Marcar como respondido:
-                </h3>
-                <textarea
-                  value={adminNote}
-                  onChange={(e) => setAdminNote(e.target.value)}
-                  placeholder="Opcional: Agrega una nota sobre cómo respondiste..."
-                  className="border-input bg-input text-foreground placeholder:text-muted-foreground focus:border-ring mb-4 w-full rounded-2xl border p-4 focus:outline-none"
-                  rows={4}
-                />
-                <button
-                  onClick={() => handleMarkAsReplied(selectedContact.id)}
-                  disabled={isLoading}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground w-full rounded-xl px-6 py-4 font-bold shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {isLoading ? 'Guardando...' : 'Marcar como respondido'}
-                </button>
               </div>
             )}
           </div>

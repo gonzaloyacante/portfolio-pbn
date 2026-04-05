@@ -204,39 +204,6 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                   ),
                   const SizedBox(height: 16),
 
-                  // ── Respuesta ──────────────────────────────────────────
-                  Text('Respuesta', style: theme.textTheme.titleSmall),
-                  const SizedBox(height: 8),
-                  if (detail.isReplied)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.check_circle,
-                            size: 16,
-                            color: Colors.green,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Respondido ${detail.repliedAt != null ? _formatDate(detail.repliedAt!) : ""}',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: Colors.green,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  TextFormField(
-                    controller: _replyCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Texto de respuesta',
-                      hintText: 'Escribe la respuesta enviada al cliente…',
-                    ),
-                    maxLines: 4,
-                  ),
-                  const SizedBox(height: 16),
-
                   // ── Nota interna ───────────────────────────────────────
                   Text('Nota interna', style: theme.textTheme.titleSmall),
                   const SizedBox(height: 8),
@@ -328,12 +295,6 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
     'URGENT' => 'Urgente',
     _ => 'Media',
   };
-
-  String _formatDate(DateTime dt) {
-    return '${dt.day.toString().padLeft(2, '0')}/'
-        '${dt.month.toString().padLeft(2, '0')}/'
-        '${dt.year}';
-  }
 
   String _responsePreferenceLabel(String pref) => switch (pref) {
     'PHONE' => 'Teléfono',

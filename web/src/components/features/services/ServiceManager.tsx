@@ -5,7 +5,7 @@ import { Service } from '@/generated/prisma/client'
 import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/cms/services'
 import ServiceForm from './ServiceForm'
-import { Edit, Trash2, Plus } from 'lucide-react'
+import { Edit, Trash2, Plus, Search } from 'lucide-react'
 import { showToast } from '@/lib/toast'
 import React from 'react'
 
@@ -16,6 +16,13 @@ interface ServiceManagerProps {
 export default function ServiceManager({ initialServices }: ServiceManagerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingService, setEditingService] = useState<Service | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const filteredServices = initialServices.filter(
+    (s) =>
+      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (s.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
+  )
 
   // Confirmation Dialog
   const { confirm, Dialog } = useConfirmDialog()
@@ -54,7 +61,20 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1 sm:max-w-xs">
+          <Search
+            size={16}
+            className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
+          />
+          <input
+            type="search"
+            placeholder="Buscar servicios..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-xl border py-2 pr-4 pl-9 text-sm focus:outline-none"
+          />
+        </div>
         <Button onClick={handleCreate} className="gap-2">
           <Plus size={18} />
           Nuevo Servicio
@@ -62,15 +82,19 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
       </div>
 
       <Card>
-        {initialServices.length === 0 ? (
+        {filteredServices.length === 0 ? (
           <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
             <span className="mb-4 text-4xl">💅</span>
-            <p className="font-medium">No hay servicios aún</p>
-            <p className="text-sm">Crea tu primer servicio arriba</p>
+            <p className="font-medium">
+              {searchQuery
+                ? 'No hay servicios que coincidan con la búsqueda'
+                : 'No hay servicios aún'}
+            </p>
+            {!searchQuery && <p className="text-sm">Crea tu primer servicio arriba</p>}
           </div>
         ) : (
           <div className="divide-border divide-y">
-            {initialServices.map((s) => (
+            {filteredServices.map((s) => (
               <div
                 key={s.id}
                 className="group flex flex-col gap-4 py-6 md:flex-row md:items-start md:justify-between"
