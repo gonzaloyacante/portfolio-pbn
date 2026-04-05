@@ -24,6 +24,7 @@ export const ROUTES = {
     theme: '/admin/tema',
     analytics: '/admin/analitica',
     calendar: '/admin/calendario',
+    calendarEdit: (id: string) => `/admin/calendario/${id}/editar` as const,
     account: '/admin/mi-cuenta',
     help: '/admin/ayuda',
     trash: '/admin/papelera',

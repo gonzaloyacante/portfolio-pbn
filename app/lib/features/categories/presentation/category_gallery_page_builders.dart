@@ -18,6 +18,7 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
           item: img,
           index: index,
           total: _displayItems.length,
+          onTap: () => _ImageViewer.show(context, img.url, position: index + 1),
           onDelete: () => _deleteImage(img),
         );
       },
@@ -62,6 +63,8 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                   item: img,
                   index: index,
                   total: _items!.length,
+                  onTap: () =>
+                      _ImageViewer.show(context, img.url, position: index + 1),
                   onDelete: () => _deleteImage(img),
                 ),
               );
@@ -265,6 +268,8 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                 child: GalleryGridTile(
                   item: img,
                   position: position,
+                  onTap: () =>
+                      _ImageViewer.show(context, img.url, position: position),
                   onDelete: () => _deleteImage(img),
                 ),
               ),

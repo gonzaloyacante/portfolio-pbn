@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { getBookingsByRange, updateBookingStatus } from '@/actions/user/bookings'
 import { Button, Modal, Badge } from '@/components/ui'
-import { ChevronLeft, User, Mail, Phone, FileText, Users } from 'lucide-react'
+import { ChevronLeft, User, Mail, Phone, FileText, Users, Pencil } from 'lucide-react'
 import {
   format,
   startOfMonth,
@@ -19,6 +20,7 @@ import {
 } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { showToast } from '@/lib/toast'
+import { ROUTES } from '@/config/routes'
 
 // Types (Mirrors Prisma Model for client usage)
 type Booking = {
@@ -38,6 +40,7 @@ type Booking = {
 }
 
 export default function CalendarView() {
+  const router = useRouter()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [bookings, setBookings] = useState<Booking[]>([])
 
@@ -276,7 +279,15 @@ export default function CalendarView() {
             </div>
 
             {/* Actions */}
-            <div className="border-border flex justify-end gap-2 border-t pt-4">
+            <div className="border-border flex flex-wrap justify-end gap-2 border-t pt-4">
+              {/* Edit button always shown */}
+              <Button
+                variant="secondary"
+                onClick={() => router.push(ROUTES.admin.calendarEdit(selectedBooking.id))}
+              >
+                <Pencil size={14} className="mr-1.5" />
+                Editar
+              </Button>
               {selectedBooking.status === 'PENDING' && (
                 <>
                   <Button variant="destructive" onClick={() => handleStatusUpdate('CANCELLED')}>

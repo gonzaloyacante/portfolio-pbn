@@ -9,11 +9,13 @@ class GalleryGridTile extends StatelessWidget {
     required this.item,
     this.position,
     this.onDelete,
+    this.onTap,
   });
 
   final GalleryImageItem item;
   final int? position;
   final VoidCallback? onDelete;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +28,26 @@ class GalleryGridTile extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          CachedNetworkImage(
-            imageUrl: item.url,
-            fit: BoxFit.cover,
-            placeholder: (_, _) => ColoredBox(
-              color: scheme.surfaceContainerHighest,
-              child: Icon(
-                Icons.image_outlined,
-                color: scheme.outlineVariant,
-                size: 32,
+          GestureDetector(
+            onTap: onTap,
+            child: CachedNetworkImage(
+              imageUrl: item.url,
+              fit: BoxFit.cover,
+              placeholder: (_, _) => ColoredBox(
+                color: scheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.image_outlined,
+                  color: scheme.outlineVariant,
+                  size: 32,
+                ),
               ),
-            ),
-            errorWidget: (_, _, _) => ColoredBox(
-              color: scheme.surfaceContainerHighest,
-              child: Icon(
-                Icons.broken_image_outlined,
-                color: scheme.outlineVariant,
-                size: 32,
+              errorWidget: (_, _, _) => ColoredBox(
+                color: scheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.broken_image_outlined,
+                  color: scheme.outlineVariant,
+                  size: 32,
+                ),
               ),
             ),
           ),
