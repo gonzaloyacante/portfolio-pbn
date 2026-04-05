@@ -11,11 +11,25 @@ interface Contact {
   email: string
   phone: string | null
   message: string
+  status: string
+  priority: string
   isRead: boolean
   isReplied: boolean
   adminNote: string | null
   createdAt: Date
   updatedAt: Date
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  IN_PROGRESS: 'En curso',
+  CLOSED: 'Cerrado',
+  SPAM: 'Spam',
+}
+
+const STATUS_CLASS: Record<string, string> = {
+  IN_PROGRESS: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300',
+  CLOSED: 'bg-muted text-muted-foreground',
+  SPAM: 'bg-destructive/15 text-destructive',
 }
 
 interface ContactListProps {
@@ -124,7 +138,7 @@ export default function ContactList({ contacts }: ContactListProps) {
             >
               <div className="mb-2 flex items-start justify-between gap-2">
                 <h3 className="text-foreground font-bold">{contact.name}</h3>
-                <div className="flex gap-1">
+                <div className="flex flex-wrap gap-1">
                   {!contact.isRead && (
                     <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs font-bold">
                       Nuevo
@@ -133,6 +147,23 @@ export default function ContactList({ contacts }: ContactListProps) {
                   {contact.isReplied && (
                     <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-bold">
                       ✓
+                    </span>
+                  )}
+                  {STATUS_LABEL[contact.status] && (
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-bold ${STATUS_CLASS[contact.status]}`}
+                    >
+                      {STATUS_LABEL[contact.status]}
+                    </span>
+                  )}
+                  {contact.priority === 'URGENT' && (
+                    <span className="bg-destructive/15 text-destructive rounded-full px-2 py-0.5 text-xs font-bold">
+                      Urgente
+                    </span>
+                  )}
+                  {contact.priority === 'HIGH' && (
+                    <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                      Alta
                     </span>
                   )}
                 </div>
