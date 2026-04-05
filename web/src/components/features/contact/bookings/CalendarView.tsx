@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { getBookingsByRange, updateBookingStatus } from '@/actions/user/bookings'
 import { Button, Modal, Badge } from '@/components/ui'
-import { ChevronLeft, User, Mail, Phone, FileText } from 'lucide-react'
+import { ChevronLeft, User, Mail, Phone, FileText, Users } from 'lucide-react'
 import {
   format,
   startOfMonth,
@@ -29,6 +29,8 @@ type Booking = {
   clientEmail: string
   clientPhone: string | null
   clientNotes: string | null
+  guestCount: number | null
+  adminNotes: string | null
   service: {
     name: string
     duration: string | null
@@ -242,6 +244,12 @@ export default function CalendarView() {
                     <span>{selectedBooking.clientPhone}</span>
                   </div>
                 )}
+                {(selectedBooking.guestCount ?? 1) > 1 && (
+                  <div className="flex items-center gap-2">
+                    <Users size={16} className="text-muted-foreground/60" />
+                    <span>{selectedBooking.guestCount} asistentes</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -254,6 +262,14 @@ export default function CalendarView() {
                   <div className="border-border mt-2 flex gap-2 border-t pt-2">
                     <FileText size={16} className="text-muted-foreground/60 shrink-0" />
                     <p className="text-muted-foreground italic">{selectedBooking.clientNotes}</p>
+                  </div>
+                )}
+                {selectedBooking.adminNotes && (
+                  <div className="border-border mt-2 flex gap-2 border-t pt-2">
+                    <FileText size={16} className="text-primary/60 shrink-0" />
+                    <p className="text-muted-foreground text-xs font-medium">
+                      🔒 {selectedBooking.adminNotes}
+                    </p>
                   </div>
                 )}
               </div>

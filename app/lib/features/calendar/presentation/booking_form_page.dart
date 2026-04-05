@@ -34,16 +34,19 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   final _clientEmailCtrl = TextEditingController();
   String? _completeClientPhone;
   final _notesCtrl = TextEditingController();
+  final _adminNotesCtrl = TextEditingController();
   final _guestCountCtrl = TextEditingController();
 
   DateTime? _date;
   String? _serviceId;
+  String? _currentStatus;
 
   @override
   void dispose() {
     _clientNameCtrl.dispose();
     _clientEmailCtrl.dispose();
     _notesCtrl.dispose();
+    _adminNotesCtrl.dispose();
     _guestCountCtrl.dispose();
     super.dispose();
   }
@@ -54,9 +57,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _clientEmailCtrl.text = detail.clientEmail;
     _guestCountCtrl.text = detail.guestCount > 1 ? '${detail.guestCount}' : '';
     _notesCtrl.text = detail.clientNotes ?? '';
+    _adminNotesCtrl.text = detail.adminNotes ?? '';
     _completeClientPhone = detail.clientPhone;
     _date = detail.date;
     _serviceId = detail.serviceId;
+    _currentStatus = detail.status;
     _prefilled = true;
   }
 
@@ -138,7 +143,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         clientNotes: _notesCtrl.text.trim().isEmpty
             ? null
             : _notesCtrl.text.trim(),
+        adminNotes: _adminNotesCtrl.text.trim().isEmpty
+            ? null
+            : _adminNotesCtrl.text.trim(),
         serviceId: _serviceId!,
+        status: _currentStatus ?? 'PENDING',
       );
       if (_isEdit) {
         await repo.updateBooking(widget.bookingId!, data.toJson());
@@ -394,6 +403,17 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
                         decoration: const InputDecoration(
                           hintText: 'Observaciones, peticiones especiales…',
                           border: OutlineInputBorder(),
+                          labelText: 'Notas del cliente',
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _adminNotesCtrl,
+                        maxLines: 3,
+                        decoration: const InputDecoration(
+                          hintText: 'Notas internas de administración…',
+                          border: OutlineInputBorder(),
+                          labelText: 'Notas internas (admin)',
                         ),
                       ),
                     ],
