@@ -1003,7 +1003,8 @@ as bool,
 /// @nodoc
 mixin _$SiteSettings {
 
- String? get id; String get siteName; String? get siteTagline; String? get logoUrl; String? get defaultMetaTitle; String? get defaultMetaDescription; String? get defaultEmail; String? get defaultPhone; String? get defaultWhatsapp; String? get googleAnalyticsId; bool get maintenanceMode; String? get maintenanceMessage; bool get showAboutPage; bool get showGalleryPage; bool get showServicesPage; bool get showContactPage; bool get allowIndexing; bool get isActive;
+ String? get id; String get siteName; String? get siteTagline; String? get logoUrl; String? get defaultMetaTitle; String? get defaultMetaDescription; String? get defaultEmail; String? get defaultPhone; String? get defaultWhatsapp; String? get googleAnalyticsId; bool get maintenanceMode; String? get maintenanceMessage; bool get showAboutPage; bool get showGalleryPage; bool get showServicesPage; bool get showContactPage; bool get allowIndexing; bool get isActive;// ── Encabezado / Navbar brand ──
+ String? get navbarBrandText; String? get navbarBrandFont; String? get navbarBrandFontUrl; int? get navbarBrandFontSize; String? get navbarBrandColor; String? get navbarBrandColorDark; bool get navbarShowBrand;
 /// Create a copy of SiteSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1016,16 +1017,16 @@ $SiteSettingsCopyWith<SiteSettings> get copyWith => _$SiteSettingsCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SiteSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.siteTagline, siteTagline) || other.siteTagline == siteTagline)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.defaultMetaTitle, defaultMetaTitle) || other.defaultMetaTitle == defaultMetaTitle)&&(identical(other.defaultMetaDescription, defaultMetaDescription) || other.defaultMetaDescription == defaultMetaDescription)&&(identical(other.defaultEmail, defaultEmail) || other.defaultEmail == defaultEmail)&&(identical(other.defaultPhone, defaultPhone) || other.defaultPhone == defaultPhone)&&(identical(other.defaultWhatsapp, defaultWhatsapp) || other.defaultWhatsapp == defaultWhatsapp)&&(identical(other.googleAnalyticsId, googleAnalyticsId) || other.googleAnalyticsId == googleAnalyticsId)&&(identical(other.maintenanceMode, maintenanceMode) || other.maintenanceMode == maintenanceMode)&&(identical(other.maintenanceMessage, maintenanceMessage) || other.maintenanceMessage == maintenanceMessage)&&(identical(other.showAboutPage, showAboutPage) || other.showAboutPage == showAboutPage)&&(identical(other.showGalleryPage, showGalleryPage) || other.showGalleryPage == showGalleryPage)&&(identical(other.showServicesPage, showServicesPage) || other.showServicesPage == showServicesPage)&&(identical(other.showContactPage, showContactPage) || other.showContactPage == showContactPage)&&(identical(other.allowIndexing, allowIndexing) || other.allowIndexing == allowIndexing)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SiteSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.siteTagline, siteTagline) || other.siteTagline == siteTagline)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.defaultMetaTitle, defaultMetaTitle) || other.defaultMetaTitle == defaultMetaTitle)&&(identical(other.defaultMetaDescription, defaultMetaDescription) || other.defaultMetaDescription == defaultMetaDescription)&&(identical(other.defaultEmail, defaultEmail) || other.defaultEmail == defaultEmail)&&(identical(other.defaultPhone, defaultPhone) || other.defaultPhone == defaultPhone)&&(identical(other.defaultWhatsapp, defaultWhatsapp) || other.defaultWhatsapp == defaultWhatsapp)&&(identical(other.googleAnalyticsId, googleAnalyticsId) || other.googleAnalyticsId == googleAnalyticsId)&&(identical(other.maintenanceMode, maintenanceMode) || other.maintenanceMode == maintenanceMode)&&(identical(other.maintenanceMessage, maintenanceMessage) || other.maintenanceMessage == maintenanceMessage)&&(identical(other.showAboutPage, showAboutPage) || other.showAboutPage == showAboutPage)&&(identical(other.showGalleryPage, showGalleryPage) || other.showGalleryPage == showGalleryPage)&&(identical(other.showServicesPage, showServicesPage) || other.showServicesPage == showServicesPage)&&(identical(other.showContactPage, showContactPage) || other.showContactPage == showContactPage)&&(identical(other.allowIndexing, allowIndexing) || other.allowIndexing == allowIndexing)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.navbarBrandText, navbarBrandText) || other.navbarBrandText == navbarBrandText)&&(identical(other.navbarBrandFont, navbarBrandFont) || other.navbarBrandFont == navbarBrandFont)&&(identical(other.navbarBrandFontUrl, navbarBrandFontUrl) || other.navbarBrandFontUrl == navbarBrandFontUrl)&&(identical(other.navbarBrandFontSize, navbarBrandFontSize) || other.navbarBrandFontSize == navbarBrandFontSize)&&(identical(other.navbarBrandColor, navbarBrandColor) || other.navbarBrandColor == navbarBrandColor)&&(identical(other.navbarBrandColorDark, navbarBrandColorDark) || other.navbarBrandColorDark == navbarBrandColorDark)&&(identical(other.navbarShowBrand, navbarShowBrand) || other.navbarShowBrand == navbarShowBrand));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,siteName,siteTagline,logoUrl,defaultMetaTitle,defaultMetaDescription,defaultEmail,defaultPhone,defaultWhatsapp,googleAnalyticsId,maintenanceMode,maintenanceMessage,showAboutPage,showGalleryPage,showServicesPage,showContactPage,allowIndexing,isActive);
+int get hashCode => Object.hashAll([runtimeType,id,siteName,siteTagline,logoUrl,defaultMetaTitle,defaultMetaDescription,defaultEmail,defaultPhone,defaultWhatsapp,googleAnalyticsId,maintenanceMode,maintenanceMessage,showAboutPage,showGalleryPage,showServicesPage,showContactPage,allowIndexing,isActive,navbarBrandText,navbarBrandFont,navbarBrandFontUrl,navbarBrandFontSize,navbarBrandColor,navbarBrandColorDark,navbarShowBrand]);
 
 @override
 String toString() {
-  return 'SiteSettings(id: $id, siteName: $siteName, siteTagline: $siteTagline, logoUrl: $logoUrl, defaultMetaTitle: $defaultMetaTitle, defaultMetaDescription: $defaultMetaDescription, defaultEmail: $defaultEmail, defaultPhone: $defaultPhone, defaultWhatsapp: $defaultWhatsapp, googleAnalyticsId: $googleAnalyticsId, maintenanceMode: $maintenanceMode, maintenanceMessage: $maintenanceMessage, showAboutPage: $showAboutPage, showGalleryPage: $showGalleryPage, showServicesPage: $showServicesPage, showContactPage: $showContactPage, allowIndexing: $allowIndexing, isActive: $isActive)';
+  return 'SiteSettings(id: $id, siteName: $siteName, siteTagline: $siteTagline, logoUrl: $logoUrl, defaultMetaTitle: $defaultMetaTitle, defaultMetaDescription: $defaultMetaDescription, defaultEmail: $defaultEmail, defaultPhone: $defaultPhone, defaultWhatsapp: $defaultWhatsapp, googleAnalyticsId: $googleAnalyticsId, maintenanceMode: $maintenanceMode, maintenanceMessage: $maintenanceMessage, showAboutPage: $showAboutPage, showGalleryPage: $showGalleryPage, showServicesPage: $showServicesPage, showContactPage: $showContactPage, allowIndexing: $allowIndexing, isActive: $isActive, navbarBrandText: $navbarBrandText, navbarBrandFont: $navbarBrandFont, navbarBrandFontUrl: $navbarBrandFontUrl, navbarBrandFontSize: $navbarBrandFontSize, navbarBrandColor: $navbarBrandColor, navbarBrandColorDark: $navbarBrandColorDark, navbarShowBrand: $navbarShowBrand)';
 }
 
 
@@ -1036,7 +1037,7 @@ abstract mixin class $SiteSettingsCopyWith<$Res>  {
   factory $SiteSettingsCopyWith(SiteSettings value, $Res Function(SiteSettings) _then) = _$SiteSettingsCopyWithImpl;
 @useResult
 $Res call({
- String? id, String siteName, String? siteTagline, String? logoUrl, String? defaultMetaTitle, String? defaultMetaDescription, String? defaultEmail, String? defaultPhone, String? defaultWhatsapp, String? googleAnalyticsId, bool maintenanceMode, String? maintenanceMessage, bool showAboutPage, bool showGalleryPage, bool showServicesPage, bool showContactPage, bool allowIndexing, bool isActive
+ String? id, String siteName, String? siteTagline, String? logoUrl, String? defaultMetaTitle, String? defaultMetaDescription, String? defaultEmail, String? defaultPhone, String? defaultWhatsapp, String? googleAnalyticsId, bool maintenanceMode, String? maintenanceMessage, bool showAboutPage, bool showGalleryPage, bool showServicesPage, bool showContactPage, bool allowIndexing, bool isActive, String? navbarBrandText, String? navbarBrandFont, String? navbarBrandFontUrl, int? navbarBrandFontSize, String? navbarBrandColor, String? navbarBrandColorDark, bool navbarShowBrand
 });
 
 
@@ -1053,7 +1054,7 @@ class _$SiteSettingsCopyWithImpl<$Res>
 
 /// Create a copy of SiteSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? siteName = null,Object? siteTagline = freezed,Object? logoUrl = freezed,Object? defaultMetaTitle = freezed,Object? defaultMetaDescription = freezed,Object? defaultEmail = freezed,Object? defaultPhone = freezed,Object? defaultWhatsapp = freezed,Object? googleAnalyticsId = freezed,Object? maintenanceMode = null,Object? maintenanceMessage = freezed,Object? showAboutPage = null,Object? showGalleryPage = null,Object? showServicesPage = null,Object? showContactPage = null,Object? allowIndexing = null,Object? isActive = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? siteName = null,Object? siteTagline = freezed,Object? logoUrl = freezed,Object? defaultMetaTitle = freezed,Object? defaultMetaDescription = freezed,Object? defaultEmail = freezed,Object? defaultPhone = freezed,Object? defaultWhatsapp = freezed,Object? googleAnalyticsId = freezed,Object? maintenanceMode = null,Object? maintenanceMessage = freezed,Object? showAboutPage = null,Object? showGalleryPage = null,Object? showServicesPage = null,Object? showContactPage = null,Object? allowIndexing = null,Object? isActive = null,Object? navbarBrandText = freezed,Object? navbarBrandFont = freezed,Object? navbarBrandFontUrl = freezed,Object? navbarBrandFontSize = freezed,Object? navbarBrandColor = freezed,Object? navbarBrandColorDark = freezed,Object? navbarShowBrand = null,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,siteName: null == siteName ? _self.siteName : siteName // ignore: cast_nullable_to_non_nullable
@@ -1073,6 +1074,13 @@ as bool,showServicesPage: null == showServicesPage ? _self.showServicesPage : sh
 as bool,showContactPage: null == showContactPage ? _self.showContactPage : showContactPage // ignore: cast_nullable_to_non_nullable
 as bool,allowIndexing: null == allowIndexing ? _self.allowIndexing : allowIndexing // ignore: cast_nullable_to_non_nullable
 as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,navbarBrandText: freezed == navbarBrandText ? _self.navbarBrandText : navbarBrandText // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandFont: freezed == navbarBrandFont ? _self.navbarBrandFont : navbarBrandFont // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandFontUrl: freezed == navbarBrandFontUrl ? _self.navbarBrandFontUrl : navbarBrandFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandFontSize: freezed == navbarBrandFontSize ? _self.navbarBrandFontSize : navbarBrandFontSize // ignore: cast_nullable_to_non_nullable
+as int?,navbarBrandColor: freezed == navbarBrandColor ? _self.navbarBrandColor : navbarBrandColor // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandColorDark: freezed == navbarBrandColorDark ? _self.navbarBrandColorDark : navbarBrandColorDark // ignore: cast_nullable_to_non_nullable
+as String?,navbarShowBrand: null == navbarShowBrand ? _self.navbarShowBrand : navbarShowBrand // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -1158,10 +1166,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String siteName,  String? siteTagline,  String? logoUrl,  String? defaultMetaTitle,  String? defaultMetaDescription,  String? defaultEmail,  String? defaultPhone,  String? defaultWhatsapp,  String? googleAnalyticsId,  bool maintenanceMode,  String? maintenanceMessage,  bool showAboutPage,  bool showGalleryPage,  bool showServicesPage,  bool showContactPage,  bool allowIndexing,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String siteName,  String? siteTagline,  String? logoUrl,  String? defaultMetaTitle,  String? defaultMetaDescription,  String? defaultEmail,  String? defaultPhone,  String? defaultWhatsapp,  String? googleAnalyticsId,  bool maintenanceMode,  String? maintenanceMessage,  bool showAboutPage,  bool showGalleryPage,  bool showServicesPage,  bool showContactPage,  bool allowIndexing,  bool isActive,  String? navbarBrandText,  String? navbarBrandFont,  String? navbarBrandFontUrl,  int? navbarBrandFontSize,  String? navbarBrandColor,  String? navbarBrandColorDark,  bool navbarShowBrand)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SiteSettings() when $default != null:
-return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.defaultMetaTitle,_that.defaultMetaDescription,_that.defaultEmail,_that.defaultPhone,_that.defaultWhatsapp,_that.googleAnalyticsId,_that.maintenanceMode,_that.maintenanceMessage,_that.showAboutPage,_that.showGalleryPage,_that.showServicesPage,_that.showContactPage,_that.allowIndexing,_that.isActive);case _:
+return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.defaultMetaTitle,_that.defaultMetaDescription,_that.defaultEmail,_that.defaultPhone,_that.defaultWhatsapp,_that.googleAnalyticsId,_that.maintenanceMode,_that.maintenanceMessage,_that.showAboutPage,_that.showGalleryPage,_that.showServicesPage,_that.showContactPage,_that.allowIndexing,_that.isActive,_that.navbarBrandText,_that.navbarBrandFont,_that.navbarBrandFontUrl,_that.navbarBrandFontSize,_that.navbarBrandColor,_that.navbarBrandColorDark,_that.navbarShowBrand);case _:
   return orElse();
 
 }
@@ -1179,10 +1187,10 @@ return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.de
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String siteName,  String? siteTagline,  String? logoUrl,  String? defaultMetaTitle,  String? defaultMetaDescription,  String? defaultEmail,  String? defaultPhone,  String? defaultWhatsapp,  String? googleAnalyticsId,  bool maintenanceMode,  String? maintenanceMessage,  bool showAboutPage,  bool showGalleryPage,  bool showServicesPage,  bool showContactPage,  bool allowIndexing,  bool isActive)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String siteName,  String? siteTagline,  String? logoUrl,  String? defaultMetaTitle,  String? defaultMetaDescription,  String? defaultEmail,  String? defaultPhone,  String? defaultWhatsapp,  String? googleAnalyticsId,  bool maintenanceMode,  String? maintenanceMessage,  bool showAboutPage,  bool showGalleryPage,  bool showServicesPage,  bool showContactPage,  bool allowIndexing,  bool isActive,  String? navbarBrandText,  String? navbarBrandFont,  String? navbarBrandFontUrl,  int? navbarBrandFontSize,  String? navbarBrandColor,  String? navbarBrandColorDark,  bool navbarShowBrand)  $default,) {final _that = this;
 switch (_that) {
 case _SiteSettings():
-return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.defaultMetaTitle,_that.defaultMetaDescription,_that.defaultEmail,_that.defaultPhone,_that.defaultWhatsapp,_that.googleAnalyticsId,_that.maintenanceMode,_that.maintenanceMessage,_that.showAboutPage,_that.showGalleryPage,_that.showServicesPage,_that.showContactPage,_that.allowIndexing,_that.isActive);case _:
+return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.defaultMetaTitle,_that.defaultMetaDescription,_that.defaultEmail,_that.defaultPhone,_that.defaultWhatsapp,_that.googleAnalyticsId,_that.maintenanceMode,_that.maintenanceMessage,_that.showAboutPage,_that.showGalleryPage,_that.showServicesPage,_that.showContactPage,_that.allowIndexing,_that.isActive,_that.navbarBrandText,_that.navbarBrandFont,_that.navbarBrandFontUrl,_that.navbarBrandFontSize,_that.navbarBrandColor,_that.navbarBrandColorDark,_that.navbarShowBrand);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1199,10 +1207,10 @@ return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.de
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String siteName,  String? siteTagline,  String? logoUrl,  String? defaultMetaTitle,  String? defaultMetaDescription,  String? defaultEmail,  String? defaultPhone,  String? defaultWhatsapp,  String? googleAnalyticsId,  bool maintenanceMode,  String? maintenanceMessage,  bool showAboutPage,  bool showGalleryPage,  bool showServicesPage,  bool showContactPage,  bool allowIndexing,  bool isActive)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String siteName,  String? siteTagline,  String? logoUrl,  String? defaultMetaTitle,  String? defaultMetaDescription,  String? defaultEmail,  String? defaultPhone,  String? defaultWhatsapp,  String? googleAnalyticsId,  bool maintenanceMode,  String? maintenanceMessage,  bool showAboutPage,  bool showGalleryPage,  bool showServicesPage,  bool showContactPage,  bool allowIndexing,  bool isActive,  String? navbarBrandText,  String? navbarBrandFont,  String? navbarBrandFontUrl,  int? navbarBrandFontSize,  String? navbarBrandColor,  String? navbarBrandColorDark,  bool navbarShowBrand)?  $default,) {final _that = this;
 switch (_that) {
 case _SiteSettings() when $default != null:
-return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.defaultMetaTitle,_that.defaultMetaDescription,_that.defaultEmail,_that.defaultPhone,_that.defaultWhatsapp,_that.googleAnalyticsId,_that.maintenanceMode,_that.maintenanceMessage,_that.showAboutPage,_that.showGalleryPage,_that.showServicesPage,_that.showContactPage,_that.allowIndexing,_that.isActive);case _:
+return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.defaultMetaTitle,_that.defaultMetaDescription,_that.defaultEmail,_that.defaultPhone,_that.defaultWhatsapp,_that.googleAnalyticsId,_that.maintenanceMode,_that.maintenanceMessage,_that.showAboutPage,_that.showGalleryPage,_that.showServicesPage,_that.showContactPage,_that.allowIndexing,_that.isActive,_that.navbarBrandText,_that.navbarBrandFont,_that.navbarBrandFontUrl,_that.navbarBrandFontSize,_that.navbarBrandColor,_that.navbarBrandColorDark,_that.navbarShowBrand);case _:
   return null;
 
 }
@@ -1214,7 +1222,7 @@ return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.de
 @JsonSerializable()
 
 class _SiteSettings implements SiteSettings {
-  const _SiteSettings({this.id, this.siteName = 'Paola Bolívar Nievas - Make-up Artist', this.siteTagline, this.logoUrl, this.defaultMetaTitle, this.defaultMetaDescription, this.defaultEmail, this.defaultPhone, this.defaultWhatsapp, this.googleAnalyticsId, this.maintenanceMode = false, this.maintenanceMessage, this.showAboutPage = true, this.showGalleryPage = true, this.showServicesPage = false, this.showContactPage = true, this.allowIndexing = true, this.isActive = true});
+  const _SiteSettings({this.id, this.siteName = 'Paola Bolívar Nievas - Make-up Artist', this.siteTagline, this.logoUrl, this.defaultMetaTitle, this.defaultMetaDescription, this.defaultEmail, this.defaultPhone, this.defaultWhatsapp, this.googleAnalyticsId, this.maintenanceMode = false, this.maintenanceMessage, this.showAboutPage = true, this.showGalleryPage = true, this.showServicesPage = false, this.showContactPage = true, this.allowIndexing = true, this.isActive = true, this.navbarBrandText, this.navbarBrandFont, this.navbarBrandFontUrl, this.navbarBrandFontSize, this.navbarBrandColor, this.navbarBrandColorDark, this.navbarShowBrand = true});
   factory _SiteSettings.fromJson(Map<String, dynamic> json) => _$SiteSettingsFromJson(json);
 
 @override final  String? id;
@@ -1235,6 +1243,14 @@ class _SiteSettings implements SiteSettings {
 @override@JsonKey() final  bool showContactPage;
 @override@JsonKey() final  bool allowIndexing;
 @override@JsonKey() final  bool isActive;
+// ── Encabezado / Navbar brand ──
+@override final  String? navbarBrandText;
+@override final  String? navbarBrandFont;
+@override final  String? navbarBrandFontUrl;
+@override final  int? navbarBrandFontSize;
+@override final  String? navbarBrandColor;
+@override final  String? navbarBrandColorDark;
+@override@JsonKey() final  bool navbarShowBrand;
 
 /// Create a copy of SiteSettings
 /// with the given fields replaced by the non-null parameter values.
@@ -1249,16 +1265,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SiteSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.siteTagline, siteTagline) || other.siteTagline == siteTagline)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.defaultMetaTitle, defaultMetaTitle) || other.defaultMetaTitle == defaultMetaTitle)&&(identical(other.defaultMetaDescription, defaultMetaDescription) || other.defaultMetaDescription == defaultMetaDescription)&&(identical(other.defaultEmail, defaultEmail) || other.defaultEmail == defaultEmail)&&(identical(other.defaultPhone, defaultPhone) || other.defaultPhone == defaultPhone)&&(identical(other.defaultWhatsapp, defaultWhatsapp) || other.defaultWhatsapp == defaultWhatsapp)&&(identical(other.googleAnalyticsId, googleAnalyticsId) || other.googleAnalyticsId == googleAnalyticsId)&&(identical(other.maintenanceMode, maintenanceMode) || other.maintenanceMode == maintenanceMode)&&(identical(other.maintenanceMessage, maintenanceMessage) || other.maintenanceMessage == maintenanceMessage)&&(identical(other.showAboutPage, showAboutPage) || other.showAboutPage == showAboutPage)&&(identical(other.showGalleryPage, showGalleryPage) || other.showGalleryPage == showGalleryPage)&&(identical(other.showServicesPage, showServicesPage) || other.showServicesPage == showServicesPage)&&(identical(other.showContactPage, showContactPage) || other.showContactPage == showContactPage)&&(identical(other.allowIndexing, allowIndexing) || other.allowIndexing == allowIndexing)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SiteSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.siteName, siteName) || other.siteName == siteName)&&(identical(other.siteTagline, siteTagline) || other.siteTagline == siteTagline)&&(identical(other.logoUrl, logoUrl) || other.logoUrl == logoUrl)&&(identical(other.defaultMetaTitle, defaultMetaTitle) || other.defaultMetaTitle == defaultMetaTitle)&&(identical(other.defaultMetaDescription, defaultMetaDescription) || other.defaultMetaDescription == defaultMetaDescription)&&(identical(other.defaultEmail, defaultEmail) || other.defaultEmail == defaultEmail)&&(identical(other.defaultPhone, defaultPhone) || other.defaultPhone == defaultPhone)&&(identical(other.defaultWhatsapp, defaultWhatsapp) || other.defaultWhatsapp == defaultWhatsapp)&&(identical(other.googleAnalyticsId, googleAnalyticsId) || other.googleAnalyticsId == googleAnalyticsId)&&(identical(other.maintenanceMode, maintenanceMode) || other.maintenanceMode == maintenanceMode)&&(identical(other.maintenanceMessage, maintenanceMessage) || other.maintenanceMessage == maintenanceMessage)&&(identical(other.showAboutPage, showAboutPage) || other.showAboutPage == showAboutPage)&&(identical(other.showGalleryPage, showGalleryPage) || other.showGalleryPage == showGalleryPage)&&(identical(other.showServicesPage, showServicesPage) || other.showServicesPage == showServicesPage)&&(identical(other.showContactPage, showContactPage) || other.showContactPage == showContactPage)&&(identical(other.allowIndexing, allowIndexing) || other.allowIndexing == allowIndexing)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.navbarBrandText, navbarBrandText) || other.navbarBrandText == navbarBrandText)&&(identical(other.navbarBrandFont, navbarBrandFont) || other.navbarBrandFont == navbarBrandFont)&&(identical(other.navbarBrandFontUrl, navbarBrandFontUrl) || other.navbarBrandFontUrl == navbarBrandFontUrl)&&(identical(other.navbarBrandFontSize, navbarBrandFontSize) || other.navbarBrandFontSize == navbarBrandFontSize)&&(identical(other.navbarBrandColor, navbarBrandColor) || other.navbarBrandColor == navbarBrandColor)&&(identical(other.navbarBrandColorDark, navbarBrandColorDark) || other.navbarBrandColorDark == navbarBrandColorDark)&&(identical(other.navbarShowBrand, navbarShowBrand) || other.navbarShowBrand == navbarShowBrand));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,siteName,siteTagline,logoUrl,defaultMetaTitle,defaultMetaDescription,defaultEmail,defaultPhone,defaultWhatsapp,googleAnalyticsId,maintenanceMode,maintenanceMessage,showAboutPage,showGalleryPage,showServicesPage,showContactPage,allowIndexing,isActive);
+int get hashCode => Object.hashAll([runtimeType,id,siteName,siteTagline,logoUrl,defaultMetaTitle,defaultMetaDescription,defaultEmail,defaultPhone,defaultWhatsapp,googleAnalyticsId,maintenanceMode,maintenanceMessage,showAboutPage,showGalleryPage,showServicesPage,showContactPage,allowIndexing,isActive,navbarBrandText,navbarBrandFont,navbarBrandFontUrl,navbarBrandFontSize,navbarBrandColor,navbarBrandColorDark,navbarShowBrand]);
 
 @override
 String toString() {
-  return 'SiteSettings(id: $id, siteName: $siteName, siteTagline: $siteTagline, logoUrl: $logoUrl, defaultMetaTitle: $defaultMetaTitle, defaultMetaDescription: $defaultMetaDescription, defaultEmail: $defaultEmail, defaultPhone: $defaultPhone, defaultWhatsapp: $defaultWhatsapp, googleAnalyticsId: $googleAnalyticsId, maintenanceMode: $maintenanceMode, maintenanceMessage: $maintenanceMessage, showAboutPage: $showAboutPage, showGalleryPage: $showGalleryPage, showServicesPage: $showServicesPage, showContactPage: $showContactPage, allowIndexing: $allowIndexing, isActive: $isActive)';
+  return 'SiteSettings(id: $id, siteName: $siteName, siteTagline: $siteTagline, logoUrl: $logoUrl, defaultMetaTitle: $defaultMetaTitle, defaultMetaDescription: $defaultMetaDescription, defaultEmail: $defaultEmail, defaultPhone: $defaultPhone, defaultWhatsapp: $defaultWhatsapp, googleAnalyticsId: $googleAnalyticsId, maintenanceMode: $maintenanceMode, maintenanceMessage: $maintenanceMessage, showAboutPage: $showAboutPage, showGalleryPage: $showGalleryPage, showServicesPage: $showServicesPage, showContactPage: $showContactPage, allowIndexing: $allowIndexing, isActive: $isActive, navbarBrandText: $navbarBrandText, navbarBrandFont: $navbarBrandFont, navbarBrandFontUrl: $navbarBrandFontUrl, navbarBrandFontSize: $navbarBrandFontSize, navbarBrandColor: $navbarBrandColor, navbarBrandColorDark: $navbarBrandColorDark, navbarShowBrand: $navbarShowBrand)';
 }
 
 
@@ -1269,7 +1285,7 @@ abstract mixin class _$SiteSettingsCopyWith<$Res> implements $SiteSettingsCopyWi
   factory _$SiteSettingsCopyWith(_SiteSettings value, $Res Function(_SiteSettings) _then) = __$SiteSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String siteName, String? siteTagline, String? logoUrl, String? defaultMetaTitle, String? defaultMetaDescription, String? defaultEmail, String? defaultPhone, String? defaultWhatsapp, String? googleAnalyticsId, bool maintenanceMode, String? maintenanceMessage, bool showAboutPage, bool showGalleryPage, bool showServicesPage, bool showContactPage, bool allowIndexing, bool isActive
+ String? id, String siteName, String? siteTagline, String? logoUrl, String? defaultMetaTitle, String? defaultMetaDescription, String? defaultEmail, String? defaultPhone, String? defaultWhatsapp, String? googleAnalyticsId, bool maintenanceMode, String? maintenanceMessage, bool showAboutPage, bool showGalleryPage, bool showServicesPage, bool showContactPage, bool allowIndexing, bool isActive, String? navbarBrandText, String? navbarBrandFont, String? navbarBrandFontUrl, int? navbarBrandFontSize, String? navbarBrandColor, String? navbarBrandColorDark, bool navbarShowBrand
 });
 
 
@@ -1286,7 +1302,7 @@ class __$SiteSettingsCopyWithImpl<$Res>
 
 /// Create a copy of SiteSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? siteName = null,Object? siteTagline = freezed,Object? logoUrl = freezed,Object? defaultMetaTitle = freezed,Object? defaultMetaDescription = freezed,Object? defaultEmail = freezed,Object? defaultPhone = freezed,Object? defaultWhatsapp = freezed,Object? googleAnalyticsId = freezed,Object? maintenanceMode = null,Object? maintenanceMessage = freezed,Object? showAboutPage = null,Object? showGalleryPage = null,Object? showServicesPage = null,Object? showContactPage = null,Object? allowIndexing = null,Object? isActive = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? siteName = null,Object? siteTagline = freezed,Object? logoUrl = freezed,Object? defaultMetaTitle = freezed,Object? defaultMetaDescription = freezed,Object? defaultEmail = freezed,Object? defaultPhone = freezed,Object? defaultWhatsapp = freezed,Object? googleAnalyticsId = freezed,Object? maintenanceMode = null,Object? maintenanceMessage = freezed,Object? showAboutPage = null,Object? showGalleryPage = null,Object? showServicesPage = null,Object? showContactPage = null,Object? allowIndexing = null,Object? isActive = null,Object? navbarBrandText = freezed,Object? navbarBrandFont = freezed,Object? navbarBrandFontUrl = freezed,Object? navbarBrandFontSize = freezed,Object? navbarBrandColor = freezed,Object? navbarBrandColorDark = freezed,Object? navbarShowBrand = null,}) {
   return _then(_SiteSettings(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,siteName: null == siteName ? _self.siteName : siteName // ignore: cast_nullable_to_non_nullable
@@ -1306,6 +1322,13 @@ as bool,showServicesPage: null == showServicesPage ? _self.showServicesPage : sh
 as bool,showContactPage: null == showContactPage ? _self.showContactPage : showContactPage // ignore: cast_nullable_to_non_nullable
 as bool,allowIndexing: null == allowIndexing ? _self.allowIndexing : allowIndexing // ignore: cast_nullable_to_non_nullable
 as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,navbarBrandText: freezed == navbarBrandText ? _self.navbarBrandText : navbarBrandText // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandFont: freezed == navbarBrandFont ? _self.navbarBrandFont : navbarBrandFont // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandFontUrl: freezed == navbarBrandFontUrl ? _self.navbarBrandFontUrl : navbarBrandFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandFontSize: freezed == navbarBrandFontSize ? _self.navbarBrandFontSize : navbarBrandFontSize // ignore: cast_nullable_to_non_nullable
+as int?,navbarBrandColor: freezed == navbarBrandColor ? _self.navbarBrandColor : navbarBrandColor // ignore: cast_nullable_to_non_nullable
+as String?,navbarBrandColorDark: freezed == navbarBrandColorDark ? _self.navbarBrandColorDark : navbarBrandColorDark // ignore: cast_nullable_to_non_nullable
+as String?,navbarShowBrand: null == navbarShowBrand ? _self.navbarShowBrand : navbarShowBrand // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

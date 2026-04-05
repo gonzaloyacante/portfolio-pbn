@@ -323,6 +323,15 @@ model SiteSettings {
 
   allowIndexing Boolean @default(true) // SEO robots
 
+  // ── Navbar / Encabezado ──────────────────────────────────────────
+  navbarBrandText      String?  @default("Paola BN")
+  navbarBrandFont      String?  // Font family name, e.g. "Great Vibes"
+  navbarBrandFontUrl   String?  // Google Fonts embed URL
+  navbarBrandFontSize  Int?     @default(30) // px
+  navbarBrandColor     String?  // CSS color light mode
+  navbarBrandColorDark String?  // CSS color dark mode
+  navbarShowBrand      Boolean  @default(true)
+
   // Meta
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())

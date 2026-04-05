@@ -30,7 +30,8 @@ interface NavbarProps {
 
 export default function Navbar({ brandName, visibility }: NavbarProps) {
   const pathname = usePathname()
-  const displayBrand = brandName || 'PBN'
+  const displayBrand = visibility?.navbarBrandText ?? brandName ?? 'PBN'
+  const showBrand = visibility?.navbarShowBrand ?? true
 
   const navItems = useMemo(() => {
     if (!visibility) return allNavItems
@@ -56,12 +57,14 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
         {/* Logo - visible en pantallas grandes */}
-        <Link
-          href={ROUTES.home}
-          className="font-script text-foreground mb-4 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
-        >
-          {displayBrand}
-        </Link>
+        {showBrand && (
+          <Link
+            href={ROUTES.home}
+            className="nb-brand font-script text-foreground mb-4 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
+          >
+            {displayBrand}
+          </Link>
+        )}
 
         {/* Navegación con block-active */}
         <div className="relative flex flex-wrap items-center justify-center gap-1 md:gap-0">

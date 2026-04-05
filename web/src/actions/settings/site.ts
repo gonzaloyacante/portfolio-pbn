@@ -30,6 +30,13 @@ export interface SiteSettingsData {
   showServicesPage: boolean
   showContactPage: boolean
   allowIndexing: boolean
+  navbarBrandText: string | null
+  navbarBrandFont: string | null
+  navbarBrandFontUrl: string | null
+  navbarBrandFontSize: number | null
+  navbarBrandColor: string | null
+  navbarBrandColorDark: string | null
+  navbarShowBrand: boolean
 }
 
 /** Minimal visibility-only data for Navbar / Footer / middleware */
@@ -40,6 +47,13 @@ export interface PageVisibility {
   showContactPage: boolean
   maintenanceMode: boolean
   maintenanceMessage: string | null
+  navbarBrandText: string | null
+  navbarBrandFont: string | null
+  navbarBrandFontUrl: string | null
+  navbarBrandFontSize: number | null
+  navbarBrandColor: string | null
+  navbarBrandColorDark: string | null
+  navbarShowBrand: boolean
 }
 
 // ─── Validation ─────────────────────────────────────
@@ -59,6 +73,13 @@ const siteSettingsSchema = z.object({
   showServicesPage: z.boolean().optional(),
   showContactPage: z.boolean().optional(),
   allowIndexing: z.boolean().optional(),
+  navbarBrandText: z.string().max(100).nullable().optional(),
+  navbarBrandFont: z.string().max(100).nullable().optional(),
+  navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
+  navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
+  navbarBrandColor: z.string().max(30).nullable().optional(),
+  navbarBrandColorDark: z.string().max(30).nullable().optional(),
+  navbarShowBrand: z.boolean().optional(),
 })
 
 // ─── Queries ────────────────────────────────────────
@@ -91,6 +112,13 @@ export const getSiteSettings = unstable_cache(
           showServicesPage: true,
           showContactPage: true,
           allowIndexing: true,
+          navbarBrandText: true,
+          navbarBrandFont: true,
+          navbarBrandFontUrl: true,
+          navbarBrandFontSize: true,
+          navbarBrandColor: true,
+          navbarBrandColorDark: true,
+          navbarShowBrand: true,
         },
       })
       return settings
@@ -118,6 +146,13 @@ export const getPageVisibility = unstable_cache(
           showContactPage: true,
           maintenanceMode: true,
           maintenanceMessage: true,
+          navbarBrandText: true,
+          navbarBrandFont: true,
+          navbarBrandFontUrl: true,
+          navbarBrandFontSize: true,
+          navbarBrandColor: true,
+          navbarBrandColorDark: true,
+          navbarShowBrand: true,
         },
       })
       return (
@@ -128,6 +163,13 @@ export const getPageVisibility = unstable_cache(
           showContactPage: true,
           maintenanceMode: false,
           maintenanceMessage: null,
+          navbarBrandText: null,
+          navbarBrandFont: null,
+          navbarBrandFontUrl: null,
+          navbarBrandFontSize: null,
+          navbarBrandColor: null,
+          navbarBrandColorDark: null,
+          navbarShowBrand: true,
         }
       )
     } catch {
@@ -138,6 +180,13 @@ export const getPageVisibility = unstable_cache(
         showContactPage: true,
         maintenanceMode: false,
         maintenanceMessage: null,
+        navbarBrandText: null,
+        navbarBrandFont: null,
+        navbarBrandFontUrl: null,
+        navbarBrandFontSize: null,
+        navbarBrandColor: null,
+        navbarBrandColorDark: null,
+        navbarShowBrand: true,
       }
     }
   },

@@ -35,6 +35,15 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   bool _showServices = false;
   bool _showContact = true;
 
+  // ── Encabezado / Navbar brand ──
+  final _navbarBrandTextCtrl = TextEditingController();
+  final _navbarBrandFontCtrl = TextEditingController();
+  final _navbarBrandFontUrlCtrl = TextEditingController();
+  final _navbarBrandFontSizeCtrl = TextEditingController();
+  final _navbarBrandColorCtrl = TextEditingController();
+  final _navbarBrandColorDarkCtrl = TextEditingController();
+  bool _navbarShowBrand = true;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +53,12 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
       _metaTitleCtrl,
       _metaDescCtrl,
       _maintenanceMsgCtrl,
+      _navbarBrandTextCtrl,
+      _navbarBrandFontCtrl,
+      _navbarBrandFontUrlCtrl,
+      _navbarBrandFontSizeCtrl,
+      _navbarBrandColorCtrl,
+      _navbarBrandColorDarkCtrl,
     ]) {
       c.addListener(_markDirty);
     }
@@ -78,14 +93,16 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
       _metaTitleCtrl,
       _metaDescCtrl,
       _maintenanceMsgCtrl,
+      _navbarBrandTextCtrl,
+      _navbarBrandFontCtrl,
+      _navbarBrandFontUrlCtrl,
+      _navbarBrandFontSizeCtrl,
+      _navbarBrandColorCtrl,
+      _navbarBrandColorDarkCtrl,
     ]) {
       c.removeListener(_markDirty);
+      c.dispose();
     }
-    _siteNameCtrl.dispose();
-    _siteTaglineCtrl.dispose();
-    _metaTitleCtrl.dispose();
-    _metaDescCtrl.dispose();
-    _maintenanceMsgCtrl.dispose();
     super.dispose();
   }
 
@@ -102,6 +119,15 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
     _showGallery = s.showGalleryPage;
     _showServices = s.showServicesPage;
     _showContact = s.showContactPage;
+    _navbarShowBrand = s.navbarShowBrand;
+    _navbarBrandTextCtrl.text = s.navbarBrandText ?? '';
+    _navbarBrandFontCtrl.text = s.navbarBrandFont ?? '';
+    _navbarBrandFontUrlCtrl.text = s.navbarBrandFontUrl ?? '';
+    _navbarBrandFontSizeCtrl.text = s.navbarBrandFontSize != null
+        ? s.navbarBrandFontSize.toString()
+        : '30';
+    _navbarBrandColorCtrl.text = s.navbarBrandColor ?? '';
+    _navbarBrandColorDarkCtrl.text = s.navbarBrandColorDark ?? '';
   }
 
   String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v.trim();
@@ -120,6 +146,15 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'showGalleryPage': _showGallery,
         'showServicesPage': _showServices,
         'showContactPage': _showContact,
+        'navbarShowBrand': _navbarShowBrand,
+        'navbarBrandText': _nullIfEmpty(_navbarBrandTextCtrl.text),
+        'navbarBrandFont': _nullIfEmpty(_navbarBrandFontCtrl.text),
+        'navbarBrandFontUrl': _nullIfEmpty(_navbarBrandFontUrlCtrl.text),
+        'navbarBrandFontSize': _navbarBrandFontSizeCtrl.text.trim().isNotEmpty
+            ? int.tryParse(_navbarBrandFontSizeCtrl.text.trim())
+            : null,
+        'navbarBrandColor': _nullIfEmpty(_navbarBrandColorCtrl.text),
+        'navbarBrandColorDark': _nullIfEmpty(_navbarBrandColorDarkCtrl.text),
       });
       ref.invalidate(siteSettingsProvider);
       if (mounted) {
@@ -160,7 +195,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
           isLoading: _saving,
           child: async.when(
             loading: () =>
-                const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
+                const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
             error: (e, _) => ErrorState(
               message: e.toString(),
               onRetry: () => ref.invalidate(siteSettingsProvider),
@@ -173,6 +208,79 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         ),
       ),
     );
+  }
+
+  List<Widget> _navbarBrandFields() {
+    return [
+      const SizedBox(height: 12),
+      TextFormField(
+        controller: _navbarBrandTextCtrl,
+        decoration: const InputDecoration(
+          labelText: 'Texto del nombre',
+          hintText: 'Paola BN',
+        ),
+      ),
+      const SizedBox(height: 12),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _navbarBrandFontCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Fuente (nombre)',
+                hintText: 'Great Vibes',
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 90,
+            child: TextFormField(
+              controller: _navbarBrandFontSizeCtrl,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Tamaño (px)',
+                hintText: '30',
+              ),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      TextFormField(
+        controller: _navbarBrandFontUrlCtrl,
+        decoration: const InputDecoration(
+          labelText: 'URL Google Fonts',
+          hintText:
+              'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
+        ),
+      ),
+      const SizedBox(height: 12),
+      Row(
+        children: [
+          Expanded(
+            child: TextFormField(
+              controller: _navbarBrandColorCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Color claro',
+                hintText: '#1a050a',
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextFormField(
+              controller: _navbarBrandColorDarkCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Color oscuro',
+                hintText: '#fb7185',
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
   }
 
   Widget _buildForm(BuildContext context) {
@@ -192,6 +300,53 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // ── Encabezado ───────────────────────────────────────────────────
+              SettingsFormCard(
+                title: 'Encabezado',
+                children: [
+                  SwitchListTile(
+                    title: const Text('Mostrar nombre en navbar'),
+                    subtitle: const Text(
+                      'Muestra u oculta el nombre de marca en la cabecera.',
+                    ),
+                    value: _navbarShowBrand,
+                    onChanged: (v) => setState(() => _navbarShowBrand = v),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  if (_navbarShowBrand) ..._navbarBrandFields(),
+                  const Divider(height: 24),
+                  Text(
+                    'Visibilidad de páginas',
+                    style: Theme.of(context).textTheme.labelLarge,
+                  ),
+                  const SizedBox(height: 4),
+                  SwitchListTile(
+                    title: const Text('Sobre mí'),
+                    value: _showAbout,
+                    onChanged: (v) => setState(() => _showAbout = v),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Portfolio'),
+                    value: _showGallery,
+                    onChanged: (v) => setState(() => _showGallery = v),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Servicios'),
+                    value: _showServices,
+                    onChanged: (v) => setState(() => _showServices = v),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  SwitchListTile(
+                    title: const Text('Contacto'),
+                    value: _showContact,
+                    onChanged: (v) => setState(() => _showContact = v),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
               // ── Branding ─────────────────────────────────────────────────────
               SettingsFormCard(
                 title: 'Branding',
@@ -232,46 +387,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // ── Visibilidad ────────────────────────────────────────────────
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Visibilidad de páginas',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SwitchListTile(
-                      title: const Text('Sobre mí'),
-                      value: _showAbout,
-                      onChanged: (v) => setState(() => _showAbout = v),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    SwitchListTile(
-                      title: const Text('Portfolio'),
-                      value: _showGallery,
-                      onChanged: (v) => setState(() => _showGallery = v),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    SwitchListTile(
-                      title: const Text('Servicios'),
-                      value: _showServices,
-                      onChanged: (v) => setState(() => _showServices = v),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    SwitchListTile(
-                      title: const Text('Contacto'),
-                      value: _showContact,
-                      onChanged: (v) => setState(() => _showContact = v),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ],
-                ),
               ),
               const SizedBox(height: AppSpacing.md),
               // ── Mantenimiento ──────────────────────────────────────────────
