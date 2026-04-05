@@ -138,6 +138,23 @@ extension _ServiceFormPageBuilders on _ServiceFormPageState {
                 ),
                 const SizedBox(height: 16),
 
+                // URL de video externo (YouTube, Vimeo, etc.)
+                VideoUrlField(
+                  controller: _videoUrlCtrl,
+                  onChanged: (_) => _markDirty(),
+                ),
+                const SizedBox(height: 16),
+
+                // Tarifas / Pricing tiers
+                PricingTiersEditor(
+                  tiers: _pricingTiers,
+                  onChanged: (tiers) => _rebuild(() {
+                    _pricingTiers = tiers;
+                    _isDirty = true;
+                  }),
+                ),
+                const SizedBox(height: 16),
+
                 // Switches
                 SwitchListTile(
                   title: const Text('Servicio activo'),

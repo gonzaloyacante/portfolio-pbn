@@ -84,6 +84,7 @@ class BookingFormData {
   final String status;
   final String? totalAmount;
   final String? paymentMethod;
+  final String? paymentStatus;
 
   const BookingFormData({
     required this.date,
@@ -98,6 +99,7 @@ class BookingFormData {
     this.status = 'PENDING',
     this.totalAmount,
     this.paymentMethod,
+    this.paymentStatus,
   });
 
   Map<String, dynamic> toJson() => {
@@ -113,5 +115,6 @@ class BookingFormData {
     'status': status,
     if (totalAmount != null) 'totalAmount': totalAmount,
     if (paymentMethod != null) 'paymentMethod': paymentMethod,
+    if (paymentStatus != null) 'paymentStatus': paymentStatus,
   };
 }

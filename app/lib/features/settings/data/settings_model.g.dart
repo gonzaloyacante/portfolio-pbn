@@ -180,7 +180,7 @@ _SiteSettings _$SiteSettingsFromJson(Map<String, dynamic> json) =>
       maintenanceMessage: json['maintenanceMessage'] as String?,
       showAboutPage: json['showAboutPage'] as bool? ?? true,
       showGalleryPage: json['showGalleryPage'] as bool? ?? true,
-      showServicesPage: json['showServicesPage'] as bool? ?? false,
+      showServicesPage: json['showServicesPage'] as bool? ?? true,
       showContactPage: json['showContactPage'] as bool? ?? true,
       allowIndexing: json['allowIndexing'] as bool? ?? true,
       isActive: json['isActive'] as bool? ?? true,

@@ -195,6 +195,97 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                // ── Pago ─────────────────────────────────────────────────────
+                AppCard(
+                  borderRadius: AppRadius.forCard,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Pago',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _totalAmountCtrl,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: const InputDecoration(
+                          labelText: 'Precio acordado (€)',
+                          hintText: '0.00',
+                          prefixIcon: Icon(Icons.euro_outlined),
+                        ),
+                        onChanged: (_) => _markDirty(),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return null;
+                          if (double.tryParse(v.trim()) == null) {
+                            return 'Introduce un número válido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: _paymentStatus,
+                        decoration: const InputDecoration(
+                          labelText: 'Estado de pago',
+                          prefixIcon: Icon(Icons.payment_outlined),
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'PENDING',
+                            child: Text('Pendiente'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'PARTIAL',
+                            child: Text('Pago parcial'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'PAID',
+                            child: Text('Pagado'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'REFUNDED',
+                            child: Text('Reembolsado'),
+                          ),
+                        ],
+                        onChanged: (v) =>
+                            setState(() => _paymentStatus = v ?? 'PENDING'),
+                      ),
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: _paymentMethod,
+                        decoration: const InputDecoration(
+                          labelText: 'Método de pago (opcional)',
+                          prefixIcon: Icon(Icons.credit_card_outlined),
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: null,
+                            child: Text('Sin especificar'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'cash',
+                            child: Text('Efectivo'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'transfer',
+                            child: Text('Transferencia'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'mercadopago',
+                            child: Text('MercadoPago'),
+                          ),
+                        ],
+                        onChanged: (v) => setState(() => _paymentMethod = v),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 24),
                 FilledButton.icon(
                   onPressed: _submit,

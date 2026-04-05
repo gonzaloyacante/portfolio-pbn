@@ -11,6 +11,8 @@ import '../../../core/api/upload_service.dart';
 import '../data/service_model.dart';
 import '../data/services_repository.dart';
 import '../providers/services_provider.dart';
+import 'widgets/pricing_tiers_editor.dart';
+import 'widgets/video_url_field.dart';
 
 // Patrones de slug compilados una sola vez
 // ignore: deprecated_member_use
@@ -37,6 +39,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   final _descCtrl = TextEditingController();
   final _shortDescCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
+  final _videoUrlCtrl = TextEditingController();
   final _durationCtrl = TextEditingController();
   final _durationMinutesCtrl = TextEditingController();
   final _maxBookingsCtrl = TextEditingController();
@@ -50,6 +53,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   File? _pendingImage;
   String _priceLabel = 'desde';
   String _currency = 'EUR';
+  List<Map<String, dynamic>> _pricingTiers = [];
   bool _isActive = true;
   bool _isFeatured = false;
   bool _isAvailable = true;
@@ -67,6 +71,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       _descCtrl,
       _shortDescCtrl,
       _priceCtrl,
+      _videoUrlCtrl,
       _durationCtrl,
       _durationMinutesCtrl,
       _maxBookingsCtrl,
@@ -101,12 +106,16 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     _metaDescCtrl.text = detail.metaDescription ?? '';
     _metaKeywordsCtrl.text = detail.metaKeywords.join(', ');
     _imageCtrl.text = detail.imageUrl ?? '';
+    _videoUrlCtrl.text = detail.videoUrl ?? '';
     setState(() {
       _priceLabel = detail.priceLabel ?? 'desde';
       _currency = detail.currency;
       _isActive = detail.isActive;
       _isFeatured = detail.isFeatured;
       _isAvailable = detail.isAvailable;
+      _pricingTiers = detail.pricingTiers
+          .whereType<Map<String, dynamic>>()
+          .toList();
     });
   }
 
@@ -175,11 +184,15 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
         imageUrl: _imageCtrl.text.trim().isEmpty
             ? null
             : _imageCtrl.text.trim(),
+        videoUrl: _videoUrlCtrl.text.trim().isEmpty
+            ? null
+            : _videoUrlCtrl.text.trim(),
         isActive: _isActive,
         isFeatured: _isFeatured,
         isAvailable: _isAvailable,
         maxBookingsPerDay: int.tryParse(_maxBookingsCtrl.text.trim()),
         advanceNoticeDays: int.tryParse(_advanceNoticeCtrl.text.trim()),
+        pricingTiers: _pricingTiers,
         requirements: _requirementsCtrl.text.trim().isEmpty
             ? null
             : _requirementsCtrl.text.trim(),

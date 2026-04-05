@@ -39,6 +39,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   DateTime? _date;
   String? _serviceId;
   String? _currentStatus;
+  String? _paymentMethod;
+  String? _paymentStatus = 'PENDING';
+  final _totalAmountCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -61,6 +64,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _notesCtrl.dispose();
     _adminNotesCtrl.dispose();
     _guestCountCtrl.dispose();
+    _totalAmountCtrl.dispose();
     super.dispose();
   }
 
@@ -72,9 +76,14 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _notesCtrl.text = detail.clientNotes ?? '';
     _adminNotesCtrl.text = detail.adminNotes ?? '';
     _phoneCtrl.text = detail.clientPhone ?? '';
+    _totalAmountCtrl.text = detail.totalAmount ?? '';
     _date = detail.date;
     _serviceId = detail.serviceId;
     _currentStatus = detail.status;
+    setState(() {
+      _paymentMethod = detail.paymentMethod;
+      _paymentStatus = detail.paymentStatus ?? 'PENDING';
+    });
     _prefilled = true;
   }
 
@@ -161,6 +170,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             : _adminNotesCtrl.text.trim(),
         serviceId: _serviceId!,
         status: _currentStatus ?? 'PENDING',
+        totalAmount: _totalAmountCtrl.text.trim().isEmpty
+            ? null
+            : _totalAmountCtrl.text.trim(),
+        paymentMethod: _paymentMethod,
+        paymentStatus: _paymentStatus,
       );
       if (_isEdit) {
         await repo.updateBooking(widget.bookingId!, data.toJson());

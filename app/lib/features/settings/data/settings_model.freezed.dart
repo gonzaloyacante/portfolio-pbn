@@ -1222,7 +1222,7 @@ return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.de
 @JsonSerializable()
 
 class _SiteSettings implements SiteSettings {
-  const _SiteSettings({this.id, this.siteName = 'Paola Bolívar Nievas - Make-up Artist', this.siteTagline, this.logoUrl, this.defaultMetaTitle, this.defaultMetaDescription, this.defaultEmail, this.defaultPhone, this.defaultWhatsapp, this.googleAnalyticsId, this.maintenanceMode = false, this.maintenanceMessage, this.showAboutPage = true, this.showGalleryPage = true, this.showServicesPage = false, this.showContactPage = true, this.allowIndexing = true, this.isActive = true, this.navbarBrandText, this.navbarBrandFont, this.navbarBrandFontUrl, this.navbarBrandFontSize, this.navbarBrandColor, this.navbarBrandColorDark, this.navbarShowBrand = true});
+  const _SiteSettings({this.id, this.siteName = 'Paola Bolívar Nievas - Make-up Artist', this.siteTagline, this.logoUrl, this.defaultMetaTitle, this.defaultMetaDescription, this.defaultEmail, this.defaultPhone, this.defaultWhatsapp, this.googleAnalyticsId, this.maintenanceMode = false, this.maintenanceMessage, this.showAboutPage = true, this.showGalleryPage = true, this.showServicesPage = true, this.showContactPage = true, this.allowIndexing = true, this.isActive = true, this.navbarBrandText, this.navbarBrandFont, this.navbarBrandFontUrl, this.navbarBrandFontSize, this.navbarBrandColor, this.navbarBrandColorDark, this.navbarShowBrand = true});
   factory _SiteSettings.fromJson(Map<String, dynamic> json) => _$SiteSettingsFromJson(json);
 
 @override final  String? id;
