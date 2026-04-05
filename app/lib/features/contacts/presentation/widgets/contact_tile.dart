@@ -94,6 +94,15 @@ class ContactTile extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
+                    if (item.isImportant)
+                      const Padding(
+                        padding: EdgeInsets.only(right: 4),
+                        child: Icon(
+                          Icons.star_rounded,
+                          size: 14,
+                          color: Color(0xFFF59E0B),
+                        ),
+                      ),
                     Text(
                       AppDateUtils.toRelative(item.createdAt),
                       style: theme.textTheme.labelSmall?.copyWith(

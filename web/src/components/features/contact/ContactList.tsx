@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check } from 'lucide-react'
-import { markContactAsRead, deleteContact } from '@/actions/user/contact'
+import { Copy, Check, Star } from 'lucide-react'
+import { markContactAsRead, deleteContact, toggleContactImportant } from '@/actions/user/contact'
 import { useConfirmDialog } from '@/components/ui'
 
 interface Contact {
@@ -15,6 +15,7 @@ interface Contact {
   priority: string
   isRead: boolean
   isReplied: boolean
+  isImportant: boolean
   adminNote: string | null
   createdAt: Date
   updatedAt: Date
@@ -40,8 +41,21 @@ export default function ContactList({ contacts }: ContactListProps) {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [filter, setFilter] = useState<'all' | 'unread' | 'replied'>('all')
+  const [filter, setFilter] = useState<'all' | 'unread' | 'replied' | 'important'>('all')
   const [copiedField, setCopiedField] = useState<string | null>(null)
+  const [importantIds, setImportantIds] = useState<Set<string>>(
+    () => new Set(contacts.filter((c) => c.isImportant).map((c) => c.id))
+  )
+
+  const handleToggleImportant = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setImportantIds((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+    await toggleContactImportant(id)
+  }
 
   const handleCopy = (value: string, field: string) => {
     navigator.clipboard
@@ -59,6 +73,7 @@ export default function ContactList({ contacts }: ContactListProps) {
   const filteredContacts = contacts.filter((contact) => {
     if (filter === 'unread') return !contact.isRead
     if (filter === 'replied') return contact.isReplied
+    if (filter === 'important') return importantIds.has(contact.id)
     return true
   })
 
@@ -114,7 +129,7 @@ export default function ContactList({ contacts }: ContactListProps) {
           <select
             value={filter}
             onChange={(e) => {
-              setFilter(e.target.value as 'all' | 'unread' | 'replied')
+              setFilter(e.target.value as 'all' | 'unread' | 'replied' | 'important')
               setCurrentPage(1)
             }}
             className="border-input bg-background text-foreground focus:border-ring rounded-xl border px-3 py-1.5 text-sm focus:outline-none"
@@ -122,6 +137,7 @@ export default function ContactList({ contacts }: ContactListProps) {
             <option value="all">Todos</option>
             <option value="unread">No leídos</option>
             <option value="replied">Respondidos</option>
+            <option value="important">⭐ Importantes</option>
           </select>
         </div>
 
@@ -138,34 +154,45 @@ export default function ContactList({ contacts }: ContactListProps) {
             >
               <div className="mb-2 flex items-start justify-between gap-2">
                 <h3 className="text-foreground font-bold">{contact.name}</h3>
-                <div className="flex flex-wrap gap-1">
-                  {!contact.isRead && (
-                    <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs font-bold">
-                      Nuevo
-                    </span>
-                  )}
-                  {contact.isReplied && (
-                    <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-bold">
-                      ✓
-                    </span>
-                  )}
-                  {STATUS_LABEL[contact.status] && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-bold ${STATUS_CLASS[contact.status]}`}
-                    >
-                      {STATUS_LABEL[contact.status]}
-                    </span>
-                  )}
-                  {contact.priority === 'URGENT' && (
-                    <span className="bg-destructive/15 text-destructive rounded-full px-2 py-0.5 text-xs font-bold">
-                      Urgente
-                    </span>
-                  )}
-                  {contact.priority === 'HIGH' && (
-                    <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
-                      Alta
-                    </span>
-                  )}
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={(e) => handleToggleImportant(contact.id, e)}
+                    title={importantIds.has(contact.id) ? 'Quitar importante' : 'Marcar importante'}
+                    className="text-muted-foreground transition-colors hover:text-yellow-500"
+                  >
+                    <Star
+                      className={`h-3.5 w-3.5 ${importantIds.has(contact.id) ? 'fill-yellow-400 text-yellow-400' : ''}`}
+                    />
+                  </button>
+                  <div className="flex flex-wrap gap-1">
+                    {!contact.isRead && (
+                      <span className="bg-primary text-primary-foreground rounded-full px-2 py-0.5 text-xs font-bold">
+                        Nuevo
+                      </span>
+                    )}
+                    {contact.isReplied && (
+                      <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-bold">
+                        ✓
+                      </span>
+                    )}
+                    {STATUS_LABEL[contact.status] && (
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-bold ${STATUS_CLASS[contact.status]}`}
+                      >
+                        {STATUS_LABEL[contact.status]}
+                      </span>
+                    )}
+                    {contact.priority === 'URGENT' && (
+                      <span className="bg-destructive/15 text-destructive rounded-full px-2 py-0.5 text-xs font-bold">
+                        Urgente
+                      </span>
+                    )}
+                    {contact.priority === 'HIGH' && (
+                      <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-bold text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                        Alta
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <p className="text-muted-foreground mb-1 text-sm">{contact.email}</p>
@@ -269,6 +296,21 @@ export default function ContactList({ contacts }: ContactListProps) {
               </div>
 
               <div className="flex gap-2">
+                <button
+                  onClick={(e) => handleToggleImportant(selectedContact.id, e)}
+                  title={
+                    importantIds.has(selectedContact.id) ? 'Quitar importante' : 'Marcar importante'
+                  }
+                  className={`rounded-xl border px-3 py-2 text-sm font-bold transition-colors ${
+                    importantIds.has(selectedContact.id)
+                      ? 'border-yellow-400 bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20'
+                      : 'border-border bg-muted text-muted-foreground hover:border-yellow-400 hover:text-yellow-600'
+                  }`}
+                >
+                  <Star
+                    className={`h-4 w-4 ${importantIds.has(selectedContact.id) ? 'fill-yellow-400' : ''}`}
+                  />
+                </button>
                 {!selectedContact.isRead && (
                   <button
                     onClick={() => handleMarkAsRead(selectedContact.id)}

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ContactItem {
 
- String get id; String get name; String get email; String? get phone; String? get subject; String get status; String get priority; bool get isRead; bool get isReplied; DateTime? get readAt; DateTime? get repliedAt; List<String> get tags; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; String get email; String? get phone; String? get subject; String get status; String get priority; bool get isRead; bool get isReplied; bool get isImportant; DateTime? get readAt; DateTime? get repliedAt; List<String> get tags; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of ContactItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ContactItemCopyWith<ContactItem> get copyWith => _$ContactItemCopyWithImpl<Cont
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ContactItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ContactItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,phone,subject,status,priority,isRead,isReplied,readAt,repliedAt,const DeepCollectionEquality().hash(tags),createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,email,phone,subject,status,priority,isRead,isReplied,isImportant,readAt,repliedAt,const DeepCollectionEquality().hash(tags),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ContactItem(id: $id, name: $name, email: $email, phone: $phone, subject: $subject, status: $status, priority: $priority, isRead: $isRead, isReplied: $isReplied, readAt: $readAt, repliedAt: $repliedAt, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ContactItem(id: $id, name: $name, email: $email, phone: $phone, subject: $subject, status: $status, priority: $priority, isRead: $isRead, isReplied: $isReplied, isImportant: $isImportant, readAt: $readAt, repliedAt: $repliedAt, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ContactItemCopyWith<$Res>  {
   factory $ContactItemCopyWith(ContactItem value, $Res Function(ContactItem) _then) = _$ContactItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String email, String? phone, String? subject, String status, String priority, bool isRead, bool isReplied, DateTime? readAt, DateTime? repliedAt, List<String> tags, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, String? phone, String? subject, String status, String priority, bool isRead, bool isReplied, bool isImportant, DateTime? readAt, DateTime? repliedAt, List<String> tags, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$ContactItemCopyWithImpl<$Res>
 
 /// Create a copy of ContactItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? subject = freezed,Object? status = null,Object? priority = null,Object? isRead = null,Object? isReplied = null,Object? readAt = freezed,Object? repliedAt = freezed,Object? tags = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? subject = freezed,Object? status = null,Object? priority = null,Object? isRead = null,Object? isReplied = null,Object? isImportant = null,Object? readAt = freezed,Object? repliedAt = freezed,Object? tags = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -76,6 +76,7 @@ as String?,status: null == status ? _self.status : status // ignore: cast_nullab
 as String,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
 as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
 as bool,isReplied: null == isReplied ? _self.isReplied : isReplied // ignore: cast_nullable_to_non_nullable
+as bool,isImportant: null == isImportant ? _self.isImportant : isImportant // ignore: cast_nullable_to_non_nullable
 as bool,readAt: freezed == readAt ? _self.readAt : readAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,repliedAt: freezed == repliedAt ? _self.repliedAt : repliedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
@@ -166,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? subject,  String status,  String priority,  bool isRead,  bool isReplied,  DateTime? readAt,  DateTime? repliedAt,  List<String> tags,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? subject,  String status,  String priority,  bool isRead,  bool isReplied,  bool isImportant,  DateTime? readAt,  DateTime? repliedAt,  List<String> tags,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ContactItem() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.status,_that.priority,_that.isRead,_that.isReplied,_that.readAt,_that.repliedAt,_that.tags,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.status,_that.priority,_that.isRead,_that.isReplied,_that.isImportant,_that.readAt,_that.repliedAt,_that.tags,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -187,10 +188,10 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? subject,  String status,  String priority,  bool isRead,  bool isReplied,  DateTime? readAt,  DateTime? repliedAt,  List<String> tags,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String? subject,  String status,  String priority,  bool isRead,  bool isReplied,  bool isImportant,  DateTime? readAt,  DateTime? repliedAt,  List<String> tags,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ContactItem():
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.status,_that.priority,_that.isRead,_that.isReplied,_that.readAt,_that.repliedAt,_that.tags,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.status,_that.priority,_that.isRead,_that.isReplied,_that.isImportant,_that.readAt,_that.repliedAt,_that.tags,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +208,10 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  String? phone,  String? subject,  String status,  String priority,  bool isRead,  bool isReplied,  DateTime? readAt,  DateTime? repliedAt,  List<String> tags,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  String? phone,  String? subject,  String status,  String priority,  bool isRead,  bool isReplied,  bool isImportant,  DateTime? readAt,  DateTime? repliedAt,  List<String> tags,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ContactItem() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.status,_that.priority,_that.isRead,_that.isReplied,_that.readAt,_that.repliedAt,_that.tags,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.status,_that.priority,_that.isRead,_that.isReplied,_that.isImportant,_that.readAt,_that.repliedAt,_that.tags,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -222,7 +223,7 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.subject,_that.
 @JsonSerializable()
 
 class _ContactItem implements ContactItem {
-  const _ContactItem({required this.id, required this.name, required this.email, this.phone, this.subject, this.status = 'NEW', this.priority = 'MEDIUM', this.isRead = false, this.isReplied = false, this.readAt, this.repliedAt, final  List<String> tags = const [], required this.createdAt, required this.updatedAt}): _tags = tags;
+  const _ContactItem({required this.id, required this.name, required this.email, this.phone, this.subject, this.status = 'NEW', this.priority = 'MEDIUM', this.isRead = false, this.isReplied = false, this.isImportant = false, this.readAt, this.repliedAt, final  List<String> tags = const [], required this.createdAt, required this.updatedAt}): _tags = tags;
   factory _ContactItem.fromJson(Map<String, dynamic> json) => _$ContactItemFromJson(json);
 
 @override final  String id;
@@ -234,6 +235,7 @@ class _ContactItem implements ContactItem {
 @override@JsonKey() final  String priority;
 @override@JsonKey() final  bool isRead;
 @override@JsonKey() final  bool isReplied;
+@override@JsonKey() final  bool isImportant;
 @override final  DateTime? readAt;
 @override final  DateTime? repliedAt;
  final  List<String> _tags;
@@ -259,16 +261,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ContactItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ContactItem&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,email,phone,subject,status,priority,isRead,isReplied,readAt,repliedAt,const DeepCollectionEquality().hash(_tags),createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,email,phone,subject,status,priority,isRead,isReplied,isImportant,readAt,repliedAt,const DeepCollectionEquality().hash(_tags),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ContactItem(id: $id, name: $name, email: $email, phone: $phone, subject: $subject, status: $status, priority: $priority, isRead: $isRead, isReplied: $isReplied, readAt: $readAt, repliedAt: $repliedAt, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ContactItem(id: $id, name: $name, email: $email, phone: $phone, subject: $subject, status: $status, priority: $priority, isRead: $isRead, isReplied: $isReplied, isImportant: $isImportant, readAt: $readAt, repliedAt: $repliedAt, tags: $tags, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -279,7 +281,7 @@ abstract mixin class _$ContactItemCopyWith<$Res> implements $ContactItemCopyWith
   factory _$ContactItemCopyWith(_ContactItem value, $Res Function(_ContactItem) _then) = __$ContactItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String email, String? phone, String? subject, String status, String priority, bool isRead, bool isReplied, DateTime? readAt, DateTime? repliedAt, List<String> tags, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, String? phone, String? subject, String status, String priority, bool isRead, bool isReplied, bool isImportant, DateTime? readAt, DateTime? repliedAt, List<String> tags, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -296,7 +298,7 @@ class __$ContactItemCopyWithImpl<$Res>
 
 /// Create a copy of ContactItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? subject = freezed,Object? status = null,Object? priority = null,Object? isRead = null,Object? isReplied = null,Object? readAt = freezed,Object? repliedAt = freezed,Object? tags = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? subject = freezed,Object? status = null,Object? priority = null,Object? isRead = null,Object? isReplied = null,Object? isImportant = null,Object? readAt = freezed,Object? repliedAt = freezed,Object? tags = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ContactItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -307,6 +309,7 @@ as String?,status: null == status ? _self.status : status // ignore: cast_nullab
 as String,priority: null == priority ? _self.priority : priority // ignore: cast_nullable_to_non_nullable
 as String,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
 as bool,isReplied: null == isReplied ? _self.isReplied : isReplied // ignore: cast_nullable_to_non_nullable
+as bool,isImportant: null == isImportant ? _self.isImportant : isImportant // ignore: cast_nullable_to_non_nullable
 as bool,readAt: freezed == readAt ? _self.readAt : readAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,repliedAt: freezed == repliedAt ? _self.repliedAt : repliedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
@@ -323,7 +326,7 @@ as DateTime,
 /// @nodoc
 mixin _$ContactDetail {
 
- String get id; String get name; String get email; String? get phone; String get message; String? get subject; String get responsePreference; String get status; String get priority; bool get isRead; DateTime? get readAt; bool get isReplied; DateTime? get repliedAt; String? get replyText; String? get adminNote; List<String> get tags; String? get ipAddress; String? get referrer; String? get utmSource; String? get utmMedium; String? get utmCampaign; DateTime get createdAt; DateTime get updatedAt;
+ String get id; String get name; String get email; String? get phone; String get message; String? get subject; String get responsePreference; String get status; String get priority; bool get isRead; DateTime? get readAt; bool get isReplied; DateTime? get repliedAt; String? get replyText; bool get isImportant; String? get adminNote; List<String> get tags; String? get ipAddress; String? get referrer; String? get utmSource; String? get utmMedium; String? get utmCampaign; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of ContactDetail
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -336,16 +339,16 @@ $ContactDetailCopyWith<ContactDetail> get copyWith => _$ContactDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&(identical(other.replyText, replyText) || other.replyText == replyText)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&(identical(other.replyText, replyText) || other.replyText == replyText)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other.tags, tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,message,subject,responsePreference,status,priority,isRead,readAt,isReplied,repliedAt,replyText,adminNote,const DeepCollectionEquality().hash(tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,message,subject,responsePreference,status,priority,isRead,readAt,isReplied,repliedAt,replyText,isImportant,adminNote,const DeepCollectionEquality().hash(tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isReplied: $isReplied, repliedAt: $repliedAt, replyText: $replyText, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isReplied: $isReplied, repliedAt: $repliedAt, replyText: $replyText, isImportant: $isImportant, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -356,7 +359,7 @@ abstract mixin class $ContactDetailCopyWith<$Res>  {
   factory $ContactDetailCopyWith(ContactDetail value, $Res Function(ContactDetail) _then) = _$ContactDetailCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String email, String? phone, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isReplied, DateTime? repliedAt, String? replyText, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, String? phone, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isReplied, DateTime? repliedAt, String? replyText, bool isImportant, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -373,7 +376,7 @@ class _$ContactDetailCopyWithImpl<$Res>
 
 /// Create a copy of ContactDetail
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isReplied = null,Object? repliedAt = freezed,Object? replyText = freezed,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isReplied = null,Object? repliedAt = freezed,Object? replyText = freezed,Object? isImportant = null,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -389,7 +392,8 @@ as bool,readAt: freezed == readAt ? _self.readAt : readAt // ignore: cast_nullab
 as DateTime?,isReplied: null == isReplied ? _self.isReplied : isReplied // ignore: cast_nullable_to_non_nullable
 as bool,repliedAt: freezed == repliedAt ? _self.repliedAt : repliedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,replyText: freezed == replyText ? _self.replyText : replyText // ignore: cast_nullable_to_non_nullable
-as String?,adminNote: freezed == adminNote ? _self.adminNote : adminNote // ignore: cast_nullable_to_non_nullable
+as String?,isImportant: null == isImportant ? _self.isImportant : isImportant // ignore: cast_nullable_to_non_nullable
+as bool,adminNote: freezed == adminNote ? _self.adminNote : adminNote // ignore: cast_nullable_to_non_nullable
 as String?,tags: null == tags ? _self.tags : tags // ignore: cast_nullable_to_non_nullable
 as List<String>,ipAddress: freezed == ipAddress ? _self.ipAddress : ipAddress // ignore: cast_nullable_to_non_nullable
 as String?,referrer: freezed == referrer ? _self.referrer : referrer // ignore: cast_nullable_to_non_nullable
@@ -483,10 +487,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isReplied,  DateTime? repliedAt,  String? replyText,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isReplied,  DateTime? repliedAt,  String? replyText,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ContactDetail() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isReplied,_that.repliedAt,_that.replyText,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isReplied,_that.repliedAt,_that.replyText,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -504,10 +508,10 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isReplied,  DateTime? repliedAt,  String? replyText,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  String? phone,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isReplied,  DateTime? repliedAt,  String? replyText,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ContactDetail():
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isReplied,_that.repliedAt,_that.replyText,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isReplied,_that.repliedAt,_that.replyText,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -524,10 +528,10 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  String? phone,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isReplied,  DateTime? repliedAt,  String? replyText,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  String? phone,  String message,  String? subject,  String responsePreference,  String status,  String priority,  bool isRead,  DateTime? readAt,  bool isReplied,  DateTime? repliedAt,  String? replyText,  bool isImportant,  String? adminNote,  List<String> tags,  String? ipAddress,  String? referrer,  String? utmSource,  String? utmMedium,  String? utmCampaign,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ContactDetail() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isReplied,_that.repliedAt,_that.replyText,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.subject,_that.responsePreference,_that.status,_that.priority,_that.isRead,_that.readAt,_that.isReplied,_that.repliedAt,_that.replyText,_that.isImportant,_that.adminNote,_that.tags,_that.ipAddress,_that.referrer,_that.utmSource,_that.utmMedium,_that.utmCampaign,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -539,7 +543,7 @@ return $default(_that.id,_that.name,_that.email,_that.phone,_that.message,_that.
 @JsonSerializable()
 
 class _ContactDetail implements ContactDetail {
-  const _ContactDetail({required this.id, required this.name, required this.email, this.phone, required this.message, this.subject, this.responsePreference = 'EMAIL', this.status = 'NEW', this.priority = 'MEDIUM', this.isRead = false, this.readAt, this.isReplied = false, this.repliedAt, this.replyText, this.adminNote, final  List<String> tags = const [], this.ipAddress, this.referrer, this.utmSource, this.utmMedium, this.utmCampaign, required this.createdAt, required this.updatedAt}): _tags = tags;
+  const _ContactDetail({required this.id, required this.name, required this.email, this.phone, required this.message, this.subject, this.responsePreference = 'EMAIL', this.status = 'NEW', this.priority = 'MEDIUM', this.isRead = false, this.readAt, this.isReplied = false, this.repliedAt, this.replyText, this.isImportant = false, this.adminNote, final  List<String> tags = const [], this.ipAddress, this.referrer, this.utmSource, this.utmMedium, this.utmCampaign, required this.createdAt, required this.updatedAt}): _tags = tags;
   factory _ContactDetail.fromJson(Map<String, dynamic> json) => _$ContactDetailFromJson(json);
 
 @override final  String id;
@@ -556,6 +560,7 @@ class _ContactDetail implements ContactDetail {
 @override@JsonKey() final  bool isReplied;
 @override final  DateTime? repliedAt;
 @override final  String? replyText;
+@override@JsonKey() final  bool isImportant;
 @override final  String? adminNote;
  final  List<String> _tags;
 @override@JsonKey() List<String> get tags {
@@ -585,16 +590,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&(identical(other.replyText, replyText) || other.replyText == replyText)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ContactDetail&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.message, message) || other.message == message)&&(identical(other.subject, subject) || other.subject == subject)&&(identical(other.responsePreference, responsePreference) || other.responsePreference == responsePreference)&&(identical(other.status, status) || other.status == status)&&(identical(other.priority, priority) || other.priority == priority)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.readAt, readAt) || other.readAt == readAt)&&(identical(other.isReplied, isReplied) || other.isReplied == isReplied)&&(identical(other.repliedAt, repliedAt) || other.repliedAt == repliedAt)&&(identical(other.replyText, replyText) || other.replyText == replyText)&&(identical(other.isImportant, isImportant) || other.isImportant == isImportant)&&(identical(other.adminNote, adminNote) || other.adminNote == adminNote)&&const DeepCollectionEquality().equals(other._tags, _tags)&&(identical(other.ipAddress, ipAddress) || other.ipAddress == ipAddress)&&(identical(other.referrer, referrer) || other.referrer == referrer)&&(identical(other.utmSource, utmSource) || other.utmSource == utmSource)&&(identical(other.utmMedium, utmMedium) || other.utmMedium == utmMedium)&&(identical(other.utmCampaign, utmCampaign) || other.utmCampaign == utmCampaign)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,message,subject,responsePreference,status,priority,isRead,readAt,isReplied,repliedAt,replyText,adminNote,const DeepCollectionEquality().hash(_tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
+int get hashCode => Object.hashAll([runtimeType,id,name,email,phone,message,subject,responsePreference,status,priority,isRead,readAt,isReplied,repliedAt,replyText,isImportant,adminNote,const DeepCollectionEquality().hash(_tags),ipAddress,referrer,utmSource,utmMedium,utmCampaign,createdAt,updatedAt]);
 
 @override
 String toString() {
-  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isReplied: $isReplied, repliedAt: $repliedAt, replyText: $replyText, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ContactDetail(id: $id, name: $name, email: $email, phone: $phone, message: $message, subject: $subject, responsePreference: $responsePreference, status: $status, priority: $priority, isRead: $isRead, readAt: $readAt, isReplied: $isReplied, repliedAt: $repliedAt, replyText: $replyText, isImportant: $isImportant, adminNote: $adminNote, tags: $tags, ipAddress: $ipAddress, referrer: $referrer, utmSource: $utmSource, utmMedium: $utmMedium, utmCampaign: $utmCampaign, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -605,7 +610,7 @@ abstract mixin class _$ContactDetailCopyWith<$Res> implements $ContactDetailCopy
   factory _$ContactDetailCopyWith(_ContactDetail value, $Res Function(_ContactDetail) _then) = __$ContactDetailCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String email, String? phone, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isReplied, DateTime? repliedAt, String? replyText, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, String? phone, String message, String? subject, String responsePreference, String status, String priority, bool isRead, DateTime? readAt, bool isReplied, DateTime? repliedAt, String? replyText, bool isImportant, String? adminNote, List<String> tags, String? ipAddress, String? referrer, String? utmSource, String? utmMedium, String? utmCampaign, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -622,7 +627,7 @@ class __$ContactDetailCopyWithImpl<$Res>
 
 /// Create a copy of ContactDetail
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isReplied = null,Object? repliedAt = freezed,Object? replyText = freezed,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? phone = freezed,Object? message = null,Object? subject = freezed,Object? responsePreference = null,Object? status = null,Object? priority = null,Object? isRead = null,Object? readAt = freezed,Object? isReplied = null,Object? repliedAt = freezed,Object? replyText = freezed,Object? isImportant = null,Object? adminNote = freezed,Object? tags = null,Object? ipAddress = freezed,Object? referrer = freezed,Object? utmSource = freezed,Object? utmMedium = freezed,Object? utmCampaign = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ContactDetail(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -638,7 +643,8 @@ as bool,readAt: freezed == readAt ? _self.readAt : readAt // ignore: cast_nullab
 as DateTime?,isReplied: null == isReplied ? _self.isReplied : isReplied // ignore: cast_nullable_to_non_nullable
 as bool,repliedAt: freezed == repliedAt ? _self.repliedAt : repliedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,replyText: freezed == replyText ? _self.replyText : replyText // ignore: cast_nullable_to_non_nullable
-as String?,adminNote: freezed == adminNote ? _self.adminNote : adminNote // ignore: cast_nullable_to_non_nullable
+as String?,isImportant: null == isImportant ? _self.isImportant : isImportant // ignore: cast_nullable_to_non_nullable
+as bool,adminNote: freezed == adminNote ? _self.adminNote : adminNote // ignore: cast_nullable_to_non_nullable
 as String?,tags: null == tags ? _self._tags : tags // ignore: cast_nullable_to_non_nullable
 as List<String>,ipAddress: freezed == ipAddress ? _self.ipAddress : ipAddress // ignore: cast_nullable_to_non_nullable
 as String?,referrer: freezed == referrer ? _self.referrer : referrer // ignore: cast_nullable_to_non_nullable

@@ -75,6 +75,23 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     }
   }
 
+  Future<void> _toggleImportant(bool current) async {
+    setState(() => _loading = true);
+    try {
+      await ref.read(contactsRepositoryProvider).updateContact(
+        widget.contactId,
+        {'isImportant': !current},
+      );
+      ref
+        ..invalidate(contactsListProvider)
+        ..invalidate(contactDetailProvider(widget.contactId));
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => _buildContent(context);
 }

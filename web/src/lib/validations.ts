@@ -445,6 +445,7 @@ export const contactUpdateApiSchema = z.object({
   status: z.enum(['NEW', 'IN_PROGRESS', 'REPLIED', 'CLOSED', 'SPAM']).optional(),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   isRead: z.boolean().optional(),
+  isImportant: z.boolean().optional(),
   replyText: z
     .string()
     .optional()

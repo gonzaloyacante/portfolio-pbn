@@ -16,6 +16,7 @@ _ContactItem _$ContactItemFromJson(Map<String, dynamic> json) => _ContactItem(
   priority: json['priority'] as String? ?? 'MEDIUM',
   isRead: json['isRead'] as bool? ?? false,
   isReplied: json['isReplied'] as bool? ?? false,
+  isImportant: json['isImportant'] as bool? ?? false,
   readAt: json['readAt'] == null
       ? null
       : DateTime.parse(json['readAt'] as String),
@@ -40,6 +41,7 @@ Map<String, dynamic> _$ContactItemToJson(_ContactItem instance) =>
       'priority': instance.priority,
       'isRead': instance.isRead,
       'isReplied': instance.isReplied,
+      'isImportant': instance.isImportant,
       'readAt': instance.readAt?.toIso8601String(),
       'repliedAt': instance.repliedAt?.toIso8601String(),
       'tags': instance.tags,
@@ -67,6 +69,7 @@ _ContactDetail _$ContactDetailFromJson(Map<String, dynamic> json) =>
           ? null
           : DateTime.parse(json['repliedAt'] as String),
       replyText: json['replyText'] as String?,
+      isImportant: json['isImportant'] as bool? ?? false,
       adminNote: json['adminNote'] as String?,
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
@@ -96,6 +99,7 @@ Map<String, dynamic> _$ContactDetailToJson(_ContactDetail instance) =>
       'isReplied': instance.isReplied,
       'repliedAt': instance.repliedAt?.toIso8601String(),
       'replyText': instance.replyText,
+      'isImportant': instance.isImportant,
       'adminNote': instance.adminNote,
       'tags': instance.tags,
       'ipAddress': instance.ipAddress,

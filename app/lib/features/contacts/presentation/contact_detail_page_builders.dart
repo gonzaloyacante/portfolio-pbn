@@ -2,8 +2,8 @@ part of 'contact_detail_page.dart';
 
 extension _ContactDetailPageBuilders on _ContactDetailPageState {
   Widget _buildContent(BuildContext context) {
-    final theme = Theme.of(context);
     final async = ref.watch(contactDetailProvider(widget.contactId));
+    final isImportant = async.value?.isImportant ?? false;
 
     return LoadingOverlay(
       isLoading: _loading,
@@ -15,12 +15,23 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
             tooltip: 'Volver',
           ),
           title: const Text('Detalle del contacto'),
+          actions: [
+            IconButton(
+              icon: Icon(
+                isImportant ? Icons.star_rounded : Icons.star_border_rounded,
+                color: isImportant ? const Color(0xFFF59E0B) : null,
+              ),
+              tooltip: isImportant ? 'Quitar importante' : 'Marcar importante',
+              onPressed: _loading ? null : () => _toggleImportant(isImportant),
+            ),
+          ],
         ),
         body: async.when(
           loading: () => const SkeletonContactDetail(),
           error: (e, _) => Center(child: Text('Error: $e')),
           data: (detail) {
             _populate(detail);
+            final theme = Theme.of(context);
             return RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(contactDetailProvider(widget.contactId));
