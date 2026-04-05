@@ -69,6 +69,14 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Preload fuente decorativa crítica para reducir FOUT */}
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN-XCg6UKDXlCbA.woff2"
+          crossOrigin="anonymous"
+        />
         <link rel="preconnect" href="https://res.cloudinary.com" />
       </head>
       <body

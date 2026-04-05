@@ -77,6 +77,8 @@ const securityHeaders = [
       "form-action 'self'",
       // Frame ancestors: none (prevents clickjacking, redundant with X-Frame-Options)
       "frame-ancestors 'none'",
+      // Report CSP violations to /api/csp-report
+      'report-uri /api/csp-report',
     ].join('; '),
   },
 ]
@@ -194,6 +196,9 @@ const pwaConfig = withPWA({
   dest: 'public',
   register: true,
   disable: process.env.NODE_ENV === 'development',
+  fallbacks: {
+    document: '/offline',
+  },
   workboxOptions: {
     runtimeCaching: [
       {

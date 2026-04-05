@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -7,6 +8,7 @@ import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 
@@ -18,6 +20,8 @@ import '../../settings/providers/settings_provider.dart';
 import 'widgets/category_grid_card.dart';
 import 'widgets/category_settings_dialog.dart';
 import 'widgets/category_tile.dart';
+
+part 'categories_list_page_builders.dart';
 
 class CategoriesListPage extends ConsumerStatefulWidget {
   const CategoriesListPage({super.key});
@@ -66,6 +70,85 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
         ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
       }
     }
+  }
+
+  Future<void> _toggleCategoryActive(
+    BuildContext ctx,
+    CategoryItem item,
+  ) async {
+    try {
+      await ref.read(categoriesRepositoryProvider).updateCategory(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(categoriesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Categoría desactivada' : 'Categoría activada',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
+  }
+
+  void _showCategoryActions(BuildContext ctx, CategoryItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.categoryEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleCategoryActive(ctx, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _showSettingsDialog(BuildContext context) async {
@@ -224,41 +307,6 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildList(List<CategoryItem> items, double hPad) {
-    return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: hPad),
-      itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
-      itemBuilder: (ctx, i) => RepaintBoundary(
-        child: FadeSlideIn(
-          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: CategoryTile(item: items[i], onDelete: _delete),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGrid(List<CategoryItem> items, double hPad) {
-    final width = MediaQuery.sizeOf(context).width;
-    final cols = width >= 900 ? 3 : 2;
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: hPad),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: cols,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.1,
-      ),
-      itemCount: items.length,
-      itemBuilder: (ctx, i) => RepaintBoundary(
-        child: FadeSlideIn(
-          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: CategoryGridCard(item: items[i], onDelete: _delete),
-        ),
       ),
     );
   }

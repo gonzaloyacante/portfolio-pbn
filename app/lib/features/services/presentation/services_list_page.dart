@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -6,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 
@@ -14,6 +16,7 @@ import '../data/services_repository.dart';
 import '../providers/services_provider.dart';
 import 'widgets/service_grid_card.dart';
 import 'widgets/service_tile.dart';
+part 'services_list_page_builders.dart';
 
 class ServicesListPage extends ConsumerStatefulWidget {
   const ServicesListPage({super.key});
@@ -64,6 +67,82 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
         );
       }
     }
+  }
+
+  Future<void> _toggleServiceActive(BuildContext ctx, ServiceItem item) async {
+    try {
+      await ref.read(servicesRepositoryProvider).updateService(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(servicesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Servicio desactivado' : 'Servicio activado',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
+  }
+
+  void _showServiceActions(BuildContext ctx, ServiceItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.serviceEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleServiceActive(ctx, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -128,59 +207,8 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                       onRefresh: () async =>
                           ref.invalidate(servicesListProvider),
                       child: viewMode == ViewMode.grid
-                          ? GridView.builder(
-                              padding: EdgeInsets.fromLTRB(
-                                hPad,
-                                0,
-                                hPad,
-                                AppSpacing.base,
-                              ),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: AppBreakpoints.gridColumns(
-                                      context,
-                                      compact: 2,
-                                      medium: 3,
-                                      expanded: 4,
-                                    ),
-                                    crossAxisSpacing: AppBreakpoints.gutter(
-                                      context,
-                                    ),
-                                    mainAxisSpacing: AppBreakpoints.gutter(
-                                      context,
-                                    ),
-                                    childAspectRatio: 1.05,
-                                  ),
-                              itemCount: paginated.data.length,
-                              itemBuilder: (ctx, i) => RepaintBoundary(
-                                child: FadeSlideIn(
-                                  delay: Duration(
-                                    milliseconds: (i * 40).clamp(0, 300),
-                                  ),
-                                  child: ServiceGridCard(
-                                    item: paginated.data[i],
-                                    onDelete: _delete,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : ListView.separated(
-                              padding: EdgeInsets.symmetric(horizontal: hPad),
-                              itemCount: paginated.data.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(height: 8),
-                              itemBuilder: (ctx, i) => RepaintBoundary(
-                                child: FadeSlideIn(
-                                  delay: Duration(
-                                    milliseconds: (i * 40).clamp(0, 300),
-                                  ),
-                                  child: ServiceTile(
-                                    item: paginated.data[i],
-                                    onDelete: _delete,
-                                  ),
-                                ),
-                              ),
-                            ),
+                          ? _buildGrid(paginated.data, hPad)
+                          : _buildList(paginated.data, hPad),
                     ),
             ),
           ),
@@ -189,5 +217,3 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
     );
   }
 }
-
-// ── Grid Card ─────────────────────────────────────────────────────────────────

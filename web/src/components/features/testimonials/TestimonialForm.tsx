@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'
+import { Heart } from 'lucide-react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 /**
@@ -41,7 +42,7 @@ export default function TestimonialForm() {
   if (isSubmitted) {
     return (
       <div className="border-primary/20 bg-primary/5 dark:bg-primary/10 rounded-2xl border p-8 text-center">
-        <span className="mb-4 block text-4xl">✅</span>
+        <Heart className="text-primary mx-auto mb-4 h-12 w-12" />
         <h3 className="text-primary mb-2 text-xl font-bold">¡Gracias por tu testimonio!</h3>
         <p className="text-muted-foreground">Tu opinión será publicada después de ser revisada.</p>
       </div>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -15,6 +16,7 @@ class AppSnackBar {
   AppSnackBar._();
 
   static void success(BuildContext context, String message) {
+    HapticFeedback.lightImpact();
     _show(
       context,
       message: message,

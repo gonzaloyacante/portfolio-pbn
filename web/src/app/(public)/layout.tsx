@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransitionWrapper from '@/components/layout/PageTransitionWrapper'
+import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
 
@@ -143,6 +144,32 @@ export default async function PublicLayout({ children }: { children: React.React
         }}
       />
 
+      {/* Navbar brand: custom font + colors via CSS variables */}
+      {visibility.navbarBrandFontUrl && (
+        <link rel="stylesheet" href={visibility.navbarBrandFontUrl} />
+      )}
+      {(visibility.navbarBrandFont ||
+        visibility.navbarBrandFontSize ||
+        visibility.navbarBrandColor ||
+        visibility.navbarBrandColorDark) && (
+        <style>
+          {[
+            '.nb-brand{',
+            visibility.navbarBrandFont
+              ? `font-family:'${visibility.navbarBrandFont.replace(/'/g, '')},sans-serif !important;`
+              : '',
+            visibility.navbarBrandFontSize
+              ? `font-size:${Number(visibility.navbarBrandFontSize)}px !important;`
+              : '',
+            visibility.navbarBrandColor ? `color:${visibility.navbarBrandColor} !important;` : '',
+            '}',
+            visibility.navbarBrandColorDark
+              ? `.dark .nb-brand{color:${visibility.navbarBrandColorDark} !important;}`
+              : '',
+          ].join('')}
+        </style>
+      )}
+
       <div className="bg-background flex min-h-screen flex-col transition-colors duration-300">
         {/* Skip navigation link - accesibilidad para lectores de pantalla y teclado */}
         <a
@@ -155,6 +182,7 @@ export default async function PublicLayout({ children }: { children: React.React
         <main id="main-content" className="flex-1" tabIndex={-1}>
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
         </main>
+        <PublicTestimonialsSection />
       </div>
     </>
   )

@@ -6,6 +6,7 @@ interface JsonLdProps {
     | 'CollectionPage'
     | 'CreativeWork'
     | 'Service'
+    | 'ImageGallery'
   data?: {
     name?: string
     url?: string
@@ -13,6 +14,8 @@ interface JsonLdProps {
     description?: string
     datePublished?: string
     author?: string
+    providerName?: string
+    offers?: { name: string; price: number }[]
     sameAs?: string[]
     jobTitle?: string
     address?: {
@@ -41,6 +44,8 @@ export default function JsonLd({ type, data }: JsonLdProps) {
     url: baseUrl,
     image: '',
     jobTitle: 'Maquilladora Profesional',
+    providerName: 'Paola Bolívar Nievas',
+    offers: [] as { name: string; price: number }[],
     sameAs: [],
     address: {
       addressLocality: '',
@@ -54,6 +59,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
     ...defaultData,
     ...data,
     address: { ...defaultData.address, ...data?.address },
+    offers: data?.offers ?? defaultData.offers,
   }
 
   const generateSchema = () => {
@@ -169,22 +175,30 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           image: mergedData.image,
           provider: {
             '@type': 'Person',
-            name: mergedData.name,
+            name: mergedData.providerName,
             url: baseUrl,
           },
           areaServed: {
             '@type': 'City',
             name: mergedData.address?.addressLocality || 'España',
           },
-          ...(mergedData.priceRange && {
-            offers: {
+          ...(mergedData.offers.length > 0 && {
+            offers: mergedData.offers.map((offer) => ({
               '@type': 'Offer',
-              priceSpecification: {
-                '@type': 'PriceSpecification',
-                priceCurrency: 'EUR',
-              },
-            },
+              name: offer.name,
+              price: offer.price,
+              priceCurrency: 'EUR',
+            })),
           }),
+        }
+
+      case 'ImageGallery':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'ImageGallery',
+          name: mergedData.name,
+          description: mergedData.description,
+          url: mergedData.url,
         }
 
       default:

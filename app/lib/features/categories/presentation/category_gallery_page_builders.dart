@@ -1,6 +1,28 @@
 part of 'category_gallery_page.dart';
 
 extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
+  // ── Vista búsqueda (sin drag) ────────────────────────────────────────────────
+
+  Widget _buildSearchResults(BuildContext context) {
+    return ListView.builder(
+      key: const ValueKey('search'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.base,
+        vertical: 4,
+      ),
+      itemCount: _displayItems.length,
+      itemBuilder: (context, index) {
+        final img = _displayItems[index];
+        return GalleryTile(
+          key: ValueKey('search_${img.id}'),
+          item: img,
+          index: index,
+          total: _displayItems.length,
+        );
+      },
+    );
+  }
+
   // ── Vista lista ─────────────────────────────────────────────────────────────
 
   Widget _buildListView(BuildContext context) {

@@ -16,12 +16,22 @@ import '../../testimonials/providers/testimonials_provider.dart';
 import '../data/trash_model.dart';
 import '../providers/trash_provider.dart';
 import 'widgets/trash_section.dart';
+part 'trash_page_builders.dart';
 
-class TrashPage extends ConsumerWidget {
+class TrashPage extends ConsumerStatefulWidget {
   const TrashPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TrashPage> createState() => _TrashPageState();
+}
+
+class _TrashPageState extends ConsumerState<TrashPage> {
+  String _searchQuery = '';
+
+  void _onSearch(String value) => setState(() => _searchQuery = value.trim());
+
+  @override
+  Widget build(BuildContext context) {
     final trashAsync = ref.watch(trashItemsProvider);
 
     return AppScaffold(
@@ -32,127 +42,14 @@ class TrashPage extends ConsumerWidget {
           message: e.toString(),
           onRetry: () => ref.invalidate(trashItemsProvider),
         ),
-        data: (grouped) {
-          final allItems = grouped.values.expand((list) => list).toList();
-          if (allItems.isEmpty) {
-            return const EmptyState(
-              icon: Icons.delete_outline,
-              title: 'Papelera vacía',
-              subtitle: 'No hay elementos eliminados',
-            );
-          }
-          final sections = grouped.entries
-              .where((e) => e.value.isNotEmpty)
-              .toList();
-
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 600;
-              final List<Widget> rows = [];
-
-              if (!isWide) {
-                // Mobile: secciones apiladas verticalmente
-                for (final entry in sections) {
-                  rows.add(
-                    TrashSection(
-                      type: entry.key,
-                      items: entry.value,
-                      isNarrow: false,
-                      onTap: (item) => context.pushNamed(
-                        RouteNames.trashDetail,
-                        extra: item,
-                      ),
-                      onRestore: (item) => _restore(context, ref, item),
-                      onPurge: (item) => _purge(context, ref, item),
-                    ),
-                  );
-                }
-              } else {
-                // Tablet: secciones con 1 item se emparejan (50/50).
-                // Secciones con 2+ items ocupan el ancho completo.
-                int i = 0;
-                while (i < sections.length) {
-                  final cur = sections[i];
-                  final curIsNarrow = cur.value.length == 1;
-                  final hasNext = i + 1 < sections.length;
-                  final nextIsNarrow =
-                      hasNext && sections[i + 1].value.length == 1;
-
-                  if (curIsNarrow && hasNext && nextIsNarrow) {
-                    // Dos secciones de 1 item → lado a lado
-                    final next = sections[i + 1];
-                    rows.add(
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: TrashSection(
-                              type: cur.key,
-                              items: cur.value,
-                              isNarrow: true,
-                              onTap: (item) => context.pushNamed(
-                                RouteNames.trashDetail,
-                                extra: item,
-                              ),
-                              onRestore: (item) => _restore(context, ref, item),
-                              onPurge: (item) => _purge(context, ref, item),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TrashSection(
-                              type: next.key,
-                              items: next.value,
-                              isNarrow: true,
-                              onTap: (item) => context.pushNamed(
-                                RouteNames.trashDetail,
-                                extra: item,
-                              ),
-                              onRestore: (item) => _restore(context, ref, item),
-                              onPurge: (item) => _purge(context, ref, item),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                    i += 2;
-                  } else {
-                    // Sección con 2+ items (o impar sin par) → ancho completo
-                    rows.add(
-                      TrashSection(
-                        type: cur.key,
-                        items: cur.value,
-                        isNarrow: false,
-                        onTap: (item) => context.pushNamed(
-                          RouteNames.trashDetail,
-                          extra: item,
-                        ),
-                        onRestore: (item) => _restore(context, ref, item),
-                        onPurge: (item) => _purge(context, ref, item),
-                      ),
-                    );
-                    i++;
-                  }
-                }
-              }
-
-              return ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                children: rows,
-              );
-            },
-          );
-        },
+        data: (grouped) => _buildContent(context, grouped),
       ),
     );
   }
 
   /// Invalida el provider de lista correspondiente al tipo de elemento,
   /// para que las listas reflejen la restauración o eliminación.
-  void _invalidateListByType(WidgetRef ref, String type) {
+  void _invalidateListByType(String type) {
     switch (type) {
       case 'category':
         ref.invalidate(categoriesListProvider);
@@ -167,11 +64,7 @@ class TrashPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _restore(
-    BuildContext context,
-    WidgetRef ref,
-    TrashItem item,
-  ) async {
+  Future<void> _restore(BuildContext context, TrashItem item) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Restaurar elemento',
@@ -187,7 +80,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .restore(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
-      _invalidateListByType(ref, item.type);
+      _invalidateListByType(item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -206,11 +99,7 @@ class TrashPage extends ConsumerWidget {
     }
   }
 
-  Future<void> _purge(
-    BuildContext context,
-    WidgetRef ref,
-    TrashItem item,
-  ) async {
+  Future<void> _purge(BuildContext context, TrashItem item) async {
     final confirmed = await ConfirmDialog.show(
       context,
       title: 'Eliminar permanentemente',
@@ -226,7 +115,7 @@ class TrashPage extends ConsumerWidget {
           .read(trashRepositoryProvider)
           .purge(type: item.type, id: item.id);
       ref.invalidate(trashItemsProvider);
-      _invalidateListByType(ref, item.type);
+      _invalidateListByType(item.type);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

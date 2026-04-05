@@ -33,6 +33,7 @@ class SettingsHomePage extends ConsumerStatefulWidget {
 class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   // Hero
   final _title1Ctrl = TextEditingController();
@@ -86,6 +87,27 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   // ignore: use_setters_to_change_properties
   void _rebuild(VoidCallback fn) => setState(fn);
 
+  void _markDirty() {
+    if (!_isDirty) _rebuild(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -100,7 +122,10 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
     }
   }
 
-  void _onPreviewChange() => setState(() {});
+  void _onPreviewChange() {
+    _markDirty();
+    setState(() {});
+  }
 
   @override
   void dispose() {
@@ -342,6 +367,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
 
       ref.invalidate(homeSettingsProvider);
       if (mounted) {
+        setState(() => _isDirty = false);
         AppSnackBar.success(context, 'Inicio guardado correctamente');
       }
     } catch (e, st) {
@@ -360,28 +386,33 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   Widget build(BuildContext context) {
     final async = ref.watch(homeSettingsProvider);
 
-    return AppScaffold(
-      title: 'Página de inicio',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _saving ? null : _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(homeSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Página de inicio',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _saving ? null : _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(homeSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
+          ),
         ),
       ),
     );

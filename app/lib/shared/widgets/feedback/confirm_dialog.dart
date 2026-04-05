@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // ── ConfirmDialog ─────────────────────────────────────────────────────────────
 
@@ -106,7 +107,10 @@ class ConfirmDialog extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         FilledButton(
-          onPressed: () => Navigator.of(context).pop(true),
+          onPressed: () {
+            HapticFeedback.mediumImpact();
+            Navigator.of(context).pop(true);
+          },
           style: isDestructive
               ? FilledButton.styleFrom(
                   backgroundColor: colorScheme.error,

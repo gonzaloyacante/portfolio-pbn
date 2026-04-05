@@ -13,6 +13,8 @@ import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
 import '../../../core/theme/app_radius.dart';
 
+part 'settings_contact_page_builders.dart';
+
 class SettingsContactPage extends ConsumerStatefulWidget {
   const SettingsContactPage({super.key});
 
@@ -24,6 +26,7 @@ class SettingsContactPage extends ConsumerStatefulWidget {
 class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   final _pageTitleCtrl = TextEditingController();
   final _ownerNameCtrl = TextEditingController();
@@ -38,7 +41,53 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   bool _showLocation = true;
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _pageTitleCtrl,
+      _ownerNameCtrl,
+      _emailCtrl,
+      _phoneCtrl,
+      _whatsappCtrl,
+      _locationCtrl,
+    ]) {
+      c.addListener(_markDirty);
+    }
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
+  @override
   void dispose() {
+    for (final c in [
+      _pageTitleCtrl,
+      _ownerNameCtrl,
+      _emailCtrl,
+      _phoneCtrl,
+      _whatsappCtrl,
+      _locationCtrl,
+    ]) {
+      c.removeListener(_markDirty);
+    }
     _pageTitleCtrl.dispose();
     _ownerNameCtrl.dispose();
     _emailCtrl.dispose();
@@ -83,7 +132,10 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
         'showLocation': _showLocation,
       });
       ref.invalidate(contactSettingsProvider);
-      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
+      if (mounted) {
+        setState(() => _isDirty = false);
+        AppSnackBar.success(context, 'Configuración guardada');
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
@@ -98,190 +150,32 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   Widget build(BuildContext context) {
     final async = ref.watch(contactSettingsProvider);
 
-    return AppScaffold(
-      title: 'Contacto',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(contactSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Contacto',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForm(BuildContext context) {
-    final padding = AppBreakpoints.pagePadding(context);
-    final maxWidth = AppBreakpoints.value<double>(
-      context,
-      compact: double.infinity,
-      medium: 760,
-      expanded: 960,
-    );
-
-    return SingleChildScrollView(
-      padding: padding,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SettingsFormCard(
-                title: 'Página de contacto',
-                children: [
-                  TextFormField(
-                    controller: _pageTitleCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Título de página',
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _ownerNameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre del propietario',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              SettingsFormCard(
-                title: 'Datos de contacto',
-                children: [
-                  TextFormField(
-                    controller: _emailCtrl,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  PhoneInputField(controller: _phoneCtrl, label: 'Teléfono'),
-                  const SizedBox(height: 12),
-                  PhoneInputField(controller: _whatsappCtrl, label: 'WhatsApp'),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _locationCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Ubicación',
-                      prefixIcon: Icon(Icons.location_on_outlined),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      title: const Text('Mostrar email'),
-                      subtitle: const Text('Visible en la página de contacto'),
-                      value: _showEmail,
-                      onChanged: (v) => setState(() => _showEmail = v),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    SwitchListTile(
-                      title: const Text('Mostrar teléfono'),
-                      subtitle: const Text('Visible en la página de contacto'),
-                      value: _showPhone,
-                      onChanged: (v) => setState(() => _showPhone = v),
-                    ),
-                    const Divider(height: 1),
-                    SwitchListTile(
-                      title: const Text('Mostrar WhatsApp'),
-                      subtitle: const Text('Visible en la página de contacto'),
-                      value: _showWhatsapp,
-                      onChanged: (v) => setState(() => _showWhatsapp = v),
-                    ),
-                    const Divider(height: 1),
-                    SwitchListTile(
-                      title: const Text('Mostrar ubicación'),
-                      subtitle: const Text('Visible en la página de contacto'),
-                      value: _showLocation,
-                      onChanged: (v) => setState(() => _showLocation = v),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppCard(
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      title: const Text('Mostrar redes sociales'),
-                      subtitle: const Text(
-                        'Muestra iconos de redes en la página de contacto',
-                      ),
-                      value: _showSocialLinks,
-                      onChanged: (v) => setState(() => _showSocialLinks = v),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.share_outlined, size: 20),
-                      title: const Text('Administrar redes sociales'),
-                      subtitle: const Text(
-                        'Activar o desactivar cada red individualmente',
-                      ),
-                      trailing: const Icon(
-                        Icons.chevron_right_rounded,
-                        size: 20,
-                      ),
-                      onTap: () => context.pushNamed(RouteNames.settingsSocial),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              FilledButton.icon(
-                onPressed: _save,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Guardar cambios'),
-              ),
-              const SizedBox(height: AppSpacing.base),
-            ],
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(contactSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
           ),
         ),
       ),

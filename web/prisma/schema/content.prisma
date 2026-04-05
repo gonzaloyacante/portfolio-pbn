@@ -93,7 +93,8 @@ model Contact {
   phone              String?
   message            String    @db.Text
   subject            String? // Optional subject line
-  responsePreference String    @default("EMAIL") // EMAIL, PHONE, WHATSAPP
+  responsePreference String    @default("EMAIL") // EMAIL, PHONE, WHATSAPP, INSTAGRAM
+  instagramUser      String? // @usuario de Instagram (cuando responsePreference == INSTAGRAM)
   // CRM Workflow
   status             String    @default("NEW") // NEW, IN_PROGRESS, REPLIED, CLOSED, SPAM
   priority           String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT

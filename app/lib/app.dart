@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_pbn/core/router/route_names.dart';
 
@@ -137,6 +138,15 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
+
+      // ── Localización ──────────────────────────────────────────────────────
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('es', 'ES')],
+      locale: const Locale('es', 'ES'),
 
       // ── Router ────────────────────────────────────────────────────────────
       routerConfig: router,

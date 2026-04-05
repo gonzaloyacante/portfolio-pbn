@@ -266,6 +266,52 @@ export async function toggleTestimonial(id: string) {
   }
 }
 
+export async function approveTestimonial(id: string) {
+  await requireAdmin()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
+
+  try {
+    await prisma.testimonial.update({
+      where: { id },
+      data: { status: 'APPROVED', isActive: true, moderatedAt: new Date() },
+    })
+
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about, 'layout')
+    revalidatePath(ROUTES.admin.testimonials)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
+    logger.info(`Testimonial approved: ${id}`)
+    return { success: true }
+  } catch (error) {
+    logger.error('Error approving testimonial:', { error })
+    return { success: false, error: 'Error al aprobar el testimonio' }
+  }
+}
+
+export async function rejectTestimonial(id: string) {
+  await requireAdmin()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
+
+  try {
+    await prisma.testimonial.update({
+      where: { id },
+      data: { status: 'REJECTED', isActive: false, moderatedAt: new Date() },
+    })
+
+    revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.about, 'layout')
+    revalidatePath(ROUTES.admin.testimonials)
+    revalidateTag(CACHE_TAGS.testimonials, 'max')
+    logger.info(`Testimonial rejected: ${id}`)
+    return { success: true }
+  } catch (error) {
+    logger.error('Error rejecting testimonial:', { error })
+    return { success: false, error: 'Error al rechazar el testimonio' }
+  }
+}
+
 /**
  * Get active testimonials for public display
  */

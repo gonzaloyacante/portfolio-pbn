@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_breakpoints.dart';
@@ -10,6 +11,8 @@ import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
 import 'widgets/dynamic_item_list.dart';
+
+part 'settings_about_page_builders.dart';
 
 class SettingsAboutPage extends ConsumerStatefulWidget {
   const SettingsAboutPage({super.key});
@@ -21,6 +24,7 @@ class SettingsAboutPage extends ConsumerStatefulWidget {
 class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   bool _saving = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   File? _pendingProfileImage;
 
@@ -38,7 +42,49 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _bioTitleCtrl,
+      _bioIntroCtrl,
+      _bioDescCtrl,
+      _profileImageCtrl,
+    ]) {
+      c.addListener(_markDirty);
+    }
+  }
+
+  void _markDirty() {
+    if (!_isDirty) setState(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
+  @override
   void dispose() {
+    for (final c in [
+      _bioTitleCtrl,
+      _bioIntroCtrl,
+      _bioDescCtrl,
+      _profileImageCtrl,
+    ]) {
+      c.removeListener(_markDirty);
+    }
     _bioTitleCtrl.dispose();
     _bioIntroCtrl.dispose();
     _bioDescCtrl.dispose();
@@ -153,7 +199,10 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
       });
 
       ref.invalidate(aboutSettingsProvider);
-      if (mounted) AppSnackBar.success(context, 'Configuración guardada');
+      if (mounted) {
+        setState(() => _isDirty = false);
+        AppSnackBar.success(context, 'Configuración guardada');
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
@@ -172,178 +221,32 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   Widget build(BuildContext context) {
     final async = ref.watch(aboutSettingsProvider);
 
-    return AppScaffold(
-      title: 'Sobre mí',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Guardar',
-          onPressed: _save,
-        ),
-      ],
-      body: LoadingOverlay(
-        isLoading: _saving,
-        child: async.when(
-          loading: () =>
-              const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
-            onRetry: () => ref.invalidate(aboutSettingsProvider),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+          _maybeLeave(context),
+      child: AppScaffold(
+        title: 'Sobre mí',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.save_outlined),
+            tooltip: 'Guardar',
+            onPressed: _save,
           ),
-          data: (settings) {
-            _populate(settings);
-            return _buildForm(context);
-          },
-        ),
-      ),
-    );
-  }
-
-  // ── Shimmer ───────────────────────────────────────────────────────────────
-
-  // ── Form ──────────────────────────────────────────────────────────────────
-
-  Widget _buildForm(BuildContext context) {
-    final padding = AppBreakpoints.pagePadding(context);
-    final maxWidth = AppBreakpoints.value<double>(
-      context,
-      compact: double.infinity,
-      medium: 760,
-      expanded: 960,
-    );
-
-    return SingleChildScrollView(
-      padding: padding,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Bio ──────────────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Bio',
-                children: [
-                  TextFormField(
-                    controller: _bioTitleCtrl,
-                    decoration: const InputDecoration(labelText: 'Título'),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _bioIntroCtrl,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Intro',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _bioDescCtrl,
-                    maxLines: 5,
-                    decoration: const InputDecoration(
-                      labelText: 'Descripción',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Perfil ───────────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Imagen de perfil',
-                children: [
-                  ImageUploadWidget(
-                    label: 'Foto de perfil',
-                    currentImageUrl: _profileImageCtrl.text.isNotEmpty
-                        ? _profileImageCtrl.text
-                        : null,
-                    hint: 'Foto de perfil para la sección About',
-                    onImageSelected: (file) =>
-                        setState(() => _pendingProfileImage = file),
-                    onImageRemoved: () => setState(() {
-                      _pendingProfileImage = null;
-                      _profileImageCtrl.clear();
-                    }),
-                    height: AppBreakpoints.value<double>(
-                      context,
-                      compact: 160,
-                      medium: 200,
-                      expanded: 220,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Habilidades ──────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Habilidades',
-                children: [
-                  DynamicItemList(
-                    controllers: _skillsCtrls,
-                    focusNodes: _skillsFocus,
-                    labelPrefix: 'Habilidad',
-                    addLabel: 'Agregar habilidad',
-                    onAdd: () =>
-                        setState(() => _addField(_skillsCtrls, _skillsFocus)),
-                    onRemove: (i) => setState(() {
-                      _removeField(i, _skillsCtrls, _skillsFocus);
-                      if (_skillsCtrls.isEmpty) {
-                        _addField(_skillsCtrls, _skillsFocus);
-                      }
-                    }),
-                    onSubmit: () => setState(() {
-                      _addField(_skillsCtrls, _skillsFocus);
-                      Future.microtask(() => _skillsFocus.last.requestFocus());
-                    }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Certificaciones ──────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Certificaciones',
-                children: [
-                  DynamicItemList(
-                    controllers: _certificationsCtrls,
-                    focusNodes: _certificationsFocus,
-                    labelPrefix: 'Certificación',
-                    addLabel: 'Agregar certificación',
-                    onAdd: () => setState(
-                      () =>
-                          _addField(_certificationsCtrls, _certificationsFocus),
-                    ),
-                    onRemove: (i) => setState(() {
-                      _removeField(
-                        i,
-                        _certificationsCtrls,
-                        _certificationsFocus,
-                      );
-                      if (_certificationsCtrls.isEmpty) {
-                        _addField(_certificationsCtrls, _certificationsFocus);
-                      }
-                    }),
-                    onSubmit: () => setState(() {
-                      _addField(_certificationsCtrls, _certificationsFocus);
-                      Future.microtask(
-                        () => _certificationsFocus.last.requestFocus(),
-                      );
-                    }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.xl),
-
-              FilledButton.icon(
-                onPressed: _save,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Guardar cambios'),
-              ),
-              const SizedBox(height: AppSpacing.base),
-            ],
+        ],
+        body: LoadingOverlay(
+          isLoading: _saving,
+          child: async.when(
+            loading: () =>
+                const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
+            error: (e, _) => ErrorState(
+              message: e.toString(),
+              onRetry: () => ref.invalidate(aboutSettingsProvider),
+            ),
+            data: (settings) {
+              _populate(settings);
+              return _buildForm(context);
+            },
           ),
         ),
       ),

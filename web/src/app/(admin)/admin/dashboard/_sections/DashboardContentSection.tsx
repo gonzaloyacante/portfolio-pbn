@@ -1,12 +1,29 @@
 import { getDashboardContentStats } from '@/actions/analytics'
 import { auth } from '@/lib/auth'
+import { prisma } from '@/lib/db'
 import { ROUTES } from '@/config/routes'
 import { PageHeader } from '@/components/layout'
 import ContentStats from '@/components/features/dashboard/ContentStats'
 import AlertsSection from '@/components/features/dashboard/AlertsSection'
+import RecentBookingsWidget from '@/components/features/dashboard/RecentBookingsWidget'
 
 export default async function DashboardContentSection() {
-  const [session, stats] = await Promise.all([auth(), getDashboardContentStats()])
+  const [session, stats, recentBookings] = await Promise.all([
+    auth(),
+    getDashboardContentStats(),
+    prisma.booking.findMany({
+      where: { deletedAt: null, status: { in: ['PENDING', 'CONFIRMED'] } },
+      orderBy: { createdAt: 'desc' },
+      take: 5,
+      select: {
+        id: true,
+        clientName: true,
+        date: true,
+        status: true,
+        service: { select: { name: true } },
+      },
+    }),
+  ])
 
   const {
     imagesCount,
@@ -44,6 +61,7 @@ export default async function DashboardContentSection() {
         pendingTestimonials={pendingTestimonials}
         deletedCount={deletedCount}
       />
+      <RecentBookingsWidget bookings={recentBookings} />
     </>
   )
 }

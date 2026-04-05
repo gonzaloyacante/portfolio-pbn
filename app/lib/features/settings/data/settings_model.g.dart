@@ -184,6 +184,13 @@ _SiteSettings _$SiteSettingsFromJson(Map<String, dynamic> json) =>
       showContactPage: json['showContactPage'] as bool? ?? true,
       allowIndexing: json['allowIndexing'] as bool? ?? true,
       isActive: json['isActive'] as bool? ?? true,
+      navbarBrandText: json['navbarBrandText'] as String?,
+      navbarBrandFont: json['navbarBrandFont'] as String?,
+      navbarBrandFontUrl: json['navbarBrandFontUrl'] as String?,
+      navbarBrandFontSize: (json['navbarBrandFontSize'] as num?)?.toInt(),
+      navbarBrandColor: json['navbarBrandColor'] as String?,
+      navbarBrandColorDark: json['navbarBrandColorDark'] as String?,
+      navbarShowBrand: json['navbarShowBrand'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$SiteSettingsToJson(_SiteSettings instance) =>
@@ -206,6 +213,13 @@ Map<String, dynamic> _$SiteSettingsToJson(_SiteSettings instance) =>
       'showContactPage': instance.showContactPage,
       'allowIndexing': instance.allowIndexing,
       'isActive': instance.isActive,
+      'navbarBrandText': instance.navbarBrandText,
+      'navbarBrandFont': instance.navbarBrandFont,
+      'navbarBrandFontUrl': instance.navbarBrandFontUrl,
+      'navbarBrandFontSize': instance.navbarBrandFontSize,
+      'navbarBrandColor': instance.navbarBrandColor,
+      'navbarBrandColorDark': instance.navbarBrandColorDark,
+      'navbarShowBrand': instance.navbarShowBrand,
     };
 
 _HomeSettings _$HomeSettingsFromJson(

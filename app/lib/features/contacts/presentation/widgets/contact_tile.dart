@@ -125,6 +125,27 @@ class ContactTile extends StatelessWidget {
                     ),
                   ),
                 ],
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: [
+                    _ContactBadge(
+                      label: _statusLabel(item.status),
+                      color: _statusColor(item.status, scheme),
+                    ),
+                    if (item.priority == 'URGENT')
+                      const _ContactBadge(
+                        label: 'Urgente',
+                        color: AppColors.priorityHigh,
+                      ),
+                    if (item.priority == 'HIGH')
+                      const _ContactBadge(
+                        label: 'Alta',
+                        color: AppColors.priorityMedium,
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -159,6 +180,50 @@ class ContactTile extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  static String _statusLabel(String status) => switch (status) {
+    'IN_PROGRESS' => 'En curso',
+    'REPLIED' => 'Respondido',
+    'CLOSED' => 'Cerrado',
+    'SPAM' => 'Spam',
+    _ => 'Nuevo',
+  };
+
+  static Color _statusColor(String status, ColorScheme scheme) =>
+      switch (status) {
+        'IN_PROGRESS' => AppColors.warning,
+        'REPLIED' => AppColors.success,
+        'CLOSED' => AppColors.priorityLow,
+        'SPAM' => AppColors.destructive,
+        _ => scheme.primary,
+      };
+}
+
+class _ContactBadge extends StatelessWidget {
+  const _ContactBadge({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.35), width: 0.5),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
       ),
     );
   }

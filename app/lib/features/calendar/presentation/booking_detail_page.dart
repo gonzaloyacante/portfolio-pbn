@@ -1,10 +1,12 @@
 // ignore_for_file: use_null_aware_elements
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/router/route_names.dart';
 import '../../../core/utils/currency_helper.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/booking_model.dart';
@@ -57,6 +59,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
       ref.invalidate(bookingDetailProvider(widget.bookingId));
       ref.invalidate(bookingsListProvider);
       if (mounted) {
+        HapticFeedback.lightImpact();
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Reserva actualizada')));
@@ -96,7 +99,10 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
           .read(bookingsRepositoryProvider)
           .deleteBooking(widget.bookingId);
       ref.invalidate(bookingsListProvider);
-      if (mounted) context.pop();
+      if (mounted) {
+        HapticFeedback.lightImpact();
+        context.pop();
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {

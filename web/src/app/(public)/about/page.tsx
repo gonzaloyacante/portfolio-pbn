@@ -1,10 +1,7 @@
 import { getAboutSettings } from '@/actions/settings/about'
-import { getActiveTestimonials } from '@/actions/cms/testimonials'
-import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import { getContactSettings } from '@/actions/settings/contact'
 import JsonLd from '@/components/seo/JsonLd'
 import { AboutBioColumn, AboutProfileImage } from '@/components/features/about/AboutBioSection'
-import { AboutTestimonialsSection } from '@/components/features/about/AboutTestimonialsSection'
 import { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -56,16 +53,10 @@ function buildJsonLdData(
  * Mínima complejidad ciclomática: toda lógica delegada a sub-componentes.
  */
 export default async function AboutPage() {
-  const [testimonials, aboutSettings, testimonialSettings, contact] = await Promise.all([
-    getActiveTestimonials(6),
-    getAboutSettings(),
-    getTestimonialSettings(),
-    getContactSettings(),
-  ])
+  const [aboutSettings, contact] = await Promise.all([getAboutSettings(), getContactSettings()])
 
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
   const location = contact?.location || ''
-  const showTestimonials = testimonialSettings?.showOnAbout ?? true
 
   return (
     <section className="w-full bg-(--background) transition-colors duration-500">
@@ -88,13 +79,6 @@ export default async function AboutPage() {
           shape={aboutSettings?.profileImageShape ?? 'ellipse'}
         />
       </div>
-
-      {showTestimonials && (
-        <AboutTestimonialsSection
-          testimonials={testimonials}
-          title={testimonialSettings?.title || 'Lo que dicen mis clientes'}
-        />
-      )}
     </section>
   )
 }

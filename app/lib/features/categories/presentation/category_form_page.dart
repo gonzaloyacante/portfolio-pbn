@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/route_names.dart';
@@ -79,6 +80,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
   bool _isActive = true;
   bool _loading = false;
   String? _populatedFor;
+  bool _isDirty = false;
 
   bool get _isEdit => widget.categoryId != null;
 
@@ -113,7 +115,29 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     });
   }
 
+  void _markDirty() {
+    if (!_isDirty) _rebuild(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
   void _autoSlug(String name) {
+    _markDirty();
     if (_isEdit) return;
     _slugCtrl.text = _toSlug(name);
   }
@@ -262,7 +286,10 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       }
 
       ref.invalidate(categoriesListProvider);
-      if (mounted) context.pop();
+      if (mounted) {
+        HapticFeedback.lightImpact();
+        context.pop();
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {

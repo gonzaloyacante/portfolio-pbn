@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { sendContactEmail } from '@/actions/user/contact'
 import { Button, PhoneInput } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2 } from 'lucide-react'
+import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2, Instagram } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ROUTES } from '@/config/routes'
@@ -15,7 +15,7 @@ import { useSearchParams } from 'next/navigation'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 // Response preference type
-type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP'
+type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP' | 'INSTAGRAM'
 
 // Contact form schema with conditional email/phone validation
 const contactFormSchema = z
@@ -28,7 +28,8 @@ const contactFormSchema = z
       .optional()
       .or(z.literal('')),
     message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP']),
+    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP', 'INSTAGRAM']),
+    instagramUser: z.string().trim().max(50).optional(),
     privacy: z.boolean().refine((val) => val === true, {
       message: 'Debes aceptar la política de privacidad',
     }),
@@ -51,6 +52,13 @@ const contactFormSchema = z
         code: 'custom',
         path: ['phone'],
         message: 'El teléfono es obligatorio para este tipo de contacto',
+      })
+    }
+    if (data.responsePreference === 'INSTAGRAM' && !data.instagramUser?.trim()) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['instagramUser'],
+        message: 'El usuario de Instagram es obligatorio',
       })
     }
   })
@@ -104,6 +112,7 @@ export default function ContactForm({
       phone: '',
       message: '',
       responsePreference: 'EMAIL',
+      instagramUser: '',
       privacy: false,
     },
   })
@@ -131,6 +140,7 @@ export default function ContactForm({
       formData.append('phone', data.phone || '')
       formData.append('message', data.message)
       formData.append('responsePreference', data.responsePreference)
+      formData.append('instagramUser', data.instagramUser || '')
       formData.append('privacy', data.privacy ? 'on' : 'off')
       formData.append('recaptchaToken', token)
 
@@ -252,7 +262,7 @@ export default function ContactForm({
           <legend className="mb-3 block text-sm font-semibold text-(--foreground)">
             {preferenceLabel || '¿Cómo preferís que te contacte?'} *
           </legend>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <PreferenceButton
               active={responsePreference === 'EMAIL'}
               onClick={() => setPreference('EMAIL')}
@@ -271,6 +281,12 @@ export default function ContactForm({
               icon={<MessageCircle className="h-5 w-5" />}
               label="WhatsApp"
             />
+            <PreferenceButton
+              active={responsePreference === 'INSTAGRAM'}
+              onClick={() => setPreference('INSTAGRAM')}
+              icon={<Instagram className="h-5 w-5" />}
+              label="Instagram"
+            />
           </div>
           <AnimatePresence>
             {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') &&
@@ -285,6 +301,33 @@ export default function ContactForm({
                   necesitamos tu número
                 </motion.p>
               )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {responsePreference === 'INSTAGRAM' && (
+              <motion.div
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                className="mt-3"
+              >
+                <label
+                  htmlFor="instagramUser"
+                  className="mb-2 block text-sm font-semibold text-(--foreground)"
+                >
+                  Tu usuario de Instagram *
+                </label>
+                <input
+                  {...register('instagramUser')}
+                  id="instagramUser"
+                  className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+                  placeholder="@tu_usuario"
+                  autoComplete="off"
+                />
+                {errors.instagramUser && (
+                  <p className="mt-1 text-sm text-red-500">{errors.instagramUser.message}</p>
+                )}
+              </motion.div>
+            )}
           </AnimatePresence>
         </fieldset>
 

@@ -23,6 +23,7 @@ const CONTACT_DETAIL_SELECT = {
   message: true,
   subject: true,
   responsePreference: true,
+  instagramUser: true,
   status: true,
   priority: true,
   isRead: true,

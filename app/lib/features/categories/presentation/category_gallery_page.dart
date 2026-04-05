@@ -46,11 +46,23 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   List<GalleryImageItem>? _items;
   bool _dirty = false;
   bool _saving = false;
+  String _searchQuery = '';
 
   /// ID del ítem actualmente arrastrado en la vista de cuadrícula.
   String? _draggingId;
 
   void _rebuild(VoidCallback fn) => setState(fn);
+
+  void _onSearch(String value) => setState(() => _searchQuery = value.trim());
+
+  List<GalleryImageItem> get _displayItems {
+    if (_items == null) return const [];
+    if (_searchQuery.isEmpty) return _items!;
+    final query = _searchQuery.toLowerCase();
+    return _items!
+        .where((img) => img.publicId?.toLowerCase().contains(query) ?? false)
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,38 +133,45 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           }
 
           if (_items!.isEmpty) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(AppSpacing.xl),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.photo_library_outlined,
-                      size: 64,
-                      color: Colors.grey,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Esta categoría no tiene imágenes todavía.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ],
+            return Column(
+              children: [
+                AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
+                const Expanded(
+                  child: EmptyState(
+                    icon: Icons.photo_library_outlined,
+                    title: 'Sin imágenes',
+                    subtitle: 'Esta categoría no tiene imágenes todavía.',
+                  ),
                 ),
-              ),
+              ],
             );
           }
 
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            transitionBuilder: (child, animation) =>
-                FadeTransition(opacity: animation, child: child),
-            child: viewMode == ViewMode.list
-                ? _buildListView(context)
-                : _buildGridView(context),
+          return Column(
+            children: [
+              AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
+              Expanded(
+                child: _displayItems.isEmpty
+                    ? const EmptyState(
+                        icon: Icons.search_off_outlined,
+                        title: 'Sin resultados',
+                        subtitle:
+                            'No hay imágenes que coincidan con la búsqueda',
+                      )
+                    : _searchQuery.isNotEmpty
+                    ? _buildSearchResults(context)
+                    : AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        switchInCurve: Curves.easeOut,
+                        switchOutCurve: Curves.easeIn,
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: viewMode == ViewMode.list
+                            ? _buildListView(context)
+                            : _buildGridView(context),
+                      ),
+              ),
+            ],
           );
         },
       ),

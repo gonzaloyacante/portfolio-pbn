@@ -26,6 +26,19 @@ export function SiteEditor({ settings }: SiteEditorProps) {
   const [maintenanceMode, setMaintenanceMode] = useState(settings?.maintenanceMode ?? false)
   const [maintenanceMessage, setMaintenanceMessage] = useState(settings?.maintenanceMessage ?? '')
 
+  // — Encabezado / Navbar brand
+  const [navbarShowBrand, setNavbarShowBrand] = useState(settings?.navbarShowBrand ?? true)
+  const [navbarBrandText, setNavbarBrandText] = useState(settings?.navbarBrandText ?? '')
+  const [navbarBrandFont, setNavbarBrandFont] = useState(settings?.navbarBrandFont ?? '')
+  const [navbarBrandFontUrl, setNavbarBrandFontUrl] = useState(settings?.navbarBrandFontUrl ?? '')
+  const [navbarBrandFontSize, setNavbarBrandFontSize] = useState(
+    settings?.navbarBrandFontSize ?? 30
+  )
+  const [navbarBrandColor, setNavbarBrandColor] = useState(settings?.navbarBrandColor ?? '')
+  const [navbarBrandColorDark, setNavbarBrandColorDark] = useState(
+    settings?.navbarBrandColorDark ?? ''
+  )
+
   // — Visibilidad de páginas
   const [showAboutPage, setShowAboutPage] = useState(settings?.showAboutPage ?? true)
   const [showGalleryPage, setShowGalleryPage] = useState(settings?.showGalleryPage ?? true)
@@ -41,6 +54,13 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         siteTagline: siteTagline.trim() || null,
         maintenanceMode,
         maintenanceMessage: maintenanceMessage.trim() || null,
+        navbarShowBrand,
+        navbarBrandText: navbarBrandText.trim() || null,
+        navbarBrandFont: navbarBrandFont.trim() || null,
+        navbarBrandFontUrl: navbarBrandFontUrl.trim() || null,
+        navbarBrandFontSize: navbarBrandFontSize || null,
+        navbarBrandColor: navbarBrandColor.trim() || null,
+        navbarBrandColorDark: navbarBrandColorDark.trim() || null,
         showAboutPage,
         showGalleryPage,
         showServicesPage,
@@ -128,34 +148,141 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         </div>
       </section>
 
-      {/* ── Visibilidad de páginas ─────────────────────────────────── */}
-      <section className="border-border bg-card space-y-4 rounded-2xl border p-6">
+      {/* ── Encabezado ─────────────────────────────────────────────── */}
+      <section className="border-border bg-card space-y-5 rounded-2xl border p-6">
         <div>
-          <h2 className="font-heading text-lg font-semibold">Visibilidad de páginas</h2>
+          <h2 className="font-heading text-lg font-semibold">Encabezado</h2>
           <p className="text-muted-foreground text-sm">
-            Activa o desactiva secciones del sitio público. Las páginas desactivadas no aparecen en
-            el menú.
+            Personaliza el nombre visible en la barra de navegación pública y controla qué páginas
+            aparecen en el menú.
           </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            { label: 'Sobre Mí', value: showAboutPage, setter: setShowAboutPage },
-            { label: 'Portfolio', value: showGalleryPage, setter: setShowGalleryPage },
-            { label: 'Servicios', value: showServicesPage, setter: setShowServicesPage },
-            { label: 'Contacto', value: showContactPage, setter: setShowContactPage },
-          ].map(({ label, value, setter }) => (
-            <div
-              key={label}
-              className="border-border flex items-center justify-between rounded-xl border px-4 py-3"
-            >
-              <span className="text-sm font-medium">{label}</span>
-              <Switch
-                checked={value}
-                onCheckedChange={setter}
-                aria-label={`Mostrar página ${label}`}
-              />
+
+        {/* Mostrar nombre en navbar */}
+        <div className="border-border flex items-center justify-between rounded-xl border px-4 py-3">
+          <div>
+            <p className="text-sm font-medium">Mostrar nombre en navbar</p>
+            <p className="text-muted-foreground text-xs">
+              Muestra u oculta el nombre de marca en la cabecera del sitio.
+            </p>
+          </div>
+          <Switch
+            checked={navbarShowBrand}
+            onCheckedChange={setNavbarShowBrand}
+            aria-label="Mostrar nombre en navbar"
+          />
+        </div>
+
+        {navbarShowBrand && (
+          <div className="space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Texto del nombre</label>
+                <Input
+                  value={navbarBrandText}
+                  onChange={(e) => setNavbarBrandText(e.target.value)}
+                  placeholder="Paola BN"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Tamaño (px)</label>
+                <Input
+                  type="number"
+                  min={8}
+                  max={120}
+                  value={navbarBrandFontSize}
+                  onChange={(e) => setNavbarBrandFontSize(Number(e.target.value))}
+                  placeholder="30"
+                />
+              </div>
             </div>
-          ))}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Fuente (nombre)</label>
+                <Input
+                  value={navbarBrandFont}
+                  onChange={(e) => setNavbarBrandFont(e.target.value)}
+                  placeholder="Great Vibes"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">URL Google Fonts</label>
+                <Input
+                  value={navbarBrandFontUrl}
+                  onChange={(e) => setNavbarBrandFontUrl(e.target.value)}
+                  placeholder="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Color (modo claro)</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={navbarBrandColor || '#1a050a'}
+                    onChange={(e) => setNavbarBrandColor(e.target.value)}
+                    className="border-border h-9 w-9 cursor-pointer rounded border p-0.5"
+                    aria-label="Color modo claro"
+                  />
+                  <Input
+                    value={navbarBrandColor}
+                    onChange={(e) => setNavbarBrandColor(e.target.value)}
+                    placeholder="#1a050a"
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium">Color (modo oscuro)</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={navbarBrandColorDark || '#fb7185'}
+                    onChange={(e) => setNavbarBrandColorDark(e.target.value)}
+                    className="border-border h-9 w-9 cursor-pointer rounded border p-0.5"
+                    aria-label="Color modo oscuro"
+                  />
+                  <Input
+                    value={navbarBrandColorDark}
+                    onChange={(e) => setNavbarBrandColorDark(e.target.value)}
+                    placeholder="#fb7185"
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Visibilidad de páginas (dentro de Encabezado) */}
+        <div className="border-border space-y-3 rounded-xl border p-4">
+          <p className="text-sm font-semibold">Visibilidad de páginas</p>
+          <p className="text-muted-foreground text-xs">
+            Las páginas desactivadas no aparecen en el menú de navegación.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              { label: 'Sobre Mí', value: showAboutPage, setter: setShowAboutPage },
+              { label: 'Portfolio', value: showGalleryPage, setter: setShowGalleryPage },
+              { label: 'Servicios', value: showServicesPage, setter: setShowServicesPage },
+              { label: 'Contacto', value: showContactPage, setter: setShowContactPage },
+            ].map(({ label, value, setter }) => (
+              <div
+                key={label}
+                className="bg-background flex items-center justify-between rounded-lg px-3 py-2"
+              >
+                <span className="text-sm font-medium">{label}</span>
+                <Switch
+                  checked={value}
+                  onCheckedChange={setter}
+                  aria-label={`Mostrar página ${label}`}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

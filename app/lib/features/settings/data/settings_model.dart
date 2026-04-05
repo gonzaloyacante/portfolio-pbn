@@ -124,10 +124,18 @@ abstract class SiteSettings with _$SiteSettings {
     String? maintenanceMessage,
     @Default(true) bool showAboutPage,
     @Default(true) bool showGalleryPage,
-    @Default(false) bool showServicesPage,
+    @Default(true) bool showServicesPage,
     @Default(true) bool showContactPage,
     @Default(true) bool allowIndexing,
     @Default(true) bool isActive,
+    // ── Encabezado / Navbar brand ──
+    String? navbarBrandText,
+    String? navbarBrandFont,
+    String? navbarBrandFontUrl,
+    int? navbarBrandFontSize,
+    String? navbarBrandColor,
+    String? navbarBrandColorDark,
+    @Default(true) bool navbarShowBrand,
   }) = _SiteSettings;
 
   factory SiteSettings.fromJson(Map<String, dynamic> json) =>

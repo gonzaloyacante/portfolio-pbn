@@ -157,6 +157,9 @@ model ContactSettings {
   email            String?
   phone            String?
   whatsapp         String?
+  instagram        String? // URL del perfil de Instagram
+  instagramUsername String? @default("") // @username para mostrar
+  showInstagram    Boolean  @default(true)
   location         String?
   // Form Configuration
   formTitle        String?  @default("Envíame un mensaje")
@@ -319,6 +322,15 @@ model SiteSettings {
   showContactPage    Boolean @default(true)
 
   allowIndexing Boolean @default(true) // SEO robots
+
+  // ── Navbar / Encabezado ──────────────────────────────────────────
+  navbarBrandText      String?  @default("Paola BN")
+  navbarBrandFont      String?  // Font family name, e.g. "Great Vibes"
+  navbarBrandFontUrl   String?  // Google Fonts embed URL
+  navbarBrandFontSize  Int?     @default(30) // px
+  navbarBrandColor     String?  // CSS color light mode
+  navbarBrandColorDark String?  // CSS color dark mode
+  navbarShowBrand      Boolean  @default(true)
 
   // Meta
   isActive  Boolean  @default(true)

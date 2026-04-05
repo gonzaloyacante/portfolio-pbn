@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -54,6 +55,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   bool _isAvailable = true;
   bool _loading = false;
   bool _populated = false;
+  bool _isDirty = false;
 
   bool get _isEdit => widget.serviceId != null;
 
@@ -108,7 +110,29 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     });
   }
 
+  void _markDirty() {
+    if (!_isDirty) _rebuild(() => _isDirty = true);
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
   void _autoSlug(String name) {
+    _markDirty();
     if (_isEdit) return;
     final slug = name
         .toLowerCase()
@@ -181,7 +205,10 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       }
 
       ref.invalidate(servicesListProvider);
-      if (mounted) context.pop();
+      if (mounted) {
+        HapticFeedback.lightImpact();
+        context.pop();
+      }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {

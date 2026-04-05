@@ -16,6 +16,7 @@ class _ServerSwitcherCard extends ConsumerStatefulWidget {
 class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
   final _customUrlController = TextEditingController();
   bool _showCustomInput = false;
+  bool _switching = false;
 
   @override
   void dispose() {
@@ -29,173 +30,189 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
     final notifier = ref.read<ServerUrlNotifier>(serverUrlProvider.notifier);
     final scheme = Theme.of(context).colorScheme;
 
-    return _DebugCard(
-      title: '🌐 Server Switcher',
-      icon: Icons.swap_horiz_rounded,
-      children: [
-        // URL activa
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(
-            color: Colors.green.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.circle, color: Colors.green, size: 10),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  serverState.resolvedUrl,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-
-        // Botones de preset
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: ServerPreset.values.map((preset) {
-            final isSelected = serverState.preset == preset;
-            return InkWell(
-              onTap: () async {
-                if (preset == ServerPreset.custom) {
-                  setState(() => _showCustomInput = !_showCustomInput);
-                  return;
-                }
-                setState(() => _showCustomInput = false);
-                await notifier.setPreset(preset);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        '${preset.emoji} Servidor: ${preset.resolveUrl()}',
-                      ),
-                      behavior: SnackBarBehavior.floating,
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
+    return LoadingOverlay(
+      isLoading: _switching,
+      message: 'Reconectando...',
+      child: _DebugCard(
+        title: '🌐 Server Switcher',
+        icon: Icons.swap_horiz_rounded,
+        children: [
+          // URL activa
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? scheme.primaryContainer
-                      : scheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: isSelected ? scheme.primary : scheme.outlineVariant,
-                    width: isSelected ? 1.5 : 1,
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(preset.emoji, style: const TextStyle(fontSize: 13)),
-                    const SizedBox(width: 4),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          preset.label,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: isSelected ? scheme.primary : null,
-                          ),
-                        ),
-                        Text(
-                          preset.description,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: scheme.onSurface.withValues(alpha: 0.5),
-                          ),
-                        ),
-                      ],
+              border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.circle, color: Colors.green, size: 10),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    serverState.resolvedUrl,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'monospace',
+                      fontWeight: FontWeight.w600,
                     ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-
-        // Input URL personalizada
-        if (_showCustomInput) ...[
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _customUrlController,
-                  decoration: const InputDecoration(
-                    hintText: 'https://tu-servidor.com',
-                    isDense: true,
-                    prefixIcon: Icon(Icons.link, size: 16),
-                    border: OutlineInputBorder(),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  style: const TextStyle(fontSize: 12),
-                  keyboardType: TextInputType.url,
-                  onSubmitted: (v) async {
-                    if (v.trim().isEmpty) return;
-                    await notifier.setCustomUrl(v.trim());
-                    setState(() => _showCustomInput = false);
-                  },
                 ),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () async {
-                  final url = _customUrlController.text.trim();
-                  if (url.isEmpty) return;
-                  await notifier.setCustomUrl(url);
-                  setState(() => _showCustomInput = false);
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Botones de preset
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: ServerPreset.values.map((preset) {
+              final isSelected = serverState.preset == preset;
+              return InkWell(
+                onTap: () async {
+                  if (preset == ServerPreset.custom) {
+                    setState(() => _showCustomInput = !_showCustomInput);
+                    return;
+                  }
+                  setState(() {
+                    _showCustomInput = false;
+                    _switching = true;
+                  });
+                  await notifier.setPreset(preset);
+                  if (mounted) setState(() => _switching = false);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('✏️ URL: $url'),
+                        content: Text(
+                          '${preset.emoji} Servidor: ${preset.resolveUrl()}',
+                        ),
                         behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 2),
                       ),
                     );
                   }
                 },
-                style: ElevatedButton.styleFrom(
+                borderRadius: BorderRadius.circular(8),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? scheme.primaryContainer
+                        : scheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isSelected
+                          ? scheme.primary
+                          : scheme.outlineVariant,
+                      width: isSelected ? 1.5 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(preset.emoji, style: const TextStyle(fontSize: 13)),
+                      const SizedBox(width: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            preset.label,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: isSelected ? scheme.primary : null,
+                            ),
+                          ),
+                          Text(
+                            preset.description,
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: scheme.onSurface.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                child: const Text('OK', style: TextStyle(fontSize: 12)),
-              ),
-            ],
+              );
+            }).toList(),
+          ),
+
+          // Input URL personalizada
+          if (_showCustomInput) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _customUrlController,
+                    decoration: const InputDecoration(
+                      hintText: 'https://tu-servidor.com',
+                      isDense: true,
+                      prefixIcon: Icon(Icons.link, size: 16),
+                      border: OutlineInputBorder(),
+                    ),
+                    style: const TextStyle(fontSize: 12),
+                    keyboardType: TextInputType.url,
+                    onSubmitted: (v) async {
+                      if (v.trim().isEmpty) return;
+                      await notifier.setCustomUrl(v.trim());
+                      setState(() => _showCustomInput = false);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () async {
+                    final url = _customUrlController.text.trim();
+                    if (url.isEmpty) return;
+                    setState(() => _switching = true);
+                    await notifier.setCustomUrl(url);
+                    if (mounted) {
+                      setState(() {
+                        _switching = false;
+                        _showCustomInput = false;
+                      });
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('✏️ URL: $url'),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                  ),
+                  child: const Text('OK', style: TextStyle(fontSize: 12)),
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 4),
+          Text(
+            '⚠️ El cambio reconstruye el cliente HTTP (Dio). Válido solo en Debug.',
+            style: TextStyle(
+              fontSize: 10,
+              color: scheme.onSurface.withValues(alpha: 0.5),
+            ),
           ),
         ],
-
-        const SizedBox(height: 4),
-        Text(
-          '⚠️ El cambio reconstruye el cliente HTTP (Dio). Válido solo en Debug.',
-          style: TextStyle(
-            fontSize: 10,
-            color: scheme.onSurface.withValues(alpha: 0.5),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -36,6 +36,9 @@ export interface ContactSettingsData {
   showWhatsapp: boolean
   showEmail: boolean
   showLocation: boolean
+  instagram: string | null
+  instagramUsername: string | null
+  showInstagram: boolean
   isActive: boolean
 }
 
