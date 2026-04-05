@@ -82,6 +82,8 @@ dependencies:
   # Abre/instala archivos nativos desde la app (APK install en Android).
   # Gestiona automáticamente FileProvider para Android 7+.
   open_file: ^3.5.10
+  # Runtime permissions (e.g. REQUEST_INSTALL_PACKAGES before APK install).
+  permission_handler: ^11.3.1
   # SHA-256 para verificar integridad del APK descargado (ya transitiva vía firebase)
   crypto: ^3.0.6
 

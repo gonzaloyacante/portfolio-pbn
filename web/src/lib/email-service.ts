@@ -10,6 +10,7 @@ import {
 } from './email-templates'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings } from '@/actions/settings/site'
+import { getEmailSettings } from '@/actions/settings/email'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -106,7 +107,16 @@ export const emailService = {
     message: string
     preference: string
   }) {
-    const [adminEmail, branding] = await Promise.all([getAdminEmail(), getSenderBranding()])
+    const [adminEmail, branding, emailSettings] = await Promise.all([
+      getAdminEmail(),
+      getSenderBranding(),
+      getEmailSettings(),
+    ])
+
+    if (emailSettings && !emailSettings.sendContactNotifications) {
+      logger.info('Contact notifications disabled — skipping email.')
+      return { success: true }
+    }
 
     return sendEmail({
       to: adminEmail,
@@ -157,7 +167,16 @@ export const emailService = {
    * Notify Admin about a new testimonial
    */
   async notifyNewTestimonial(data: { name: string; rating: number; text: string; email?: string }) {
-    const [adminEmail, branding] = await Promise.all([getAdminEmail(), getSenderBranding()])
+    const [adminEmail, branding, emailSettings] = await Promise.all([
+      getAdminEmail(),
+      getSenderBranding(),
+      getEmailSettings(),
+    ])
+
+    if (emailSettings && !emailSettings.sendTestimonialNotifications) {
+      logger.info('Testimonial notifications disabled — skipping email.')
+      return { success: true }
+    }
 
     return sendEmail({
       to: adminEmail,
@@ -177,7 +196,16 @@ export const emailService = {
     serviceId: string
     notes?: string
   }) {
-    const [adminEmail, branding] = await Promise.all([getAdminEmail(), getSenderBranding()])
+    const [adminEmail, branding, emailSettings] = await Promise.all([
+      getAdminEmail(),
+      getSenderBranding(),
+      getEmailSettings(),
+    ])
+
+    if (emailSettings && !emailSettings.sendBookingNotifications) {
+      logger.info('Booking notifications disabled — skipping admin email.')
+      return { success: true }
+    }
 
     return sendEmail({
       to: adminEmail,
@@ -191,7 +219,13 @@ export const emailService = {
    * Notify Client that booking is received (Pending)
    */
   async notifyClientBookingReceived(data: { clientEmail: string; clientName: string; date: Date }) {
-    const branding = await getSenderBranding()
+    const [branding, emailSettings] = await Promise.all([getSenderBranding(), getEmailSettings()])
+
+    if (emailSettings && !emailSettings.sendBookingNotifications) {
+      logger.info('Booking notifications disabled — skipping client email.')
+      return { success: true }
+    }
+
     return sendEmail({
       to: data.clientEmail,
       subject: '📅 Reserva Recibida - Pendiente de Confirmación',

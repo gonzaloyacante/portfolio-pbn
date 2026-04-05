@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:open_file/open_file.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -106,6 +107,22 @@ class AppUpdatePageNotifier extends _$AppUpdatePageNotifier {
     if (apk == null) return;
 
     try {
+      // On Android, REQUEST_INSTALL_PACKAGES must be granted at runtime.
+      if (Platform.isAndroid) {
+        final status = await Permission.requestInstallPackages.status;
+        if (!status.isGranted) {
+          final result = await Permission.requestInstallPackages.request();
+          if (!result.isGranted) {
+            state = state.copyWith(
+              phase: UpdatePhase.error,
+              errorMsg:
+                  'Permiso de instalación denegado.\nActívalo en Ajustes > Aplicaciones.',
+            );
+            return;
+          }
+        }
+      }
+
       final result = await OpenFile.open(apk.path);
       if (result.type != ResultType.done) {
         state = state.copyWith(

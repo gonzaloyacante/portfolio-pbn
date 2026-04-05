@@ -41,6 +41,19 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   String? _currentStatus;
 
   @override
+  void initState() {
+    super.initState();
+    // Pre-populate serviceId if navigated from service tile/detail.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final extra = GoRouterState.of(context).extra;
+      if (extra is Map<String, dynamic> && extra['serviceId'] is String) {
+        setState(() => _serviceId = extra['serviceId'] as String);
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _clientNameCtrl.dispose();
     _clientEmailCtrl.dispose();
