@@ -91,11 +91,18 @@ extension _CalendarPageBuilders on _CalendarPageState {
             outsideDaysVisible: false,
           ),
           headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
+            formatButtonVisible: true,
+            formatButtonShowsNext: false,
             titleCentered: true,
             leftChevronIcon: Icon(Icons.chevron_left_rounded),
             rightChevronIcon: Icon(Icons.chevron_right_rounded),
           ),
+          availableCalendarFormats: const {
+            CalendarFormat.month: 'Mes',
+            CalendarFormat.week: 'Semana',
+          },
+          calendarFormat: _calendarFormat,
+          onFormatChanged: (format) => setState(() => _calendarFormat = format),
         ),
       ),
     );

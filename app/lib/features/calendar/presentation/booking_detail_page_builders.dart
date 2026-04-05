@@ -46,7 +46,13 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
           ),
           data: (detail) {
             _populate(detail);
-            return _buildDetail(context, detail);
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(bookingDetailProvider(widget.bookingId));
+                await ref.read(bookingDetailProvider(widget.bookingId).future);
+              },
+              child: _buildDetail(context, detail),
+            );
           },
         ),
       ),
@@ -57,6 +63,7 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

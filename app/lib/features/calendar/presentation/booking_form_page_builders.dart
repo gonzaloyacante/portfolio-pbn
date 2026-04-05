@@ -107,17 +107,9 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                         validator: AppValidators.email,
                       ),
                       const SizedBox(height: 12),
-                      IntlPhoneField(
-                        decoration: const InputDecoration(
-                          labelText: 'Teléfono',
-                          counterText: '',
-                        ),
-                        initialCountryCode: 'ES',
-                        invalidNumberMessage: 'Número de teléfono inválido',
-                        keyboardType: TextInputType.phone,
-                        onChanged: (phone) {
-                          _completeClientPhone = phone.completeNumber;
-                        },
+                      PhoneInputField(
+                        controller: _phoneCtrl,
+                        label: 'Teléfono',
                       ),
                       const SizedBox(height: 12),
                       TextFormField(

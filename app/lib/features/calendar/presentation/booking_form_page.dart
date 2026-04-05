@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../../services/providers/services_provider.dart';
@@ -33,7 +31,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
   final _clientNameCtrl = TextEditingController();
   final _clientEmailCtrl = TextEditingController();
-  String? _completeClientPhone;
+  final _phoneCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
   final _adminNotesCtrl = TextEditingController();
   final _guestCountCtrl = TextEditingController();
@@ -46,6 +44,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   void dispose() {
     _clientNameCtrl.dispose();
     _clientEmailCtrl.dispose();
+    _phoneCtrl.dispose();
     _notesCtrl.dispose();
     _adminNotesCtrl.dispose();
     _guestCountCtrl.dispose();
@@ -59,7 +58,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _guestCountCtrl.text = detail.guestCount > 1 ? '${detail.guestCount}' : '';
     _notesCtrl.text = detail.clientNotes ?? '';
     _adminNotesCtrl.text = detail.adminNotes ?? '';
-    _completeClientPhone = detail.clientPhone;
+    _phoneCtrl.text = detail.clientPhone ?? '';
     _date = detail.date;
     _serviceId = detail.serviceId;
     _currentStatus = detail.status;
@@ -137,9 +136,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         date: _date!,
         clientName: _clientNameCtrl.text.trim(),
         clientEmail: _clientEmailCtrl.text.trim(),
-        clientPhone: (_completeClientPhone?.trim().isEmpty ?? true)
+        clientPhone: (_phoneCtrl.text.trim().isEmpty)
             ? null
-            : _completeClientPhone!.trim(),
+            : _phoneCtrl.text.trim(),
         guestCount: int.tryParse(_guestCountCtrl.text.trim()) ?? 1,
         clientNotes: _notesCtrl.text.trim().isEmpty
             ? null

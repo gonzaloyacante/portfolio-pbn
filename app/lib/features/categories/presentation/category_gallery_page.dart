@@ -55,6 +55,12 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
 
   void _onSearch(String value) => setState(() => _searchQuery = value.trim());
 
+  Future<void> _onRefresh() async {
+    setState(() => _items = null);
+    ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+    await ref.read(_categoryGalleryProvider(widget.categoryId).future);
+  }
+
   List<GalleryImageItem> get _displayItems {
     if (_items == null) return const [];
     if (_searchQuery.isEmpty) return _items!;
@@ -133,45 +139,60 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           }
 
           if (_items!.isEmpty) {
-            return Column(
-              children: [
-                AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
-                const Expanded(
-                  child: EmptyState(
-                    icon: Icons.photo_library_outlined,
-                    title: 'Sin imágenes',
-                    subtitle: 'Esta categoría no tiene imágenes todavía.',
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: Column(
+                children: [
+                  AppSearchBar(
+                    hint: 'Buscar imágenes...',
+                    onChanged: _onSearch,
                   ),
-                ),
-              ],
+                  const Expanded(
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: 400,
+                        child: EmptyState(
+                          icon: Icons.photo_library_outlined,
+                          title: 'Sin imágenes',
+                          subtitle: 'Esta categoría no tiene imágenes todavía.',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
-          return Column(
-            children: [
-              AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
-              Expanded(
-                child: _displayItems.isEmpty
-                    ? const EmptyState(
-                        icon: Icons.search_off_outlined,
-                        title: 'Sin resultados',
-                        subtitle:
-                            'No hay imágenes que coincidan con la búsqueda',
-                      )
-                    : _searchQuery.isNotEmpty
-                    ? _buildSearchResults(context)
-                    : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        switchInCurve: Curves.easeOut,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(opacity: animation, child: child),
-                        child: viewMode == ViewMode.list
-                            ? _buildListView(context)
-                            : _buildGridView(context),
-                      ),
-              ),
-            ],
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: Column(
+              children: [
+                AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
+                Expanded(
+                  child: _displayItems.isEmpty
+                      ? const EmptyState(
+                          icon: Icons.search_off_outlined,
+                          title: 'Sin resultados',
+                          subtitle:
+                              'No hay imágenes que coincidan con la búsqueda',
+                        )
+                      : _searchQuery.isNotEmpty
+                      ? _buildSearchResults(context)
+                      : AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeOut,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(opacity: animation, child: child),
+                          child: viewMode == ViewMode.list
+                              ? _buildListView(context)
+                              : _buildGridView(context),
+                        ),
+                ),
+              ],
+            ),
           );
         },
       ),
