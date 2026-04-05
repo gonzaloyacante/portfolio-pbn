@@ -18,6 +18,7 @@ analyzer:
     missing_required_param: error
     missing_return: error
     deprecated_member_use: ignore
+    invalid_use_of_protected_member: ignore
 
 linter:
   rules:

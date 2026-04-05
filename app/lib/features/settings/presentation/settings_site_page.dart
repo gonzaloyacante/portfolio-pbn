@@ -11,6 +11,8 @@ import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
 
+part 'settings_site_page_builders.dart';
+
 class SettingsSitePage extends ConsumerStatefulWidget {
   const SettingsSitePage({super.key});
 
@@ -37,8 +39,8 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
 
   // ── Encabezado / Navbar brand ──
   final _navbarBrandTextCtrl = TextEditingController();
-  final _navbarBrandFontCtrl = TextEditingController();
-  final _navbarBrandFontUrlCtrl = TextEditingController();
+  String? _navbarBrandFont;
+  String? _navbarBrandFontUrl;
   final _navbarBrandFontSizeCtrl = TextEditingController();
   final _navbarBrandColorCtrl = TextEditingController();
   final _navbarBrandColorDarkCtrl = TextEditingController();
@@ -54,8 +56,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
       _metaDescCtrl,
       _maintenanceMsgCtrl,
       _navbarBrandTextCtrl,
-      _navbarBrandFontCtrl,
-      _navbarBrandFontUrlCtrl,
       _navbarBrandFontSizeCtrl,
       _navbarBrandColorCtrl,
       _navbarBrandColorDarkCtrl,
@@ -94,8 +94,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
       _metaDescCtrl,
       _maintenanceMsgCtrl,
       _navbarBrandTextCtrl,
-      _navbarBrandFontCtrl,
-      _navbarBrandFontUrlCtrl,
       _navbarBrandFontSizeCtrl,
       _navbarBrandColorCtrl,
       _navbarBrandColorDarkCtrl,
@@ -121,8 +119,8 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
     _showContact = s.showContactPage;
     _navbarShowBrand = s.navbarShowBrand;
     _navbarBrandTextCtrl.text = s.navbarBrandText ?? '';
-    _navbarBrandFontCtrl.text = s.navbarBrandFont ?? '';
-    _navbarBrandFontUrlCtrl.text = s.navbarBrandFontUrl ?? '';
+    _navbarBrandFont = s.navbarBrandFont;
+    _navbarBrandFontUrl = s.navbarBrandFontUrl;
     _navbarBrandFontSizeCtrl.text = s.navbarBrandFontSize != null
         ? s.navbarBrandFontSize.toString()
         : '30';
@@ -148,8 +146,12 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
         'showContactPage': _showContact,
         'navbarShowBrand': _navbarShowBrand,
         'navbarBrandText': _nullIfEmpty(_navbarBrandTextCtrl.text),
-        'navbarBrandFont': _nullIfEmpty(_navbarBrandFontCtrl.text),
-        'navbarBrandFontUrl': _nullIfEmpty(_navbarBrandFontUrlCtrl.text),
+        'navbarBrandFont': _navbarBrandFont?.trim().isEmpty ?? true
+            ? null
+            : _navbarBrandFont,
+        'navbarBrandFontUrl': _navbarBrandFontUrl?.trim().isEmpty ?? true
+            ? null
+            : _navbarBrandFontUrl,
         'navbarBrandFontSize': _navbarBrandFontSizeCtrl.text.trim().isNotEmpty
             ? int.tryParse(_navbarBrandFontSizeCtrl.text.trim())
             : null,
@@ -204,242 +206,6 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
               _populate(settings);
               return _buildForm(context);
             },
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _navbarBrandFields() {
-    return [
-      const SizedBox(height: 12),
-      TextFormField(
-        controller: _navbarBrandTextCtrl,
-        decoration: const InputDecoration(
-          labelText: 'Texto del nombre',
-          hintText: 'Paola BN',
-        ),
-      ),
-      const SizedBox(height: 12),
-      Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: TextFormField(
-              controller: _navbarBrandFontCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Fuente (nombre)',
-                hintText: 'Great Vibes',
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: 90,
-            child: TextFormField(
-              controller: _navbarBrandFontSizeCtrl,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'Tamaño (px)',
-                hintText: '30',
-              ),
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 12),
-      TextFormField(
-        controller: _navbarBrandFontUrlCtrl,
-        decoration: const InputDecoration(
-          labelText: 'URL Google Fonts',
-          hintText:
-              'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
-        ),
-      ),
-      const SizedBox(height: 12),
-      Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              controller: _navbarBrandColorCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Color claro',
-                hintText: '#1a050a',
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: TextFormField(
-              controller: _navbarBrandColorDarkCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Color oscuro',
-                hintText: '#fb7185',
-              ),
-            ),
-          ),
-        ],
-      ),
-    ];
-  }
-
-  Widget _buildForm(BuildContext context) {
-    final padding = AppBreakpoints.pagePadding(context);
-    final maxWidth = AppBreakpoints.value<double>(
-      context,
-      compact: double.infinity,
-      medium: 760,
-      expanded: 960,
-    );
-
-    return SingleChildScrollView(
-      padding: padding,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Encabezado ───────────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Encabezado',
-                children: [
-                  SwitchListTile(
-                    title: const Text('Mostrar nombre en navbar'),
-                    subtitle: const Text(
-                      'Muestra u oculta el nombre de marca en la cabecera.',
-                    ),
-                    value: _navbarShowBrand,
-                    onChanged: (v) => setState(() => _navbarShowBrand = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  if (_navbarShowBrand) ..._navbarBrandFields(),
-                  const Divider(height: 24),
-                  Text(
-                    'Visibilidad de páginas',
-                    style: Theme.of(context).textTheme.labelLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  SwitchListTile(
-                    title: const Text('Sobre mí'),
-                    value: _showAbout,
-                    onChanged: (v) => setState(() => _showAbout = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Portfolio'),
-                    value: _showGallery,
-                    onChanged: (v) => setState(() => _showGallery = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Servicios'),
-                    value: _showServices,
-                    onChanged: (v) => setState(() => _showServices = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  SwitchListTile(
-                    title: const Text('Contacto'),
-                    value: _showContact,
-                    onChanged: (v) => setState(() => _showContact = v),
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // ── Branding ─────────────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Branding',
-                children: [
-                  TextFormField(
-                    controller: _siteNameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Nombre del sitio',
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _siteTaglineCtrl,
-                    decoration: const InputDecoration(labelText: 'Eslogan'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // ── SEO ────────────────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'SEO',
-                children: [
-                  TextFormField(
-                    controller: _metaTitleCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Meta título',
-                      helperText: 'Título para buscadores (Google)',
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _metaDescCtrl,
-                    maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Meta descripción',
-                      helperText: 'Descripción en resultados de búsqueda',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // ── Mantenimiento ──────────────────────────────────────────────
-              AppCard(
-                color: _maintenanceMode
-                    ? Colors.orange.withValues(alpha: 0.12)
-                    : null,
-                borderRadius: AppRadius.forCard,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.engineering_outlined,
-                          color: Colors.orange,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Modo mantenimiento',
-                          style: Theme.of(context).textTheme.titleSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const Spacer(),
-                        Switch(
-                          value: _maintenanceMode,
-                          onChanged: (v) =>
-                              setState(() => _maintenanceMode = v),
-                        ),
-                      ],
-                    ),
-                    if (_maintenanceMode) ...[
-                      const SizedBox(height: 12),
-                      TextFormField(
-                        controller: _maintenanceMsgCtrl,
-                        maxLines: 2,
-                        decoration: const InputDecoration(
-                          labelText: 'Mensaje de mantenimiento',
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.xl),
-              FilledButton.icon(
-                onPressed: _save,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Guardar cambios'),
-              ),
-              const SizedBox(height: AppSpacing.base),
-            ],
           ),
         ),
       ),

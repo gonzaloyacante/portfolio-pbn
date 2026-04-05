@@ -16,6 +16,7 @@ import '../data/services_repository.dart';
 import '../providers/services_provider.dart';
 import 'widgets/service_grid_card.dart';
 import 'widgets/service_tile.dart';
+part 'services_list_page_builders.dart';
 
 class ServicesListPage extends ConsumerStatefulWidget {
   const ServicesListPage({super.key});
@@ -206,97 +207,8 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
                       onRefresh: () async =>
                           ref.invalidate(servicesListProvider),
                       child: viewMode == ViewMode.grid
-                          ? GridView.builder(
-                              padding: EdgeInsets.fromLTRB(
-                                hPad,
-                                0,
-                                hPad,
-                                AppSpacing.base,
-                              ),
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: AppBreakpoints.gridColumns(
-                                      context,
-                                      compact: 2,
-                                      medium: 3,
-                                      expanded: 4,
-                                    ),
-                                    crossAxisSpacing: AppBreakpoints.gutter(
-                                      context,
-                                    ),
-                                    mainAxisSpacing: AppBreakpoints.gutter(
-                                      context,
-                                    ),
-                                    childAspectRatio: 1.05,
-                                  ),
-                              itemCount: paginated.data.length,
-                              itemBuilder: (ctx, i) => RepaintBoundary(
-                                child: FadeSlideIn(
-                                  delay: Duration(
-                                    milliseconds: (i * 40).clamp(0, 300),
-                                  ),
-                                  child: GestureDetector(
-                                    onLongPress: () {
-                                      HapticFeedback.mediumImpact();
-                                      _showServiceActions(
-                                        ctx,
-                                        paginated.data[i],
-                                      );
-                                    },
-                                    child: ServiceGridCard(
-                                      item: paginated.data[i],
-                                      onDelete: _delete,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            )
-                          : ListView.separated(
-                              padding: EdgeInsets.symmetric(horizontal: hPad),
-                              itemCount: paginated.data.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(height: 8),
-                              itemBuilder: (ctx, i) => RepaintBoundary(
-                                child: FadeSlideIn(
-                                  delay: Duration(
-                                    milliseconds: (i * 40).clamp(0, 300),
-                                  ),
-                                  child: Dismissible(
-                                    key: Key(paginated.data[i].id),
-                                    direction: DismissDirection.endToStart,
-                                    background: Container(
-                                      color: AppColors.destructive,
-                                      alignment: Alignment.centerRight,
-                                      padding: const EdgeInsets.only(
-                                        right: AppSpacing.lg,
-                                      ),
-                                      child: const Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    confirmDismiss: (_) async {
-                                      HapticFeedback.mediumImpact();
-                                      await _delete(ctx, paginated.data[i]);
-                                      return false;
-                                    },
-                                    child: GestureDetector(
-                                      onLongPress: () {
-                                        HapticFeedback.mediumImpact();
-                                        _showServiceActions(
-                                          ctx,
-                                          paginated.data[i],
-                                        );
-                                      },
-                                      child: ServiceTile(
-                                        item: paginated.data[i],
-                                        onDelete: _delete,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                          ? _buildGrid(paginated.data, hPad)
+                          : _buildList(paginated.data, hPad),
                     ),
             ),
           ),
@@ -305,5 +217,3 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
     );
   }
 }
-
-// ── Grid Card ─────────────────────────────────────────────────────────────────
