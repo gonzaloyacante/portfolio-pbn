@@ -30,12 +30,15 @@ class AppDrawer extends ConsumerWidget {
     final isExpanded = AppBreakpoints.isExpanded(context);
 
     // Badge counts — silently 0 if data isn't loaded yet
-    final stats = ref.watch(dashboardStatsProvider).value;
+    final pendingBookings = ref.watch(
+      dashboardStatsProvider.select((v) => v.value?.pendingBookings ?? 0),
+    );
+    final newContacts = ref.watch(
+      dashboardStatsProvider.select((v) => v.value?.newContacts ?? 0),
+    );
     final badgeCounts = <String, int>{
-      if (stats != null && stats.newContacts > 0)
-        RouteNames.contacts: stats.newContacts,
-      if (stats != null && stats.pendingBookings > 0)
-        RouteNames.calendar: stats.pendingBookings,
+      if (newContacts > 0) RouteNames.contacts: newContacts,
+      if (pendingBookings > 0) RouteNames.calendar: pendingBookings,
     };
 
     final content = Container(

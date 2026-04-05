@@ -152,6 +152,41 @@ class CategoriesRepository {
       throw Exception(apiResponse.error ?? 'Error al guardar el orden');
     }
   }
+
+  Future<void> addGalleryImages(
+    String categoryId,
+    List<({String url, String publicId})> images,
+  ) async {
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {
+        'images': images
+            .map((i) => {'url': i.url, 'publicId': i.publicId})
+            .toList(),
+      },
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al agregar imágenes');
+    }
+  }
+
+  Future<void> deleteGalleryImage(
+    String categoryId,
+    String imageId,
+    String publicId,
+  ) async {
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {'imageId': imageId, 'publicId': publicId},
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al eliminar imagen');
+    }
+  }
 }
 
 @Riverpod(keepAlive: true)

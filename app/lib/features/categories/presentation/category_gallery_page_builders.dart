@@ -18,6 +18,7 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
           item: img,
           index: index,
           total: _displayItems.length,
+          onDelete: () => _deleteImage(img),
         );
       },
     );
@@ -61,6 +62,7 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                   item: img,
                   index: index,
                   total: _items!.length,
+                  onDelete: () => _deleteImage(img),
                 ),
               );
             },
@@ -260,7 +262,11 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
               ),
               child: ClipRRect(
                 borderRadius: AppRadius.asRounded(AppRadius.md),
-                child: GalleryGridTile(item: img, position: position),
+                child: GalleryGridTile(
+                  item: img,
+                  position: position,
+                  onDelete: () => _deleteImage(img),
+                ),
               ),
             ),
           );

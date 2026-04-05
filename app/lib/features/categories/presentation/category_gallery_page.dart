@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../features/app_settings/providers/app_preferences_provider.dart';
+import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -46,6 +47,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   List<GalleryImageItem>? _items;
   bool _dirty = false;
   bool _saving = false;
+  bool _uploading = false;
   String _searchQuery = '';
 
   /// ID del ítem actualmente arrastrado en la vista de cuadrícula.
@@ -77,6 +79,19 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
 
     return AppScaffold(
       title: 'Galería — ${widget.categoryName}',
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: (_saving || _uploading) ? null : _showUploadSheet,
+        icon: _uploading
+            ? const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.add_photo_alternate_outlined),
+        label: Text(_uploading ? 'Subiendo...' : 'Agregar foto'),
+      ),
       actions: [
         // Toggle lista / cuadrícula
         IconButton(
@@ -197,6 +212,130 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
         },
       ),
     );
+  }
+
+  // ── Upload ────────────────────────────────────────────────────────────────
+
+  Future<void> _showUploadSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: MediaQuery.viewInsetsOf(ctx).bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Agregar foto a la galería',
+              style: Theme.of(
+                ctx,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 16),
+            ImageUploadWidget(
+              label: 'Seleccionar foto',
+              hint: 'Toca para seleccionar una imagen',
+              height: 240,
+              onImageSelected: (file) async {
+                Navigator.pop(ctx);
+                setState(() => _uploading = true);
+                try {
+                  final uploadSvc = ref.read(uploadServiceProvider);
+                  final result = await uploadSvc.uploadImageFull(file);
+                  await ref.read(categoriesRepositoryProvider).addGalleryImages(
+                    widget.categoryId,
+                    [(url: result.url, publicId: result.publicId)],
+                  );
+                  ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+                  setState(() => _items = null);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Imagen agregada correctamente'),
+                      ),
+                    );
+                  }
+                } catch (e, st) {
+                  Sentry.captureException(e, stackTrace: st);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No se pudo agregar la imagen.'),
+                      ),
+                    );
+                  }
+                } finally {
+                  if (mounted) setState(() => _uploading = false);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Delete ────────────────────────────────────────────────────────────────
+
+  Future<void> _deleteImage(GalleryImageItem item) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Eliminar imagen'),
+        content: const Text(
+          '¿Eliminar esta imagen de la galería? Esta acción no se puede deshacer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: AppColors.destructive),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    setState(() => _saving = true);
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .deleteGalleryImage(widget.categoryId, item.id, item.publicId ?? '');
+      setState(() {
+        _items?.removeWhere((i) => i.id == item.id);
+      });
+      ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Imagen eliminada')));
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo eliminar la imagen.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   // ── Helpers de arrastre (grid) ───────────────────────────────────────────────

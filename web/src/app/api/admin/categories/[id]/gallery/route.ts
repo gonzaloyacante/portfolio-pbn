@@ -1,6 +1,8 @@
 /**
- * GET  /api/admin/categories/[id]/gallery  — Todas las imágenes de una categoría
- * PUT  /api/admin/categories/[id]/gallery  — Actualizar orden de la galería
+ * GET    /api/admin/categories/[id]/gallery  — Todas las imágenes de una categoría
+ * POST   /api/admin/categories/[id]/gallery  — Agregar imágenes a la galería
+ * PUT    /api/admin/categories/[id]/gallery  — Actualizar orden de la galería
+ * DELETE /api/admin/categories/[id]/gallery  — Eliminar imagen individual
  */
 
 import { NextResponse } from 'next/server'
@@ -8,6 +10,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { deleteImage } from '@/lib/cloudinary'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
@@ -164,6 +167,74 @@ export async function PUT(req: Request, { params }: Params) {
     logger.error('PUT category gallery order error', err as Record<string, unknown>)
     return NextResponse.json(
       { success: false, error: 'Error al actualizar el orden de la galería' },
+      { status: 500 }
+    )
+  }
+}
+
+// ── DELETE (Eliminar imagen individual) ──────────────────────────────────────
+
+/**
+ * Body: { imageId: string, publicId: string }
+ * Elimina la imagen de DB y de Cloudinary.
+ */
+export async function DELETE(req: Request, { params }: Params) {
+  const auth = await withAdminJwt(req)
+  if (!auth.ok) return auth.response
+
+  try {
+    const { id: categoryId } = await params
+
+    const body = await req.json()
+    const imageId: string = body?.imageId
+    const publicId: string = body?.publicId
+
+    if (!imageId || !publicId) {
+      return NextResponse.json(
+        { success: false, error: 'Los campos "imageId" y "publicId" son requeridos' },
+        { status: 400 }
+      )
+    }
+
+    // Verificar que la imagen pertenece a esta categoría
+    const image = await prisma.categoryImage.findFirst({
+      where: { id: imageId, categoryId },
+    })
+
+    if (!image) {
+      return NextResponse.json(
+        { success: false, error: 'Imagen no encontrada en esta categoría' },
+        { status: 404 }
+      )
+    }
+
+    // Eliminar de Cloudinary
+    await deleteImage(publicId)
+
+    // Eliminar de DB
+    await prisma.categoryImage.delete({ where: { id: imageId } })
+
+    // Reordenar las imágenes restantes
+    const remaining = await prisma.categoryImage.findMany({
+      where: { categoryId },
+      orderBy: { order: 'asc' },
+    })
+
+    await prisma.$transaction(
+      remaining.map((img, i) =>
+        prisma.categoryImage.update({ where: { id: img.id }, data: { order: i } })
+      )
+    )
+
+    revalidatePath(ROUTES.admin.categories)
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+
+    logger.info(`Category image deleted: ${imageId} (publicId: ${publicId})`)
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    logger.error('DELETE category gallery image error', err as Record<string, unknown>)
+    return NextResponse.json(
+      { success: false, error: 'Error al eliminar la imagen' },
       { status: 500 }
     )
   }

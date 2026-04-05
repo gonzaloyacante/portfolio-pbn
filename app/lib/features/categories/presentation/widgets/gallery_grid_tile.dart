@@ -4,10 +4,16 @@ import 'package:flutter/material.dart';
 import '../../data/category_model.dart';
 
 class GalleryGridTile extends StatelessWidget {
-  const GalleryGridTile({super.key, required this.item, this.position});
+  const GalleryGridTile({
+    super.key,
+    required this.item,
+    this.position,
+    this.onDelete,
+  });
 
   final GalleryImageItem item;
   final int? position;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +63,26 @@ class GalleryGridTile extends StatelessWidget {
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 0.3,
+                  ),
+                ),
+              ),
+            ),
+          if (onDelete != null)
+            Positioned(
+              bottom: 6,
+              right: 6,
+              child: GestureDetector(
+                onTap: onDelete,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.8),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.white,
+                    size: 16,
                   ),
                 ),
               ),

@@ -72,12 +72,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               SettingsFormCard(
                 title: 'Tipografías — Base',
                 children: [
-                  TextFormField(
-                    controller: _headingFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente de títulos',
-                      prefixIcon: Icon(Icons.title),
-                    ),
+                  FontPickerField(
+                    label: 'Fuente de títulos',
+                    value: _headingFontCtrl.text.isEmpty
+                        ? null
+                        : _headingFontCtrl.text,
+                    onChanged: (name, _) {
+                      _headingFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -89,12 +93,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _bodyFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente de cuerpo',
-                      prefixIcon: Icon(Icons.text_fields),
-                    ),
+                  FontPickerField(
+                    label: 'Fuente de cuerpo',
+                    value: _bodyFontCtrl.text.isEmpty
+                        ? null
+                        : _bodyFontCtrl.text,
+                    onChanged: (name, _) {
+                      _bodyFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -106,12 +114,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _scriptFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente script/decorativa',
-                      prefixIcon: Icon(Icons.font_download_outlined),
-                    ),
+                  FontPickerField(
+                    label: 'Fuente script/decorativa',
+                    value: _scriptFontCtrl.text.isEmpty
+                        ? null
+                        : _scriptFontCtrl.text,
+                    onChanged: (name, _) {
+                      _scriptFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -130,13 +142,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               SettingsFormCard(
                 title: 'Tipografías — Marca',
                 children: [
-                  TextFormField(
-                    controller: _brandFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente título "Make-up"',
-                      prefixIcon: Icon(Icons.branding_watermark),
-                      hintText: 'Ej: Saira Extra Condensed',
-                    ),
+                  FontPickerField(
+                    label: 'Fuente título "Make-up"',
+                    value: _brandFontCtrl.text.isEmpty
+                        ? null
+                        : _brandFontCtrl.text,
+                    onChanged: (name, _) {
+                      _brandFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -148,13 +163,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _portfolioFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente título "Portfolio"',
-                      prefixIcon: Icon(Icons.branding_watermark),
-                      hintText: 'Ej: Saira Extra Condensed',
-                    ),
+                  FontPickerField(
+                    label: 'Fuente título "Portfolio"',
+                    value: _portfolioFontCtrl.text.isEmpty
+                        ? null
+                        : _portfolioFontCtrl.text,
+                    onChanged: (name, _) {
+                      _portfolioFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -166,13 +184,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _signatureFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente firma',
-                      prefixIcon: Icon(Icons.draw_outlined),
-                      hintText: 'Ej: Dawning of a New Day',
-                    ),
+                  FontPickerField(
+                    label: 'Fuente firma',
+                    value: _signatureFontCtrl.text.isEmpty
+                        ? null
+                        : _signatureFontCtrl.text,
+                    onChanged: (name, _) {
+                      _signatureFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(

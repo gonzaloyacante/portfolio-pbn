@@ -11,11 +11,13 @@ class GalleryTile extends StatelessWidget {
     required this.item,
     required this.index,
     required this.total,
+    this.onDelete,
   });
 
   final GalleryImageItem item;
   final int index;
   final int total;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -88,13 +90,20 @@ class GalleryTile extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Icon(
                 Icons.drag_handle_rounded,
                 color: scheme.onSurface.withValues(alpha: 0.3),
                 size: 22,
               ),
             ),
+            if (onDelete != null)
+              IconButton(
+                icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                color: scheme.error,
+                tooltip: 'Eliminar imagen',
+                onPressed: onDelete,
+              ),
           ],
         ),
       ),
