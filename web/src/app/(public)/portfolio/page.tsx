@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
-import Image from 'next/image'
-import { FadeIn, StaggerChildren } from '@/components/ui'
+import { OptimizedImage, FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
 import { ROUTES } from '@/config/routes'
 import type { Metadata } from 'next'
@@ -111,13 +110,14 @@ export default async function PortfolioPage({
                     {/* Background Image */}
                     {cardImageUrl ? (
                       <>
-                        <Image
+                        <OptimizedImage
                           src={cardImageUrl}
                           alt={category.name}
                           fill
                           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
                           priority={category.sortOrder <= 4}
+                          transparentBackground={false}
                         />
                         {/* Overlay Gradient */}
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
