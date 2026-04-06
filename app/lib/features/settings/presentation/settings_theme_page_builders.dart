@@ -23,17 +23,65 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               SettingsFormCard(
                 title: 'Colores — Modo claro',
                 children: [
-                  ColorField(controller: _primaryCtrl, label: 'Primario'),
+                  ColorField(
+                    controller: _primaryCtrl,
+                    label: 'Primario',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Primario',
+                      hexColor: _primaryCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _secondaryCtrl, label: 'Secundario'),
+                  ColorField(
+                    controller: _secondaryCtrl,
+                    label: 'Secundario',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Secundario',
+                      hexColor: _secondaryCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _accentCtrl, label: 'Acento'),
+                  ColorField(
+                    controller: _accentCtrl,
+                    label: 'Acento',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Acento',
+                      hexColor: _accentCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _bgCtrl, label: 'Fondo'),
+                  ColorField(
+                    controller: _bgCtrl,
+                    label: 'Fondo',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo',
+                      hexColor: _bgCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _textCtrl, label: 'Texto'),
+                  ColorField(
+                    controller: _textCtrl,
+                    label: 'Texto',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Texto',
+                      hexColor: _textCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _cardBgCtrl, label: 'Fondo tarjetas'),
+                  ColorField(
+                    controller: _cardBgCtrl,
+                    label: 'Fondo tarjetas',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo tarjetas',
+                      hexColor: _cardBgCtrl.text,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
@@ -45,25 +93,61 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                   ColorField(
                     controller: _darkPrimaryCtrl,
                     label: 'Primario (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Primario (dark)',
+                      hexColor: _darkPrimaryCtrl.text,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   ColorField(
                     controller: _darkSecondaryCtrl,
                     label: 'Secundario (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Secundario (dark)',
+                      hexColor: _darkSecondaryCtrl.text,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   ColorField(
                     controller: _darkAccentCtrl,
                     label: 'Acento (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Acento (dark)',
+                      hexColor: _darkAccentCtrl.text,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
+                  ColorField(
+                    controller: _darkBgCtrl,
+                    label: 'Fondo (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo (dark)',
+                      hexColor: _darkBgCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _darkTextCtrl, label: 'Texto (dark)'),
+                  ColorField(
+                    controller: _darkTextCtrl,
+                    label: 'Texto (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Texto (dark)',
+                      hexColor: _darkTextCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   ColorField(
                     controller: _darkCardBgCtrl,
                     label: 'Fondo tarjetas (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo tarjetas (dark)',
+                      hexColor: _darkCardBgCtrl.text,
+                    ),
                   ),
                 ],
               ),

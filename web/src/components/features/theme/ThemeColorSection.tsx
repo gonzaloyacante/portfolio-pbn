@@ -2,6 +2,7 @@ import React from 'react'
 import { Control, Controller, Path } from 'react-hook-form'
 import { FormLabel, FormMessage, ColorPicker } from '@/components/ui'
 import { ThemeEditorData } from '@/lib/validations'
+import { ColorUsageModal } from './ColorUsageModal'
 
 interface ThemeColorSectionProps {
   mode: 'light' | 'dark'
@@ -60,7 +61,20 @@ export const ThemeColorSection: React.FC<ThemeColorSectionProps> = ({ mode, cont
           return (
             <div key={fieldKey} className="flex flex-col gap-2 rounded-lg border p-3 shadow-sm">
               <div className="mb-1">
-                <FormLabel className="text-sm font-medium">{field.label}</FormLabel>
+                <div className="flex items-center gap-1">
+                  <FormLabel className="text-sm font-medium">{field.label}</FormLabel>
+                  <Controller
+                    control={control}
+                    name={fieldKey as Path<ThemeEditorData>}
+                    render={({ field: { value } }) => (
+                      <ColorUsageModal
+                        fieldKey={fieldKey}
+                        label={field.label}
+                        currentColor={(value as string) || '#000000'}
+                      />
+                    )}
+                  />
+                </div>
                 <p className="text-muted-foreground text-xs">{field.description}</p>
               </div>
               <Controller

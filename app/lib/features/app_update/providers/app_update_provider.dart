@@ -108,31 +108,16 @@ class AppUpdatePageNotifier extends _$AppUpdatePageNotifier {
 
     try {
       // On Android, REQUEST_INSTALL_PACKAGES must be granted at runtime.
+      // Show a friendly explanation dialog first if not already granted.
       if (Platform.isAndroid) {
         final status = await Permission.requestInstallPackages.status;
         if (!status.isGranted) {
-          final result = await Permission.requestInstallPackages.request();
-          if (!result.isGranted) {
-            state = state.copyWith(
-              phase: UpdatePhase.error,
-              errorMsg:
-                  'Permiso de instalación denegado.\nActívalo en Ajustes > Aplicaciones.',
-            );
-            return;
-          }
+          state = state.copyWith(phase: UpdatePhase.needsPermission);
+          return;
         }
       }
 
-      final result = await OpenFile.open(apk.path);
-      if (result.type != ResultType.done) {
-        state = state.copyWith(
-          phase: UpdatePhase.error,
-          errorMsg: 'Imposible abrir el instalador: ${result.message}',
-        );
-        return;
-      }
-
-      state = state.copyWith(phase: UpdatePhase.installing);
+      await _doInstall(apk.path);
     } catch (e, st) {
       AppLogger.error('AppUpdatePageNotifier: fallo al instalar', e, st);
       state = state.copyWith(
@@ -140,6 +125,34 @@ class AppUpdatePageNotifier extends _$AppUpdatePageNotifier {
         errorMsg: 'Ocurrió un error nativo al instalar el APK.',
       );
     }
+  }
+
+  /// Called when user taps "Activar en ajustes" from the needsPermission screen.
+  Future<void> requestInstallPermission() async {
+    final result = await Permission.requestInstallPackages.request();
+    if (result.isGranted) {
+      // Permission granted — proceed with installation
+      final apk = state.downloadedApk;
+      if (apk != null) await _doInstall(apk.path);
+    }
+    // If still denied, stay on needsPermission phase — user can try again or skip
+  }
+
+  /// Called when user taps "Ahora no" from the needsPermission screen.
+  void skipPermission() {
+    state = state.copyWith(phase: UpdatePhase.available);
+  }
+
+  Future<void> _doInstall(String apkPath) async {
+    final result = await OpenFile.open(apkPath);
+    if (result.type != ResultType.done) {
+      state = state.copyWith(
+        phase: UpdatePhase.error,
+        errorMsg: 'Imposible abrir el instalador: ${result.message}',
+      );
+      return;
+    }
+    state = state.copyWith(phase: UpdatePhase.installing);
   }
 
   void retry() {
