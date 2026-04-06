@@ -218,7 +218,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             ),
             title: const Text('Editar reserva'),
           ),
-          body: const Center(child: CircularProgressIndicator()),
+          body: const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
         ),
         error: (e, _) => Scaffold(
           appBar: AppBar(
