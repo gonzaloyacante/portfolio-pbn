@@ -5,6 +5,7 @@
 
 // Forms
 export { default as Button } from './forms/Button'
+export { SubmitButton } from './forms/SubmitButton'
 export { default as Input } from './forms/Input'
 export { default as Select } from './forms/Select'
 export { Switch } from './forms/Switch'

@@ -48,9 +48,6 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentRoute = GoRouterState.of(context).name ?? '';
-    final isOnDashboard = currentRoute == RouteNames.dashboard;
-
     Widget child;
     if (AppBreakpoints.isExpanded(context)) {
       child = _ExpandedScaffold(
@@ -85,6 +82,9 @@ class AppScaffold extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
+        // Evaluate route at callback time — avoids subscribing scaffold to route changes
+        final isOnDashboard =
+            GoRouterState.of(context).name == RouteNames.dashboard;
         if (!isOnDashboard) {
           context.goNamed(RouteNames.dashboard);
           return;
@@ -143,7 +143,7 @@ class _ExpandedScaffold extends StatelessWidget {
       floatingActionButtonLocation: floatingActionButtonLocation,
       body: Row(
         children: [
-          const AppDrawer(),
+          const RepaintBoundary(child: AppDrawer()),
           VerticalDivider(
             width: 1,
             thickness: 1,
@@ -204,7 +204,7 @@ class _MediumScaffold extends StatelessWidget {
       floatingActionButtonLocation: floatingActionButtonLocation,
       body: Row(
         children: [
-          _AppNavigationRail(),
+          RepaintBoundary(child: _AppNavigationRail()),
           VerticalDivider(
             width: 1,
             thickness: 1,
@@ -292,7 +292,7 @@ class _CompactScaffoldState extends State<_CompactScaffold> {
             )
           : null,
       body: widget.body,
-      drawer: const AppDrawer(),
+      drawer: const RepaintBoundary(child: AppDrawer()),
     );
   }
 }
