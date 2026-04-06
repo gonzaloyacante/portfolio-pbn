@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Star } from 'lucide-react'
+import { Copy, Check, Star, Instagram } from 'lucide-react'
 import { markContactAsRead, deleteContact, toggleContactImportant } from '@/actions/user/contact'
 import { useConfirmDialog } from '@/components/ui'
 
@@ -10,6 +10,7 @@ interface Contact {
   name: string
   email: string
   phone: string | null
+  instagramUser: string | null
   message: string
   status: string
   priority: string
@@ -195,7 +196,14 @@ export default function ContactList({ contacts }: ContactListProps) {
                   </div>
                 </div>
               </div>
-              <p className="text-muted-foreground mb-1 text-sm">{contact.email}</p>
+              <div className="mb-1 flex items-center gap-2">
+                <p className="text-muted-foreground text-sm">{contact.email}</p>
+                {contact.instagramUser && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-2 py-0.5 text-xs font-medium text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+                    <Instagram className="h-3 w-3" />@{contact.instagramUser}
+                  </span>
+                )}
+              </div>
               <p className="text-muted-foreground line-clamp-2 text-sm">{contact.message}</p>
               <p className="text-muted-foreground mt-2 text-xs">{formatDate(contact.createdAt)}</p>
             </button>
@@ -283,6 +291,30 @@ export default function ContactList({ contacts }: ContactListProps) {
                       className="text-muted-foreground hover:text-foreground transition-colors"
                     >
                       {copiedField === 'phone' ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                )}
+                {selectedContact.instagramUser && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <Instagram className="h-4 w-4 text-pink-500" />
+                    <a
+                      href={`https://instagram.com/${selectedContact.instagramUser}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-pink-600 hover:underline dark:text-pink-400"
+                    >
+                      @{selectedContact.instagramUser}
+                    </a>
+                    <button
+                      onClick={() => handleCopy(`@${selectedContact.instagramUser!}`, 'instagram')}
+                      title="Copiar usuario"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {copiedField === 'instagram' ? (
                         <Check className="h-4 w-4 text-green-500" />
                       ) : (
                         <Copy className="h-4 w-4" />

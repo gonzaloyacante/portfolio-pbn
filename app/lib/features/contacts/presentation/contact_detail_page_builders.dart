@@ -97,6 +97,38 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                                         style: theme.textTheme.bodySmall,
                                       ),
                                     ],
+                                    if (detail.instagramUser != null) ...[
+                                      const SizedBox(height: 4),
+                                      GestureDetector(
+                                        onTap: () => launchUrl(
+                                          Uri.parse(
+                                            'https://instagram.com/${detail.instagramUser}',
+                                          ),
+                                          mode: LaunchMode.externalApplication,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.camera_alt_outlined,
+                                              size: 12,
+                                              color: Color(0xFFE1306C),
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              '@${detail.instagramUser}',
+                                              style: theme.textTheme.bodySmall
+                                                  ?.copyWith(
+                                                    color: const Color(
+                                                      0xFFE1306C,
+                                                    ),
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ],
                                 ),
                               ),
