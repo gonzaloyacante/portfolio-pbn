@@ -42,7 +42,7 @@ final class AppUpdatePageNotifierProvider
 }
 
 String _$appUpdatePageNotifierHash() =>
-    r'6fd79968932c7c2f4e844fcc79904739272f5411';
+    r'a6101d5a6eeef653f1f0c70aaf88d073fb2b20ab';
 
 abstract class _$AppUpdatePageNotifier extends $Notifier<AppUpdateState> {
   AppUpdateState build();

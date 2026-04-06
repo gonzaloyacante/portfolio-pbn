@@ -21,7 +21,7 @@ class GalleryGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    const double aspectRatio = 0.8;
+    final double aspectRatio = item.aspectRatio;
 
     return AspectRatio(
       aspectRatio: aspectRatio,

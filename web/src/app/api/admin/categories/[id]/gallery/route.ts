@@ -41,7 +41,7 @@ export async function GET(req: Request, { params }: Params) {
 
     const images = await prisma.categoryImage.findMany({
       where: { categoryId },
-      select: { id: true, url: true, publicId: true, order: true },
+      select: { id: true, url: true, publicId: true, order: true, width: true, height: true },
       orderBy: { order: 'asc' },
     })
 
@@ -64,7 +64,8 @@ export async function POST(req: Request, { params }: Params) {
     const { id: categoryId } = await params
 
     const body = await req.json()
-    const images: { url: string; publicId: string }[] = body?.images
+    const images: { url: string; publicId: string; width?: number; height?: number }[] =
+      body?.images
 
     if (!Array.isArray(images) || images.length === 0) {
       return NextResponse.json(
@@ -91,6 +92,8 @@ export async function POST(req: Request, { params }: Params) {
     const toCreate = images.map((img, i) => ({
       url: img.url,
       publicId: img.publicId,
+      width: img.width ?? null,
+      height: img.height ?? null,
       categoryId,
       order: currentCount + i,
     }))

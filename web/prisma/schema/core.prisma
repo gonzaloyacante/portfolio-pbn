@@ -58,6 +58,8 @@ model CategoryImage {
   url        String
   publicId   String
   order      Int      @default(0)
+  width      Int?
+  height     Int?
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())

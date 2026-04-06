@@ -155,13 +155,20 @@ class CategoriesRepository {
 
   Future<void> addGalleryImages(
     String categoryId,
-    List<({String url, String publicId})> images,
+    List<({String url, String publicId, int? width, int? height})> images,
   ) async {
     final resp = await _client.post<Map<String, dynamic>>(
       Endpoints.categoryGallery(categoryId),
       data: {
         'images': images
-            .map((i) => {'url': i.url, 'publicId': i.publicId})
+            .map(
+              (i) => {
+                'url': i.url,
+                'publicId': i.publicId,
+                if (i.width != null) 'width': i.width,
+                if (i.height != null) 'height': i.height,
+              },
+            )
             .toList(),
       },
     );

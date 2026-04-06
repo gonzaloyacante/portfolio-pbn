@@ -253,10 +253,16 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                 try {
                   final uploadSvc = ref.read(uploadServiceProvider);
                   final result = await uploadSvc.uploadImageFull(file);
-                  await ref.read(categoriesRepositoryProvider).addGalleryImages(
-                    widget.categoryId,
-                    [(url: result.url, publicId: result.publicId)],
-                  );
+                  await ref
+                      .read(categoriesRepositoryProvider)
+                      .addGalleryImages(widget.categoryId, [
+                        (
+                          url: result.url,
+                          publicId: result.publicId,
+                          width: result.width,
+                          height: result.height,
+                        ),
+                      ]);
                   ref.invalidate(_categoryGalleryProvider(widget.categoryId));
                   setState(() => _items = null);
                   if (mounted) {
