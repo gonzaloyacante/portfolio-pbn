@@ -241,27 +241,10 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                   ),
                 ),
               ),
-              childWhenDragging: ClipRRect(
+              childWhenDragging: DragPlaceholder(
                 borderRadius: AppRadius.asRounded(AppRadius.md),
-                child: AspectRatio(
-                  aspectRatio: aspectRatio,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: 0.06),
-                      border: Border.all(
-                        color: scheme.primary.withValues(alpha: 0.3),
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.swap_vert_rounded,
-                        color: scheme.primary.withValues(alpha: 0.5),
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                ),
+                aspectRatio: aspectRatio,
+                color: scheme.primary,
               ),
               child: ClipRRect(
                 borderRadius: AppRadius.asRounded(AppRadius.md),

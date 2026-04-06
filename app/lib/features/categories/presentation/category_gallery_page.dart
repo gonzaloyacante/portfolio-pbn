@@ -13,6 +13,7 @@ import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import 'widgets/gallery_grid_tile.dart';
 import 'widgets/gallery_tile.dart';
+import 'widgets/drag_placeholder.dart';
 import 'widgets/instruction_banner.dart';
 
 part 'category_gallery_page_widgets.dart';
