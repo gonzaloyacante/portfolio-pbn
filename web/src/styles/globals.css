@@ -190,3 +190,46 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-primary/50 hover:bg-primary rounded-full;
 }
+
+/* react-phone-number-input integration */
+.phone-input-container {
+  @apply flex w-full;
+}
+
+.phone-input-container .PhoneInputCountry {
+  @apply flex items-center rounded-l-xl border-2 border-r-0 border-(--primary)/20 bg-(--background) px-3 transition-all;
+}
+
+.phone-input-container .PhoneInputCountrySelect {
+  @apply bg-(--background) text-(--foreground) text-sm focus:outline-none;
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.phone-input-container .PhoneInputCountrySelectArrow {
+  @apply text-(--foreground)/60;
+  margin-left: 4px;
+}
+
+.phone-input-container .PhoneInputCountryFlag {
+  width: 1.5em;
+  height: 1em;
+  margin-right: 4px;
+}
+
+.phone-input-container .PhoneInputCountryIconImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.phone-input-container .PhoneInput--focus .PhoneInputCountry {
+  @apply border-(--primary);
+}
+
+.phone-input-container .PhoneInputInput {
+  @apply w-full flex-1 rounded-r-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-base text-(--foreground) transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none placeholder:text-(--foreground)/50 disabled:cursor-not-allowed disabled:opacity-50;
+}
