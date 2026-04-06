@@ -10,7 +10,7 @@ interface GalleryImage {
   id: string
   url: string
   alt: string
-  title: string // Image title
+  title: string
   width?: number | null
   height?: number | null
 }
@@ -36,15 +36,41 @@ export default function CategoryGallery({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [expandOrigin, setExpandOrigin] = useState<ExpandOrigin | null>(null)
 
-  // Refs for focus management
   const triggerRef = useRef<HTMLDivElement | null>(null)
+  const gridRef = useRef<HTMLDivElement | null>(null)
 
   const closeLightbox = useCallback(() => {
     setSelectedIndex(null)
     triggerRef.current?.focus()
   }, [])
 
-  // Clean Masonry Logic
+  // ── IntersectionObserver prefetch ─────────────────────────────────────────
+  // When a thumbnail enters the viewport (with 300px rootMargin), preload the
+  // Cloudinary thumbnail variant so the lightbox image is already cached on click.
+  useEffect(() => {
+    const container = gridRef.current
+    if (!container || typeof IntersectionObserver === 'undefined') return
+    const prefetched = new Set<string>()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          const url = (entry.target as HTMLElement).dataset.prefetchUrl
+          if (url && !prefetched.has(url)) {
+            prefetched.add(url)
+            new window.Image().src = url
+          }
+        })
+      },
+      { rootMargin: '300px 0px' }
+    )
+    container
+      .querySelectorAll<HTMLElement>('[data-prefetch-url]')
+      .forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [images])
+
+  // ── Masonry columns ───────────────────────────────────────────────────────
   const [columns, setColumns] = useState(1)
 
   useEffect(() => {
@@ -57,7 +83,6 @@ export default function CategoryGallery({
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Shortest Column Distribution
   const columnsData = Array.from({ length: columns }, () => ({
     images: [] as (GalleryImage & { originalIndex: number })[],
     height: 0,
@@ -65,15 +90,12 @@ export default function CategoryGallery({
 
   const imagesWithIndex = images.map((img, idx) => ({ ...img, originalIndex: idx }))
 
-  // Distribución round-robin (secuencial): preserva el orden asignado por el admin.
-  // posición 0→col0, 1→col1, 2→col2... el orden visual izq→der coincide con el orden guardado.
   imagesWithIndex.forEach((img, i) => {
     columnsData[i % columns].images.push(img)
   })
 
   const distributedImages = columnsData.map((c) => c.images)
 
-  // Map images for Lightbox
   const lightboxImages: LightboxImage[] = images.map((img) => ({
     id: img.id,
     url: img.url,
@@ -97,52 +119,60 @@ export default function CategoryGallery({
   return (
     <>
       {/* Grid */}
-      <div className={cn('grid gap-4', columns === 2 ? 'grid-cols-2' : 'grid-cols-3')}>
+      <div
+        ref={gridRef}
+        className={cn('grid gap-4', columns === 2 ? 'grid-cols-2' : 'grid-cols-3')}
+      >
         {distributedImages.map((columnImages, colIndex) => (
           <div key={colIndex} className="flex flex-col gap-4">
-            {columnImages.map((img) => (
-              <FadeIn key={img.id} delay={Math.min(img.originalIndex * 0.08, 0.6)}>
-                <motion.div
-                  role="button"
-                  tabIndex={0}
-                  aria-label={img.alt || `Ver imagen ${img.originalIndex + 1}`}
-                  onClick={(e) => handleImageClick(e, img)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      triggerRef.current = e.currentTarget as HTMLDivElement
-                      const originalIndex = images.findIndex((i) => i.id === img.id)
-                      setSelectedIndex(originalIndex)
-                    }
-                  }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-(--card-bg) shadow-sm transition-all hover:shadow-lg"
-                >
-                  <OptimizedImage
-                    src={img.url}
-                    alt={img.alt}
-                    width={500}
-                    height={500}
-                    className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    variant="card"
-                  />
-                  <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
-                  {showTitles && (
-                    <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
-                      <p className="truncate text-xs font-bold text-white drop-shadow-md">
-                        {img.title}
-                      </p>
-                    </div>
-                  )}
-                </motion.div>
-              </FadeIn>
-            ))}
+            {columnImages.map((img) => {
+              const prefetchUrl = CLOUDINARY_RE.test(img.url)
+                ? getVariantUrl(img.url, 'thumbnail')
+                : img.url
+              return (
+                <FadeIn key={img.id} delay={Math.min(img.originalIndex * 0.08, 0.6)}>
+                  <motion.div
+                    role="button"
+                    tabIndex={0}
+                    aria-label={img.alt || `Ver imagen ${img.originalIndex + 1}`}
+                    data-prefetch-url={prefetchUrl}
+                    onClick={(e) => handleImageClick(e, img)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        triggerRef.current = e.currentTarget as HTMLDivElement
+                        setSelectedIndex(images.findIndex((i) => i.id === img.id))
+                      }
+                    }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                    className="group relative cursor-pointer overflow-hidden rounded-xl bg-(--card-bg) shadow-sm transition-all hover:shadow-lg"
+                  >
+                    <OptimizedImage
+                      src={img.url}
+                      alt={img.alt}
+                      width={500}
+                      height={500}
+                      className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      variant="card"
+                    />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
+                    {showTitles && (
+                      <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
+                        <p className="truncate text-xs font-bold text-white drop-shadow-md">
+                          {img.title}
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                </FadeIn>
+              )
+            })}
           </div>
         ))}
       </div>
 
-      {/* Expand-from-origin overlay (Framer Motion zoom animation) */}
+      {/* Expand-from-origin overlay */}
       <AnimatePresence>
         {expandOrigin && (
           <motion.div
