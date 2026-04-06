@@ -98,7 +98,7 @@ class LiveHeroPreview extends StatelessWidget {
     final effT1Size = _eff(
       'heroTitle1FontSize',
       'heroTitle1MobileFontSize',
-      isMobile ? 60 : 100,
+      isMobile ? 56 : 112,
       isMobile,
     );
     final t1ColorStr = isDarkMode
@@ -129,7 +129,7 @@ class LiveHeroPreview extends StatelessWidget {
     final effT2Size = _eff(
       'heroTitle2FontSize',
       'heroTitle2MobileFontSize',
-      isMobile ? 48 : 96,
+      isMobile ? 72 : 96,
       isMobile,
     );
     final t2ColorStr = isDarkMode
@@ -160,7 +160,7 @@ class LiveHeroPreview extends StatelessWidget {
     final effOwnSize = _eff(
       'ownerNameFontSize',
       'ownerNameMobileFontSize',
-      isMobile ? 12 : 14,
+      isMobile ? 28 : 36,
       isMobile,
     );
     final ownColorStr = isDarkMode
@@ -188,7 +188,7 @@ class LiveHeroPreview extends StatelessWidget {
       0,
       isMobile,
     );
-    final imgStyle = extraCtrls['heroImageStyle']?.text ?? 'default';
+    final imgStyle = (vals['heroImageStyle'] as String?) ?? 'original';
 
     // Ilustración
     final effIllX = _eff(
@@ -204,7 +204,12 @@ class LiveHeroPreview extends StatelessWidget {
       isMobile,
     );
     final effIllScale =
-        _eff('illustrationSize', 'illustrationMobileSize', 100, isMobile) /
+        _eff(
+          'illustrationSize',
+          'illustrationMobileSize',
+          isMobile ? 60 : 100,
+          isMobile,
+        ) /
         100.0;
     final effIllRot = _eff(
       'illustrationRotation',
@@ -212,7 +217,7 @@ class LiveHeroPreview extends StatelessWidget {
       0,
       isMobile,
     );
-    final illOpac = (vals['illustrationOpacity'] as num?)?.toDouble() ?? 80.0;
+    final illOpac = (vals['illustrationOpacity'] as num?)?.toDouble() ?? 100.0;
 
     // CTA
     final effCtaX = _eff('ctaOffsetX', 'ctaMobileOffsetX', 0, isMobile);
@@ -337,7 +342,7 @@ class LiveHeroPreview extends StatelessWidget {
       ),
     );
 
-    // Signature + Illustration group (overlapping conceptually, handled via flex in web)
+    // Signature + Illustration group
     final signatureAndIllWidget = isMobile
         ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -349,13 +354,7 @@ class LiveHeroPreview extends StatelessWidget {
           )
         : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Transform.translate(
-                offset: const Offset(-40, 0),
-                child: illustrationWidget,
-              ),
-              signatureWidget,
-            ],
+            children: [illustrationWidget, signatureWidget],
           );
 
     final ctaWidget = Transform.translate(
@@ -435,7 +434,7 @@ class LiveHeroPreview extends StatelessWidget {
                             children: [
                               title1Widget,
                               title2Widget,
-                              const Spacer(),
+                              const SizedBox(height: 24),
                               signatureAndIllWidget,
                             ],
                           ),

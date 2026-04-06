@@ -3,46 +3,91 @@ part of 'login_page.dart';
 // ── _TwoColumnLayout ──────────────────────────────────────────────────────────
 
 /// Layout de dos columnas para pantallas expanded (tablet/desktop).
-/// Columna izquierda: branding decorativo. Columna derecha: formulario.
+/// Columna izquierda: panel de marca con gradiente oscuro. Columna derecha: formulario.
 class _TwoColumnLayout extends StatelessWidget {
   const _TwoColumnLayout({required this.formContent});
   final Widget formContent;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        // Lado izquierdo — panel de marca con fondo de color
+        // Lado izquierdo — panel de marca con gradiente oscuro
         Expanded(
-          child: ColoredBox(
-            color: scheme.primary,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.xxxl),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Paola\nBolívar',
-                      style: AppTypography.decorativeTitle(
-                        scheme.onPrimary,
-                        fontSize: 72,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      'Panel de administración',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: scheme.onPrimary.withValues(alpha: 0.75),
-                        letterSpacing: 0.5,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+          child: DecoratedBox(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.darkBackground,
+                  AppColors.darkCard,
+                  AppColors.darkSecondary,
+                ],
+                stops: [0.0, 0.55, 1.0],
               ),
+            ),
+            child: Stack(
+              children: [
+                // Elemento decorativo: círculo difuso en la esquina superior derecha
+                Positioned(
+                  top: -60,
+                  right: -60,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.darkPrimary.withValues(alpha: 0.08),
+                    ),
+                    child: const SizedBox(width: 220, height: 220),
+                  ),
+                ),
+                // Elemento decorativo: círculo difuso en la esquina inferior izquierda
+                Positioned(
+                  bottom: -80,
+                  left: -80,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.darkPrimary.withValues(alpha: 0.06),
+                    ),
+                    child: const SizedBox(width: 280, height: 280),
+                  ),
+                ),
+                // Contenido principal centrado
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xxxl),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const PbnSplashLogo(size: 80),
+                        const SizedBox(height: AppSpacing.xl),
+                        Text(
+                          'Paola Bolívar Nievas',
+                          style: AppTypography.decorativeTitle(
+                            AppColors.darkPrimary,
+                            fontSize: 32,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        Text(
+                          'Panel de administración',
+                          style: TextStyle(
+                            color: AppColors.darkForeground.withValues(
+                              alpha: 0.55,
+                            ),
+                            fontSize: 13,
+                            letterSpacing: 1.5,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
