@@ -175,3 +175,37 @@ export async function updateBookingAdmin(
     return { success: false, error: 'Error al actualizar la reserva' }
   }
 }
+
+// ── Bulk update ───────────────────────────────────────────────────────────────
+
+const bulkStatusSchema = z.object({
+  ids: z.array(z.string().cuid()).min(1).max(100),
+  status: z.enum(['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']),
+})
+
+export async function bulkUpdateBookingStatus(ids: string[], status: string) {
+  await requireAdmin()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
+
+  const parsed = bulkStatusSchema.safeParse({ ids, status })
+  if (!parsed.success) return { success: false, error: 'Datos inválidos' }
+
+  try {
+    const result = await prisma.booking.updateMany({
+      where: { id: { in: parsed.data.ids }, deletedAt: null },
+      data: {
+        status: parsed.data.status,
+        ...(parsed.data.status === 'CONFIRMED' && { confirmedAt: new Date() }),
+        ...(parsed.data.status === 'CANCELLED' && { cancelledAt: new Date() }),
+      },
+    })
+
+    revalidatePath(ROUTES.admin.calendar)
+    logger.info(`Bulk booking status update: ${result.count} bookings → ${status}`)
+    return { success: true, count: result.count }
+  } catch (err) {
+    logger.error('bulkUpdateBookingStatus error', err as Record<string, unknown>)
+    return { success: false, error: 'Error al actualizar las reservas' }
+  }
+}
