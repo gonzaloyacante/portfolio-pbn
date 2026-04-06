@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'

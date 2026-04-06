@@ -87,9 +87,14 @@ export {
   SlideIn,
   ScaleIn,
   StaggerChildren,
+  StaggerItem,
   StaggerContainer,
+  WordReveal,
   AnimatePresence,
+  motion,
+  useReducedMotion,
 } from './animations/Animations'
+export type { Variants } from './animations/Animations'
 export { MagneticButton } from './animations/MagneticButton'
 export { ScrollProgress } from './animations/ScrollProgress'
 

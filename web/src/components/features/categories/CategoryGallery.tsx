@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { OptimizedImage, Lightbox } from '@/components/ui'
+import { FadeIn, OptimizedImage, Lightbox } from '@/components/ui'
 import type { LightboxImage } from '@/components/ui'
 import { cn } from '@/lib/utils'
 
@@ -80,12 +79,7 @@ export default function CategoryGallery({
         {distributedImages.map((columnImages, colIndex) => (
           <div key={colIndex} className="flex flex-col gap-4">
             {columnImages.map((img) => (
-              <motion.div
-                key={img.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: img.originalIndex * 0.15, duration: 0.5 }}
-              >
+              <FadeIn key={img.id} delay={Math.min(img.originalIndex * 0.08, 0.6)}>
                 <div
                   role="button"
                   tabIndex={0}
@@ -122,7 +116,7 @@ export default function CategoryGallery({
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </FadeIn>
             ))}
           </div>
         ))}

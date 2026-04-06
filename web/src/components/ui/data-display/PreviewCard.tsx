@@ -1,5 +1,5 @@
 import { clsx } from 'clsx'
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 // import { OptimizedImage } from '@/components/ui' // Unused
 
 interface PreviewCardProps {

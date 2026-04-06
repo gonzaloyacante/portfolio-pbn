@@ -19,7 +19,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 import { updateCategoryGalleryOrder, resetCategoryGalleryOrder } from '@/actions/gallery-ordering'
 import { Button } from '@/components/ui'
 import ImageUpload from '@/components/ui/media/ImageUpload'

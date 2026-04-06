@@ -1,5 +1,6 @@
 import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
+import { FadeIn, StaggerChildren, StaggerItem, WordReveal } from '@/components/ui'
 import type { Testimonial } from '@/generated/prisma/client'
 
 interface TestimonialCardProps {
@@ -25,11 +26,13 @@ function TestimonialCard({ testimonial }: TestimonialCardProps) {
 
 function TestimonialsGrid({ testimonials }: { testimonials: Testimonial[] }) {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <StaggerChildren className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {testimonials.map((testimonial) => (
-        <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+        <StaggerItem key={testimonial.id}>
+          <TestimonialCard testimonial={testimonial} />
+        </StaggerItem>
       ))}
-    </div>
+    </StaggerChildren>
   )
 }
 
@@ -44,9 +47,11 @@ export function AboutTestimonialsSection({ testimonials, title }: AboutTestimoni
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {testimonials.length > 0 && (
           <>
-            <h2 className="font-heading mb-12 text-center text-3xl font-bold text-(--foreground)">
-              {title}
-            </h2>
+            <WordReveal
+              text={title}
+              as="h2"
+              className="font-heading mb-12 text-center text-3xl font-bold text-(--foreground)"
+            />
 
             {testimonials.length <= 3 ? (
               <TestimonialsGrid testimonials={testimonials} />
@@ -56,14 +61,14 @@ export function AboutTestimonialsSection({ testimonials, title }: AboutTestimoni
           </>
         )}
 
-        <div className="mx-auto mt-16 max-w-lg">
+        <FadeIn className="mx-auto mt-16 max-w-lg" delay={0.2}>
           <h3 className="mb-6 text-center text-xl font-bold text-(--foreground)">
             ¿Has trabajado conmigo? ¡Deja tu opinión!
           </h3>
           <div className="bg-card border-border/50 rounded-2xl border p-6 shadow-md">
             <TestimonialForm />
           </div>
-        </div>
+        </FadeIn>
       </div>
     </div>
   )

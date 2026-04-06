@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence, type Variants } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from '@/components/ui'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 

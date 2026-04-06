@@ -19,7 +19,7 @@ import {
 } from '@dnd-kit/sortable'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 import { GripVertical } from 'lucide-react'
 
 interface SortableGridProps<T> {

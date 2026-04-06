@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 
 interface CookieConsentProps {

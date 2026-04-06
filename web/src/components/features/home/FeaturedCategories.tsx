@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
-import { FadeIn, StaggerChildren, OptimizedImage } from '@/components/ui'
+import { StaggerChildren, StaggerItem, WordReveal, OptimizedImage } from '@/components/ui'
 import { ArrowRight } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 import { FontLoader } from './FontLoader'
@@ -51,15 +51,18 @@ export default async function FeaturedCategories({
                 fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
               }}
             >
-              <span className="dark:hidden" style={{ color: titleColor || 'inherit' }}>
-                {title || 'Galerías Destacadas'}
-              </span>
-              <span
+              <WordReveal
+                text={title || 'Galerías Destacadas'}
+                as="span"
+                className="dark:hidden"
+                style={{ color: titleColor || 'inherit' }}
+              />
+              <WordReveal
+                text={title || 'Galerías Destacadas'}
+                as="span"
                 className="hidden dark:inline"
                 style={{ color: titleColorDark || titleColor || 'inherit' }}
-              >
-                {title || 'Galerías Destacadas'}
-              </span>
+              />
             </h2>
           </div>
           <Link
@@ -74,7 +77,7 @@ export default async function FeaturedCategories({
         {/* Categories Grid */}
         <StaggerChildren className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
           {categories.map((category) => (
-            <FadeIn key={category.id}>
+            <StaggerItem key={category.id}>
               <Link
                 href={`${ROUTES.public.portfolio}/${category.slug}`}
                 className="group relative block aspect-4/5 overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl"
@@ -110,7 +113,7 @@ export default async function FeaturedCategories({
                   )}
                 </div>
               </Link>
-            </FadeIn>
+            </StaggerItem>
           ))}
         </StaggerChildren>
       </div>
