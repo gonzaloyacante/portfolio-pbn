@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { FadeIn, OptimizedImage, Lightbox } from '@/components/ui'
+import { AnimatePresence, motion, FadeIn, OptimizedImage, Lightbox } from '@/components/ui'
 import type { LightboxImage } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { getVariantUrl } from '@/lib/cloudinary-helper'
 
 interface GalleryImage {
   id: string
@@ -13,6 +14,15 @@ interface GalleryImage {
   width?: number | null
   height?: number | null
 }
+
+interface ExpandOrigin {
+  rect: DOMRect
+  src: string
+  alt: string
+  pendingIndex: number
+}
+
+const CLOUDINARY_RE = /^https?:\/\/res\.cloudinary\.com\//
 
 export default function CategoryGallery({
   images: initialImages,
@@ -24,6 +34,7 @@ export default function CategoryGallery({
   const images = initialImages
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const [expandOrigin, setExpandOrigin] = useState<ExpandOrigin | null>(null)
 
   // Refs for focus management
   const triggerRef = useRef<HTMLDivElement | null>(null)
@@ -72,6 +83,17 @@ export default function CategoryGallery({
     height: img.height,
   }))
 
+  const handleImageClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>, img: GalleryImage & { originalIndex: number }) => {
+      triggerRef.current = e.currentTarget
+      const rect = e.currentTarget.getBoundingClientRect()
+      const originalIndex = images.findIndex((i) => i.id === img.id)
+      const src = CLOUDINARY_RE.test(img.url) ? getVariantUrl(img.url, 'thumbnail') : img.url
+      setExpandOrigin({ rect, src, alt: img.alt, pendingIndex: originalIndex })
+    },
+    [images]
+  )
+
   return (
     <>
       {/* Grid */}
@@ -80,15 +102,11 @@ export default function CategoryGallery({
           <div key={colIndex} className="flex flex-col gap-4">
             {columnImages.map((img) => (
               <FadeIn key={img.id} delay={Math.min(img.originalIndex * 0.08, 0.6)}>
-                <div
+                <motion.div
                   role="button"
                   tabIndex={0}
                   aria-label={img.alt || `Ver imagen ${img.originalIndex + 1}`}
-                  onClick={(e) => {
-                    triggerRef.current = e.currentTarget as HTMLDivElement
-                    const originalIndex = images.findIndex((i) => i.id === img.id)
-                    setSelectedIndex(originalIndex)
-                  }}
+                  onClick={(e) => handleImageClick(e, img)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault()
@@ -97,6 +115,8 @@ export default function CategoryGallery({
                       setSelectedIndex(originalIndex)
                     }
                   }}
+                  whileTap={{ scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   className="group relative cursor-pointer overflow-hidden rounded-xl bg-(--card-bg) shadow-sm transition-all hover:shadow-lg"
                 >
                   <OptimizedImage
@@ -115,12 +135,51 @@ export default function CategoryGallery({
                       </p>
                     </div>
                   )}
-                </div>
+                </motion.div>
               </FadeIn>
             ))}
           </div>
         ))}
       </div>
+
+      {/* Expand-from-origin overlay (Framer Motion zoom animation) */}
+      <AnimatePresence>
+        {expandOrigin && (
+          <motion.div
+            key="expand-overlay"
+            style={{ position: 'fixed', overflow: 'hidden', zIndex: 9998, pointerEvents: 'none' }}
+            initial={{
+              top: expandOrigin.rect.top,
+              left: expandOrigin.rect.left,
+              width: expandOrigin.rect.width,
+              height: expandOrigin.rect.height,
+              borderRadius: 12,
+            }}
+            animate={{
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              borderRadius: 0,
+            }}
+            exit={{ opacity: 0, transition: { duration: 0.15 } }}
+            transition={{ duration: 0.38, ease: [0.4, 0, 0.2, 1] }}
+            onAnimationComplete={(def) => {
+              if (def === 'animate') {
+                setSelectedIndex(expandOrigin.pendingIndex)
+                setExpandOrigin(null)
+              }
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={expandOrigin.src}
+              alt={expandOrigin.alt}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Lightbox */}
       <Lightbox
