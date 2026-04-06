@@ -11,6 +11,7 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
     );
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
       child: Center(
         child: ConstrainedBox(

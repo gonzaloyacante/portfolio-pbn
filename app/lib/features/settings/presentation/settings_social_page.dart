@@ -61,26 +61,33 @@ class SettingsSocialPage extends ConsumerWidget {
           message: e.toString(),
           onRetry: () => ref.invalidate(socialLinksProvider),
         ),
-        data: (links) => ListView.separated(
-          padding: AppBreakpoints.pagePadding(context),
-          itemCount: _kPlatforms.length,
-          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-          itemBuilder: (_, i) {
-            final platform = _kPlatforms[i];
-            final existing = links.where((l) => l.platform == platform.$2);
-            final link = existing.isEmpty ? null : existing.first;
-
-            return RepaintBoundary(
-              child: SocialLinkTile(
-                platform: platform.$1,
-                platformId: platform.$2,
-                icon: platform.$3,
-                urlHint: platform.$4,
-                link: link,
-                onSaved: () => ref.invalidate(socialLinksProvider),
-              ),
-            );
+        data: (links) => RefreshIndicator(
+          onRefresh: () async {
+            ref.invalidate(socialLinksProvider);
+            await ref.read(socialLinksProvider.future);
           },
+          child: ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: AppBreakpoints.pagePadding(context),
+            itemCount: _kPlatforms.length,
+            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (_, i) {
+              final platform = _kPlatforms[i];
+              final existing = links.where((l) => l.platform == platform.$2);
+              final link = existing.isEmpty ? null : existing.first;
+
+              return RepaintBoundary(
+                child: SocialLinkTile(
+                  platform: platform.$1,
+                  platformId: platform.$2,
+                  icon: platform.$3,
+                  urlHint: platform.$4,
+                  link: link,
+                  onSaved: () => ref.invalidate(socialLinksProvider),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

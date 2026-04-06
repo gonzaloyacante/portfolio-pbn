@@ -11,6 +11,7 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
     );
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
       child: Center(
         child: ConstrainedBox(

@@ -11,6 +11,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
     );
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
       child: Center(
         child: ConstrainedBox(

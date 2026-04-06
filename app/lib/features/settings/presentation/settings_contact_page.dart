@@ -174,7 +174,13 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
             ),
             data: (settings) {
               _populate(settings);
-              return _buildForm(context);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(contactSettingsProvider);
+                  await ref.read(contactSettingsProvider.future);
+                },
+                child: _buildForm(context),
+              );
             },
           ),
         ),

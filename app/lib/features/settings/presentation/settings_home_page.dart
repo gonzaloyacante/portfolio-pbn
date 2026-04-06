@@ -410,7 +410,13 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
             ),
             data: (settings) {
               _populate(settings);
-              return _buildForm(context);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(homeSettingsProvider);
+                  await ref.read(homeSettingsProvider.future);
+                },
+                child: _buildForm(context),
+              );
             },
           ),
         ),

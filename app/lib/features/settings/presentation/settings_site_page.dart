@@ -204,7 +204,13 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
             ),
             data: (settings) {
               _populate(settings);
-              return _buildForm(context);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(siteSettingsProvider);
+                  await ref.read(siteSettingsProvider.future);
+                },
+                child: _buildForm(context),
+              );
             },
           ),
         ),

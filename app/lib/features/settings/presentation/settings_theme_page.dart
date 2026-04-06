@@ -259,7 +259,13 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
             ),
             data: (settings) {
               _populate(settings);
-              return _buildForm(context);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(themeSettingsProvider);
+                  await ref.read(themeSettingsProvider.future);
+                },
+                child: _buildForm(context),
+              );
             },
           ),
         ),
