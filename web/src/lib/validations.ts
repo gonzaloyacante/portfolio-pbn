@@ -288,21 +288,13 @@ export const contactSettingsSchema = z.object({
   phone: z.string().optional().nullable(),
   whatsapp: z.string().optional().nullable(),
   location: z.string().optional().nullable(),
-  formTitle: z.string().optional().nullable(),
-  nameLabel: z.string().optional().nullable(),
-  emailLabel: z.string().optional().nullable(),
-  phoneLabel: z.string().optional().nullable(),
-  messageLabel: z.string().optional().nullable(),
-  preferenceLabel: z.string().optional().nullable(),
-  submitLabel: z.string().optional().nullable(),
-  successTitle: z.string().optional().nullable(),
-  successMessage: z.string().optional().nullable(),
-  sendAnotherLabel: z.string().optional().nullable(),
   showSocialLinks: z.boolean(),
   showPhone: z.boolean().optional(),
   showWhatsapp: z.boolean().optional(),
   showEmail: z.boolean().optional(),
   showLocation: z.boolean().optional(),
+  instagramPostUrl: z.string().url().optional().nullable(),
+  showInstagramEmbed: z.boolean().optional(),
 })
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>

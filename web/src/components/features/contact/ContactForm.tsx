@@ -2,7 +2,7 @@
 
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import { contactFormSchema, type ContactFormData } from '@/lib/validations'
 import { sendContactEmail } from '@/actions/user/contact'
 import { Button, PhoneInput } from '@/components/ui'
 import { showToast } from '@/lib/toast'
@@ -14,83 +14,16 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
-// Response preference type
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP' | 'INSTAGRAM'
 
-// Contact form schema with conditional email/phone validation
-const contactFormSchema = z
-  .object({
-    name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
-    email: z.string().optional(),
-    phone: z
-      .string()
-      .regex(/^\+[1-9]\d{1,14}$/, 'Teléfono internacional inválido (+34...)')
-      .optional()
-      .or(z.literal('')),
-    message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-    responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP', 'INSTAGRAM']),
-    instagramUser: z.string().trim().max(50).optional(),
-    privacy: z.boolean().refine((val) => val === true, {
-      message: 'Debes aceptar la política de privacidad',
-    }),
-  })
-  .superRefine((data, ctx) => {
-    if (data.responsePreference === 'EMAIL') {
-      if (!data.email?.trim()) {
-        ctx.addIssue({ code: 'custom', path: ['email'], message: 'El email es obligatorio' })
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-        ctx.addIssue({ code: 'custom', path: ['email'], message: 'Email inválido' })
-      }
-    } else if (data.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-      ctx.addIssue({ code: 'custom', path: ['email'], message: 'Email inválido' })
-    }
-    if (
-      (data.responsePreference === 'PHONE' || data.responsePreference === 'WHATSAPP') &&
-      !data.phone?.trim()
-    ) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['phone'],
-        message: 'El teléfono es obligatorio para este tipo de contacto',
-      })
-    }
-    if (data.responsePreference === 'INSTAGRAM' && !data.instagramUser?.trim()) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['instagramUser'],
-        message: 'El usuario de Instagram es obligatorio',
-      })
-    }
-  })
+const PREFERENCES: { id: ResponsePreference; icon: React.ReactNode; label: string }[] = [
+  { id: 'INSTAGRAM', icon: <Instagram className="h-5 w-5" />, label: 'Instagram' },
+  { id: 'WHATSAPP', icon: <MessageCircle className="h-5 w-5" />, label: 'WhatsApp' },
+  { id: 'PHONE', icon: <Phone className="h-5 w-5" />, label: 'Teléfono' },
+  { id: 'EMAIL', icon: <Mail className="h-5 w-5" />, label: 'Email' },
+]
 
-type ContactFormData = z.infer<typeof contactFormSchema>
-
-interface ContactFormProps {
-  // Labels (all from DB via ContactSettings)
-  formTitle?: string | null
-  nameLabel?: string | null
-  emailLabel?: string | null
-  phoneLabel?: string | null
-  messageLabel?: string | null
-  preferenceLabel?: string | null
-  submitLabel?: string | null
-  successTitle?: string | null
-  successMessage?: string | null
-  sendAnotherLabel?: string | null
-}
-
-export default function ContactForm({
-  formTitle,
-  nameLabel,
-  emailLabel,
-  phoneLabel,
-  messageLabel,
-  preferenceLabel,
-  submitLabel,
-  successTitle,
-  successMessage,
-  sendAnotherLabel,
-}: ContactFormProps) {
+export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
   const searchParams = useSearchParams()
   const serviceName = searchParams.get('service')
@@ -111,13 +44,12 @@ export default function ContactForm({
       email: '',
       phone: '',
       message: '',
-      responsePreference: 'EMAIL',
+      responsePreference: 'INSTAGRAM',
       instagramUser: '',
       privacy: false,
     },
   })
 
-  // Pre-fill message if service param exists
   useEffect(() => {
     if (serviceName) {
       setValue(
@@ -127,7 +59,6 @@ export default function ContactForm({
     }
   }, [serviceName, setValue])
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const responsePreference = watch('responsePreference')
 
   const onSubmit = async (data: ContactFormData) => {
@@ -157,22 +88,12 @@ export default function ContactForm({
     }
   }
 
-  const handleSendAnother = () => {
-    setSubmitted(false)
-    reset()
-  }
-
-  const setPreference = (pref: ResponsePreference) => {
-    setValue('responsePreference', pref)
-  }
-
-  // Success State
   if (submitted) {
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-[2.5rem] bg-(--card-bg) p-8 text-center shadow-lg"
+        className="rounded-[2.5rem] bg-(--card) p-8 text-center shadow-lg"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -183,13 +104,13 @@ export default function ContactForm({
           <CheckCircle2 size={64} className="text-(--primary)" />
         </motion.div>
         <h3 className="font-heading mb-3 text-2xl font-bold text-(--foreground)">
-          {successTitle || '¡Mensaje enviado!'}
+          ¡Mensaje enviado!
         </h3>
-        <p className="text-foreground mb-6">
-          {successMessage || 'Gracias por contactarme. Te responderé lo antes posible.'}
+        <p className="mb-6 text-(--foreground)/80">
+          Gracias por contactarme. Te responderé lo antes posible.
         </p>
-        <Button onClick={handleSendAnother} variant="outline" className="rounded-xl">
-          {sendAnotherLabel || 'Enviar otro mensaje'}
+        <Button onClick={() => { setSubmitted(false); reset() }} variant="outline" className="rounded-xl">
+          Enviar otro mensaje
         </Button>
       </motion.div>
     )
@@ -200,147 +121,81 @@ export default function ContactForm({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-[2.5rem] bg-(--card-bg) p-8 shadow-lg"
+      className="rounded-[2.5rem] bg-(--card) p-8 shadow-lg"
     >
       <h2 className="font-heading mb-6 text-2xl font-bold text-(--foreground)">
-        {formTitle || 'Envíame un mensaje'}
+        Envíame un mensaje
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {/* Name & Email Row */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="mb-2 block text-sm font-semibold text-(--foreground)">
-              {nameLabel || 'Tu nombre'} *
-            </label>
-            <input
-              {...register('name')}
-              id="name"
-              className="text-foreground placeholder:text-foreground/50 w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
-              placeholder="Tu nombre completo"
-              autoComplete="name"
-            />
-            {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="email" className="mb-2 block text-sm font-semibold text-(--foreground)">
-              {emailLabel || 'Tu email'}
-              {responsePreference === 'EMAIL' && ' *'}
-            </label>
-            <input
-              {...register('email')}
-              type="email"
-              inputMode="email"
-              id="email"
-              className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
-              placeholder="tu@email.com"
-              autoComplete="email"
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
-          </div>
+        {/* Name */}
+        <div>
+          <label htmlFor="name" className="mb-2 block text-sm font-semibold text-(--foreground)">
+            Tu nombre *
+          </label>
+          <input
+            {...register('name')}
+            id="name"
+            className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+            placeholder="Tu nombre completo"
+            autoComplete="name"
+          />
+          {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
         </div>
-
-        {/* Phone */}
-        <Controller
-          name="phone"
-          control={control}
-          render={({ field }) => (
-            <PhoneInput
-              label={`${phoneLabel || 'Tu teléfono'}${
-                responsePreference === 'PHONE' || responsePreference === 'WHATSAPP' ? ' *' : ''
-              }`}
-              value={field.value || ''}
-              onChange={field.onChange}
-              error={errors.phone?.message}
-            />
-          )}
-        />
 
         {/* Response Preference Selector */}
         <fieldset>
           <legend className="mb-3 block text-sm font-semibold text-(--foreground)">
-            {preferenceLabel || '¿Cómo preferís que te contacte?'} *
+            ¿Cómo preferís que te contacte? *
           </legend>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <PreferenceButton
-              active={responsePreference === 'EMAIL'}
-              onClick={() => setPreference('EMAIL')}
-              icon={<Mail className="h-5 w-5" />}
-              label="Email"
-            />
-            <PreferenceButton
-              active={responsePreference === 'PHONE'}
-              onClick={() => setPreference('PHONE')}
-              icon={<Phone className="h-5 w-5" />}
-              label="Teléfono"
-            />
-            <PreferenceButton
-              active={responsePreference === 'WHATSAPP'}
-              onClick={() => setPreference('WHATSAPP')}
-              icon={<MessageCircle className="h-5 w-5" />}
-              label="WhatsApp"
-            />
-            <PreferenceButton
-              active={responsePreference === 'INSTAGRAM'}
-              onClick={() => setPreference('INSTAGRAM')}
-              icon={<Instagram className="h-5 w-5" />}
-              label="Instagram"
-            />
-          </div>
-          <AnimatePresence>
-            {(responsePreference === 'PHONE' || responsePreference === 'WHATSAPP') &&
-              !watch('phone') && (
-                <motion.p
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  className="mt-2 text-xs text-amber-600"
-                >
-                  * Para contactarte por {responsePreference === 'PHONE' ? 'teléfono' : 'WhatsApp'},
-                  necesitamos tu número
-                </motion.p>
-              )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {responsePreference === 'INSTAGRAM' && (
-              <motion.div
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                className="mt-3"
+            {PREFERENCES.map(({ id, icon, label }) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setValue('responsePreference', id, { shouldValidate: false })}
+                className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${
+                  responsePreference === id
+                    ? 'border-(--primary) bg-(--primary)/10 text-(--primary)'
+                    : 'border-(--primary)/20 bg-(--background) text-(--foreground) hover:border-(--primary)/50'
+                }`}
               >
-                <label
-                  htmlFor="instagramUser"
-                  className="mb-2 block text-sm font-semibold text-(--foreground)"
-                >
-                  Tu usuario de Instagram *
-                </label>
-                <input
-                  {...register('instagramUser')}
-                  id="instagramUser"
-                  className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
-                  placeholder="@tu_usuario"
-                  autoComplete="off"
-                />
-                {errors.instagramUser && (
-                  <p className="mt-1 text-sm text-red-500">{errors.instagramUser.message}</p>
-                )}
-              </motion.div>
-            )}
+                {icon}
+                <span className="text-sm font-medium">{label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Animated conditional contact field — opacity-only to prevent layout shift */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={responsePreference}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+              className="mt-3"
+            >
+              <ContactField
+                preference={responsePreference}
+                register={register}
+                control={control}
+                errors={errors}
+              />
+            </motion.div>
           </AnimatePresence>
         </fieldset>
 
         {/* Message */}
         <div>
           <label htmlFor="message" className="mb-2 block text-sm font-semibold text-(--foreground)">
-            {messageLabel || 'Mensaje'} *
+            Mensaje *
           </label>
           <textarea
             {...register('message')}
             id="message"
             rows={5}
-            className="text-foreground placeholder:text-foreground/50 w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+            className="w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
           />
@@ -355,7 +210,7 @@ export default function ContactForm({
             id="privacy"
             className="mt-1 h-4 w-4 rounded border-2 border-(--primary)/30 text-(--primary) focus:ring-2 focus:ring-(--primary)/20"
           />
-          <label htmlFor="privacy" className="text-foreground/80 text-sm">
+          <label htmlFor="privacy" className="text-sm text-(--foreground)/80">
             He leído y acepto la{' '}
             <Link
               href={ROUTES.public.privacy}
@@ -370,7 +225,7 @@ export default function ContactForm({
         </div>
         {errors.privacy && <p className="text-sm text-red-500">{errors.privacy.message}</p>}
 
-        {/* Submit Button */}
+        {/* Submit — uses Button directly (RHF form, not Server Action) */}
         <Button
           type="submit"
           disabled={isSubmitting}
@@ -385,41 +240,84 @@ export default function ContactForm({
           ) : (
             <span className="flex items-center justify-center gap-2">
               <Send size={20} />
-              {submitLabel || 'Enviar mensaje'}
+              Enviar mensaje
             </span>
           )}
         </Button>
 
-        <p className="text-foreground/60 text-center text-xs">* Campos obligatorios</p>
+        <p className="text-center text-xs text-(--foreground)/60">* Campos obligatorios</p>
       </form>
     </motion.div>
   )
 }
 
-// Preference Button Component
-function PreferenceButton({
-  active,
-  onClick,
-  icon,
-  label,
+const inputClass =
+  'w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none'
+
+function ContactField({
+  preference,
+  register,
+  control,
+  errors,
 }: {
-  active: boolean
-  onClick: () => void
-  icon: React.ReactNode
-  label: string
+  preference: ResponsePreference
+  register: ReturnType<typeof useForm<ContactFormData>>['register']
+  control: ReturnType<typeof useForm<ContactFormData>>['control']
+  errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors']
 }) {
+  if (preference === 'INSTAGRAM') {
+    return (
+      <div>
+        <label htmlFor="instagramUser" className="mb-2 block text-sm font-semibold text-(--foreground)">
+          Tu usuario de Instagram *
+        </label>
+        <input
+          {...register('instagramUser')}
+          id="instagramUser"
+          className={inputClass}
+          placeholder="@tu_usuario"
+          autoComplete="off"
+        />
+        {errors.instagramUser && (
+          <p className="mt-1 text-sm text-red-500">{errors.instagramUser.message}</p>
+        )}
+      </div>
+    )
+  }
+
+  if (preference === 'WHATSAPP' || preference === 'PHONE') {
+    return (
+      <Controller
+        name="phone"
+        control={control}
+        render={({ field }) => (
+          <PhoneInput
+            label="Tu teléfono *"
+            value={field.value || ''}
+            onChange={field.onChange}
+            error={errors.phone?.message}
+          />
+        )}
+      />
+    )
+  }
+
+  // EMAIL
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${
-        active
-          ? 'border-(--primary) bg-(--primary)/10 text-(--primary)'
-          : 'text-foreground border-(--primary)/20 bg-(--background) hover:border-(--primary)/50'
-      }`}
-    >
-      {icon}
-      <span className="text-sm font-medium">{label}</span>
-    </button>
+    <div>
+      <label htmlFor="email" className="mb-2 block text-sm font-semibold text-(--foreground)">
+        Tu email *
+      </label>
+      <input
+        {...register('email')}
+        type="email"
+        inputMode="email"
+        id="email"
+        className={inputClass}
+        placeholder="tu@email.com"
+        autoComplete="email"
+      />
+      {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+    </div>
   )
 }

@@ -47,21 +47,13 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       phone: settings?.phone || '',
       whatsapp: settings?.whatsapp || '',
       location: settings?.location || '',
-      formTitle: settings?.formTitle || 'Envíame un mensaje',
-      nameLabel: settings?.nameLabel || 'Tu nombre',
-      emailLabel: settings?.emailLabel || 'Tu email',
-      phoneLabel: settings?.phoneLabel || 'Tu teléfono (opcional)',
-      messageLabel: settings?.messageLabel || 'Mensaje',
-      preferenceLabel: settings?.preferenceLabel || '¿Cómo preferís que te contacte?',
-      submitLabel: settings?.submitLabel || 'Enviar mensaje',
-      successTitle: settings?.successTitle || '¡Mensaje enviado!',
-      successMessage: settings?.successMessage || 'Gracias por contactarme.',
-      sendAnotherLabel: settings?.sendAnotherLabel || 'Enviar otro mensaje',
       showSocialLinks: settings?.showSocialLinks ?? true,
       showPhone: settings?.showPhone ?? true,
       showWhatsapp: settings?.showWhatsapp ?? true,
       showEmail: settings?.showEmail ?? true,
       showLocation: settings?.showLocation ?? true,
+      instagramPostUrl: settings?.instagramPostUrl || '',
+      showInstagramEmbed: settings?.showInstagramEmbed ?? false,
     },
   })
 
@@ -86,7 +78,6 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="mb-6 w-full md:w-auto">
           <TabsTrigger value="general">📞 Info General</TabsTrigger>
-          <TabsTrigger value="form">📝 Formulario Labels</TabsTrigger>
           <TabsTrigger value="social">🔗 Redes Sociales</TabsTrigger>
         </TabsList>
 
@@ -167,42 +158,6 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
           </form>
         </TabsContent>
 
-        {/* FORM LABELS TAB */}
-        <TabsContent value="form">
-          <form
-            onSubmit={handleSubmit(onSettingsSubmit)}
-            className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm"
-          >
-            <h2 className="text-lg font-semibold">Textos del Formulario</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              <Input
-                label="Título del Formulario"
-                {...register('formTitle')}
-                error={errors.formTitle?.message}
-              />
-              <Input label="Label Nombre" {...register('nameLabel')} />
-              <Input label="Label Email" {...register('emailLabel')} />
-              <Input label="Label Teléfono" {...register('phoneLabel')} />
-              <Input label="Label Mensaje" {...register('messageLabel')} />
-              <Input label="Label Preferencia" {...register('preferenceLabel')} />
-              <Input label="Texto Botón Enviar" {...register('submitLabel')} />
-              <div className="col-span-2 border-t pt-4">
-                <h3 className="mb-4 font-medium">Mensajes de Éxito</h3>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Input label="Título Éxito" {...register('successTitle')} />
-                  <Input label="Mensaje Éxito" {...register('successMessage')} />
-                  <Input label="Botón Enviar Otro" {...register('sendAnotherLabel')} />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
-                <Save className="mr-2 h-4 w-4" /> Guardar Textos
-              </Button>
-            </div>
-          </form>
-        </TabsContent>
-
         {/* SOCIAL LINKS TAB */}
         <TabsContent value="social">
           <div className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm">
@@ -220,6 +175,32 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
               {/* Empty Row for New Link */}
               <SocialLinkRow isNew />
             </div>
+
+            {/* Instagram Post Embed */}
+            <form onSubmit={handleSubmit(onSettingsSubmit)} className="border-border mt-6 space-y-4 border-t pt-6">
+              <h3 className="text-sm font-semibold">Post de Instagram en página de contacto</h3>
+              <p className="text-muted-foreground text-xs">
+                Copiá la URL de un post específico de Instagram (ej: https://www.instagram.com/p/ABC123/). Se mostrará como embed nativo de Instagram.
+              </p>
+              <Input
+                label="URL del post de Instagram"
+                {...register('instagramPostUrl')}
+                error={errors.instagramPostUrl?.message}
+                placeholder="https://www.instagram.com/p/..."
+              />
+              <label className="flex items-center gap-3">
+                <Switch
+                  checked={watch('showInstagramEmbed') ?? false}
+                  onCheckedChange={(v) => setValue('showInstagramEmbed', v, { shouldDirty: true })}
+                />
+                <span className="text-sm">Mostrar embed de Instagram</span>
+              </label>
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isSubmitting} loading={isSubmitting} size="sm">
+                  <Save className="mr-2 h-4 w-4" /> Guardar
+                </Button>
+              </div>
+            </form>
           </div>
         </TabsContent>
       </Tabs>

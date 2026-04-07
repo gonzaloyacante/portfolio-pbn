@@ -21,16 +21,6 @@ export interface ContactSettingsData {
   phone: string | null
   whatsapp: string | null
   location: string | null
-  formTitle: string | null
-  nameLabel: string | null
-  emailLabel: string | null
-  phoneLabel: string | null
-  messageLabel: string | null
-  preferenceLabel: string | null
-  submitLabel: string | null
-  successTitle: string | null
-  successMessage: string | null
-  sendAnotherLabel: string | null
   showSocialLinks: boolean
   showPhone: boolean
   showWhatsapp: boolean
@@ -39,6 +29,8 @@ export interface ContactSettingsData {
   instagram: string | null
   instagramUsername: string | null
   showInstagram: boolean
+  instagramPostUrl: string | null
+  showInstagramEmbed: boolean
   isActive: boolean
 }
 
@@ -97,23 +89,13 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
         whatsapp: (cleanData.whatsapp as string) ?? undefined,
         location: (cleanData.location as string) ?? undefined,
 
-        formTitle: (cleanData.formTitle as string) || 'Envíame un mensaje',
-        nameLabel: (cleanData.nameLabel as string) || 'Tu nombre',
-        emailLabel: (cleanData.emailLabel as string) || 'Tu email',
-        phoneLabel: (cleanData.phoneLabel as string) || 'Tu teléfono (opcional)',
-        messageLabel: (cleanData.messageLabel as string) || 'Mensaje',
-        preferenceLabel: (cleanData.preferenceLabel as string) || '¿Cómo preferís que te contacte?',
-        submitLabel: (cleanData.submitLabel as string) || 'Enviar mensaje',
-        successTitle: (cleanData.successTitle as string) || '¡Mensaje enviado!',
-        successMessage:
-          (cleanData.successMessage as string) ||
-          'Gracias por contactarme. Te responderé lo antes posible.',
-        sendAnotherLabel: (cleanData.sendAnotherLabel as string) || 'Enviar otro mensaje',
         showSocialLinks: (cleanData.showSocialLinks as boolean) ?? true,
         showPhone: (cleanData.showPhone as boolean) ?? true,
         showWhatsapp: (cleanData.showWhatsapp as boolean) ?? true,
         showEmail: (cleanData.showEmail as boolean) ?? true,
         showLocation: (cleanData.showLocation as boolean) ?? true,
+        instagramPostUrl: (cleanData.instagramPostUrl as string) ?? undefined,
+        showInstagramEmbed: (cleanData.showInstagramEmbed as boolean) ?? false,
 
         isActive: true,
       }
