@@ -1,12 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { motion } from '@/components/ui'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { Heart, Sparkles } from 'lucide-react'
+import { Heart, Sparkles, Home } from 'lucide-react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { ROUTES } from '@/config/routes'
 
 /**
  * TestimonialForm - Refactored to use UI components
@@ -90,6 +92,21 @@ export default function TestimonialForm() {
           <br />
           Lo revisaré personalmente antes de publicarlo. ✨
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55, duration: 0.4 }}
+          className="mt-8"
+        >
+          <Link
+            href={ROUTES.home}
+            className="text-primary hover:text-primary/80 inline-flex items-center gap-2 text-sm font-medium transition-colors"
+          >
+            <Home size={16} />
+            Volver al inicio
+          </Link>
+        </motion.div>
       </motion.div>
     )
   }

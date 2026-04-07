@@ -194,6 +194,24 @@ class CategoriesRepository {
       throw Exception(apiResponse.error ?? 'Error al eliminar imagen');
     }
   }
+
+  Future<void> toggleImageFeatured(
+    String categoryId,
+    String imageId, {
+    required bool isFeatured,
+  }) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {'imageId': imageId, 'isFeatured': isFeatured},
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(
+        apiResponse.error ?? 'Error al actualizar imagen destacada',
+      );
+    }
+  }
 }
 
 @Riverpod(keepAlive: true)

@@ -110,3 +110,32 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
     return { success: false, error: 'Error al restablecer el orden de la galería' }
   }
 }
+
+/**
+ * Toggle the isFeatured flag for a single gallery image
+ */
+export async function toggleCategoryImageFeatured(imageId: string, isFeatured: boolean) {
+  try {
+    await requireAdmin()
+    const rl = await checkApiRateLimit()
+    if (rl) return { success: false, error: rl.error }
+
+    z.string().cuid().parse(imageId)
+    z.boolean().parse(isFeatured)
+
+    const image = await prisma.categoryImage.update({
+      where: { id: imageId },
+      data: { isFeatured },
+      include: { category: { select: { slug: true } } },
+    })
+
+    revalidatePath(ROUTES.home)
+    revalidatePath(`${ROUTES.public.portfolio}/${image.category.slug}`)
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+
+    return { success: true }
+  } catch (error) {
+    logger.error('[toggleCategoryImageFeatured] Error:', { error })
+    return { success: false, error: 'Error al actualizar la imagen' }
+  }
+}

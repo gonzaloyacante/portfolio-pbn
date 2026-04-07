@@ -141,6 +141,7 @@ const nextConfig: NextConfig = {
       { source: '/servicios', destination: '/services' },
       { source: '/servicios/:slug', destination: '/services/:slug' },
       { source: '/privacidad', destination: '/privacy' },
+      { source: '/testimonio', destination: '/testimony' },
 
       // ----------------------------
       // ADMIN

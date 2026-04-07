@@ -2,6 +2,7 @@
  * GET    /api/admin/categories/[id]/gallery  — Todas las imágenes de una categoría
  * POST   /api/admin/categories/[id]/gallery  — Agregar imágenes a la galería
  * PUT    /api/admin/categories/[id]/gallery  — Actualizar orden de la galería
+ * PATCH  /api/admin/categories/[id]/gallery  — Alternar isFeatured de una imagen
  * DELETE /api/admin/categories/[id]/gallery  — Eliminar imagen individual
  */
 
@@ -41,7 +42,15 @@ export async function GET(req: Request, { params }: Params) {
 
     const images = await prisma.categoryImage.findMany({
       where: { categoryId },
-      select: { id: true, url: true, publicId: true, order: true, width: true, height: true },
+      select: {
+        id: true,
+        url: true,
+        publicId: true,
+        order: true,
+        width: true,
+        height: true,
+        isFeatured: true,
+      },
       orderBy: { order: 'asc' },
     })
 
@@ -238,6 +247,58 @@ export async function DELETE(req: Request, { params }: Params) {
     logger.error('DELETE category gallery image error', err as Record<string, unknown>)
     return NextResponse.json(
       { success: false, error: 'Error al eliminar la imagen' },
+      { status: 500 }
+    )
+  }
+}
+
+// ── PATCH (Toggle isFeatured) ─────────────────────────────────────────────────
+
+/**
+ * Body: { imageId: string, isFeatured: boolean }
+ * Alterna el campo `isFeatured` de una imagen de la galería.
+ */
+export async function PATCH(req: Request, { params }: Params) {
+  const auth = await withAdminJwt(req)
+  if (!auth.ok) return auth.response
+
+  try {
+    const { id: categoryId } = await params
+    const body = await req.json()
+    const imageId: string = body?.imageId
+    const isFeatured: boolean = body?.isFeatured
+
+    if (!imageId || typeof isFeatured !== 'boolean') {
+      return NextResponse.json(
+        { success: false, error: 'Los campos "imageId" e "isFeatured" son requeridos' },
+        { status: 400 }
+      )
+    }
+
+    const image = await prisma.categoryImage.findFirst({
+      where: { id: imageId, categoryId },
+    })
+
+    if (!image) {
+      return NextResponse.json(
+        { success: false, error: 'Imagen no encontrada en esta categoría' },
+        { status: 404 }
+      )
+    }
+
+    await prisma.categoryImage.update({
+      where: { id: imageId },
+      data: { isFeatured },
+    })
+
+    revalidatePath(ROUTES.home)
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+
+    return NextResponse.json({ success: true })
+  } catch (err) {
+    logger.error('PATCH category gallery featured error', err as Record<string, unknown>)
+    return NextResponse.json(
+      { success: false, error: 'Error al actualizar imagen destacada' },
       { status: 500 }
     )
   }

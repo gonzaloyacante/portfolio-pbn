@@ -95,6 +95,7 @@ abstract class GalleryImageItem with _$GalleryImageItem {
     required String categoryId,
     int? width,
     int? height,
+    @Default(false) bool isFeatured,
   }) = _GalleryImageItem;
 
   factory GalleryImageItem.fromJson(Map<String, dynamic> json) =>

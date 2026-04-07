@@ -20,11 +20,15 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { motion } from '@/components/ui'
-import { updateCategoryGalleryOrder, resetCategoryGalleryOrder } from '@/actions/gallery-ordering'
+import {
+  updateCategoryGalleryOrder,
+  resetCategoryGalleryOrder,
+  toggleCategoryImageFeatured,
+} from '@/actions/gallery-ordering'
 import { Button } from '@/components/ui'
 import ImageUpload from '@/components/ui/media/ImageUpload'
 import { OptimizedImage } from '@/components/ui'
-import { Save, RotateCcw, GripVertical, Check, ArrowLeft } from 'lucide-react'
+import { Save, RotateCcw, GripVertical, Check, ArrowLeft, Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
@@ -38,6 +42,7 @@ interface GalleryImage {
   title: string
   width?: number | null
   height?: number | null
+  isFeatured?: boolean
   categoryGalleryOrder?: number | null
 }
 
@@ -48,7 +53,15 @@ interface CategoryGalleryEditorProps {
 }
 
 // ── Sortable image card ─────────────────────────────────────────────────────
-function SortableImageCard({ image, index }: { image: GalleryImage; index: number }) {
+function SortableImageCard({
+  image,
+  index,
+  onToggleFeatured,
+}: {
+  image: GalleryImage
+  index: number
+  onToggleFeatured: (id: string, val: boolean) => void
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: image.id,
   })
@@ -84,10 +97,35 @@ function SortableImageCard({ image, index }: { image: GalleryImage; index: numbe
         <GripVertical size={14} className="text-white" />
       </div>
 
-      {/* Position badge */}
-      <div className="absolute top-2 right-2 z-10 rounded-full bg-black/50 px-2 py-0.5 text-xs font-medium text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-        #{index + 1}
+      {/* Featured toggle + position badge */}
+      <div className="absolute top-2 right-2 z-10 flex items-center gap-1.5 opacity-0 transition-opacity group-hover:opacity-100">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            onToggleFeatured(image.id, !image.isFeatured)
+          }}
+          title={image.isFeatured ? 'Quitar de destacados' : 'Marcar como destacada'}
+          className={cn(
+            'flex h-6 w-6 items-center justify-center rounded-full backdrop-blur-sm transition-colors',
+            image.isFeatured
+              ? 'bg-yellow-400/90 text-yellow-900'
+              : 'bg-black/50 text-white/70 hover:text-yellow-400'
+          )}
+        >
+          <Star size={12} className={image.isFeatured ? 'fill-current' : ''} />
+        </button>
+        <div className="rounded-full bg-black/50 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+          #{index + 1}
+        </div>
       </div>
+
+      {/* Featured indicator — always visible */}
+      {image.isFeatured && (
+        <div className="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-yellow-400/90 opacity-100 group-hover:opacity-0">
+          <Star size={12} className="fill-current text-yellow-900" />
+        </div>
+      )}
 
       {/* Image */}
       <div className="relative w-full" style={{ paddingBottom: `${aspectRatio * 100}%` }}>
@@ -185,6 +223,18 @@ export default function CategoryGalleryEditor({
       return arrayMove(prev, from, to)
     })
     setIsDirty(true)
+  }
+
+  // ── Featured toggle ───────────────────────────────────────────────────────
+  const handleToggleFeatured = async (imageId: string, val: boolean) => {
+    setImages((prev) => prev.map((img) => (img.id === imageId ? { ...img, isFeatured: val } : img)))
+    const result = await toggleCategoryImageFeatured(imageId, val)
+    if (!result.success) {
+      setImages((prev) =>
+        prev.map((img) => (img.id === imageId ? { ...img, isFeatured: !val } : img))
+      )
+      showToast.error('Error al actualizar la imagen destacada')
+    }
   }
 
   // ── Save / Reset ──────────────────────────────────────────────────────────
@@ -349,7 +399,12 @@ export default function CategoryGalleryEditor({
             {columnsData.map((col, colIndex) => (
               <div key={colIndex} className="flex flex-col gap-4">
                 {col.images.map((img) => (
-                  <SortableImageCard key={img.id} image={img} index={img.flatIndex} />
+                  <SortableImageCard
+                    key={img.id}
+                    image={img}
+                    index={img.flatIndex}
+                    onToggleFeatured={handleToggleFeatured}
+                  />
                 ))}
               </div>
             ))}

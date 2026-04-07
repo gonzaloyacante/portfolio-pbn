@@ -8,6 +8,7 @@ import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
+import { getCategorySettings } from '@/actions/settings/categories'
 
 // ISR: revalidar cada 60s + on-demand via revalidatePath()
 export const revalidate = 60
@@ -68,19 +69,23 @@ export default async function CategoryGalleryPage({
 }) {
   const { category: categorySlug } = await params
 
-  const category = await getCategory(categorySlug)
+  const [category, categorySettings] = await Promise.all([
+    getCategory(categorySlug),
+    getCategorySettings(),
+  ])
 
   if (!category) {
     notFound()
   }
 
-  const showTitles = true
+  const showTitles = categorySettings?.showDescription ?? true
 
   const allImages = category.images.map((img) => ({
     id: img.id,
     url: img.url,
     alt: category.name,
     title: category.name,
+    isFeatured: img.isFeatured,
   }))
 
   return (

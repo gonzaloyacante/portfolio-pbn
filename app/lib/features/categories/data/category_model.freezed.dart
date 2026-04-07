@@ -613,7 +613,7 @@ as String,
 /// @nodoc
 mixin _$GalleryImageItem {
 
- String get id; String get url; String? get publicId; int get order; String get categoryId; int? get width; int? get height;
+ String get id; String get url; String? get publicId; int get order; String get categoryId; int? get width; int? get height; bool get isFeatured;
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -626,16 +626,16 @@ $GalleryImageItemCopyWith<GalleryImageItem> get copyWith => _$GalleryImageItemCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,url,publicId,order,categoryId,width,height);
+int get hashCode => Object.hash(runtimeType,id,url,publicId,order,categoryId,width,height,isFeatured);
 
 @override
 String toString() {
-  return 'GalleryImageItem(id: $id, url: $url, publicId: $publicId, order: $order, categoryId: $categoryId, width: $width, height: $height)';
+  return 'GalleryImageItem(id: $id, url: $url, publicId: $publicId, order: $order, categoryId: $categoryId, width: $width, height: $height, isFeatured: $isFeatured)';
 }
 
 
@@ -646,7 +646,7 @@ abstract mixin class $GalleryImageItemCopyWith<$Res>  {
   factory $GalleryImageItemCopyWith(GalleryImageItem value, $Res Function(GalleryImageItem) _then) = _$GalleryImageItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String url, String? publicId, int order, String categoryId, int? width, int? height
+ String id, String url, String? publicId, int order, String categoryId, int? width, int? height, bool isFeatured
 });
 
 
@@ -663,7 +663,7 @@ class _$GalleryImageItemCopyWithImpl<$Res>
 
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? url = null,Object? publicId = freezed,Object? order = null,Object? categoryId = null,Object? width = freezed,Object? height = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? url = null,Object? publicId = freezed,Object? order = null,Object? categoryId = null,Object? width = freezed,Object? height = freezed,Object? isFeatured = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -672,7 +672,8 @@ as String?,order: null == order ? _self.order : order // ignore: cast_nullable_t
 as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
 as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isFeatured: null == isFeatured ? _self.isFeatured : isFeatured // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -757,10 +758,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String url,  String? publicId,  int order,  String categoryId,  int? width,  int? height)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String url,  String? publicId,  int order,  String categoryId,  int? width,  int? height,  bool isFeatured)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _GalleryImageItem() when $default != null:
-return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_that.width,_that.height);case _:
+return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_that.width,_that.height,_that.isFeatured);case _:
   return orElse();
 
 }
@@ -778,10 +779,10 @@ return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String url,  String? publicId,  int order,  String categoryId,  int? width,  int? height)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String url,  String? publicId,  int order,  String categoryId,  int? width,  int? height,  bool isFeatured)  $default,) {final _that = this;
 switch (_that) {
 case _GalleryImageItem():
-return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_that.width,_that.height);case _:
+return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_that.width,_that.height,_that.isFeatured);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -798,10 +799,10 @@ return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String url,  String? publicId,  int order,  String categoryId,  int? width,  int? height)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String url,  String? publicId,  int order,  String categoryId,  int? width,  int? height,  bool isFeatured)?  $default,) {final _that = this;
 switch (_that) {
 case _GalleryImageItem() when $default != null:
-return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_that.width,_that.height);case _:
+return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_that.width,_that.height,_that.isFeatured);case _:
   return null;
 
 }
@@ -813,7 +814,7 @@ return $default(_that.id,_that.url,_that.publicId,_that.order,_that.categoryId,_
 @JsonSerializable()
 
 class _GalleryImageItem implements GalleryImageItem {
-  const _GalleryImageItem({required this.id, required this.url, this.publicId, required this.order, required this.categoryId, this.width, this.height});
+  const _GalleryImageItem({required this.id, required this.url, this.publicId, required this.order, required this.categoryId, this.width, this.height, this.isFeatured = false});
   factory _GalleryImageItem.fromJson(Map<String, dynamic> json) => _$GalleryImageItemFromJson(json);
 
 @override final  String id;
@@ -823,6 +824,7 @@ class _GalleryImageItem implements GalleryImageItem {
 @override final  String categoryId;
 @override final  int? width;
 @override final  int? height;
+@override@JsonKey() final  bool isFeatured;
 
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
@@ -837,16 +839,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _GalleryImageItem&&(identical(other.id, id) || other.id == id)&&(identical(other.url, url) || other.url == url)&&(identical(other.publicId, publicId) || other.publicId == publicId)&&(identical(other.order, order) || other.order == order)&&(identical(other.categoryId, categoryId) || other.categoryId == categoryId)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height)&&(identical(other.isFeatured, isFeatured) || other.isFeatured == isFeatured));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,url,publicId,order,categoryId,width,height);
+int get hashCode => Object.hash(runtimeType,id,url,publicId,order,categoryId,width,height,isFeatured);
 
 @override
 String toString() {
-  return 'GalleryImageItem(id: $id, url: $url, publicId: $publicId, order: $order, categoryId: $categoryId, width: $width, height: $height)';
+  return 'GalleryImageItem(id: $id, url: $url, publicId: $publicId, order: $order, categoryId: $categoryId, width: $width, height: $height, isFeatured: $isFeatured)';
 }
 
 
@@ -857,7 +859,7 @@ abstract mixin class _$GalleryImageItemCopyWith<$Res> implements $GalleryImageIt
   factory _$GalleryImageItemCopyWith(_GalleryImageItem value, $Res Function(_GalleryImageItem) _then) = __$GalleryImageItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String url, String? publicId, int order, String categoryId, int? width, int? height
+ String id, String url, String? publicId, int order, String categoryId, int? width, int? height, bool isFeatured
 });
 
 
@@ -874,7 +876,7 @@ class __$GalleryImageItemCopyWithImpl<$Res>
 
 /// Create a copy of GalleryImageItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? url = null,Object? publicId = freezed,Object? order = null,Object? categoryId = null,Object? width = freezed,Object? height = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? url = null,Object? publicId = freezed,Object? order = null,Object? categoryId = null,Object? width = freezed,Object? height = freezed,Object? isFeatured = null,}) {
   return _then(_GalleryImageItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -883,7 +885,8 @@ as String?,order: null == order ? _self.order : order // ignore: cast_nullable_t
 as int,categoryId: null == categoryId ? _self.categoryId : categoryId // ignore: cast_nullable_to_non_nullable
 as String,width: freezed == width ? _self.width : width // ignore: cast_nullable_to_non_nullable
 as int?,height: freezed == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isFeatured: null == isFeatured ? _self.isFeatured : isFeatured // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

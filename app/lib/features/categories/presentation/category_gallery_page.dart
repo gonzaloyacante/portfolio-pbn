@@ -346,6 +346,43 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     }
   }
 
+  // ── Toggle isFeatured ─────────────────────────────────────────────────────────
+
+  Future<void> _toggleImageFeatured(GalleryImageItem item) async {
+    final newValue = !item.isFeatured;
+    setState(() {
+      _items = _items
+          ?.map((i) => i.id == item.id ? i.copyWith(isFeatured: newValue) : i)
+          .toList();
+    });
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .toggleImageFeatured(
+            widget.categoryId,
+            item.id,
+            isFeatured: newValue,
+          );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      setState(() {
+        _items = _items
+            ?.map(
+              (i) => i.id == item.id ? i.copyWith(isFeatured: !newValue) : i,
+            )
+            .toList();
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo actualizar la imagen destacada.'),
+          ),
+        );
+      }
+    }
+  }
+
   // ── Helpers de arrastre (grid) ───────────────────────────────────────────────
 
   void _swapItems(int fromIdx, int toIdx) {

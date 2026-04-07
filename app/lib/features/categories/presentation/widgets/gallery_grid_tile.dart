@@ -10,12 +10,14 @@ class GalleryGridTile extends StatelessWidget {
     this.position,
     this.onDelete,
     this.onTap,
+    this.onToggleFeatured,
   });
 
   final GalleryImageItem item;
   final int? position;
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
+  final VoidCallback? onToggleFeatured;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,7 @@ class GalleryGridTile extends StatelessWidget {
               ),
             ),
           ),
+          // Position badge (top-right)
           if (position != null)
             Positioned(
               top: 6,
@@ -72,6 +75,33 @@ class GalleryGridTile extends StatelessWidget {
                 ),
               ),
             ),
+          // Featured star (bottom-left)
+          if (onToggleFeatured != null)
+            Positioned(
+              bottom: 6,
+              left: 6,
+              child: GestureDetector(
+                onTap: onToggleFeatured,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: item.isFeatured
+                        ? Colors.amber.withValues(alpha: 0.9)
+                        : Colors.black.withValues(alpha: 0.55),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    item.isFeatured
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    color: item.isFeatured ? Colors.white : Colors.white70,
+                    size: 16,
+                  ),
+                ),
+              ),
+            ),
+          // Delete button (bottom-right)
           if (onDelete != null)
             Positioned(
               bottom: 6,

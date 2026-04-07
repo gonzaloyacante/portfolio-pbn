@@ -254,6 +254,7 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                   onTap: () =>
                       _ImageViewer.show(context, img.url, position: position),
                   onDelete: () => _deleteImage(img),
+                  onToggleFeatured: () => _toggleImageFeatured(img),
                 ),
               ),
             ),

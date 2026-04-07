@@ -5,9 +5,11 @@ import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { Plus } from 'lucide-react'
 import CategoriesContent from './CategoriesContent'
+import CategorySettingsCard from '@/components/features/categories/CategorySettingsCard'
+import { getCategorySettings } from '@/actions/settings/categories'
 
 export default async function CategoriesPage() {
-  const [categories] = await Promise.all([
+  const [categories, categorySettings] = await Promise.all([
     prisma.category.findMany({
       where: { deletedAt: null },
       include: {
@@ -16,6 +18,7 @@ export default async function CategoriesPage() {
       },
       orderBy: { sortOrder: 'asc' },
     }),
+    getCategorySettings(),
   ])
 
   return (
@@ -33,6 +36,9 @@ export default async function CategoriesPage() {
           </Link>
         </Button>
       </div>
+
+      {/* Gallery display settings */}
+      <CategorySettingsCard settings={categorySettings} />
 
       {/* Client Component with the list */}
       <CategoriesContent categories={categories} />

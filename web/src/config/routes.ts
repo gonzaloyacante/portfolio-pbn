@@ -36,5 +36,6 @@ export const ROUTES = {
     serviceDetail: (slug: string) => `/servicios/${slug}` as const,
     contact: '/contacto',
     privacy: '/privacidad',
+    testimonialForm: '/testimonio',
   },
 } as const

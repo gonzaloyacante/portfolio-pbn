@@ -1,107 +1,126 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Testimonial } from '@/generated/prisma/client'
+import { useState, useEffect, useCallback } from 'react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import type { Testimonial } from '@/generated/prisma/client'
+
+const CARDS_VISIBLE = 3
+const AUTO_ADVANCE_MS = 5000
 
 interface TestimonialSliderProps {
   testimonials: Testimonial[]
 }
 
-export default function TestimonialSlider({ testimonials }: TestimonialSliderProps) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-
-  useEffect(() => {
-    if (testimonials.length <= 1) return
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [testimonials.length])
-
-  if (testimonials.length === 0) {
-    return null
-  }
-
-  const currentTestimonial = testimonials[currentIndex]
-
+function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
-    <div className="bg-card border-border/50 mx-auto max-w-3xl rounded-xl border p-8 shadow-lg">
-      <div className="mb-4 flex justify-center">
-        {Array.from({ length: currentTestimonial.rating }).map((_, i) => (
-          <span key={i} className="text-warning text-xl drop-shadow-sm">
-            ⭐
-          </span>
+    <div className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg">
+      <div className="mb-3 flex gap-0.5 text-yellow-400">
+        {Array.from({ length: testimonial.rating }).map((_, i) => (
+          <span key={i}>⭐</span>
         ))}
       </div>
-
-      <blockquote className="text-muted-foreground relative mb-6 text-center text-lg italic">
-        &ldquo;{currentTestimonial.text}&rdquo;
-      </blockquote>
-
-      <div className="flex flex-col items-center gap-3">
-        {currentTestimonial.avatarUrl ? (
+      <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed italic">
+        &ldquo;{testimonial.text}&rdquo;
+      </p>
+      <div className="mt-auto flex items-center gap-3">
+        {testimonial.avatarUrl ? (
           <Image
-            src={currentTestimonial.avatarUrl}
-            alt={currentTestimonial.name}
-            width={48}
-            height={48}
-            className="h-12 w-12 rounded-full border-2 border-(--primary) object-cover"
+            src={testimonial.avatarUrl}
+            alt={testimonial.name}
+            width={40}
+            height={40}
+            className="border-primary/30 h-10 w-10 rounded-full border-2 object-cover"
           />
         ) : (
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-(--primary)/10 text-lg font-bold text-(--primary)">
-            {currentTestimonial.name.charAt(0)}
+          <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold">
+            {testimonial.name.charAt(0)}
           </div>
         )}
-
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2">
-            <p className="text-foreground text-lg font-semibold">{currentTestimonial.name}</p>
-            {currentTestimonial.verified && (
-              <span title="Cliente Verificado" className="text-info">
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+        <div>
+          <div className="flex items-center gap-1">
+            <p className="text-card-foreground text-sm font-semibold">{testimonial.name}</p>
+            {testimonial.verified && (
+              <span className="text-primary" title="Cliente verificado">
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
               </span>
             )}
           </div>
-
-          <div className="text-muted-foreground flex flex-col gap-0.5 text-sm">
-            {currentTestimonial.position && <span>{currentTestimonial.position}</span>}
-            {currentTestimonial.company && (
-              <span className="text-primary font-medium">
-                {currentTestimonial.website ? (
-                  <a
-                    href={currentTestimonial.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline"
-                  >
-                    @{currentTestimonial.company}
-                  </a>
-                ) : (
-                  `@${currentTestimonial.company}`
-                )}
-              </span>
-            )}
-          </div>
+          {(testimonial.position || testimonial.company) && (
+            <p className="text-muted-foreground text-xs">
+              {[testimonial.position, testimonial.company].filter(Boolean).join(' · ')}
+            </p>
+          )}
         </div>
       </div>
+    </div>
+  )
+}
 
-      {testimonials.length > 1 && (
-        <div className="mt-6 flex justify-center gap-2">
-          {testimonials.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`h-2 w-2 rounded-full transition-all ${
-                index === currentIndex ? 'bg-primary w-8' : 'bg-muted-foreground/30'
-              }`}
-              aria-label={`Go to testimonial ${index + 1}`}
-            />
-          ))}
+export default function TestimonialSlider({ testimonials }: TestimonialSliderProps) {
+  const total = testimonials.length
+  const maxStart = Math.max(0, total - CARDS_VISIBLE)
+  const [start, setStart] = useState(0)
+
+  const prev = useCallback(() => setStart((s) => Math.max(0, s - 1)), [])
+  const next = useCallback(() => setStart((s) => Math.min(maxStart, s + 1)), [maxStart])
+
+  useEffect(() => {
+    if (total <= CARDS_VISIBLE) return
+    const interval = setInterval(
+      () => setStart((s) => (s >= maxStart ? 0 : s + 1)),
+      AUTO_ADVANCE_MS
+    )
+    return () => clearInterval(interval)
+  }, [total, maxStart])
+
+  const visible = testimonials.slice(start, start + CARDS_VISIBLE)
+
+  return (
+    <div className="relative">
+      {/* Cards row */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {visible.map((t) => (
+          <TestimonialCard key={t.id} testimonial={t} />
+        ))}
+      </div>
+
+      {/* Navigation — only when more than CARDS_VISIBLE */}
+      {total > CARDS_VISIBLE && (
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            onClick={prev}
+            disabled={start === 0}
+            aria-label="Anterior"
+            className="border-border text-foreground hover:bg-primary hover:text-primary-foreground disabled:text-muted-foreground flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronLeft size={18} />
+          </button>
+
+          {/* Dots */}
+          <div className="flex gap-2">
+            {Array.from({ length: maxStart + 1 }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setStart(i)}
+                aria-label={`Ir al grupo ${i + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  i === start ? 'bg-primary w-6' : 'bg-muted-foreground/30 w-2'
+                }`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={next}
+            disabled={start >= maxStart}
+            aria-label="Siguiente"
+            className="border-border text-foreground hover:bg-primary hover:text-primary-foreground disabled:text-muted-foreground flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronRight size={18} />
+          </button>
         </div>
       )}
     </div>
