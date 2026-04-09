@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
+import { Heart } from 'lucide-react'
 import { OptimizedImage, FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
 import { ROUTES } from '@/config/routes'
@@ -31,14 +32,7 @@ export const metadata: Metadata = {
  * Portfolio Page - Category Grid
  * Design: Grid 1x 2x 4x for 4 items balance.
  */
-export default async function PortfolioPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ category?: string }>
-}) {
-  const sp = await searchParams
-  const activeCategory = sp.category ?? null
-
+export default async function PortfolioPage() {
   const [categories, categorySettings] = await Promise.all([
     prisma.category.findMany({
       where: { isActive: true, deletedAt: null },
@@ -55,10 +49,6 @@ export default async function PortfolioPage({
   const showCount = false
   const showDesc = categorySettings?.showDescription ?? false
 
-  const filteredCategories = activeCategory
-    ? categories.filter((c) => c.slug === activeCategory)
-    : categories
-
   return (
     <section className="w-full bg-(--background) transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12 lg:px-16 lg:py-12">
@@ -72,33 +62,14 @@ export default async function PortfolioPage({
           </p>
         </div>
 
-        {/* Category Filter Chips */}
-        {categories.length > 1 && (
-          <div className="mb-6 flex flex-wrap gap-2 sm:mb-8">
-            <Link
-              href={ROUTES.public.portfolio}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${!activeCategory ? 'bg-(--primary) text-white' : 'bg-(--muted) text-(--foreground) hover:bg-(--primary)/10'}`}
-            >
-              Todas
-            </Link>
-            {categories.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`${ROUTES.public.portfolio}?category=${cat.slug}`}
-                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${activeCategory === cat.slug ? 'bg-(--primary) text-white' : 'bg-(--muted) text-(--foreground) hover:bg-(--primary)/10'}`}
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
-        )}
+        {/* Category Filter Chips - REMOVED: each category card is its own navigation */}
 
         {/* Categories Grid */}
-        {filteredCategories.length > 0 ? (
+        {categories.length > 0 ? (
           <StaggerChildren
             className={`grid gap-3 sm:gap-6 lg:gap-8 ${gridCols === 1 ? 'grid-cols-1' : ''} ${gridCols === 2 ? 'grid-cols-2' : ''} ${gridCols === 3 ? 'grid-cols-2 lg:grid-cols-3' : ''} ${gridCols === 4 ? 'grid-cols-2 lg:grid-cols-4' : ''} `}
           >
-            {filteredCategories.map((category) => {
+            {categories.map((category) => {
               const cardImageUrl = category.coverImageUrl ?? category.images[0]?.url ?? null
 
               return (
@@ -167,6 +138,18 @@ export default async function PortfolioPage({
             </p>
           </div>
         )}
+
+        {/* Inline testimonials CTA */}
+        <FadeIn className="mt-12 flex items-center justify-center gap-3 border-t border-(--border) pt-10">
+          <span className="text-muted-foreground text-sm">¿Ya fui tu maquilladora?</span>
+          <Link
+            href={ROUTES.public.testimonialForm}
+            className="text-primary hover:text-primary/80 inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+          >
+            <Heart size={14} />
+            Deja tu opinión
+          </Link>
+        </FadeIn>
       </div>
     </section>
   )

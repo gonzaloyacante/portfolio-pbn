@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
 import PageTransitionWrapper from '@/components/layout/PageTransitionWrapper'
-import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
 
@@ -182,7 +181,6 @@ export default async function PublicLayout({ children }: { children: React.React
         <main id="main-content" className="flex-1" tabIndex={-1}>
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
         </main>
-        <PublicTestimonialsSection />
       </div>
     </>
   )

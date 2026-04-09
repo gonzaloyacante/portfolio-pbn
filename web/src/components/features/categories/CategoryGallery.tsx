@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { AnimatePresence, motion, FadeIn, OptimizedImage, Lightbox } from '@/components/ui'
+import { motion, FadeIn, OptimizedImage, Lightbox } from '@/components/ui'
 import type { LightboxImage } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { getVariantUrl } from '@/lib/cloudinary-helper'
@@ -13,13 +13,6 @@ interface GalleryImage {
   title: string
   width?: number | null
   height?: number | null
-}
-
-interface ExpandOrigin {
-  rect: DOMRect
-  src: string
-  alt: string
-  pendingIndex: number
 }
 
 const CLOUDINARY_RE = /^https?:\/\/res\.cloudinary\.com\//
@@ -34,8 +27,6 @@ export default function CategoryGallery({
   const images = initialImages
 
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
-  const [expandOrigin, setExpandOrigin] = useState<ExpandOrigin | null>(null)
-
   const triggerRef = useRef<HTMLDivElement | null>(null)
   const gridRef = useRef<HTMLDivElement | null>(null)
 
@@ -44,9 +35,8 @@ export default function CategoryGallery({
     triggerRef.current?.focus()
   }, [])
 
-  // ── IntersectionObserver prefetch ─────────────────────────────────────────
-  // When a thumbnail enters the viewport (with 300px rootMargin), preload the
-  // Cloudinary thumbnail variant so the lightbox image is already cached on click.
+  // Prefetch thumbnail variant for every image that enters the viewport
+  // so the lightbox loads instantly on click.
   useEffect(() => {
     const container = gridRef.current
     if (!container || typeof IntersectionObserver === 'undefined') return
@@ -85,13 +75,10 @@ export default function CategoryGallery({
 
   const columnsData = Array.from({ length: columns }, () => ({
     images: [] as (GalleryImage & { originalIndex: number })[],
-    height: 0,
   }))
 
-  const imagesWithIndex = images.map((img, idx) => ({ ...img, originalIndex: idx }))
-
-  imagesWithIndex.forEach((img, i) => {
-    columnsData[i % columns].images.push(img)
+  images.forEach((img, i) => {
+    columnsData[i % columns].images.push({ ...img, originalIndex: i })
   })
 
   const distributedImages = columnsData.map((c) => c.images)
@@ -104,17 +91,6 @@ export default function CategoryGallery({
     width: img.width,
     height: img.height,
   }))
-
-  const handleImageClick = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>, img: GalleryImage & { originalIndex: number }) => {
-      triggerRef.current = e.currentTarget
-      const rect = e.currentTarget.getBoundingClientRect()
-      const originalIndex = images.findIndex((i) => i.id === img.id)
-      const src = CLOUDINARY_RE.test(img.url) ? getVariantUrl(img.url, 'thumbnail') : img.url
-      setExpandOrigin({ rect, src, alt: img.alt, pendingIndex: originalIndex })
-    },
-    [images]
-  )
 
   return (
     <>
@@ -136,24 +112,27 @@ export default function CategoryGallery({
                     tabIndex={0}
                     aria-label={img.alt || `Ver imagen ${img.originalIndex + 1}`}
                     data-prefetch-url={prefetchUrl}
-                    onClick={(e) => handleImageClick(e, img)}
+                    onClick={(e) => {
+                      triggerRef.current = e.currentTarget
+                      setSelectedIndex(img.originalIndex)
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault()
                         triggerRef.current = e.currentTarget as HTMLDivElement
-                        setSelectedIndex(images.findIndex((i) => i.id === img.id))
+                        setSelectedIndex(img.originalIndex)
                       }
                     }}
                     whileTap={{ scale: 0.97 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                    className="group relative cursor-pointer overflow-hidden rounded-xl bg-(--card-bg) shadow-sm transition-all hover:shadow-lg"
+                    className="group relative cursor-pointer overflow-hidden rounded-xl shadow-sm transition-all hover:shadow-lg"
                   >
                     <OptimizedImage
                       src={img.url}
                       alt={img.alt}
                       width={500}
                       height={500}
-                      className="w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       variant="card"
                     />
                     <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
@@ -172,46 +151,7 @@ export default function CategoryGallery({
         ))}
       </div>
 
-      {/* Expand-from-origin overlay */}
-      <AnimatePresence>
-        {expandOrigin && (
-          <motion.div
-            key="expand-overlay"
-            style={{ position: 'fixed', overflow: 'hidden', zIndex: 9998, pointerEvents: 'none' }}
-            initial={{
-              top: expandOrigin.rect.top,
-              left: expandOrigin.rect.left,
-              width: expandOrigin.rect.width,
-              height: expandOrigin.rect.height,
-              borderRadius: 12,
-            }}
-            animate={{
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              borderRadius: 0,
-            }}
-            exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            transition={{ duration: 0.38, ease: [0.4, 0, 0.2, 1] }}
-            onAnimationComplete={(def) => {
-              if (def === 'animate') {
-                setSelectedIndex(expandOrigin.pendingIndex)
-                setExpandOrigin(null)
-              }
-            }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={expandOrigin.src}
-              alt={expandOrigin.alt}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Lightbox */}
+      {/* Lightbox with progressive quality: thumbnail (400px) → full (3840px) */}
       <Lightbox
         images={lightboxImages}
         selectedIndex={selectedIndex}
@@ -221,3 +161,4 @@ export default function CategoryGallery({
     </>
   )
 }
+

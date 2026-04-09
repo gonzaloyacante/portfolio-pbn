@@ -90,7 +90,7 @@
     "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.71.2",
     "react-hot-toast": "^2.6.0",
-    "react-phone-number-input": "^3.4.16",
+    "react-international-phone": "^4.8.0",
     "react-simple-maps": "^3.0.0",
     "resend": "^6.9.2",
     "swr": "^2.4.0",

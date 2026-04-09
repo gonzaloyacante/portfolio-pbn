@@ -14,6 +14,7 @@ import {
   MapPin,
   Phone,
   Mail,
+  Heart,
 } from 'lucide-react'
 import { OptimizedImage, FadeIn } from '@/components/ui'
 import { Suspense } from 'react'
@@ -233,7 +234,7 @@ export default async function ContactPage() {
               href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-primary/20 hover:border-primary/60 mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border bg-gradient-to-br from-pink-50 via-purple-50 to-orange-50 px-5 py-4 transition-all hover:scale-[1.02] hover:shadow-md lg:hidden dark:from-pink-950/20 dark:via-purple-950/20 dark:to-orange-950/20"
+              className="border-primary/20 hover:border-primary/60 mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border bg-linear-to-br from-pink-50 via-purple-50 to-orange-50 px-5 py-4 transition-all hover:scale-[1.02] hover:shadow-md lg:hidden dark:from-pink-950/20 dark:via-purple-950/20 dark:to-orange-950/20"
             >
               <Instagram className="text-primary h-6 w-6 shrink-0" />
               <div>
@@ -253,6 +254,16 @@ export default async function ContactPage() {
 
       {/* Copyright */}
       <div className="border-primary/20 border-t py-8 text-center font-sans">
+        <div className="mb-4 flex items-center justify-center gap-3">
+          <span className="text-muted-foreground text-sm">¿Ya trabajamos juntas?</span>
+          <Link
+            href={ROUTES.public.testimonialForm}
+            className="text-primary hover:text-primary/80 inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+          >
+            <Heart size={14} />
+            Deja tu testimonio
+          </Link>
+        </div>
         <p className="text-muted-foreground mb-2 text-sm font-light tracking-widest uppercase">
           © {new Date().getFullYear()} {ownerName.toUpperCase()}
         </p>

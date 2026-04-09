@@ -286,29 +286,6 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         </div>
       </section>
 
-      {/* ── SEO ───────────────────────────────────────────────────── */}
-      <section className="border-border bg-card space-y-4 rounded-2xl border p-6">
-        <div>
-          <h2 className="font-heading text-lg font-semibold">SEO</h2>
-          <p className="text-muted-foreground text-sm">
-            Configuración de indexación para buscadores.
-          </p>
-        </div>
-        <div className="border-border flex items-center justify-between rounded-xl border px-4 py-3">
-          <div>
-            <p className="text-sm font-medium">Permitir indexación</p>
-            <p className="text-muted-foreground text-xs">
-              Habilita que Google y otros motores indexen el sitio.
-            </p>
-          </div>
-          <Switch
-            checked={allowIndexing}
-            onCheckedChange={setAllowIndexing}
-            aria-label="Permitir indexación por buscadores"
-          />
-        </div>
-      </section>
-
       {/* ── Guardar ───────────────────────────────────────────────── */}
       <div className="flex justify-end">
         <Button onClick={handleSave} disabled={saving} className="gap-2">
