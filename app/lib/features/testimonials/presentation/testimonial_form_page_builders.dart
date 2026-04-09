@@ -115,7 +115,7 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
                     onTap: () => setState(() => _rating = i),
                     child: Icon(
                       i <= _rating ? Icons.star : Icons.star_border,
-                      color: Colors.amber,
+                      color: AppColors.warning,
                       size: 28,
                     ),
                   ),

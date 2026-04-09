@@ -24,9 +24,9 @@ Widget _buildPhaseContent(
         theme,
         title: '¡Estás al día!',
         subtitle: 'Tienes la versión más reciente instalada.',
-        icon: Icon(
+        icon: const Icon(
           Icons.check_circle_rounded,
-          color: Colors.green.shade600,
+          color: AppColors.success,
           size: 48,
         ),
         child: Padding(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../shared/widgets/widgets.dart';
 import '../../../core/router/route_names.dart';
+import '../../../core/theme/app_colors.dart';
 import '../providers/app_update_provider.dart';
 import '../providers/app_update_state.dart';
 

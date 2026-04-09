@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../data/category_model.dart';
 
 class GalleryGridTile extends StatelessWidget {
@@ -87,7 +88,7 @@ class GalleryGridTile extends StatelessWidget {
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: item.isFeatured
-                        ? Colors.amber.withValues(alpha: 0.9)
+                        ? AppColors.warning.withValues(alpha: 0.9)
                         : Colors.black.withValues(alpha: 0.55),
                     shape: BoxShape.circle,
                   ),
@@ -111,7 +112,7 @@ class GalleryGridTile extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.8),
+                    color: AppColors.destructive.withValues(alpha: 0.8),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

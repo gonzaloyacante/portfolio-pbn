@@ -111,7 +111,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
               // ── Mantenimiento ──────────────────────────────────────────────
               AppCard(
                 color: _maintenanceMode
-                    ? Colors.orange.withValues(alpha: 0.12)
+                    ? AppColors.warning.withValues(alpha: 0.12)
                     : null,
                 borderRadius: AppRadius.forCard,
                 child: Column(
@@ -121,7 +121,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
                       children: [
                         const Icon(
                           Icons.engineering_outlined,
-                          color: Colors.orange,
+                          color: AppColors.warning,
                         ),
                         const SizedBox(width: 8),
                         Text(
