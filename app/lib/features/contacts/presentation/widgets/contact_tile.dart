@@ -100,7 +100,7 @@ class ContactTile extends StatelessWidget {
                         child: Icon(
                           Icons.star_rounded,
                           size: 14,
-                          color: Color(0xFFF59E0B),
+                          color: AppColors.warning,
                         ),
                       ),
                     Text(

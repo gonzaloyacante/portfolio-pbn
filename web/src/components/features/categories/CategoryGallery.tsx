@@ -61,11 +61,11 @@ export default function CategoryGallery({
   }, [images])
 
   // ── Masonry columns ───────────────────────────────────────────────────────
-  const [columns, setColumns] = useState(1)
+  const [columns, setColumns] = useState(2)
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 1024) setColumns(3)
+      if (window.innerWidth >= 768) setColumns(3)
       else setColumns(2)
     }
     handleResize()

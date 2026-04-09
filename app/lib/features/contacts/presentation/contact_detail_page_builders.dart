@@ -19,7 +19,7 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
             IconButton(
               icon: Icon(
                 isImportant ? Icons.star_rounded : Icons.star_border_rounded,
-                color: isImportant ? const Color(0xFFF59E0B) : null,
+                color: isImportant ? AppColors.warning : null,
               ),
               tooltip: isImportant ? 'Quitar importante' : 'Marcar importante',
               onPressed: _loading ? null : () => _toggleImportant(isImportant),
@@ -111,16 +111,14 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                                             const Icon(
                                               Icons.camera_alt_outlined,
                                               size: 12,
-                                              color: Color(0xFFE1306C),
+                                              color: AppColors.instagramPink,
                                             ),
                                             const SizedBox(width: 4),
                                             Text(
                                               '@${detail.instagramUser}',
                                               style: theme.textTheme.bodySmall
                                                   ?.copyWith(
-                                                    color: const Color(
-                                                      0xFFE1306C,
-                                                    ),
+                                                    color: AppColors.instagramPink,
                                                     decoration: TextDecoration
                                                         .underline,
                                                   ),
