@@ -41,6 +41,7 @@ async function main() {
   // All settings models are singletons identified by key='singleton'
   // Use key-based upsert to handle existing records with any CUID id
   console.log('\n⚙️ Seeding Settings...')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _themeId, ...themeUpdate } = themeSettings
   await prisma.themeSettings.upsert({
     where: { key: 'singleton' },
@@ -48,6 +49,7 @@ async function main() {
     create: themeSettings,
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _homeId, ...homeUpdate } = homeSettings
   await prisma.homeSettings.upsert({
     where: { key: 'singleton' },
@@ -55,6 +57,7 @@ async function main() {
     create: homeSettings,
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _aboutId, ...aboutUpdate } = aboutSettings
   await prisma.aboutSettings.upsert({
     where: { key: 'singleton' },
@@ -62,6 +65,7 @@ async function main() {
     create: aboutSettings,
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _contactId, ...contactUpdate } = contactSettings
   await prisma.contactSettings.upsert({
     where: { key: 'singleton' },
@@ -69,6 +73,7 @@ async function main() {
     create: contactSettings,
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _testimonialSettingsId, ...testimonialSettingsUpdate } = testimonialSettings
   await prisma.testimonialSettings.upsert({
     where: { key: 'singleton' },
@@ -76,6 +81,7 @@ async function main() {
     create: testimonialSettings,
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: _categorySettingsId, ...categorySettingsUpdate } = categorySettings
   await prisma.categorySettings.upsert({
     where: { key: 'singleton' },

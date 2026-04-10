@@ -75,10 +75,17 @@ export default function CategoryGallery({
 
   const columnsData = Array.from({ length: columns }, () => ({
     images: [] as (GalleryImage & { originalIndex: number })[],
+    height: 0,
   }))
 
   images.forEach((img, i) => {
-    columnsData[i % columns].images.push({ ...img, originalIndex: i })
+    const ar = img.height && img.width ? img.height / img.width : 1.5
+    let minCol = 0
+    columnsData.forEach((col, colIdx) => {
+      if (col.height < columnsData[minCol].height) minCol = colIdx
+    })
+    columnsData[minCol].images.push({ ...img, originalIndex: i })
+    columnsData[minCol].height += ar
   })
 
   const distributedImages = columnsData.map((c) => c.images)

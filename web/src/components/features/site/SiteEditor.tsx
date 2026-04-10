@@ -7,10 +7,15 @@ import { Button, Input, Switch } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import type { SiteSettingsData } from '@/actions/settings/site'
 import { updateSiteSettings } from '@/actions/settings/site'
+import { BRAND } from '@/lib/design-tokens'
 
 interface SiteEditorProps {
   settings: SiteSettingsData | null
 }
+
+// Default brand colors for the color-picker editor fields — sourced from design-tokens.
+const DEFAULT_BRAND_COLOR_LIGHT = BRAND.foreground
+const DEFAULT_BRAND_COLOR_DARK = BRAND.darkPrimary
 
 export function SiteEditor({ settings }: SiteEditorProps) {
   const router = useRouter()
@@ -44,7 +49,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
   const [showGalleryPage, setShowGalleryPage] = useState(settings?.showGalleryPage ?? true)
   const [showServicesPage, setShowServicesPage] = useState(settings?.showServicesPage ?? false)
   const [showContactPage, setShowContactPage] = useState(settings?.showContactPage ?? true)
-  const [allowIndexing, setAllowIndexing] = useState(settings?.allowIndexing ?? true)
+  const [allowIndexing] = useState(settings?.allowIndexing ?? true)
 
   async function handleSave() {
     setSaving(true)
@@ -222,7 +227,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={navbarBrandColor || '#1a050a'}
+                    value={navbarBrandColor || DEFAULT_BRAND_COLOR_LIGHT}
                     onChange={(e) => setNavbarBrandColor(e.target.value)}
                     className="border-border h-9 w-9 cursor-pointer rounded border p-0.5"
                     aria-label="Color modo claro"
@@ -230,7 +235,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
                   <Input
                     value={navbarBrandColor}
                     onChange={(e) => setNavbarBrandColor(e.target.value)}
-                    placeholder="#1a050a"
+                    placeholder={DEFAULT_BRAND_COLOR_LIGHT}
                     className="font-mono"
                   />
                 </div>
@@ -240,7 +245,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={navbarBrandColorDark || '#fb7185'}
+                    value={navbarBrandColorDark || DEFAULT_BRAND_COLOR_DARK}
                     onChange={(e) => setNavbarBrandColorDark(e.target.value)}
                     className="border-border h-9 w-9 cursor-pointer rounded border p-0.5"
                     aria-label="Color modo oscuro"
@@ -248,7 +253,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
                   <Input
                     value={navbarBrandColorDark}
                     onChange={(e) => setNavbarBrandColorDark(e.target.value)}
-                    placeholder="#fb7185"
+                    placeholder={DEFAULT_BRAND_COLOR_DARK}
                     className="font-mono"
                   />
                 </div>

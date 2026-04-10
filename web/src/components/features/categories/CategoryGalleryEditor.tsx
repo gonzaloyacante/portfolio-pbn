@@ -342,7 +342,7 @@ export default function CategoryGalleryEditor({
                   } else {
                     showToast.error(data.error ?? 'Error al agregar imágenes')
                   }
-                } catch (err) {
+                } catch (_err) {
                   showToast.error('Error al agregar imágenes a la galería')
                 }
               }}

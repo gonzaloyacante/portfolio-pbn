@@ -42,7 +42,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
       defaultCountry = 'es',
       onChange,
     },
-    ref
+    _ref
   ) => {
     const [focused, setFocused] = useState(false)
     const wrapperRef = useRef<HTMLDivElement>(null)

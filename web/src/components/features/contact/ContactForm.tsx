@@ -1,6 +1,6 @@
 'use client'
 
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactFormSchema, type ContactFormData } from '@/lib/validations'
 import { sendContactEmail } from '@/actions/user/contact'
@@ -33,7 +33,6 @@ export default function ContactForm() {
     register,
     handleSubmit,
     reset,
-    watch,
     setValue,
     control,
     formState: { errors, isSubmitting },
@@ -59,7 +58,7 @@ export default function ContactForm() {
     }
   }, [serviceName, setValue])
 
-  const responsePreference = watch('responsePreference')
+  const responsePreference = useWatch({ control, name: 'responsePreference' })
 
   const onSubmit = async (data: ContactFormData) => {
     try {

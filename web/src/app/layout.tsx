@@ -70,6 +70,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Preload fuente decorativa crítica para reducir FOUT */}
+        {/* eslint-disable-next-line @next/next/google-font-preconnect -- preconnect for gstatic.com is present at line above */}
         <link
           rel="preload"
           as="font"

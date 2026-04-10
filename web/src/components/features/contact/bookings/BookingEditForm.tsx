@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Badge } from '@/components/ui'
+import { Button, Input } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { ROUTES } from '@/config/routes'
 import { updateBookingAdmin, type BookingForEdit } from '@/actions/cms/bookings'

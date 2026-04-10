@@ -15,7 +15,7 @@ import {
   useConfirmDialog,
   ImageUpload,
 } from '@/components/ui'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
 import { Plus, Trash2, Save } from 'lucide-react'
@@ -34,7 +34,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactSettingsFormData>({
     resolver: zodResolver(contactSettingsSchema),
@@ -56,6 +56,20 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       showInstagramEmbed: settings?.showInstagramEmbed ?? false,
     },
   })
+
+  const toggleFieldValues = useWatch({
+    control,
+    name: ['showEmail', 'showPhone', 'showWhatsapp', 'showLocation', 'showSocialLinks', 'showInstagramEmbed'],
+  })
+
+  const toggleValueMap: Record<string, boolean> = {
+    showEmail: toggleFieldValues[0] ?? true,
+    showPhone: toggleFieldValues[1] ?? true,
+    showWhatsapp: toggleFieldValues[2] ?? true,
+    showLocation: toggleFieldValues[3] ?? true,
+    showSocialLinks: toggleFieldValues[4] ?? true,
+    showInstagramEmbed: toggleFieldValues[5] ?? false,
+  }
 
   // Social Links State (Simple local management before save? No, immediate actions)
 
@@ -147,7 +161,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
                 ].map(({ field, label }) => (
                   <label key={field} className="flex items-center gap-3">
                     <Switch
-                      checked={watch(field) ?? true}
+                      checked={toggleValueMap[field] ?? true}
                       onCheckedChange={(v) => setValue(field, v, { shouldDirty: true })}
                     />
                     <span className="text-sm">{label}</span>
@@ -190,7 +204,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
               />
               <label className="flex items-center gap-3">
                 <Switch
-                  checked={watch('showInstagramEmbed') ?? false}
+                  checked={toggleValueMap['showInstagramEmbed'] ?? false}
                   onCheckedChange={(v) => setValue('showInstagramEmbed', v, { shouldDirty: true })}
                 />
                 <span className="text-sm">Mostrar embed de Instagram</span>

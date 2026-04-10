@@ -75,10 +75,25 @@ const eslintConfig = defineConfig([
       "@next/next/no-img-element": "off",
     },
   },
+  // ─── Source files: unused-vars with catch/args ignore patterns ───────────────
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          varsIgnorePattern: "^_",
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
   // ─── Design Token Enforcement ──────────────────────────────────────────────
   // Prohíbe colores HEX hardcodeados fuera del archivo de tokens.
   // Excepciones: design-tokens.ts (fuente de verdad), ColorPicker.tsx (paleta UI),
   // OptimizedImage.tsx (SVG placeholder neutral), visual-editor (inputs nativos).
+  // opengraph-image.tsx: Satori (ImageResponse) no soporta CSS variables — valores raw necesarios.
   {
     files: ["src/**/*.{ts,tsx}"],
     ignores: [
@@ -87,6 +102,7 @@ const eslintConfig = defineConfig([
       "src/components/ui/media/OptimizedImage.tsx",
       "src/components/features/visual-editor/**",
       "src/components/features/theme/ThemeColorSection.tsx",
+      "src/app/opengraph-image.tsx",
     ],
     rules: {
       "no-restricted-syntax": [

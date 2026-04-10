@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from 'vitest'
 vi.mock('@/lib/db', () => ({ prisma: {} }))
 vi.mock('next/cache', () => ({ unstable_cache: vi.fn((fn: Function) => fn) }))
 
-import { seoConfig, generateMetadata, generatePersonSchema } from '@/lib/seo'
+import { seoConfig, generateMetadata } from '@/lib/seo'
 
 // ============================================
 // generateMetadata — extended edge cases
