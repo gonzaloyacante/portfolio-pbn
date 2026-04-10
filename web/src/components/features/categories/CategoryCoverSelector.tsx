@@ -5,19 +5,14 @@ import Image from 'next/image'
 import { Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import ImageUpload from '@/components/ui/media/ImageUpload'
 import { getCategoryImages } from '@/actions/cms/category'
-import { Loader2, Check, Image as ImageIcon, Upload } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Image as ImageIcon, Upload } from 'lucide-react'
+import { GalleryImagePicker } from './GalleryImagePicker'
+import type { GalleryCoverImage } from './types'
 
 interface CategoryCoverSelectorProps {
   categoryId: string
   currentCoverUrl?: string | null
   onSelect?: (url: string) => void
-}
-
-interface GalleryImage {
-  id: string
-  url: string
-  publicId: string
 }
 
 export default function CategoryCoverSelector({
@@ -26,10 +21,9 @@ export default function CategoryCoverSelector({
   onSelect,
 }: CategoryCoverSelectorProps) {
   const [selectedUrl, setSelectedUrl] = useState<string | null>(currentCoverUrl || null)
-  const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([])
+  const [galleryImages, setGalleryImages] = useState<GalleryCoverImage[]>([])
   const [loading, setLoading] = useState(false)
 
-  // Fetch gallery images on mount
   useEffect(() => {
     const fetchImages = async () => {
       setLoading(true)
@@ -51,7 +45,6 @@ export default function CategoryCoverSelector({
     <div className="space-y-4">
       <input type="hidden" name="coverImageUrl" value={selectedUrl || ''} />
 
-      {/* Preview Actual */}
       {selectedUrl && (
         <div className="border-primary/20 bg-muted/30 relative h-48 w-full overflow-hidden rounded-xl border-2">
           <Image src={selectedUrl} alt="Portada seleccionada" fill className="object-cover" />
@@ -83,56 +76,19 @@ export default function CategoryCoverSelector({
 
         <TabsContent value="gallery" className="mt-4">
           <div className="bg-card rounded-lg border p-4">
-            {loading ? (
-              <div className="flex h-40 items-center justify-center">
-                <Loader2 className="text-primary animate-spin" />
-              </div>
-            ) : galleryImages.length > 0 ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
-                {galleryImages.map((img) => (
-                  <div
-                    key={img.id}
-                    onClick={() => handleSelect(img.url)}
-                    className={cn(
-                      'group relative aspect-square cursor-pointer overflow-hidden rounded-md border-2 transition-all hover:scale-105',
-                      selectedUrl === img.url
-                        ? 'border-primary ring-primary ring-2 ring-offset-2'
-                        : 'hover:border-primary/50 border-transparent'
-                    )}
-                  >
-                    <Image
-                      src={img.url}
-                      alt="Imagen de galería"
-                      fill
-                      className="object-cover"
-                      sizes="150px"
-                    />
-                    {selectedUrl === img.url && (
-                      <div className="bg-primary/20 absolute inset-0 flex items-center justify-center">
-                        <div className="bg-primary rounded-full p-1 text-white shadow-sm">
-                          <Check size={16} />
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute right-0 bottom-0 left-0 truncate bg-black/60 p-1 text-center text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100">
-                      {img.url.split('/').pop()?.split('.')[0] ?? 'imagen'}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-muted-foreground py-8 text-center">
-                <p>No hay imágenes en esta categoría.</p>
-                <p className="text-sm">Sube una imagen nueva.</p>
-              </div>
-            )}
+            <GalleryImagePicker
+              images={galleryImages}
+              selectedUrl={selectedUrl}
+              loading={loading}
+              onSelect={handleSelect}
+            />
           </div>
         </TabsContent>
 
         <TabsContent value="upload" className="mt-4">
           <Card className="p-6">
             <ImageUpload
-              name="coverImageUpload" // Temporary name, we handle value via onSelect
+              name="coverImageUpload"
               label="Subir Imagen de Portada"
               folder="portfolio/categories"
               maxFiles={1}
@@ -151,3 +107,4 @@ export default function CategoryCoverSelector({
     </div>
   )
 }
+
