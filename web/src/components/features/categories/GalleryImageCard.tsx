@@ -44,10 +44,10 @@ export function GalleryImageCard({ image, showTitles, onClick }: GalleryImageCar
           className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
           variant="card"
         />
-        <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-foreground/20 opacity-0 transition-opacity group-hover:opacity-100" />
         {showTitles && (
           <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
-            <p className="truncate text-xs font-bold text-white drop-shadow-md">{image.title}</p>
+            <p className="truncate text-xs font-bold text-background drop-shadow-md">{image.title}</p>
           </div>
         )}
       </motion.div>

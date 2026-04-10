@@ -47,10 +47,10 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
       <div
         {...attributes}
         {...listeners}
-        className="absolute top-2 left-2 z-10 cursor-grab rounded-lg bg-black/50 p-1.5 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        className="absolute top-2 left-2 z-10 cursor-grab rounded-lg bg-foreground/50 p-1.5 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 active:cursor-grabbing"
         aria-label={`Mover ${image.title}`}
       >
-        <GripVertical size={14} className="text-white" />
+        <GripVertical size={14} className="text-background" />
       </div>
 
       {/* Featured toggle + position badge */}
@@ -65,21 +65,21 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
           className={cn(
             'flex h-6 w-6 items-center justify-center rounded-full backdrop-blur-sm transition-colors',
             image.isFeatured
-              ? 'bg-yellow-400/90 text-yellow-900'
-              : 'bg-black/50 text-white/70 hover:text-yellow-400'
+              ? 'bg-warning text-warning-foreground'
+              : 'bg-foreground/50 text-background/70 hover:text-warning'
           )}
         >
           <Star size={12} className={image.isFeatured ? 'fill-current' : ''} />
         </button>
-        <div className="rounded-full bg-black/50 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+        <div className="rounded-full bg-foreground/50 px-2 py-0.5 text-xs font-medium text-background backdrop-blur-sm">
           #{index + 1}
         </div>
       </div>
 
       {/* Featured indicator — always visible */}
       {image.isFeatured && (
-        <div className="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-yellow-400/90 opacity-100 group-hover:opacity-0">
-          <Star size={12} className="fill-current text-yellow-900" />
+        <div className="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-warning opacity-100 group-hover:opacity-0">
+          <Star size={12} className="fill-current text-warning-foreground" />
         </div>
       )}
 
@@ -95,8 +95,8 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
       </div>
 
       {/* Title hover overlay */}
-      <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/70 to-transparent p-3 transition-transform duration-300 group-hover:translate-y-0">
-        <p className="truncate text-xs font-medium text-white">{image.title}</p>
+      <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-foreground/70 to-transparent p-3 transition-transform duration-300 group-hover:translate-y-0">
+        <p className="truncate text-xs font-medium text-background">{image.title}</p>
       </div>
     </motion.div>
   )
