@@ -13,10 +13,11 @@ const GoogleFontPicker = dynamic(
 import { EditorDualColorControl } from './components/EditorColorControl'
 import { EditorSliderControl } from './components/EditorSliderControl'
 import { EditorZIndexControl } from './components/EditorZIndexControl'
-import { EditorPositionControl } from './components/EditorPositionControl'
 import { EditorImageUpload } from './components/EditorImageUpload'
 import { EditorVariantControl } from './components/EditorVariantControl'
 import { EditorSelectControl } from './components/EditorSelectControl'
+import { MobileOverridableSlider } from './components/MobileOverridableSlider'
+import { MobileOverridablePosition } from './components/MobileOverridablePosition'
 import { ELEMENT_CONFIG } from './propertyEditorConfig'
 import type { EditableElement, ViewportMode } from './types'
 
@@ -29,32 +30,6 @@ const IMAGE_STYLES = [
   { value: 'portrait', label: 'Retrato (3:4)' },
   { value: 'star', label: 'Estrella' },
 ]
-
-function MobileInheritNote({ desktopLabel }: { desktopLabel: string }) {
-  return (
-    <p className="text-muted-foreground mt-1 text-xs italic">
-      Heredado de escritorio: {desktopLabel}
-    </p>
-  )
-}
-
-function MobileResetButton({
-  desktopLabel,
-  onReset,
-}: {
-  desktopLabel: string
-  onReset: () => void
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onReset}
-      className="text-muted-foreground hover:text-foreground mt-1 text-xs underline"
-    >
-      Restaurar al valor de escritorio ({desktopLabel})
-    </button>
-  )
-}
 
 interface PropertyEditorProps {
   element: Exclude<EditableElement, null>
@@ -81,7 +56,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
 
   return (
     <div className="space-y-6">
-      {/* Mobile editing banner */}
       {isMobileEditing && (
         <div className="bg-primary/10 text-primary border-primary/20 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium">
           <Smartphone className="h-3.5 w-3.5 shrink-0" />
@@ -90,7 +64,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         </div>
       )}
 
-      {/* Text Input */}
       {fields.text && (
         <Input
           label="Texto"
@@ -99,7 +72,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Link Input (CTA) */}
       {fields.link && (
         <Input
           label="URL Destino"
@@ -108,7 +80,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Variant Control (CTA) */}
       {fields.variant && (
         <div className="my-4 border-t pt-4">
           <EditorVariantControl
@@ -118,7 +89,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         </div>
       )}
 
-      {/* Image Upload */}
       {fields.imageUrl && (
         <EditorImageUpload
           label={element === 'illustration' ? 'Subir Ilustración' : 'Imagen Principal'}
@@ -129,7 +99,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Image Style Select */}
       {fields.imageStyle && (
         <EditorSelectControl
           label="Estilo de Imagen"
@@ -139,7 +108,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Font Picker */}
       {fields.font && fields.fontUrl && (
         <div className={fields.variant ? 'my-4 border-t pt-4' : ''}>
           <GoogleFontPicker
@@ -153,7 +121,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         </div>
       )}
 
-      {/* Font Size — mobile can override */}
       {fields.fontSize && (
         <MobileOverridableSlider
           label={element === 'ctaButton' ? 'Tamaño de Texto' : 'Tamaño'}
@@ -167,7 +134,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Size (illustration) — mobile can override */}
       {fields.size && (
         <MobileOverridableSlider
           label="Tamaño"
@@ -181,7 +147,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Opacity */}
       {fields.opacity && (
         <EditorSliderControl
           label="Opacidad (%)"
@@ -193,7 +158,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Dual Color Control */}
       {fields.color && fields.colorDark && (
         <EditorDualColorControl
           label="Color"
@@ -204,7 +168,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Z-Index */}
       {fields.zIndex && (
         <EditorZIndexControl
           value={(settings[fields.zIndex] as number) ?? defaults.zIndex ?? 10}
@@ -212,7 +175,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Position Control — mobile can override */}
       {fields.offsetX && fields.offsetY && (
         <MobileOverridablePosition
           fields={fields}
@@ -222,7 +184,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Alt Text (accessibility) */}
       {fields.alt && (
         <Input
           label="Texto alternativo (alt)"
@@ -232,7 +193,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         />
       )}
 
-      {/* Show Featured Images Toggle */}
       {fields.showFeatured && (
         <div className="flex items-center justify-between rounded-lg border p-3">
           <div>
@@ -250,7 +210,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         </div>
       )}
 
-      {/* Featured Count */}
       {fields.featuredCount && (
         <EditorSliderControl
           label="Número de imágenes destacadas"
@@ -259,149 +218,6 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
           min={1}
           max={20}
         />
-      )}
-    </div>
-  )
-}
-
-// ─── Helper sub-components for mobile-overridable fields ─────────────────────
-
-interface MobileOverridableSliderProps {
-  label: string
-  desktopKey: keyof HomeSettingsData
-  mobileKey?: keyof HomeSettingsData
-  settings: HomeSettingsData
-  onUpdate: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
-  defaultValue: number
-  min: number
-  max: number
-}
-
-function MobileOverridableSlider({
-  label,
-  desktopKey,
-  mobileKey,
-  settings,
-  onUpdate,
-  defaultValue,
-  min,
-  max,
-}: MobileOverridableSliderProps) {
-  const desktopVal = (settings[desktopKey] as number) ?? defaultValue
-  const mobileVal = mobileKey ? (settings[mobileKey] as number | null) : undefined
-  const effectiveKey = mobileKey ?? desktopKey
-  const effectiveValue = mobileKey ? (mobileVal ?? desktopVal) : desktopVal
-  const isInherited = mobileKey != null && mobileVal == null
-
-  return (
-    <div>
-      <EditorSliderControl
-        label={mobileKey ? `${label} (móvil)` : label}
-        value={effectiveValue}
-        onChange={(val: number) =>
-          onUpdate(effectiveKey, val as HomeSettingsData[typeof effectiveKey])
-        }
-        min={min}
-        max={max}
-      />
-      {mobileKey && !isInherited && (
-        <MobileResetButton
-          desktopLabel={`${desktopVal}px`}
-          onReset={() => onUpdate(mobileKey, null as HomeSettingsData[typeof mobileKey])}
-        />
-      )}
-      {isInherited && <MobileInheritNote desktopLabel={`${desktopVal}px`} />}
-    </div>
-  )
-}
-
-interface MobileOverridablePositionProps {
-  fields: {
-    offsetX?: keyof HomeSettingsData
-    offsetY?: keyof HomeSettingsData
-    rotation?: keyof HomeSettingsData
-  }
-  mobileFields?: {
-    offsetX?: keyof HomeSettingsData
-    offsetY?: keyof HomeSettingsData
-    rotation?: keyof HomeSettingsData
-  }
-  settings: HomeSettingsData
-  onUpdate: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
-}
-
-function MobileOverridablePosition({
-  fields,
-  mobileFields,
-  settings,
-  onUpdate,
-}: MobileOverridablePositionProps) {
-  const mobileXKey = mobileFields?.offsetX
-  const mobileYKey = mobileFields?.offsetY
-  const mobileRotKey = mobileFields?.rotation
-
-  const desktopX = (settings[fields.offsetX!] as number) ?? 0
-  const desktopY = (settings[fields.offsetY!] as number) ?? 0
-  const desktopRot = fields.rotation ? ((settings[fields.rotation] as number) ?? 0) : undefined
-
-  const currentX = mobileXKey ? (settings[mobileXKey] as number | null) : desktopX
-  const currentY = mobileYKey ? (settings[mobileYKey] as number | null) : desktopY
-  const currentRot = mobileRotKey ? (settings[mobileRotKey] as number | null) : desktopRot
-
-  const effectiveXKey = mobileXKey ?? fields.offsetX!
-  const effectiveYKey = mobileYKey ?? fields.offsetY!
-  const effectiveRotKey = mobileRotKey ?? fields.rotation
-
-  const posHasOverride = mobileXKey != null && (currentX != null || currentY != null)
-  const rotHasOverride = mobileRotKey != null && currentRot != null
-
-  return (
-    <div>
-      <EditorPositionControl
-        label={mobileXKey ? 'Posición (móvil)' : undefined}
-        offsetX={(currentX ?? desktopX) as number}
-        offsetY={(currentY ?? desktopY) as number}
-        onChangeX={(val: number) =>
-          onUpdate(effectiveXKey, val as HomeSettingsData[typeof effectiveXKey])
-        }
-        onChangeY={(val: number) =>
-          onUpdate(effectiveYKey, val as HomeSettingsData[typeof effectiveYKey])
-        }
-        rotation={effectiveRotKey ? ((currentRot ?? desktopRot ?? 0) as number) : undefined}
-        onChangeRotation={
-          effectiveRotKey
-            ? (val: number) =>
-                onUpdate(effectiveRotKey, val as HomeSettingsData[typeof effectiveRotKey])
-            : undefined
-        }
-      />
-      {mobileXKey && (
-        <div className="mt-1 space-y-0.5">
-          {posHasOverride ? (
-            <MobileResetButton
-              desktopLabel={`X:${desktopX}, Y:${desktopY}`}
-              onReset={() => {
-                onUpdate(mobileXKey, null as HomeSettingsData[typeof mobileXKey])
-                if (mobileYKey) onUpdate(mobileYKey, null as HomeSettingsData[typeof mobileYKey])
-              }}
-            />
-          ) : (
-            <MobileInheritNote desktopLabel={`X:${desktopX}, Y:${desktopY}`} />
-          )}
-          {mobileRotKey &&
-            (rotHasOverride ? (
-              <MobileResetButton
-                desktopLabel={`${desktopRot ?? 0}°`}
-                onReset={() =>
-                  onUpdate(mobileRotKey, null as HomeSettingsData[typeof mobileRotKey])
-                }
-              />
-            ) : (
-              desktopRot !== undefined && (
-                <MobileInheritNote desktopLabel={`Rotación: ${desktopRot}°`} />
-              )
-            ))}
-        </div>
       )}
     </div>
   )
