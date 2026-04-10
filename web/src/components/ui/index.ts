@@ -61,12 +61,16 @@ export {
   SkeletonAnalyticsChart,
   SkeletonSmallCard,
   SkeletonTable,
+} from './feedback/SkeletonBlocks'
+export {
   SkeletonImageGrid,
   SkeletonCategoryGrid,
   SkeletonServiceList,
   SkeletonTestimonialList,
   SkeletonTrashGrid,
   SkeletonContactList,
+} from './feedback/SkeletonLists'
+export {
   SkeletonDashboardPage,
   SkeletonContactsPage,
   SkeletonCategoriesPage,
@@ -78,7 +82,7 @@ export {
   SkeletonAnalyticsPage,
   SkeletonCalendarPage,
   SkeletonGalleryPage,
-} from './feedback/SkeletonAdmin'
+} from './feedback/SkeletonPages'
 export { ErrorBoundary } from './feedback/ErrorBoundary'
 
 // Animations
