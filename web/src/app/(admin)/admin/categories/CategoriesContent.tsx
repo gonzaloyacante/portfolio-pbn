@@ -3,18 +3,19 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteCategoryAction, reorderCategories } from '@/actions/cms/category'
-import { Button, Card, Badge, useConfirmDialog } from '@/components/ui'
+import { Button, Card, useConfirmDialog } from '@/components/ui'
 import ViewToggle, { type ViewMode } from '@/components/layout/ViewToggle'
 import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
-import { Plus, ExternalLink, Pencil, Trash2, Images, Search } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import type { Category } from '@/generated/prisma/client'
 import { motion, AnimatePresence } from '@/components/ui'
 import { useOptimisticReorder } from '@/hooks/useOptimisticReorder'
 import { TOAST_MESSAGES } from '@/lib/toast-messages'
 import { showToast } from '@/lib/toast'
+import { CategoryGridCard } from './CategoryGridCard'
+import { CategoryListItem } from './CategoryListItem'
 
 type CategoryWithCount = Category & {
   _count: { images: number }
@@ -28,15 +29,11 @@ interface CategoriesContentProps {
 export default function CategoriesContent({
   categories: initialCategories,
 }: CategoriesContentProps) {
-  // State
   const [view, setView] = useState<ViewMode>('grid')
   const [searchQuery, setSearchQuery] = useState('')
   const router = useRouter()
-
-  // Confirmation Dialog
   const { confirm, Dialog } = useConfirmDialog()
 
-  // Delete handler with confirmation
   const handleDelete = async (categoryId: string, categoryName: string) => {
     const isConfirmed = await confirm({
       title: '¿Eliminar categoría?',
@@ -54,7 +51,6 @@ export default function CategoriesContent({
     }
   }
 
-  // Optimistic reordering using custom hook
   const { items: categories, handleReorder } = useOptimisticReorder<CategoryWithCount>({
     initialItems: initialCategories,
     reorderAction: reorderCategories,
@@ -70,174 +66,13 @@ export default function CategoriesContent({
           (c.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
       )
     : categories
-  const renderCategoryItem = (category: CategoryWithCount, isDragging: boolean) => {
-    // Priority: explicit category cover → first gallery image → empty
-    const thumbnailUrl = category.coverImageUrl || category.images[0]?.url
 
-    if (view === 'grid') {
-      return (
-        <Card
-          className={`group hover:border-primary h-full overflow-hidden transition-all hover:shadow-lg ${
-            isDragging ? 'ring-primary/20 scale-105 shadow-xl ring-2' : ''
-          }`}
-        >
-          {/* Thumbnail */}
-          <div className="bg-muted relative aspect-video overflow-hidden">
-            {thumbnailUrl ? (
-              <Image
-                src={thumbnailUrl}
-                alt={category.name}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-110"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center opacity-20">
-                <span className="text-4xl">📁</span>
-              </div>
-            )}
-            <Badge className="absolute top-2 right-2 shadow-sm">#{category.sortOrder ?? 0}</Badge>
-          </div>
-
-          {/* Info */}
-          <div className="space-y-3 p-5">
-            <div>
-              <h3 className="text-foreground truncate text-lg font-bold">{category.name}</h3>
-            </div>
-
-            {category.description && (
-              <p className="text-muted-foreground line-clamp-2 min-h-10 text-sm">
-                {category.description}
-              </p>
-            )}
-
-            <div className="text-muted-foreground flex gap-3 text-xs">
-              <span>🖼️ {category._count.images} imágenes</span>
-            </div>
-
-            {/* Actions */}
-            <div className="border-border mt-auto flex gap-2 border-t pt-4">
-              <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
-                <Link
-                  href={`${ROUTES.public.portfolio}/${category.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <ExternalLink size={14} />
-                  Ver
-                </Link>
-              </Button>
-              <Button asChild size="sm" className="flex-1 gap-2">
-                <Link href={ROUTES.admin.editCategory(category.id)}>
-                  <Pencil size={14} />
-                  Editar
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
-                <Link href={ROUTES.admin.categoryGallery(category.id)}>
-                  <Images size={14} />
-                  Galería
-                </Link>
-              </Button>
-              <Button
-                variant="destructive"
-                size="sm"
-                aria-label={`Eliminar categoría ${category.name}`}
-                onClick={() => handleDelete(category.id, category.name)}
-              >
-                <Trash2 size={14} />
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )
-    }
-
-    // List View
-    return (
-      <div
-        className={`border-border bg-card hover:border-primary flex items-center gap-4 rounded-lg border p-3 transition-colors ${
-          isDragging ? 'bg-accent/10 shadow-lg' : ''
-        }`}
-      >
-        {/* Drag Handle placeholder for alignment */}
-        <div className="w-6" />
-
-        {/* Thumbnail */}
-        <div className="bg-muted relative h-16 w-24 shrink-0 overflow-hidden rounded-md">
-          {thumbnailUrl ? (
-            <Image
-              src={thumbnailUrl}
-              alt={category.name}
-              fill
-              className="object-cover"
-              sizes="96px"
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center opacity-20">
-              <span className="text-2xl">📁</span>
-            </div>
-          )}
-        </div>
-
-        {/* Info */}
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="text-foreground truncate font-semibold">{category.name}</h3>
-            <Badge variant="outline" className="text-xs">
-              #{category.sortOrder ?? 0}
-            </Badge>
-          </div>
-
-          <div className="text-muted-foreground mt-1 text-xs">
-            {category._count.images} imágenes
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-1">
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            aria-label={`Ver categoría ${category.name} en público`}
-          >
-            <Link
-              href={`${ROUTES.public.portfolio}/${category.slug}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <ExternalLink size={16} />
-            </Link>
-          </Button>
-          <Button
-            asChild
-            variant="ghost"
-            size="sm"
-            aria-label={`Editar categoría ${category.name}`}
-          >
-            <Link href={ROUTES.admin.editCategory(category.id)}>
-              <Pencil size={16} />
-            </Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm" aria-label={`Ver galería de ${category.name}`}>
-            <Link href={ROUTES.admin.categoryGallery(category.id)}>
-              <Images size={16} />
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-destructive"
-            aria-label={`Eliminar categoría ${category.name}`}
-            onClick={() => handleDelete(category.id, category.name)}
-          >
-            <Trash2 size={16} />
-          </Button>
-        </div>
-      </div>
+  const renderItem = (category: CategoryWithCount, isDragging: boolean) =>
+    view === 'grid' ? (
+      <CategoryGridCard category={category} isDragging={isDragging} onDelete={handleDelete} />
+    ) : (
+      <CategoryListItem category={category} isDragging={isDragging} onDelete={handleDelete} />
     )
-  }
 
   return (
     <>
@@ -271,7 +106,7 @@ export default function CategoriesContent({
               items={filteredCategories}
               getItemId={(c) => c.id}
               onReorder={handleReorder}
-              renderItem={renderCategoryItem}
+              renderItem={renderItem}
               strategy={view === 'grid' ? 'grid' : 'vertical'}
               columns={3}
             />

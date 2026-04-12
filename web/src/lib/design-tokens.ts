@@ -67,11 +67,11 @@ export const TYPOGRAPHY_DEFAULTS = {
 // ─── Default Theme (defaults para `getThemeValues` sin DB) ───────────────────
 export const DEFAULT_CSS_VARIABLES: Record<string, string> = {
   '--primary': BRAND.primary,
-  '--secondary': '#ffaadd', // Valor original legacy del seed (distinto al brand.secondary)
+  '--secondary': BRAND.secondary,
   '--accent': BRAND.accent,
-  '--background': BRAND.accent, // legacy: accent como bg
-  '--foreground': BRAND.fallbackLight.foreground,
-  '--card-bg': '#ffaadd',
+  '--background': BRAND.background,
+  '--foreground': BRAND.foreground,
+  '--card-bg': BRAND.card,
 
   '--dark-primary': BRAND.darkPrimary,
   '--dark-secondary': BRAND.darkSecondary,

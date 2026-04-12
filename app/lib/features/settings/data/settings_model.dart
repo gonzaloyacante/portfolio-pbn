@@ -62,20 +62,20 @@ abstract class ContactSettings with _$ContactSettings {
 abstract class ThemeSettings with _$ThemeSettings {
   const factory ThemeSettings({
     String? id,
-    // Light mode
+    // Light mode — matches AppColors & design-tokens.ts BRAND values
     @Default('#6c0a0a') String primaryColor,
-    @Default('#ffaadd') String secondaryColor,
+    @Default('#fce7f3') String secondaryColor,
     @Default('#fff1f9') String accentColor,
-    @Default('#fff1f9') String backgroundColor,
-    @Default('#000000') String textColor,
-    @Default('#ffaadd') String cardBgColor,
-    // Dark mode
-    @Default('#ffaadd') String darkPrimaryColor,
-    @Default('#6c0a0a') String darkSecondaryColor,
-    @Default('#000000') String darkAccentColor,
-    @Default('#6c0a0a') String darkBackgroundColor,
-    @Default('#fff1f9') String darkTextColor,
-    @Default('#ffaadd') String darkCardBgColor,
+    @Default('#fff8fc') String backgroundColor,
+    @Default('#1a050a') String textColor,
+    @Default('#ffffff') String cardBgColor,
+    // Dark mode — matches AppColors darkXxx values
+    @Default('#fb7185') String darkPrimaryColor,
+    @Default('#881337') String darkSecondaryColor,
+    @Default('#2a1015') String darkAccentColor,
+    @Default('#0f0505') String darkBackgroundColor,
+    @Default('#fafafa') String darkTextColor,
+    @Default('#1c0a0f') String darkCardBgColor,
     // Typography — Base
     @Default('Poppins') String headingFont,
     String? headingFontUrl,

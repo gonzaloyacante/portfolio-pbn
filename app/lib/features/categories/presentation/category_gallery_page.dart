@@ -55,6 +55,9 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   /// ID del ítem actualmente arrastrado en la vista de cuadrícula.
   String? _draggingId;
 
+  /// ID del ítem que acaba de ser soltado — activa la animación de drop.
+  String? _lastDroppedId;
+
   void _rebuild(VoidCallback fn) => setState(fn);
 
   void _onSearch(String value) => setState(() => _searchQuery = value.trim());
@@ -390,6 +393,11 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       final item = _items!.removeAt(fromIdx);
       _items!.insert(toIdx, item);
       _dirty = true;
+      _lastDroppedId = item.id;
+    });
+    // Clear the drop marker after the bounce animation finishes.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => _lastDroppedId = null);
     });
   }
 

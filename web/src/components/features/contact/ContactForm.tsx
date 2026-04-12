@@ -1,18 +1,19 @@
 'use client'
 
-import { useForm, Controller, useWatch } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactFormSchema, type ContactFormData } from '@/lib/validations'
 import { sendContactEmail } from '@/actions/user/contact'
-import { Button, PhoneInput } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { Mail, Phone, MessageCircle, Send, Loader2, CheckCircle2, Instagram } from 'lucide-react'
+import { Mail, Phone, MessageCircle, Send, CheckCircle2, Instagram } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { ContactField } from './ContactField'
 
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP' | 'INSTAGRAM'
 
@@ -227,96 +228,16 @@ export default function ContactForm() {
         {/* Submit — uses Button directly (RHF form, not Server Action) */}
         <Button
           type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-xl bg-(--primary) py-4 text-(--background) transition-all hover:opacity-90"
+          loading={isSubmitting}
+          leftIcon={<Send size={20} />}
+          className="w-full rounded-xl py-4"
           size="lg"
         >
-          {isSubmitting ? (
-            <span className="flex items-center justify-center gap-2">
-              <Loader2 size={20} className="animate-spin" />
-              Enviando...
-            </span>
-          ) : (
-            <span className="flex items-center justify-center gap-2">
-              <Send size={20} />
-              Enviar mensaje
-            </span>
-          )}
+          Enviar mensaje
         </Button>
 
         <p className="text-center text-xs text-(--foreground)/60">* Campos obligatorios</p>
       </form>
     </motion.div>
-  )
-}
-
-const inputClass =
-  'w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none'
-
-function ContactField({
-  preference,
-  register,
-  control,
-  errors,
-}: {
-  preference: ResponsePreference
-  register: ReturnType<typeof useForm<ContactFormData>>['register']
-  control: ReturnType<typeof useForm<ContactFormData>>['control']
-  errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors']
-}) {
-  if (preference === 'INSTAGRAM') {
-    return (
-      <div>
-        <label htmlFor="instagramUser" className="mb-2 block text-sm font-semibold text-(--foreground)">
-          Tu usuario de Instagram *
-        </label>
-        <input
-          {...register('instagramUser')}
-          id="instagramUser"
-          className={inputClass}
-          placeholder="@tu_usuario"
-          autoComplete="off"
-        />
-        {errors.instagramUser && (
-          <p className="mt-1 text-sm text-red-500">{errors.instagramUser.message}</p>
-        )}
-      </div>
-    )
-  }
-
-  if (preference === 'WHATSAPP' || preference === 'PHONE') {
-    return (
-      <Controller
-        name="phone"
-        control={control}
-        render={({ field }) => (
-          <PhoneInput
-            label="Tu teléfono *"
-            value={field.value || ''}
-            onChange={field.onChange}
-            error={errors.phone?.message}
-          />
-        )}
-      />
-    )
-  }
-
-  // EMAIL
-  return (
-    <div>
-      <label htmlFor="email" className="mb-2 block text-sm font-semibold text-(--foreground)">
-        Tu email *
-      </label>
-      <input
-        {...register('email')}
-        type="email"
-        inputMode="email"
-        id="email"
-        className={inputClass}
-        placeholder="tu@email.com"
-        autoComplete="email"
-      />
-      {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
-    </div>
   )
 }

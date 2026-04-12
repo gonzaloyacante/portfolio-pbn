@@ -246,15 +246,18 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                 aspectRatio: aspectRatio,
                 color: scheme.primary,
               ),
-              child: ClipRRect(
-                borderRadius: AppRadius.asRounded(AppRadius.md),
-                child: GalleryGridTile(
-                  item: img,
-                  position: position,
-                  onTap: () =>
-                      _ImageViewer.show(context, img.url, position: position),
-                  onDelete: () => _deleteImage(img),
-                  onToggleFeatured: () => _toggleImageFeatured(img),
+              child: _DroppedAnimator(
+                dropped: _lastDroppedId == img.id,
+                child: ClipRRect(
+                  borderRadius: AppRadius.asRounded(AppRadius.md),
+                  child: GalleryGridTile(
+                    item: img,
+                    position: position,
+                    onTap: () =>
+                        _ImageViewer.show(context, img.url, position: position),
+                    onDelete: () => _deleteImage(img),
+                    onToggleFeatured: () => _toggleImageFeatured(img),
+                  ),
                 ),
               ),
             ),
