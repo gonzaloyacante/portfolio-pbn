@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 
 /// Muestra una vista previa visual de los colores del tema en tiempo real.
@@ -38,7 +39,7 @@ class ThemeColorPreview extends StatelessWidget {
     final lSecondary = _parse(lightSecondary) ?? colorScheme.secondary;
     final lBg = _parse(lightBg) ?? colorScheme.surface;
     final dPrimary = _parse(darkPrimary) ?? colorScheme.primary;
-    final dBg = _parse(darkBg) ?? const Color(0xFF0F0505);
+    final dBg = _parse(darkBg) ?? AppColors.darkBackground;
 
     return Container(
       decoration: BoxDecoration(

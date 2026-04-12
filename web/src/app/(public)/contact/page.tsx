@@ -3,6 +3,7 @@ import { getSocialLinks } from '@/actions/settings/social'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import ContactForm from '@/components/features/contact/ContactForm'
+import InstagramEmbed from '@/components/features/contact/InstagramEmbed'
 import {
   Instagram,
   Music2,
@@ -13,6 +14,7 @@ import {
   MapPin,
   Phone,
   Mail,
+  Heart,
 } from 'lucide-react'
 import { OptimizedImage, FadeIn } from '@/components/ui'
 import { Suspense } from 'react'
@@ -59,6 +61,14 @@ export default async function ContactPage() {
   }
 
   const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
+
+  // Derive Instagram from social links (configured in admin → Redes Sociales)
+  const instagramLink = socialLinks.find((l) => l.platform === 'instagram')
+  const instagramUrl = instagramLink?.url || contactSettings?.instagram || null
+  const instagramDisplayName =
+    instagramLink?.username ||
+    contactSettings?.instagramUsername ||
+    (instagramUrl ? instagramUrl.split('/').filter(Boolean).pop() : null)
 
   return (
     <section className="bg-background w-full transition-colors duration-500">
@@ -162,41 +172,31 @@ export default async function ContactPage() {
             )}
           </div>
 
-          {/* Instagram Widget Desktop */}
-          {contactSettings?.showInstagram && contactSettings?.instagram && (
-            <a
-              href={contactSettings.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-primary/20 hover:border-primary/60 mb-6 flex w-full max-w-xs items-center gap-4 rounded-2xl border bg-gradient-to-r from-pink-50 to-purple-50 px-5 py-4 transition-all hover:scale-[1.02] dark:from-pink-950/20 dark:to-purple-950/20"
-            >
-              <Instagram className="text-primary h-8 w-8 flex-shrink-0" />
-              <div className="min-w-0">
-                <p className="text-muted-foreground text-xs tracking-widest uppercase">
-                  Sígueme en Instagram
-                </p>
-                <p className="text-foreground truncate font-semibold">
-                  {contactSettings.instagramUsername
-                    ? `@${contactSettings.instagramUsername.replace(/^@/, '')}`
-                    : 'Instagram'}
-                </p>
-              </div>
-            </a>
+          {/* Instagram Embed Desktop */}
+          {contactSettings?.showInstagramEmbed && contactSettings?.instagramPostUrl && (
+            <div className="mb-6 w-full max-w-sm">
+              <InstagramEmbed postUrl={contactSettings.instagramPostUrl} />
+            </div>
           )}
 
           {/* Social Links Desktop */}
           {contactSettings?.showSocialLinks && socialLinks.length > 0 && (
-            <div className="flex flex-wrap justify-start gap-4">
+            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
               {socialLinks.map((link) => (
                 <a
                   key={link.id}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-card text-foreground hover:bg-primary hover:text-background flex h-12 w-12 items-center justify-center rounded-full transition-all hover:scale-110"
-                  aria-label={link.platform}
+                  className="border-primary/20 hover:border-primary/60 flex w-full max-w-xs items-center gap-4 rounded-2xl border px-5 py-4 transition-all hover:scale-[1.02] dark:from-pink-950/20 dark:to-purple-950/20"
                 >
                   {iconMap[link.platform] || <span className="text-lg">🔗</span>}
+                  <div className="min-w-0">
+                    <p>{link.platform.charAt(0).toUpperCase() + link.platform.slice(1)}</p>
+                    <p className="text-foreground truncate font-semibold">
+                      {link.username ? `@${link.username.replace(/^@/, '')}` : link.platform}
+                    </p>
+                  </div>
                 </a>
               ))}
             </div>
@@ -208,18 +208,7 @@ export default async function ContactPage() {
           <Suspense
             fallback={<div className="bg-muted h-96 w-full animate-pulse rounded-[2.5rem]" />}
           >
-            <ContactForm
-              formTitle={contactSettings?.formTitle}
-              nameLabel={contactSettings?.nameLabel}
-              emailLabel={contactSettings?.emailLabel}
-              phoneLabel={contactSettings?.phoneLabel}
-              messageLabel={contactSettings?.messageLabel}
-              preferenceLabel={contactSettings?.preferenceLabel}
-              submitLabel={contactSettings?.submitLabel}
-              successTitle={contactSettings?.successTitle}
-              successMessage={contactSettings?.successMessage}
-              sendAnotherLabel={contactSettings?.sendAnotherLabel}
-            />
+            <ContactForm />
           </Suspense>
 
           {/* MOBILE SOCIAL LINKS (Shown below form on mobile only) */}
@@ -240,21 +229,21 @@ export default async function ContactPage() {
           </div>
 
           {/* Instagram Widget Mobile */}
-          {contactSettings?.showInstagram && contactSettings?.instagram && (
+          {instagramUrl && (
             <a
-              href={contactSettings.instagram}
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-primary/20 hover:border-primary/60 mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border bg-gradient-to-r from-pink-50 to-purple-50 px-5 py-4 transition-all hover:scale-[1.02] lg:hidden dark:from-pink-950/20 dark:to-purple-950/20"
+              className="border-primary/20 hover:border-primary/60 mt-4 flex w-full items-center justify-center gap-3 rounded-2xl border bg-linear-to-br from-pink-50 via-purple-50 to-orange-50 px-5 py-4 transition-all hover:scale-[1.02] hover:shadow-md lg:hidden dark:from-pink-950/20 dark:via-purple-950/20 dark:to-orange-950/20"
             >
-              <Instagram className="text-primary h-6 w-6 flex-shrink-0" />
+              <Instagram className="text-primary h-6 w-6 shrink-0" />
               <div>
                 <p className="text-muted-foreground text-xs tracking-widest uppercase">
                   Sígueme en Instagram
                 </p>
                 <p className="text-foreground font-semibold">
-                  {contactSettings.instagramUsername
-                    ? `@${contactSettings.instagramUsername.replace(/^@/, '')}`
+                  {instagramDisplayName
+                    ? `@${String(instagramDisplayName).replace(/^@/, '')}`
                     : 'Instagram'}
                 </p>
               </div>
@@ -265,6 +254,16 @@ export default async function ContactPage() {
 
       {/* Copyright */}
       <div className="border-primary/20 border-t py-8 text-center font-sans">
+        <div className="mb-4 flex items-center justify-center gap-3">
+          <span className="text-muted-foreground text-sm">¿Ya trabajamos juntas?</span>
+          <Link
+            href={ROUTES.public.testimonialForm}
+            className="text-primary hover:text-primary/80 inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
+          >
+            <Heart size={14} />
+            Deja tu testimonio
+          </Link>
+        </div>
         <p className="text-muted-foreground mb-2 text-sm font-light tracking-widest uppercase">
           © {new Date().getFullYear()} {ownerName.toUpperCase()}
         </p>

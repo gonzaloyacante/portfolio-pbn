@@ -5,6 +5,13 @@ import { getContactSettings } from '@/actions/settings/contact'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
+// OG image color palette — Satori (ImageResponse) does not support CSS variables,
+// so raw hex values must be defined as typed constants here.
+const OG_BACKGROUND = '#fff8fc'
+const OG_PRIMARY = '#6c0a0a'
+const OG_FOREGROUND = '#1a050a'
+const OG_MUTED = '#737373'
+
 export default async function Image() {
   const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])
 
@@ -17,7 +24,7 @@ export default async function Image() {
     (
       <div
         style={{
-          background: '#fff8fc',
+          background: OG_BACKGROUND,
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -33,7 +40,7 @@ export default async function Image() {
           style={{
             width: 80,
             height: 6,
-            background: '#6c0a0a',
+            background: OG_PRIMARY,
             borderRadius: 3,
             marginBottom: 16,
           }}
@@ -42,7 +49,7 @@ export default async function Image() {
           style={{
             fontSize: 72,
             fontWeight: 700,
-            color: '#6c0a0a',
+            color: OG_PRIMARY,
             letterSpacing: '-1px',
             textAlign: 'center',
           }}
@@ -52,7 +59,7 @@ export default async function Image() {
         <div
           style={{
             fontSize: 32,
-            color: '#1a050a',
+            color: OG_FOREGROUND,
             textAlign: 'center',
           }}
         >
@@ -61,7 +68,7 @@ export default async function Image() {
         <div
           style={{
             fontSize: 22,
-            color: '#737373',
+            color: OG_MUTED,
             textAlign: 'center',
           }}
         >
@@ -74,7 +81,7 @@ export default async function Image() {
             bottom: 64,
             width: 120,
             height: 4,
-            background: '#6c0a0a',
+            background: OG_PRIMARY,
             borderRadius: 2,
             opacity: 0.4,
           }}

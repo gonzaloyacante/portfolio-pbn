@@ -184,7 +184,7 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
               minChildSize: 0.4,
               maxChildSize: 0.95,
               expand: false,
-              builder: (_, controller) {
+              builder: (BuildContext _, ScrollController controller) {
                 return SingleChildScrollView(
                   controller: controller,
                   child: CategorySettingsDialog(

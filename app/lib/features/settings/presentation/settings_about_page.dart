@@ -245,7 +245,13 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
             ),
             data: (settings) {
               _populate(settings);
-              return _buildForm(context);
+              return RefreshIndicator(
+                onRefresh: () async {
+                  ref.invalidate(aboutSettingsProvider);
+                  await ref.read(aboutSettingsProvider.future);
+                },
+                child: _buildForm(context),
+              );
             },
           ),
         ),

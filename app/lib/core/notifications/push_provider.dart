@@ -69,7 +69,7 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
       // Escuchar rotación de tokens y re-registrar automáticamente.
       // Guardamos la suscripción para cancelarla en dispose.
       _tokenRefreshSub?.cancel();
-      _tokenRefreshSub = service.onTokenRefresh.listen((newToken) {
+      _tokenRefreshSub = service.onTokenRefresh.listen((String newToken) {
         AppLogger.info('PushRegistration: token rotado, re-registrando…');
         _sendTokenToBackend(newToken, service.platform).ignore();
         if (ref.mounted) state = newToken;

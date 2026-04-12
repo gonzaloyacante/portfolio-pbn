@@ -113,6 +113,17 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.calendar_today_outlined),
+              title: const Text('Nueva reserva'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.bookingNew,
+                  extra: {'serviceId': item.id},
+                );
+              },
+            ),
+            ListTile(
               leading: Icon(
                 item.isActive
                     ? Icons.visibility_off_outlined

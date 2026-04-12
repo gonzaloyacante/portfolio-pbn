@@ -11,11 +11,15 @@ class GalleryTile extends StatelessWidget {
     required this.item,
     required this.index,
     required this.total,
+    this.onDelete,
+    this.onTap,
   });
 
   final GalleryImageItem item;
   final int index;
   final int total;
+  final VoidCallback? onDelete;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -41,28 +45,31 @@ class GalleryTile extends StatelessWidget {
                 ),
               ),
             ),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: SizedBox(
-                width: 72,
-                height: 72,
-                child: CachedNetworkImage(
-                  imageUrl: item.url,
-                  fit: BoxFit.cover,
-                  placeholder: (ctx2, url) => ColoredBox(
-                    color: scheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.image_outlined,
-                      color: scheme.outlineVariant,
-                      size: 28,
+            GestureDetector(
+              onTap: onTap,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: SizedBox(
+                  width: 72,
+                  height: 72,
+                  child: CachedNetworkImage(
+                    imageUrl: item.url,
+                    fit: BoxFit.cover,
+                    placeholder: (ctx2, url) => ColoredBox(
+                      color: scheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.image_outlined,
+                        color: scheme.outlineVariant,
+                        size: 28,
+                      ),
                     ),
-                  ),
-                  errorWidget: (ctx2, url, err) => ColoredBox(
-                    color: scheme.surfaceContainerHighest,
-                    child: Icon(
-                      Icons.broken_image_outlined,
-                      color: scheme.outlineVariant,
-                      size: 28,
+                    errorWidget: (ctx2, url, err) => ColoredBox(
+                      color: scheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        color: scheme.outlineVariant,
+                        size: 28,
+                      ),
                     ),
                   ),
                 ),
@@ -88,13 +95,20 @@ class GalleryTile extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Icon(
                 Icons.drag_handle_rounded,
                 color: scheme.onSurface.withValues(alpha: 0.3),
                 size: 22,
               ),
             ),
+            if (onDelete != null)
+              IconButton(
+                icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                color: scheme.error,
+                tooltip: 'Eliminar imagen',
+                onPressed: onDelete,
+              ),
           ],
         ),
       ),

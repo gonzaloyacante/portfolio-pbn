@@ -11,6 +11,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
     );
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
       child: Center(
         child: ConstrainedBox(
@@ -22,17 +23,65 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               SettingsFormCard(
                 title: 'Colores — Modo claro',
                 children: [
-                  ColorField(controller: _primaryCtrl, label: 'Primario'),
+                  ColorField(
+                    controller: _primaryCtrl,
+                    label: 'Primario',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Primario',
+                      hexColor: _primaryCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _secondaryCtrl, label: 'Secundario'),
+                  ColorField(
+                    controller: _secondaryCtrl,
+                    label: 'Secundario',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Secundario',
+                      hexColor: _secondaryCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _accentCtrl, label: 'Acento'),
+                  ColorField(
+                    controller: _accentCtrl,
+                    label: 'Acento',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Acento',
+                      hexColor: _accentCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _bgCtrl, label: 'Fondo'),
+                  ColorField(
+                    controller: _bgCtrl,
+                    label: 'Fondo',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo',
+                      hexColor: _bgCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _textCtrl, label: 'Texto'),
+                  ColorField(
+                    controller: _textCtrl,
+                    label: 'Texto',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Texto',
+                      hexColor: _textCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _cardBgCtrl, label: 'Fondo tarjetas'),
+                  ColorField(
+                    controller: _cardBgCtrl,
+                    label: 'Fondo tarjetas',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo tarjetas',
+                      hexColor: _cardBgCtrl.text,
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
@@ -44,25 +93,61 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                   ColorField(
                     controller: _darkPrimaryCtrl,
                     label: 'Primario (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Primario (dark)',
+                      hexColor: _darkPrimaryCtrl.text,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   ColorField(
                     controller: _darkSecondaryCtrl,
                     label: 'Secundario (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Secundario (dark)',
+                      hexColor: _darkSecondaryCtrl.text,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   ColorField(
                     controller: _darkAccentCtrl,
                     label: 'Acento (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Acento (dark)',
+                      hexColor: _darkAccentCtrl.text,
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _darkBgCtrl, label: 'Fondo (dark)'),
+                  ColorField(
+                    controller: _darkBgCtrl,
+                    label: 'Fondo (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo (dark)',
+                      hexColor: _darkBgCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
-                  ColorField(controller: _darkTextCtrl, label: 'Texto (dark)'),
+                  ColorField(
+                    controller: _darkTextCtrl,
+                    label: 'Texto (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Texto (dark)',
+                      hexColor: _darkTextCtrl.text,
+                    ),
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   ColorField(
                     controller: _darkCardBgCtrl,
                     label: 'Fondo tarjetas (dark)',
+                    onInfoTap: () => showColorUsageSheet(
+                      context,
+                      label: 'Fondo tarjetas (dark)',
+                      hexColor: _darkCardBgCtrl.text,
+                    ),
                   ),
                 ],
               ),
@@ -72,12 +157,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               SettingsFormCard(
                 title: 'Tipografías — Base',
                 children: [
-                  TextFormField(
-                    controller: _headingFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente de títulos',
-                      prefixIcon: Icon(Icons.title),
-                    ),
+                  FontPickerField(
+                    label: 'Fuente de títulos',
+                    value: _headingFontCtrl.text.isEmpty
+                        ? null
+                        : _headingFontCtrl.text,
+                    onChanged: (name, _) {
+                      _headingFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -89,12 +178,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _bodyFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente de cuerpo',
-                      prefixIcon: Icon(Icons.text_fields),
-                    ),
+                  FontPickerField(
+                    label: 'Fuente de cuerpo',
+                    value: _bodyFontCtrl.text.isEmpty
+                        ? null
+                        : _bodyFontCtrl.text,
+                    onChanged: (name, _) {
+                      _bodyFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -106,12 +199,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _scriptFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente script/decorativa',
-                      prefixIcon: Icon(Icons.font_download_outlined),
-                    ),
+                  FontPickerField(
+                    label: 'Fuente script/decorativa',
+                    value: _scriptFontCtrl.text.isEmpty
+                        ? null
+                        : _scriptFontCtrl.text,
+                    onChanged: (name, _) {
+                      _scriptFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -130,13 +227,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               SettingsFormCard(
                 title: 'Tipografías — Marca',
                 children: [
-                  TextFormField(
-                    controller: _brandFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente título "Make-up"',
-                      prefixIcon: Icon(Icons.branding_watermark),
-                      hintText: 'Ej: Saira Extra Condensed',
-                    ),
+                  FontPickerField(
+                    label: 'Fuente título "Make-up"',
+                    value: _brandFontCtrl.text.isEmpty
+                        ? null
+                        : _brandFontCtrl.text,
+                    onChanged: (name, _) {
+                      _brandFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -148,13 +248,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _portfolioFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente título "Portfolio"',
-                      prefixIcon: Icon(Icons.branding_watermark),
-                      hintText: 'Ej: Saira Extra Condensed',
-                    ),
+                  FontPickerField(
+                    label: 'Fuente título "Portfolio"',
+                    value: _portfolioFontCtrl.text.isEmpty
+                        ? null
+                        : _portfolioFontCtrl.text,
+                    onChanged: (name, _) {
+                      _portfolioFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(
@@ -166,13 +269,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     keyboardType: TextInputType.number,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  TextFormField(
-                    controller: _signatureFontCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Fuente firma',
-                      prefixIcon: Icon(Icons.draw_outlined),
-                      hintText: 'Ej: Dawning of a New Day',
-                    ),
+                  FontPickerField(
+                    label: 'Fuente firma',
+                    value: _signatureFontCtrl.text.isEmpty
+                        ? null
+                        : _signatureFontCtrl.text,
+                    onChanged: (name, _) {
+                      _signatureFontCtrl.text = name;
+                      _markDirty();
+                      setState(() {});
+                    },
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   TextFormField(

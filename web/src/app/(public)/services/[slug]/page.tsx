@@ -1,11 +1,11 @@
 import { getServiceBySlug, getServices } from '@/actions/cms/services'
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
-import { Button } from '@/components/ui'
+import { Button, OptimizedImage } from '@/components/ui'
 import { Check, Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
+import { ROUTES } from '@/config/routes'
 
 // ISR: revalidar cada 60s + on-demand via revalidatePath()
 export const revalidate = 60
@@ -22,9 +22,9 @@ interface PricingTier {
 }
 
 interface ServicePageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 // ── Metadata Helpers ───────────────────────────────────────────────────────
@@ -111,7 +111,14 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
       {/* Hero Section */}
       <div className="relative h-[60vh] min-h-125 w-full overflow-hidden">
         {service.imageUrl ? (
-          <Image src={service.imageUrl} alt={service.name} fill className="object-cover" priority />
+          <OptimizedImage
+            src={service.imageUrl}
+            alt={service.name}
+            fill
+            className="object-cover"
+            priority
+            transparentBackground={false}
+          />
         ) : (
           <div className="bg-muted h-full w-full" />
         )}
@@ -195,7 +202,13 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                     key={idx}
                     className="relative aspect-square overflow-hidden rounded-xl transition-transform hover:scale-105"
                   >
-                    <Image src={url} alt={`Gallery ${idx}`} fill className="object-cover" />
+                    <OptimizedImage
+                      src={url}
+                      alt={`Gallery ${idx}`}
+                      fill
+                      className="object-cover"
+                      transparentBackground={false}
+                    />
                   </div>
                 ))}
               </div>
@@ -239,7 +252,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
             <div className="flex flex-col gap-3">
               <Button asChild size="lg" className="w-full">
-                <Link href={`/contacto?service=${encodeURIComponent(service.name)}`}>
+                <Link href={`${ROUTES.public.contact}?service=${encodeURIComponent(service.name)}`}>
                   Agendar Cita
                 </Link>
               </Button>

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { resetPassword } from '@/actions/user/auth'
 import { ROUTES } from '@/config/routes'
-import { FadeIn } from '@/components/ui'
+import { FadeIn, Button } from '@/components/ui'
 
 import PasswordStrengthMeter from '@/components/ui/forms/PasswordStrengthMeter'
 
@@ -169,35 +169,15 @@ function ResetPasswordForm() {
                   />
                 </div>
 
-                <button
+                <Button
                   type="submit"
-                  disabled={isLoading}
-                  className="bg-foreground text-background w-full cursor-pointer rounded-lg py-3 font-semibold transition-all hover:scale-[1.02] disabled:scale-100 disabled:opacity-50"
+                  fullWidth
+                  size="lg"
+                  loading={isLoading}
+                  className="rounded-xl"
                 >
-                  {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                          fill="none"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                        />
-                      </svg>
-                      Guardando...
-                    </span>
-                  ) : (
-                    'Guardar nueva contraseña'
-                  )}
-                </button>
+                  Guardar nueva contraseña
+                </Button>
               </form>
             )}
 

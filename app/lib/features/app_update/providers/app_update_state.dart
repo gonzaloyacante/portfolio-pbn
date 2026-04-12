@@ -11,6 +11,7 @@ enum UpdatePhase {
   downloading, // En progreso de descarga
   verifying, // Comprobando integridad
   ready, // APK comprobado y listo para instalarse
+  needsPermission, // Falta el permiso REQUEST_INSTALL_PACKAGES
   installing, // Instalador nativo lanzado
   error, // Error en cualquier fase
 }

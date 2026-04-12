@@ -58,7 +58,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       url: result.url,
+      thumbnailUrl: result.thumbnailUrl,
+      lqipUrl: result.lqipUrl,
       publicId: result.publicId,
+      width: result.width,
+      height: result.height,
+      format: result.format,
     })
   } catch (error) {
     if (error instanceof Error && error.message.includes('solicitudes')) {

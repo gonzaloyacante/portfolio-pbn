@@ -59,15 +59,15 @@ extension _CalendarPageBuilders on _CalendarPageState {
           firstDay: DateTime(2020),
           lastDay: DateTime(2030),
           focusedDay: _focusedDay,
-          selectedDayPredicate: (d) =>
+          selectedDayPredicate: (DateTime d) =>
               _selectedDay != null && isSameDay(d, _selectedDay),
-          onDaySelected: (selected, focused) {
+          onDaySelected: (DateTime selected, DateTime focused) {
             setState(() {
               _selectedDay = selected;
               _focusedDay = focused;
             });
           },
-          onPageChanged: (focused) {
+          onPageChanged: (DateTime focused) {
             setState(() {
               _focusedDay = focused;
               _selectedDay = null;
@@ -91,11 +91,19 @@ extension _CalendarPageBuilders on _CalendarPageState {
             outsideDaysVisible: false,
           ),
           headerStyle: const HeaderStyle(
-            formatButtonVisible: false,
+            formatButtonVisible: true,
+            formatButtonShowsNext: false,
             titleCentered: true,
             leftChevronIcon: Icon(Icons.chevron_left_rounded),
             rightChevronIcon: Icon(Icons.chevron_right_rounded),
           ),
+          availableCalendarFormats: const {
+            CalendarFormat.month: 'Mes',
+            CalendarFormat.week: 'Semana',
+          },
+          calendarFormat: _calendarFormat,
+          onFormatChanged: (CalendarFormat format) =>
+              setState(() => _calendarFormat = format),
         ),
       ),
     );

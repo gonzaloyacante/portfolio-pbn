@@ -93,8 +93,23 @@ abstract class GalleryImageItem with _$GalleryImageItem {
     String? publicId,
     required int order,
     required String categoryId,
+    int? width,
+    int? height,
+    @Default(false) bool isFeatured,
   }) = _GalleryImageItem;
 
   factory GalleryImageItem.fromJson(Map<String, dynamic> json) =>
       _$GalleryImageItemFromJson(json);
+}
+
+/// Extension que expone el aspect ratio real de la imagen.
+/// Usa las dimensiones almacenadas en DB si existen; cae a 0.8 (portrait 4:5)
+/// como fallback para imágenes anteriores sin dimensiones guardadas.
+extension GalleryImageItemAspectRatio on GalleryImageItem {
+  double get aspectRatio {
+    if (width != null && height != null && width! > 0 && height! > 0) {
+      return width! / height!;
+    }
+    return 0.8;
+  }
 }

@@ -4,8 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../../services/providers/services_provider.dart';
@@ -33,7 +31,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
 
   final _clientNameCtrl = TextEditingController();
   final _clientEmailCtrl = TextEditingController();
-  String? _completeClientPhone;
+  final _phoneCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
   final _adminNotesCtrl = TextEditingController();
   final _guestCountCtrl = TextEditingController();
@@ -41,14 +39,32 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   DateTime? _date;
   String? _serviceId;
   String? _currentStatus;
+  String? _paymentMethod;
+  String? _paymentStatus = 'PENDING';
+  final _totalAmountCtrl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-populate serviceId if navigated from service tile/detail.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final extra = GoRouterState.of(context).extra;
+      if (extra is Map<String, dynamic> && extra['serviceId'] is String) {
+        setState(() => _serviceId = extra['serviceId'] as String);
+      }
+    });
+  }
 
   @override
   void dispose() {
     _clientNameCtrl.dispose();
     _clientEmailCtrl.dispose();
+    _phoneCtrl.dispose();
     _notesCtrl.dispose();
     _adminNotesCtrl.dispose();
     _guestCountCtrl.dispose();
+    _totalAmountCtrl.dispose();
     super.dispose();
   }
 
@@ -59,10 +75,15 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     _guestCountCtrl.text = detail.guestCount > 1 ? '${detail.guestCount}' : '';
     _notesCtrl.text = detail.clientNotes ?? '';
     _adminNotesCtrl.text = detail.adminNotes ?? '';
-    _completeClientPhone = detail.clientPhone;
+    _phoneCtrl.text = detail.clientPhone ?? '';
+    _totalAmountCtrl.text = detail.totalAmount ?? '';
     _date = detail.date;
     _serviceId = detail.serviceId;
     _currentStatus = detail.status;
+    setState(() {
+      _paymentMethod = detail.paymentMethod;
+      _paymentStatus = detail.paymentStatus ?? 'PENDING';
+    });
     _prefilled = true;
   }
 
@@ -137,9 +158,9 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         date: _date!,
         clientName: _clientNameCtrl.text.trim(),
         clientEmail: _clientEmailCtrl.text.trim(),
-        clientPhone: (_completeClientPhone?.trim().isEmpty ?? true)
+        clientPhone: (_phoneCtrl.text.trim().isEmpty)
             ? null
-            : _completeClientPhone!.trim(),
+            : _phoneCtrl.text.trim(),
         guestCount: int.tryParse(_guestCountCtrl.text.trim()) ?? 1,
         clientNotes: _notesCtrl.text.trim().isEmpty
             ? null
@@ -149,6 +170,11 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             : _adminNotesCtrl.text.trim(),
         serviceId: _serviceId!,
         status: _currentStatus ?? 'PENDING',
+        totalAmount: _totalAmountCtrl.text.trim().isEmpty
+            ? null
+            : _totalAmountCtrl.text.trim(),
+        paymentMethod: _paymentMethod,
+        paymentStatus: _paymentStatus,
       );
       if (_isEdit) {
         await repo.updateBooking(widget.bookingId!, data.toJson());
@@ -192,7 +218,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
             ),
             title: const Text('Editar reserva'),
           ),
-          body: const Center(child: CircularProgressIndicator()),
+          body: const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
         ),
         error: (e, _) => Scaffold(
           appBar: AppBar(

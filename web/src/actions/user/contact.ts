@@ -242,6 +242,23 @@ export async function deleteContact(id: string) {
   revalidatePath(ROUTES.admin.contacts)
 }
 
+export async function toggleContactImportant(id: string) {
+  await requireAdmin()
+  const rl = await checkApiRateLimit()
+  if (rl) throw new Error(rl.error)
+
+  const contact = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
+  if (!contact) throw new Error('Contacto no encontrado')
+
+  const updated = await prisma.contact.update({
+    where: { id },
+    data: { isImportant: !contact.isImportant },
+    select: { id: true, isImportant: true },
+  })
+  revalidatePath(ROUTES.admin.contacts)
+  return updated
+}
+
 export async function exportContactsToCSV(): Promise<string> {
   await requireAdmin()
   const rl = await checkApiRateLimit()

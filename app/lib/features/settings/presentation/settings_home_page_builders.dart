@@ -680,6 +680,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
     final formContent = _buildFormContent(context);
 
     return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
       child: Center(
         child: ConstrainedBox(

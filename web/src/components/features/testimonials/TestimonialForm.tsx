@@ -1,11 +1,14 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { motion } from '@/components/ui'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { Heart } from 'lucide-react'
+import { Heart, Sparkles, Home } from 'lucide-react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
+import { ROUTES } from '@/config/routes'
 
 /**
  * TestimonialForm - Refactored to use UI components
@@ -41,11 +44,70 @@ export default function TestimonialForm() {
 
   if (isSubmitted) {
     return (
-      <div className="border-primary/20 bg-primary/5 dark:bg-primary/10 rounded-2xl border p-8 text-center">
-        <Heart className="text-primary mx-auto mb-4 h-12 w-12" />
-        <h3 className="text-primary mb-2 text-xl font-bold">¡Gracias por tu testimonio!</h3>
-        <p className="text-muted-foreground">Tu opinión será publicada después de ser revisada.</p>
-      </div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="border-primary/20 bg-primary/5 dark:bg-primary/10 rounded-2xl border p-10 text-center"
+      >
+        <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
+          <motion.div
+            animate={{ scale: [1, 1.15, 1] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            className="bg-primary/10 absolute inset-0 rounded-full"
+          />
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.2, type: 'spring', stiffness: 260, damping: 20 }}
+          >
+            <Heart className="text-primary relative h-10 w-10 fill-current" />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.45, duration: 0.3 }}
+            className="absolute -top-1 -right-1"
+          >
+            <Sparkles className="text-primary/60 h-5 w-5" />
+          </motion.div>
+        </div>
+
+        <motion.h3
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.4 }}
+          className="text-primary font-decorative mb-2 text-2xl font-bold"
+        >
+          ¡Gracias de corazón!
+        </motion.h3>
+
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.4 }}
+          className="text-muted-foreground text-base leading-relaxed"
+        >
+          Tu testimonio fue recibido con mucho amor.
+          <br />
+          Lo revisaré personalmente antes de publicarlo. ✨
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.55, duration: 0.4 }}
+          className="mt-8"
+        >
+          <Link
+            href={ROUTES.home}
+            className="text-primary hover:text-primary/80 inline-flex items-center gap-2 text-sm font-medium transition-colors"
+          >
+            <Home size={16} />
+            Volver al inicio
+          </Link>
+        </motion.div>
+      </motion.div>
     )
   }
 

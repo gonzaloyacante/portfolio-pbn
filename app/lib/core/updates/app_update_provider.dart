@@ -10,7 +10,7 @@ import 'app_update_repository.dart';
 
 /// Singleton del repositorio de actualizaciones.
 /// Usa su propio Dio sin interceptores de auth (el endpoint es público).
-final appUpdateRepositoryProvider = Provider<AppUpdateRepository>((ref) {
+final appUpdateRepositoryProvider = Provider<AppUpdateRepository>((Ref ref) {
   return AppUpdateRepository();
 });
 
@@ -55,7 +55,7 @@ final appUpdateTriggerProvider =
 /// NUNCA lanza si falla — retorna [AppUpdateCheckFailed] silenciosamente
 /// para no interrumpir el flujo de la app.
 final appUpdateStatusProvider = FutureProvider.autoDispose<AppUpdateStatus>((
-  ref,
+  Ref ref,
 ) async {
   // Observar el trigger para reejecutar cuando se incremente
   ref.watch(appUpdateTriggerProvider);

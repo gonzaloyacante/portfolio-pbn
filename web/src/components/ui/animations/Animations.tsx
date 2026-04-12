@@ -173,7 +173,92 @@ export function StaggerChildren({
 }
 
 /**
- * StaggerContainer alias for compatibility if needed, or simply prefer StaggerChildren
+ * StaggerItem Component
+ * Direct child of StaggerChildren. Uses variants (not whileInView) so the
+ * parent's staggerChildren timing actually controls the entrance.
+ */
+export function StaggerItem({ children, className }: { children: ReactNode; className?: string }) {
+  const shouldReduceMotion = useReducedMotion()
+
+  if (shouldReduceMotion) return <div className={className}>{children}</div>
+
+  return (
+    <motion.div variants={staggerItem} className={className}>
+      {children}
+    </motion.div>
+  )
+}
+
+/**
+ * WordReveal Component
+ * Animates a string word-by-word with a stagger, triggered on viewport entry.
+ * Each word slides up and fades in independently.
+ */
+export function WordReveal({
+  text,
+  className,
+  style,
+  delay = 0,
+  stagger = 0.08,
+  as: Tag = 'span',
+}: {
+  text: string
+  className?: string
+  style?: React.CSSProperties
+  delay?: number
+  stagger?: number
+  as?: 'span' | 'h1' | 'h2' | 'h3' | 'p'
+}) {
+  const isMounted = useIsMounted()
+  const shouldReduceMotion = useReducedMotion()
+  const MotionTag = motion[Tag] as typeof motion.span
+
+  if (!isMounted || shouldReduceMotion) {
+    const StaticTag = Tag
+    return (
+      <StaticTag className={className} style={style}>
+        {text}
+      </StaticTag>
+    )
+  }
+
+  const words = text.split(' ')
+
+  return (
+    <MotionTag
+      className={className}
+      style={style}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-40px' }}
+      variants={{
+        visible: {
+          transition: { staggerChildren: stagger, delayChildren: delay },
+        },
+      }}
+    >
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          className="mr-[0.25em] inline-block last:mr-0"
+          variants={{
+            hidden: { opacity: 0, y: 24 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+            },
+          }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </MotionTag>
+  )
+}
+
+/**
+ * StaggerContainer alias for backward compatibility.
  */
 export const StaggerContainer = StaggerChildren
 
@@ -191,4 +276,5 @@ export const staggerItem: Variants = {
   },
 }
 
-export { AnimatePresence }
+export { AnimatePresence, motion, useReducedMotion }
+export type { Variants }

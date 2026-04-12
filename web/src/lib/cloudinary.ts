@@ -14,7 +14,8 @@ cloudinary.config({
  * Genera la URL de thumbnail a partir de la URL original de Cloudinary.
  *
  * El thumbnail usa transformaciones on-the-fly de Cloudinary (sin re-subir):
- * - c_fill: recorte inteligente centrado
+ * - c_fill: recorte inteligente centrado con g_auto (auto-gravity para detectar
+ *   el área de interés más relevante de la imagen)
  * - w_800, h_600: tamaño para listas / cards (cubre pantallas retina 2×)
  * - q_auto: calidad automática (equilibrio velocidad/visual)
  * - f_auto: formato moderno automático (WebP, AVIF según el browser)
@@ -23,8 +24,47 @@ cloudinary.config({
  */
 export function generateThumbnailUrl(originalUrl: string): string {
   if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
-  const THUMB_TRANSFORM = 'c_fill,w_800,h_600,q_auto,f_auto'
+  const THUMB_TRANSFORM = 'c_fill,g_auto,w_800,h_600,q_auto,f_auto'
   return originalUrl.replace('/image/upload/', `/image/upload/${THUMB_TRANSFORM}/`)
+}
+
+/**
+ * Genera la URL de placeholder LQIP (Low Quality Image Placeholder).
+ *
+ * Devuelve una imagen mínima de 30px con blur intenso para usar como placeholder
+ * mientras carga la imagen real. El blur extremo permite ignorar la compresión
+ * visual sin afectar la percepción del placeholder.
+ *
+ * - w_30: ancho de 30px (mínimo para placeholder)
+ * - q_5: calidad 5% (máxima compresión, invisible con blur)
+ * - e_blur:800: efecto blur Cloudinary on-the-fly
+ * - f_jpg: formato JPG para máxima compatibilidad en placeholders
+ *
+ * Uso típico: base64 en <img> o CSS background-image antes de cargar la imagen real.
+ * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
+ */
+export function generateLqipUrl(originalUrl: string): string {
+  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
+  const LQIP_TRANSFORM = 'w_30,q_5,e_blur:800,f_jpg'
+  return originalUrl.replace('/image/upload/', `/image/upload/${LQIP_TRANSFORM}/`)
+}
+
+/**
+ * Genera la URL de card cuadrada para galería (aspect ratio 1:1).
+ *
+ * Ideal para grids uniformes donde se quiere consistencia visual:
+ * - c_fill: recorte inteligente
+ * - g_auto: auto-gravity detecta el área de interés
+ * - w_600, h_600: resolución de card (cubre retina 2× en columnas de ~300px)
+ * - q_auto: calidad automática
+ * - f_auto: formato moderno (WebP, AVIF)
+ *
+ * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
+ */
+export function generateGalleryCardUrl(originalUrl: string): string {
+  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
+  const CARD_TRANSFORM = 'c_fill,g_auto,w_600,h_600,q_auto,f_auto'
+  return originalUrl.replace('/image/upload/', `/image/upload/${CARD_TRANSFORM}/`)
 }
 
 /**
@@ -82,16 +122,31 @@ export function extractPublicIdUrl(url: string | null | undefined): string | nul
  *
  * No se aplican transformaciones al archivo almacenado: Cloudinary guarda
  * la imagen tal como se sube. Las variantes optimizadas se generan
- * dinámicamente vía URL (generateThumbnailUrl / generateCoverUrl).
+ * dinámicamente vía URL (generateThumbnailUrl / generateCoverUrl / generateLqipUrl).
+ *
+ * Cloudinary devuelve automáticamente las dimensiones reales del archivo
+ * subido (width, height) sin coste extra de transformación.
  *
  * @returns url           – URL original (sin transformaciones)
  * @returns thumbnailUrl  – URL con transformación de thumbnail (on-the-fly)
+ * @returns lqipUrl       – URL de placeholder borroso 30px (on-the-fly)
  * @returns publicId      – Public ID en Cloudinary
+ * @returns width         – Ancho original en píxeles
+ * @returns height        – Alto original en píxeles
+ * @returns format        – Formato del archivo (jpg, png, webp, etc.)
  */
 export const uploadImage = async (
   file: File,
   folder: string = 'portfolio'
-): Promise<{ url: string; thumbnailUrl: string; publicId: string }> => {
+): Promise<{
+  url: string
+  thumbnailUrl: string
+  lqipUrl: string
+  publicId: string
+  width: number
+  height: number
+  format: string
+}> => {
   const arrayBuffer = await file.arrayBuffer()
   const buffer = Buffer.from(arrayBuffer)
 
@@ -115,7 +170,11 @@ export const uploadImage = async (
           resolve({
             url,
             thumbnailUrl: generateThumbnailUrl(url),
+            lqipUrl: generateLqipUrl(url),
             publicId: result.public_id,
+            width: result.width,
+            height: result.height,
+            format: result.format,
           })
         }
       )

@@ -81,6 +81,9 @@ _GalleryImageItem _$GalleryImageItemFromJson(Map<String, dynamic> json) =>
       publicId: json['publicId'] as String?,
       order: (json['order'] as num).toInt(),
       categoryId: json['categoryId'] as String,
+      width: (json['width'] as num?)?.toInt(),
+      height: (json['height'] as num?)?.toInt(),
+      isFeatured: json['isFeatured'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$GalleryImageItemToJson(_GalleryImageItem instance) =>
@@ -90,4 +93,7 @@ Map<String, dynamic> _$GalleryImageItemToJson(_GalleryImageItem instance) =>
       'publicId': instance.publicId,
       'order': instance.order,
       'categoryId': instance.categoryId,
+      'width': instance.width,
+      'height': instance.height,
+      'isFeatured': instance.isFeatured,
     };

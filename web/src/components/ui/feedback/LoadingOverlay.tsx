@@ -1,6 +1,6 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 import { Loader2 } from 'lucide-react'
 
 interface LoadingOverlayProps {

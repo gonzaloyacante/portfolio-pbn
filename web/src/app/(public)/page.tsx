@@ -3,6 +3,7 @@ import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings } from '@/actions/settings/site'
 import HeroSection from '@/components/features/home/HeroSection'
 import FeaturedCategories from '@/components/features/home/FeaturedCategories'
+import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
 import { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -62,6 +63,9 @@ export default async function Home() {
           titleColorDark={homeSettings.featuredTitleColorDark}
         />
       )}
+
+      {/* Testimonials + CTA */}
+      <PublicTestimonialsSection />
     </main>
   )
 }

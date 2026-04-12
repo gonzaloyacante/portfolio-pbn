@@ -58,13 +58,27 @@ class UploadService {
 
   // ── Upload con metadatos ──────────────────────────────────────────────────
 
-  /// Sube [file] y devuelve `({url, thumbnailUrl, publicId})`.
+  /// Sube [file] y devuelve `({url, thumbnailUrl, lqipUrl, publicId, width, height})`.
   ///
   /// - [url]: URL original (calidad máxima, sin transformaciones).
   /// - [thumbnailUrl]: URL optimizada de Cloudinary (800×600, q_auto, f_auto),
   ///   generada on-the-fly sin re-subir la imagen.
+  /// - [lqipUrl]: URL de placeholder borroso de 30px para usar como fondo
+  ///   mientras carga la imagen real.
   /// - [publicId]: ID en Cloudinary para eliminar o asociar al backend.
-  Future<({String url, String thumbnailUrl, String publicId})> uploadImageFull(
+  /// - [width]: Ancho original en píxeles (para masonry layout).
+  /// - [height]: Alto original en píxeles (para masonry layout).
+  Future<
+    ({
+      String url,
+      String thumbnailUrl,
+      String lqipUrl,
+      String publicId,
+      int? width,
+      int? height,
+    })
+  >
+  uploadImageFull(
     File file, {
     String folder = 'portfolio',
     void Function(int sent, int total)? onProgress,
@@ -88,17 +102,25 @@ class UploadService {
     final url = response['url'] as String?;
     final publicId = response['publicId'] as String?;
     final thumbnailUrl = response['thumbnailUrl'] as String?;
+    final lqipUrl = response['lqipUrl'] as String?;
+    final width = response['width'] as int?;
+    final height = response['height'] as int?;
     if (url == null || url.isEmpty) {
       throw const ParseException(
         message: 'El servidor no devolvió una URL de imagen',
       );
     }
 
-    AppLogger.info('UploadService: upload (full) successful → $url');
+    AppLogger.info(
+      'UploadService: upload (full) successful → $url (${width}x$height)',
+    );
     return (
       url: url,
       thumbnailUrl: thumbnailUrl ?? url,
+      lqipUrl: lqipUrl ?? url,
       publicId: publicId ?? '',
+      width: width,
+      height: height,
     );
   }
 

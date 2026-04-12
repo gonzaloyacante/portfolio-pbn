@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 import { ROUTES } from '@/config/routes'
 import type { PageVisibility } from '@/actions/settings/site'

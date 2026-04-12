@@ -104,6 +104,7 @@ model Contact {
   isReplied          Boolean   @default(false)
   repliedAt          DateTime?
   replyText          String?   @db.Text
+  isImportant        Boolean   @default(false)
   // Admin notes
   adminNote          String?   @db.Text
   tags               String[]  @default([])

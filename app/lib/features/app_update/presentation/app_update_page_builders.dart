@@ -24,9 +24,9 @@ Widget _buildPhaseContent(
         theme,
         title: '¡Estás al día!',
         subtitle: 'Tienes la versión más reciente instalada.',
-        icon: Icon(
+        icon: const Icon(
           Icons.check_circle_rounded,
-          color: Colors.green.shade600,
+          color: AppColors.success,
           size: 48,
         ),
         child: Padding(
@@ -136,6 +136,78 @@ Widget _buildPhaseContent(
               padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             ),
             onPressed: notifier.install,
+          ),
+        ),
+      );
+
+    case UpdatePhase.needsPermission:
+      return _buildCentered(
+        theme,
+        title: 'Permiso necesario',
+        subtitle:
+            'Para instalar actualizaciones directamente en tu dispositivo, Portfolio Admin necesita permiso para instalar aplicaciones.',
+        icon: Icon(
+          Icons.security_rounded,
+          color: theme.colorScheme.primary,
+          size: 56,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 32),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primaryContainer.withValues(
+                    alpha: 0.4,
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Android requiere que actives manualmente "Instalar apps desconocidas" para esta app en Ajustes.',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onPrimaryContainer,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  icon: const Icon(Icons.settings_outlined),
+                  label: const Text('Activar en Ajustes'),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onPressed: notifier.requestInstallPermission,
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: notifier.skipPermission,
+                  child: const Text('Ahora no'),
+                ),
+              ),
+            ],
           ),
         ),
       );

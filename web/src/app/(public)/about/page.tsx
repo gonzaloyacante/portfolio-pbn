@@ -1,7 +1,10 @@
 import { getAboutSettings } from '@/actions/settings/about'
 import { getContactSettings } from '@/actions/settings/contact'
+import { getActiveTestimonials } from '@/actions/cms/testimonials'
+import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import JsonLd from '@/components/seo/JsonLd'
 import { AboutBioColumn, AboutProfileImage } from '@/components/features/about/AboutBioSection'
+import { AboutTestimonialsSection } from '@/components/features/about/AboutTestimonialsSection'
 import { Metadata } from 'next'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -53,7 +56,12 @@ function buildJsonLdData(
  * Mínima complejidad ciclomática: toda lógica delegada a sub-componentes.
  */
 export default async function AboutPage() {
-  const [aboutSettings, contact] = await Promise.all([getAboutSettings(), getContactSettings()])
+  const [aboutSettings, contact, testimonials, testimonialSettings] = await Promise.all([
+    getAboutSettings(),
+    getContactSettings(),
+    getActiveTestimonials(9),
+    getTestimonialSettings(),
+  ])
 
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
   const location = contact?.location || ''
@@ -79,6 +87,11 @@ export default async function AboutPage() {
           shape={aboutSettings?.profileImageShape ?? 'ellipse'}
         />
       </div>
+
+      <AboutTestimonialsSection
+        testimonials={testimonials}
+        title={testimonialSettings?.title || 'Lo que dicen mis clientas'}
+      />
     </section>
   )
 }

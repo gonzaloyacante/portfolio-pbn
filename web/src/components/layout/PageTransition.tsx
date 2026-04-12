@@ -1,6 +1,6 @@
 'use client'
 
-import { motion, AnimatePresence, type Variants } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from '@/components/ui'
 import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
@@ -11,22 +11,19 @@ interface PageTransitionProps {
 const pageVariants: Variants = {
   initial: {
     opacity: 0,
-    y: 20,
   },
   enter: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.3,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      duration: 0.25,
+      ease: 'easeOut',
     },
   },
   exit: {
     opacity: 0,
-    y: -10,
     transition: {
-      duration: 0.2,
-      ease: [0.25, 0.46, 0.45, 0.94],
+      duration: 0.15,
+      ease: 'easeIn',
     },
   },
 }

@@ -31,6 +31,7 @@ const CONTACT_DETAIL_SELECT = {
   isReplied: true,
   repliedAt: true,
   replyText: true,
+  isImportant: true,
   adminNote: true,
   tags: true,
   ipAddress: true,
@@ -95,7 +96,7 @@ export async function PATCH(req: Request, { params }: Params) {
         { status: 400 }
       )
     }
-    const { status, priority, isRead, replyText, adminNote, tags } = parsed.data
+    const { status, priority, isRead, isImportant, replyText, adminNote, tags } = parsed.data
 
     const existing = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
     if (!existing) {
@@ -111,6 +112,7 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(status !== undefined && { status }),
         ...(priority !== undefined && { priority }),
         ...(isRead !== undefined && { isRead, readAt: isRead ? new Date() : null }),
+        ...(isImportant !== undefined && { isImportant }),
         ...(replyText !== undefined && { replyText }),
         ...(adminNote !== undefined && { adminNote }),
         ...(tags !== undefined && { tags }),

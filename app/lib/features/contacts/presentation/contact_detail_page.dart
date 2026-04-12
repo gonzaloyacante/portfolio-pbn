@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../shared/widgets/widgets.dart';
 import '../../../core/theme/app_colors.dart';
@@ -70,6 +71,23 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _toggleImportant(bool current) async {
+    setState(() => _loading = true);
+    try {
+      await ref.read(contactsRepositoryProvider).updateContact(
+        widget.contactId,
+        {'isImportant': !current},
+      );
+      ref
+        ..invalidate(contactsListProvider)
+        ..invalidate(contactDetailProvider(widget.contactId));
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
     } finally {
       if (mounted) setState(() => _loading = false);
     }

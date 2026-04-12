@@ -190,3 +190,8 @@
 ::-webkit-scrollbar-thumb {
   @apply bg-primary/50 hover:bg-primary rounded-full;
 }
+
+/* react-international-phone: z-index for dropdown */
+.react-international-phone-country-selector-dropdown {
+  z-index: 50;
+}

@@ -48,12 +48,14 @@ abstract class ServiceDetail with _$ServiceDetail {
     String? duration,
     int? durationMinutes,
     String? imageUrl,
+    String? videoUrl,
     @Default(true) bool isActive,
     @Default(false) bool isFeatured,
     @Default(true) bool isAvailable,
     int? maxBookingsPerDay,
     int? advanceNoticeDays,
     @Default(0) int sortOrder,
+    @Default([]) List<dynamic> pricingTiers,
     String? metaTitle,
     String? metaDescription,
     @Default([]) List<String> metaKeywords,
@@ -80,11 +82,13 @@ class ServiceFormData {
   final String? duration;
   final int? durationMinutes;
   final String? imageUrl;
+  final String? videoUrl;
   final bool isActive;
   final bool isFeatured;
   final bool isAvailable;
   final int? maxBookingsPerDay;
   final int? advanceNoticeDays;
+  final List<Map<String, dynamic>> pricingTiers;
   final String? requirements;
   final String? cancellationPolicy;
   final String? metaTitle;
@@ -102,11 +106,13 @@ class ServiceFormData {
     this.duration,
     this.durationMinutes,
     this.imageUrl,
+    this.videoUrl,
     this.isActive = true,
     this.isFeatured = false,
     this.isAvailable = true,
     this.maxBookingsPerDay,
     this.advanceNoticeDays,
+    this.pricingTiers = const [],
     this.requirements,
     this.cancellationPolicy,
     this.metaTitle,
@@ -125,11 +131,13 @@ class ServiceFormData {
     'duration': duration,
     'durationMinutes': durationMinutes,
     'imageUrl': imageUrl,
+    'videoUrl': videoUrl,
     'isActive': isActive,
     'isFeatured': isFeatured,
     'isAvailable': isAvailable,
     'maxBookingsPerDay': maxBookingsPerDay,
     'advanceNoticeDays': advanceNoticeDays,
+    'pricingTiers': pricingTiers,
     'requirements': requirements,
     'cancellationPolicy': cancellationPolicy,
     'metaTitle': metaTitle,

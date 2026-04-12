@@ -1,9 +1,10 @@
 import { prisma } from '@/lib/db'
-import Link from 'next/link'
-import { FadeIn, StaggerChildren, OptimizedImage } from '@/components/ui'
 import { ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+import { WordReveal } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import { FontLoader } from './FontLoader'
+import FeaturedImagesGallery from './FeaturedImagesGallery'
 
 interface FeaturedCategoriesProps {
   title?: string | null
@@ -24,16 +25,22 @@ export default async function FeaturedCategories({
   titleColor,
   titleColorDark,
 }: FeaturedCategoriesProps) {
-  const categories = await prisma.category.findMany({
-    where: { isActive: true, deletedAt: null },
-    include: {
-      images: { take: 1, orderBy: { order: 'asc' }, select: { url: true } },
-    },
-    orderBy: { sortOrder: 'asc' },
+  const featuredImages = await prisma.categoryImage.findMany({
+    where: { isFeatured: true, category: { isActive: true, deletedAt: null } },
+    include: { category: { select: { name: true } } },
+    orderBy: { order: 'asc' },
     take: count,
   })
 
-  if (categories.length === 0) return null
+  if (featuredImages.length === 0) return null
+
+  const images = featuredImages.map((img) => ({
+    id: img.id,
+    url: img.url,
+    width: img.width,
+    height: img.height,
+    categoryName: img.category.name,
+  }))
 
   const fontsToLoad = titleFont ? [titleFont] : []
 
@@ -51,15 +58,18 @@ export default async function FeaturedCategories({
                 fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
               }}
             >
-              <span className="dark:hidden" style={{ color: titleColor || 'inherit' }}>
-                {title || 'Galerías Destacadas'}
-              </span>
-              <span
+              <WordReveal
+                text={title || 'Imágenes Destacadas'}
+                as="span"
+                className="dark:hidden"
+                style={{ color: titleColor || 'inherit' }}
+              />
+              <WordReveal
+                text={title || 'Imágenes Destacadas'}
+                as="span"
                 className="hidden dark:inline"
                 style={{ color: titleColorDark || titleColor || 'inherit' }}
-              >
-                {title || 'Galerías Destacadas'}
-              </span>
+              />
             </h2>
           </div>
           <Link
@@ -71,48 +81,8 @@ export default async function FeaturedCategories({
           </Link>
         </div>
 
-        {/* Categories Grid */}
-        <StaggerChildren className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-3">
-          {categories.map((category) => (
-            <FadeIn key={category.id}>
-              <Link
-                href={`${ROUTES.public.portfolio}/${category.slug}`}
-                className="group relative block aspect-4/5 overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl"
-              >
-                {/* Image */}
-                {category.images[0]?.url ? (
-                  <OptimizedImage
-                    src={category.images[0].url}
-                    alt={category.name}
-                    fill
-                    variant="card"
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center bg-(--card-bg)">
-                    <span className="text-4xl text-(--foreground) opacity-20">📷</span>
-                  </div>
-                )}
-
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
-
-                {/* Content */}
-                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-6 lg:p-8">
-                  <h3 className="font-heading text-sm leading-tight font-bold text-white sm:text-xl lg:text-2xl">
-                    {category.name}
-                  </h3>
-                  {category.description && (
-                    <p className="mt-1 line-clamp-2 text-[10px] text-white/80 sm:text-xs">
-                      {category.description}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            </FadeIn>
-          ))}
-        </StaggerChildren>
+        {/* Images grid with lightbox */}
+        <FeaturedImagesGallery images={images} />
       </div>
     </section>
   )

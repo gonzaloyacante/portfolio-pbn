@@ -160,19 +160,10 @@ model ContactSettings {
   instagram        String? // URL del perfil de Instagram
   instagramUsername String? @default("") // @username para mostrar
   showInstagram    Boolean  @default(true)
+  // Instagram Post Embed
+  instagramPostUrl     String? // URL of specific Instagram post to embed
+  showInstagramEmbed   Boolean @default(false)
   location         String?
-  // Form Configuration
-  formTitle        String?  @default("Envíame un mensaje")
-  nameLabel        String?  @default("Tu nombre")
-  emailLabel       String?  @default("Tu email")
-  phoneLabel       String?  @default("Tu teléfono (opcional)")
-  messageLabel     String?  @default("Mensaje")
-  preferenceLabel  String?  @default("¿Cómo preferís que te contacte?")
-  submitLabel      String?  @default("Enviar mensaje")
-  // Success Messages
-  successTitle     String?  @default("¡Mensaje enviado!")
-  successMessage   String?  @default("Gracias por contactarme. Te responderé lo antes posible.")
-  sendAnotherLabel String?  @default("Enviar otro mensaje")
   // Visibility Toggles
   showSocialLinks  Boolean  @default(true)
   showPhone        Boolean  @default(true)

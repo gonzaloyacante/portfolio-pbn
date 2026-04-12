@@ -6,6 +6,7 @@ import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/notifications/push_provider.dart';
 import '../../../core/theme/app_breakpoints.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';

@@ -1,8 +1,7 @@
 'use client'
 
 import { ContactSettingsData, updateContactSettings } from '@/actions/settings/contact'
-import { SocialLinkData, upsertSocialLink, deleteSocialLink } from '@/actions/settings/social'
-import { useState } from 'react'
+import { SocialLinkData } from '@/actions/settings/social'
 import { useRouter } from 'next/navigation'
 import {
   Button,
@@ -12,14 +11,14 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  useConfirmDialog,
   ImageUpload,
 } from '@/components/ui'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
-import { Plus, Trash2, Save } from 'lucide-react'
+import { Save } from 'lucide-react'
 import { showToast } from '@/lib/toast'
+import { SocialLinkRow } from './SocialLinkRow'
 
 interface ContactEditorProps {
   settings: ContactSettingsData | null
@@ -34,7 +33,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     register,
     handleSubmit,
     setValue,
-    watch,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<ContactSettingsFormData>({
     resolver: zodResolver(contactSettingsSchema),
@@ -47,23 +46,36 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       phone: settings?.phone || '',
       whatsapp: settings?.whatsapp || '',
       location: settings?.location || '',
-      formTitle: settings?.formTitle || 'Envíame un mensaje',
-      nameLabel: settings?.nameLabel || 'Tu nombre',
-      emailLabel: settings?.emailLabel || 'Tu email',
-      phoneLabel: settings?.phoneLabel || 'Tu teléfono (opcional)',
-      messageLabel: settings?.messageLabel || 'Mensaje',
-      preferenceLabel: settings?.preferenceLabel || '¿Cómo preferís que te contacte?',
-      submitLabel: settings?.submitLabel || 'Enviar mensaje',
-      successTitle: settings?.successTitle || '¡Mensaje enviado!',
-      successMessage: settings?.successMessage || 'Gracias por contactarme.',
-      sendAnotherLabel: settings?.sendAnotherLabel || 'Enviar otro mensaje',
       showSocialLinks: settings?.showSocialLinks ?? true,
       showPhone: settings?.showPhone ?? true,
       showWhatsapp: settings?.showWhatsapp ?? true,
       showEmail: settings?.showEmail ?? true,
       showLocation: settings?.showLocation ?? true,
+      instagramPostUrl: settings?.instagramPostUrl || '',
+      showInstagramEmbed: settings?.showInstagramEmbed ?? false,
     },
   })
+
+  const toggleFieldValues = useWatch({
+    control,
+    name: [
+      'showEmail',
+      'showPhone',
+      'showWhatsapp',
+      'showLocation',
+      'showSocialLinks',
+      'showInstagramEmbed',
+    ],
+  })
+
+  const toggleValueMap: Record<string, boolean> = {
+    showEmail: toggleFieldValues[0] ?? true,
+    showPhone: toggleFieldValues[1] ?? true,
+    showWhatsapp: toggleFieldValues[2] ?? true,
+    showLocation: toggleFieldValues[3] ?? true,
+    showSocialLinks: toggleFieldValues[4] ?? true,
+    showInstagramEmbed: toggleFieldValues[5] ?? false,
+  }
 
   // Social Links State (Simple local management before save? No, immediate actions)
 
@@ -86,7 +98,6 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       <Tabs defaultValue="general" className="w-full">
         <TabsList className="mb-6 w-full md:w-auto">
           <TabsTrigger value="general">📞 Info General</TabsTrigger>
-          <TabsTrigger value="form">📝 Formulario Labels</TabsTrigger>
           <TabsTrigger value="social">🔗 Redes Sociales</TabsTrigger>
         </TabsList>
 
@@ -156,49 +167,13 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
                 ].map(({ field, label }) => (
                   <label key={field} className="flex items-center gap-3">
                     <Switch
-                      checked={watch(field) ?? true}
+                      checked={toggleValueMap[field] ?? true}
                       onCheckedChange={(v) => setValue(field, v, { shouldDirty: true })}
                     />
                     <span className="text-sm">{label}</span>
                   </label>
                 ))}
               </div>
-            </div>
-          </form>
-        </TabsContent>
-
-        {/* FORM LABELS TAB */}
-        <TabsContent value="form">
-          <form
-            onSubmit={handleSubmit(onSettingsSubmit)}
-            className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm"
-          >
-            <h2 className="text-lg font-semibold">Textos del Formulario</h2>
-            <div className="grid gap-6 md:grid-cols-2">
-              <Input
-                label="Título del Formulario"
-                {...register('formTitle')}
-                error={errors.formTitle?.message}
-              />
-              <Input label="Label Nombre" {...register('nameLabel')} />
-              <Input label="Label Email" {...register('emailLabel')} />
-              <Input label="Label Teléfono" {...register('phoneLabel')} />
-              <Input label="Label Mensaje" {...register('messageLabel')} />
-              <Input label="Label Preferencia" {...register('preferenceLabel')} />
-              <Input label="Texto Botón Enviar" {...register('submitLabel')} />
-              <div className="col-span-2 border-t pt-4">
-                <h3 className="mb-4 font-medium">Mensajes de Éxito</h3>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Input label="Título Éxito" {...register('successTitle')} />
-                  <Input label="Mensaje Éxito" {...register('successMessage')} />
-                  <Input label="Botón Enviar Otro" {...register('sendAnotherLabel')} />
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
-                <Save className="mr-2 h-4 w-4" /> Guardar Textos
-              </Button>
             </div>
           </form>
         </TabsContent>
@@ -220,119 +195,39 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
               {/* Empty Row for New Link */}
               <SocialLinkRow isNew />
             </div>
+
+            {/* Instagram Post Embed */}
+            <form
+              onSubmit={handleSubmit(onSettingsSubmit)}
+              className="border-border mt-6 space-y-4 border-t pt-6"
+            >
+              <h3 className="text-sm font-semibold">Post de Instagram en página de contacto</h3>
+              <p className="text-muted-foreground text-xs">
+                Copiá la URL de un post específico de Instagram (ej:
+                https://www.instagram.com/p/ABC123/). Se mostrará como embed nativo de Instagram.
+              </p>
+              <Input
+                label="URL del post de Instagram"
+                {...register('instagramPostUrl')}
+                error={errors.instagramPostUrl?.message}
+                placeholder="https://www.instagram.com/p/..."
+              />
+              <label className="flex items-center gap-3">
+                <Switch
+                  checked={toggleValueMap['showInstagramEmbed'] ?? false}
+                  onCheckedChange={(v) => setValue('showInstagramEmbed', v, { shouldDirty: true })}
+                />
+                <span className="text-sm">Mostrar embed de Instagram</span>
+              </label>
+              <div className="flex justify-end">
+                <Button type="submit" disabled={isSubmitting} loading={isSubmitting} size="sm">
+                  <Save className="mr-2 h-4 w-4" /> Guardar
+                </Button>
+              </div>
+            </form>
           </div>
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
-
-function SocialLinkRow({ link, isNew }: { link?: SocialLinkData; isNew?: boolean }) {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [data, setData] = useState({
-    platform: link?.platform || '',
-    url: link?.url || '',
-    username: link?.username || '',
-    isActive: link?.isActive ?? true,
-    sortOrder: link?.sortOrder || 0,
-  })
-
-  // Confirmation Dialog
-  const { confirm, Dialog } = useConfirmDialog()
-
-  // Simple save handler per row
-  const handleSave = async () => {
-    if (!data.platform || !data.url) {
-      showToast.error('Plataforma y URL requeridos')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const result = await upsertSocialLink({ ...data, icon: null, id: link?.id })
-      if (result.success) {
-        showToast.success(isNew ? 'Link creado' : 'Link actualizado')
-        if (isNew) setData({ platform: '', url: '', username: '', isActive: true, sortOrder: 0 })
-        router.refresh()
-      } else {
-        showToast.error(result.error || 'Error desconocido')
-      }
-    } catch {
-      showToast.error('Error de conexión')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleDelete = async () => {
-    if (!link?.id) return
-
-    const isConfirmed = await confirm({
-      title: '¿Eliminar red social?',
-      message: 'Esta acción no se puede deshacer.',
-      confirmText: 'Eliminar',
-      variant: 'danger',
-    })
-
-    if (isConfirmed) {
-      setLoading(true)
-      await deleteSocialLink(link.id)
-      router.refresh()
-      setLoading(false)
-    }
-  }
-
-  return (
-    <>
-      <div
-        className={`grid grid-cols-12 items-center gap-2 rounded border p-3 ${isNew ? 'border-border bg-muted/50 border-dashed' : 'border-border'}`}
-      >
-        <div className="col-span-2">
-          {isNew ? (
-            <Input
-              placeholder="Plataforma (ej: instagram)"
-              value={data.platform}
-              onChange={(e) => setData({ ...data, platform: e.target.value.toLowerCase() })}
-              className="h-9 text-xs"
-            />
-          ) : (
-            <span className="ml-2 text-sm font-medium capitalize">{data.platform}</span>
-          )}
-        </div>
-        <div className="col-span-4">
-          <Input
-            placeholder="URL Completa"
-            value={data.url}
-            onChange={(e) => setData({ ...data, url: e.target.value })}
-            className="h-9 text-xs"
-          />
-        </div>
-        <div className="col-span-3">
-          <Input
-            placeholder="@usuario"
-            value={data.username || ''}
-            onChange={(e) => setData({ ...data, username: e.target.value })}
-            className="h-9 text-xs"
-          />
-        </div>
-        <div className="col-span-3 flex justify-end gap-2">
-          <Button
-            size="sm"
-            variant={isNew ? 'primary' : 'ghost'}
-            onClick={handleSave}
-            disabled={loading}
-          >
-            {isNew ? <Plus size={16} /> : <Save size={16} className="text-primary" />}
-          </Button>
-          {!isNew && (
-            <Button size="sm" variant="ghost" onClick={handleDelete} disabled={loading}>
-              <Trash2 size={16} className="text-destructive" />
-            </Button>
-          )}
-        </div>
-      </div>
-      <Dialog />
-    </>
   )
 }

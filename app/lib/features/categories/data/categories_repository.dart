@@ -152,6 +152,66 @@ class CategoriesRepository {
       throw Exception(apiResponse.error ?? 'Error al guardar el orden');
     }
   }
+
+  Future<void> addGalleryImages(
+    String categoryId,
+    List<({String url, String publicId, int? width, int? height})> images,
+  ) async {
+    final resp = await _client.post<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {
+        'images': images
+            .map(
+              (i) => {
+                'url': i.url,
+                'publicId': i.publicId,
+                if (i.width != null) 'width': i.width,
+                if (i.height != null) 'height': i.height,
+              },
+            )
+            .toList(),
+      },
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al agregar imágenes');
+    }
+  }
+
+  Future<void> deleteGalleryImage(
+    String categoryId,
+    String imageId,
+    String publicId,
+  ) async {
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {'imageId': imageId, 'publicId': publicId},
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al eliminar imagen');
+    }
+  }
+
+  Future<void> toggleImageFeatured(
+    String categoryId,
+    String imageId, {
+    required bool isFeatured,
+  }) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.categoryGallery(categoryId),
+      data: {'imageId': imageId, 'isFeatured': isFeatured},
+    );
+
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(
+        apiResponse.error ?? 'Error al actualizar imagen destacada',
+      );
+    }
+  }
 }
 
 @Riverpod(keepAlive: true)

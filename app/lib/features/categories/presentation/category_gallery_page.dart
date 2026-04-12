@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../features/app_settings/providers/app_preferences_provider.dart';
+import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -11,6 +13,7 @@ import '../data/categories_repository.dart';
 import '../data/category_model.dart';
 import 'widgets/gallery_grid_tile.dart';
 import 'widgets/gallery_tile.dart';
+import 'widgets/drag_placeholder.dart';
 import 'widgets/instruction_banner.dart';
 
 part 'category_gallery_page_widgets.dart';
@@ -20,7 +23,7 @@ part 'category_gallery_page_builders.dart';
 
 final _categoryGalleryProvider =
     FutureProvider.family<List<GalleryImageItem>, String>(
-      (ref, categoryId) =>
+      (Ref ref, String categoryId) =>
           ref.read(categoriesRepositoryProvider).getCategoryGallery(categoryId),
     );
 
@@ -46,14 +49,24 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   List<GalleryImageItem>? _items;
   bool _dirty = false;
   bool _saving = false;
+  bool _uploading = false;
   String _searchQuery = '';
 
   /// ID del ítem actualmente arrastrado en la vista de cuadrícula.
   String? _draggingId;
 
+  /// ID del ítem que acaba de ser soltado — activa la animación de drop.
+  String? _lastDroppedId;
+
   void _rebuild(VoidCallback fn) => setState(fn);
 
   void _onSearch(String value) => setState(() => _searchQuery = value.trim());
+
+  Future<void> _onRefresh() async {
+    setState(() => _items = null);
+    ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+    await ref.read(_categoryGalleryProvider(widget.categoryId).future);
+  }
 
   List<GalleryImageItem> get _displayItems {
     if (_items == null) return const [];
@@ -71,6 +84,19 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
 
     return AppScaffold(
       title: 'Galería — ${widget.categoryName}',
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: (_saving || _uploading) ? null : _showUploadSheet,
+        icon: _uploading
+            ? const SizedBox.square(
+                dimension: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+            : const Icon(Icons.add_photo_alternate_outlined),
+        label: Text(_uploading ? 'Subiendo...' : 'Agregar foto'),
+      ),
       actions: [
         // Toggle lista / cuadrícula
         IconButton(
@@ -133,49 +159,235 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
           }
 
           if (_items!.isEmpty) {
-            return Column(
-              children: [
-                AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
-                const Expanded(
-                  child: EmptyState(
-                    icon: Icons.photo_library_outlined,
-                    title: 'Sin imágenes',
-                    subtitle: 'Esta categoría no tiene imágenes todavía.',
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: Column(
+                children: [
+                  AppSearchBar(
+                    hint: 'Buscar imágenes...',
+                    onChanged: _onSearch,
                   ),
-                ),
-              ],
+                  const Expanded(
+                    child: SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      child: SizedBox(
+                        height: 400,
+                        child: EmptyState(
+                          icon: Icons.photo_library_outlined,
+                          title: 'Sin imágenes',
+                          subtitle: 'Esta categoría no tiene imágenes todavía.',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           }
 
-          return Column(
-            children: [
-              AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
-              Expanded(
-                child: _displayItems.isEmpty
-                    ? const EmptyState(
-                        icon: Icons.search_off_outlined,
-                        title: 'Sin resultados',
-                        subtitle:
-                            'No hay imágenes que coincidan con la búsqueda',
-                      )
-                    : _searchQuery.isNotEmpty
-                    ? _buildSearchResults(context)
-                    : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        switchInCurve: Curves.easeOut,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(opacity: animation, child: child),
-                        child: viewMode == ViewMode.list
-                            ? _buildListView(context)
-                            : _buildGridView(context),
-                      ),
-              ),
-            ],
+          return RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: Column(
+              children: [
+                AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
+                Expanded(
+                  child: _displayItems.isEmpty
+                      ? const EmptyState(
+                          icon: Icons.search_off_outlined,
+                          title: 'Sin resultados',
+                          subtitle:
+                              'No hay imágenes que coincidan con la búsqueda',
+                        )
+                      : _searchQuery.isNotEmpty
+                      ? _buildSearchResults(context)
+                      : AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          switchInCurve: Curves.easeOut,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) =>
+                                  FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
+                          child: viewMode == ViewMode.list
+                              ? _buildListView(context)
+                              : _buildGridView(context),
+                        ),
+                ),
+              ],
+            ),
           );
         },
       ),
     );
+  }
+
+  // ── Upload ────────────────────────────────────────────────────────────────
+
+  Future<void> _showUploadSheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 24,
+          bottom: MediaQuery.viewInsetsOf(ctx).bottom + 24,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Agregar foto a la galería',
+              style: Theme.of(
+                ctx,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 16),
+            ImageUploadWidget(
+              label: 'Seleccionar foto',
+              hint: 'Toca para seleccionar una imagen',
+              height: 240,
+              onImageSelected: (file) async {
+                Navigator.pop(ctx);
+                setState(() => _uploading = true);
+                try {
+                  final uploadSvc = ref.read(uploadServiceProvider);
+                  final result = await uploadSvc.uploadImageFull(file);
+                  await ref
+                      .read(categoriesRepositoryProvider)
+                      .addGalleryImages(widget.categoryId, [
+                        (
+                          url: result.url,
+                          publicId: result.publicId,
+                          width: result.width,
+                          height: result.height,
+                        ),
+                      ]);
+                  ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+                  setState(() => _items = null);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Imagen agregada correctamente'),
+                      ),
+                    );
+                  }
+                } catch (e, st) {
+                  Sentry.captureException(e, stackTrace: st);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No se pudo agregar la imagen.'),
+                      ),
+                    );
+                  }
+                } finally {
+                  if (mounted) setState(() => _uploading = false);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Delete ────────────────────────────────────────────────────────────────
+
+  Future<void> _deleteImage(GalleryImageItem item) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Eliminar imagen'),
+        content: const Text(
+          '¿Eliminar esta imagen de la galería? Esta acción no se puede deshacer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: AppColors.destructive),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    setState(() => _saving = true);
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .deleteGalleryImage(widget.categoryId, item.id, item.publicId ?? '');
+      setState(() {
+        _items?.removeWhere((i) => i.id == item.id);
+      });
+      ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Imagen eliminada')));
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo eliminar la imagen.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  // ── Toggle isFeatured ─────────────────────────────────────────────────────────
+
+  Future<void> _toggleImageFeatured(GalleryImageItem item) async {
+    final newValue = !item.isFeatured;
+    setState(() {
+      _items = _items
+          ?.map((i) => i.id == item.id ? i.copyWith(isFeatured: newValue) : i)
+          .toList();
+    });
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .toggleImageFeatured(
+            widget.categoryId,
+            item.id,
+            isFeatured: newValue,
+          );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      setState(() {
+        _items = _items
+            ?.map(
+              (i) => i.id == item.id ? i.copyWith(isFeatured: !newValue) : i,
+            )
+            .toList();
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo actualizar la imagen destacada.'),
+          ),
+        );
+      }
+    }
   }
 
   // ── Helpers de arrastre (grid) ───────────────────────────────────────────────
@@ -185,6 +397,11 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       final item = _items!.removeAt(fromIdx);
       _items!.insert(toIdx, item);
       _dirty = true;
+      _lastDroppedId = item.id;
+    });
+    // Clear the drop marker after the bounce animation finishes.
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => _lastDroppedId = null);
     });
   }
 

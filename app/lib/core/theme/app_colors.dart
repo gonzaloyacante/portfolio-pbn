@@ -56,4 +56,7 @@ class AppColors {
   static const Color neutral = Color(0xFF6B7280); // gris ui (inactivo/borrador)
   static const Color neutralMedium = Color(0xFF9E9E9E); // gris placeholder imgs
   static const Color featured = Color(0xFF8B5CF6); // violeta para "Destacado"
+
+  // ── Redes sociales ────────────────────────────────────────────────────────
+  static const Color instagramPink = Color(0xFFE1306C); // Instagram brand color
 }

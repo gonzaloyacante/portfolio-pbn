@@ -634,8 +634,8 @@ as bool,
 /// @nodoc
 mixin _$ThemeSettings {
 
- String? get id;// Light mode
- String get primaryColor; String get secondaryColor; String get accentColor; String get backgroundColor; String get textColor; String get cardBgColor;// Dark mode
+ String? get id;// Light mode — matches AppColors & design-tokens.ts BRAND values
+ String get primaryColor; String get secondaryColor; String get accentColor; String get backgroundColor; String get textColor; String get cardBgColor;// Dark mode — matches AppColors darkXxx values
  String get darkPrimaryColor; String get darkSecondaryColor; String get darkAccentColor; String get darkBackgroundColor; String get darkTextColor; String get darkCardBgColor;// Typography — Base
  String get headingFont; String? get headingFontUrl; int get headingFontSize; String get bodyFont; String? get bodyFontUrl; int get bodyFontSize; String get scriptFont; String? get scriptFontUrl; int get scriptFontSize;// Typography — Brand
  String? get brandFont; String? get brandFontUrl; int? get brandFontSize; String? get portfolioFont; String? get portfolioFontUrl; int? get portfolioFontSize; String? get signatureFont; String? get signatureFontUrl; int? get signatureFontSize;// Layout
@@ -865,18 +865,18 @@ return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentCol
 @JsonSerializable()
 
 class _ThemeSettings implements ThemeSettings {
-  const _ThemeSettings({this.id, this.primaryColor = '#6c0a0a', this.secondaryColor = '#ffaadd', this.accentColor = '#fff1f9', this.backgroundColor = '#fff1f9', this.textColor = '#000000', this.cardBgColor = '#ffaadd', this.darkPrimaryColor = '#ffaadd', this.darkSecondaryColor = '#6c0a0a', this.darkAccentColor = '#000000', this.darkBackgroundColor = '#6c0a0a', this.darkTextColor = '#fff1f9', this.darkCardBgColor = '#ffaadd', this.headingFont = 'Poppins', this.headingFontUrl, this.headingFontSize = 32, this.bodyFont = 'Open Sans', this.bodyFontUrl, this.bodyFontSize = 16, this.scriptFont = 'Great Vibes', this.scriptFontUrl, this.scriptFontSize = 24, this.brandFont, this.brandFontUrl, this.brandFontSize, this.portfolioFont, this.portfolioFontUrl, this.portfolioFontSize, this.signatureFont, this.signatureFontUrl, this.signatureFontSize, this.borderRadius = 40, this.isActive = true});
+  const _ThemeSettings({this.id, this.primaryColor = '#6c0a0a', this.secondaryColor = '#fce7f3', this.accentColor = '#fff1f9', this.backgroundColor = '#fff8fc', this.textColor = '#1a050a', this.cardBgColor = '#ffffff', this.darkPrimaryColor = '#fb7185', this.darkSecondaryColor = '#881337', this.darkAccentColor = '#2a1015', this.darkBackgroundColor = '#0f0505', this.darkTextColor = '#fafafa', this.darkCardBgColor = '#1c0a0f', this.headingFont = 'Poppins', this.headingFontUrl, this.headingFontSize = 32, this.bodyFont = 'Open Sans', this.bodyFontUrl, this.bodyFontSize = 16, this.scriptFont = 'Great Vibes', this.scriptFontUrl, this.scriptFontSize = 24, this.brandFont, this.brandFontUrl, this.brandFontSize, this.portfolioFont, this.portfolioFontUrl, this.portfolioFontSize, this.signatureFont, this.signatureFontUrl, this.signatureFontSize, this.borderRadius = 40, this.isActive = true});
   factory _ThemeSettings.fromJson(Map<String, dynamic> json) => _$ThemeSettingsFromJson(json);
 
 @override final  String? id;
-// Light mode
+// Light mode — matches AppColors & design-tokens.ts BRAND values
 @override@JsonKey() final  String primaryColor;
 @override@JsonKey() final  String secondaryColor;
 @override@JsonKey() final  String accentColor;
 @override@JsonKey() final  String backgroundColor;
 @override@JsonKey() final  String textColor;
 @override@JsonKey() final  String cardBgColor;
-// Dark mode
+// Dark mode — matches AppColors darkXxx values
 @override@JsonKey() final  String darkPrimaryColor;
 @override@JsonKey() final  String darkSecondaryColor;
 @override@JsonKey() final  String darkAccentColor;
@@ -1222,7 +1222,7 @@ return $default(_that.id,_that.siteName,_that.siteTagline,_that.logoUrl,_that.de
 @JsonSerializable()
 
 class _SiteSettings implements SiteSettings {
-  const _SiteSettings({this.id, this.siteName = 'Paola Bolívar Nievas - Make-up Artist', this.siteTagline, this.logoUrl, this.defaultMetaTitle, this.defaultMetaDescription, this.defaultEmail, this.defaultPhone, this.defaultWhatsapp, this.googleAnalyticsId, this.maintenanceMode = false, this.maintenanceMessage, this.showAboutPage = true, this.showGalleryPage = true, this.showServicesPage = false, this.showContactPage = true, this.allowIndexing = true, this.isActive = true, this.navbarBrandText, this.navbarBrandFont, this.navbarBrandFontUrl, this.navbarBrandFontSize, this.navbarBrandColor, this.navbarBrandColorDark, this.navbarShowBrand = true});
+  const _SiteSettings({this.id, this.siteName = 'Paola Bolívar Nievas - Make-up Artist', this.siteTagline, this.logoUrl, this.defaultMetaTitle, this.defaultMetaDescription, this.defaultEmail, this.defaultPhone, this.defaultWhatsapp, this.googleAnalyticsId, this.maintenanceMode = false, this.maintenanceMessage, this.showAboutPage = true, this.showGalleryPage = true, this.showServicesPage = true, this.showContactPage = true, this.allowIndexing = true, this.isActive = true, this.navbarBrandText, this.navbarBrandFont, this.navbarBrandFontUrl, this.navbarBrandFontSize, this.navbarBrandColor, this.navbarBrandColorDark, this.navbarShowBrand = true});
   factory _SiteSettings.fromJson(Map<String, dynamic> json) => _$SiteSettingsFromJson(json);
 
 @override final  String? id;

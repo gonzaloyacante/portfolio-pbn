@@ -20,7 +20,7 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2, Star } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion } from '@/components/ui'
 import { useConfirmDialog } from '@/components/ui'
 
 interface CategoryImage {

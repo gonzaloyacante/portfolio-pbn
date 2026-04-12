@@ -6,7 +6,7 @@ import {
   approveTestimonial,
   rejectTestimonial,
 } from '@/actions/cms/testimonials'
-import { Button, Card, Badge } from '@/components/ui'
+import { Button, Card, Badge, SubmitButton } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import Link from 'next/link'
@@ -55,7 +55,7 @@ export default async function TestimonialsPage() {
             ]}
           />
           <div className="flex justify-end">
-            <Button type="submit">Crear Testimonio</Button>
+            <SubmitButton>Crear Testimonio</SubmitButton>
           </div>
         </form>
       </Section>
@@ -136,9 +136,9 @@ export default async function TestimonialsPage() {
                           await approveTestimonial(t.id)
                         }}
                       >
-                        <Button type="submit" variant="primary" size="sm" className="shadow-sm">
+                        <SubmitButton variant="primary" size="sm" className="shadow-sm">
                           ✓ Aprobar
-                        </Button>
+                        </SubmitButton>
                       </form>
                       <form
                         action={async () => {
@@ -146,9 +146,9 @@ export default async function TestimonialsPage() {
                           await rejectTestimonial(t.id)
                         }}
                       >
-                        <Button type="submit" variant="destructive" size="sm" className="shadow-sm">
+                        <SubmitButton variant="destructive" size="sm" className="shadow-sm">
                           ✕ Rechazar
-                        </Button>
+                        </SubmitButton>
                       </form>
                     </>
                   )}
@@ -161,14 +161,13 @@ export default async function TestimonialsPage() {
                         await toggleTestimonial(t.id)
                       }}
                     >
-                      <Button
-                        type="submit"
+                      <SubmitButton
                         variant={t.isActive ? 'secondary' : 'primary'}
                         size="sm"
                         className="shadow-sm"
                       >
                         {t.isActive ? '🔒 Ocultar' : '👁️ Mostrar'}
-                      </Button>
+                      </SubmitButton>
                     </form>
                   )}
 
@@ -179,15 +178,14 @@ export default async function TestimonialsPage() {
                       await deleteTestimonial(t.id)
                     }}
                   >
-                    <Button
-                      type="submit"
+                    <SubmitButton
                       variant="destructive"
                       size="sm"
                       className="px-3"
                       aria-label={`Eliminar testimonio de ${t.name}`}
                     >
                       🗑️
-                    </Button>
+                    </SubmitButton>
                   </form>
                 </div>
               </div>

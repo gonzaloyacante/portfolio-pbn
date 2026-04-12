@@ -25,6 +25,7 @@ class CalendarPage extends ConsumerStatefulWidget {
 class _CalendarPageState extends ConsumerState<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  CalendarFormat _calendarFormat = CalendarFormat.month;
 
   DateTime get _monthStart => DateTime(_focusedDay.year, _focusedDay.month, 1);
   DateTime get _monthEnd =>
