@@ -219,7 +219,8 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                       child: ListView.separated(
                         padding: EdgeInsets.symmetric(horizontal: hPad),
                         itemCount: paginated.data.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 8),
+                        separatorBuilder: (BuildContext _, int _) =>
+                            const SizedBox(height: 8),
                         itemBuilder: (ctx, i) => RepaintBoundary(
                           child: FadeSlideIn(
                             delay: Duration(
@@ -239,7 +240,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                                   color: Colors.white,
                                 ),
                               ),
-                              confirmDismiss: (_) async {
+                              confirmDismiss: (DismissDirection _) async {
                                 HapticFeedback.mediumImpact();
                                 await _delete(ctx, paginated.data[i]);
                                 return false;

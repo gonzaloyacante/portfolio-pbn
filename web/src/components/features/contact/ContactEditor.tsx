@@ -16,7 +16,7 @@ import {
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { contactSettingsSchema, type ContactSettingsFormData } from '@/lib/validations'
-import { Plus, Save } from 'lucide-react'
+import { Save } from 'lucide-react'
 import { showToast } from '@/lib/toast'
 import { SocialLinkRow } from './SocialLinkRow'
 
@@ -58,7 +58,14 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
 
   const toggleFieldValues = useWatch({
     control,
-    name: ['showEmail', 'showPhone', 'showWhatsapp', 'showLocation', 'showSocialLinks', 'showInstagramEmbed'],
+    name: [
+      'showEmail',
+      'showPhone',
+      'showWhatsapp',
+      'showLocation',
+      'showSocialLinks',
+      'showInstagramEmbed',
+    ],
   })
 
   const toggleValueMap: Record<string, boolean> = {
@@ -190,10 +197,14 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
             </div>
 
             {/* Instagram Post Embed */}
-            <form onSubmit={handleSubmit(onSettingsSubmit)} className="border-border mt-6 space-y-4 border-t pt-6">
+            <form
+              onSubmit={handleSubmit(onSettingsSubmit)}
+              className="border-border mt-6 space-y-4 border-t pt-6"
+            >
               <h3 className="text-sm font-semibold">Post de Instagram en página de contacto</h3>
               <p className="text-muted-foreground text-xs">
-                Copiá la URL de un post específico de Instagram (ej: https://www.instagram.com/p/ABC123/). Se mostrará como embed nativo de Instagram.
+                Copiá la URL de un post específico de Instagram (ej:
+                https://www.instagram.com/p/ABC123/). Se mostrará como embed nativo de Instagram.
               </p>
               <Input
                 label="URL del post de Instagram"

@@ -168,7 +168,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
             expand: false,
             initialChildSize: 0.6,
             maxChildSize: 0.9,
-            builder: (_, scrollCtrl) {
+            builder: (BuildContext _, ScrollController scrollCtrl) {
               return Column(
                 children: [
                   Padding(
@@ -203,7 +203,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                             mainAxisSpacing: 6,
                           ),
                       itemCount: images.length,
-                      itemBuilder: (_, i) {
+                      itemBuilder: (BuildContext _, int i) {
                         final img = images[i];
                         return RepaintBoundary(
                           child: GestureDetector(
@@ -219,13 +219,19 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                               child: CachedNetworkImage(
                                 imageUrl: img.url,
                                 fit: BoxFit.cover,
-                                placeholder: (ctx2, url) => const ColoredBox(
-                                  color: AppColors.lightBorder,
-                                ),
-                                errorWidget: (ctx2, url, err) => const Icon(
-                                  Icons.broken_image,
-                                  color: AppColors.neutralMedium,
-                                ),
+                                placeholder: (BuildContext ctx2, String url) =>
+                                    const ColoredBox(
+                                      color: AppColors.lightBorder,
+                                    ),
+                                errorWidget:
+                                    (
+                                      BuildContext ctx2,
+                                      String url,
+                                      Object err,
+                                    ) => const Icon(
+                                      Icons.broken_image,
+                                      color: AppColors.neutralMedium,
+                                    ),
                               ),
                             ),
                           ),

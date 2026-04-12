@@ -69,7 +69,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: ServerPreset.values.map((preset) {
+            children: ServerPreset.values.map((ServerPreset preset) {
               final isSelected = serverState.preset == preset;
               return InkWell(
                 onTap: () async {
@@ -162,7 +162,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                     ),
                     style: const TextStyle(fontSize: 12),
                     keyboardType: TextInputType.url,
-                    onSubmitted: (v) async {
+                    onSubmitted: (String v) async {
                       if (v.trim().isEmpty) return;
                       await notifier.setCustomUrl(v.trim());
                       setState(() => _showCustomInput = false);

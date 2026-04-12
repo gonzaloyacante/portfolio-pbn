@@ -44,7 +44,7 @@ class AuthNotifier extends _$AuthNotifier {
     //   auth_interceptor → auth_provider → auth_repository → api_client → auth_interceptor
     // Cuando el refresh token falla, el interceptor incrementa sessionExpiredSignal.
     // Aquí reaccionamos actualizando el estado → RouterNotifier redirige al login.
-    ref.listen<int>(sessionExpiredSignal, (prev, next) {
+    ref.listen<int>(sessionExpiredSignal, (int? prev, int next) {
       if (next > (prev ?? 0)) {
         AppLogger.warn(
           'AuthNotifier: session expired signal → transitioning to unauthenticated',

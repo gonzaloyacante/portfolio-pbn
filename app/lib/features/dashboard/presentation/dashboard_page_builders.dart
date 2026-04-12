@@ -54,7 +54,8 @@ extension _DashboardPageBuilders on DashboardPage {
                           childAspectRatio: 2.6,
                         ),
                         itemCount: 8,
-                        itemBuilder: (_, _) => const SkeletonStatCard(),
+                        itemBuilder: (BuildContext _, int _) =>
+                            const SkeletonStatCard(),
                       ),
                     ),
                   ),

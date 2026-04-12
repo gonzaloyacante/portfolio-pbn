@@ -118,7 +118,8 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                                               '@${detail.instagramUser}',
                                               style: theme.textTheme.bodySmall
                                                   ?.copyWith(
-                                                    color: AppColors.instagramPink,
+                                                    color:
+                                                        AppColors.instagramPink,
                                                     decoration: TextDecoration
                                                         .underline,
                                                   ),

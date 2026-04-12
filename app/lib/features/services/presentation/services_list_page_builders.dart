@@ -35,7 +35,7 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: hPad),
       itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 8),
+      separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
@@ -48,7 +48,7 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
               padding: const EdgeInsets.only(right: AppSpacing.lg),
               child: const Icon(Icons.delete_outline, color: Colors.white),
             ),
-            confirmDismiss: (_) async {
+            confirmDismiss: (DismissDirection _) async {
               HapticFeedback.mediumImpact();
               await _delete(ctx, items[i]);
               return false;

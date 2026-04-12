@@ -187,7 +187,7 @@ class AppUpdateRepository {
       await _dio.download(
         release.downloadUrl,
         savePath,
-        onReceiveProgress: (received, total) {
+        onReceiveProgress: (int received, int total) {
           onProgress?.call(received, total);
           if (total > 0) {
             final pct = (received / total * 100).toStringAsFixed(0);

@@ -23,7 +23,7 @@ part 'category_gallery_page_builders.dart';
 
 final _categoryGalleryProvider =
     FutureProvider.family<List<GalleryImageItem>, String>(
-      (ref, categoryId) =>
+      (Ref ref, String categoryId) =>
           ref.read(categoriesRepositoryProvider).getCategoryGallery(categoryId),
     );
 
@@ -204,8 +204,12 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                           duration: const Duration(milliseconds: 300),
                           switchInCurve: Curves.easeOut,
                           switchOutCurve: Curves.easeIn,
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(opacity: animation, child: child),
+                          transitionBuilder:
+                              (Widget child, Animation<double> animation) =>
+                                  FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
                           child: viewMode == ViewMode.list
                               ? _buildListView(context)
                               : _buildGridView(context),

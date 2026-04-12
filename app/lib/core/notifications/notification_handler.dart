@@ -73,7 +73,7 @@ class NotificationHandler {
 
     // 2. Mensajes recibidos en foreground → notificación del sistema
     try {
-      FirebaseMessaging.onMessage.listen((message) {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         AppLogger.info(
           'NotificationHandler[fg]: ${message.notification?.title}',
         );
@@ -87,7 +87,7 @@ class NotificationHandler {
 
     // 3. App abierta desde notificación (background → foreground tap)
     try {
-      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         AppLogger.info(
           'NotificationHandler[tap]: ${message.notification?.title}',
         );
@@ -100,7 +100,9 @@ class NotificationHandler {
 
     // 4. App abierta desde estado terminado por notificación
     try {
-      FirebaseMessaging.instance.getInitialMessage().then((message) {
+      FirebaseMessaging.instance.getInitialMessage().then((
+        RemoteMessage? message,
+      ) {
         if (message != null) {
           AppLogger.info(
             'NotificationHandler[initial]: ${message.notification?.title}',

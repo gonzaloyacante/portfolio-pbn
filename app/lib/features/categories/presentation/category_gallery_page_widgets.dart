@@ -28,13 +28,17 @@ class _DroppedAnimatorState extends State<_DroppedAnimator>
     );
     _scale = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.07)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.07,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.07, end: 1.0)
-            .chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween<double>(
+          begin: 1.07,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 70,
       ),
     ]).animate(_ctrl);
@@ -58,7 +62,8 @@ class _DroppedAnimatorState extends State<_DroppedAnimator>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _scale,
-      builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
+      builder: (BuildContext _, Widget? child) =>
+          Transform.scale(scale: _scale.value, child: child),
       child: widget.child,
     );
   }
@@ -109,16 +114,17 @@ class _ImageViewer extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.contain,
-                placeholder: (_, _) => const Center(
+                placeholder: (BuildContext _, String _) => const Center(
                   child: CircularProgressIndicator(color: Colors.white),
                 ),
-                errorWidget: (_, _, _) => const Center(
-                  child: Icon(
-                    Icons.broken_image_outlined,
-                    color: Colors.white54,
-                    size: 64,
-                  ),
-                ),
+                errorWidget: (BuildContext _, String _, Object _) =>
+                    const Center(
+                      child: Icon(
+                        Icons.broken_image_outlined,
+                        color: Colors.white54,
+                        size: 64,
+                      ),
+                    ),
               ),
             ),
           ),

@@ -115,7 +115,7 @@ final class PushRegistrationNotifierProvider
 }
 
 String _$pushRegistrationNotifierHash() =>
-    r'47a0f61172572203352245e053f43a40597cfcf9';
+    r'ec38bb5248e396c2242609a0283d3fc99639ac9f';
 
 /// Gestiona el registro/desregistro del token FCM en el backend.
 ///

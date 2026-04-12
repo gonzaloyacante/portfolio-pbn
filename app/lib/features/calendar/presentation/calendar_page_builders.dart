@@ -59,15 +59,15 @@ extension _CalendarPageBuilders on _CalendarPageState {
           firstDay: DateTime(2020),
           lastDay: DateTime(2030),
           focusedDay: _focusedDay,
-          selectedDayPredicate: (d) =>
+          selectedDayPredicate: (DateTime d) =>
               _selectedDay != null && isSameDay(d, _selectedDay),
-          onDaySelected: (selected, focused) {
+          onDaySelected: (DateTime selected, DateTime focused) {
             setState(() {
               _selectedDay = selected;
               _focusedDay = focused;
             });
           },
-          onPageChanged: (focused) {
+          onPageChanged: (DateTime focused) {
             setState(() {
               _focusedDay = focused;
               _selectedDay = null;
@@ -102,7 +102,8 @@ extension _CalendarPageBuilders on _CalendarPageState {
             CalendarFormat.week: 'Semana',
           },
           calendarFormat: _calendarFormat,
-          onFormatChanged: (format) => setState(() => _calendarFormat = format),
+          onFormatChanged: (CalendarFormat format) =>
+              setState(() => _calendarFormat = format),
         ),
       ),
     );
