@@ -10,6 +10,7 @@ export default async function ServicesPage() {
   const services = await prisma.service.findMany({
     where: { deletedAt: null },
     orderBy: { sortOrder: 'asc' },
+    include: { pricingTiers: { orderBy: { sortOrder: 'asc' } } },
   })
 
   return (

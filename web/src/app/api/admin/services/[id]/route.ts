@@ -39,6 +39,10 @@ const SERVICE_FULL_SELECT = {
   cancellationPolicy: true,
   createdAt: true,
   updatedAt: true,
+  pricingTiers: {
+    select: { id: true, name: true, price: true, description: true, sortOrder: true },
+    orderBy: { sortOrder: 'asc' as const },
+  },
 }
 
 // ── GET ───────────────────────────────────────────────────────────────────────
@@ -108,6 +112,7 @@ export async function PATCH(req: Request, { params }: Params) {
       sortOrder,
       requirements,
       cancellationPolicy,
+      pricingTiers,
     } = parsed.data
 
     if (slug) {
@@ -128,7 +133,7 @@ export async function PATCH(req: Request, { params }: Params) {
       select: { imageUrl: true },
     })
 
-    const service = await prisma.service.update({
+    await prisma.service.update({
       where: { id },
       data: {
         ...(name !== undefined && { name }),
@@ -150,6 +155,25 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(requirements !== undefined && { requirements }),
         ...(cancellationPolicy !== undefined && { cancellationPolicy }),
       },
+    })
+
+    if (pricingTiers !== undefined) {
+      await prisma.servicePricingTier.deleteMany({ where: { serviceId: id } })
+      if (pricingTiers.length > 0) {
+        await prisma.servicePricingTier.createMany({
+          data: pricingTiers.map((tier, idx) => ({
+            serviceId: id,
+            name: tier.name,
+            price: tier.price,
+            description: tier.description ?? null,
+            sortOrder: idx,
+          })),
+        })
+      }
+    }
+
+    const updatedService = await prisma.service.findUnique({
+      where: { id },
       select: SERVICE_FULL_SELECT,
     })
 
@@ -179,7 +203,7 @@ export async function PATCH(req: Request, { params }: Params) {
       })
     }
 
-    return NextResponse.json({ success: true, data: service })
+    return NextResponse.json({ success: true, data: updatedService })
   } catch (err) {
     logger.error('[admin-service-patch] Error', {
       error: err instanceof Error ? err.message : String(err),

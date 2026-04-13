@@ -42,14 +42,6 @@ _CategoryDetail _$CategoryDetailFromJson(Map<String, dynamic> json) =>
       description: json['description'] as String?,
       thumbnailUrl: json['thumbnailUrl'] as String?,
       coverImageUrl: json['coverImageUrl'] as String?,
-      metaTitle: json['metaTitle'] as String?,
-      metaDescription: json['metaDescription'] as String?,
-      metaKeywords:
-          (json['metaKeywords'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      ogImage: json['ogImage'] as String?,
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
       isActive: json['isActive'] as bool? ?? true,
       createdAt: json['createdAt'] as String,
@@ -64,10 +56,6 @@ Map<String, dynamic> _$CategoryDetailToJson(_CategoryDetail instance) =>
       'description': instance.description,
       'thumbnailUrl': instance.thumbnailUrl,
       'coverImageUrl': instance.coverImageUrl,
-      'metaTitle': instance.metaTitle,
-      'metaDescription': instance.metaDescription,
-      'metaKeywords': instance.metaKeywords,
-      'ogImage': instance.ogImage,
       'sortOrder': instance.sortOrder,
       'isActive': instance.isActive,
       'createdAt': instance.createdAt,

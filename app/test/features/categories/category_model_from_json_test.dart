@@ -155,10 +155,6 @@ void main() {
     };
 
     test(
-      'metaKeywords defaults to empty',
-      () => expect(CategoryDetail.fromJson(base).metaKeywords, isEmpty),
-    );
-    test(
       'isActive defaults to true',
       () => expect(CategoryDetail.fromJson(base).isActive, isTrue),
     );
@@ -166,18 +162,7 @@ void main() {
       'coverImageUrl is null',
       () => expect(CategoryDetail.fromJson(base).coverImageUrl, isNull),
     );
-    test(
-      'metaTitle is null',
-      () => expect(CategoryDetail.fromJson(base).metaTitle, isNull),
-    );
-    test(
-      'metaDescription is null',
-      () => expect(CategoryDetail.fromJson(base).metaDescription, isNull),
-    );
-    test(
-      'ogImage is null',
-      () => expect(CategoryDetail.fromJson(base).ogImage, isNull),
-    );
+    // SEO fields removed from DB schema (March 2026) — not expected in API responses
   });
 
   group('CategoryDetail.fromJson — optional fields', () {
@@ -211,24 +196,7 @@ void main() {
         'https://x.com/cover.jpg',
       ),
     );
-    test(
-      'parses metaTitle',
-      () => expect(CategoryDetail.fromJson(full()).metaTitle, 'Estudio - SEO'),
-    );
-    test(
-      'parses metaKeywords',
-      () => expect(CategoryDetail.fromJson(full()).metaKeywords, [
-        'estudio',
-        'foto',
-      ]),
-    );
-    test(
-      'parses ogImage',
-      () => expect(
-        CategoryDetail.fromJson(full()).ogImage,
-        'https://x.com/og.jpg',
-      ),
-    );
+    // SEO fields (metaTitle, metaKeywords, ogImage) removed from DB — not parsed
     test(
       'parses sortOrder',
       () => expect(CategoryDetail.fromJson(full()).sortOrder, 3),

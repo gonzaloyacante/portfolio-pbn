@@ -99,8 +99,8 @@ void main() {
     test('stores id', () => expect(detail.id, 's1'));
     test('currency defaults to EUR', () => expect(detail.currency, 'EUR'));
     test(
-      'metaKeywords defaults to empty list',
-      () => expect(detail.metaKeywords, isEmpty),
+      'pricingTiers defaults to empty list',
+      () => expect(detail.pricingTiers, isEmpty),
     );
     test(
       'durationMinutes defaults to null',

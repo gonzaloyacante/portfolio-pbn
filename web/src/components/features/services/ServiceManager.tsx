@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Service } from '@/generated/prisma/client'
+import { Service, ServicePricingTier } from '@/generated/prisma/client'
 import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/cms/services'
 import ServiceForm from './ServiceForm'
@@ -9,13 +9,15 @@ import { Edit, Trash2, Plus, Search } from 'lucide-react'
 import { showToast } from '@/lib/toast'
 import React from 'react'
 
+type ServiceWithTiers = Service & { pricingTiers?: ServicePricingTier[] }
+
 interface ServiceManagerProps {
-  initialServices: Service[]
+  initialServices: ServiceWithTiers[]
 }
 
 export default function ServiceManager({ initialServices }: ServiceManagerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingService, setEditingService] = useState<Service | null>(null)
+  const [editingService, setEditingService] = useState<ServiceWithTiers | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
   const filteredServices = initialServices.filter(
@@ -32,7 +34,7 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
     setIsModalOpen(true)
   }
 
-  const handleEdit = (service: Service) => {
+  const handleEdit = (service: ServiceWithTiers) => {
     setEditingService(service)
     setIsModalOpen(true)
   }

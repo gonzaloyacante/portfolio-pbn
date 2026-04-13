@@ -46,14 +46,11 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
   final _advanceNoticeCtrl = TextEditingController();
   final _requirementsCtrl = TextEditingController();
   final _cancellationPolicyCtrl = TextEditingController();
-  final _metaTitleCtrl = TextEditingController();
-  final _metaDescCtrl = TextEditingController();
-  final _metaKeywordsCtrl = TextEditingController();
   final _imageCtrl = TextEditingController();
   File? _pendingImage;
   String _priceLabel = 'desde';
   String _currency = 'EUR';
-  List<Map<String, dynamic>> _pricingTiers = [];
+  List<ServicePricingTierItem> _pricingTiers = const [];
   bool _isActive = true;
   bool _isFeatured = false;
   bool _isAvailable = true;
@@ -78,9 +75,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       _advanceNoticeCtrl,
       _requirementsCtrl,
       _cancellationPolicyCtrl,
-      _metaTitleCtrl,
-      _metaDescCtrl,
-      _metaKeywordsCtrl,
       _imageCtrl,
     ]) {
       ctrl.dispose();
@@ -102,9 +96,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
     _advanceNoticeCtrl.text = detail.advanceNoticeDays?.toString() ?? '';
     _requirementsCtrl.text = detail.requirements ?? '';
     _cancellationPolicyCtrl.text = detail.cancellationPolicy ?? '';
-    _metaTitleCtrl.text = detail.metaTitle ?? '';
-    _metaDescCtrl.text = detail.metaDescription ?? '';
-    _metaKeywordsCtrl.text = detail.metaKeywords.join(', ');
     _imageCtrl.text = detail.imageUrl ?? '';
     _videoUrlCtrl.text = detail.videoUrl ?? '';
     setState(() {
@@ -113,9 +104,7 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
       _isActive = detail.isActive;
       _isFeatured = detail.isFeatured;
       _isAvailable = detail.isAvailable;
-      _pricingTiers = detail.pricingTiers
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      _pricingTiers = detail.pricingTiers;
     });
   }
 
@@ -199,15 +188,6 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage> {
         cancellationPolicy: _cancellationPolicyCtrl.text.trim().isEmpty
             ? null
             : _cancellationPolicyCtrl.text.trim(),
-        metaTitle: _metaTitleCtrl.text.trim().isEmpty
-            ? null
-            : _metaTitleCtrl.text.trim(),
-        metaDescription: _metaDescCtrl.text.trim().isEmpty
-            ? null
-            : _metaDescCtrl.text.trim(),
-        metaKeywords: _metaKeywordsCtrl.text.trim().isEmpty
-            ? null
-            : _metaKeywordsCtrl.text.trim(),
       );
 
       if (_isEdit) {

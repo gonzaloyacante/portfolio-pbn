@@ -203,8 +203,8 @@ void main() {
     };
 
     test(
-      'metaKeywords defaults to empty',
-      () => expect(ServiceDetail.fromJson(base).metaKeywords, isEmpty),
+      'pricingTiers defaults to empty',
+      () => expect(ServiceDetail.fromJson(base).pricingTiers, isEmpty),
     );
     test(
       'isActive defaults to true',
@@ -219,14 +219,6 @@ void main() {
       () => expect(ServiceDetail.fromJson(base).description, isNull),
     );
     test(
-      'metaTitle is null',
-      () => expect(ServiceDetail.fromJson(base).metaTitle, isNull),
-    );
-    test(
-      'metaDescription is null',
-      () => expect(ServiceDetail.fromJson(base).metaDescription, isNull),
-    );
-    test(
       'maxBookingsPerDay is null',
       () => expect(ServiceDetail.fromJson(base).maxBookingsPerDay, isNull),
     );
@@ -234,6 +226,7 @@ void main() {
       'advanceNoticeDays is null',
       () => expect(ServiceDetail.fromJson(base).advanceNoticeDays, isNull),
     );
+    // SEO fields (metaTitle, metaDescription, metaKeywords) removed from DB (March 2026)
   });
 
   group('ServiceDetail.fromJson — optional fields', () {
@@ -245,9 +238,6 @@ void main() {
       'durationMinutes': 120,
       'maxBookingsPerDay': 3,
       'advanceNoticeDays': 2,
-      'metaTitle': 'SEO Title',
-      'metaDescription': 'SEO Desc',
-      'metaKeywords': ['makeup', 'novia'],
       'requirements': 'Traer fotos de referencia',
       'cancellationPolicy': '48h previas',
       'createdAt': '2024-01-01T00:00:00Z',
@@ -272,17 +262,6 @@ void main() {
     test(
       'parses advanceNoticeDays',
       () => expect(ServiceDetail.fromJson(full()).advanceNoticeDays, 2),
-    );
-    test(
-      'parses metaTitle',
-      () => expect(ServiceDetail.fromJson(full()).metaTitle, 'SEO Title'),
-    );
-    test(
-      'parses metaKeywords',
-      () => expect(ServiceDetail.fromJson(full()).metaKeywords, [
-        'makeup',
-        'novia',
-      ]),
     );
     test(
       'parses requirements',

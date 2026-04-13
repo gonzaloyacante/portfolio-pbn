@@ -1,8 +1,8 @@
-import { getServiceBySlug, getServices } from '@/actions/cms/services'
+import { getActiveServices, getServiceBySlug } from '@/actions/cms/services'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Button, OptimizedImage } from '@/components/ui'
-import { Check, Clock, Calendar, AlertCircle } from 'lucide-react'
+import { Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
@@ -11,14 +11,14 @@ import { ROUTES } from '@/config/routes'
 export const revalidate = 60
 
 export async function generateStaticParams() {
-  const services = await getServices()
+  const services = await getActiveServices()
   return services.map((s: { slug: string }) => ({ slug: s.slug }))
 }
 
 interface PricingTier {
   name: string
-  price: number
-  features?: string[]
+  price: string
+  description?: string | null
 }
 
 interface ServicePageProps {
@@ -84,17 +84,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
     notFound()
   }
 
-  // Parse Pricing Tiers if string or JSON
-  let tiers: PricingTier[] = []
-  if (service.pricingTiers) {
-    if (typeof service.pricingTiers === 'string') {
-      try {
-        tiers = JSON.parse(service.pricingTiers) as PricingTier[]
-      } catch {}
-    } else {
-      tiers = service.pricingTiers as unknown as PricingTier[]
-    }
-  }
+  // Map relation rows to typed tiers
+  const tiers: PricingTier[] = (service.pricingTiers ?? []).map((t) => ({
+    name: t.name,
+    price: t.price,
+    description: t.description,
+  }))
 
   return (
     <main className="pb-20">
@@ -105,7 +100,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           description: service.shortDesc || service.description?.slice(0, 160) || service.name,
           url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios/${slug}`,
           image: service.imageUrl ?? undefined,
-          offers: tiers.map((t) => ({ name: t.name, price: t.price })),
+          offers: tiers.map((t) => ({ name: t.name, price: parseFloat(t.price) || 0 })),
         }}
       />
       {/* Hero Section */}
@@ -174,17 +169,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                     <p className="text-primary mb-4 text-3xl font-bold">
                       {service.currency} {tier.price}
                     </p>
-                    {tier.features && Array.isArray(tier.features) && (
-                      <ul className="space-y-2">
-                        {tier.features.map((f: string, i: number) => (
-                          <li
-                            key={i}
-                            className="text-muted-foreground flex items-center gap-2 text-sm"
-                          >
-                            <Check className="h-4 w-4 text-green-500" /> {f}
-                          </li>
-                        ))}
-                      </ul>
+                    {tier.description && (
+                      <p className="text-muted-foreground text-sm">{tier.description}</p>
                     )}
                   </div>
                 ))}

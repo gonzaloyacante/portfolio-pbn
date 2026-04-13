@@ -251,42 +251,6 @@ extension _ServiceFormPageBuilders on _ServiceFormPageState {
                   maxLines: 3,
                 ),
 
-                // ── SEO ───────────────────────────────────────────────────
-                const Divider(height: 32),
-                Text(
-                  'SEO',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _metaTitleCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Meta Título',
-                    helperText: 'Título para buscadores (50-60 caracteres)',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _metaDescCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Meta Descripción',
-                    helperText:
-                        'Descripción para buscadores (150-160 caracteres)',
-                  ),
-                  maxLines: 2,
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: _metaKeywordsCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Keywords',
-                    hintText: 'fotografía, retrato, sesión...',
-                    helperText: 'Separadas por coma',
-                  ),
-                ),
-
                 const SizedBox(height: 32),
 
                 FilledButton(

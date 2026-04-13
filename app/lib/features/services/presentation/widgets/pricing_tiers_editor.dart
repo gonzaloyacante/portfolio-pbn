@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../shared/widgets/widgets.dart';
+import '../../data/service_model.dart';
+import 'tier_row_widget.dart';
 
 /// Editable list of pricing tiers for a service.
-/// Each tier has a `name`, `price` and optional `description`.
+/// Each tier is a typed [ServicePricingTierItem].
 class PricingTiersEditor extends StatefulWidget {
   const PricingTiersEditor({
     super.key,
@@ -13,27 +13,25 @@ class PricingTiersEditor extends StatefulWidget {
     required this.onChanged,
   });
 
-  final List<Map<String, dynamic>> tiers;
-  final void Function(List<Map<String, dynamic>>) onChanged;
+  final List<ServicePricingTierItem> tiers;
+  final void Function(List<ServicePricingTierItem>) onChanged;
 
   @override
   State<PricingTiersEditor> createState() => _PricingTiersEditorState();
 }
 
 class _PricingTiersEditorState extends State<PricingTiersEditor> {
-  late List<Map<String, dynamic>> _tiers;
+  late List<ServicePricingTierItem> _tiers;
 
   @override
   void initState() {
     super.initState();
-    _tiers = List<Map<String, dynamic>>.from(
-      widget.tiers.map((t) => Map<String, dynamic>.from(t)),
-    );
+    _tiers = List<ServicePricingTierItem>.from(widget.tiers);
   }
 
   void _addTier() {
     setState(() {
-      _tiers.add({'name': '', 'price': '', 'description': ''});
+      _tiers.add(const ServicePricingTierItem(id: '', name: '', price: ''));
     });
     widget.onChanged(_tiers);
   }
@@ -43,8 +41,8 @@ class _PricingTiersEditorState extends State<PricingTiersEditor> {
     widget.onChanged(_tiers);
   }
 
-  void _updateTier(int index, String field, String value) {
-    _tiers[index] = Map<String, dynamic>.from(_tiers[index])..[field] = value;
+  void _updateTier(int index, ServicePricingTierItem updated) {
+    setState(() => _tiers[index] = updated);
     widget.onChanged(_tiers);
   }
 
@@ -94,105 +92,22 @@ class _PricingTiersEditorState extends State<PricingTiersEditor> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _tiers.length,
             onReorder: _reorder,
-            itemBuilder: (context, i) => _TierRow(
+            itemBuilder: (context, i) => TierRowWidget(
               key: ValueKey(i),
               tier: _tiers[i],
-              onNameChanged: (v) => _updateTier(i, 'name', v),
-              onPriceChanged: (v) => _updateTier(i, 'price', v),
-              onDescriptionChanged: (v) => _updateTier(i, 'description', v),
+              onNameChanged: (v) => _updateTier(i, _tiers[i].copyWith(name: v)),
+              onPriceChanged: (v) =>
+                  _updateTier(i, _tiers[i].copyWith(price: v)),
+              onDescriptionChanged: (v) => _updateTier(
+                i,
+                _tiers[i].copyWith(
+                  description: v.trim().isEmpty ? null : v.trim(),
+                ),
+              ),
               onRemove: () => _removeTier(i),
             ),
           ),
       ],
-    );
-  }
-}
-
-class _TierRow extends StatelessWidget {
-  const _TierRow({
-    super.key,
-    required this.tier,
-    required this.onNameChanged,
-    required this.onPriceChanged,
-    required this.onDescriptionChanged,
-    required this.onRemove,
-  });
-
-  final Map<String, dynamic> tier;
-  final void Function(String) onNameChanged;
-  final void Function(String) onPriceChanged;
-  final void Function(String) onDescriptionChanged;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-      child: AppCard(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Icon(Icons.drag_handle, color: AppColors.neutral),
-            const SizedBox(width: AppSpacing.xs),
-            Expanded(
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: TextFormField(
-                          initialValue: tier['name']?.toString() ?? '',
-                          decoration: const InputDecoration(
-                            labelText: 'Nombre',
-                            isDense: true,
-                          ),
-                          onChanged: onNameChanged,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      Expanded(
-                        flex: 2,
-                        child: TextFormField(
-                          initialValue: tier['price']?.toString() ?? '',
-                          decoration: const InputDecoration(
-                            labelText: 'Precio',
-                            isDense: true,
-                          ),
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          onChanged: onPriceChanged,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  TextFormField(
-                    initialValue: tier['description']?.toString() ?? '',
-                    decoration: const InputDecoration(
-                      labelText: 'Descripción (opcional)',
-                      isDense: true,
-                    ),
-                    onChanged: onDescriptionChanged,
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              onPressed: onRemove,
-              icon: const Icon(
-                Icons.close,
-                color: AppColors.destructive,
-                size: 18,
-              ),
-              tooltip: 'Eliminar tier',
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
