@@ -6,10 +6,12 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import {
   homeSettingsSchema,
   aboutSettingsSchema,
   contactSettingsSchema,
+  siteSettingsSchema,
   themeEditorSchema,
   testimonialSettingsSchema,
   categorySettingsSchema,
@@ -38,12 +40,13 @@ const SETTINGS_MODELS = {
 
 type SettingsType = keyof typeof SETTINGS_MODELS
 
-// Mapa de tipo → Zod schema (site no tiene schema propio, pasa sin validar)
+// Mapa de tipo → Zod schema
 const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
   home: homeSettingsSchema,
   about: aboutSettingsSchema,
   contact: contactSettingsSchema,
   theme: themeEditorSchema,
+  site: siteSettingsSchema,
   testimonial: testimonialSettingsSchema,
   category: categorySettingsSchema,
 }
@@ -112,6 +115,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
     )
   }
   try {
+    await checkSettingsRateLimit(auth.payload.userId)
+
     const body = await req.json().catch(() => null)
     if (!body || typeof body !== 'object') {
       return NextResponse.json({ success: false, error: 'Body JSON inválido' }, { status: 400 })

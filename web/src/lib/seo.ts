@@ -6,7 +6,7 @@ export const seoConfig = {
   siteUrl: process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es',
   defaultTitle: 'Paola Bolívar Nievas | Maquilladora Profesional',
   defaultDescription:
-    'Portfolio de Paola Bolívar Nievas - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social en Málaga, España.',
+    'Portfolio de Paola Bolívar Nievas - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social.',
   defaultImage: '/og-image.jpg',
   twitterHandle: '@paolabolivar', // Placeholder
   locale: 'es_ES',
@@ -67,7 +67,7 @@ export function generateMetadata({
 }
 
 // Generate Person JSON-LD (Home Page)
-export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', location = 'Málaga') {
+export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', location?: string | null) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -76,10 +76,14 @@ export function generatePersonSchema(ownerName = 'Paola Bolívar Nievas', locati
     image: `${seoConfig.siteUrl}${seoConfig.defaultImage}`,
     jobTitle: 'Maquilladora Profesional',
     description: seoConfig.defaultDescription,
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: location,
-      addressCountry: 'ES',
-    },
+    ...(location
+      ? {
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: location,
+            addressCountry: 'ES',
+          },
+        }
+      : {}),
   }
 }

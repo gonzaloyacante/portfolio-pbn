@@ -50,17 +50,15 @@ export function HeroMainImage({
                 variant="hero"
                 className={cn(
                   'h-auto w-full',
-                  s.heroImageStyle === 'circle'
-                    ? 'aspect-square object-cover'
-                    : 'object-contain',
+                  s.heroImageStyle === 'circle' ? 'aspect-square object-cover' : 'object-contain',
                   s.heroImageStyle === 'portrait' && 'h-full object-cover'
                 )}
                 sizes="(max-width: 768px) 100vw, 50vw"
               />
 
               {caption && (
-                <div className="absolute right-4 bottom-4 max-w-xs rounded-xl bg-foreground/10 p-3 backdrop-blur-md lg:right-8 lg:bottom-8 lg:p-4">
-                  <p className="font-script text-xl text-background lg:text-2xl">{caption}</p>
+                <div className="bg-foreground/10 absolute right-4 bottom-4 max-w-xs rounded-xl p-3 backdrop-blur-md lg:right-8 lg:bottom-8 lg:p-4">
+                  <p className="font-script text-background text-xl lg:text-2xl">{caption}</p>
                 </div>
               )}
             </div>
