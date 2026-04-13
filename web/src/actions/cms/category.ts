@@ -51,7 +51,15 @@ export async function getCategoryImages(categoryId: string) {
     const images = await prisma.categoryImage.findMany({
       where: { categoryId },
       orderBy: { order: 'asc' },
-      select: { id: true, url: true, publicId: true, order: true },
+      select: {
+        id: true,
+        url: true,
+        publicId: true,
+        order: true,
+        width: true,
+        height: true,
+        isFeatured: true,
+      },
     })
     return { success: true, data: images }
   } catch {

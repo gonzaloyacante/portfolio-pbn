@@ -51,7 +51,7 @@ export default function ImageUpload({
     handleEditClick,
   } = useImageUpload({
     folder,
-    multiple,
+    multiple: effectiveMultiple,
     images,
     setImages,
     maxFiles,
@@ -94,7 +94,7 @@ export default function ImageUpload({
         />
       )}
 
-      {multiple && images.length > 0 && (
+      {effectiveMultiple && images.length > 0 && (
         <ImageGridPreview images={images} maxFiles={maxFiles} onRemove={handleRemove} />
       )}
 

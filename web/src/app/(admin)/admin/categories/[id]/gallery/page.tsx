@@ -30,6 +30,8 @@ export default async function CategoryGalleryPage({ params }: { params: Promise<
     url: img.url,
     alt: category.name,
     title: category.name,
+    width: img.width,
+    height: img.height,
     isFeatured: img.isFeatured,
   }))
 

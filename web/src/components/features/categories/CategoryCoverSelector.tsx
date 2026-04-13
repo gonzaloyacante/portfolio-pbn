@@ -107,4 +107,3 @@ export default function CategoryCoverSelector({
     </div>
   )
 }
-

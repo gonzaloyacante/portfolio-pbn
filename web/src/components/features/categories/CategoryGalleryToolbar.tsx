@@ -16,7 +16,12 @@ interface CategoryGalleryToolbarProps {
   isResetting: boolean
   onSave: () => void
   onReset: () => void
-  onUploadComplete: (urls: string[], publicIds: string[]) => void
+  onUploadComplete: (
+    urls: string[],
+    publicIds: string[],
+    widths?: Array<number | undefined>,
+    heights?: Array<number | undefined>
+  ) => void
 }
 
 export function CategoryGalleryToolbar({

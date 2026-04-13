@@ -43,8 +43,7 @@ export function useMasonryColumns<T extends { width?: number | null; height?: nu
     columnsData[minCol].height += ar
   })
 
-  const colClass =
-    columns === 2 ? 'grid-cols-2' : columns === 3 ? 'grid-cols-3' : 'grid-cols-4'
+  const colClass = columns === 2 ? 'grid-cols-2' : columns === 3 ? 'grid-cols-3' : 'grid-cols-4'
 
   return { columns, columnsData, colClass }
 }

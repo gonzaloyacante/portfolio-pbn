@@ -68,7 +68,12 @@ export function useImageUpload(options: UseImageUploadOptions) {
           throw new Error(data.error || 'Error al subir')
         }
         const data = await res.json()
-        return { url: data.url, publicId: data.publicId }
+        return {
+          url: data.url,
+          publicId: data.publicId,
+          width: data.width,
+          height: data.height,
+        }
       } catch (error) {
         return { url: '', publicId: '', error: String(error) }
       }
@@ -97,14 +102,18 @@ export function useImageUpload(options: UseImageUploadOptions) {
       const results = await Promise.all(validFiles.map((file) => uploadFile(file)))
 
       setImages((prev) => {
+        let uploadIndex = 0
         const updated = prev.map((img) => {
           if (!img.isUploading) return img
-          const result = results.find(
-            (r) => !r.error && !prev.some((p) => p.publicId === r.publicId && p !== img)
-          )
+          const result = results[uploadIndex++]
           if (result && !result.error) {
             if (img.url.startsWith('blob:')) URL.revokeObjectURL(img.url)
-            return { url: result.url, publicId: result.publicId }
+            return {
+              url: result.url,
+              publicId: result.publicId,
+              width: result.width,
+              height: result.height,
+            }
           }
           return { ...img, isUploading: false, error: 'Error al subir' }
         })
@@ -113,7 +122,9 @@ export function useImageUpload(options: UseImageUploadOptions) {
         setTimeout(() => {
           onChange?.(
             successfulUploads.map((img) => img.url),
-            successfulUploads.map((img) => img.publicId)
+            successfulUploads.map((img) => img.publicId),
+            successfulUploads.map((img) => img.width),
+            successfulUploads.map((img) => img.height)
           )
         }, 0)
         return updated
@@ -187,7 +198,9 @@ export function useImageUpload(options: UseImageUploadOptions) {
     setTimeout(() => {
       onChange?.(
         newImages.map((img) => img.url),
-        newImages.map((img) => img.publicId)
+        newImages.map((img) => img.publicId),
+        newImages.map((img) => img.width),
+        newImages.map((img) => img.height)
       )
     }, 0)
   }

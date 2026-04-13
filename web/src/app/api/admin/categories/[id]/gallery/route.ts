@@ -18,6 +18,16 @@ import { ROUTES } from '@/config/routes'
 
 type Params = { params: Promise<{ id: string }> }
 
+function revalidateCategoryGallery(categoryId: string, categorySlug?: string) {
+  revalidatePath(ROUTES.admin.categories)
+  revalidatePath(ROUTES.admin.categoryGallery(categoryId))
+  revalidatePath(ROUTES.public.portfolio, 'layout')
+  if (categorySlug) {
+    revalidatePath(`${ROUTES.public.portfolio}/${categorySlug}`)
+  }
+  revalidateTag(CACHE_TAGS.categoryImages, 'max')
+}
+
 // ── GET ───────────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request, { params }: Params) {
@@ -47,6 +57,7 @@ export async function GET(req: Request, { params }: Params) {
         url: true,
         publicId: true,
         order: true,
+        categoryId: true,
         width: true,
         height: true,
         isFeatured: true,
@@ -86,7 +97,7 @@ export async function POST(req: Request, { params }: Params) {
     // Verificar que la categoría existe
     const category = await prisma.category.findFirst({
       where: { id: categoryId, deletedAt: null },
-      select: { id: true },
+      select: { id: true, slug: true },
     })
     if (!category) {
       return NextResponse.json(
@@ -110,8 +121,7 @@ export async function POST(req: Request, { params }: Params) {
     await prisma.categoryImage.createMany({ data: toCreate })
 
     // Revalidate
-    revalidatePath(ROUTES.admin.categories)
-    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+    revalidateCategoryGallery(categoryId, category.slug)
 
     logger.info(`${images.length} image(s) added to category: ${categoryId}`)
     return NextResponse.json({ success: true })
@@ -150,7 +160,7 @@ export async function PUT(req: Request, { params }: Params) {
     // Verificar que la categoría existe
     const category = await prisma.category.findFirst({
       where: { id: categoryId, deletedAt: null },
-      select: { id: true },
+      select: { id: true, slug: true },
     })
 
     if (!category) {
@@ -161,6 +171,22 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     if (order.length === 0) {
+      const existingImages = await prisma.categoryImage.findMany({
+        where: { categoryId },
+        orderBy: { order: 'asc' },
+        select: { id: true },
+      })
+
+      await prisma.$transaction(
+        existingImages.map((img, index) =>
+          prisma.categoryImage.update({
+            where: { id: img.id },
+            data: { order: index },
+          })
+        )
+      )
+
+      revalidateCategoryGallery(categoryId, category.slug)
       return NextResponse.json({ success: true })
     }
 
@@ -174,6 +200,7 @@ export async function PUT(req: Request, { params }: Params) {
       )
     )
 
+    revalidateCategoryGallery(categoryId, category.slug)
     return NextResponse.json({ success: true })
   } catch (err) {
     logger.error('PUT category gallery order error', err as Record<string, unknown>)
@@ -211,6 +238,14 @@ export async function DELETE(req: Request, { params }: Params) {
     // Verificar que la imagen pertenece a esta categoría
     const image = await prisma.categoryImage.findFirst({
       where: { id: imageId, categoryId },
+      select: {
+        id: true,
+        category: {
+          select: {
+            slug: true,
+          },
+        },
+      },
     })
 
     if (!image) {
@@ -238,8 +273,7 @@ export async function DELETE(req: Request, { params }: Params) {
       )
     )
 
-    revalidatePath(ROUTES.admin.categories)
-    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+    revalidateCategoryGallery(categoryId, image.category.slug)
 
     logger.info(`Category image deleted: ${imageId} (publicId: ${publicId})`)
     return NextResponse.json({ success: true })
@@ -277,6 +311,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const image = await prisma.categoryImage.findFirst({
       where: { id: imageId, categoryId },
+      select: {
+        id: true,
+        category: {
+          select: {
+            slug: true,
+          },
+        },
+      },
     })
 
     if (!image) {
@@ -292,7 +334,7 @@ export async function PATCH(req: Request, { params }: Params) {
     })
 
     revalidatePath(ROUTES.home)
-    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+    revalidateCategoryGallery(categoryId, image.category.slug)
 
     return NextResponse.json({ success: true })
   } catch (err) {

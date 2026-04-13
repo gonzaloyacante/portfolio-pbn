@@ -47,7 +47,7 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
       <div
         {...attributes}
         {...listeners}
-        className="absolute top-2 left-2 z-10 cursor-grab rounded-lg bg-foreground/50 p-1.5 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+        className="bg-foreground/50 absolute top-2 left-2 z-10 cursor-grab rounded-lg p-1.5 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 active:cursor-grabbing"
         aria-label={`Mover ${image.title}`}
       >
         <GripVertical size={14} className="text-background" />
@@ -71,15 +71,15 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
         >
           <Star size={12} className={image.isFeatured ? 'fill-current' : ''} />
         </button>
-        <div className="rounded-full bg-foreground/50 px-2 py-0.5 text-xs font-medium text-background backdrop-blur-sm">
+        <div className="bg-foreground/50 text-background rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
           #{index + 1}
         </div>
       </div>
 
       {/* Featured indicator — always visible */}
       {image.isFeatured && (
-        <div className="absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-warning opacity-100 group-hover:opacity-0">
-          <Star size={12} className="fill-current text-warning-foreground" />
+        <div className="bg-warning absolute top-2 right-2 z-10 flex h-6 w-6 items-center justify-center rounded-full opacity-100 group-hover:opacity-0">
+          <Star size={12} className="text-warning-foreground fill-current" />
         </div>
       )}
 
@@ -95,8 +95,8 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
       </div>
 
       {/* Title hover overlay */}
-      <div className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-foreground/70 to-transparent p-3 transition-transform duration-300 group-hover:translate-y-0">
-        <p className="truncate text-xs font-medium text-background">{image.title}</p>
+      <div className="from-foreground/70 absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t to-transparent p-3 transition-transform duration-300 group-hover:translate-y-0">
+        <p className="text-background truncate text-xs font-medium">{image.title}</p>
       </div>
     </motion.div>
   )

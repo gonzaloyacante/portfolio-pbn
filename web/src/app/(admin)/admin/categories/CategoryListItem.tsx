@@ -68,22 +68,12 @@ export function CategoryListItem({ category, isDragging, onDelete }: CategoryLis
             <ExternalLink size={16} />
           </Link>
         </Button>
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          aria-label={`Editar categoría ${category.name}`}
-        >
+        <Button asChild variant="ghost" size="sm" aria-label={`Editar categoría ${category.name}`}>
           <Link href={ROUTES.admin.editCategory(category.id)}>
             <Pencil size={16} />
           </Link>
         </Button>
-        <Button
-          asChild
-          variant="ghost"
-          size="sm"
-          aria-label={`Ver galería de ${category.name}`}
-        >
+        <Button asChild variant="ghost" size="sm" aria-label={`Ver galería de ${category.name}`}>
           <Link href={ROUTES.admin.categoryGallery(category.id)}>
             <Images size={16} />
           </Link>

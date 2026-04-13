@@ -17,7 +17,9 @@ export function GalleryImageCard({ image, showTitles, onClick }: GalleryImageCar
     ? getVariantUrl(image.url, 'thumbnail')
     : image.url
 
-  const handleActivate = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+  const handleActivate = (
+    e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>
+  ) => {
     if ('key' in e && e.key !== 'Enter' && e.key !== ' ') return
     if ('key' in e) e.preventDefault()
     onClick(image.flatIndex, e.currentTarget)
@@ -44,10 +46,12 @@ export function GalleryImageCard({ image, showTitles, onClick }: GalleryImageCar
           className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
           variant="card"
         />
-        <div className="absolute inset-0 bg-foreground/20 opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="bg-foreground/20 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />
         {showTitles && (
           <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
-            <p className="truncate text-xs font-bold text-background drop-shadow-md">{image.title}</p>
+            <p className="text-background truncate text-xs font-bold drop-shadow-md">
+              {image.title}
+            </p>
           </div>
         )}
       </motion.div>

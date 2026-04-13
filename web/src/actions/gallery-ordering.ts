@@ -49,8 +49,10 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
       )
     )
 
+    revalidatePath(ROUTES.public.portfolio, 'layout')
     revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`, 'layout')
     revalidatePath(ROUTES.admin.categories)
+    revalidatePath(ROUTES.admin.categoryGallery(categoryId))
     revalidateTag(CACHE_TAGS.categoryImages, 'max')
 
     return { success: true }
@@ -99,9 +101,11 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
     })
 
     if (category) {
+      revalidatePath(ROUTES.public.portfolio, 'layout')
       revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`, 'layout')
     }
     revalidatePath(ROUTES.admin.categories)
+    revalidatePath(ROUTES.admin.categoryGallery(categoryId))
     revalidateTag(CACHE_TAGS.categoryImages, 'max')
 
     return { success: true }
@@ -126,11 +130,13 @@ export async function toggleCategoryImageFeatured(imageId: string, isFeatured: b
     const image = await prisma.categoryImage.update({
       where: { id: imageId },
       data: { isFeatured },
-      include: { category: { select: { slug: true } } },
+      include: { category: { select: { id: true, slug: true } } },
     })
 
     revalidatePath(ROUTES.home)
+    revalidatePath(ROUTES.public.portfolio, 'layout')
     revalidatePath(`${ROUTES.public.portfolio}/${image.category.slug}`)
+    revalidatePath(ROUTES.admin.categoryGallery(image.category.id))
     revalidateTag(CACHE_TAGS.categoryImages, 'max')
 
     return { success: true }

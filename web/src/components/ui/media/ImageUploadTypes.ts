@@ -3,6 +3,8 @@ import type { ChangeEvent, DragEvent } from 'react'
 export interface UploadedImage {
   url: string
   publicId: string
+  width?: number
+  height?: number
   file?: File
   isUploading?: boolean
   error?: string
@@ -15,7 +17,12 @@ export interface ImageUploadProps {
   folder?: string
   value?: string[]
   currentImage?: string | null
-  onChange?: (urls: string[], publicIds: string[]) => void
+  onChange?: (
+    urls: string[],
+    publicIds: string[],
+    widths?: Array<number | undefined>,
+    heights?: Array<number | undefined>
+  ) => void
   onUploadStart?: () => void
   onUploadEnd?: () => void
   maxFiles?: number
@@ -31,7 +38,12 @@ export interface UseImageUploadOptions {
   setImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>
   maxFiles: number
   maxSizeMB: number
-  onChange?: (urls: string[], publicIds: string[]) => void
+  onChange?: (
+    urls: string[],
+    publicIds: string[],
+    widths?: Array<number | undefined>,
+    heights?: Array<number | undefined>
+  ) => void
   onUploadStart?: () => void
   onUploadEnd?: () => void
 }
