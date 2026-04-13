@@ -98,6 +98,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
       await ref
           .read(bookingsRepositoryProvider)
           .deleteBooking(widget.bookingId);
+      ref.invalidate(bookingDetailProvider(widget.bookingId));
       ref.invalidate(bookingsListProvider);
       if (mounted) {
         HapticFeedback.lightImpact();

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -29,6 +31,7 @@ class App extends ConsumerStatefulWidget {
 
 class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   NotificationHandler? _notifHandler;
+  Timer? _postLoginUpdateTimer;
 
   // ── timeDilation sync ────────────────────────────────────────────────────
 
@@ -65,6 +68,9 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _postLoginUpdateTimer?.cancel();
+    _notifHandler?.dispose();
+    clearAppUpdateContainer();
     WidgetsBinding.instance.removeObserver(this);
     clearShowUpdateDialogCallback();
     super.dispose();
@@ -92,7 +98,8 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
         ref.read(pushRegistrationProvider.notifier).register();
 
         // Pequeño delay para no solapar con la animación de navegación.
-        Future.delayed(const Duration(seconds: 3), () {
+        _postLoginUpdateTimer?.cancel();
+        _postLoginUpdateTimer = Timer(const Duration(seconds: 3), () {
           if (mounted) {
             AppLogger.info('App: disparando check de actualización post-login');
             ref.read(appUpdateTriggerProvider.notifier).trigger();

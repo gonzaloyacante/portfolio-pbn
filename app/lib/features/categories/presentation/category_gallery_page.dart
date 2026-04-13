@@ -424,7 +424,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       final orderItems = _items!
           .asMap()
           .entries
-          .map((e) => (id: e.value.id, order: e.key + 1))
+          .map((e) => (id: e.value.id, order: e.key))
           .toList();
 
       await ref
@@ -463,7 +463,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     // Al volver, la página de formulario quedará tal como estaba en la pila
     // (estado preservado). Enviamos true como resultado para que el form
     // pueda refrescar si lo necesita.
-    Navigator.of(context).pop(true);
+    context.pop(true);
   }
 
   Future<void> _resetOrder() async {

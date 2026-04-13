@@ -211,6 +211,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                               setState(() {
                                 _coverImageCtrl.text = img.url;
                                 _pendingThumbnail = null;
+                                _isDirty = true;
                               });
                               ctx.pop();
                             },

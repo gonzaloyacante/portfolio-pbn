@@ -78,8 +78,11 @@ class AppScaffold extends StatelessWidget {
       );
     }
 
+    // Allow natural GoRouter pop for pushed routes (e.g. gallery page).
+    // Only intercept when canPop is false (root-level pages).
+    final canGoBack = GoRouter.of(context).canPop();
     return PopScope(
-      canPop: false,
+      canPop: canGoBack,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
         // Evaluate route at callback time — avoids subscribing scaffold to route changes

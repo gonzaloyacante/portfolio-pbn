@@ -4,6 +4,23 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'service_model.freezed.dart';
 part 'service_model.g.dart';
 
+// ── ServicePricingTierItem ────────────────────────────────────────────────────
+
+/// A single pricing tier for a service (relational — replaces JSON blob).
+@freezed
+abstract class ServicePricingTierItem with _$ServicePricingTierItem {
+  const factory ServicePricingTierItem({
+    required String id,
+    required String name,
+    @Default('') String price,
+    String? description,
+    @Default(0) int sortOrder,
+  }) = _ServicePricingTierItem;
+
+  factory ServicePricingTierItem.fromJson(Map<String, dynamic> json) =>
+      _$ServicePricingTierItemFromJson(json);
+}
+
 // ── ServiceItem ───────────────────────────────────────────────────────────────
 
 /// Modelo ligero para listas.
@@ -55,10 +72,7 @@ abstract class ServiceDetail with _$ServiceDetail {
     int? maxBookingsPerDay,
     int? advanceNoticeDays,
     @Default(0) int sortOrder,
-    @Default([]) List<dynamic> pricingTiers,
-    String? metaTitle,
-    String? metaDescription,
-    @Default([]) List<String> metaKeywords,
+    @Default([]) List<ServicePricingTierItem> pricingTiers,
     String? requirements,
     String? cancellationPolicy,
     required String createdAt,
@@ -88,12 +102,9 @@ class ServiceFormData {
   final bool isAvailable;
   final int? maxBookingsPerDay;
   final int? advanceNoticeDays;
-  final List<Map<String, dynamic>> pricingTiers;
+  final List<ServicePricingTierItem> pricingTiers;
   final String? requirements;
   final String? cancellationPolicy;
-  final String? metaTitle;
-  final String? metaDescription;
-  final String? metaKeywords;
 
   const ServiceFormData({
     required this.name,
@@ -115,9 +126,6 @@ class ServiceFormData {
     this.pricingTiers = const [],
     this.requirements,
     this.cancellationPolicy,
-    this.metaTitle,
-    this.metaDescription,
-    this.metaKeywords,
   });
 
   Map<String, dynamic> toJson() => {
@@ -137,16 +145,8 @@ class ServiceFormData {
     'isAvailable': isAvailable,
     'maxBookingsPerDay': maxBookingsPerDay,
     'advanceNoticeDays': advanceNoticeDays,
-    'pricingTiers': pricingTiers,
+    'pricingTiers': pricingTiers.map((t) => t.toJson()).toList(),
     'requirements': requirements,
     'cancellationPolicy': cancellationPolicy,
-    'metaTitle': metaTitle,
-    'metaDescription': metaDescription,
-    if (metaKeywords != null && metaKeywords!.isNotEmpty)
-      'metaKeywords': metaKeywords!
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList(),
   };
 }

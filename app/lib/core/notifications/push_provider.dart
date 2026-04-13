@@ -71,7 +71,7 @@ class PushRegistrationNotifier extends _$PushRegistrationNotifier {
       _tokenRefreshSub?.cancel();
       _tokenRefreshSub = service.onTokenRefresh.listen((String newToken) {
         AppLogger.info('PushRegistration: token rotado, re-registrando…');
-        _sendTokenToBackend(newToken, service.platform).ignore();
+        unawaited(_sendTokenToBackend(newToken, service.platform));
         if (ref.mounted) state = newToken;
       });
     } catch (e, st) {

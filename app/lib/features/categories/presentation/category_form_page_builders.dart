@@ -84,7 +84,10 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                         title: const Text('Categoría activa'),
                         subtitle: const Text('Visible en el portfolio'),
                         value: _isActive,
-                        onChanged: (v) => _rebuild(() => _isActive = v),
+                        onChanged: (v) => _rebuild(() {
+                          _isActive = v;
+                          _isDirty = true;
+                        }),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                         ),
@@ -122,6 +125,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                                 maxLength: 500,
                                 maxLines: null,
                                 expands: true,
+                                onChanged: (_) => _markDirty(),
                               ),
                             ),
                           ],
@@ -147,6 +151,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                           ),
                           maxLength: 500,
                           maxLines: 3,
+                          onChanged: (_) => _markDirty(),
                         ),
                       ],
                     );
@@ -164,12 +169,16 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                         ? _coverImageCtrl.text
                         : null,
                     onImageSelected: (file) {
-                      _rebuild(() => _pendingThumbnail = file);
+                      _rebuild(() {
+                        _pendingThumbnail = file;
+                        _isDirty = true;
+                      });
                     },
                     onImageRemoved: () {
                       _rebuild(() {
                         _pendingThumbnail = null;
                         _coverImageCtrl.clear();
+                        _isDirty = true;
                       });
                     },
                     height: imageHeight,

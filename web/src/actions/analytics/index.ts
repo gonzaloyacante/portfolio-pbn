@@ -171,9 +171,8 @@ export async function recordAnalyticEvent(
         utmTerm: options?.stm?.term,
         utmContent: options?.stm?.content,
         loadTime: options?.performance?.loadTime,
-        eventData: options?.metadata
-          ? JSON.parse(JSON.stringify({ ...options.metadata, _consentLevel: consentLevel }))
-          : { _consentLevel: consentLevel },
+        pageUrl: options?.metadata?.url as string | undefined,
+        consentLevel: consentLevel,
       },
     })
     return { success: true }
