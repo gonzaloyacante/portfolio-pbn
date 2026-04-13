@@ -10,64 +10,50 @@ import '../utils/app_logger.dart';
 
 // ── UploadService ─────────────────────────────────────────────────────────────
 
-/// Servicio para subir imágenes a Cloudinary via el backend.
+/// Servicio para subir imágenes directamente a Cloudinary usando firma del servidor.
 ///
-/// Usa el endpoint autenticado `/api/admin/upload` con JWT Flutter.
-/// La imagen se sube en calidad original (sin compresión previa).
+/// Flujo:
+///   1. POST /api/admin/upload/sign → recibe {apiKey, cloudName, timestamp, signature, folder}
+///   2. POST https://api.cloudinary.com/v1_1/{cloud}/image/upload directamente
+///      (sin pasar por Vercel → sin límite de 4.5 MB → imágenes de cualquier tamaño)
+///   3. Computa thumbnailUrl y lqipUrl localmente con las mismas transformaciones del servidor
 class UploadService {
-  const UploadService(this._client);
+  UploadService(this._client);
 
   final ApiClient _client;
 
+  /// Dio sin interceptores ni base URL para llamar directo a Cloudinary.
+  late final Dio _cloudinaryDio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(minutes: 10),
+      sendTimeout: const Duration(minutes: 15),
+    ),
+  );
+
   // ── Upload ─────────────────────────────────────────────────────────────────
 
-  /// Sube [file] a Cloudinary y devuelve la URL pública resultante.
-  ///
-  /// [folder] agrupa las imágenes en Cloudinary (por defecto: 'portfolio').
+  /// Sube [file] y devuelve solo la URL pública de Cloudinary.
   Future<String> uploadImage(
     File file, {
     String folder = 'portfolio',
     void Function(int sent, int total)? onProgress,
   }) async {
-    AppLogger.info('UploadService: uploading ${file.path}');
-
-    final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        file.path,
-        filename: file.path.split('/').last,
-      ),
-      'folder': folder,
-    });
-
-    final response = await _client.upload<Map<String, dynamic>>(
-      Endpoints.adminUpload,
-      formData,
+    final result = await uploadImageFull(
+      file,
+      folder: folder,
       onProgress: onProgress,
     );
-
-    final url = response['url'] as String?;
-    if (url == null || url.isEmpty) {
-      throw const ParseException(
-        message: 'El servidor no devolvió una URL de imagen',
-      );
-    }
-
-    AppLogger.info('UploadService: upload successful → $url');
-    return url;
+    return result.url;
   }
 
-  // ── Upload con metadatos ──────────────────────────────────────────────────
-
-  /// Sube [file] y devuelve `({url, thumbnailUrl, lqipUrl, publicId, width, height})`.
+  /// Sube [file] directo a Cloudinary y devuelve todos los metadatos.
   ///
-  /// - [url]: URL original (calidad máxima, sin transformaciones).
-  /// - [thumbnailUrl]: URL optimizada de Cloudinary (800×600, q_auto, f_auto),
-  ///   generada on-the-fly sin re-subir la imagen.
-  /// - [lqipUrl]: URL de placeholder borroso de 30px para usar como fondo
-  ///   mientras carga la imagen real.
-  /// - [publicId]: ID en Cloudinary para eliminar o asociar al backend.
-  /// - [width]: Ancho original en píxeles (para masonry layout).
-  /// - [height]: Alto original en píxeles (para masonry layout).
+  /// - [url]: URL original en calidad máxima (sin transformaciones).
+  /// - [thumbnailUrl]: URL optimizada (800×600, c_fill, q_auto, f_auto).
+  /// - [lqipUrl]: Placeholder borroso de 30px para carga progresiva.
+  /// - [publicId]: ID de Cloudinary para eliminar o asociar al backend.
+  /// - [width]/[height]: Dimensiones originales para masonry layout.
   Future<
     ({
       String url,
@@ -83,41 +69,86 @@ class UploadService {
     String folder = 'portfolio',
     void Function(int sent, int total)? onProgress,
   }) async {
-    AppLogger.info('UploadService: uploading (full) ${file.path}');
+    AppLogger.info('UploadService: signing upload for ${file.path}');
+
+    // 1 — Obtener firma del servidor
+    final signRes = await _client.post<Map<String, dynamic>>(
+      Endpoints.adminUploadSign,
+      data: {'folder': folder},
+    );
+
+    final apiKey = signRes['apiKey'] as String?;
+    final cloudName = signRes['cloudName'] as String?;
+    final timestamp = signRes['timestamp'] as int?;
+    final signature = signRes['signature'] as String?;
+    final fullFolder = signRes['folder'] as String?;
+
+    if (apiKey == null ||
+        cloudName == null ||
+        timestamp == null ||
+        signature == null) {
+      throw const ParseException(message: 'Firma de Cloudinary inválida');
+    }
+
+    // 2 — Subir directamente a Cloudinary (sin pasar por Vercel)
+    AppLogger.info(
+      'UploadService: uploading directly to Cloudinary ($cloudName)',
+    );
 
     final formData = FormData.fromMap({
       'file': await MultipartFile.fromFile(
         file.path,
         filename: file.path.split('/').last,
       ),
-      'folder': folder,
+      'api_key': apiKey,
+      'timestamp': timestamp.toString(),
+      'signature': signature,
+      'folder': fullFolder,
     });
 
-    final response = await _client.upload<Map<String, dynamic>>(
-      Endpoints.adminUpload,
-      formData,
-      onProgress: onProgress,
-    );
+    final uploadUrl = 'https://api.cloudinary.com/v1_1/$cloudName/image/upload';
 
-    final url = response['url'] as String?;
-    final publicId = response['publicId'] as String?;
-    final thumbnailUrl = response['thumbnailUrl'] as String?;
-    final lqipUrl = response['lqipUrl'] as String?;
-    final width = response['width'] as int?;
-    final height = response['height'] as int?;
-    if (url == null || url.isEmpty) {
-      throw const ParseException(
-        message: 'El servidor no devolvió una URL de imagen',
+    late final Map<String, dynamic> clRes;
+    try {
+      final response = await _cloudinaryDio.post<Map<String, dynamic>>(
+        uploadUrl,
+        data: formData,
+        onSendProgress: onProgress,
       );
+      clRes = response.data ?? {};
+    } on DioException catch (e) {
+      String? errMsg;
+      final data = e.response?.data;
+      if (data is Map) {
+        final error = data['error'];
+        if (error is Map) errMsg = error['message']?.toString();
+      }
+      errMsg ??= e.message ?? 'Error desconocido';
+      AppLogger.error('UploadService: Cloudinary error → $errMsg');
+      throw ServerException(message: 'Error de Cloudinary: $errMsg');
     }
 
+    // 3 — Parsear respuesta de Cloudinary
+    final url = clRes['secure_url'] as String?;
+    final publicId = clRes['public_id'] as String?;
+    final width = clRes['width'] as int?;
+    final height = clRes['height'] as int?;
+
+    if (url == null || url.isEmpty) {
+      throw const ParseException(message: 'Cloudinary no devolvió una URL');
+    }
+
+    // 4 — Computar URLs de transformación (igual que cloudinary.ts en el servidor)
+    final thumbnailUrl = _toThumbnailUrl(url);
+    final lqipUrl = _toLqipUrl(url);
+
     AppLogger.info(
-      'UploadService: upload (full) successful → $url (${width}x$height)',
+      'UploadService: upload successful → $url (${width}x$height)',
     );
     return (
       url: url,
-      thumbnailUrl: thumbnailUrl ?? url,
-      lqipUrl: lqipUrl ?? url,
+      thumbnailUrl: thumbnailUrl,
+      lqipUrl: lqipUrl,
       publicId: publicId ?? '',
       width: width,
       height: height,
@@ -126,7 +157,7 @@ class UploadService {
 
   // ── Delete ─────────────────────────────────────────────────────────────────
 
-  /// Elimina la imagen con [publicId] de Cloudinary.
+  /// Elimina la imagen con [publicId] de Cloudinary vía el backend.
   Future<void> deleteImage(String publicId) async {
     AppLogger.info('UploadService: deleting $publicId');
     await _client.delete<void>(
@@ -134,6 +165,28 @@ class UploadService {
       data: {'publicId': publicId},
     );
     AppLogger.info('UploadService: delete successful');
+  }
+
+  // ── URL Transforms ─────────────────────────────────────────────────────────
+
+  /// Réplica de `generateThumbnailUrl` de cloudinary.ts:
+  /// c_fill, g_auto, w_800, h_600, q_auto, f_auto
+  String _toThumbnailUrl(String url) {
+    if (!url.contains('res.cloudinary.com')) return url;
+    return url.replaceFirst(
+      '/image/upload/',
+      '/image/upload/c_fill,g_auto,w_800,h_600,q_auto,f_auto/',
+    );
+  }
+
+  /// Réplica de `generateLqipUrl` de cloudinary.ts:
+  /// w_30, q_5, e_blur:800, f_jpg
+  String _toLqipUrl(String url) {
+    if (!url.contains('res.cloudinary.com')) return url;
+    return url.replaceFirst(
+      '/image/upload/',
+      '/image/upload/w_30,q_5,e_blur:800,f_jpg/',
+    );
   }
 }
 

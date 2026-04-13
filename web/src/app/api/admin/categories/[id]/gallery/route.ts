@@ -11,7 +11,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { deleteImage } from '@/lib/cloudinary'
+import { deleteImage, extractPublicIdUrl } from '@/lib/cloudinary'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
@@ -240,9 +240,11 @@ export async function DELETE(req: Request, { params }: Params) {
       where: { id: imageId, categoryId },
       select: {
         id: true,
+        url: true,
         category: {
           select: {
             slug: true,
+            coverImageUrl: true,
           },
         },
       },
@@ -258,8 +260,19 @@ export async function DELETE(req: Request, { params }: Params) {
     // Eliminar de Cloudinary
     await deleteImage(publicId)
 
-    // Eliminar de DB
-    await prisma.categoryImage.delete({ where: { id: imageId } })
+    // Determinar si la imagen eliminada es la portada de la categoría
+    const isCover =
+      image.category.coverImageUrl != null &&
+      (image.category.coverImageUrl === image.url ||
+        extractPublicIdUrl(image.category.coverImageUrl) === publicId)
+
+    // Eliminar de DB y, si corresponde, limpiar coverImageUrl en la misma transacción
+    await prisma.$transaction([
+      prisma.categoryImage.delete({ where: { id: imageId } }),
+      ...(isCover
+        ? [prisma.category.update({ where: { id: categoryId }, data: { coverImageUrl: null } })]
+        : []),
+    ])
 
     // Reordenar las imágenes restantes
     const remaining = await prisma.categoryImage.findMany({

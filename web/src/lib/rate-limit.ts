@@ -85,7 +85,9 @@ export function createRateLimiter(config: RateLimitConfig) {
         data: {
           eventType: `RATE_LIMIT_${config.id.toUpperCase()}`,
           ipAddress: identifier,
-          metadata: metadata ? JSON.stringify(metadata) : null,
+          // Mapeo a columnas actuales: pageUrl + consentLevel (el campo `metadata` fue removido en la migración)
+          pageUrl: metadata?.url as string | undefined,
+          consentLevel: metadata?.consentLevel as string | undefined,
         },
       })
     } catch (error) {

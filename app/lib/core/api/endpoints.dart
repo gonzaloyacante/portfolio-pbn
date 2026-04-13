@@ -58,6 +58,9 @@ class Endpoints {
   /// Endpoint autenticado con JWT Flutter para subir imágenes.
   static const String adminUpload = '/api/admin/upload';
 
+  /// Genera una firma Cloudinary para subida directa (bypass Vercel body limit).
+  static const String adminUploadSign = '/api/admin/upload/sign';
+
   // ── App Updates (in-app update check) ────────────────────────────────────
   /// GET público: retorna la última release de la app Flutter.
   /// Query params opcionales: ?version=1.0.0&versionCode=1
