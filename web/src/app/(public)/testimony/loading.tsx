@@ -52,7 +52,10 @@ export default function TestimonyLoading() {
           <Skeleton className="mx-auto mb-8 h-8 w-56 rounded-xl" />
           <div className="grid gap-6 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-card border-border/50 flex flex-col rounded-2xl border p-5">
+              <div
+                key={i}
+                className="bg-card border-border/50 flex flex-col rounded-2xl border p-5"
+              >
                 <Skeleton className="mb-2 h-4 w-20 rounded" />
                 <Skeleton className="h-3 w-full rounded" />
                 <Skeleton className="mt-1 h-3 w-4/5 rounded" />

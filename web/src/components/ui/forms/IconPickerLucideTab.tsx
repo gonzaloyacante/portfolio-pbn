@@ -93,9 +93,7 @@ export function IconPickerLucideTab({
       </div>
 
       {filteredIcons.length === 0 && (
-        <p className="text-muted-foreground py-6 text-center text-sm">
-          No se encontraron íconos
-        </p>
+        <p className="text-muted-foreground py-6 text-center text-sm">No se encontraron íconos</p>
       )}
     </div>
   )

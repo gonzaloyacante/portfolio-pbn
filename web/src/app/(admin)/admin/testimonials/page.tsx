@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/db'
 import {
   createTestimonial,
-  deleteTestimonial,
   toggleTestimonial,
   approveTestimonial,
   rejectTestimonial,
@@ -9,6 +8,7 @@ import {
 import { Button, Card, Badge, SubmitButton } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
+import TestimonialDeleteButton from '@/components/features/testimonials/TestimonialDeleteButton'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
@@ -171,22 +171,7 @@ export default async function TestimonialsPage() {
                     </form>
                   )}
 
-                  {/* Delete */}
-                  <form
-                    action={async () => {
-                      'use server'
-                      await deleteTestimonial(t.id)
-                    }}
-                  >
-                    <SubmitButton
-                      variant="destructive"
-                      size="sm"
-                      className="px-3"
-                      aria-label={`Eliminar testimonio de ${t.name}`}
-                    >
-                      🗑️
-                    </SubmitButton>
-                  </form>
+                  <TestimonialDeleteButton testimonialId={t.id} testimonialName={t.name} />
                 </div>
               </div>
             ))}

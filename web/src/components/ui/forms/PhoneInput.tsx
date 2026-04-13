@@ -47,8 +47,8 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
     const [focused, setFocused] = useState(false)
     const wrapperRef = useRef<HTMLDivElement>(null)
     const [dropdownWidth, setDropdownWidth] = useState(320)
-    const [currentCountry, setCurrentCountry] = useState<ParsedCountry | undefined>(
-      () => getCountry({ field: 'iso2', value: defaultCountry })
+    const [currentCountry, setCurrentCountry] = useState<ParsedCountry | undefined>(() =>
+      getCountry({ field: 'iso2', value: defaultCountry })
     )
 
     useLayoutEffect(() => {
@@ -112,9 +112,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
           }}
           className={cn('flex w-full', className)}
         />
-        {error && typeof error === 'string' && (
-          <p className="mt-1 text-sm text-red-500">{error}</p>
-        )}
+        {error && typeof error === 'string' && <p className="mt-1 text-sm text-red-500">{error}</p>}
       </div>
     )
   }

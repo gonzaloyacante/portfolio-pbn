@@ -17,10 +17,7 @@ export default function PortfolioLoading() {
         {/* Category Grid — 2 cols mobile, 4 cols desktop */}
         <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4 lg:gap-8">
           {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton
-              key={i}
-              className="aspect-[4/5] w-full rounded-[2.5rem]"
-            />
+            <Skeleton key={i} className="aspect-[4/5] w-full rounded-[2.5rem]" />
           ))}
         </div>
 

@@ -37,9 +37,12 @@ export async function POST(req: Request) {
     const rateResult = await refreshLimiter.check(clientIp)
     if (!rateResult.allowed) {
       return NextResponse.json(
-        { success: false, error: rateResult.resetIn
-          ? `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s`
-          : 'Demasiadas solicitudes' },
+        {
+          success: false,
+          error: rateResult.resetIn
+            ? `Demasiadas solicitudes. Reset en ${rateResult.resetIn}s`
+            : 'Demasiadas solicitudes',
+        },
         { status: 429, headers: { 'Retry-After': String(rateResult.resetIn ?? 60) } }
       )
     }
@@ -124,7 +127,11 @@ export async function POST(req: Request) {
     })
 
     // 6. Generar nuevo access token
-    const accessToken = await signAccessToken({ userId: user.id, role: user.role, email: user.email })
+    const accessToken = await signAccessToken({
+      userId: user.id,
+      role: user.role,
+      email: user.email,
+    })
 
     // 7. Actualizar lastUsedAt del nuevo token
     await prisma.refreshToken.update({

@@ -1,11 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef } from 'react'
-import {
-  fetchGoogleFonts,
-  getFontsByCategory,
-  type GoogleFont,
-} from '@/lib/google-fonts'
+import { fetchGoogleFonts, getFontsByCategory, type GoogleFont } from '@/lib/google-fonts'
 import { logger } from '@/lib/logger'
 
 interface UseGoogleFontPickerOptions {
