@@ -255,7 +255,9 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
               label: 'Seleccionar foto',
               hint: 'Toca para seleccionar una imagen',
               height: 240,
+              allowMultiple: true,
               onImageSelected: (file) async {
+                // Single-file fallback (keeps existing behaviour)
                 Navigator.pop(ctx);
                 setState(() => _uploading = true);
                 try {
@@ -286,6 +288,50 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('No se pudo agregar la imagen.'),
+                      ),
+                    );
+                  }
+                } finally {
+                  if (mounted) setState(() => _uploading = false);
+                }
+              },
+              onImagesSelected: (files) async {
+                // Multi-select flow (Android native)
+                Navigator.pop(ctx);
+                setState(() => _uploading = true);
+                try {
+                  final uploadSvc = ref.read(uploadServiceProvider);
+                  final uploads =
+                      <
+                        ({String url, String publicId, int? width, int? height})
+                      >[];
+                  for (final f in files) {
+                    final result = await uploadSvc.uploadImageFull(f);
+                    uploads.add((
+                      url: result.url,
+                      publicId: result.publicId,
+                      width: result.width,
+                      height: result.height,
+                    ));
+                  }
+                  await ref
+                      .read(categoriesRepositoryProvider)
+                      .addGalleryImages(widget.categoryId, uploads);
+                  ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+                  setState(() => _items = null);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Imágenes agregadas correctamente'),
+                      ),
+                    );
+                  }
+                } catch (e, st) {
+                  Sentry.captureException(e, stackTrace: st);
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No se pudieron agregar las imágenes.'),
                       ),
                     );
                   }
