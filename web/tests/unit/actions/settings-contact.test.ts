@@ -91,18 +91,17 @@ const mockContactSettings = {
   email: 'info@paolabolivar.es',
   phone: '+34 600 000 000',
   whatsapp: '+34 600 000 000',
+  instagram: 'https://instagram.com/paolabolivarnievas',
+  instagramUsername: '@paolabolivarnievas',
   location: 'Granada, España',
-  formTitle: 'Envíame un mensaje',
-  nameLabel: 'Tu nombre',
-  emailLabel: 'Tu email',
-  phoneLabel: 'Tu teléfono (opcional)',
-  messageLabel: 'Mensaje',
-  preferenceLabel: '¿Cómo preferís que te contacte?',
-  submitLabel: 'Enviar mensaje',
-  successTitle: '¡Mensaje enviado!',
-  successMessage: 'Gracias por contactarme. Te responderé lo antes posible.',
-  sendAnotherLabel: 'Enviar otro mensaje',
   showSocialLinks: true,
+  showPhone: true,
+  showWhatsapp: true,
+  showEmail: true,
+  showLocation: true,
+  showInstagram: true,
+  instagramPostUrl: null,
+  showInstagramEmbed: false,
   isActive: true,
 }
 
@@ -156,17 +155,17 @@ describe('Settings: Contact Actions', () => {
       })
     })
 
-    it('returns contact-specific fields like form labels', async () => {
+    it('returns contact-specific visibility and instagram fields', async () => {
       const { prisma } = await import('@/lib/db')
       vi.mocked(prisma.contactSettings.findFirst).mockResolvedValue(mockContactSettings as never)
 
       const { getContactSettings } = await import('@/actions/settings/contact')
       const result = await getContactSettings()
 
-      expect(result!.formTitle).toBe('Envíame un mensaje')
-      expect(result!.nameLabel).toBe('Tu nombre')
-      expect(result!.submitLabel).toBe('Enviar mensaje')
+      expect(result!.instagram).toBe('https://instagram.com/paolabolivarnievas')
+      expect(result!.instagramUsername).toBe('@paolabolivarnievas')
       expect(result!.showSocialLinks).toBe(true)
+      expect(result!.showInstagram).toBe(true)
     })
   })
 
