@@ -10,17 +10,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
-import { z } from 'zod'
-
-// Basic schema for Social Link since it wasn't in validations.ts
-const socialLinkSchema = z.object({
-  platform: z.string().min(1),
-  url: z.string().url(),
-  username: z.string().nullable().optional(),
-  icon: z.string().nullable().optional(),
-  isActive: z.boolean().optional(),
-  sortOrder: z.number().int().optional(),
-})
+import { socialLinkApiSchema } from '@/lib/validations'
 
 export interface SocialLinkData {
   id: string
@@ -64,7 +54,7 @@ export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?:
     await checkSettingsRateLimit(user.id as string)
 
     // 3. 🛡️ Validation
-    const validated = validateAndSanitize(socialLinkSchema, data)
+    const validated = validateAndSanitize(socialLinkApiSchema, data)
     if (!validated.success) {
       return { success: false, error: validated.error }
     }

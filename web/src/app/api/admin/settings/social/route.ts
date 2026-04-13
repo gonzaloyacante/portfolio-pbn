@@ -6,6 +6,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { socialLinkApiSchema } from '@/lib/validations'
 import type { z } from 'zod'
 
@@ -53,6 +54,8 @@ export async function POST(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
+    await checkSettingsRateLimit(auth.payload.userId)
+
     const body = await req.json().catch(() => null)
     const parsed = socialLinkApiSchema.safeParse(body)
     if (!parsed.success) {

@@ -45,12 +45,15 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       email: settings?.email || '',
       phone: settings?.phone || '',
       whatsapp: settings?.whatsapp || '',
+      instagram: settings?.instagram || '',
+      instagramUsername: settings?.instagramUsername || '',
       location: settings?.location || '',
       showSocialLinks: settings?.showSocialLinks ?? true,
       showPhone: settings?.showPhone ?? true,
       showWhatsapp: settings?.showWhatsapp ?? true,
       showEmail: settings?.showEmail ?? true,
       showLocation: settings?.showLocation ?? true,
+      showInstagram: settings?.showInstagram ?? true,
       instagramPostUrl: settings?.instagramPostUrl || '',
       showInstagramEmbed: settings?.showInstagramEmbed ?? false,
     },
@@ -63,6 +66,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       'showPhone',
       'showWhatsapp',
       'showLocation',
+      'showInstagram',
       'showSocialLinks',
       'showInstagramEmbed',
     ],
@@ -73,8 +77,9 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     showPhone: toggleFieldValues[1] ?? true,
     showWhatsapp: toggleFieldValues[2] ?? true,
     showLocation: toggleFieldValues[3] ?? true,
-    showSocialLinks: toggleFieldValues[4] ?? true,
-    showInstagramEmbed: toggleFieldValues[5] ?? false,
+    showInstagram: toggleFieldValues[4] ?? true,
+    showSocialLinks: toggleFieldValues[5] ?? true,
+    showInstagramEmbed: toggleFieldValues[6] ?? false,
   }
 
   // Social Links State (Simple local management before save? No, immediate actions)
@@ -131,6 +136,18 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
                   error={errors.whatsapp?.message}
                 />
                 <Input
+                  label="Instagram (URL del perfil)"
+                  {...register('instagram')}
+                  error={errors.instagram?.message}
+                  placeholder="https://www.instagram.com/tu_usuario/"
+                />
+                <Input
+                  label="Instagram (usuario visible)"
+                  {...register('instagramUsername')}
+                  error={errors.instagramUsername?.message}
+                  placeholder="@tu_usuario"
+                />
+                <Input
                   label="Ubicación"
                   {...register('location')}
                   error={errors.location?.message}
@@ -163,6 +180,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
                   { field: 'showPhone' as const, label: 'Mostrar teléfono' },
                   { field: 'showWhatsapp' as const, label: 'Mostrar WhatsApp' },
                   { field: 'showLocation' as const, label: 'Mostrar ubicación' },
+                  { field: 'showInstagram' as const, label: 'Mostrar Instagram' },
                   { field: 'showSocialLinks' as const, label: 'Mostrar redes sociales' },
                 ].map(({ field, label }) => (
                   <label key={field} className="flex items-center gap-3">

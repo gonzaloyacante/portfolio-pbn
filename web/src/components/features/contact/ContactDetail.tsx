@@ -32,7 +32,10 @@ export function ContactDetail({
         <div>
           <h2 className="text-foreground text-2xl font-bold">{contact.name}</h2>
           <div className="mt-1 flex items-center gap-2">
-            <a href={`mailto:${contact.email}`} className="text-primary font-medium hover:underline">
+            <a
+              href={`mailto:${contact.email}`}
+              className="text-primary font-medium hover:underline"
+            >
               {contact.email}
             </a>
             <button
@@ -41,7 +44,7 @@ export function ContactDetail({
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {copiedField === 'email' ? (
-                <Check className="h-4 w-4 text-success" />
+                <Check className="text-success h-4 w-4" />
               ) : (
                 <Copy className="h-4 w-4" />
               )}
@@ -61,7 +64,7 @@ export function ContactDetail({
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {copiedField === 'phone' ? (
-                  <Check className="h-4 w-4 text-success" />
+                  <Check className="text-success h-4 w-4" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
@@ -85,7 +88,7 @@ export function ContactDetail({
                 className="text-muted-foreground hover:text-foreground transition-colors"
               >
                 {copiedField === 'instagram' ? (
-                  <Check className="h-4 w-4 text-success" />
+                  <Check className="text-success h-4 w-4" />
                 ) : (
                   <Copy className="h-4 w-4" />
                 )}
@@ -139,7 +142,7 @@ export function ContactDetail({
         <div className="mb-6">
           <h3 className="text-foreground mb-3 font-bold">Nota del administrador:</h3>
           <div className="border-warning bg-warning/10 dark:bg-warning/5 rounded-2xl border-l-4 p-6">
-            <p className="text-foreground italic whitespace-pre-wrap">{contact.adminNote}</p>
+            <p className="text-foreground whitespace-pre-wrap italic">{contact.adminNote}</p>
           </div>
         </div>
       )}

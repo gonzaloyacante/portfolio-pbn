@@ -94,9 +94,7 @@ export function CalendarBookingModal({
             {booking.adminNotes && (
               <div className="border-border mt-2 flex gap-2 border-t pt-2">
                 <FileText size={16} className="text-primary/60 shrink-0" />
-                <p className="text-muted-foreground text-xs font-medium">
-                  🔒 {booking.adminNotes}
-                </p>
+                <p className="text-muted-foreground text-xs font-medium">🔒 {booking.adminNotes}</p>
               </div>
             )}
           </div>

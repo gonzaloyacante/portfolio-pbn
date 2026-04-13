@@ -65,11 +65,7 @@ export function CalendarListView({
           onClick={onSelectAll}
           className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm"
         >
-          {allSelected ? (
-            <CheckSquare className="h-4 w-4" />
-          ) : (
-            <Square className="h-4 w-4" />
-          )}
+          {allSelected ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
           {allSelected ? 'Deseleccionar todo' : 'Seleccionar todo'}
         </button>
         <span className="text-muted-foreground text-sm">({bookings.length} reservas)</span>
