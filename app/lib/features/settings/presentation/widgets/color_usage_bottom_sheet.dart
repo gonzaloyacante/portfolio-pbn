@@ -179,7 +179,7 @@ class _ColorUsageSheet extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant.withValues(
                   alpha: 0.3,
                 ),
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: const BorderRadius.circular(2),
               ),
             ),
           ),
@@ -201,7 +201,7 @@ class _ColorUsageSheet extends StatelessWidget {
               border: Border.all(
                 color: theme.colorScheme.outline.withValues(alpha: 0.3),
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: const BorderRadius.circular(12),
             ),
             child: Row(
               children: [
@@ -211,7 +211,7 @@ class _ColorUsageSheet extends StatelessWidget {
                     height: 40,
                     decoration: BoxDecoration(
                       color: color,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: const BorderRadius.circular(8),
                       border: Border.all(
                         color: theme.colorScheme.outline.withValues(alpha: 0.4),
                       ),

@@ -92,16 +92,16 @@ extension _ServiceFormPageBuilders on _ServiceFormPageState {
                         items: const [
                           DropdownMenuItem(
                             value: 'desde',
-                            child: Text('desde'),
+                            child: const Text('desde'),
                           ),
-                          DropdownMenuItem(value: 'fijo', child: Text('fijo')),
+                          DropdownMenuItem(value: 'fijo', child: const Text('fijo')),
                           DropdownMenuItem(
                             value: 'consultar',
-                            child: Text('consultar'),
+                            child: const Text('consultar'),
                           ),
                           DropdownMenuItem(
                             value: 'gratis',
-                            child: Text('gratis'),
+                            child: const Text('gratis'),
                           ),
                         ],
                         onChanged: (v) =>

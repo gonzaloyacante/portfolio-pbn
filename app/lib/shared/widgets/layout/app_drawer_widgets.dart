@@ -71,7 +71,7 @@ class _DrawerHeader extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: colorScheme.primary.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: const BorderRadius.circular(6),
                   ),
                   child: Text(
                     'Admin',
@@ -180,7 +180,7 @@ class _DrawerExpandableItemState extends State<_DrawerExpandableItem>
       children: [
         ListTile(
           dense: true,
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.forTile),
           selected: widget.isSelected,
           selectedTileColor: colorScheme.primaryContainer.withValues(
             alpha: 0.5,
@@ -287,7 +287,7 @@ class _DrawerNavItem extends StatelessWidget {
 
     return ListTile(
       dense: true,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+      shape: const RoundedRectangleBorder(borderRadius: AppRadius.forTile),
       selected: isSelected,
       selectedTileColor: colorScheme.primaryContainer.withValues(alpha: 0.5),
       leading: Icon(
@@ -307,7 +307,7 @@ class _DrawerNavItem extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
                 color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: const BorderRadius.circular(10),
               ),
               child: Text(
                 badgeCount > 99 ? '99+' : badgeCount.toString(),

@@ -224,7 +224,7 @@ class _DebugEnvBadgeState extends State<_DebugEnvBadge> {
             color: _isOpen
                 ? Colors.green.shade900.withValues(alpha: 0.95)
                 : Colors.green.shade800.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: const BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.25),
@@ -236,8 +236,8 @@ class _DebugEnvBadgeState extends State<_DebugEnvBadge> {
           child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.developer_mode, size: 12, color: Colors.white),
-              SizedBox(width: 4),
+              const Icon(Icons.developer_mode, size: 12, color: Colors.white),
+              const SizedBox(width: 4),
               Text(
                 'DEV',
                 style: TextStyle(

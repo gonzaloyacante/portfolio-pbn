@@ -33,7 +33,7 @@ class HeroImagePicker extends StatelessWidget {
           height: hasImage ? 180 : 100,
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: const BorderRadius.circular(12),
             border: Border.all(
               color: colorScheme.outline.withValues(alpha: 0.4),
             ),

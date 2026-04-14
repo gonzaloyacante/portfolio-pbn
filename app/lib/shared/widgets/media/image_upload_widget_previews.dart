@@ -14,13 +14,13 @@ class _ImagePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     if (file != null) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: const BorderRadius.circular(12),
         child: _AdaptiveImage.file(file),
       );
     }
     if (url != null) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: const BorderRadius.circular(12),
         child: _AdaptiveImage.network(url),
       );
     }

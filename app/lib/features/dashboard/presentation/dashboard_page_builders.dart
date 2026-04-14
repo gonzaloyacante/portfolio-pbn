@@ -184,7 +184,7 @@ extension _DashboardPageBuilders on DashboardPage {
                           borderRadius: 6,
                         ),
                       ),
-                      SizedBox(height: AppSpacing.sm),
+                      const SizedBox(height: AppSpacing.sm),
                       SkeletonDeviceUsageSection(),
                     ],
                   ),
@@ -238,7 +238,7 @@ extension _DashboardPageBuilders on DashboardPage {
                       ...List.generate(
                         5,
                         (_) => const Padding(
-                          padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                           child: SkeletonRankingItem(),
                         ),
                       ),
@@ -292,7 +292,7 @@ extension _DashboardPageBuilders on DashboardPage {
                           borderRadius: 6,
                         ),
                       ),
-                      SizedBox(height: AppSpacing.sm),
+                      const SizedBox(height: AppSpacing.sm),
                       SkeletonVisitorsMap(),
                     ],
                   ),
@@ -331,7 +331,7 @@ extension _DashboardPageBuilders on DashboardPage {
             ),
 
             const SliverPadding(
-              padding: EdgeInsets.only(bottom: AppSpacing.xxxl),
+              padding: const EdgeInsets.only(bottom: AppSpacing.xxxl),
             ),
           ],
         ),

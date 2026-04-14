@@ -118,15 +118,16 @@ export function useImageUpload(options: UseImageUploadOptions) {
           return { ...img, isUploading: false, error: 'Error al subir' }
         })
 
-        const successfulUploads = updated.filter((img) => img.publicId && !img.error)
-        setTimeout(() => {
+        // Only pass images uploaded in this batch (not pre-existing ones) to avoid duplicates
+        const batchSuccessful = results.filter((r) => !r.error && r.url && r.publicId)
+        queueMicrotask(() => {
           onChange?.(
-            successfulUploads.map((img) => img.url),
-            successfulUploads.map((img) => img.publicId),
-            successfulUploads.map((img) => img.width),
-            successfulUploads.map((img) => img.height)
+            batchSuccessful.map((img) => img.url),
+            batchSuccessful.map((img) => img.publicId),
+            batchSuccessful.map((img) => img.width),
+            batchSuccessful.map((img) => img.height)
           )
-        }, 0)
+        })
         return updated
       })
 
@@ -195,14 +196,14 @@ export function useImageUpload(options: UseImageUploadOptions) {
 
     const newImages = images.filter((_, i) => i !== index)
     setImages(newImages)
-    setTimeout(() => {
+    queueMicrotask(() => {
       onChange?.(
         newImages.map((img) => img.url),
         newImages.map((img) => img.publicId),
         newImages.map((img) => img.width),
         newImages.map((img) => img.height)
       )
-    }, 0)
+    })
   }
 
   const handleEditClick = (name: string) => {

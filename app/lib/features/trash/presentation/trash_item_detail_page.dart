@@ -45,7 +45,7 @@ class TrashItemDetailPage extends ConsumerWidget {
           children: [
             // ── Hero ──────────────────────────────────────────────────────────
             AppCard(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: const BorderRadius.circular(20),
               padding: const EdgeInsets.all(20),
               child: Row(
                 children: [
@@ -79,7 +79,7 @@ class TrashItemDetailPage extends ConsumerWidget {
                               ),
                               decoration: BoxDecoration(
                                 color: cs.secondaryContainer,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: const BorderRadius.circular(20),
                               ),
                               child: Text(
                                 trashTypeLabel(item.type),
@@ -101,7 +101,7 @@ class TrashItemDetailPage extends ConsumerWidget {
 
             // ── Eliminado + Expiración ────────────────────────────────────────
             AppCard(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: const BorderRadius.circular(16),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
@@ -137,7 +137,7 @@ class TrashItemDetailPage extends ConsumerWidget {
                       color: isExpiringSoon
                           ? cs.errorContainer
                           : cs.onSurface.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: const BorderRadius.circular(20),
                     ),
                     child: Text(
                       daysLeft == 0 ? 'Expira hoy' : '$daysLeft días restantes',
@@ -293,7 +293,7 @@ class TrashItemDetailPage extends ConsumerWidget {
       Sentry.captureException(e, stackTrace: st);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo eliminar el elemento')),
+          const SnackBar(content: const Text('No se pudo eliminar el elemento')),
         );
       }
     }

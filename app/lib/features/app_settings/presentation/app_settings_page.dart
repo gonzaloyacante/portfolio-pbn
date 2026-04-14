@@ -60,7 +60,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Caché limpiada correctamente'),
+          content: const Text('Caché limpiada correctamente'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -70,7 +70,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No se pudo limpiar la caché'),
+          content: const Text('No se pudo limpiar la caché'),
           behavior: SnackBarBehavior.floating,
         ),
       );

@@ -46,7 +46,7 @@ class _CategorySettingsDialogState extends State<CategorySettingsDialog> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudieron guardar los cambios')),
+          const SnackBar(content: const Text('No se pudieron guardar los cambios')),
         );
       }
     } finally {
@@ -101,7 +101,7 @@ class _CategorySettingsDialogState extends State<CategorySettingsDialog> {
               const Expanded(
                 child: Text(
                   'Columnas en el grid',
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
               DropdownButton<int>(

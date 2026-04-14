@@ -21,15 +21,15 @@ class SkeletonContactTile extends StatelessWidget {
       child: const Row(
         children: [
           ShimmerBox(width: 44, height: 44, borderRadius: 14),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 ShimmerBox(width: 160, height: 11, borderRadius: 5),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 ShimmerBox(width: 220, height: 11, borderRadius: 5),
               ],
             ),
@@ -72,11 +72,11 @@ class SkeletonContactDetail extends StatelessWidget {
         child: const Column(
           children: [
             ShimmerBox(width: double.infinity, height: 160, borderRadius: 16),
-            SizedBox(height: AppSpacing.base),
+            const SizedBox(height: AppSpacing.base),
             ShimmerBox(width: double.infinity, height: 120, borderRadius: 16),
-            SizedBox(height: AppSpacing.base),
+            const SizedBox(height: AppSpacing.base),
             ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
-            SizedBox(height: AppSpacing.base),
+            const SizedBox(height: AppSpacing.base),
             ShimmerBox(width: double.infinity, height: 100, borderRadius: 16),
           ],
         ),
@@ -120,7 +120,7 @@ class SkeletonTestimonialCard extends StatelessWidget {
                       children: List.generate(
                         5,
                         (_) => const Padding(
-                          padding: EdgeInsets.only(left: 2),
+                          padding: const EdgeInsets.only(left: 2),
                           child: ShimmerBox(
                             width: 12,
                             height: 12,
@@ -185,14 +185,14 @@ class SkeletonTrashCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return const AppCard(
       borderRadius: BorderRadius.all(Radius.circular(16)),
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
               ShimmerBox(width: 44, height: 44, borderRadius: 22),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,21 +202,21 @@ class SkeletonTrashCard extends StatelessWidget {
                       height: 13,
                       borderRadius: 6,
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     ShimmerBox(width: 80, height: 11, borderRadius: 5),
                   ],
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               ShimmerBox(width: 60, height: 20, borderRadius: 10),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               ShimmerBox(width: 80, height: 30, borderRadius: 12),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               ShimmerBox(width: 80, height: 30, borderRadius: 12),
             ],
           ),
@@ -259,7 +259,7 @@ class SkeletonBookingCard extends StatelessWidget {
       child: const Row(
         children: [
           ShimmerBox(width: 46, height: 46, borderRadius: 14),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,22 +273,22 @@ class SkeletonBookingCard extends StatelessWidget {
                         borderRadius: 6,
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     ShimmerBox(width: 56, height: 20, borderRadius: 10),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   children: [
                     ShimmerBox(width: 13, height: 13, borderRadius: 4),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     ShimmerBox(width: 140, height: 11, borderRadius: 5),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           ShimmerBox(width: 20, height: 20, borderRadius: 4),
         ],
       ),
@@ -307,13 +307,13 @@ class SkeletonCalendarSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.only(bottom: 8),
           child: ShimmerBox(width: 140, height: 14, borderRadius: 6),
         ),
         ...List.generate(
           bookingsPerSection,
           (_) => const Padding(
-            padding: EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: 8),
             child: SkeletonBookingCard(),
           ),
         ),

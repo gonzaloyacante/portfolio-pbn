@@ -5,18 +5,17 @@
  */
 
 import { NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
-// ── Handler ───────────────────────────────────────────────────────────────────
+// ── Cached data fetcher ───────────────────────────────────────────────────────
 
-export async function GET(req: Request) {
-  const auth = await withAdminJwt(req)
-  if (!auth.ok) return auth.response
-
-  try {
+const getAnalyticsOverview = unstable_cache(
+  async () => {
     const now = new Date()
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
@@ -253,24 +252,38 @@ export async function GET(req: Request) {
       count: _count._all,
     }))
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        totalImages,
-        totalCategories,
-        totalServices,
-        totalTestimonials,
-        newContacts,
-        pendingBookings,
-        pendingTestimonials,
-        trashCount,
-        pageViews30d,
-        uniqueVisitors30d,
-        deviceUsage,
-        topLocations,
-        topCategories,
-      },
-    })
+    return {
+      totalImages,
+      totalCategories,
+      totalServices,
+      totalTestimonials,
+      newContacts,
+      pendingBookings,
+      pendingTestimonials,
+      trashCount,
+      pageViews30d,
+      uniqueVisitors30d,
+      deviceUsage,
+      topLocations,
+      topCategories,
+    }
+  },
+  ['analytics-overview'],
+  {
+    revalidate: 60,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.categoryImages],
+  }
+)
+
+// ── Handler ───────────────────────────────────────────────────────────────────
+
+export async function GET(req: Request) {
+  const auth = await withAdminJwt(req)
+  if (!auth.ok) return auth.response
+
+  try {
+    const data = await getAnalyticsOverview()
+    return NextResponse.json({ success: true, data })
   } catch (err) {
     logger.error('[analytics-overview] Error', {
       error: err instanceof Error ? err.message : String(err),

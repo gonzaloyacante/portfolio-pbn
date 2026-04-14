@@ -46,7 +46,7 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined),
+                      prefixIcon: const Icon(Icons.email_outlined),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -58,7 +58,7 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
                     controller: _locationCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Ubicación',
-                      prefixIcon: Icon(Icons.location_on_outlined),
+                      prefixIcon: const Icon(Icons.location_on_outlined),
                     ),
                   ),
                 ],

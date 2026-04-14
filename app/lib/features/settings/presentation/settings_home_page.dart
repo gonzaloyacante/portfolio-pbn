@@ -277,7 +277,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
       AppLogger.error('SettingsHomePage: error picking hero image', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+          const SnackBar(content: const Text('No se pudo seleccionar la imagen')),
         );
       }
     }
@@ -305,7 +305,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
       AppLogger.error('SettingsHomePage: error picking illustration', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo seleccionar la imagen')),
+          const SnackBar(content: const Text('No se pudo seleccionar la imagen')),
         );
       }
     }

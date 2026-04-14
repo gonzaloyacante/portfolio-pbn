@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { Globe, LogOut } from 'lucide-react'
 import { showToast } from '@/lib/toast'
+import { logger } from '@/lib/logger'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 import { menuItems, type SidebarItem } from '@/config/admin-sidebar'
 import { ROUTES } from '@/config/routes'
@@ -16,7 +17,8 @@ export default function AdminSidebar() {
     try {
       await signOut({ callbackUrl: ROUTES.auth.login })
       showToast.success('Sesión cerrada exitosamente')
-    } catch {
+    } catch (error) {
+      logger.error('AdminSidebar: signOut error', { error })
       showToast.error('Error al cerrar sesión')
     }
   }

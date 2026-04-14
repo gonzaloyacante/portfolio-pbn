@@ -229,7 +229,7 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
       AppLogger.error('ImageUploadWidget: error picking image', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al seleccionar la imagen')),
+          const SnackBar(content: const Text('Error al seleccionar la imagen')),
         );
       }
     } finally {

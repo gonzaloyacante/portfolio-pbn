@@ -43,7 +43,7 @@ class BookingCard extends ConsumerWidget {
             height: 46,
             decoration: BoxDecoration(
               color: colorScheme.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: const BorderRadius.circular(14),
             ),
             alignment: Alignment.center,
             child: Text(

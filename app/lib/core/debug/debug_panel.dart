@@ -133,7 +133,7 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
                 height: 4,
                 decoration: BoxDecoration(
                   color: colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: const BorderRadius.circular(2),
                 ),
               ),
             ),

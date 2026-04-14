@@ -48,7 +48,7 @@ class ContactTile extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: scheme.primary.withValues(alpha: unread ? 0.15 : 0.07),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: const BorderRadius.circular(14),
                 ),
                 child: Icon(
                   statusIcon,
@@ -96,7 +96,7 @@ class ContactTile extends StatelessWidget {
                     const SizedBox(width: 8),
                     if (item.isImportant)
                       const Padding(
-                        padding: EdgeInsets.only(right: 4),
+                        padding: const EdgeInsets.only(right: 4),
                         child: Icon(
                           Icons.star_rounded,
                           size: 14,
@@ -168,12 +168,12 @@ class ContactTile extends StatelessWidget {
               color: scheme.outline,
             ),
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'view', child: Text('Ver detalle')),
+              const PopupMenuItem(value: 'view', child: const Text('Ver detalle')),
               const PopupMenuItem(
                 value: 'delete',
                 child: Text(
                   'Eliminar',
-                  style: TextStyle(color: AppColors.destructive),
+                  style: const TextStyle(color: AppColors.destructive),
                 ),
               ),
             ],
@@ -223,7 +223,7 @@ class _ContactBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: const BorderRadius.circular(6),
         border: Border.all(color: color.withValues(alpha: 0.35), width: 0.5),
       ),
       child: Text(

@@ -185,7 +185,7 @@ class DashboardContent extends StatelessWidget {
           ),
         ],
 
-        const SliverPadding(padding: EdgeInsets.only(bottom: AppSpacing.xxxl)),
+        const SliverPadding(padding: const EdgeInsets.only(bottom: AppSpacing.xxxl)),
       ],
     );
   }

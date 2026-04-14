@@ -190,7 +190,7 @@ class _LoginCard extends StatelessWidget {
               autofillHints: const [AutofillHints.email],
               decoration: const InputDecoration(
                 labelText: 'Correo electrónico',
-                prefixIcon: Icon(Icons.mail_outline_rounded),
+                prefixIcon: const Icon(Icons.mail_outline_rounded),
               ),
               validator: AppValidators.compose([
                 AppValidators.required,
@@ -239,7 +239,7 @@ class _LoginCard extends StatelessWidget {
               ),
               child: const Text(
                 'Entrar',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
             ),
           ],

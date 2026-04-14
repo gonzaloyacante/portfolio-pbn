@@ -39,7 +39,7 @@ class ServiceTile extends StatelessWidget {
             height: 46,
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: const BorderRadius.circular(14),
             ),
             child: Center(
               child: Icon(Icons.design_services, color: color, size: 22),
@@ -127,10 +127,10 @@ class ServiceTile extends StatelessWidget {
                       size: 18,
                       color: AppColors.destructive,
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text(
                       'Eliminar',
-                      style: TextStyle(color: AppColors.destructive),
+                      style: const TextStyle(color: AppColors.destructive),
                     ),
                   ],
                 ),

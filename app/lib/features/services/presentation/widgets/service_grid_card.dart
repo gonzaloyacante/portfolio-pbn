@@ -46,7 +46,7 @@ class ServiceGridCard extends StatelessWidget {
                 height: 46,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: const BorderRadius.circular(14),
                 ),
                 child: Center(
                   child: Icon(Icons.design_services, color: color, size: 22),
@@ -66,9 +66,9 @@ class ServiceGridCard extends StatelessWidget {
                     value: 'edit',
                     child: Row(
                       children: [
-                        Icon(Icons.edit_outlined, size: 18),
-                        SizedBox(width: 10),
-                        Text('Editar'),
+                        const Icon(Icons.edit_outlined, size: 18),
+                        const SizedBox(width: 10),
+                        const Text('Editar'),
                       ],
                     ),
                   ),
@@ -81,10 +81,10 @@ class ServiceGridCard extends StatelessWidget {
                           size: 18,
                           color: AppColors.destructive,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Text(
                           'Eliminar',
-                          style: TextStyle(color: AppColors.destructive),
+                          style: const TextStyle(color: AppColors.destructive),
                         ),
                       ],
                     ),

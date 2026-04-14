@@ -140,14 +140,14 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
     if (!_formKey.currentState!.validate()) return;
     if (_date == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecciona la fecha y hora')),
+        const SnackBar(content: const Text('Selecciona la fecha y hora')),
       );
       return;
     }
     if (_serviceId == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Selecciona un servicio')));
+      ).showSnackBar(const SnackBar(content: const Text('Selecciona un servicio')));
       return;
     }
 

@@ -33,7 +33,7 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
                     maxLines: 3,
                     decoration: const InputDecoration(
                       labelText: 'Intro',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
@@ -42,7 +42,7 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
                     maxLines: 5,
                     decoration: const InputDecoration(
                       labelText: 'Descripción',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],

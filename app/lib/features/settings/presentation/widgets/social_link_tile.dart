@@ -157,7 +157,7 @@ class _SocialLinkTileState extends ConsumerState<SocialLinkTile> {
                     decoration: const InputDecoration(
                       labelText: 'Usuario / handle',
                       helperText: 'Se muestra como texto del enlace',
-                      prefixIcon: Icon(Icons.alternate_email),
+                      prefixIcon: const Icon(Icons.alternate_email),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sm),

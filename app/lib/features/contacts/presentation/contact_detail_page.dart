@@ -58,7 +58,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Cambios guardados')));
+        ).showSnackBar(const SnackBar(content: const Text('Cambios guardados')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);

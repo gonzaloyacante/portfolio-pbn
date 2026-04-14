@@ -10,7 +10,7 @@ class SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: const BorderRadius.circular(20),
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

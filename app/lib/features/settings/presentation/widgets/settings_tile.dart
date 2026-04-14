@@ -46,7 +46,7 @@ class SettingsTile extends StatelessWidget {
                   colorScheme.primary.withValues(alpha: 0.06),
                 ],
               ),
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: const BorderRadius.circular(14),
             ),
             child: Icon(item.icon, size: 22, color: colorScheme.primary),
           ),

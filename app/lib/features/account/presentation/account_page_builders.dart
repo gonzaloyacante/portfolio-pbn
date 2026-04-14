@@ -41,7 +41,7 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
     if (trimmed.isEmpty || trimmed.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('El nombre debe tener al menos 2 caracteres'),
+          content: const Text('El nombre debe tener al menos 2 caracteres'),
         ),
       );
       return;
@@ -55,12 +55,12 @@ class _ProfileCardState extends ConsumerState<_ProfileCard> {
       setState(() => _editing = false);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
+      ).showSnackBar(const SnackBar(content: const Text('Nombre actualizado')));
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No se pudo actualizar el nombre')),
+        const SnackBar(content: const Text('No se pudo actualizar el nombre')),
       );
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -205,7 +205,7 @@ class _GoogleCalendarCard extends ConsumerWidget {
           leading: const Icon(Icons.calendar_month_outlined),
           title: const Text(
             'Google Calendar',
-            style: TextStyle(fontWeight: FontWeight.w600),
+            style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           subtitle: const Text('No se pudo cargar el estado'),
           trailing: IconButton(

@@ -26,6 +26,7 @@ import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/lib/toast'
+import { logger } from '@/lib/logger'
 import { SortableImageCard, DragOverlayCard, AnimatePresenceWrapper } from './CategoryGalleryCards'
 import { CategoryGalleryToolbar } from './CategoryGalleryToolbar'
 import { useMasonryColumns } from './useMasonryColumns'
@@ -95,7 +96,8 @@ export default function CategoryGalleryEditor({
       } else {
         showToast.error(result.error ?? 'Error al guardar')
       }
-    } catch {
+    } catch (err) {
+      logger.error('[CategoryGalleryEditor] handleSave error', { error: err })
       showToast.error('Error inesperado al guardar')
     } finally {
       setIsSaving(false)
@@ -113,7 +115,8 @@ export default function CategoryGalleryEditor({
       } else {
         showToast.error(result.error ?? 'Error al restablecer')
       }
-    } catch {
+    } catch (err) {
+      logger.error('[CategoryGalleryEditor] handleReset error', { error: err })
       showToast.error('Error inesperado al restablecer')
     } finally {
       setIsResetting(false)
@@ -143,7 +146,8 @@ export default function CategoryGalleryEditor({
       } else {
         showToast.error(result.error ?? 'Error al agregar imágenes')
       }
-    } catch {
+    } catch (err) {
+      logger.error('[CategoryGalleryEditor] handleUpload error', { error: err })
       showToast.error('Error al agregar imágenes a la galería')
     }
   }

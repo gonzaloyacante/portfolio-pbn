@@ -40,6 +40,16 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
       return { success: false, error: 'Categoría no encontrada' }
     }
 
+    // Verificar que todas las imágenes pertenecen a la categoría antes de actualizar
+    const imageIds = imageOrders.map(({ imageId }) => imageId)
+    const ownedImages = await prisma.categoryImage.findMany({
+      where: { id: { in: imageIds }, categoryId },
+      select: { id: true },
+    })
+    if (ownedImages.length !== imageIds.length) {
+      return { success: false, error: 'Una o más imágenes no pertenecen a esta categoría' }
+    }
+
     await prisma.$transaction(
       imageOrders.map(({ imageId, order }) =>
         prisma.categoryImage.update({

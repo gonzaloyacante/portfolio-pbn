@@ -22,10 +22,23 @@ const rateLimitStore = new Map<string, RateLimitEntry>()
 
 const RATE_LIMIT_REQUESTS = 120 // peticiones permitidas
 const RATE_LIMIT_WINDOW_MS = 60_000 // por minuto
+// Umbral para disparar limpieza inline (Edge runtime no soporta setInterval fiablemente)
+const RATE_LIMIT_CLEANUP_THRESHOLD = 5_000
+
+function cleanupExpiredEntries(now: number): void {
+  for (const [key, entry] of rateLimitStore.entries()) {
+    if (entry.resetAt < now) rateLimitStore.delete(key)
+  }
+}
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const entry = rateLimitStore.get(ip)
+
+  // Limpiar entradas expiradas si el store crece demasiado
+  if (rateLimitStore.size > RATE_LIMIT_CLEANUP_THRESHOLD) {
+    cleanupExpiredEntries(now)
+  }
 
   // Ventana expirada o primera vez: reiniciar contador
   if (!entry || entry.resetAt < now) {
@@ -39,9 +52,6 @@ function checkRateLimit(ip: string): boolean {
   entry.count++
   return true
 }
-
-// Nota: la limpieza del rateLimitStore (memory leak en long-running instances) debe realizarse
-// vía cron externo. setInterval es poco fiable en entornos serverless/Edge (Vercel).
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -111,10 +121,16 @@ export default withAuth(
     }
 
     // ── 3. Request logging ────────────────────────────────────────────────
+    const ASSET_PREFIXES = ['/_next', '/favicon']
+    const ASSET_EXTENSIONS = new Set([
+      '.ico', '.png', '.jpg', '.jpeg', '.svg',
+      '.webp', '.avif', '.woff', '.woff2', '.css', '.js',
+    ])
+    const lastDot = pathname.lastIndexOf('.')
+    const ext = lastDot !== -1 ? pathname.slice(lastDot) : ''
     const isAsset =
-      pathname.startsWith('/_next') ||
-      pathname.startsWith('/favicon') ||
-      pathname.match(/\.(ico|png|jpg|jpeg|svg|webp|avif|woff2?|css|js)$/) !== null
+      ASSET_PREFIXES.some((p) => pathname.startsWith(p)) ||
+      ASSET_EXTENSIONS.has(ext)
 
     if (!isAsset) {
       logger.info('[middleware] request', {

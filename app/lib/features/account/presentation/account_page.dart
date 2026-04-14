@@ -59,7 +59,7 @@ class _AccountPageState extends ConsumerState<AccountPage> {
       _newPwCtrl.clear();
       _confirmPwCtrl.clear();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Contraseña actualizada correctamente')),
+        const SnackBar(content: const Text('Contraseña actualizada correctamente')),
       );
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);

@@ -36,7 +36,7 @@ class LoadingOverlay extends StatelessWidget {
               child: Center(
                 child: AppCard(
                   elevation: 8,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: const BorderRadius.circular(16),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 28,
                     vertical: 24,

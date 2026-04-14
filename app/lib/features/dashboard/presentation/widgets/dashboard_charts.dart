@@ -75,7 +75,7 @@ class DashboardChartsSection extends ConsumerWidget {
               borderRadius: 16,
             ),
           ),
-          SizedBox(width: AppSpacing.base),
+          const SizedBox(width: AppSpacing.base),
           Expanded(
             child: ShimmerBox(
               width: double.infinity,
@@ -89,7 +89,7 @@ class DashboardChartsSection extends ConsumerWidget {
     return const Column(
       children: [
         ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
-        SizedBox(height: AppSpacing.base),
+        const SizedBox(height: AppSpacing.base),
         ShimmerBox(width: double.infinity, height: 180, borderRadius: 16),
       ],
     );

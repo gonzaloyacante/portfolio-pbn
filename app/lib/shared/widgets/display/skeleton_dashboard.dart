@@ -16,18 +16,18 @@ class SkeletonStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const AppCard(
-      padding: EdgeInsets.all(AppSpacing.md),
+      padding: const EdgeInsets.all(AppSpacing.md),
       child: Row(
         children: [
           ShimmerBox(width: 36, height: 36, borderRadius: 12),
-          SizedBox(width: AppSpacing.sm),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ShimmerBox(width: double.infinity, height: 18, borderRadius: 6),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 ShimmerBox(width: 80, height: 11, borderRadius: 5),
               ],
             ),
@@ -45,11 +45,11 @@ class SkeletonRankingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           ShimmerBox(width: 24, height: 24, borderRadius: 6),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: ShimmerBox(
               width: double.infinity,
@@ -57,7 +57,7 @@ class SkeletonRankingItem extends StatelessWidget {
               borderRadius: 5,
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           ShimmerBox(width: 40, height: 11, borderRadius: 5),
         ],
       ),
@@ -74,7 +74,7 @@ class SkeletonDeviceUsageSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppCard(
       elevation: 0,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: const BorderRadius.circular(16),
       padding: const EdgeInsets.all(AppSpacing.base),
       child: ShimmerLoader(
         child: Row(
@@ -84,11 +84,11 @@ class SkeletonDeviceUsageSection extends StatelessWidget {
               child: Column(
                 children: [
                   ShimmerBox(width: 28, height: 28, borderRadius: 8),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   ShimmerBox(width: 48, height: 20, borderRadius: 4),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   ShimmerBox(width: 56, height: 11, borderRadius: 4),
-                  SizedBox(height: 2),
+                  const SizedBox(height: 2),
                   ShimmerBox(width: 64, height: 10, borderRadius: 4),
                 ],
               ),
@@ -112,7 +112,7 @@ class SkeletonVisitorsMap extends StatelessWidget {
         children: [
           AppCard(
             elevation: 0,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: const BorderRadius.circular(16),
             padding: EdgeInsets.zero,
             child: const ShimmerBox(
               width: double.infinity,
@@ -124,11 +124,11 @@ class SkeletonVisitorsMap extends StatelessWidget {
           ...List.generate(
             4,
             (_) => const Padding(
-              padding: EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Row(
                 children: [
                   ShimmerBox(width: 24, height: 16, borderRadius: 3),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: ShimmerBox(
                       width: double.infinity,
@@ -136,7 +136,7 @@ class SkeletonVisitorsMap extends StatelessWidget {
                       borderRadius: 4,
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   ShimmerBox(width: 36, height: 11, borderRadius: 4),
                 ],
               ),
@@ -163,18 +163,18 @@ class SkeletonSocialTile extends StatelessWidget {
       child: const Row(
         children: [
           ShimmerBox(width: 40, height: 40, borderRadius: 12),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 ShimmerBox(width: 180, height: 11, borderRadius: 5),
               ],
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           ShimmerBox(width: 44, height: 24, borderRadius: 12),
         ],
       ),

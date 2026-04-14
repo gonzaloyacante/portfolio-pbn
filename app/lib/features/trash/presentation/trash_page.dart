@@ -128,7 +128,7 @@ class _TrashPageState extends ConsumerState<TrashPage> {
       Sentry.captureException(e, stackTrace: st);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo eliminar el elemento')),
+          const SnackBar(content: const Text('No se pudo eliminar el elemento')),
         );
       }
     }

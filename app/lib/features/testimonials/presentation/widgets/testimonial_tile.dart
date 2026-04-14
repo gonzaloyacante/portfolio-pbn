@@ -161,7 +161,7 @@ class TestimonialTile extends StatelessWidget {
       height: 46,
       decoration: BoxDecoration(
         color: colorScheme.primary.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: const BorderRadius.circular(14),
       ),
       clipBehavior: Clip.antiAlias,
       child: item.avatarUrl != null

@@ -45,7 +45,7 @@ class EmojiIconPicker extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(color: scheme.outline.withValues(alpha: 0.38)),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: const BorderRadius.circular(12),
               color: scheme.surfaceContainerLowest,
             ),
             child: Row(
@@ -55,7 +55,7 @@ class EmojiIconPicker extends StatelessWidget {
                   height: 42,
                   decoration: BoxDecoration(
                     color: scheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: const BorderRadius.circular(10),
                   ),
                   child: Center(
                     child: Text(

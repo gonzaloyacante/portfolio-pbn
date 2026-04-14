@@ -100,7 +100,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: isLight ? Colors.white : AppColors.darkBackground,
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.forButton),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: AppTypography.textTheme(brightness).labelLarge,
           elevation: 0,
@@ -112,7 +112,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: primary,
           side: BorderSide(color: primary),
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.forButton),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: AppTypography.textTheme(brightness).labelLarge,
         ),
@@ -122,7 +122,7 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: primary,
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
+          shape: const RoundedRectangleBorder(borderRadius: AppRadius.forButton),
           textStyle: AppTypography.textTheme(brightness).labelLarge,
         ),
       ),
@@ -227,7 +227,7 @@ class AppTheme {
       // ── SnackBar ────────────────────────────────────────────────────────
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.forButton),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.forButton),
         backgroundColor: isLight ? AppColors.lightForeground : card,
         contentTextStyle: AppTypography.textTheme(brightness).bodyMedium
             ?.copyWith(color: isLight ? AppColors.lightBackground : foreground),
@@ -235,7 +235,7 @@ class AppTheme {
 
       // ── ListTile ────────────────────────────────────────────────────────
       listTileTheme: ListTileThemeData(
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.forTile),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.forTile),
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       ),
 
@@ -243,7 +243,7 @@ class AppTheme {
       dialogTheme: DialogThemeData(
         backgroundColor: card,
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.forDialog),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.forDialog),
         elevation: 8,
       ),
 

@@ -43,7 +43,7 @@ class DeviceUsageSection extends StatelessWidget {
 
     return AppCard(
       elevation: 0,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: const BorderRadius.circular(16),
       padding: const EdgeInsets.all(AppSpacing.base),
       child: Row(
         children: sorted.map((entry) {

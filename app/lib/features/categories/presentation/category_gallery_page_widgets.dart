@@ -139,7 +139,7 @@ class _ImageViewer extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.circular(12),
                 ),
                 child: Text(
                   '#$position',

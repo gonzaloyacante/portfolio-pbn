@@ -58,7 +58,7 @@ extension _TrashItemDetailBuilders on TrashItemDetailPage {
     if (rows.isEmpty) return const SizedBox.shrink();
 
     return AppCard(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: const BorderRadius.circular(16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

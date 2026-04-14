@@ -104,7 +104,7 @@ class GoogleCalendarSection extends ConsumerWidget {
       if (created) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Evento añadido a Google Calendar'),
+            content: const Text('Evento añadido a Google Calendar'),
             behavior: SnackBarBehavior.floating,
           ),
         );

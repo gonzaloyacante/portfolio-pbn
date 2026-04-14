@@ -13,7 +13,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Título principal',
             hintText: 'Ej: "Make-up"',
-            prefixIcon: Icon(Icons.format_size),
+            prefixIcon: const Icon(Icons.format_size),
           ),
         ),
         _buildTextDesign('heroTitle1', fontSizeFallback: 112),
@@ -23,7 +23,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Segundo título',
             hintText: 'Ej: "Artist"',
-            prefixIcon: Icon(Icons.format_size),
+            prefixIcon: const Icon(Icons.format_size),
           ),
         ),
         _buildTextDesign('heroTitle2', fontSizeFallback: 96),
@@ -33,7 +33,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Nombre de la artista',
             hintText: 'Ej: "Paola Bolívar Nievas"',
-            prefixIcon: Icon(Icons.person_outline),
+            prefixIcon: const Icon(Icons.person_outline),
           ),
         ),
         _buildTextDesign('ownerName', fontSizeFallback: 36),
@@ -60,7 +60,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Texto alternativo (accesibilidad)',
             hintText: 'Ej: "Foto de Paola maquillando"',
-            prefixIcon: Icon(Icons.accessibility_new_outlined),
+            prefixIcon: const Icon(Icons.accessibility_new_outlined),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -69,7 +69,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Pie de foto (opcional)',
             hintText: 'Ej: "Sesión en Barcelona"',
-            prefixIcon: Icon(Icons.closed_caption_outlined),
+            prefixIcon: const Icon(Icons.closed_caption_outlined),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -77,16 +77,16 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           value: _strVal('heroImageStyle', 'original'),
           decoration: const InputDecoration(
             labelText: 'Estilo de imagen',
-            prefixIcon: Icon(Icons.crop_outlined),
+            prefixIcon: const Icon(Icons.crop_outlined),
           ),
           items: const [
-            DropdownMenuItem(value: 'original', child: Text('Original')),
-            DropdownMenuItem(value: 'rounded', child: Text('Redondeado')),
-            DropdownMenuItem(value: 'square', child: Text('Cuadrado')),
-            DropdownMenuItem(value: 'circle', child: Text('Circular')),
-            DropdownMenuItem(value: 'landscape', child: Text('Horizontal')),
-            DropdownMenuItem(value: 'portrait', child: Text('Retrato')),
-            DropdownMenuItem(value: 'star', child: Text('Estrella')),
+            DropdownMenuItem(value: 'original', child: const Text('Original')),
+            DropdownMenuItem(value: 'rounded', child: const Text('Redondeado')),
+            DropdownMenuItem(value: 'square', child: const Text('Cuadrado')),
+            DropdownMenuItem(value: 'circle', child: const Text('Circular')),
+            DropdownMenuItem(value: 'landscape', child: const Text('Horizontal')),
+            DropdownMenuItem(value: 'portrait', child: const Text('Retrato')),
+            DropdownMenuItem(value: 'star', child: const Text('Estrella')),
           ],
           onChanged: (v) => _setVal('heroImageStyle', v),
         ),
@@ -115,7 +115,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Texto alternativo',
             hintText: 'Ej: "Ilustración maquilladora"',
-            prefixIcon: Icon(Icons.accessibility_new_outlined),
+            prefixIcon: const Icon(Icons.accessibility_new_outlined),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -159,7 +159,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Texto del botón',
             hintText: 'Ej: "Ver portfolio"',
-            prefixIcon: Icon(Icons.smart_button_outlined),
+            prefixIcon: const Icon(Icons.smart_button_outlined),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -169,7 +169,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           decoration: const InputDecoration(
             labelText: 'Enlace destino',
             hintText: 'Ej: "/portfolio"',
-            prefixIcon: Icon(Icons.link_outlined),
+            prefixIcon: const Icon(Icons.link_outlined),
           ),
         ),
         _buildTextDesignCta(),
@@ -178,13 +178,13 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           value: _strVal('ctaVariant', 'default'),
           decoration: const InputDecoration(
             labelText: 'Variante',
-            prefixIcon: Icon(Icons.style_outlined),
+            prefixIcon: const Icon(Icons.style_outlined),
           ),
           items: const [
-            DropdownMenuItem(value: 'default', child: Text('Primario')),
-            DropdownMenuItem(value: 'secondary', child: Text('Secundario')),
-            DropdownMenuItem(value: 'outline', child: Text('Contorno')),
-            DropdownMenuItem(value: 'ghost', child: Text('Fantasma')),
+            DropdownMenuItem(value: 'default', child: const Text('Primario')),
+            DropdownMenuItem(value: 'secondary', child: const Text('Secundario')),
+            DropdownMenuItem(value: 'outline', child: const Text('Contorno')),
+            DropdownMenuItem(value: 'ghost', child: const Text('Fantasma')),
           ],
           onChanged: (v) => _setVal('ctaVariant', v),
         ),
@@ -193,12 +193,12 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
           value: _strVal('ctaSize', 'default'),
           decoration: const InputDecoration(
             labelText: 'Tamaño del botón',
-            prefixIcon: Icon(Icons.format_size_outlined),
+            prefixIcon: const Icon(Icons.format_size_outlined),
           ),
           items: const [
-            DropdownMenuItem(value: 'sm', child: Text('Pequeño')),
-            DropdownMenuItem(value: 'default', child: Text('Mediano')),
-            DropdownMenuItem(value: 'lg', child: Text('Grande')),
+            DropdownMenuItem(value: 'sm', child: const Text('Pequeño')),
+            DropdownMenuItem(value: 'default', child: const Text('Mediano')),
+            DropdownMenuItem(value: 'lg', child: const Text('Grande')),
           ],
           onChanged: (v) => _setVal('ctaSize', v),
         ),
@@ -229,7 +229,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
             decoration: const InputDecoration(
               labelText: 'Título de la sección',
               hintText: 'Ej: "Trabajos recientes"',
-              prefixIcon: Icon(Icons.title_outlined),
+              prefixIcon: const Icon(Icons.title_outlined),
             ),
           ),
           _buildTextDesign('featuredTitle', fontSizeFallback: 32),
@@ -546,7 +546,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 100),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: const BorderRadius.circular(12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -583,15 +583,15 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
                   segments: const [
                     ButtonSegment(
                       value: 'mobile',
-                      icon: Icon(Icons.phone_android, size: 16),
+                      icon: const Icon(Icons.phone_android, size: 16),
                     ),
                     ButtonSegment(
                       value: 'tablet',
-                      icon: Icon(Icons.tablet_mac, size: 16),
+                      icon: const Icon(Icons.tablet_mac, size: 16),
                     ),
                     ButtonSegment(
                       value: 'desktop',
-                      icon: Icon(Icons.desktop_mac, size: 16),
+                      icon: const Icon(Icons.desktop_mac, size: 16),
                     ),
                   ],
                   selected: {_previewDevice},
@@ -618,7 +618,7 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
         const SizedBox(height: AppSpacing.xs),
         DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: const BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 25 / 255),
@@ -650,11 +650,11 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          "El simulador escala el viewport (${_previewDevice == 'mobile'
+          'El simulador escala el viewport (${_previewDevice == 'mobile'
               ? '390px'
               : _previewDevice == 'tablet'
               ? '768px'
-              : '1200px'}) a esta caja en tiempo real. Utilízalo para probar los overrides móviles.",
+              : '1200px'}) a esta caja en tiempo real. Utilízalo para probar los overrides móviles.',
           style: theme.textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurface.withValues(alpha: 150 / 255),
             fontStyle: FontStyle.italic,

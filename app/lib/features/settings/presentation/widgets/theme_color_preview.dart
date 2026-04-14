@@ -44,7 +44,7 @@ class ThemeColorPreview extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: const BorderRadius.circular(20),
         border: Border.all(
           color: colorScheme.outlineVariant.withValues(alpha: 80 / 255),
         ),
@@ -123,7 +123,7 @@ class _MiniThemeCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: const BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: (isDark ? 60 : 18) / 255),
@@ -150,7 +150,7 @@ class _MiniThemeCard extends StatelessWidget {
               color: isDark
                   ? Colors.white.withValues(alpha: 12 / 255)
                   : Colors.white.withValues(alpha: 230 / 255),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: const BorderRadius.circular(8),
             ),
             padding: const EdgeInsets.all(6),
             child: Row(
@@ -160,7 +160,7 @@ class _MiniThemeCard extends StatelessWidget {
                   height: 20,
                   decoration: BoxDecoration(
                     color: primary.withValues(alpha: (isDark ? 90 : 40) / 255),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: const BorderRadius.circular(6),
                   ),
                   child: Icon(Icons.photo_outlined, size: 12, color: primary),
                 ),
@@ -173,7 +173,7 @@ class _MiniThemeCard extends StatelessWidget {
                         height: 5,
                         decoration: BoxDecoration(
                           color: textColor.withValues(alpha: 180 / 255),
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: const BorderRadius.circular(2),
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -182,7 +182,7 @@ class _MiniThemeCard extends StatelessWidget {
                         width: 40,
                         decoration: BoxDecoration(
                           color: subtextColor,
-                          borderRadius: BorderRadius.circular(2),
+                          borderRadius: const BorderRadius.circular(2),
                         ),
                       ),
                     ],

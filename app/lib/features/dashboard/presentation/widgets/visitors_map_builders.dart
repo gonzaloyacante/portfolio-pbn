@@ -181,7 +181,7 @@ extension _VisitorsMapBuilders on _VisitorsMapWidgetState {
                                             decoration: BoxDecoration(
                                               color: colorScheme.surface,
                                               borderRadius:
-                                                  BorderRadius.circular(10),
+                                                  const BorderRadius.circular(10),
                                               border: Border.all(
                                                 color: color.withValues(
                                                   alpha: 120 / 255,
@@ -396,7 +396,7 @@ extension _VisitorsMapBuilders on _VisitorsMapWidgetState {
                               ),
                               const SizedBox(height: 4),
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: const BorderRadius.circular(4),
                                 child: LinearProgressIndicator(
                                   value: progress,
                                   minHeight: 3,

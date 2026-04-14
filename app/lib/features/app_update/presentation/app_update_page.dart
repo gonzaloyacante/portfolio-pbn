@@ -47,7 +47,7 @@ class AppUpdatePage extends ConsumerWidget {
               : const SizedBox.shrink(),
           title: const Text(
             'Actualización',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
           ),
         ),
         body: Center(

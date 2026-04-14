@@ -152,7 +152,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       if (images.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('No hay imágenes en la galería de esta categoría.'),
+            content: const Text('No hay imágenes en la galería de esta categoría.'),
           ),
         );
         return;
@@ -216,7 +216,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
                               ctx.pop();
                             },
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: const BorderRadius.circular(8),
                               child: CachedNetworkImage(
                                 imageUrl: img.url,
                                 fit: BoxFit.cover,
@@ -251,7 +251,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('No se pudo cargar la galería. Inténtalo de nuevo.'),
+            content: const Text('No se pudo cargar la galería. Inténtalo de nuevo.'),
           ),
         );
       }

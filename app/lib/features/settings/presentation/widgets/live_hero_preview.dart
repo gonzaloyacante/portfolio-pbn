@@ -239,7 +239,7 @@ class LiveHeroPreview extends StatelessWidget {
           imageUrl: currentHeroImageUrl,
           fit: BoxFit.cover,
           errorWidget: (context, url, error) =>
-              const Center(child: Icon(Icons.broken_image)),
+              const Center(child: const Icon(Icons.broken_image)),
         );
       }
       return Container(
@@ -263,7 +263,7 @@ class LiveHeroPreview extends StatelessWidget {
           imageUrl: currentIllustrationUrl,
           fit: BoxFit.contain,
           errorWidget: (context, url, error) =>
-              const Center(child: Icon(Icons.broken_image)),
+              const Center(child: const Icon(Icons.broken_image)),
         );
       }
       return Container(
@@ -363,7 +363,7 @@ class LiveHeroPreview extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
           color: primaryColor,
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: const BorderRadius.circular(100),
         ),
         child: Text(
           cta,
@@ -376,9 +376,9 @@ class LiveHeroPreview extends StatelessWidget {
     );
 
     final imgShapeRadius = imgStyle == 'rounded'
-        ? BorderRadius.circular(32)
+        ? const BorderRadius.circular(32)
         : (imgStyle == 'circle'
-              ? BorderRadius.circular(9999)
+              ? const BorderRadius.circular(9999)
               : BorderRadius.zero);
     final imgAspectRatio = imgStyle == 'circle'
         ? 1.0
@@ -398,7 +398,7 @@ class LiveHeroPreview extends StatelessWidget {
         : (device == 'tablet' ? 768.0 : 1200.0);
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: const BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
         color: bgColor,

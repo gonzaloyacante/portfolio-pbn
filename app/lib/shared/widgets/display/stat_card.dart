@@ -65,7 +65,7 @@ class StatCard extends StatelessWidget {
 
     return AppCard(
       color: bgTint,
-      borderRadius: BorderRadius.circular(AppRadius.card),
+      borderRadius: const BorderRadius.circular(AppRadius.card),
       onTap: onTap,
       padding: EdgeInsets.all(isExpanded ? AppSpacing.base : AppSpacing.sm + 2),
       child: Row(
@@ -120,7 +120,7 @@ class StatCard extends StatelessWidget {
                           color: Theme.of(
                             context,
                           ).colorScheme.onSurface.withValues(alpha: 12 / 255),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: const BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

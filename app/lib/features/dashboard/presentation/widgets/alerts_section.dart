@@ -109,10 +109,10 @@ class _AlertChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: color.withValues(alpha: 20 / 255),
-      borderRadius: BorderRadius.circular(AppRadius.card),
+      borderRadius: const BorderRadius.circular(AppRadius.card),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: const BorderRadius.circular(AppRadius.card),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.base,

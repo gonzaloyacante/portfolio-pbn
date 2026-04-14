@@ -14,7 +14,7 @@ Widget _buildPhaseContent(
         title: 'Buscando actualizaciones...',
         subtitle: 'Conectando con el servidor para revisar nuevas versiones...',
         child: const Padding(
-          padding: EdgeInsets.only(top: 24),
+          padding: const EdgeInsets.only(top: 24),
           child: CircularProgressIndicator(),
         ),
       );
@@ -68,7 +68,7 @@ Widget _buildPhaseContent(
       final sizeMb = (state.release?.fileSizeBytes ?? 0) / 1024 / 1024;
       return _buildContentBlock(
         theme,
-        title: 'Versión ${state.release?.version ?? ""}',
+        title: 'Versión ${state.release?.version ?? ''}',
         subtitle:
             'Actualización importante recomendada. Tamaño: ${sizeMb.toStringAsFixed(1)} MB.',
         body: state.release?.releaseNotes,
@@ -88,7 +88,7 @@ Widget _buildPhaseContent(
             children: [
               LinearProgressIndicator(
                 value: state.progress > 0 ? state.progress : null,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: const BorderRadius.circular(8),
                 minHeight: 8,
               ),
               const SizedBox(height: 16),
@@ -111,7 +111,7 @@ Widget _buildPhaseContent(
         subtitle:
             'Comprobando la integridad del paquete descargado para una instalación segura.',
         child: const Padding(
-          padding: EdgeInsets.only(top: 24),
+          padding: const EdgeInsets.only(top: 24),
           child: CircularProgressIndicator(),
         ),
       );
@@ -161,7 +161,7 @@ Widget _buildPhaseContent(
                   color: theme.colorScheme.primaryContainer.withValues(
                     alpha: 0.4,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.circular(12),
                 ),
                 child: Column(
                   children: [
@@ -316,7 +316,7 @@ Widget _buildContentBlock(
           style: FilledButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: const BorderRadius.circular(12),
             ),
           ),
           child: Text(

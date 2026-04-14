@@ -53,7 +53,7 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
       if (ctx.mounted) {
         ScaffoldMessenger.of(
           ctx,
-        ).showSnackBar(const SnackBar(content: Text('Servicio eliminado')));
+        ).showSnackBar(const SnackBar(content: const Text('Servicio eliminado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
@@ -142,7 +142,7 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
               ),
               title: const Text(
                 'Eliminar',
-                style: TextStyle(color: AppColors.destructive),
+                style: const TextStyle(color: AppColors.destructive),
               ),
               onTap: () {
                 Navigator.of(sheetCtx).pop();

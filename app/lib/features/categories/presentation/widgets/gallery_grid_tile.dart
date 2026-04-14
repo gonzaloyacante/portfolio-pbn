@@ -63,7 +63,7 @@ class GalleryGridTile extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: const BorderRadius.circular(8),
                 ),
                 child: Text(
                   '#$position',

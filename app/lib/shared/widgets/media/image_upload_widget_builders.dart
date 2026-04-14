@@ -30,18 +30,18 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                                 minimumSize: Size.zero,
                                 padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: const BorderRadius.circular(8),
                                 ),
                               ),
                               child: const SizedBox.expand(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.edit_outlined, size: 20),
-                                    SizedBox(height: 6),
+                                    const Icon(Icons.edit_outlined, size: 20),
+                                    const SizedBox(height: 6),
                                     Text(
                                       'Editar',
-                                      style: TextStyle(fontSize: 12),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -56,7 +56,7 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                                 minimumSize: Size.zero,
                                 padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: const BorderRadius.circular(8),
                                 ),
                                 side: BorderSide(color: colorScheme.outline),
                                 foregroundColor: colorScheme.onSurface,
@@ -65,11 +65,11 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.close, size: 20),
-                                    SizedBox(height: 6),
+                                    const Icon(Icons.close, size: 20),
+                                    const SizedBox(height: 6),
                                     Text(
                                       'Quitar',
-                                      style: TextStyle(fontSize: 12),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                   ],
                                 ),
@@ -91,7 +91,7 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                       height: double.infinity,
                       clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: const BorderRadius.circular(12),
                         border: Border.all(
                           color: colorScheme.outline.withValues(alpha: 0.3),
                         ),
@@ -131,7 +131,7 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
             height: widget.height,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: const BorderRadius.circular(12),
               border: Border.all(
                 color: colorScheme.outline.withValues(alpha: 0.3),
               ),
@@ -169,15 +169,15 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                               minimumSize: Size.zero,
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: const BorderRadius.circular(8),
                               ),
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.edit_outlined, size: 18),
-                                SizedBox(width: 6),
-                                Text('Editar', style: TextStyle(fontSize: 13)),
+                                const Icon(Icons.edit_outlined, size: 18),
+                                const SizedBox(width: 6),
+                                Text('Editar', style: const TextStyle(fontSize: 13)),
                               ],
                             ),
                           ),
@@ -193,7 +193,7 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                               minimumSize: Size.zero,
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                                borderRadius: const BorderRadius.circular(8),
                               ),
                               side: BorderSide(color: colorScheme.outline),
                               foregroundColor: colorScheme.onSurface,
@@ -201,9 +201,9 @@ extension _ImageUploadWidgetBuilders on _ImageUploadWidgetState {
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.close, size: 18),
-                                SizedBox(width: 6),
-                                Text('Quitar', style: TextStyle(fontSize: 13)),
+                                const Icon(Icons.close, size: 18),
+                                const SizedBox(width: 6),
+                                Text('Quitar', style: const TextStyle(fontSize: 13)),
                               ],
                             ),
                           ),

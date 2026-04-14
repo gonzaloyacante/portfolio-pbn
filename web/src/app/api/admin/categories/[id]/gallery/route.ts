@@ -7,6 +7,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { z } from 'zod'
 
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
@@ -15,6 +16,22 @@ import { deleteImage } from '@/lib/cloudinary'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
+
+// ── Validation Schemas ────────────────────────────────────────────────────────
+
+const galleryImageSchema = z.object({
+  url: z.string().url('URL de imagen inválida'),
+  publicId: z.string().min(1, 'publicId es requerido'),
+  width: z.number().positive().optional(),
+  height: z.number().positive().optional(),
+})
+
+const addGalleryImagesSchema = z.object({
+  images: z
+    .array(galleryImageSchema)
+    .min(1, 'Se requiere al menos una imagen')
+    .max(50, 'No se pueden agregar más de 50 imágenes por request'),
+})
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -84,15 +101,14 @@ export async function POST(req: Request, { params }: Params) {
     const { id: categoryId } = await params
 
     const body = await req.json()
-    const images: { url: string; publicId: string; width?: number; height?: number }[] =
-      body?.images
-
-    if (!Array.isArray(images) || images.length === 0) {
+    const parsed = addGalleryImagesSchema.safeParse(body)
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'El campo "images" es requerido y debe ser un array' },
+        { success: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' },
         { status: 400 }
       )
     }
+    const { images } = parsed.data
 
     // Verificar que la categoría existe
     const category = await prisma.category.findFirst({
