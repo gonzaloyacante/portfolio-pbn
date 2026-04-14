@@ -45,7 +45,7 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                   children: [
                     // ── Cabecera ────────────────────────────────────────────
                     AppCard(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: const BorderRadius.circular(16),
                       elevation: 2,
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -60,7 +60,7 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                                   color: Theme.of(
                                     context,
                                   ).colorScheme.primary.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: const BorderRadius.circular(14),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -176,7 +176,7 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
                         color: theme.colorScheme.surfaceVariant.withValues(
                           alpha: 0.03,
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: const BorderRadius.circular(12),
                         border: Border.all(
                           color: theme.colorScheme.outline.withValues(
                             alpha: 0.06,

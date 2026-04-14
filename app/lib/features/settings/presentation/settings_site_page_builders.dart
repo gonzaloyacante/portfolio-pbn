@@ -102,7 +102,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
                     decoration: const InputDecoration(
                       labelText: 'Meta descripción',
                       helperText: 'Descripción en resultados de búsqueda',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -144,7 +144,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
                         maxLines: 2,
                         decoration: const InputDecoration(
                           labelText: 'Mensaje de mantenimiento',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                         ),
                       ),
                     ],

@@ -31,7 +31,7 @@ class SkeletonCategoryTile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(14, 12, 4, 12),
+                padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -45,18 +45,18 @@ class SkeletonCategoryTile extends StatelessWidget {
                             borderRadius: 6,
                           ),
                         ),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         ShimmerBox(width: 52, height: 20, borderRadius: 10),
                       ],
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     ShimmerBox(width: 100, height: 11, borderRadius: 5),
                   ],
                 ),
               ),
             ),
             ShimmerBox(width: 20, height: 20, borderRadius: 4),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
           ],
         ),
       ),
@@ -88,12 +88,12 @@ class SkeletonCategoryGridCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, 8, 10, 12),
+            padding: const EdgeInsets.fromLTRB(10, 8, 10, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ShimmerBox(width: double.infinity, height: 13, borderRadius: 6),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 ShimmerBox(width: 80, height: 11, borderRadius: 5),
               ],
             ),

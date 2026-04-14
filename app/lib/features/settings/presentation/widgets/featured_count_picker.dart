@@ -40,7 +40,7 @@ class FeaturedCountPicker extends StatelessWidget {
                       color: selected
                           ? colorScheme.primary
                           : colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: const BorderRadius.circular(8),
                       border: Border.all(
                         color: selected
                             ? colorScheme.primary

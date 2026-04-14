@@ -69,7 +69,7 @@ class _FontPickerSheetState extends State<_FontPickerSheet> {
                 height: 4,
                 decoration: BoxDecoration(
                   color: colorScheme.outline.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: const BorderRadius.circular(2),
                 ),
               ),
             ),

@@ -94,7 +94,7 @@ class DashboardGreeting extends ConsumerWidget {
             height: 52,
             decoration: BoxDecoration(
               color: primary.withValues(alpha: (isDark ? 70 : 40) / 255),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: const BorderRadius.circular(16),
             ),
             alignment: Alignment.center,
             child: Icon(Icons.spa_outlined, color: primary, size: 28),

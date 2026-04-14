@@ -17,7 +17,7 @@ class TopRankingSection extends StatelessWidget {
 
     return AppCard(
       elevation: 0,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: const BorderRadius.circular(16),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.base,
         vertical: AppSpacing.sm,
@@ -67,7 +67,7 @@ class TopRankingSection extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: const BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: progress,
                           minHeight: 4,

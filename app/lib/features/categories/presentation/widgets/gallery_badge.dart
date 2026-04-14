@@ -12,7 +12,7 @@ class GalleryBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: const BorderRadius.circular(4),
       ),
       child: Text(
         label,

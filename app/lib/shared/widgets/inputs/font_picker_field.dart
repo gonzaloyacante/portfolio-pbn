@@ -81,15 +81,15 @@ class FontPickerField extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         Material(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: const BorderRadius.circular(12),
           child: InkWell(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: const BorderRadius.circular(12),
             onTap: () => _openPicker(context),
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: const BorderRadius.circular(12),
                 border: Border.all(
                   color: colorScheme.outline.withValues(alpha: 0.4),
                 ),

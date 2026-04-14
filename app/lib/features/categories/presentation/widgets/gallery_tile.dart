@@ -48,7 +48,7 @@ class GalleryTile extends StatelessWidget {
             GestureDetector(
               onTap: onTap,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: const BorderRadius.circular(6),
                 child: SizedBox(
                   width: 72,
                   height: 72,

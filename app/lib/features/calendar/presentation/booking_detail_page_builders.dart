@@ -152,7 +152,7 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
           const SizedBox(height: 12),
           // ── Estado ────────────────────────────────────────────────────────
           AppCard(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: const BorderRadius.circular(20),
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +183,7 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
           const SizedBox(height: 12),
           // ── Notas admin ───────────────────────────────────────────────────
           AppCard(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: const BorderRadius.circular(20),
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +200,7 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
                   maxLines: 4,
                   decoration: const InputDecoration(
                     hintText: 'Añade notas internas sobre esta reserva…',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ],

@@ -132,9 +132,9 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
               value: _status,
               decoration: const InputDecoration(labelText: 'Estado'),
               items: const [
-                DropdownMenuItem(value: 'PENDING', child: Text('Pendiente')),
-                DropdownMenuItem(value: 'APPROVED', child: Text('Aprobado')),
-                DropdownMenuItem(value: 'REJECTED', child: Text('Rechazado')),
+                DropdownMenuItem(value: 'PENDING', child: const Text('Pendiente')),
+                DropdownMenuItem(value: 'APPROVED', child: const Text('Aprobado')),
+                DropdownMenuItem(value: 'REJECTED', child: const Text('Rechazado')),
               ],
               onChanged: (v) {
                 if (v != null) setState(() => _status = v);

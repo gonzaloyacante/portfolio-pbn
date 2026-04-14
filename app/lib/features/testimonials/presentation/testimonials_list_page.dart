@@ -51,7 +51,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
       if (ctx.mounted) {
         ScaffoldMessenger.of(
           ctx,
-        ).showSnackBar(const SnackBar(content: Text('Testimonio eliminado')));
+        ).showSnackBar(const SnackBar(content: const Text('Testimonio eliminado')));
       }
     } catch (e) {
       if (ctx.mounted) {
@@ -139,7 +139,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
               ),
               title: const Text(
                 'Eliminar',
-                style: TextStyle(color: AppColors.destructive),
+                style: const TextStyle(color: AppColors.destructive),
               ),
               onTap: () {
                 Navigator.of(sheetCtx).pop();

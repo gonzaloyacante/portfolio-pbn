@@ -24,7 +24,7 @@ class _CollapsiblePreviewState extends State<CollapsiblePreview> {
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLowest,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: const BorderRadius.circular(20),
           border: Border.all(
             color: colorScheme.outlineVariant.withValues(alpha: 80 / 255),
           ),

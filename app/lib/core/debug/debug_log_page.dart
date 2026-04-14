@@ -67,7 +67,7 @@ class _DebugLogPageState extends State<DebugLogPage> {
             tooltip: 'Filtrar por nivel',
             onSelected: (level) => setState(() => _filterLevel = level),
             itemBuilder: (_) => [
-              const PopupMenuItem(value: null, child: Text('Todos')),
+              const PopupMenuItem(value: null, child: const Text('Todos')),
               PopupMenuItem(
                 value: LogLevel.debug,
                 child: Text(
@@ -133,8 +133,8 @@ class _DebugLogPageState extends State<DebugLogPage> {
                     size: 48,
                     color: Colors.grey,
                   ),
-                  SizedBox(height: 8),
-                  Text('Sin logs', style: TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 8),
+                  Text('Sin logs', style: const TextStyle(color: Colors.grey)),
                 ],
               ),
             )
@@ -182,7 +182,7 @@ class _LogTile extends StatelessWidget {
         Clipboard.setData(ClipboardData(text: text));
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Log copiado al portapapeles'),
+            content: const Text('Log copiado al portapapeles'),
             duration: Duration(seconds: 1),
           ),
         );
@@ -198,7 +198,7 @@ class _LogTile extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: levelColor,
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: const BorderRadius.circular(2),
               ),
             ),
             const SizedBox(width: 10),

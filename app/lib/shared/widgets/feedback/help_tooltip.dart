@@ -27,7 +27,7 @@ class HelpTooltip extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.inverseSurface,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: const BorderRadius.circular(10),
       ),
       textStyle: TextStyle(
         color: Theme.of(context).colorScheme.onInverseSurface,

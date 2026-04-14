@@ -71,7 +71,7 @@ class DraggableList<T> extends StatelessWidget {
           elevation: elevation,
           color: Colors.transparent,
           shadowColor: Colors.black.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: const BorderRadius.circular(12),
           child: child,
         );
       },

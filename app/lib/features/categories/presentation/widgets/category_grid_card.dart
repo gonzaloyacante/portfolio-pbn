@@ -102,7 +102,7 @@ class CategoryGridCard extends StatelessWidget {
               padding: EdgeInsets.zero,
               decoration: BoxDecoration(
                 color: scheme.surface,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: const BorderRadius.circular(12),
               ),
               child: StatusBadge(
                 status: item.isActive ? AppStatus.active : AppStatus.inactive,

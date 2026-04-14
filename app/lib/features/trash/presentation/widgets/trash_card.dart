@@ -39,7 +39,7 @@ class TrashCard extends StatelessWidget {
     final isExpiringSoon = daysLeft <= 7;
 
     return AppCard(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: const BorderRadius.circular(16),
       padding: const EdgeInsets.all(16),
       onTap: onTap,
       child: Column(
@@ -116,7 +116,7 @@ class TrashCard extends StatelessWidget {
                   color: isExpiringSoon
                       ? colorScheme.errorContainer
                       : colorScheme.onSurface.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: const BorderRadius.circular(20),
                 ),
                 child: Text(
                   daysLeft == 0 ? 'Hoy expira' : '$daysLeft d restantes',

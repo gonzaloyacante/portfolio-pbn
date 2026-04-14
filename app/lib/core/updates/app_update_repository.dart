@@ -106,7 +106,7 @@ class AppUpdateRepository {
       AppLogger.info(
         'AppUpdateRepository: actualización disponible '
         'v${release.version} (build ${release.versionCode})'
-        '${forceUpdate ? " [FORZADA]" : ""}',
+        '${forceUpdate ? ' [FORZADA]' : ''}',
       );
 
       return AppUpdateAvailable(release: release, forceUpdate: forceUpdate);

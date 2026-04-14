@@ -157,10 +157,10 @@ class CategoryTile extends StatelessWidget {
                         size: 18,
                         color: AppColors.destructive,
                       ),
-                      SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Text(
                         'Eliminar',
-                        style: TextStyle(color: AppColors.destructive),
+                        style: const TextStyle(color: AppColors.destructive),
                       ),
                     ],
                   ),

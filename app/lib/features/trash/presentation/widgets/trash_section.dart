@@ -48,7 +48,7 @@ class TrashSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: colorScheme.onSurface.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${items.length}',
@@ -104,7 +104,7 @@ class TrashSection extends StatelessWidget {
                       ),
                     )
                   else
-                    const Expanded(child: SizedBox()),
+                    const Expanded(child: const SizedBox()),
                 ],
               ),
             ),

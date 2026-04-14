@@ -50,7 +50,7 @@ class AppCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bg = color ?? theme.cardColor;
-    final br = borderRadius ?? BorderRadius.circular(AppRadius.card);
+    final br = borderRadius ?? const BorderRadius.circular(AppRadius.card);
     final pad = padding ?? const EdgeInsets.all(AppSpacing.cardPadding);
 
     return Material(

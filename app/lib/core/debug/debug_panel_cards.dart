@@ -42,7 +42,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
               color: Colors.green.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: const BorderRadius.circular(8),
               border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
             ),
             child: Row(
@@ -95,7 +95,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                     );
                   }
                 },
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: const BorderRadius.circular(8),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
@@ -106,7 +106,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                     color: isSelected
                         ? scheme.primaryContainer
                         : scheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: const BorderRadius.circular(8),
                     border: Border.all(
                       color: isSelected
                           ? scheme.primary
@@ -157,8 +157,8 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                     decoration: const InputDecoration(
                       hintText: 'https://tu-servidor.com',
                       isDense: true,
-                      prefixIcon: Icon(Icons.link, size: 16),
-                      border: OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.link, size: 16),
+                      border: const OutlineInputBorder(),
                     ),
                     style: const TextStyle(fontSize: 12),
                     keyboardType: TextInputType.url,
@@ -197,7 +197,7 @@ class _ServerSwitcherCardState extends ConsumerState<_ServerSwitcherCard> {
                       vertical: 8,
                     ),
                   ),
-                  child: const Text('OK', style: TextStyle(fontSize: 12)),
+                  child: const Text('OK', style: const TextStyle(fontSize: 12)),
                 ),
               ],
             ),
@@ -300,7 +300,7 @@ class _AuthInfoCard extends StatelessWidget {
             onCopy: onCopy,
           ),
           loading: () => const Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: LinearProgressIndicator(),
           ),
           error: (e, _) => Text('Error: $e'),
@@ -397,7 +397,7 @@ class _DebugActionsCard extends StatelessWidget {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('🧪 Snackbar de prueba — todo funciona ✅'),
+                content: const Text('🧪 Snackbar de prueba — todo funciona ✅'),
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -452,7 +452,7 @@ class _DebugCard extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadius.card),
+        borderRadius: const BorderRadius.circular(AppRadius.card),
         border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: AppCard(
@@ -510,7 +510,7 @@ class _InfoRow extends StatelessWidget {
             child: onTap != null
                 ? InkWell(
                     onTap: onTap,
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: const BorderRadius.circular(4),
                     child: valueWidget,
                   )
                 : valueWidget,
@@ -573,7 +573,7 @@ class _EnvBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: const BorderRadius.circular(6),
         border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(

@@ -49,7 +49,7 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
       if (ctx.mounted) {
         ScaffoldMessenger.of(
           ctx,
-        ).showSnackBar(const SnackBar(content: Text('Contacto eliminado')));
+        ).showSnackBar(const SnackBar(content: const Text('Contacto eliminado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);

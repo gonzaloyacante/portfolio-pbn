@@ -173,7 +173,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _headingFontSizeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Tamaño títulos (px)',
-                      prefixIcon: Icon(Icons.format_size),
+                      prefixIcon: const Icon(Icons.format_size),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -194,7 +194,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _bodyFontSizeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Tamaño cuerpo (px)',
-                      prefixIcon: Icon(Icons.format_size),
+                      prefixIcon: const Icon(Icons.format_size),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -215,7 +215,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _scriptFontSizeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Tamaño script (px)',
-                      prefixIcon: Icon(Icons.format_size),
+                      prefixIcon: const Icon(Icons.format_size),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -243,7 +243,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _brandFontSizeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Tamaño (px)',
-                      prefixIcon: Icon(Icons.format_size),
+                      prefixIcon: const Icon(Icons.format_size),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -264,7 +264,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _portfolioFontSizeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Tamaño (px)',
-                      prefixIcon: Icon(Icons.format_size),
+                      prefixIcon: const Icon(Icons.format_size),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -285,7 +285,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _signatureFontSizeCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Tamaño (px)',
-                      prefixIcon: Icon(Icons.format_size),
+                      prefixIcon: const Icon(Icons.format_size),
                     ),
                     keyboardType: TextInputType.number,
                   ),
@@ -301,7 +301,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
                     controller: _borderRadiusCtrl,
                     decoration: const InputDecoration(
                       labelText: 'Border radius (px)',
-                      prefixIcon: Icon(Icons.rounded_corner),
+                      prefixIcon: const Icon(Icons.rounded_corner),
                       hintText: 'Ej: 40',
                     ),
                     keyboardType: TextInputType.number,

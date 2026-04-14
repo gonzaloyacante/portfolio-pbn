@@ -63,7 +63,7 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
               height: 4,
               decoration: BoxDecoration(
                 color: scheme.outline.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(2),
+                borderRadius: const BorderRadius.circular(2),
               ),
             ),
           ),
@@ -90,7 +90,7 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
                   vertical: 10,
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: const BorderRadius.circular(12),
                   borderSide: BorderSide(
                     color: scheme.outline.withValues(alpha: 0.3),
                   ),
@@ -172,7 +172,7 @@ class _EmojiPickerSheetState extends State<_EmojiPickerSheet>
                 color: isSelected
                     ? scheme.primaryContainer
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: const BorderRadius.circular(10),
                 border: isSelected
                     ? Border.all(
                         color: scheme.primary.withValues(alpha: 120 / 255),

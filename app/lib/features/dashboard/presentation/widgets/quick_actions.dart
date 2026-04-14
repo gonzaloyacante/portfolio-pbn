@@ -73,7 +73,7 @@ class _QuickActionButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(AppRadius.card),
+          borderRadius: const BorderRadius.circular(AppRadius.card),
           border: Border.all(
             color: color.withValues(alpha: (isDark ? 100 : 60) / 255),
             width: 1,

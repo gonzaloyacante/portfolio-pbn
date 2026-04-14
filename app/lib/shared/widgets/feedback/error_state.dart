@@ -96,7 +96,7 @@ class InlineError extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
         color: colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: const BorderRadius.circular(12),
       ),
       child: Row(
         children: [

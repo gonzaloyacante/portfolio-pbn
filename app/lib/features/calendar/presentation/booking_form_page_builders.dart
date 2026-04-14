@@ -178,7 +178,7 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                         maxLines: 4,
                         decoration: const InputDecoration(
                           hintText: 'Observaciones, peticiones especiales…',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           labelText: 'Notas del cliente',
                         ),
                       ),
@@ -188,7 +188,7 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                         maxLines: 3,
                         decoration: const InputDecoration(
                           hintText: 'Notas internas de administración…',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
                           labelText: 'Notas internas (admin)',
                         ),
                       ),
@@ -217,7 +217,7 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                         decoration: const InputDecoration(
                           labelText: 'Precio acordado (€)',
                           hintText: '0.00',
-                          prefixIcon: Icon(Icons.euro_outlined),
+                          prefixIcon: const Icon(Icons.euro_outlined),
                         ),
                         onChanged: (_) => _markDirty(),
                         validator: (v) {
@@ -233,24 +233,24 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                         value: _paymentStatus,
                         decoration: const InputDecoration(
                           labelText: 'Estado de pago',
-                          prefixIcon: Icon(Icons.payment_outlined),
+                          prefixIcon: const Icon(Icons.payment_outlined),
                         ),
                         items: const [
                           DropdownMenuItem(
                             value: 'PENDING',
-                            child: Text('Pendiente'),
+                            child: const Text('Pendiente'),
                           ),
                           DropdownMenuItem(
                             value: 'PARTIAL',
-                            child: Text('Pago parcial'),
+                            child: const Text('Pago parcial'),
                           ),
                           DropdownMenuItem(
                             value: 'PAID',
-                            child: Text('Pagado'),
+                            child: const Text('Pagado'),
                           ),
                           DropdownMenuItem(
                             value: 'REFUNDED',
-                            child: Text('Reembolsado'),
+                            child: const Text('Reembolsado'),
                           ),
                         ],
                         onChanged: (v) =>
@@ -261,24 +261,24 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
                         value: _paymentMethod,
                         decoration: const InputDecoration(
                           labelText: 'Método de pago (opcional)',
-                          prefixIcon: Icon(Icons.credit_card_outlined),
+                          prefixIcon: const Icon(Icons.credit_card_outlined),
                         ),
                         items: const [
                           DropdownMenuItem(
                             value: null,
-                            child: Text('Sin especificar'),
+                            child: const Text('Sin especificar'),
                           ),
                           DropdownMenuItem(
                             value: 'cash',
-                            child: Text('Efectivo'),
+                            child: const Text('Efectivo'),
                           ),
                           DropdownMenuItem(
                             value: 'transfer',
-                            child: Text('Transferencia'),
+                            child: const Text('Transferencia'),
                           ),
                           DropdownMenuItem(
                             value: 'mercadopago',
-                            child: Text('MercadoPago'),
+                            child: const Text('MercadoPago'),
                           ),
                         ],
                         onChanged: (v) => setState(() => _paymentMethod = v),

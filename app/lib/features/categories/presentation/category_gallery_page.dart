@@ -276,7 +276,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Imagen agregada correctamente'),
+                        content: const Text('Imagen agregada correctamente'),
                       ),
                     );
                   }
@@ -285,7 +285,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('No se pudo agregar la imagen.'),
+                        content: const Text('No se pudo agregar la imagen.'),
                       ),
                     );
                   }
@@ -319,7 +319,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text(
               'Eliminar',
-              style: TextStyle(color: AppColors.destructive),
+              style: const TextStyle(color: AppColors.destructive),
             ),
           ),
         ],
@@ -340,13 +340,13 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Imagen eliminada')));
+        ).showSnackBar(const SnackBar(content: const Text('Imagen eliminada')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo eliminar la imagen.')),
+          const SnackBar(content: const Text('No se pudo eliminar la imagen.')),
         );
       }
     } finally {
@@ -384,7 +384,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('No se pudo actualizar la imagen destacada.'),
+            content: const Text('No se pudo actualizar la imagen destacada.'),
           ),
         );
       }
@@ -439,7 +439,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Orden guardado correctamente')),
+          const SnackBar(content: const Text('Orden guardado correctamente')),
         );
       }
     } catch (e, st) {
@@ -447,7 +447,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('No se pudo guardar el orden. Intentá de nuevo.'),
+            content: const Text('No se pudo guardar el orden. Intentá de nuevo.'),
           ),
         );
       }
@@ -485,7 +485,7 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text(
               'Restablecer',
-              style: TextStyle(color: AppColors.destructive),
+              style: const TextStyle(color: AppColors.destructive),
             ),
           ),
         ],
@@ -515,13 +515,13 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Orden restablecido')));
+        ).showSnackBar(const SnackBar(content: const Text('Orden restablecido')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo restablecer el orden.')),
+          const SnackBar(content: const Text('No se pudo restablecer el orden.')),
         );
       }
     } finally {

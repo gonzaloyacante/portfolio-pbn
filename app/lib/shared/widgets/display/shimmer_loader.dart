@@ -115,7 +115,7 @@ class SkeletonCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ShimmerBox(width: double.infinity, height: 16),
-                  SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.sm),
                   ShimmerBox(width: 200, height: 12),
                   SizedBox(height: AppSpacing.xs + 2),
                   ShimmerBox(width: 140, height: 12),
@@ -158,7 +158,7 @@ class SkeletonGridCard extends StatelessWidget {
             ),
           ],
           const Padding(
-            padding: EdgeInsets.all(AppSpacing.md),
+            padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -166,11 +166,11 @@ class SkeletonGridCard extends StatelessWidget {
                 ShimmerBox(width: double.infinity, height: 14),
                 SizedBox(height: AppSpacing.xs + 2),
                 ShimmerBox(width: 100, height: 11),
-                SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.sm),
                 Row(
                   children: [
                     ShimmerBox(width: 48, height: 20),
-                    SizedBox(width: AppSpacing.xs),
+                    const SizedBox(width: AppSpacing.xs),
                     ShimmerBox(width: 48, height: 20),
                   ],
                 ),

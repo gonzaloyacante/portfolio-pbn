@@ -82,7 +82,7 @@ class DashboardSkeleton extends StatelessWidget {
                           height: 180,
                           borderRadius: 16,
                         ),
-                        SizedBox(height: AppSpacing.base),
+                        const SizedBox(height: AppSpacing.base),
                         ShimmerBox(
                           width: double.infinity,
                           height: 180,
@@ -104,7 +104,7 @@ class DashboardSkeleton extends StatelessWidget {
                 children: List.generate(
                   5,
                   (_) => const Padding(
-                    padding: EdgeInsets.only(bottom: AppSpacing.sm),
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
                     child: SkeletonRankingItem(),
                   ),
                 ),

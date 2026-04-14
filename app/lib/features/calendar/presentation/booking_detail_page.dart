@@ -62,7 +62,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
         HapticFeedback.lightImpact();
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('Reserva actualizada')));
+        ).showSnackBar(const SnackBar(content: const Text('Reserva actualizada')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
