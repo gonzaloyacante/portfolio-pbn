@@ -18,6 +18,7 @@ import {
   resetCategoryGalleryOrder,
   toggleCategoryImageFeatured,
 } from '@/actions/gallery-ordering'
+import { saveGalleryImages } from '@/actions/cms/content'
 import { Button } from '@/components/ui'
 import { Save, RotateCcw, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -135,18 +136,12 @@ export default function CategoryGalleryEditor({
         width: widths[i],
         height: heights[i],
       }))
-      const res = await fetch(`/api/admin/categories/${categoryId}/gallery`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: payload }),
-        credentials: 'include',
-      })
-      const data = (await res.json()) as { success: boolean; error?: string }
-      if (data.success) {
+      const result = await saveGalleryImages(categoryId, payload)
+      if (result.success) {
         showToast.success('Imágenes agregadas a la galería')
         router.refresh()
       } else {
-        showToast.error(data.error ?? 'Error al agregar imágenes')
+        showToast.error(result.error ?? 'Error al agregar imágenes')
       }
     } catch {
       showToast.error('Error al agregar imágenes a la galería')
