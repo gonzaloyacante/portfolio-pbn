@@ -199,6 +199,61 @@ export async function addCategoryImages(
   }
 }
 
+/**
+ * Guarda imágenes ya subidas a Cloudinary en la galería de una categoría.
+ * Diseñado para el flujo del panel admin web donde la subida a Cloudinary
+ * ocurre primero (via /api/upload) y luego se persisten los metadatos en DB.
+ */
+export async function saveGalleryImages(
+  categoryId: string,
+  images: { url: string; publicId: string; width?: number; height?: number }[]
+): Promise<{ success: boolean; error?: string }> {
+  await requireAdmin()
+  await checkApiRateLimit()
+
+  try {
+    if (!categoryId || images.length === 0) {
+      return { success: false, error: 'Categoría e imágenes son requeridos' }
+    }
+
+    // Verificar que la categoría existe y no está eliminada
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, deletedAt: null },
+      select: { id: true, slug: true },
+    })
+    if (!category) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
+
+    const currentCount = await prisma.categoryImage.count({ where: { categoryId } })
+
+    const toCreate = images.map((img, i) => ({
+      url: img.url,
+      publicId: img.publicId,
+      width: img.width ?? null,
+      height: img.height ?? null,
+      categoryId,
+      order: currentCount + i,
+    }))
+
+    await prisma.categoryImage.createMany({ data: toCreate })
+
+    _revalidatePublicContent()
+    revalidatePath(ROUTES.admin.categories)
+    revalidatePath(ROUTES.admin.categoryGallery(categoryId))
+    if (category.slug) {
+      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
+    }
+    revalidateTag(CACHE_TAGS.categoryImages, 'max')
+
+    logger.info(`${images.length} image(s) saved to category gallery: ${categoryId}`)
+    return { success: true }
+  } catch (error) {
+    logger.error('Error saving gallery images:', { error })
+    return { success: false, error: 'Error al guardar imágenes en la galería' }
+  }
+}
+
 export async function deleteCategoryImage(
   imageId: string
 ): Promise<{ success: boolean; error?: string }> {
