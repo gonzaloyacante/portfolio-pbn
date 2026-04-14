@@ -180,11 +180,27 @@ export async function addCategoryImages(
   await checkApiRateLimit()
 
   try {
+    // Verificar que la categoría existe antes de subir a Cloudinary
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, deletedAt: null },
+      select: { id: true },
+    })
+    if (!category) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
+
     const currentCount = await prisma.categoryImage.count({ where: { categoryId } })
     const uploaded = await Promise.all(
       files.map(async (file, i) => {
-        const { url, publicId } = await uploadImage(file)
-        return { url, publicId, order: currentCount + i, categoryId }
+        const result = await uploadImage(file)
+        return {
+          url: result.url,
+          publicId: result.publicId,
+          width: result.width ?? null,
+          height: result.height ?? null,
+          order: currentCount + i,
+          categoryId,
+        }
       })
     )
     await prisma.categoryImage.createMany({ data: uploaded })
@@ -255,14 +271,18 @@ export async function saveGalleryImages(
 }
 
 export async function deleteCategoryImage(
-  imageId: string
+  imageId: string,
+  categoryId?: string
 ): Promise<{ success: boolean; error?: string }> {
   await requireAdmin()
   await checkApiRateLimit()
 
   try {
-    const image = await prisma.categoryImage.findUnique({
-      where: { id: imageId },
+    const whereClause = categoryId
+      ? { id: imageId, categoryId }
+      : { id: imageId }
+    const image = await prisma.categoryImage.findFirst({
+      where: whereClause,
       select: { publicId: true, categoryId: true },
     })
     if (!image) throw new Error('Image not found')

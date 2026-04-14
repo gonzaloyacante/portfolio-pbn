@@ -73,6 +73,7 @@ export async function GET(req: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text()
+      // Log without the full URL to avoid exposing the API key in logs
       logger.error('Google Fonts API error', { status: response.status, details: errorText })
 
       return NextResponse.json({ error: 'Error al obtener las fuentes de Google' }, { status: 502 })

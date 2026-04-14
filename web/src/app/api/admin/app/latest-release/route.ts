@@ -109,14 +109,21 @@ export async function GET(req: Request) {
     // ocultamos la release para evitar que la app intente descargar un asset 404.
     const urlIsReachable = async (u: string) => {
       try {
-        const head = await fetch(u, { method: 'HEAD', cache: 'no-store' })
-        if (head.ok) return true
-        const r = await fetch(u, {
-          method: 'GET',
-          cache: 'no-store',
-          headers: { Range: 'bytes=0-0' },
-        })
-        return r.ok
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        try {
+          const head = await fetch(u, { method: 'HEAD', cache: 'no-store', signal: controller.signal })
+          if (head.ok) return true
+          const r = await fetch(u, {
+            method: 'GET',
+            cache: 'no-store',
+            headers: { Range: 'bytes=0-0' },
+            signal: controller.signal,
+          })
+          return r.ok
+        } finally {
+          clearTimeout(timeoutId)
+        }
       } catch {
         return false
       }
@@ -212,15 +219,22 @@ export async function POST(req: Request) {
     // Verificar que la URL de descarga sea alcanzable (evitar releases con assets ausentes)
     const urlIsReachable = async (u: string) => {
       try {
-        // Intentar HEAD primero (rápido). Si falla, intentar GET con rango de 1 byte.
-        const head = await fetch(u, { method: 'HEAD', cache: 'no-store' })
-        if (head.ok) return true
-        const r = await fetch(u, {
-          method: 'GET',
-          cache: 'no-store',
-          headers: { Range: 'bytes=0-0' },
-        })
-        return r.ok
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 5000)
+        try {
+          // Intentar HEAD primero (rápido). Si falla, intentar GET con rango de 1 byte.
+          const head = await fetch(u, { method: 'HEAD', cache: 'no-store', signal: controller.signal })
+          if (head.ok) return true
+          const r = await fetch(u, {
+            method: 'GET',
+            cache: 'no-store',
+            headers: { Range: 'bytes=0-0' },
+            signal: controller.signal,
+          })
+          return r.ok
+        } finally {
+          clearTimeout(timeoutId)
+        }
       } catch {
         return false
       }
