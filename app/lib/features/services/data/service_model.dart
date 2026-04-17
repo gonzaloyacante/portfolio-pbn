@@ -128,25 +128,27 @@ class ServiceFormData {
     this.cancellationPolicy,
   });
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'slug': slug,
-    'description': description,
-    'shortDesc': shortDesc,
-    'price': price != null ? double.tryParse(price!) : null,
-    'priceLabel': priceLabel,
-    'currency': currency,
-    'duration': duration,
-    'durationMinutes': durationMinutes,
-    'imageUrl': imageUrl,
-    'videoUrl': videoUrl,
-    'isActive': isActive,
-    'isFeatured': isFeatured,
-    'isAvailable': isAvailable,
-    'maxBookingsPerDay': maxBookingsPerDay,
-    'advanceNoticeDays': advanceNoticeDays,
-    'pricingTiers': pricingTiers.map((t) => t.toJson()).toList(),
-    'requirements': requirements,
-    'cancellationPolicy': cancellationPolicy,
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'slug': slug,
+      if (description != null) 'description': description,
+      if (shortDesc != null) 'shortDesc': shortDesc,
+      if (price != null) 'price': price,
+      'priceLabel': priceLabel,
+      'currency': currency,
+      if (duration != null) 'duration': duration,
+      if (durationMinutes != null) 'durationMinutes': durationMinutes,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      if (videoUrl != null) 'videoUrl': videoUrl,
+      'isActive': isActive,
+      'isFeatured': isFeatured,
+      'isAvailable': isAvailable,
+      if (maxBookingsPerDay != null) 'maxBookingsPerDay': maxBookingsPerDay,
+      if (advanceNoticeDays != null) 'advanceNoticeDays': advanceNoticeDays,
+      'pricingTiers': pricingTiers.map((t) => t.toJson()).toList(),
+      if (requirements != null) 'requirements': requirements,
+      if (cancellationPolicy != null) 'cancellationPolicy': cancellationPolicy,
+    };
+  }
 }

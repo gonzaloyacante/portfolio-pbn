@@ -280,7 +280,7 @@ void main() {
     );
     test(
       'parses categoryId',
-      () => expect(TestimonialDetail.fromJson(full()).categoryId, 'proj-5'),
+      () => expect(TestimonialDetail.fromJson(full()).categoryId, 'cat-5'),
     );
     test(
       'parses moderationNote',
