@@ -1,6 +1,141 @@
 part of 'categories_list_page.dart';
 
 extension _CategoriesListPageBuilders on _CategoriesListPageState {
+  void showCategoryActions(BuildContext ctx, CategoryItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.categoryEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleCategoryActive(ctx, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> showSettingsDialog(BuildContext context) async {
+    CategoryDisplaySettings current;
+    try {
+      current = await ref.read(categoryDisplaySettingsProvider.future);
+    } catch (e, st) {
+      AppLogger.warn(
+        'CategoriesListPage: error loading display settings, using defaults — $e',
+      );
+      Sentry.captureException(e, stackTrace: st);
+      current = const CategoryDisplaySettings();
+    }
+    if (!context.mounted) return;
+
+    final isMobile = AppBreakpoints.isMobile(context);
+
+    if (isMobile) {
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (ctx) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            ),
+            child: DraggableScrollableSheet(
+              initialChildSize: 0.7,
+              minChildSize: 0.4,
+              maxChildSize: 0.95,
+              expand: false,
+              builder: (BuildContext _, ScrollController controller) {
+                return SingleChildScrollView(
+                  controller: controller,
+                  child: CategorySettingsDialog(
+                    initial: current,
+                    fullWidth: true,
+                    onSave: (updated) async {
+                      await ref
+                          .read(settingsRepositoryProvider)
+                          .updateCategorySettings({
+                            'showDescription': updated.showDescription,
+                            'gridColumns': updated.gridColumns,
+                          });
+                      ref.invalidate(categoryDisplaySettingsProvider);
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      );
+    } else {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) {
+          final screenW = MediaQuery.of(ctx).size.width;
+          final maxW = screenW * 0.92;
+          final dialogW = maxW > 760 ? 760.0 : maxW;
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: dialogW),
+              child: CategorySettingsDialog(
+                initial: current,
+                onSave: (updated) async {
+                  await ref
+                      .read(settingsRepositoryProvider)
+                      .updateCategorySettings({
+                        'showDescription': updated.showDescription,
+                        'gridColumns': updated.gridColumns,
+                      });
+                  ref.invalidate(categoryDisplaySettingsProvider);
+                },
+              ),
+            ),
+          );
+        },
+      );
+    }
+  }
+
   Widget _buildList(List<CategoryItem> items, double hPad) {
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: hPad),

@@ -197,8 +197,8 @@ describe('contactSettingsSchema — exhaustive', () => {
     expect(contactSettingsSchema.safeParse(validCS).success).toBe(true)
   })
 
-  it('fails when showSocialLinks is missing', () => {
-    expect(contactSettingsSchema.safeParse({ email: 'a@b.com' }).success).toBe(false)
+  it('passes when showSocialLinks is missing (optional)', () => {
+    expect(contactSettingsSchema.safeParse({ email: 'a@b.com' }).success).toBe(true)
   })
 
   it('fails with invalid email', () => {

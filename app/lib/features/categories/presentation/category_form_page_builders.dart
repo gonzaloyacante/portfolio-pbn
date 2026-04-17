@@ -257,4 +257,120 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
       ),
     );
   }
+
+  Future<void> _pickFromGallery() async {
+    if (!_isEdit) return;
+    try {
+      final images = await ref
+          .read(categoriesRepositoryProvider)
+          .getCategoryGallery(widget.categoryId!);
+      if (!mounted) return;
+      if (images.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No hay imágenes en la galería de esta categoría.'),
+          ),
+        );
+        return;
+      }
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) {
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.6,
+            maxChildSize: 0.9,
+            builder: (BuildContext _, ScrollController scrollCtrl) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Seleccionar de la galería',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => ctx.pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: GridView.builder(
+                      controller: scrollCtrl,
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                          ),
+                      itemCount: images.length,
+                      itemBuilder: (BuildContext _, int i) {
+                        final img = images[i];
+                        return RepaintBoundary(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _coverImageCtrl.text = img.url;
+                                _pendingThumbnail = null;
+                                _isDirty = true;
+                              });
+                              ctx.pop();
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: img.url,
+                                fit: BoxFit.cover,
+                                placeholder: (BuildContext ctx2, String url) =>
+                                    const ColoredBox(
+                                      color: AppColors.lightBorder,
+                                    ),
+                                errorWidget:
+                                    (
+                                      BuildContext ctx2,
+                                      String url,
+                                      Object err,
+                                    ) => const Icon(
+                                      Icons.broken_image,
+                                      color: AppColors.neutralMedium,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo cargar la galería. Inténtalo de nuevo.'),
+          ),
+        );
+      }
+    }
+  }
 }

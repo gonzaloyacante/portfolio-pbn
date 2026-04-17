@@ -2,14 +2,29 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
-vi.mock('@/lib/db', () => ({
-  prisma: {
-    user: { findFirst: vi.fn(), update: vi.fn() },
-    refreshToken: { create: vi.fn() },
-    pushToken: { upsert: vi.fn() },
-    analyticLog: { create: vi.fn() },
-  },
-}))
+vi.mock('@/lib/db', () => {
+  const userFindFirst = vi.fn()
+  const userUpdate = vi.fn()
+  const refreshTokenCreate = vi.fn()
+  const pushTokenUpsert = vi.fn()
+  const analyticLogCreate = vi.fn()
+
+  const tx = {
+    user: { findFirst: userFindFirst, update: userUpdate },
+    refreshToken: { create: refreshTokenCreate },
+    pushToken: { upsert: pushTokenUpsert },
+    analyticLog: { create: analyticLogCreate },
+  }
+
+  return {
+    prisma: {
+      ...tx,
+      $transaction: vi
+        .fn()
+        .mockImplementation(async (fn: (tx: typeof tx) => Promise<unknown>) => fn(tx)),
+    },
+  }
+})
 
 vi.mock('@/lib/jwt-admin', () => ({
   signAccessToken: vi.fn().mockResolvedValue('mock-access-token'),

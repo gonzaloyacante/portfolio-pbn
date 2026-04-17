@@ -67,6 +67,10 @@ vi.mock('@/actions/analytics', () => ({
   recordAnalyticEvent: vi.fn().mockResolvedValue({ success: true }),
 }))
 
+vi.mock('@/lib/recaptcha', () => ({
+  verifyRecaptchaToken: vi.fn().mockResolvedValue(true),
+}))
+
 vi.mock('@/lib/validations', () => ({
   contactFormSchema: {
     parse: vi.fn().mockImplementation((data: Record<string, unknown>) => {
@@ -224,7 +228,9 @@ describe('getUnreadContactsCount', () => {
     const { getUnreadContactsCount } = await import('@/actions/user/contact')
     const count = await getUnreadContactsCount()
     expect(count).toBe(5)
-    expect(prisma.contact.count).toHaveBeenCalledWith({ where: { isRead: false } })
+    expect(prisma.contact.count).toHaveBeenCalledWith({
+      where: { isRead: false, deletedAt: null },
+    })
   })
 })
 

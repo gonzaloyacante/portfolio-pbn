@@ -476,9 +476,9 @@ describe('contactSettingsSchema — extended', () => {
     expect(result.success).toBe(false)
   })
 
-  it('fails when showSocialLinks is missing', () => {
+  it('passes when showSocialLinks is missing (optional)', () => {
     const result = contactSettingsSchema.safeParse({ email: 'a@b.com' })
-    expect(result.success).toBe(false)
+    expect(result.success).toBe(true)
   })
 
   it('passes with Instagram and visibility fields', () => {

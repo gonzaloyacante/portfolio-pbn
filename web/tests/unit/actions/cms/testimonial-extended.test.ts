@@ -71,6 +71,10 @@ vi.mock('@/config/routes', () => ({
   },
 }))
 
+vi.mock('@/lib/recaptcha', () => ({
+  verifyRecaptchaToken: vi.fn().mockResolvedValue(true),
+}))
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makeFormData(fields: Record<string, string>): FormData {

@@ -65,4 +65,66 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
       ),
     );
   }
+
+  void _showServiceActions(BuildContext ctx, ServiceItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.serviceEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_today_outlined),
+              title: const Text('Nueva reserva'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.bookingNew,
+                  extra: {'serviceId': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleServiceActive(ctx, item);
+              },
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.destructive,
+              ),
+              title: const Text(
+                'Eliminar',
+                style: TextStyle(color: AppColors.destructive),
+              ),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _delete(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
 }

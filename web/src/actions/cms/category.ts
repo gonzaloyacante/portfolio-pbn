@@ -10,7 +10,7 @@ import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 import { z } from 'zod'
 
-const ReorderCategoriesSchema = z.array(z.string().cuid()).min(1)
+const ReorderCategoriesSchema = z.array(z.string())
 
 export async function deleteCategoryAction(categoryId: string): Promise<void> {
   await requireAdmin()

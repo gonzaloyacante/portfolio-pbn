@@ -120,6 +120,7 @@ describe('Validation Schemas', () => {
           message: 'Test message here, needing more detail',
           responsePreference: pref,
           privacy: true,
+          ...(pref === 'PHONE' || pref === 'WHATSAPP' ? { phone: '+34600123456' } : {}),
         }
 
         const result = contactFormSchema.safeParse(contact)

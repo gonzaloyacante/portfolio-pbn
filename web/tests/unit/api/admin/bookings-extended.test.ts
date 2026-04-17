@@ -279,7 +279,7 @@ describe('POST /api/admin/bookings — extended', () => {
 
     const body = {
       ...validBooking,
-      clientPhone: '+34 600 111 222',
+      clientPhone: '+34600111222',
       guestCount: 4,
       adminNotes: 'VIP client',
       totalAmount: 250.0,

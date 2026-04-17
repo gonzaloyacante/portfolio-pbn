@@ -31,7 +31,7 @@ extension _NotificationHandlerNavigation on NotificationHandler {
   void _navigateFromMessage(RemoteMessage message) {
     // Si es un mensaje de actualización (usuario tapó la notificación)
     if (message.data['type'] == 'app_update') {
-      _handleAppUpdateData(message.data);
+      _handleAppUpdateData();
       return;
     }
     _navigateFromData(
@@ -44,10 +44,9 @@ extension _NotificationHandlerNavigation on NotificationHandler {
 
   /// Gestiona un mensaje FCM de tipo `app_update`.
   ///
-  /// Si el payload de actualización es recibido, navega inmediatamente
-  /// a la pantalla de actualizaciones, la cual se encargará de re-comprobar
-  /// con el servidor y mostrar el UI correspondiente al usuario.
-  void _handleAppUpdateData(Map<String, dynamic> data) {
+  /// Navega inmediatamente a la pantalla de actualizaciones, la cual se
+  /// encargará de re-comprobar con el servidor y mostrar el UI correspondiente.
+  void _handleAppUpdateData() {
     AppLogger.info(
       'NotificationHandler: mensaje app_update detectado, redirigiendo a /app-update',
     );

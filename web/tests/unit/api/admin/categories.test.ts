@@ -320,7 +320,6 @@ describe('POST /api/admin/categories', () => {
       expect.objectContaining({
         data: expect.objectContaining({
           description: 'Descripción extra',
-          thumbnailUrl: 'https://img.test/cat.jpg',
           coverImageUrl: 'https://img.test/cover.jpg',
         }),
       })

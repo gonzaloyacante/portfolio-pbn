@@ -294,34 +294,37 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
 
   it('PATCH creates settings when none exist', async () => {
     mockModel.findFirst.mockResolvedValue(null)
-    mockModel.create.mockResolvedValue({ id: 'new-1', heroTitle: 'My Hero' })
+    mockModel.create.mockResolvedValue({ id: 'new-1', bioTitle: 'My Hero' })
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const res = await PATCH(
-      makeRequest(`${BASE_URL}/about`, { method: 'PATCH', body: { title: 'My Hero' } }),
+      makeRequest(`${BASE_URL}/about`, { method: 'PATCH', body: { bioTitle: 'My Hero' } }),
       { params: Promise.resolve({ type: 'about' }) }
     )
 
     expect(res.status).toBe(200)
     expect(mockModel.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ title: 'My Hero' }),
+        data: expect.objectContaining({ bioTitle: 'My Hero' }),
       })
     )
   })
 
   it('PATCH updates existing settings by id', async () => {
     mockModel.findFirst.mockResolvedValue({ id: 'existing-id' })
-    mockModel.update.mockResolvedValue({ id: 'existing-id', heroTitle: 'Updated' })
+    mockModel.update.mockResolvedValue({ id: 'existing-id', bioTitle: 'Updated' })
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
-    await PATCH(makeRequest(`${BASE_URL}/about`, { method: 'PATCH', body: { title: 'Updated' } }), {
-      params: Promise.resolve({ type: 'about' }),
-    })
+    await PATCH(
+      makeRequest(`${BASE_URL}/about`, { method: 'PATCH', body: { bioTitle: 'Updated' } }),
+      {
+        params: Promise.resolve({ type: 'about' }),
+      }
+    )
 
     expect(mockModel.update).toHaveBeenCalledWith({
       where: { id: 'existing-id' },
-      data: { title: 'Updated' },
+      data: { bioTitle: 'Updated' },
     })
   })
 
@@ -382,9 +385,9 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
           createdAt: 'inject',
           updatedAt: 'inject',
           isActive: false,
-          title: 'About Me',
-          description: 'Lorem ipsum',
-          imageUrl: 'https://example.com/me.jpg',
+          bioTitle: 'About Me',
+          bioDescription: 'Lorem ipsum',
+          profileImageUrl: 'https://example.com/me.jpg',
         },
       }),
       { params: Promise.resolve({ type: 'about' }) }
@@ -393,9 +396,9 @@ describe('PATCH /api/admin/settings/[type] — extended', () => {
     expect(mockModel.update).toHaveBeenCalledWith({
       where: { id: '1' },
       data: {
-        title: 'About Me',
-        description: 'Lorem ipsum',
-        imageUrl: 'https://example.com/me.jpg',
+        bioTitle: 'About Me',
+        bioDescription: 'Lorem ipsum',
+        profileImageUrl: 'https://example.com/me.jpg',
       },
     })
   })

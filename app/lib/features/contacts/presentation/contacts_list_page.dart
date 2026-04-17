@@ -4,12 +4,13 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
-
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 import 'widgets/contact_tile.dart';
+
+part 'contacts_list_page_builders.dart';
 
 class ContactsListPage extends ConsumerStatefulWidget {
   const ContactsListPage({super.key});
@@ -161,34 +162,7 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
                       subtitle:
                           'Aquí aparecen los mensajes del formulario de contacto',
                     )
-                  : RefreshIndicator(
-                      onRefresh: () async =>
-                          ref.invalidate(contactsListProvider),
-                      child: ListView.separated(
-                        padding: EdgeInsets.symmetric(horizontal: hPad),
-                        itemCount: paginated.data.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 6),
-                        itemBuilder: (ctx, i) {
-                          final item = paginated.data[i];
-                          return RepaintBoundary(
-                            child: FadeSlideIn(
-                              delay: Duration(
-                                milliseconds: (i * 40).clamp(0, 300),
-                              ),
-                              child: ContactTile(
-                                item: item,
-                                priorityColor: _priorityColor(
-                                  ctx,
-                                  item.priority,
-                                ),
-                                statusIcon: _statusIcon(item.status),
-                                onDelete: _delete,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                  : _buildList(paginated.data, hPad),
             ),
           ),
         ],

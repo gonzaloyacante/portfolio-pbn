@@ -241,7 +241,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
           createdAt: '2020-01-01',
           updatedAt: '2020-01-01',
           isActive: false,
-          heroTitle: 'Valid Field',
+          heroTitle1Text: 'Valid Field',
           showFeaturedImages: true,
           featuredCount: 3,
         },
@@ -260,7 +260,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
     )
     expect(prisma.homeSettings.update).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ heroTitle: 'Valid Field' }),
+        data: expect.objectContaining({ heroTitle1Text: 'Valid Field' }),
       })
     )
   })

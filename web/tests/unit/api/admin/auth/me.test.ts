@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     user: { findFirst: vi.fn(), update: vi.fn() },
+    refreshToken: { updateMany: vi.fn().mockResolvedValue({ count: 0 }) },
   },
 }))
 
@@ -254,7 +255,7 @@ describe('PATCH /api/admin/auth/me', () => {
     expect(prisma.user.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 'admin-1' },
-        data: { password: 'new-hashed-password' },
+        data: expect.objectContaining({ password: 'new-hashed-password' }),
       })
     )
   })

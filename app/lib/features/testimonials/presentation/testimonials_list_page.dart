@@ -6,12 +6,13 @@ import 'package:go_router/go_router.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
-
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
 import 'widgets/testimonial_tile.dart';
+
+part 'testimonials_list_page_builders.dart';
 
 class TestimonialsListPage extends ConsumerStatefulWidget {
   const TestimonialsListPage({super.key});
@@ -93,66 +94,6 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
     }
   }
 
-  void _showTestimonialActions(BuildContext ctx, TestimonialItem item) {
-    showModalBottomSheet<void>(
-      context: ctx,
-      builder: (sheetCtx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit_outlined),
-              title: const Text('Editar'),
-              onTap: () {
-                Navigator.of(sheetCtx).pop();
-                ctx.pushNamed(
-                  RouteNames.testimonialEdit,
-                  pathParameters: {'id': item.id},
-                );
-              },
-            ),
-            if (item.status != 'APPROVED')
-              ListTile(
-                leading: const Icon(Icons.check_circle_outline),
-                title: const Text('Aprobar'),
-                onTap: () {
-                  Navigator.of(sheetCtx).pop();
-                  _changeTestimonialStatus(ctx, item, 'APPROVED');
-                },
-              ),
-            if (item.status != 'REJECTED')
-              ListTile(
-                leading: const Icon(
-                  Icons.cancel_outlined,
-                  color: AppColors.destructive,
-                ),
-                title: const Text('Rechazar'),
-                onTap: () {
-                  Navigator.of(sheetCtx).pop();
-                  _changeTestimonialStatus(ctx, item, 'REJECTED');
-                },
-              ),
-            ListTile(
-              leading: const Icon(
-                Icons.delete_outline,
-                color: AppColors.destructive,
-              ),
-              title: const Text(
-                'Eliminar',
-                style: TextStyle(color: AppColors.destructive),
-              ),
-              onTap: () {
-                Navigator.of(sheetCtx).pop();
-                _delete(ctx, item);
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-
   AppStatus _statusFromString(String status) => switch (status) {
     'APPROVED' => AppStatus.approved,
     'REJECTED' => AppStatus.rejected,
@@ -213,57 +154,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
                       title: 'Sin testimonios',
                       subtitle: 'Agrega el primer testimonio',
                     )
-                  : RefreshIndicator(
-                      onRefresh: () async =>
-                          ref.invalidate(testimonialsListProvider),
-                      child: ListView.separated(
-                        padding: EdgeInsets.symmetric(horizontal: hPad),
-                        itemCount: paginated.data.length,
-                        separatorBuilder: (BuildContext _, int _) =>
-                            const SizedBox(height: 8),
-                        itemBuilder: (ctx, i) => RepaintBoundary(
-                          child: FadeSlideIn(
-                            delay: Duration(
-                              milliseconds: (i * 40).clamp(0, 300),
-                            ),
-                            child: Dismissible(
-                              key: Key(paginated.data[i].id),
-                              direction: DismissDirection.endToStart,
-                              background: Container(
-                                color: AppColors.destructive,
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(
-                                  right: AppSpacing.lg,
-                                ),
-                                child: const Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              confirmDismiss: (DismissDirection _) async {
-                                HapticFeedback.mediumImpact();
-                                await _delete(ctx, paginated.data[i]);
-                                return false;
-                              },
-                              child: GestureDetector(
-                                onLongPress: () {
-                                  HapticFeedback.mediumImpact();
-                                  _showTestimonialActions(
-                                    ctx,
-                                    paginated.data[i],
-                                  );
-                                },
-                                child: TestimonialTile(
-                                  item: paginated.data[i],
-                                  statusOf: _statusFromString,
-                                  onDelete: _delete,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  : _buildList(paginated.data, hPad),
             ),
           ),
         ],

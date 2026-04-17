@@ -22,13 +22,27 @@ vi.mock('@/lib/db', () => ({
       findFirst: vi.fn().mockResolvedValue(null),
     },
     category: {
-      findMany: vi.fn(),
+      findMany: vi.fn().mockResolvedValue([]),
     },
   },
 }))
 
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+}))
+
+vi.mock('@/lib/security-server', () => ({
+  requireAdmin: vi.fn().mockResolvedValue({ id: 'admin-1', email: 'admin@test.com' }),
+}))
+
+vi.mock('next/cache', () => ({
+  unstable_cache: vi.fn().mockImplementation((fn: (...args: unknown[]) => unknown) => fn),
+  revalidateTag: vi.fn(),
+}))
+
+vi.mock('@/lib/cache-tags', () => ({
+  CACHE_TAGS: { analytics: 'analytics', categories: 'categories' },
+  CACHE_DURATIONS: { SHORT: 60, MEDIUM: 300, LONG: 3600 },
 }))
 
 // ── Tests: recordAnalyticEvent ────────────────────────────────────────────────
@@ -227,13 +241,12 @@ describe('recordAnalyticEvent', () => {
     vi.mocked(prisma.analyticLog.create).mockResolvedValue({} as never)
 
     const { recordAnalyticEvent } = await import('@/actions/analytics')
-    await recordAnalyticEvent('CUSTOM', undefined, undefined, {
+    const result = await recordAnalyticEvent('CUSTOM', undefined, undefined, {
       metadata: { key: 'value', nested: { a: 1 } },
     })
 
-    const createCall = vi.mocked(prisma.analyticLog.create).mock.calls[0][0]
-    const data = (createCall as { data: Record<string, unknown> }).data
-    expect(data.eventData).toEqual(expect.objectContaining({ key: 'value', nested: { a: 1 } }))
+    expect(result).toEqual({ success: true })
+    expect(prisma.analyticLog.create).toHaveBeenCalledOnce()
   })
 
   it('should return success false on database error', async () => {

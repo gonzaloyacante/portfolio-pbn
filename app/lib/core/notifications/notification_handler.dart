@@ -284,7 +284,7 @@ class NotificationHandler {
             ),
           );
       // También mostrar el diálogo directamente en la UI
-      _handleAppUpdateData(data);
+      _handleAppUpdateData();
       return;
     }
 

@@ -50,6 +50,19 @@ vi.mock('@/components/ui', () => ({
       </button>
     )
   ),
+  motion: {
+    div: React.forwardRef(
+      (
+        { children, ...props }: React.PropsWithChildren<Record<string, unknown>>,
+        ref: React.Ref<HTMLDivElement>
+      ) => (
+        <div ref={ref} {...props}>
+          {children}
+        </div>
+      )
+    ),
+  },
+  AnimatePresence: ({ children }: React.PropsWithChildren) => <>{children}</>,
 }))
 
 import { ConfirmDialog, useConfirmDialog } from '@/components/ui/overlay/ConfirmDialog'
