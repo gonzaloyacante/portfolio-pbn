@@ -50,3 +50,34 @@ sealed class AuthState with _$AuthState {
   /// Error de autenticación (credenciales incorrectas, red, etc.).
   const factory AuthState.error({required String message}) = AuthError;
 }
+
+// ── AuthLoginResponse ─────────────────────────────────────────────────────────
+
+/// Respuesta del endpoint POST /api/admin/auth/login.
+/// Backend devuelve: { success, data: { accessToken, refreshToken, user } }
+@freezed
+abstract class AuthLoginResponse with _$AuthLoginResponse {
+  const factory AuthLoginResponse({
+    required String accessToken,
+    required String refreshToken,
+    required UserProfile user,
+  }) = _AuthLoginResponse;
+
+  factory AuthLoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$AuthLoginResponseFromJson(json);
+}
+
+// ── AuthRefreshResponse ───────────────────────────────────────────────────────
+
+/// Respuesta del endpoint POST /api/admin/auth/refresh.
+/// Backend devuelve: { success, data: { accessToken, refreshToken } }
+@freezed
+abstract class AuthRefreshResponse with _$AuthRefreshResponse {
+  const factory AuthRefreshResponse({
+    required String accessToken,
+    required String refreshToken,
+  }) = _AuthRefreshResponse;
+
+  factory AuthRefreshResponse.fromJson(Map<String, dynamic> json) =>
+      _$AuthRefreshResponseFromJson(json);
+}

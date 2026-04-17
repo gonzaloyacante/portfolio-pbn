@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
 import '../api/api_exceptions.dart';
+import '../api/cloudinary_models.dart';
 import '../api/endpoints.dart';
 import '../utils/app_logger.dart';
 
@@ -72,21 +73,19 @@ class UploadService {
     AppLogger.info('UploadService: signing upload for ${file.path}');
 
     // 1 — Obtener firma del servidor
-    final signRes = await _client.post<Map<String, dynamic>>(
+    final signData = await _client.post<Map<String, dynamic>>(
       Endpoints.adminUploadSign,
       data: {'folder': folder},
     );
+    final signRes = CloudinarySignResponse.fromJson(signData);
 
-    final apiKey = signRes['apiKey'] as String?;
-    final cloudName = signRes['cloudName'] as String?;
-    final timestamp = signRes['timestamp'] as int?;
-    final signature = signRes['signature'] as String?;
-    final fullFolder = signRes['folder'] as String?;
+    final apiKey = signRes.apiKey;
+    final cloudName = signRes.cloudName;
+    final timestamp = signRes.timestamp;
+    final signature = signRes.signature;
+    final fullFolder = signRes.folder;
 
-    if (apiKey == null ||
-        cloudName == null ||
-        timestamp == null ||
-        signature == null) {
+    if (apiKey.isEmpty || cloudName.isEmpty || signature.isEmpty) {
       throw const ParseException(message: 'Firma de Cloudinary inválida');
     }
 
@@ -108,14 +107,14 @@ class UploadService {
 
     final uploadUrl = 'https://api.cloudinary.com/v1_1/$cloudName/image/upload';
 
-    late final Map<String, dynamic> clRes;
+    late final CloudinaryUploadResponse clRes;
     try {
       final response = await _cloudinaryDio.post<Map<String, dynamic>>(
         uploadUrl,
         data: formData,
         onSendProgress: onProgress,
       );
-      clRes = response.data ?? {};
+      clRes = CloudinaryUploadResponse.fromJson(response.data ?? {});
     } on DioException catch (e) {
       String? errMsg;
       final data = e.response?.data;
@@ -129,12 +128,12 @@ class UploadService {
     }
 
     // 3 — Parsear respuesta de Cloudinary
-    final url = clRes['secure_url'] as String?;
-    final publicId = clRes['public_id'] as String?;
-    final width = clRes['width'] as int?;
-    final height = clRes['height'] as int?;
+    final url = clRes.secureUrl;
+    final publicId = clRes.publicId;
+    final width = clRes.width;
+    final height = clRes.height;
 
-    if (url == null || url.isEmpty) {
+    if (url.isEmpty) {
       throw const ParseException(message: 'Cloudinary no devolvió una URL');
     }
 
@@ -149,7 +148,7 @@ class UploadService {
       url: url,
       thumbnailUrl: thumbnailUrl,
       lqipUrl: lqipUrl,
-      publicId: publicId ?? '',
+      publicId: publicId,
       width: width,
       height: height,
     );

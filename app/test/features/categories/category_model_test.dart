@@ -21,8 +21,8 @@ void main() {
       () => expect(item.description, isNull),
     );
     test(
-      'thumbnailUrl defaults to null',
-      () => expect(item.thumbnailUrl, isNull),
+      'coverImageUrl defaults to null',
+      () => expect(item.coverImageUrl, isNull),
     );
     test('sortOrder defaults to 0', () => expect(item.sortOrder, 0));
     test('isActive defaults to true', () => expect(item.isActive, true));

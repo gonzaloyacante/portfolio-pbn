@@ -40,3 +40,30 @@ Map<String, dynamic> _$UserProfileToJson(_UserProfile instance) =>
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
     };
+
+_AuthLoginResponse _$AuthLoginResponseFromJson(Map<String, dynamic> json) =>
+    _AuthLoginResponse(
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String,
+      user: UserProfile.fromJson(json['user'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$AuthLoginResponseToJson(_AuthLoginResponse instance) =>
+    <String, dynamic>{
+      'accessToken': instance.accessToken,
+      'refreshToken': instance.refreshToken,
+      'user': instance.user,
+    };
+
+_AuthRefreshResponse _$AuthRefreshResponseFromJson(Map<String, dynamic> json) =>
+    _AuthRefreshResponse(
+      accessToken: json['accessToken'] as String,
+      refreshToken: json['refreshToken'] as String,
+    );
+
+Map<String, dynamic> _$AuthRefreshResponseToJson(
+  _AuthRefreshResponse instance,
+) => <String, dynamic>{
+  'accessToken': instance.accessToken,
+  'refreshToken': instance.refreshToken,
+};

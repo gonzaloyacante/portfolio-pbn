@@ -66,28 +66,22 @@ class AuthRepository {
       data: payload,
     );
 
-    // El backend devuelve { success: true, data: { accessToken, refreshToken, user } }
-    // pero mantenemos compatibilidad si la respuesta viene con los campos al tope.
+    // Backend: { success: true, data: { accessToken, refreshToken, user } }
     final body = (raw['data'] is Map<String, dynamic>)
         ? raw['data'] as Map<String, dynamic>
         : raw;
 
-    final accessToken = body['accessToken'] as String?;
-    final refreshToken = body['refreshToken'] as String?;
-    final userData = body['user'] as Map<String, dynamic>?;
-
-    if (accessToken == null || refreshToken == null || userData == null) {
-      throw const ServerException(message: 'Respuesta de login inválida');
-    }
+    final loginResponse = AuthLoginResponse.fromJson(body);
 
     await Future.wait([
-      _storage.saveAccessToken(accessToken),
-      _storage.saveRefreshToken(refreshToken),
+      _storage.saveAccessToken(loginResponse.accessToken),
+      _storage.saveRefreshToken(loginResponse.refreshToken),
     ]);
 
-    final profile = UserProfile.fromJson(userData);
-    AppLogger.info('AuthRepository: login successful for ${profile.email}');
-    return profile;
+    AppLogger.info(
+      'AuthRepository: login successful for ${loginResponse.user.email}',
+    );
+    return loginResponse.user;
   }
 
   // ── logout ─────────────────────────────────────────────────────────────────
@@ -122,7 +116,7 @@ class AuthRepository {
   Future<UserProfile> getMe() async {
     final raw = await _api.get<Map<String, dynamic>>(Endpoints.authMe);
 
-    // Backend returns { success: true, data: <user> }
+    // Backend: { success: true, data: <user> } or { data: { user: {...} } }
     final body = (raw['data'] is Map<String, dynamic>)
         ? raw['data'] as Map<String, dynamic>
         : raw;

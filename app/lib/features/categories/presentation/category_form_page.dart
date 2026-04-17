@@ -107,9 +107,7 @@ class _CategoryFormPageState extends ConsumerState<CategoryFormPage> {
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;
     _descriptionCtrl.text = detail.description ?? '';
-    // Usar coverImageUrl si existe; si no, thumbnailUrl como fallback para
-    // categorías creadas antes del sistema de imagen dual.
-    _coverImageCtrl.text = detail.coverImageUrl ?? detail.thumbnailUrl ?? '';
+    _coverImageCtrl.text = detail.coverImageUrl ?? '';
     setState(() {
       _isActive = detail.isActive;
     });

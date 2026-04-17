@@ -53,8 +53,8 @@ void main() {
       () => expect(CategoryItem.fromJson(base).description, isNull),
     );
     test(
-      'thumbnailUrl is null',
-      () => expect(CategoryItem.fromJson(base).thumbnailUrl, isNull),
+      'coverImageUrl is null',
+      () => expect(CategoryItem.fromJson(base).coverImageUrl, isNull),
     );
   });
 
@@ -64,7 +64,7 @@ void main() {
       'name': 'Maternidad',
       'slug': 'maternidad',
       'description': 'Sesiones de maternidad',
-      'thumbnailUrl': 'https://x.com/thumb.jpg',
+      'coverImageUrl': 'https://x.com/thumb.jpg',
       'sortOrder': 5,
       'isActive': false,
       'viewCount': 340,
@@ -80,9 +80,9 @@ void main() {
       ),
     );
     test(
-      'parses thumbnailUrl',
+      'parses coverImageUrl',
       () => expect(
-        CategoryItem.fromJson(full()).thumbnailUrl,
+        CategoryItem.fromJson(full()).coverImageUrl,
         'https://x.com/thumb.jpg',
       ),
     );
@@ -220,7 +220,7 @@ void main() {
     test('null optional fields not present', () {
       final j = const CategoryFormData(name: 'T', slug: 't').toJson();
       expect(j.containsKey('description'), isFalse);
-      expect(j.containsKey('thumbnailUrl'), isFalse);
+      expect(j.containsKey('coverImageUrl'), isFalse);
     });
   });
 }

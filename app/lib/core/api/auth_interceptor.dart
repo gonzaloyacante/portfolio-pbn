@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../auth/auth_state.dart';
 import '../auth/session_signal.dart';
 import '../auth/token_storage.dart';
 import '../utils/app_logger.dart';
@@ -178,17 +179,10 @@ class AuthInterceptor extends Interceptor {
         ? body['data'] as Map<String, dynamic>
         : body;
 
-    final newAccess = data['accessToken'] as String?;
-    final newRefresh = data['refreshToken'] as String?;
+    final refreshResponse = AuthRefreshResponse.fromJson(data);
 
-    if (newAccess == null || newRefresh == null) {
-      throw const UnauthorizedException(
-        message: 'Invalid refresh response tokens',
-      );
-    }
-
-    await storage.saveAccessToken(newAccess);
-    await storage.saveRefreshToken(newRefresh);
+    await storage.saveAccessToken(refreshResponse.accessToken);
+    await storage.saveRefreshToken(refreshResponse.refreshToken);
 
     AppLogger.info('AuthInterceptor: tokens refreshed successfully');
   }

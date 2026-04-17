@@ -34,10 +34,9 @@ class CategoryTile extends StatelessWidget {
             SizedBox(
               width: 80,
               child:
-                  (item.thumbnailUrl ?? item.coverImageUrl) != null &&
-                      (item.thumbnailUrl ?? item.coverImageUrl)!.isNotEmpty
+                  item.coverImageUrl != null && item.coverImageUrl!.isNotEmpty
                   ? CachedNetworkImage(
-                      imageUrl: (item.thumbnailUrl ?? item.coverImageUrl)!,
+                      imageUrl: item.coverImageUrl!,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => ColoredBox(
                         color: scheme.surfaceContainerHighest,
