@@ -100,9 +100,9 @@ export const getServiceBySlug = unstable_cache(
 )
 
 /**
- * Get all services for admin view
+ * Get all services for admin view (auth-protected)
  */
-export const getServices = unstable_cache(
+const _getServicesCached = unstable_cache(
   async () => {
     try {
       const services = await prisma.service.findMany({
@@ -118,6 +118,11 @@ export const getServices = unstable_cache(
   [CACHE_TAGS.services],
   { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
 )
+
+export async function getServices() {
+  await requireAdmin()
+  return _getServicesCached()
+}
 
 // ============================================
 // ADMIN ACTIONS
@@ -190,30 +195,42 @@ export async function createService(formData: FormData) {
             .filter(Boolean)
         : []
 
-    const service = await prisma.service.create({
-      data: {
-        name: data.name,
-        slug: data.slug,
-        description: data.description || null,
-        shortDesc: data.shortDesc,
-        price: data.price ? data.price : null,
-        priceLabel: data.priceLabel,
-        currency: data.currency,
-        duration: data.duration || null,
-        durationMinutes: data.durationMinutes || null,
-        isAvailable: data.isAvailable,
-        maxBookingsPerDay: data.maxBookingsPerDay,
-        advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || galleryList[0] || null,
-        galleryUrls: galleryList,
-        videoUrl: data.videoUrl || null,
-        isActive: data.isActive,
-        isFeatured: data.isFeatured,
-        sortOrder: data.sortOrder,
-        requirements: data.requirements,
-        cancellationPolicy: data.cancellationPolicy,
-      },
-      select: { id: true },
+    const service = await prisma.$transaction(async (tx) => {
+      // Compute next sortOrder atomically if none provided
+      let finalSortOrder = data.sortOrder
+      if (finalSortOrder === 0) {
+        const maxResult = await tx.service.aggregate({
+          _max: { sortOrder: true },
+          where: { deletedAt: null },
+        })
+        finalSortOrder = (maxResult._max.sortOrder ?? 0) + 1
+      }
+
+      return tx.service.create({
+        data: {
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          shortDesc: data.shortDesc,
+          price: data.price ? data.price : null,
+          priceLabel: data.priceLabel,
+          currency: data.currency,
+          duration: data.duration || null,
+          durationMinutes: data.durationMinutes || null,
+          isAvailable: data.isAvailable,
+          maxBookingsPerDay: data.maxBookingsPerDay,
+          advanceNoticeDays: data.advanceNoticeDays,
+          imageUrl: data.imageUrl || galleryList[0] || null,
+          galleryUrls: galleryList,
+          videoUrl: data.videoUrl || null,
+          isActive: data.isActive,
+          isFeatured: data.isFeatured,
+          sortOrder: finalSortOrder,
+          requirements: data.requirements,
+          cancellationPolicy: data.cancellationPolicy,
+        },
+        select: { id: true },
+      })
     })
 
     if (tiersData.length > 0) {
