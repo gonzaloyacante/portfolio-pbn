@@ -10,6 +10,7 @@ import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
 import FontLoader from '@/components/layout/FontLoader'
+import { BRAND } from '@/lib/design-tokens'
 
 // Script font para "Make-up", firmas y detalles elegantes
 // Alternativa a Amsterdam Four (Canva)
@@ -40,10 +41,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    // eslint-disable-next-line no-restricted-syntax -- browser meta tag requires HEX directly
-    { media: '(prefers-color-scheme: light)', color: '#fff1f9' },
-    // eslint-disable-next-line no-restricted-syntax -- browser meta tag requires HEX directly
-    { media: '(prefers-color-scheme: dark)', color: '#6c0a0a' },
+    { media: '(prefers-color-scheme: light)', color: BRAND.accent },
+    { media: '(prefers-color-scheme: dark)', color: BRAND.primary },
   ],
 }
 
