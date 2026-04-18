@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,15 +6,16 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/categories_repository.dart';
 import '../data/category_model.dart';
-import 'widgets/gallery_grid_tile.dart';
+import 'widgets/gallery_image_viewer.dart';
+import 'widgets/gallery_list_view.dart';
+import 'widgets/gallery_grid_view.dart';
+import 'widgets/gallery_skeleton.dart';
 import 'widgets/gallery_tile.dart';
-import 'widgets/drag_placeholder.dart';
-import 'widgets/instruction_banner.dart';
+import 'widgets/gallery_upload_fab.dart';
 
 part 'category_gallery_page_widgets.dart';
 part 'category_gallery_page_builders.dart';
@@ -85,142 +85,9 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
 
     return AppScaffold(
       title: 'Galería — ${widget.categoryName}',
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: (_saving || _uploading) ? null : _showUploadSheet,
-        icon: _uploading
-            ? const SizedBox.square(
-                dimension: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const Icon(Icons.add_photo_alternate_outlined),
-        label: Text(_uploading ? 'Subiendo...' : 'Agregar foto'),
-      ),
-      actions: [
-        // Toggle lista / cuadrícula
-        IconButton(
-          icon: Icon(
-            viewMode == ViewMode.list
-                ? Icons.grid_view_rounded
-                : Icons.list_rounded,
-          ),
-          tooltip: viewMode == ViewMode.list
-              ? 'Vista en cuadrícula'
-              : 'Vista en lista',
-          onPressed: () =>
-              ref.read(categoryGalleryViewModeProvider.notifier).toggle(),
-        ),
-        if (_dirty) ...[
-          TextButton.icon(
-            onPressed: _saving ? null : _saveAndReturn,
-            icon: _saving
-                ? const SizedBox.square(
-                    dimension: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.save_outlined, size: 18),
-            label: const Text('Guardar'),
-          ),
-          const SizedBox(width: 8),
-          TextButton.icon(
-            onPressed: _saving ? null : _saveOrder,
-            icon: _saving
-                ? const SizedBox.square(
-                    dimension: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.save_outlined, size: 18),
-            label: const Text('Guardar orden'),
-          ),
-        ],
-        if (_items != null && _items!.isNotEmpty)
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: 'Restablecer orden predeterminado',
-            onPressed: _saving ? null : _resetOrder,
-          ),
-      ],
-      body: async.when(
-        loading: () => _GallerySkeleton(viewMode: viewMode),
-        error: (e, _) => ErrorState(
-          message: e.toString(),
-          onRetry: () =>
-              ref.invalidate(_categoryGalleryProvider(widget.categoryId)),
-        ),
-        data: (images) {
-          // Inicializar estado local solo la primera vez o cuando el backend
-          // devuelve datos frescos (ej.: después de un reset).
-          if (_items == null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) setState(() => _items = List.of(images));
-            });
-            return _GallerySkeleton(viewMode: viewMode);
-          }
-
-          if (_items!.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _onRefresh,
-              child: Column(
-                children: [
-                  AppSearchBar(
-                    hint: 'Buscar imágenes...',
-                    onChanged: _onSearch,
-                  ),
-                  const Expanded(
-                    child: SingleChildScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      child: SizedBox(
-                        height: 400,
-                        child: EmptyState(
-                          icon: Icons.photo_library_outlined,
-                          title: 'Sin imágenes',
-                          subtitle: 'Esta categoría no tiene imágenes todavía.',
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: Column(
-              children: [
-                AppSearchBar(hint: 'Buscar imágenes...', onChanged: _onSearch),
-                Expanded(
-                  child: _displayItems.isEmpty
-                      ? const EmptyState(
-                          icon: Icons.search_off_outlined,
-                          title: 'Sin resultados',
-                          subtitle:
-                              'No hay imágenes que coincidan con la búsqueda',
-                        )
-                      : _searchQuery.isNotEmpty
-                      ? _buildSearchResults(context)
-                      : AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          switchInCurve: Curves.easeOut,
-                          switchOutCurve: Curves.easeIn,
-                          transitionBuilder:
-                              (Widget child, Animation<double> animation) =>
-                                  FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  ),
-                          child: viewMode == ViewMode.list
-                              ? _buildListView(context)
-                              : _buildGridView(context),
-                        ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+      floatingActionButton: _buildFAB(context),
+      actions: _buildActions(context, viewMode),
+      body: _buildBody(context, async, viewMode),
     );
   }
 
