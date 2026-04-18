@@ -6,14 +6,11 @@ import '../../../core/auth/auth_provider.dart';
 import '../../../core/auth/auth_state.dart';
 import '../../../core/notifications/push_provider.dart';
 import '../../../core/theme/app_breakpoints.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/theme/app_typography.dart';
 import '../../../core/utils/app_logger.dart';
-import '../../../core/utils/validators.dart';
-
-part 'login_page_builders.dart';
+import 'widgets/login_brand.dart';
+import 'widgets/login_card.dart';
+import 'widgets/login_two_column_layout.dart';
 
 // ── LoginPage ─────────────────────────────────────────────────────────────────
 
@@ -89,7 +86,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _LoginCard(
+        LoginCard(
           formKey: _formKey,
           emailController: _emailController,
           passwordController: _passwordController,
@@ -134,7 +131,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       child: Scaffold(
         body: SafeArea(
           child: isExpanded
-              ? _TwoColumnLayout(formContent: formContent)
+              ? LoginTwoColumnLayout(formContent: formContent)
               : Center(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.symmetric(
@@ -146,7 +143,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _Brand(),
+                          const LoginBrand(),
                           const SizedBox(height: AppSpacing.xxxl),
                           formContent,
                         ],

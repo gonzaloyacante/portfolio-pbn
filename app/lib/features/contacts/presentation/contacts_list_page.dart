@@ -4,11 +4,11 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/contact_model.dart';
 import '../providers/contacts_provider.dart';
 import 'widgets/contact_tile.dart';
+import 'widgets/contacts_list_header.dart';
 
 part 'contacts_list_page_builders.dart';
 
@@ -82,14 +82,6 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
     _ => Icons.mail_outline,
   };
 
-  String _statusLabel(String s) => switch (s) {
-    'IN_PROGRESS' => 'En curso',
-    'REPLIED' => 'Respondidos',
-    'CLOSED' => 'Cerrados',
-    'SPAM' => 'Spam',
-    _ => 'Nuevos',
-  };
-
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(
@@ -101,52 +93,25 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
     );
     final hPad = AppBreakpoints.pageMargin(context);
 
-    // Opciones de filtro: null=Todos, 'UNREAD'=No leídos, valores de _kStatuses
-    final selectedChip = _unreadOnly ? 'UNREAD' : _statusFilter;
-    const filterOptions = <String?>[
-      null,
-      'UNREAD',
-      'NEW',
-      'IN_PROGRESS',
-      'REPLIED',
-      'CLOSED',
-      'SPAM',
-    ];
-
     return AppScaffold(
       title: 'Contactos',
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.base, hPad, 0),
-            child: Column(
-              children: [
-                AppSearchBar(
-                  hint: 'Buscar por nombre, email…',
-                  controller: _searchController,
-                  onChanged: _onSearch,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppFilterChips<String?>(
-                  options: filterOptions,
-                  selected: selectedChip,
-                  labelBuilder: (s) => switch (s) {
-                    null => 'Todos',
-                    'UNREAD' => 'No leídos',
-                    _ => _statusLabel(s),
-                  },
-                  onSelected: (s) => setState(() {
-                    if (s == 'UNREAD') {
-                      _unreadOnly = true;
-                      _statusFilter = null;
-                    } else {
-                      _unreadOnly = false;
-                      _statusFilter = s;
-                    }
-                  }),
-                ),
-              ],
-            ),
+          ContactsListHeader(
+            controller: _searchController,
+            onSearch: _onSearch,
+            statusFilter: _statusFilter,
+            unreadOnly: _unreadOnly,
+            hPad: hPad,
+            onFilterChanged: (s) => setState(() {
+              if (s == 'UNREAD') {
+                _unreadOnly = true;
+                _statusFilter = null;
+              } else {
+                _unreadOnly = false;
+                _statusFilter = s;
+              }
+            }),
           ),
           Expanded(
             child: async.when(

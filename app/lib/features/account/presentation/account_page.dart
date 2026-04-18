@@ -7,12 +7,12 @@ import '../../../core/auth/auth_state.dart';
 import '../../../core/debug/debug_provider.dart';
 import '../../../core/notifications/push_provider.dart';
 import '../../../core/theme/app_breakpoints.dart';
-import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../calendar/data/google_calendar_models.dart';
-import '../../calendar/providers/google_calendar_provider.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../providers/account_provider.dart';
+import 'widgets/account_profile_card.dart';
+import 'widgets/account_password_field.dart';
+import 'widgets/account_google_calendar_card.dart';
 
 part 'account_page_builders.dart';
 

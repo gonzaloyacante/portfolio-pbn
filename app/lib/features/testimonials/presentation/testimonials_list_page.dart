@@ -11,6 +11,7 @@ import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
 import 'widgets/testimonial_tile.dart';
+import 'widgets/testimonials_list_header.dart';
 
 part 'testimonials_list_page_builders.dart';
 
@@ -101,6 +102,7 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
   };
 
   @override
+  @override
   Widget build(BuildContext context) {
     final async = ref.watch(
       testimonialsListProvider(
@@ -109,7 +111,6 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
       ),
     );
     final hPad = AppBreakpoints.pageMargin(context);
-    const filterOptions = <String?>[null, 'PENDING', 'APPROVED', 'REJECTED'];
 
     return AppScaffold(
       title: 'Testimonios',
@@ -122,24 +123,12 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
       ],
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(hPad, AppSpacing.base, hPad, 0),
-            child: Column(
-              children: [
-                AppSearchBar(
-                  hint: 'Buscar testimonios…',
-                  controller: _searchController,
-                  onChanged: _onSearch,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppFilterChips<String?>(
-                  options: filterOptions,
-                  selected: _statusFilter,
-                  labelBuilder: (s) => s == null ? 'Todos' : _statusLabel(s),
-                  onSelected: (s) => setState(() => _statusFilter = s),
-                ),
-              ],
-            ),
+          TestimonialsListHeader(
+            controller: _searchController,
+            onSearch: _onSearch,
+            statusFilter: _statusFilter,
+            hPad: hPad,
+            onFilterChanged: (s) => setState(() => _statusFilter = s),
           ),
           Expanded(
             child: async.when(
@@ -162,11 +151,6 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
     );
   }
 
-  String _statusLabel(String s) => switch (s) {
-    'APPROVED' => 'Aprobados',
-    'REJECTED' => 'Rechazados',
-    _ => 'Pendientes',
-  };
 }
 
 // ── Tile ──────────────────────────────────────────────────────────────────────
