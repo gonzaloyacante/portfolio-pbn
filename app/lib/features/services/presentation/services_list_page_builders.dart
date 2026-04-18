@@ -127,4 +127,61 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
       ),
     );
   }
+
+  Future<void> _delete(BuildContext ctx, ServiceItem item) async {
+    final confirmed = await ConfirmDialog.show(
+      ctx,
+      title: 'Eliminar servicio',
+      message: '¿Eliminar "${item.name}"? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      isDestructive: true,
+    );
+    if (!confirmed || !ctx.mounted) return;
+
+    try {
+      await ref.read(servicesRepositoryProvider).deleteService(item.id);
+      ref.invalidate(servicesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(content: Text('Servicio eliminado')),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No fue posible completar la accion. Intentalo de nuevo.',
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _toggleServiceActive(BuildContext ctx, ServiceItem item) async {
+    try {
+      await ref.read(servicesRepositoryProvider).updateService(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(servicesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Servicio desactivado' : 'Servicio activado',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(content: Text('Error al actualizar: $e')),
+        );
+      }
+    }
+  }
 }
