@@ -16,3 +16,4 @@ export 'adaptive_form_layout.dart';
 export 'adaptive_grid.dart';
 export 'app_card.dart';
 export 'draggable_list.dart';
+export 'paginated_list_view.dart';

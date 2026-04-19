@@ -56,8 +56,11 @@ class GalleryListView extends StatelessWidget {
                   item: img,
                   index: index,
                   total: items.length,
-                  onTap: () =>
-                      GalleryImageViewer.show(context, img.url, position: index + 1),
+                  onTap: () => GalleryImageViewer.show(
+                    context,
+                    img.url,
+                    position: index + 1,
+                  ),
                   onDelete: () => onDelete(img),
                 ),
               );

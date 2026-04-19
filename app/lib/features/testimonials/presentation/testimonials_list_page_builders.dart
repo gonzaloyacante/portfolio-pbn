@@ -62,44 +62,106 @@ extension _TestimonialsListPageBuilders on _TestimonialsListPageState {
   }
 
   Widget _buildList(List<TestimonialItem> items, double hPad) {
-    return RefreshIndicator(
-      onRefresh: () async => ref.invalidate(testimonialsListProvider),
-      child: ListView.separated(
-        padding: EdgeInsets.symmetric(horizontal: hPad),
-        itemCount: items.length,
-        separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
-        itemBuilder: (ctx, i) => RepaintBoundary(
-          child: FadeSlideIn(
-            delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-            child: Dismissible(
-              key: Key(items[i].id),
-              direction: DismissDirection.endToStart,
-              background: Container(
-                color: AppColors.destructive,
-                alignment: Alignment.centerRight,
-                padding: const EdgeInsets.only(right: AppSpacing.lg),
-                child: const Icon(Icons.delete_outline, color: Colors.white),
-              ),
-              confirmDismiss: (DismissDirection _) async {
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(horizontal: hPad),
+      itemCount: items.length,
+      separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
+      itemBuilder: (ctx, i) => RepaintBoundary(
+        child: FadeSlideIn(
+          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+          child: Dismissible(
+            key: Key(items[i].id),
+            direction: DismissDirection.endToStart,
+            background: Container(
+              color: AppColors.destructive,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: AppSpacing.lg),
+              child: const Icon(Icons.delete_outline, color: Colors.white),
+            ),
+            confirmDismiss: (DismissDirection _) async {
+              HapticFeedback.mediumImpact();
+              await _delete(ctx, items[i]);
+              return false;
+            },
+            child: GestureDetector(
+              onLongPress: () {
                 HapticFeedback.mediumImpact();
-                await _delete(ctx, items[i]);
-                return false;
+                _showTestimonialActions(ctx, items[i]);
               },
-              child: GestureDetector(
-                onLongPress: () {
-                  HapticFeedback.mediumImpact();
-                  _showTestimonialActions(ctx, items[i]);
-                },
-                child: TestimonialTile(
-                  item: items[i],
-                  statusOf: _statusFromString,
-                  onDelete: _delete,
-                ),
+              child: TestimonialTile(
+                item: items[i],
+                statusOf: _statusFromString,
+                onDelete: _delete,
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  AppStatus _statusFromString(String status) => switch (status) {
+    'APPROVED' => AppStatus.approved,
+    'REJECTED' => AppStatus.rejected,
+    _ => AppStatus.pending,
+  };
+
+  Future<void> _delete(BuildContext ctx, TestimonialItem item) async {
+    final confirmed = await ConfirmDialog.show(
+      ctx,
+      title: 'Eliminar testimonio',
+      message:
+          '¿Eliminar el testimonio de "${item.name}"? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      isDestructive: true,
+    );
+    if (!confirmed || !ctx.mounted) return;
+
+    try {
+      await ref.read(testimonialsRepositoryProvider).deleteTestimonial(item.id);
+      ref.invalidate(testimonialsListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Testimonio eliminado')));
+      }
+    } catch (e) {
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
+      }
+    }
+  }
+
+  Future<void> _changeTestimonialStatus(
+    BuildContext ctx,
+    TestimonialItem item,
+    String newStatus,
+  ) async {
+    try {
+      await ref.read(testimonialsRepositoryProvider).updateTestimonial(
+        item.id,
+        {'status': newStatus},
+      );
+      ref.invalidate(testimonialsListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              newStatus == 'APPROVED'
+                  ? 'Testimonio aprobado'
+                  : 'Testimonio rechazado',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
   }
 }

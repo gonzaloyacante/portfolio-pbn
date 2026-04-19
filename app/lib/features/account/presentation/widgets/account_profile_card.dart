@@ -58,9 +58,9 @@ class _AccountProfileCardState extends ConsumerState<AccountProfileCard> {
       ref.invalidate(authProvider);
       if (!mounted) return;
       setState(() => _editing = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Nombre actualizado')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Nombre actualizado')));
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (!mounted) return;

@@ -36,72 +36,6 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
 
   void _onSearch(String value) => setState(() => _search = value.trim());
 
-  Future<void> _delete(BuildContext ctx, TestimonialItem item) async {
-    final confirmed = await ConfirmDialog.show(
-      ctx,
-      title: 'Eliminar testimonio',
-      message:
-          '¿Eliminar el testimonio de "${item.name}"? Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
-      isDestructive: true,
-    );
-    if (!confirmed || !ctx.mounted) return;
-
-    try {
-      await ref.read(testimonialsRepositoryProvider).deleteTestimonial(item.id);
-      ref.invalidate(testimonialsListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Testimonio eliminado')));
-      }
-    } catch (e) {
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
-      }
-    }
-  }
-
-  Future<void> _changeTestimonialStatus(
-    BuildContext ctx,
-    TestimonialItem item,
-    String newStatus,
-  ) async {
-    try {
-      await ref.read(testimonialsRepositoryProvider).updateTestimonial(
-        item.id,
-        {'status': newStatus},
-      );
-      ref.invalidate(testimonialsListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-            content: Text(
-              newStatus == 'APPROVED'
-                  ? 'Testimonio aprobado'
-                  : 'Testimonio rechazado',
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
-      }
-    }
-  }
-
-  AppStatus _statusFromString(String status) => switch (status) {
-    'APPROVED' => AppStatus.approved,
-    'REJECTED' => AppStatus.rejected,
-    _ => AppStatus.pending,
-  };
-
-  @override
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(
@@ -121,36 +55,25 @@ class _TestimonialsListPageState extends ConsumerState<TestimonialsListPage> {
           onPressed: () => context.pushNamed(RouteNames.testimonialNew),
         ),
       ],
-      body: Column(
-        children: [
-          TestimonialsListHeader(
-            controller: _searchController,
-            onSearch: _onSearch,
-            statusFilter: _statusFilter,
-            hPad: hPad,
-            onFilterChanged: (s) => setState(() => _statusFilter = s),
-          ),
-          Expanded(
-            child: async.when(
-              loading: () => const SkeletonTestimonialsList(),
-              error: (e, _) => ErrorState(
-                message: e.toString(),
-                onRetry: () => ref.invalidate(testimonialsListProvider),
-              ),
-              data: (paginated) => paginated.data.isEmpty
-                  ? const EmptyState(
-                      icon: Icons.format_quote_outlined,
-                      title: 'Sin testimonios',
-                      subtitle: 'Agrega el primer testimonio',
-                    )
-                  : _buildList(paginated.data, hPad),
-            ),
-          ),
-        ],
+      body: PaginatedListView<TestimonialItem>(
+        asyncValue: async,
+        loadingWidget: const SkeletonTestimonialsList(),
+        emptyState: const EmptyState(
+          icon: Icons.format_quote_outlined,
+          title: 'Sin testimonios',
+          subtitle: 'Agrega el primer testimonio',
+        ),
+        onRetry: () => ref.invalidate(testimonialsListProvider),
+        onRefresh: () async => ref.invalidate(testimonialsListProvider),
+        headerWidget: TestimonialsListHeader(
+          controller: _searchController,
+          onSearch: _onSearch,
+          statusFilter: _statusFilter,
+          hPad: hPad,
+          onFilterChanged: (s) => setState(() => _statusFilter = s),
+        ),
+        dataBuilder: (items) => _buildList(items, hPad),
       ),
     );
   }
-
 }
-
-// ── Tile ──────────────────────────────────────────────────────────────────────

@@ -46,25 +46,32 @@ extension _AccountPageBuilders on _AccountPageState {
                   ),
                 ),
                 const SizedBox(height: 24),
-                ref.watch(appBuildInfoProvider).when(
-                  data: (info) => Center(
-                    child: Text(
-                      'Versión ${info.fullVersion}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
+                ref
+                    .watch(appBuildInfoProvider)
+                    .when(
+                      data: (info) => Center(
+                        child: Text(
+                          'Versión ${info.fullVersion}',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                        ),
+                      ),
+                      loading: () => const Center(
+                        child: ShimmerBox(
+                          width: 120,
+                          height: 12,
+                          borderRadius: 4,
+                        ),
+                      ),
+                      error: (_, _) => Text(
+                        'v—',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                       ),
                     ),
-                  ),
-                  loading: () => const Center(
-                    child: ShimmerBox(width: 120, height: 12, borderRadius: 4),
-                  ),
-                  error: (_, _) => Text(
-                    'v—',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
@@ -83,9 +90,9 @@ extension _AccountPageBuilders on _AccountPageState {
           children: [
             Text(
               'Cambiar contraseña',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             AccountPasswordField(
@@ -133,7 +140,3 @@ extension _AccountPageBuilders on _AccountPageState {
     );
   }
 }
-
-
-
-

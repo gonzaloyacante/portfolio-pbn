@@ -16,7 +16,8 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
           item: img,
           index: index,
           total: _displayItems.length,
-          onTap: () => GalleryImageViewer.show(context, img.url, position: index + 1),
+          onTap: () =>
+              GalleryImageViewer.show(context, img.url, position: index + 1),
           onDelete: () => _deleteImage(img),
         );
       },
@@ -54,8 +55,9 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
               ? Icons.grid_view_rounded
               : Icons.list_rounded,
         ),
-        tooltip:
-            viewMode == ViewMode.list ? 'Vista en cuadrícula' : 'Vista en lista',
+        tooltip: viewMode == ViewMode.list
+            ? 'Vista en cuadrícula'
+            : 'Vista en lista',
         onPressed: () =>
             ref.read(categoryGalleryViewModeProvider.notifier).toggle(),
       ),
@@ -248,7 +250,9 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
                 try {
                   final uploadSvc = ref.read(uploadServiceProvider);
                   final uploads =
-                      <({String url, String publicId, int? width, int? height})>[];
+                      <
+                        ({String url, String publicId, int? width, int? height})
+                      >[];
                   for (final f in files) {
                     final result = await uploadSvc.uploadImageFull(f);
                     uploads.add((

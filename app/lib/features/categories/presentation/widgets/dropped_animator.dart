@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 /// Runs a short scale-up → elastic-back animation when [dropped] toggles to true.
 /// Used to provide tactile feedback when a gallery image lands in its new position.
 class DroppedAnimator extends StatefulWidget {
-  const DroppedAnimator({super.key, required this.dropped, required this.child});
+  const DroppedAnimator({
+    super.key,
+    required this.dropped,
+    required this.child,
+  });
 
   final bool dropped;
   final Widget child;

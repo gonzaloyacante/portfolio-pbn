@@ -161,7 +161,7 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
             child: GestureDetector(
               onLongPress: () {
                 HapticFeedback.mediumImpact();
-                _showCategoryActions(ctx, items[i]);
+                showCategoryActions(ctx, items[i]);
               },
               child: CategoryTile(item: items[i], onDelete: _delete),
             ),
@@ -189,12 +189,68 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
           child: GestureDetector(
             onLongPress: () {
               HapticFeedback.mediumImpact();
-              _showCategoryActions(ctx, items[i]);
+              showCategoryActions(ctx, items[i]);
             },
             child: CategoryGridCard(item: items[i], onDelete: _delete),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _delete(BuildContext ctx, CategoryItem item) async {
+    final confirmed = await ConfirmDialog.show(
+      ctx,
+      title: 'Eliminar categoría',
+      message: '¿Eliminar "${item.name}"? Esta acción no se puede deshacer.',
+      confirmLabel: 'Eliminar',
+      isDestructive: true,
+    );
+    if (!confirmed || !ctx.mounted) return;
+
+    try {
+      await ref.read(categoriesRepositoryProvider).deleteCategory(item.id);
+      ref.invalidate(categoriesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Categoría eliminada')));
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
+      }
+    }
+  }
+
+  Future<void> _toggleCategoryActive(
+    BuildContext ctx,
+    CategoryItem item,
+  ) async {
+    try {
+      await ref.read(categoriesRepositoryProvider).updateCategory(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(categoriesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Categoría desactivada' : 'Categoría activada',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
   }
 }

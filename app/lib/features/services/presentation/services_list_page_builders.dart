@@ -142,9 +142,9 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
       await ref.read(servicesRepositoryProvider).deleteService(item.id);
       ref.invalidate(servicesListProvider);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(content: Text('Servicio eliminado')),
-        );
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(const SnackBar(content: Text('Servicio eliminado')));
       }
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
@@ -178,9 +178,9 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
     } catch (e, st) {
       Sentry.captureException(e, stackTrace: st);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(content: Text('Error al actualizar: $e')),
-        );
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
       }
     }
   }

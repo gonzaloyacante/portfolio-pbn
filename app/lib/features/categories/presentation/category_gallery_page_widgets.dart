@@ -220,4 +220,3 @@ extension _CategoryGalleryPageActions on _CategoryGalleryPageState {
     }
   }
 }
-

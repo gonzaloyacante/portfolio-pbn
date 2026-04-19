@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../shared/widgets/widgets.dart';
 
 import '../data/categories_repository.dart';
@@ -40,79 +40,15 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
     super.dispose();
   }
 
-  void _onSearch(String value) {
-    setState(() => _search = value.trim());
-  }
-
-  Future<void> _delete(BuildContext ctx, CategoryItem item) async {
-    final confirmed = await ConfirmDialog.show(
-      ctx,
-      title: 'Eliminar categoría',
-      message: '¿Eliminar "${item.name}"? Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
-      isDestructive: true,
-    );
-    if (!confirmed || !ctx.mounted) return;
-
-    try {
-      await ref.read(categoriesRepositoryProvider).deleteCategory(item.id);
-      ref.invalidate(categoriesListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Categoría eliminada')));
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
-      }
-    }
-  }
-
-  Future<void> _toggleCategoryActive(
-    BuildContext ctx,
-    CategoryItem item,
-  ) async {
-    try {
-      await ref.read(categoriesRepositoryProvider).updateCategory(item.id, {
-        'isActive': !item.isActive,
-      });
-      ref.invalidate(categoriesListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-            content: Text(
-              item.isActive ? 'Categoría desactivada' : 'Categoría activada',
-            ),
-          ),
-        );
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
-      }
-    }
-  }
-
-  void _showCategoryActions(BuildContext ctx, CategoryItem item) =>
-      showCategoryActions(ctx, item);
-
-  Future<void> _showSettingsDialog(BuildContext context) =>
-      showSettingsDialog(context);
+  void _onSearch(String v) => setState(() => _search = v.trim());
 
   @override
   Widget build(BuildContext context) {
+    final hPad = AppBreakpoints.pageMargin(context);
+    final viewMode = ref.watch(categoriesViewModeProvider);
     final async = ref.watch(
       categoriesListProvider(search: _search.isEmpty ? null : _search),
     );
-    final viewMode = ref.watch(categoriesViewModeProvider);
-    final hPad = AppBreakpoints.pageMargin(context);
 
     return AppScaffold(
       title: 'Categorías',
@@ -120,7 +56,7 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
         IconButton(
           icon: const Icon(Icons.tune_rounded),
           tooltip: 'Configurar visualización',
-          onPressed: () => _showSettingsDialog(context),
+          onPressed: () => showSettingsDialog(context),
         ),
         IconButton(
           icon: Icon(
@@ -138,46 +74,32 @@ class _CategoriesListPageState extends ConsumerState<CategoriesListPage> {
           onPressed: () => context.pushNamed(RouteNames.categoryNew),
         ),
       ],
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              hPad,
-              AppSpacing.base,
-              hPad,
-              AppSpacing.base,
-            ),
-            child: AppSearchBar(
-              hint: 'Buscar categorías…',
-              controller: _searchController,
-              onChanged: _onSearch,
-            ),
+      body: PaginatedListView<CategoryItem>(
+        asyncValue: async,
+        loadingWidget: viewMode == ViewMode.grid
+            ? const SkeletonCategoriesGrid()
+            : const SkeletonCategoriesList(),
+        emptyState: const EmptyState(
+          icon: Icons.category_outlined,
+          title: 'Sin categorías',
+          subtitle: 'Agrega la primera categoría',
+        ),
+        onRetry: () => ref.invalidate(categoriesListProvider),
+        onRefresh: () async => ref.invalidate(categoriesListProvider),
+        headerWidget: AppSearchBar(
+          hint: 'Buscar categorías…',
+          controller: _searchController,
+          onChanged: _onSearch,
+          padding: EdgeInsets.fromLTRB(
+            hPad,
+            AppSpacing.base,
+            hPad,
+            AppSpacing.base,
           ),
-          Expanded(
-            child: async.when(
-              loading: () => viewMode == ViewMode.grid
-                  ? const SkeletonCategoriesGrid()
-                  : const SkeletonCategoriesList(),
-              error: (e, _) => ErrorState(
-                message: e.toString(),
-                onRetry: () => ref.invalidate(categoriesListProvider),
-              ),
-              data: (paginated) => paginated.data.isEmpty
-                  ? const EmptyState(
-                      icon: Icons.category_outlined,
-                      title: 'Sin categorías',
-                      subtitle: 'Crea tu primera categoría',
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () async =>
-                          ref.invalidate(categoriesListProvider),
-                      child: viewMode == ViewMode.grid
-                          ? _buildGrid(paginated.data, hPad)
-                          : _buildList(paginated.data, hPad),
-                    ),
-            ),
-          ),
-        ],
+        ),
+        dataBuilder: (items) => viewMode == ViewMode.grid
+            ? _buildGrid(items, hPad)
+            : _buildList(items, hPad),
       ),
     );
   }

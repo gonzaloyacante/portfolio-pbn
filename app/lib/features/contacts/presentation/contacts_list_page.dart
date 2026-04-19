@@ -33,55 +33,6 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
 
   void _onSearch(String value) => setState(() => _search = value.trim());
 
-  Future<void> _delete(BuildContext ctx, ContactItem item) async {
-    final confirmed = await ConfirmDialog.show(
-      ctx,
-      title: 'Eliminar contacto',
-      message:
-          '¿Eliminar el mensaje de "${item.name}"? Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
-      isDestructive: true,
-    );
-    if (!confirmed || !ctx.mounted) return;
-
-    try {
-      await ref.read(contactsRepositoryProvider).deleteContact(item.id);
-      ref.invalidate(contactsListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Contacto eliminado')));
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  Color _priorityColor(BuildContext context, String priority) =>
-      switch (priority) {
-        'URGENT' => AppColors.priorityHigh,
-        'HIGH' => AppColors.priorityMedium,
-        'LOW' => AppColors.priorityLow,
-        _ => Theme.of(context).colorScheme.secondary,
-      };
-
-  IconData _statusIcon(String status) => switch (status) {
-    'REPLIED' => Icons.reply,
-    'CLOSED' => Icons.check_circle_outline,
-    'SPAM' => Icons.block,
-    'IN_PROGRESS' => Icons.pending_outlined,
-    _ => Icons.mail_outline,
-  };
-
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(
@@ -95,45 +46,34 @@ class _ContactsListPageState extends ConsumerState<ContactsListPage> {
 
     return AppScaffold(
       title: 'Contactos',
-      body: Column(
-        children: [
-          ContactsListHeader(
-            controller: _searchController,
-            onSearch: _onSearch,
-            statusFilter: _statusFilter,
-            unreadOnly: _unreadOnly,
-            hPad: hPad,
-            onFilterChanged: (s) => setState(() {
-              if (s == 'UNREAD') {
-                _unreadOnly = true;
-                _statusFilter = null;
-              } else {
-                _unreadOnly = false;
-                _statusFilter = s;
-              }
-            }),
-          ),
-          Expanded(
-            child: async.when(
-              loading: () => const SkeletonContactsList(),
-              error: (e, _) => ErrorState(
-                message: e.toString(),
-                onRetry: () => ref.invalidate(contactsListProvider),
-              ),
-              data: (paginated) => paginated.data.isEmpty
-                  ? const EmptyState(
-                      icon: Icons.mail_outline,
-                      title: 'Sin mensajes',
-                      subtitle:
-                          'Aquí aparecen los mensajes del formulario de contacto',
-                    )
-                  : _buildList(paginated.data, hPad),
-            ),
-          ),
-        ],
+      body: PaginatedListView<ContactItem>(
+        asyncValue: async,
+        loadingWidget: const SkeletonContactsList(),
+        emptyState: const EmptyState(
+          icon: Icons.mail_outline,
+          title: 'Sin mensajes',
+          subtitle: 'Aquí aparecen los mensajes del formulario de contacto',
+        ),
+        onRetry: () => ref.invalidate(contactsListProvider),
+        onRefresh: () async => ref.invalidate(contactsListProvider),
+        headerWidget: ContactsListHeader(
+          controller: _searchController,
+          onSearch: _onSearch,
+          statusFilter: _statusFilter,
+          unreadOnly: _unreadOnly,
+          hPad: hPad,
+          onFilterChanged: (s) => setState(() {
+            if (s == 'UNREAD') {
+              _unreadOnly = true;
+              _statusFilter = null;
+            } else {
+              _unreadOnly = false;
+              _statusFilter = s;
+            }
+          }),
+        ),
+        dataBuilder: (items) => _buildList(items, hPad),
       ),
     );
   }
 }
-
-// ── Tile ──────────────────────────────────────────────────────────────────────

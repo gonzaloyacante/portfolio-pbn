@@ -16,7 +16,8 @@ class GalleryImageViewer extends StatelessWidget {
     showDialog<void>(
       context: context,
       barrierColor: Colors.black87,
-      builder: (_) => GalleryImageViewer(imageUrl: imageUrl, position: position),
+      builder: (_) =>
+          GalleryImageViewer(imageUrl: imageUrl, position: position),
     );
   }
 

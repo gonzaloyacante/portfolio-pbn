@@ -89,8 +89,7 @@ class HelpContent extends StatelessWidget {
             ),
             HelpItem(
               label: '¿Cómo restaurar un elemento eliminado?',
-              value:
-                  'Ve a Papelera, localiza el elemento y pulsa "Restaurar".',
+              value: 'Ve a Papelera, localiza el elemento y pulsa "Restaurar".',
             ),
             HelpItem(
               label: '¿Cómo cambiar la contraseña?',

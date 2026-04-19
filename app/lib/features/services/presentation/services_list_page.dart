@@ -39,11 +39,11 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final hPad = AppBreakpoints.pageMargin(context);
     final viewMode = ref.watch(servicesViewModeProvider);
     final async = ref.watch(
       servicesListProvider(search: _search.isEmpty ? null : _search),
     );
-    final hPad = AppBreakpoints.pageMargin(context);
 
     return AppScaffold(
       title: 'Servicios',
@@ -65,46 +65,32 @@ class _ServicesListPageState extends ConsumerState<ServicesListPage> {
           onPressed: () => context.pushNamed(RouteNames.serviceNew),
         ),
       ],
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              hPad,
-              AppSpacing.base,
-              hPad,
-              AppSpacing.base,
-            ),
-            child: AppSearchBar(
-              hint: 'Buscar servicios…',
-              controller: _searchController,
-              onChanged: _onSearch,
-            ),
+      body: PaginatedListView<ServiceItem>(
+        asyncValue: async,
+        loadingWidget: viewMode == ViewMode.grid
+            ? const SkeletonServicesGrid()
+            : const SkeletonServicesList(),
+        emptyState: const EmptyState(
+          icon: Icons.design_services_outlined,
+          title: 'Sin servicios',
+          subtitle: 'Crea tu primer servicio',
+        ),
+        onRetry: () => ref.invalidate(servicesListProvider),
+        onRefresh: () async => ref.invalidate(servicesListProvider),
+        headerWidget: AppSearchBar(
+          hint: 'Buscar servicios…',
+          controller: _searchController,
+          onChanged: _onSearch,
+          padding: EdgeInsets.fromLTRB(
+            hPad,
+            AppSpacing.base,
+            hPad,
+            AppSpacing.base,
           ),
-          Expanded(
-            child: async.when(
-              loading: () => viewMode == ViewMode.grid
-                  ? const SkeletonServicesGrid()
-                  : const SkeletonServicesList(),
-              error: (e, _) => ErrorState(
-                message: e.toString(),
-                onRetry: () => ref.invalidate(servicesListProvider),
-              ),
-              data: (paginated) => paginated.data.isEmpty
-                  ? const EmptyState(
-                      icon: Icons.design_services_outlined,
-                      title: 'Sin servicios',
-                      subtitle: 'Crea tu primer servicio',
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () async =>
-                          ref.invalidate(servicesListProvider),
-                      child: viewMode == ViewMode.grid
-                          ? _buildGrid(paginated.data, hPad)
-                          : _buildList(paginated.data, hPad),
-                    ),
-            ),
-          ),
-        ],
+        ),
+        dataBuilder: (items) => viewMode == ViewMode.grid
+            ? _buildGrid(items, hPad)
+            : _buildList(items, hPad),
       ),
     );
   }

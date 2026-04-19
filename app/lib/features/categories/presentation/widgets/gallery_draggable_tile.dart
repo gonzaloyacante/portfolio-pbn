@@ -56,110 +56,111 @@ class GalleryDraggableTile extends StatelessWidget {
             onSwap(fromIdx, toIdx);
           }
         },
-        builder: (
-          BuildContext context,
-          List<String?> candidateData,
-          List<dynamic> _,
-        ) {
-          final isHovered = candidateData.isNotEmpty;
+        builder:
+            (
+              BuildContext context,
+              List<String?> candidateData,
+              List<dynamic> _,
+            ) {
+              final isHovered = candidateData.isNotEmpty;
 
-          return AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            curve: Curves.easeOut,
-            decoration: BoxDecoration(
-              borderRadius: AppRadius.asRounded(AppRadius.md),
-              border: isHovered
-                  ? Border.all(color: scheme.primary, width: 3)
-                  : null,
-              boxShadow: isHovered
-                  ? [
-                      BoxShadow(
-                        color: scheme.primary.withValues(alpha: 0.35),
-                        blurRadius: 18,
-                        spreadRadius: 2,
-                      ),
-                    ]
-                  : isDraggingThis
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-            ),
-            child: LongPressDraggable<String>(
-              data: item.id,
-              hapticFeedbackOnStart: true,
-              onDragStarted: () => onDragStart(item.id),
-              onDragEnd: (DraggableDetails _) => onDragEnd(),
-              onDraggableCanceled: (Velocity _, Offset _) => onDragEnd(),
-              feedback: Transform.rotate(
-                angle: 0.07,
-                child: SizedBox(
-                  width: colWidth * 1.05,
-                  child: Material(
-                    elevation: 24,
-                    borderRadius: AppRadius.asRounded(AppRadius.md),
-                    clipBehavior: Clip.antiAlias,
-                    child: Stack(
-                      children: [
-                        GalleryGridTile(item: item, position: position),
-                        Positioned.fill(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.3),
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                curve: Curves.easeOut,
+                decoration: BoxDecoration(
+                  borderRadius: AppRadius.asRounded(AppRadius.md),
+                  border: isHovered
+                      ? Border.all(color: scheme.primary, width: 3)
+                      : null,
+                  boxShadow: isHovered
+                      ? [
+                          BoxShadow(
+                            color: scheme.primary.withValues(alpha: 0.35),
+                            blurRadius: 18,
+                            spreadRadius: 2,
+                          ),
+                        ]
+                      : isDraggingThis
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                ),
+                child: LongPressDraggable<String>(
+                  data: item.id,
+                  hapticFeedbackOnStart: true,
+                  onDragStarted: () => onDragStart(item.id),
+                  onDragEnd: (DraggableDetails _) => onDragEnd(),
+                  onDraggableCanceled: (Velocity _, Offset _) => onDragEnd(),
+                  feedback: Transform.rotate(
+                    angle: 0.07,
+                    child: SizedBox(
+                      width: colWidth * 1.05,
+                      child: Material(
+                        elevation: 24,
+                        borderRadius: AppRadius.asRounded(AppRadius.md),
+                        clipBehavior: Clip.antiAlias,
+                        child: Stack(
+                          children: [
+                            GalleryGridTile(item: item, position: position),
+                            Positioned.fill(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black.withValues(alpha: 0.3),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Center(
+                              child: Icon(
+                                Icons.open_with_rounded,
+                                color: Colors.white,
+                                size: 30,
+                                shadows: [
+                                  Shadow(blurRadius: 8, color: Colors.black),
                                 ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                        const Center(
-                          child: Icon(
-                            Icons.open_with_rounded,
-                            color: Colors.white,
-                            size: 30,
-                            shadows: [
-                              Shadow(blurRadius: 8, color: Colors.black),
-                            ],
-                          ),
+                      ),
+                    ),
+                  ),
+                  childWhenDragging: DragPlaceholder(
+                    borderRadius: AppRadius.asRounded(AppRadius.md),
+                    aspectRatio: aspectRatio,
+                    color: scheme.primary,
+                  ),
+                  child: DroppedAnimator(
+                    dropped: lastDroppedId == item.id,
+                    child: ClipRRect(
+                      borderRadius: AppRadius.asRounded(AppRadius.md),
+                      child: GalleryGridTile(
+                        item: item,
+                        position: position,
+                        onTap: () => GalleryImageViewer.show(
+                          context,
+                          item.url,
+                          position: position,
                         ),
-                      ],
+                        onDelete: () => onDelete(item),
+                        onToggleFeatured: () => onToggleFeatured(item),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              childWhenDragging: DragPlaceholder(
-                borderRadius: AppRadius.asRounded(AppRadius.md),
-                aspectRatio: aspectRatio,
-                color: scheme.primary,
-              ),
-              child: DroppedAnimator(
-                dropped: lastDroppedId == item.id,
-                child: ClipRRect(
-                  borderRadius: AppRadius.asRounded(AppRadius.md),
-                  child: GalleryGridTile(
-                    item: item,
-                    position: position,
-                    onTap: () => GalleryImageViewer.show(
-                      context,
-                      item.url,
-                      position: position,
-                    ),
-                    onDelete: () => onDelete(item),
-                    onToggleFeatured: () => onToggleFeatured(item),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
+              );
+            },
       ),
     );
   }

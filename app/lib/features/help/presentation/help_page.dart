@@ -24,4 +24,3 @@ class HelpPage extends ConsumerWidget {
     );
   }
 }
-
