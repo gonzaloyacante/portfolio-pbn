@@ -8,14 +8,9 @@ import '../../../../core/theme/app_radius.dart';
 import '../../data/category_model.dart';
 
 class CategoryGridCard extends StatelessWidget {
-  const CategoryGridCard({
-    super.key,
-    required this.item,
-    required this.onDelete,
-  });
+  const CategoryGridCard({super.key, required this.item});
 
   final CategoryItem item;
-  final Future<void> Function(BuildContext, CategoryItem) onDelete;
 
   @override
   Widget build(BuildContext context) {

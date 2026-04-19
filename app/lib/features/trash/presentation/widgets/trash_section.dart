@@ -10,8 +10,6 @@ class TrashSection extends StatelessWidget {
     required this.items,
     required this.isNarrow,
     required this.onTap,
-    required this.onRestore,
-    required this.onPurge,
   });
 
   final String type;
@@ -22,8 +20,6 @@ class TrashSection extends StatelessWidget {
   final bool isNarrow;
 
   final void Function(TrashItem) onTap;
-  final void Function(TrashItem) onRestore;
-  final void Function(TrashItem) onPurge;
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +64,7 @@ class TrashSection extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: SizedBox(
                     width: double.infinity,
-                    child: TrashCard(
-                      item: item,
-                      onTap: () => onTap(item),
-                      onRestore: () => onRestore(item),
-                      onPurge: () => onPurge(item),
-                    ),
+                    child: TrashCard(item: item, onTap: () => onTap(item)),
                   ),
                 ),
             ],
@@ -89,8 +80,6 @@ class TrashSection extends StatelessWidget {
                     child: TrashCard(
                       item: items[i],
                       onTap: () => onTap(items[i]),
-                      onRestore: () => onRestore(items[i]),
-                      onPurge: () => onPurge(items[i]),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -99,8 +88,6 @@ class TrashSection extends StatelessWidget {
                       child: TrashCard(
                         item: items[i + 1],
                         onTap: () => onTap(items[i + 1]),
-                        onRestore: () => onRestore(items[i + 1]),
-                        onPurge: () => onPurge(items[i + 1]),
                       ),
                     )
                   else

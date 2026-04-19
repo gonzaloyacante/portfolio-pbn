@@ -40,17 +40,19 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
   bool _showEmail = true;
   bool _showLocation = true;
 
+  List<TextEditingController> get _textControllers => [
+    _pageTitleCtrl,
+    _ownerNameCtrl,
+    _emailCtrl,
+    _phoneCtrl,
+    _whatsappCtrl,
+    _locationCtrl,
+  ];
+
   @override
   void initState() {
     super.initState();
-    for (final c in [
-      _pageTitleCtrl,
-      _ownerNameCtrl,
-      _emailCtrl,
-      _phoneCtrl,
-      _whatsappCtrl,
-      _locationCtrl,
-    ]) {
+    for (final c in _textControllers) {
       c.addListener(_markDirty);
     }
   }
@@ -59,132 +61,15 @@ class _SettingsContactPageState extends ConsumerState<SettingsContactPage> {
     if (!_isDirty) setState(() => _isDirty = true);
   }
 
-  Future<void> _maybeLeave(BuildContext context) async {
-    if (!_isDirty) {
-      context.pop();
-      return;
-    }
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => const ConfirmDialog(
-        title: '¿Salir sin guardar?',
-        message: 'Tienes cambios sin guardar.',
-        confirmLabel: 'Salir',
-        cancelLabel: 'Continuar editando',
-      ),
-    );
-    if (confirmed == true && context.mounted) context.pop();
-  }
-
   @override
   void dispose() {
-    for (final c in [
-      _pageTitleCtrl,
-      _ownerNameCtrl,
-      _emailCtrl,
-      _phoneCtrl,
-      _whatsappCtrl,
-      _locationCtrl,
-    ]) {
+    for (final c in _textControllers) {
       c.removeListener(_markDirty);
+      c.dispose();
     }
-    _pageTitleCtrl.dispose();
-    _ownerNameCtrl.dispose();
-    _emailCtrl.dispose();
-    _phoneCtrl.dispose();
-    _whatsappCtrl.dispose();
-    _locationCtrl.dispose();
     super.dispose();
   }
 
-  void _populate(ContactSettings s) {
-    if (_populated) return;
-    _populated = true;
-    _pageTitleCtrl.text = s.pageTitle ?? '';
-    _ownerNameCtrl.text = s.ownerName ?? '';
-    _emailCtrl.text = s.email ?? '';
-    _phoneCtrl.text = s.phone ?? '';
-    _whatsappCtrl.text = s.whatsapp ?? '';
-    _locationCtrl.text = s.location ?? '';
-    _showSocialLinks = s.showSocialLinks;
-    _showPhone = s.showPhone;
-    _showWhatsapp = s.showWhatsapp;
-    _showEmail = s.showEmail;
-    _showLocation = s.showLocation;
-  }
-
-  String? _nullIfEmpty(String v) => v.trim().isEmpty ? null : v.trim();
-
-  Future<void> _save() async {
-    setState(() => _saving = true);
-    try {
-      await ref.read(settingsRepositoryProvider).updateContact({
-        'pageTitle': _nullIfEmpty(_pageTitleCtrl.text),
-        'ownerName': _nullIfEmpty(_ownerNameCtrl.text),
-        'email': _nullIfEmpty(_emailCtrl.text),
-        'phone': _nullIfEmpty(_phoneCtrl.text),
-        'whatsapp': _nullIfEmpty(_whatsappCtrl.text),
-        'location': _nullIfEmpty(_locationCtrl.text),
-        'showSocialLinks': _showSocialLinks,
-        'showPhone': _showPhone,
-        'showWhatsapp': _showWhatsapp,
-        'showEmail': _showEmail,
-        'showLocation': _showLocation,
-      });
-      ref.invalidate(contactSettingsProvider);
-      if (mounted) {
-        setState(() => _isDirty = false);
-        AppSnackBar.success(context, 'Configuración guardada');
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (mounted) {
-        AppSnackBar.error(context, 'Error al guardar: $e');
-      }
-    } finally {
-      if (mounted) setState(() => _saving = false);
-    }
-  }
-
   @override
-  Widget build(BuildContext context) {
-    final async = ref.watch(contactSettingsProvider);
-
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) =>
-          _maybeLeave(context),
-      child: AppScaffold(
-        title: 'Contacto',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.save_outlined),
-            tooltip: 'Guardar',
-            onPressed: _save,
-          ),
-        ],
-        body: LoadingOverlay(
-          isLoading: _saving,
-          child: async.when(
-            loading: () =>
-                const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
-            error: (e, _) => ErrorState(
-              message: e.toString(),
-              onRetry: () => ref.invalidate(contactSettingsProvider),
-            ),
-            data: (settings) {
-              _populate(settings);
-              return RefreshIndicator(
-                onRefresh: () async {
-                  ref.invalidate(contactSettingsProvider);
-                  await ref.read(contactSettingsProvider.future);
-                },
-                child: _buildForm(context),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => _buildScaffold(context);
 }

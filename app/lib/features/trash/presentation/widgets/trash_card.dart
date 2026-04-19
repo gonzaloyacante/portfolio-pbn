@@ -16,18 +16,10 @@ IconData trashTypeIcon(String type) => switch (type) {
 };
 
 class TrashCard extends StatelessWidget {
-  const TrashCard({
-    super.key,
-    required this.item,
-    required this.onTap,
-    required this.onRestore,
-    required this.onPurge,
-  });
+  const TrashCard({super.key, required this.item, required this.onTap});
 
   final TrashItem item;
   final VoidCallback onTap;
-  final VoidCallback onRestore;
-  final VoidCallback onPurge;
 
   @override
   Widget build(BuildContext context) {
@@ -126,35 +118,6 @@ class TrashCard extends StatelessWidget {
                         : colorScheme.onSurface.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w600,
                   ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Acciones rápidas
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onRestore,
-                  icon: const Icon(Icons.restore, size: 16),
-                  label: const Text('Restaurar'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: colorScheme.primary,
-                    side: BorderSide(color: colorScheme.primary),
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: onPurge,
-                icon: const Icon(Icons.delete_forever, size: 20),
-                tooltip: 'Eliminar permanentemente',
-                style: IconButton.styleFrom(
-                  backgroundColor: colorScheme.errorContainer,
-                  foregroundColor: colorScheme.onErrorContainer,
-                  minimumSize: const Size(40, 40),
                 ),
               ),
             ],

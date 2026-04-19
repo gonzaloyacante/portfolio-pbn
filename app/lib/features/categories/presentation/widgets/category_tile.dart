@@ -1,18 +1,16 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../data/category_model.dart';
+import 'category_tile_image.dart';
 
 class CategoryTile extends StatelessWidget {
-  const CategoryTile({super.key, required this.item, required this.onDelete});
+  const CategoryTile({super.key, required this.item});
 
   final CategoryItem item;
-  final Future<void> Function(BuildContext, CategoryItem) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -33,40 +31,14 @@ class CategoryTile extends StatelessWidget {
           children: [
             SizedBox(
               width: 80,
-              child:
-                  item.coverImageUrl != null && item.coverImageUrl!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: item.coverImageUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => ColoredBox(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 28,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => ColoredBox(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 28,
-                        ),
-                      ),
-                    )
-                  : ColoredBox(
-                      color: scheme.surfaceContainerHighest,
-                      child: Icon(
-                        Icons.photo_library_outlined,
-                        color: scheme.outlineVariant,
-                        size: 28,
-                      ),
-                    ),
+              child: CategoryTileImage(
+                coverImageUrl: item.coverImageUrl,
+                colorScheme: Theme.of(context).colorScheme,
+              ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -114,8 +86,6 @@ class CategoryTile extends StatelessWidget {
                     pathParameters: {'id': item.id},
                     queryParameters: {'name': item.name},
                   );
-                } else if (action == 'delete') {
-                  onDelete(context, item);
                 }
               },
               itemBuilder: (_) => [
@@ -144,23 +114,6 @@ class CategoryTile extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       const Text('Ver galería'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete_outline,
-                        size: 18,
-                        color: AppColors.destructive,
-                      ),
-                      SizedBox(width: 10),
-                      Text(
-                        'Eliminar',
-                        style: TextStyle(color: AppColors.destructive),
-                      ),
                     ],
                   ),
                 ),

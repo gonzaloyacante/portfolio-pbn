@@ -7,7 +7,6 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/utils/app_logger.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../features/app_settings/providers/app_preferences_provider.dart';
 import '../../../shared/widgets/widgets.dart';

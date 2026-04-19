@@ -31,20 +31,6 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
                 _toggleCategoryActive(ctx, item);
               },
             ),
-            ListTile(
-              leading: const Icon(
-                Icons.delete_outline,
-                color: AppColors.destructive,
-              ),
-              title: const Text(
-                'Eliminar',
-                style: TextStyle(color: AppColors.destructive),
-              ),
-              onTap: () {
-                Navigator.of(sheetCtx).pop();
-                _delete(ctx, item);
-              },
-            ),
             const SizedBox(height: 8),
           ],
         ),
@@ -144,27 +130,12 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: Dismissible(
-            key: Key(items[i].id),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              color: AppColors.destructive,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: AppSpacing.lg),
-              child: const Icon(Icons.delete_outline, color: Colors.white),
-            ),
-            confirmDismiss: (DismissDirection _) async {
+          child: GestureDetector(
+            onLongPress: () {
               HapticFeedback.mediumImpact();
-              await _delete(ctx, items[i]);
-              return false;
+              showCategoryActions(ctx, items[i]);
             },
-            child: GestureDetector(
-              onLongPress: () {
-                HapticFeedback.mediumImpact();
-                showCategoryActions(ctx, items[i]);
-              },
-              child: CategoryTile(item: items[i], onDelete: _delete),
-            ),
+            child: CategoryTile(item: items[i]),
           ),
         ),
       ),
@@ -191,39 +162,11 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
               HapticFeedback.mediumImpact();
               showCategoryActions(ctx, items[i]);
             },
-            child: CategoryGridCard(item: items[i], onDelete: _delete),
+            child: CategoryGridCard(item: items[i]),
           ),
         ),
       ),
     );
-  }
-
-  Future<void> _delete(BuildContext ctx, CategoryItem item) async {
-    final confirmed = await ConfirmDialog.show(
-      ctx,
-      title: 'Eliminar categoría',
-      message: '¿Eliminar "${item.name}"? Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
-      isDestructive: true,
-    );
-    if (!confirmed || !ctx.mounted) return;
-
-    try {
-      await ref.read(categoriesRepositoryProvider).deleteCategory(item.id);
-      ref.invalidate(categoriesListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Categoría eliminada')));
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(SnackBar(content: Text('Error al eliminar: $e')));
-      }
-    }
   }
 
   Future<void> _toggleCategoryActive(

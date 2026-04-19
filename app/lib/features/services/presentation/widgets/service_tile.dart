@@ -3,16 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/utils/currency_helper.dart';
 import '../../data/service_model.dart';
 
 class ServiceTile extends StatelessWidget {
-  const ServiceTile({super.key, required this.item, required this.onDelete});
+  const ServiceTile({super.key, required this.item});
 
   final ServiceItem item;
-  final Future<void> Function(BuildContext, ServiceItem) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +28,9 @@ class ServiceTile extends StatelessWidget {
         RouteNames.serviceEdit,
         pathParameters: {'id': item.id},
       ),
-      padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       child: Row(
         children: [
-          // Icon container
           Container(
             width: 46,
             height: 46,
@@ -46,7 +43,6 @@ class ServiceTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          // Content
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,59 +89,6 @@ class ServiceTile extends StatelessWidget {
                 ],
               ],
             ),
-          ),
-          // Menu
-          PopupMenuButton<String>(
-            iconSize: 20,
-            padding: EdgeInsets.zero,
-            icon: Icon(
-              Icons.more_vert_rounded,
-              size: 20,
-              color: scheme.outline,
-            ),
-            itemBuilder: (_) => [
-              PopupMenuItem(
-                value: 'edit',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit_outlined,
-                      size: 18,
-                      color: scheme.onSurface,
-                    ),
-                    const SizedBox(width: 10),
-                    const Text('Editar'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: AppColors.destructive,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Eliminar',
-                      style: TextStyle(color: AppColors.destructive),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (action) {
-              if (action == 'edit') {
-                context.pushNamed(
-                  RouteNames.serviceEdit,
-                  pathParameters: {'id': item.id},
-                );
-              } else if (action == 'delete') {
-                onDelete(context, item);
-              }
-            },
           ),
         ],
       ),

@@ -15,7 +15,6 @@ extension _ContactsListPageBuilders on _ContactsListPageState {
               item: item,
               priorityColor: _priorityColor(ctx, item.priority),
               statusIcon: _statusIcon(item.status),
-              onDelete: _delete,
             ),
           ),
         );
@@ -38,37 +37,4 @@ extension _ContactsListPageBuilders on _ContactsListPageState {
     'IN_PROGRESS' => Icons.pending_outlined,
     _ => Icons.mail_outline,
   };
-
-  Future<void> _delete(BuildContext ctx, ContactItem item) async {
-    final confirmed = await ConfirmDialog.show(
-      ctx,
-      title: 'Eliminar contacto',
-      message:
-          '¿Eliminar el mensaje de "${item.name}"? Esta acción no se puede deshacer.',
-      confirmLabel: 'Eliminar',
-      isDestructive: true,
-    );
-    if (!confirmed || !ctx.mounted) return;
-
-    try {
-      await ref.read(contactsRepositoryProvider).deleteContact(item.id);
-      ref.invalidate(contactsListProvider);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(
-          ctx,
-        ).showSnackBar(const SnackBar(content: Text('Contacto eliminado')));
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No fue posible completar la accion. Intentalo de nuevo.',
-            ),
-          ),
-        );
-      }
-    }
-  }
 }
