@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
-Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
+Widget _wrap(Widget child) => ProviderScope(
+  child: MaterialApp(home: Scaffold(body: child)),
+);
 
 void main() {
   group('ShimmerBox', () {
@@ -39,7 +42,7 @@ void main() {
     testWidgets('renders with image placeholder by default', (tester) async {
       await tester.pumpWidget(_wrap(const SkeletonCard()));
       expect(find.byType(SkeletonCard), findsOneWidget);
-      expect(find.byType(Card), findsOneWidget);
+      expect(find.byType(AppCard), findsOneWidget);
     });
 
     testWidgets('renders without image when hasImage=false', (tester) async {

@@ -42,7 +42,9 @@ class ImageUploadWidget extends StatefulWidget {
     this.maxWidth, // null = sin límite de dimensión
     this.maxHeight, // null = sin límite de dimensión
     required this.onImageSelected,
+    this.onImagesSelected,
     this.onImageRemoved,
+    this.allowMultiple = false,
     this.height = 360,
   });
 
@@ -53,7 +55,9 @@ class ImageUploadWidget extends StatefulWidget {
   final int? maxWidth;
   final int? maxHeight;
   final void Function(File file) onImageSelected;
+  final void Function(List<File> files)? onImagesSelected;
   final VoidCallback? onImageRemoved;
+  final bool allowMultiple;
   final double height;
 
   @override
@@ -191,6 +195,28 @@ class _ImageUploadWidgetState extends State<ImageUploadWidget>
       // imageQuality is intentionally omitted here: image_cropper will apply
       // compressQuality (85) in its own pipeline, avoiding a double-compression
       // step that can fail on HEIC / cloud-backed gallery images on Android.
+
+      // Android native multi-select path (no cropping for multi-select)
+      if (source == ImagePickerSource.gallery &&
+          widget.allowMultiple &&
+          Platform.isAndroid) {
+        final pickedList = await picker.pickMultiImage(
+          maxWidth: widget.maxWidth?.toDouble(),
+          maxHeight: widget.maxHeight?.toDouble(),
+        );
+        if (!mounted) return;
+        if (pickedList.isEmpty) return;
+        final files = pickedList.map((p) => File(p.path)).toList();
+        if (widget.onImagesSelected != null) {
+          widget.onImagesSelected!(files);
+        } else {
+          for (final f in files) {
+            widget.onImageSelected(f);
+          }
+        }
+        return;
+      }
+
       final picked = await picker.pickImage(
         source: source == ImagePickerSource.gallery
             ? ImageSource.gallery

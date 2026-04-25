@@ -191,18 +191,14 @@ describe('testimonialSettingsSchema — exhaustive', () => {
 // ============================================
 
 describe('contactSettingsSchema — exhaustive', () => {
-  const validCS = { email: 'info@paola.es', showSocialLinks: true }
+  const validCS = { showSocialLinks: true }
 
-  it('passes with required email and showSocialLinks', () => {
+  it('passes with minimal required fields', () => {
     expect(contactSettingsSchema.safeParse(validCS).success).toBe(true)
   })
 
-  it('fails when email is missing', () => {
-    expect(contactSettingsSchema.safeParse({ showSocialLinks: true }).success).toBe(false)
-  })
-
-  it('fails when showSocialLinks is missing', () => {
-    expect(contactSettingsSchema.safeParse({ email: 'a@b.com' }).success).toBe(false)
+  it('passes when showSocialLinks is missing (optional)', () => {
+    expect(contactSettingsSchema.safeParse({ email: 'a@b.com' }).success).toBe(true)
   })
 
   it('fails with invalid email', () => {
@@ -220,17 +216,16 @@ describe('contactSettingsSchema — exhaustive', () => {
       ownerName: 'Paola',
       phone: '+34 600 000 000',
       whatsapp: '+34 600 000 000',
-      location: 'Madrid',
-      formTitle: 'Formulario',
-      nameLabel: 'Nombre',
-      emailLabel: 'Email',
-      phoneLabel: 'Teléfono',
-      messageLabel: 'Mensaje',
-      preferenceLabel: 'Preferencia',
-      submitLabel: 'Enviar',
-      successTitle: 'Enviado',
-      successMessage: 'Te responderemos pronto',
-      sendAnotherLabel: 'Enviar otro',
+      instagram: 'https://instagram.com/paolabolivarnievas',
+      instagramUsername: '@paolabolivarnievas',
+      location: 'Granada, España',
+      showPhone: true,
+      showWhatsapp: true,
+      showEmail: true,
+      showLocation: true,
+      showInstagram: true,
+      instagramPostUrl: 'https://www.instagram.com/p/ABC123/',
+      showInstagramEmbed: true,
     })
     expect(r.success).toBe(true)
   })

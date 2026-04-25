@@ -66,7 +66,7 @@ export function IconPickerDropdown({ value, onSelect, onClose }: IconPickerDropd
             placeholder={tab === 'emoji' ? 'Buscar emoji...' : 'Buscar ícono...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-transparent placeholder:text-muted-foreground w-full text-sm outline-none"
+            className="placeholder:text-muted-foreground w-full bg-transparent text-sm outline-none"
           />
         </div>
       </div>

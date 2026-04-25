@@ -65,8 +65,6 @@ extension _TrashPageBuilders on _TrashPageState {
                 isNarrow: false,
                 onTap: (item) =>
                     context.pushNamed(RouteNames.trashDetail, extra: item),
-                onRestore: (item) => _restore(context, item),
-                onPurge: (item) => _purge(context, item),
               ),
             );
           }
@@ -96,8 +94,6 @@ extension _TrashPageBuilders on _TrashPageState {
                           RouteNames.trashDetail,
                           extra: item,
                         ),
-                        onRestore: (item) => _restore(context, item),
-                        onPurge: (item) => _purge(context, item),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -110,8 +106,6 @@ extension _TrashPageBuilders on _TrashPageState {
                           RouteNames.trashDetail,
                           extra: item,
                         ),
-                        onRestore: (item) => _restore(context, item),
-                        onPurge: (item) => _purge(context, item),
                       ),
                     ),
                   ],
@@ -127,8 +121,6 @@ extension _TrashPageBuilders on _TrashPageState {
                   isNarrow: false,
                   onTap: (item) =>
                       context.pushNamed(RouteNames.trashDetail, extra: item),
-                  onRestore: (item) => _restore(context, item),
-                  onPurge: (item) => _purge(context, item),
                 ),
               );
               i++;

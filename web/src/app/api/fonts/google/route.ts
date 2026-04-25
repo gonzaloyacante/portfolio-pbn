@@ -38,8 +38,7 @@ export async function GET(req: NextRequest) {
   // Solo accesible para administradores autenticados
   const session = await getServerSession(authOptions)
   const isAuthenticated =
-    !!session ||
-    !!(await getToken({ req, secret: process.env.NEXTAUTH_SECRET }))
+    !!session || !!(await getToken({ req, secret: process.env.NEXTAUTH_SECRET }))
 
   if (!isAuthenticated) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })

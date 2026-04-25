@@ -10,6 +10,7 @@ vi.mock('@/lib/db', () => ({
     category: {
       update: vi.fn(),
     },
+    $transaction: vi.fn().mockImplementation(async (ops: Promise<unknown>[]) => Promise.all(ops)),
   },
 }))
 

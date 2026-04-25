@@ -14,6 +14,7 @@ vi.mock('@/lib/db', () => ({
       delete: vi.fn(),
       count: vi.fn(),
     },
+    $transaction: vi.fn().mockImplementation(async (ops: Promise<unknown>[]) => Promise.all(ops)),
   },
 }))
 

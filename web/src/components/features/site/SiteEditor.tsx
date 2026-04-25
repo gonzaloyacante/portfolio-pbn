@@ -19,7 +19,9 @@ export function SiteEditor({ settings }: SiteEditorProps) {
   const router = useRouter()
   const [saving, setSaving] = useState(false)
 
-  const [siteName, setSiteName] = useState(settings?.siteName ?? 'Paola Bolívar Nievas - Make-up Artist')
+  const [siteName, setSiteName] = useState(
+    settings?.siteName ?? 'Paola Bolívar Nievas - Make-up Artist'
+  )
   const [siteTagline, setSiteTagline] = useState(settings?.siteTagline ?? '')
   const [maintenanceMode, setMaintenanceMode] = useState(settings?.maintenanceMode ?? false)
   const [maintenanceMessage, setMaintenanceMessage] = useState(settings?.maintenanceMessage ?? '')
@@ -27,9 +29,13 @@ export function SiteEditor({ settings }: SiteEditorProps) {
   const [navbarBrandText, setNavbarBrandText] = useState(settings?.navbarBrandText ?? '')
   const [navbarBrandFont, setNavbarBrandFont] = useState(settings?.navbarBrandFont ?? '')
   const [navbarBrandFontUrl, setNavbarBrandFontUrl] = useState(settings?.navbarBrandFontUrl ?? '')
-  const [navbarBrandFontSize, setNavbarBrandFontSize] = useState(settings?.navbarBrandFontSize ?? 30)
+  const [navbarBrandFontSize, setNavbarBrandFontSize] = useState(
+    settings?.navbarBrandFontSize ?? 30
+  )
   const [navbarBrandColor, setNavbarBrandColor] = useState(settings?.navbarBrandColor ?? '')
-  const [navbarBrandColorDark, setNavbarBrandColorDark] = useState(settings?.navbarBrandColorDark ?? '')
+  const [navbarBrandColorDark, setNavbarBrandColorDark] = useState(
+    settings?.navbarBrandColorDark ?? ''
+  )
   const [showAboutPage, setShowAboutPage] = useState(settings?.showAboutPage ?? true)
   const [showGalleryPage, setShowGalleryPage] = useState(settings?.showGalleryPage ?? true)
   const [showServicesPage, setShowServicesPage] = useState(settings?.showServicesPage ?? false)

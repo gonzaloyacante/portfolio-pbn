@@ -38,7 +38,7 @@ export default function Modal({
 
       if (e.key === 'Tab' && dialogRef.current) {
         const focusable = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS),
+          dialogRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTORS)
         )
         if (focusable.length === 0) {
           e.preventDefault()

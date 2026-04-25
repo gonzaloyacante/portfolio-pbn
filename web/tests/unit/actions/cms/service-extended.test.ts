@@ -2,17 +2,29 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
+const mockServiceMethods = vi.hoisted(() => ({
+  findMany: vi.fn(),
+  findFirst: vi.fn(),
+  findUnique: vi.fn(),
+  create: vi.fn(),
+  update: vi.fn(),
+  delete: vi.fn(),
+  aggregate: vi.fn().mockResolvedValue({ _max: { sortOrder: 0 } }),
+}))
+
+const mockPricingTierMethods = vi.hoisted(() => ({
+  deleteMany: vi.fn(),
+  createMany: vi.fn(),
+}))
+
 vi.mock('@/lib/db', () => ({
   prisma: {
-    service: {
-      findMany: vi.fn(),
-      findFirst: vi.fn(),
-      findUnique: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-    },
-    $transaction: vi.fn(),
+    service: mockServiceMethods,
+    servicePricingTier: mockPricingTierMethods,
+    $transaction: vi.fn().mockImplementation(async (fnOrArray: unknown) => {
+      if (typeof fnOrArray === 'function') return fnOrArray({ service: mockServiceMethods })
+      return Promise.all(fnOrArray as Promise<unknown>[])
+    }),
   },
 }))
 
@@ -228,10 +240,12 @@ describe('deleteService', () => {
     const { deleteService } = await import('@/actions/cms/services')
     const result = await deleteService('svc-1')
     expect(result.success).toBe(true)
-    expect(prisma.service.update).toHaveBeenCalledWith({
-      where: { id: 'svc-1' },
-      data: { deletedAt: expect.any(Date) },
-    })
+    expect(prisma.service.update).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'svc-1' },
+        data: expect.objectContaining({ deletedAt: expect.any(Date) }),
+      })
+    )
   })
 
   it('should handle database error on delete', async () => {

@@ -1,171 +1,222 @@
 part of 'category_gallery_page.dart';
 
-// ── Drop Bounce Animator ──────────────────────────────────────────────────────
+extension _CategoryGalleryPageActions on _CategoryGalleryPageState {
+  // ── Delete ──────────────────────────────────────────────────────────────────
 
-/// Runs a short scale-up → elastic-back animation when [dropped] toggles to true.
-/// Used to provide tactile feedback when a gallery image lands in its new position.
-class _DroppedAnimator extends StatefulWidget {
-  const _DroppedAnimator({required this.dropped, required this.child});
-
-  final bool dropped;
-  final Widget child;
-
-  @override
-  State<_DroppedAnimator> createState() => _DroppedAnimatorState();
-}
-
-class _DroppedAnimatorState extends State<_DroppedAnimator>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 400),
-      vsync: this,
-    );
-    _scale = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 1.0,
-          end: 1.07,
-        ).chain(CurveTween(curve: Curves.easeOut)),
-        weight: 30,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(
-          begin: 1.07,
-          end: 1.0,
-        ).chain(CurveTween(curve: Curves.elasticOut)),
-        weight: 70,
-      ),
-    ]).animate(_ctrl);
-  }
-
-  @override
-  void didUpdateWidget(_DroppedAnimator oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.dropped && !oldWidget.dropped) {
-      _ctrl.forward(from: 0.0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _scale,
-      builder: (BuildContext _, Widget? child) =>
-          Transform.scale(scale: _scale.value, child: child),
-      child: widget.child,
-    );
-  }
-}
-
-// ── Skeleton ──────────────────────────────────────────────────────────────────
-
-class _GallerySkeleton extends StatelessWidget {
-  const _GallerySkeleton({required this.viewMode});
-
-  final ViewMode viewMode;
-
-  @override
-  Widget build(BuildContext context) {
-    if (viewMode == ViewMode.grid) {
-      return const SkeletonCategoriesGrid();
-    }
-    return const SkeletonCategoriesList();
-  }
-}
-
-// ── Full-screen image viewer (pinch-to-zoom) ─────────────────────────────────
-
-class _ImageViewer extends StatelessWidget {
-  const _ImageViewer({required this.imageUrl, required this.position});
-
-  final String imageUrl;
-  final int? position;
-
-  static void show(BuildContext context, String imageUrl, {int? position}) {
-    showDialog<void>(
+  Future<void> _deleteImage(GalleryImageItem item) async {
+    final confirmed = await showDialog<bool>(
       context: context,
-      barrierColor: Colors.black87,
-      builder: (_) => _ImageViewer(imageUrl: imageUrl, position: position),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog.fullscreen(
-      backgroundColor: Colors.black,
-      child: Stack(
-        children: [
-          Center(
-            child: InteractiveViewer(
-              minScale: 0.5,
-              maxScale: 5.0,
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.contain,
-                placeholder: (BuildContext _, String _) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
-                ),
-                errorWidget: (BuildContext _, String _, Object _) =>
-                    const Center(
-                      child: Icon(
-                        Icons.broken_image_outlined,
-                        color: Colors.white54,
-                        size: 64,
-                      ),
-                    ),
-              ),
-            ),
+      builder: (ctx) => AlertDialog(
+        title: const Text('Eliminar imagen'),
+        content: const Text(
+          '¿Eliminar esta imagen de la galería? Esta acción no se puede deshacer.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
           ),
-          if (position != null)
-            Positioned(
-              top: MediaQuery.paddingOf(context).top + 12,
-              left: 16,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '#$position',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-          Positioned(
-            top: MediaQuery.paddingOf(context).top + 8,
-            right: 8,
-            child: IconButton(
-              icon: const Icon(
-                Icons.close_rounded,
-                color: Colors.white,
-                size: 28,
-              ),
-              onPressed: () => Navigator.pop(context),
-              tooltip: 'Cerrar',
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: AppColors.destructive),
             ),
           ),
         ],
       ),
     );
+
+    if (confirmed != true || !mounted) return;
+    setState(() => _saving = true);
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .deleteGalleryImage(widget.categoryId, item.id, item.publicId ?? '');
+      setState(() {
+        _items?.removeWhere((i) => i.id == item.id);
+      });
+      ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Imagen eliminada')));
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo eliminar la imagen.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  // ── Toggle isFeatured ───────────────────────────────────────────────────────
+
+  Future<void> _toggleImageFeatured(GalleryImageItem item) async {
+    final newValue = !item.isFeatured;
+    setState(() {
+      _items = _items
+          ?.map((i) => i.id == item.id ? i.copyWith(isFeatured: newValue) : i)
+          .toList();
+    });
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .toggleImageFeatured(
+            widget.categoryId,
+            item.id,
+            isFeatured: newValue,
+          );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      setState(() {
+        _items = _items
+            ?.map(
+              (i) => i.id == item.id ? i.copyWith(isFeatured: !newValue) : i,
+            )
+            .toList();
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo actualizar la imagen destacada.'),
+          ),
+        );
+      }
+    }
+  }
+
+  // ── Drag / Reorder ──────────────────────────────────────────────────────────
+
+  void _swapItems(int fromIdx, int toIdx) {
+    setState(() {
+      final item = _items!.removeAt(fromIdx);
+      _items!.insert(toIdx, item);
+      _dirty = true;
+      _lastDroppedId = item.id;
+    });
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) setState(() => _lastDroppedId = null);
+    });
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex -= 1;
+      final item = _items!.removeAt(oldIndex);
+      _items!.insert(newIndex, item);
+      _dirty = true;
+    });
+  }
+
+  // ── Save / Reset order ──────────────────────────────────────────────────────
+
+  Future<void> _saveOrder() async {
+    if (_items == null || !_dirty) return;
+    setState(() => _saving = true);
+
+    try {
+      final orderItems = _items!
+          .asMap()
+          .entries
+          .map((e) => (id: e.value.id, order: e.key))
+          .toList();
+
+      await ref
+          .read(categoriesRepositoryProvider)
+          .updateGalleryOrder(widget.categoryId, orderItems);
+
+      ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+      setState(() => _dirty = false);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Orden guardado correctamente')),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo guardar el orden. Intentá de nuevo.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _saveAndReturn() async {
+    await _saveOrder();
+    if (!mounted) return;
+    context.pop(true);
+  }
+
+  Future<void> _resetOrder() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Restablecer orden'),
+        content: const Text(
+          '¿Restablecer al orden predeterminado (por orden de subida)?'
+          '\nSe perderá el orden personalizado.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Restablecer',
+              style: TextStyle(color: AppColors.destructive),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+    setState(() => _saving = true);
+
+    try {
+      await ref
+          .read(categoriesRepositoryProvider)
+          .updateGalleryOrder(widget.categoryId, []);
+
+      ref.invalidate(_categoryGalleryProvider(widget.categoryId));
+      final fresh = await ref.read(
+        _categoryGalleryProvider(widget.categoryId).future,
+      );
+      if (!mounted) return;
+      setState(() {
+        _dirty = false;
+        _items = List.of(fresh);
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Orden restablecido')));
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo restablecer el orden.')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 }

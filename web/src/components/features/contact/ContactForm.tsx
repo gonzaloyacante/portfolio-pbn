@@ -109,7 +109,14 @@ export default function ContactForm() {
         <p className="mb-6 text-(--foreground)/80">
           Gracias por contactarme. Te responderé lo antes posible.
         </p>
-        <Button onClick={() => { setSubmitted(false); reset() }} variant="outline" className="rounded-xl">
+        <Button
+          onClick={() => {
+            setSubmitted(false)
+            reset()
+          }}
+          variant="outline"
+          className="rounded-xl"
+        >
           Enviar otro mensaje
         </Button>
       </motion.div>

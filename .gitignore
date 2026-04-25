@@ -128,7 +128,6 @@ Thumbs.db
 # ===================================================
 # Keep generated prisma client and sqlite local DBs ignored for web
 /web/src/generated/prisma
-/web/prisma/migrations/
 *.sqlite
 *.sqlite-journal
 
@@ -210,3 +209,15 @@ migrate_working_dir/
 .idea/
 .vscode/
 .unlighthouse
+
+# ===================================================
+# AI TOOLS & AGENT CONFIGS (never commit)
+# ===================================================
+# Neon CLI context (contains org ID)
+.neon
+# Kiro/Claude agent skills cache
+skills-lock.json
+.agents/skills/neon-postgres/
+.claude/skills/neon-postgres/
+# Cursor rules (local only)
+.cursor/

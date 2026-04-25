@@ -14,7 +14,6 @@ abstract class CategoryItem with _$CategoryItem {
     required String name,
     required String slug,
     String? description,
-    String? thumbnailUrl,
     String? coverImageUrl,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
@@ -36,12 +35,7 @@ abstract class CategoryDetail with _$CategoryDetail {
     required String name,
     required String slug,
     String? description,
-    String? thumbnailUrl,
     String? coverImageUrl,
-    String? metaTitle,
-    String? metaDescription,
-    @Default([]) List<String> metaKeywords,
-    String? ogImage,
     @Default(0) int sortOrder,
     @Default(true) bool isActive,
     required String createdAt,
@@ -59,8 +53,7 @@ class CategoryFormData {
   final String slug;
   final String? description;
 
-  /// URL original (alta calidad) subida por el usuario.
-  /// El backend genera automáticamente thumbnailUrl a partir de este campo.
+  /// URL de portada (alta calidad) subida por el usuario.
   final String? coverImageUrl;
   final bool isActive;
 
@@ -72,13 +65,16 @@ class CategoryFormData {
     this.isActive = true,
   });
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'slug': slug,
-    'description': description,
-    'coverImageUrl': coverImageUrl,
-    'isActive': isActive,
-  };
+  Map<String, dynamic> toJson() {
+    final m = <String, dynamic>{
+      'name': name,
+      'slug': slug,
+      'isActive': isActive,
+    };
+    if (description != null) m['description'] = description;
+    if (coverImageUrl != null) m['coverImageUrl'] = coverImageUrl;
+    return m;
+  }
 }
 
 // ── GalleryImageItem ────────────────────────────────────────────────────────────

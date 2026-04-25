@@ -4,9 +4,10 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { requireAdmin } from '@/lib/security-server'
+import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
-import { z } from 'zod'
+import { siteSettingsSchema } from '@/lib/validations'
 
 // ─── Types ──────────────────────────────────────────
 
@@ -55,32 +56,6 @@ export interface PageVisibility {
   navbarBrandColorDark: string | null
   navbarShowBrand: boolean
 }
-
-// ─── Validation ─────────────────────────────────────
-
-const siteSettingsSchema = z.object({
-  siteName: z.string().min(1).max(200).optional(),
-  siteTagline: z.string().max(500).nullable().optional(),
-  logoUrl: z.string().url().nullable().optional(),
-  faviconUrl: z.string().url().nullable().optional(),
-  defaultEmail: z.string().email().nullable().optional(),
-  defaultPhone: z.string().max(30).nullable().optional(),
-  defaultWhatsapp: z.string().max(30).nullable().optional(),
-  maintenanceMode: z.boolean().optional(),
-  maintenanceMessage: z.string().max(500).nullable().optional(),
-  showAboutPage: z.boolean().optional(),
-  showGalleryPage: z.boolean().optional(),
-  showServicesPage: z.boolean().optional(),
-  showContactPage: z.boolean().optional(),
-  allowIndexing: z.boolean().optional(),
-  navbarBrandText: z.string().max(100).nullable().optional(),
-  navbarBrandFont: z.string().max(100).nullable().optional(),
-  navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
-  navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
-  navbarBrandColor: z.string().max(30).nullable().optional(),
-  navbarBrandColorDark: z.string().max(30).nullable().optional(),
-  navbarShowBrand: z.boolean().optional(),
-})
 
 // ─── Queries ────────────────────────────────────────
 
@@ -212,13 +187,13 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
     const user = await requireAdmin()
     await checkSettingsRateLimit(user.id as string)
 
-    const parsed = siteSettingsSchema.partial().safeParse(data)
-    if (!parsed.success) {
-      return { success: false, error: parsed.error.issues[0]?.message ?? 'Datos inválidos' }
+    const validated = validateAndSanitize(siteSettingsSchema.partial(), data)
+    if (!validated.success) {
+      return { success: false, error: validated.error }
     }
 
     const cleanData = Object.fromEntries(
-      Object.entries(parsed.data).filter(([, v]) => v !== undefined)
+      Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     ) as Record<string, unknown>
 
     const settings = await _upsertSiteSettings(cleanData)

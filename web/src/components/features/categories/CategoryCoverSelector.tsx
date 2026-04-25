@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
-import ImageUpload from '@/components/ui/media/ImageUpload'
+import { ImageUpload } from '@/components/ui'
 import { getCategoryImages } from '@/actions/cms/category'
 import { Image as ImageIcon, Upload } from 'lucide-react'
 import { GalleryImagePicker } from './GalleryImagePicker'
@@ -107,4 +107,3 @@ export default function CategoryCoverSelector({
     </div>
   )
 }
-

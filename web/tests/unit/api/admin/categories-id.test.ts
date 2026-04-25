@@ -9,6 +9,7 @@ vi.mock('@/lib/db', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    categoryImage: { count: vi.fn().mockResolvedValue(0) },
   },
 }))
 

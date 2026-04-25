@@ -137,10 +137,14 @@ web/src/
 
 ### Base de Datos (Neon Branching)
 
-| Entorno    | Branch Git | Branch Neon       | .env File         |
-| ---------- | ---------- | ----------------- | ----------------- |
-| Producción | `main`     | `main`            | `.env.production` |
-| Desarrollo | `develop`  | `preview/develop` | `.env`            |
+| Entorno    | Branch Git | Branch Neon | .env File         |
+| ---------- | ---------- | ----------- | ----------------- |
+| Producción | `main`     | `main`      | `.env.production` |
+| Desarrollo | `develop`  | `develop`   | `.env`            |
+
+> **Proyecto Neon**: `dry-cake-98386708` (org: Vercel: Gonzalo Yacante's projects)
+> **Pool config**: `max: 3`, `idleTimeoutMillis: 10_000` — crítico para free tier (suspende compute rápido)
+> **⚠️ PROHIBIDO**: escribir en DB desde rate limiters — usar solo memoria. Ver `src/lib/rate-limit.ts`.
 
 ### Scripts Web (ejecutar desde `web/`)
 
@@ -209,7 +213,7 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 | **Navegación**           | `go_router`                         | Rutas tipadas, guards en `redirect`. Sin `Navigator.push`.     |
 | **Auth Storage**         | `flutter_secure_storage`            | JWT access + refresh token. NUNCA en SharedPreferences.        |
 | **DB Local**             | `drift` (SQLite)                    | Tablas tipadas, DAOs, streams reactivos.                       |
-| **Imágenes - Upload**    | `image_picker` + `image_cropper`    | Compresión a calidad 85% antes de subir.                       |
+| **Imágenes - Upload**    | `image_picker` + `image_cropper`    | Calidad 100% (sin compresión — portafolio artístico, calidad máxima intencional). Ver `AppConstants.imageQuality`. |
 | **Push Notifications**   | `firebase_messaging`                | FCM. Token registrado en backend al login.                     |
 | **Imágenes - Red**       | `cached_network_image`              | Siempre con placeholder shimmer.                               |
 | **Tipografías**          | `google_fonts`                      | Poppins, Open Sans, Great Vibes — igual que la web.             |
@@ -220,7 +224,7 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 | **Mapa**                 | `flutter_map` (OpenStreetMap)       | Mapa de visitantes en dashboard. Sin API key.                  |
 | **Serialización**        | `freezed` + `json_serializable`     | Modelos inmutables con code-gen. **PROHIBIDO** maps dinámicos. |
 | **Error Tracking**       | `sentry_flutter`                    | Mismo proyecto Sentry que la web.                              |
-| **Env Config**           | `envied`                            | Variables de entorno seguras. NUNCA hardcodear URLs/keys.      |
+| **Env Config**           | `flutter_dotenv ^6.0.0`             | Variables de entorno seguras via `.env`. NUNCA hardcodear URLs/keys. Acceder SIEMPRE via `EnvConfig.X` — nunca `dotenv.env[]` directo. |
 | **Code Gen**             | `build_runner` + `riverpod_generator` | Reejecutar tras cambios en modelos o providers.              |
 | **Testing**              | `flutter_test` + `mocktail`         | Unit + widget + integration tests.                             |
 | **Logging**              | `logger`                            | Sin `print()` en producción.                                   |
@@ -248,7 +252,7 @@ app/lib/
 │   │   ├── auth_interceptor.dart  # Inyecta JWT + auto-refresh en 401
 │   │   └── token_storage.dart     # flutter_secure_storage wrapper
 │   ├── config/
-│   │   ├── env_config.dart        # API_BASE_URL, SENTRY_DSN (envied)
+│   │   ├── env_config.dart        # API_BASE_URL, SENTRY_DSN (flutter_dotenv — wrapper tipado)
 │   │   └── app_constants.dart     # Constantes de la app (timeouts, límites, etc.)
 │   ├── database/
 │   │   ├── app_database.dart      # drift AppDatabase class
@@ -531,7 +535,7 @@ Ambos scripts ejecutan **todos** estos pasos sin excepción (ninguno es opcional
 ### Anti-Patrones App
 
 - ❌ Usar `print()` (usar `AppLogger`)
-- ❌ Hardcodear URLs o API keys (usar `envied`)
+- ❌ Hardcodear URLs o API keys (usar `flutter_dotenv` via `EnvConfig.X`)
 - ❌ `setState` para estado global o de carga
 - ❌ `Navigator.push()` (usar GoRouter)
 - ❌ `Map<String, dynamic>` como modelo de datos
@@ -603,4 +607,46 @@ Al terminar cada fase de implementación:
   - `feat(app): implement Phase 0 - project structure and dependencies`
   - `feat(app): add Google Calendar integration to bookings`
 - **Requisito OBLIGATORIO:** Cada commit que afecte `app/` debe incluir un aumento de versión en `app/pubspec.yaml` (ej.: `version: X.Y.Z+N`). Esto es indispensable para que los scripts de distribución detecten builds nuevas y las notificaciones in-app funcionen. Sin bump de versión, la app no detecta actualizaciones.
+
+---
+
+## 6. 🧠 MEMORIA ACTIVA
+
+> [!IMPORTANT] MEMORIA PERMANENTE
+> Este proyecto está indexado en el Cerebro Digital (Obsidian). **Antes de cada sesión de trabajo**, el Agente DEBE consultar `~/cerebro/Proyectos/portfolio-pbn/` para cargar el contexto de arquitectura, deuda técnica y decisiones cerradas.
+
+### Notas clave en Obsidian
+
+| Nota | Propósito |
+|------|-----------|
+| `Proyectos/portfolio-pbn/SOP_Reglas.md` | Reglas, prohibiciones y protocolos — fuente de verdad |
+| `Proyectos/portfolio-pbn/Stack_Tecnico.md` | Versiones exactas, dependencias, scripts |
+| `Proyectos/portfolio-pbn/Mapa_Estructura.md` | Jerarquía de carpetas y responsabilidades |
+| `Proyectos/portfolio-pbn/Design_System_Real.md` | Tokens reales (HEX, spacing, radius, typography) |
+| `Proyectos/portfolio-pbn/Flujo_Datos_Estado.md` | Providers Riverpod, auth state machine, persistencia |
+| `Proyectos/portfolio-pbn/Features/` | Una nota por feature con capa datos/dominio/UI |
+| `Proyectos/portfolio-pbn/Tareas_Pendientes.md` | Backlog priorizado de deuda técnica |
+| `Proyectos/portfolio-pbn/Auditoria_Calidad_*.md` | Hallazgos de auditoría con fecha |
+| `wiki/entities/portfolio-pbn.md` | Índice central con wikilinks a todo |
+
+### Decisiones Cerradas (no reabrir sin evidencia nueva)
+
+| Decisión | Razón |
+|----------|-------|
+| `flutter_dotenv` en lugar de `envied` | No se necesita code-gen; wrapper tipado `EnvConfig` es suficiente |
+| `imageQuality = 100` (sin compresión) | Portafolio artístico — calidad máxima es requerimiento del cliente |
+| Rate limit in-memory | Aceptable para deployment single-region en Vercel; documentado como limitación |
+| `unstable_cache` (no migrado aún) | `"use cache"` directive en Next.js 16 es API experimental; migrar gradualmente |
+| Theme DB-driven | Permite al cliente cambiar colores sin redeploy; caché con `revalidateTag` |
+| JWT custom (Flutter) independiente de NextAuth | NextAuth no tiene endpoint REST consumible desde Flutter nativo |
+| Refresh tokens como UUID en DB (no JWT) | Permite revocación inmediata; JWTs de refresh son irrevocables |
+
+### Deuda Técnica Activa (ver `Tareas_Pendientes.md` para detalle)
+
+- 🔴 **P0**: 3 tests failing — `thumbnailUrl` → `coverImageUrl` en test/features/categories/
+- 🟡 **P1**: Migrar `unstable_cache` → `"use cache"` directive en web/src/actions/
+- 🟡 **P1**: Plan de testing Flutter — cobertura mínima de repositories
+- 🟡 **P1**: Rate limit — evaluar Upstash Redis para multi-worker
+- 🟢 **P2**: Agregar `AppColors.divider/disabled/hint` y limpiar HEX en `app_theme.dart`
+- 🟢 **P2**: Crear modelo `@freezed CloudinaryUploadResponse` en upload_service.dart
 

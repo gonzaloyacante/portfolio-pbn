@@ -35,11 +35,9 @@ export function ContactCard({
           <button
             onClick={(e) => onToggleImportant(contact.id, e)}
             title={isImportant ? 'Quitar importante' : 'Marcar importante'}
-            className="text-muted-foreground transition-colors hover:text-warning"
+            className="text-muted-foreground hover:text-warning transition-colors"
           >
-            <Star
-              className={`h-3.5 w-3.5 ${isImportant ? 'fill-warning text-warning' : ''}`}
-            />
+            <Star className={`h-3.5 w-3.5 ${isImportant ? 'fill-warning text-warning' : ''}`} />
           </button>
           <div className="flex flex-wrap gap-1">
             {!contact.isRead && (

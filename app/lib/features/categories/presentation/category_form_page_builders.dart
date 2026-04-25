@@ -1,5 +1,42 @@
 part of 'category_form_page.dart';
 
+// ── Slug helpers ──────────────────────────────────────────────────────────────
+
+/// Convierte un nombre legible en un slug URL-safe.
+String _toSlug(String input) {
+  const accents = <String, String>{
+    'á': 'a',
+    'à': 'a',
+    'â': 'a',
+    'ä': 'a',
+    'é': 'e',
+    'è': 'e',
+    'ê': 'e',
+    'ë': 'e',
+    'í': 'i',
+    'ì': 'i',
+    'î': 'i',
+    'ï': 'i',
+    'ó': 'o',
+    'ò': 'o',
+    'ô': 'o',
+    'ö': 'o',
+    'ú': 'u',
+    'ù': 'u',
+    'û': 'u',
+    'ü': 'u',
+    'ñ': 'n',
+  };
+  var s = input.toLowerCase();
+  for (final entry in accents.entries) {
+    s = s.replaceAll(entry.key, entry.value);
+  }
+  // ignore: deprecated_member_use
+  s = s.replaceAll(RegExp(r'[^a-z0-9\s-]'), '').trim();
+  // ignore: deprecated_member_use
+  return s.replaceAll(RegExp(r'\s+'), '-');
+}
+
 extension _CategoryFormPageBuilders on _CategoryFormPageState {
   Widget _buildContent(BuildContext context) {
     if (_isEdit) {
@@ -51,7 +88,14 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Nombre + Switch + Descripción (responsivo)
+                if (_hasDraft)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: DraftRestoreBanner(
+                      onRestore: _restoreDraft,
+                      onDiscard: _discardDraft,
+                    ),
+                  ), // Nombre + Switch + Descripción (responsivo)
                 Builder(
                   builder: (ctx) {
                     final colorScheme = Theme.of(ctx).colorScheme;
@@ -84,7 +128,10 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                         title: const Text('Categoría activa'),
                         subtitle: const Text('Visible en el portfolio'),
                         value: _isActive,
-                        onChanged: (v) => _rebuild(() => _isActive = v),
+                        onChanged: (v) => _rebuild(() {
+                          _isActive = v;
+                          _isDirty = true;
+                        }),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12,
                         ),
@@ -122,6 +169,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                                 maxLength: 500,
                                 maxLines: null,
                                 expands: true,
+                                onChanged: (_) => _markDirty(),
                               ),
                             ),
                           ],
@@ -147,6 +195,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                           ),
                           maxLength: 500,
                           maxLines: 3,
+                          onChanged: (_) => _markDirty(),
                         ),
                       ],
                     );
@@ -164,12 +213,16 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                         ? _coverImageCtrl.text
                         : null,
                     onImageSelected: (file) {
-                      _rebuild(() => _pendingThumbnail = file);
+                      _rebuild(() {
+                        _pendingThumbnail = file;
+                        _isDirty = true;
+                      });
                     },
                     onImageRemoved: () {
                       _rebuild(() {
                         _pendingThumbnail = null;
                         _coverImageCtrl.clear();
+                        _isDirty = true;
                       });
                     },
                     height: imageHeight,
@@ -247,5 +300,209 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
         ),
       ),
     );
+  }
+
+  Future<void> _pickFromGallery() async {
+    if (!_isEdit) return;
+    try {
+      final images = await ref
+          .read(categoriesRepositoryProvider)
+          .getCategoryGallery(widget.categoryId!);
+      if (!mounted) return;
+      if (images.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No hay imágenes en la galería de esta categoría.'),
+          ),
+        );
+        return;
+      }
+      await showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (ctx) {
+          return DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.6,
+            maxChildSize: 0.9,
+            builder: (BuildContext _, ScrollController scrollCtrl) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Seleccionar de la galería',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => ctx.pop(),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: GridView.builder(
+                      controller: scrollCtrl,
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 6,
+                            mainAxisSpacing: 6,
+                          ),
+                      itemCount: images.length,
+                      itemBuilder: (BuildContext _, int i) {
+                        final img = images[i];
+                        return RepaintBoundary(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _coverImageCtrl.text = img.url;
+                                _pendingThumbnail = null;
+                                _isDirty = true;
+                              });
+                              ctx.pop();
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: CachedNetworkImage(
+                                imageUrl: img.url,
+                                fit: BoxFit.cover,
+                                placeholder: (BuildContext ctx2, String url) =>
+                                    const ColoredBox(
+                                      color: AppColors.lightBorder,
+                                    ),
+                                errorWidget:
+                                    (
+                                      BuildContext ctx2,
+                                      String url,
+                                      Object err,
+                                    ) => const Icon(
+                                      Icons.broken_image,
+                                      color: AppColors.neutralMedium,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      );
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No se pudo cargar la galería. Inténtalo de nuevo.'),
+          ),
+        );
+      }
+    }
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────────────
+
+  void _populateForm(CategoryDetail detail) {
+    if (_populatedFor == widget.categoryId) return;
+    _populatedFor = widget.categoryId;
+    _nameCtrl.text = detail.name;
+    _slugCtrl.text = detail.slug;
+    _descriptionCtrl.text = detail.description ?? '';
+    _coverImageCtrl.text = detail.coverImageUrl ?? '';
+    setState(() {
+      _isActive = detail.isActive;
+    });
+  }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
+
+  void _autoSlug(String name) {
+    _markDirty();
+    if (_isEdit) return;
+    _slugCtrl.text = _toSlug(name);
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    setState(() => _loading = true);
+    try {
+      if (_pendingThumbnail != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        final result = await uploadSvc.uploadImageFull(
+          _pendingThumbnail!,
+          folder: 'portfolio/categories',
+        );
+        _coverImageCtrl.text = result.url;
+      }
+
+      final repo = ref.read(categoriesRepositoryProvider);
+      final formData = CategoryFormData(
+        name: _nameCtrl.text.trim(),
+        slug: _slugCtrl.text.trim(),
+        description: _descriptionCtrl.text.trim().isEmpty
+            ? null
+            : _descriptionCtrl.text.trim(),
+        coverImageUrl: _coverImageCtrl.text.trim().isEmpty
+            ? null
+            : _coverImageCtrl.text.trim(),
+        isActive: _isActive,
+      );
+
+      if (_isEdit) {
+        await repo.updateCategory(widget.categoryId!, formData.toJson());
+        ref.invalidate(categoryDetailProvider(widget.categoryId!));
+      } else {
+        await repo.createCategory(formData);
+      }
+
+      ref.invalidate(categoriesListProvider);
+      if (mounted) {
+        unawaited(ref.read(draftServiceProvider).clear(_draftScope));
+        HapticFeedback.lightImpact();
+        context.pop();
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 }

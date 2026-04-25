@@ -277,10 +277,12 @@ describe('Service Actions', () => {
       const { deleteService } = await import('@/actions/cms/services')
       await deleteService('service-abc')
 
-      expect(prisma.service.update).toHaveBeenCalledWith({
-        where: { id: 'service-abc' },
-        data: { deletedAt: expect.any(Date) },
-      })
+      expect(prisma.service.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: 'service-abc' },
+          data: expect.objectContaining({ deletedAt: expect.any(Date) }),
+        })
+      )
     })
 
     it('should return error on delete failure', async () => {

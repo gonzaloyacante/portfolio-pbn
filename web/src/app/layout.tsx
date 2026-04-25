@@ -1,4 +1,4 @@
-import type { Viewport } from 'next'
+import type { Metadata, Viewport } from 'next'
 import '@/lib/env' // ✅ Validate environment variables on server startup
 import { Suspense } from 'react'
 import { Great_Vibes, Open_Sans, Poppins } from 'next/font/google'
@@ -10,6 +10,7 @@ import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
 import FontLoader from '@/components/layout/FontLoader'
+import { BRAND } from '@/lib/design-tokens'
 
 // Script font para "Make-up", firmas y detalles elegantes
 // Alternativa a Amsterdam Four (Canva)
@@ -40,11 +41,22 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   themeColor: [
-    // eslint-disable-next-line no-restricted-syntax -- browser meta tag requires HEX directly
-    { media: '(prefers-color-scheme: light)', color: '#fff1f9' },
-    // eslint-disable-next-line no-restricted-syntax -- browser meta tag requires HEX directly
-    { media: '(prefers-color-scheme: dark)', color: '#6c0a0a' },
+    { media: '(prefers-color-scheme: light)', color: BRAND.accent },
+    { media: '(prefers-color-scheme: dark)', color: BRAND.primary },
   ],
+}
+
+export const metadata: Metadata = {
+  icons: {
+    icon: [
+      { url: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/icons/icon-128x128.png', sizes: '128x128', type: 'image/png' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' }],
+    shortcut: '/icons/icon-96x96.png',
+  },
+  manifest: '/manifest.json',
 }
 
 export default async function RootLayout({
@@ -69,16 +81,18 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Preload fuente decorativa crítica para reducir FOUT */}
-        {/* eslint-disable-next-line @next/next/google-font-preconnect -- preconnect for gstatic.com is present at line above */}
-        <link
-          rel="preload"
-          as="font"
-          type="font/woff2"
-          href="https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN-XCg6UKDXlCbA.woff2"
-          crossOrigin="anonymous"
-        />
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        {/* Dynamic theme-color from DB — overrides the static viewport export */}
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: light)"
+          content={settings?.accentColor ?? BRAND.accent}
+        />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: dark)"
+          content={settings?.darkPrimaryColor ?? BRAND.darkPrimary}
+        />
       </head>
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}

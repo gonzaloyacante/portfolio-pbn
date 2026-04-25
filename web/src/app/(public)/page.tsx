@@ -1,10 +1,9 @@
-import { getHomeSettings } from '@/actions/settings/home'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings } from '@/actions/settings/site'
-import HeroSection from '@/components/features/home/HeroSection'
-import FeaturedCategories from '@/components/features/home/FeaturedCategories'
-import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
+import HomePage from '@/components/features/home/HomePage'
 import { Metadata } from 'next'
+
+export const revalidate = 60
 
 export async function generateMetadata(): Promise<Metadata> {
   const [contact, site] = await Promise.all([getContactSettings(), getSiteSettings()])
@@ -12,6 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const location = contact?.location || ''
   const locationSuffix = location ? ` en ${location}` : ''
   const siteName = site?.siteName || ownerName
+  const ogImage = site?.defaultOgImage || undefined
 
   const title = `${ownerName} | Maquilladora Profesional${locationSuffix}`
   const shortDesc = `Maquilladora y caracterizadora profesional${locationSuffix}. Bodas, editoriales, cine y teatro. Descubre mi portfolio.`
@@ -28,44 +28,17 @@ export async function generateMetadata(): Promise<Metadata> {
       type: 'website',
       locale: 'es_ES',
       siteName,
+      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: ownerName }] }),
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description: shortDesc,
+      ...(ogImage && { images: [ogImage] }),
     },
   }
 }
 
-/**
- * Homepage
- * - Hero Section (Dynamic)
- * - Featured Galleries Grid (Dynamic)
- * - Testimonials moved to About Page
- */
 export default async function Home() {
-  const homeSettings = await getHomeSettings()
-
-  return (
-    <main className="flex w-full flex-1 flex-col items-center justify-between bg-(--background) transition-colors duration-500">
-      {/* Hero Section */}
-      <HeroSection settings={homeSettings} />
-
-      {/* Featured Images Section */}
-      {homeSettings?.showFeaturedImages && (
-        <FeaturedCategories
-          title={homeSettings.featuredTitle}
-          count={homeSettings.featuredCount}
-          titleFont={homeSettings.featuredTitleFont}
-          titleFontUrl={homeSettings.featuredTitleFontUrl}
-          titleFontSize={homeSettings.featuredTitleFontSize}
-          titleColor={homeSettings.featuredTitleColor}
-          titleColorDark={homeSettings.featuredTitleColorDark}
-        />
-      )}
-
-      {/* Testimonials + CTA */}
-      <PublicTestimonialsSection />
-    </main>
-  )
+  return <HomePage />
 }

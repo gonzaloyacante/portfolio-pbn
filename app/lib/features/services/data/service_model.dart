@@ -4,6 +4,23 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'service_model.freezed.dart';
 part 'service_model.g.dart';
 
+// ── ServicePricingTierItem ────────────────────────────────────────────────────
+
+/// A single pricing tier for a service (relational — replaces JSON blob).
+@freezed
+abstract class ServicePricingTierItem with _$ServicePricingTierItem {
+  const factory ServicePricingTierItem({
+    required String id,
+    required String name,
+    @Default('') String price,
+    String? description,
+    @Default(0) int sortOrder,
+  }) = _ServicePricingTierItem;
+
+  factory ServicePricingTierItem.fromJson(Map<String, dynamic> json) =>
+      _$ServicePricingTierItemFromJson(json);
+}
+
 // ── ServiceItem ───────────────────────────────────────────────────────────────
 
 /// Modelo ligero para listas.
@@ -55,10 +72,7 @@ abstract class ServiceDetail with _$ServiceDetail {
     int? maxBookingsPerDay,
     int? advanceNoticeDays,
     @Default(0) int sortOrder,
-    @Default([]) List<dynamic> pricingTiers,
-    String? metaTitle,
-    String? metaDescription,
-    @Default([]) List<String> metaKeywords,
+    @Default([]) List<ServicePricingTierItem> pricingTiers,
     String? requirements,
     String? cancellationPolicy,
     required String createdAt,
@@ -88,12 +102,9 @@ class ServiceFormData {
   final bool isAvailable;
   final int? maxBookingsPerDay;
   final int? advanceNoticeDays;
-  final List<Map<String, dynamic>> pricingTiers;
+  final List<ServicePricingTierItem> pricingTiers;
   final String? requirements;
   final String? cancellationPolicy;
-  final String? metaTitle;
-  final String? metaDescription;
-  final String? metaKeywords;
 
   const ServiceFormData({
     required this.name,
@@ -115,38 +126,29 @@ class ServiceFormData {
     this.pricingTiers = const [],
     this.requirements,
     this.cancellationPolicy,
-    this.metaTitle,
-    this.metaDescription,
-    this.metaKeywords,
   });
 
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'slug': slug,
-    'description': description,
-    'shortDesc': shortDesc,
-    'price': price != null ? double.tryParse(price!) : null,
-    'priceLabel': priceLabel,
-    'currency': currency,
-    'duration': duration,
-    'durationMinutes': durationMinutes,
-    'imageUrl': imageUrl,
-    'videoUrl': videoUrl,
-    'isActive': isActive,
-    'isFeatured': isFeatured,
-    'isAvailable': isAvailable,
-    'maxBookingsPerDay': maxBookingsPerDay,
-    'advanceNoticeDays': advanceNoticeDays,
-    'pricingTiers': pricingTiers,
-    'requirements': requirements,
-    'cancellationPolicy': cancellationPolicy,
-    'metaTitle': metaTitle,
-    'metaDescription': metaDescription,
-    if (metaKeywords != null && metaKeywords!.isNotEmpty)
-      'metaKeywords': metaKeywords!
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList(),
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'slug': slug,
+      if (description != null) 'description': description,
+      if (shortDesc != null) 'shortDesc': shortDesc,
+      if (price != null) 'price': price,
+      'priceLabel': priceLabel,
+      'currency': currency,
+      if (duration != null) 'duration': duration,
+      if (durationMinutes != null) 'durationMinutes': durationMinutes,
+      if (imageUrl != null) 'imageUrl': imageUrl,
+      if (videoUrl != null) 'videoUrl': videoUrl,
+      'isActive': isActive,
+      'isFeatured': isFeatured,
+      'isAvailable': isAvailable,
+      if (maxBookingsPerDay != null) 'maxBookingsPerDay': maxBookingsPerDay,
+      if (advanceNoticeDays != null) 'advanceNoticeDays': advanceNoticeDays,
+      'pricingTiers': pricingTiers.map((t) => t.toJson()).toList(),
+      if (requirements != null) 'requirements': requirements,
+      if (cancellationPolicy != null) 'cancellationPolicy': cancellationPolicy,
+    };
+  }
 }

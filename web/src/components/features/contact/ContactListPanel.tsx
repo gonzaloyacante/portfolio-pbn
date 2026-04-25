@@ -35,9 +35,7 @@ export function ContactListPanel({
   return (
     <div className="space-y-4 lg:col-span-1">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-foreground text-lg font-bold">
-          Mensajes ({filteredContacts.length})
-        </h2>
+        <h2 className="text-foreground text-lg font-bold">Mensajes ({filteredContacts.length})</h2>
         <select
           value={filter}
           onChange={(e) => onFilterChange(e.target.value as ContactFilter)}

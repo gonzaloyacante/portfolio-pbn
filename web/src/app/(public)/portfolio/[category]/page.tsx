@@ -85,6 +85,8 @@ export default async function CategoryGalleryPage({
     url: img.url,
     alt: category.name,
     title: category.name,
+    width: img.width,
+    height: img.height,
     isFeatured: img.isFeatured,
   }))
 
@@ -106,6 +108,7 @@ export default async function CategoryGalleryPage({
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
             <Link
               href={ROUTES.public.portfolio}
+              aria-label="Volver al portfolio"
               className="group text-primary flex items-center gap-2 transition-colors hover:opacity-70"
             >
               <div className="border-primary group-hover:bg-primary flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:-translate-x-1 group-hover:text-white">
@@ -118,7 +121,7 @@ export default async function CategoryGalleryPage({
             </h1>
           </div>
 
-          <p className="text-muted-foreground max-w-md text-sm opacity-80 sm:text-right">
+          <p className="text-muted-foreground max-w-md text-sm sm:text-right">
             {category.description}
           </p>
         </div>

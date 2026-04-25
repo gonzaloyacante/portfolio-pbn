@@ -21,73 +21,71 @@ export default async function Image() {
   const specialty = `Caracterización · Efectos Especiales · Audiovisual${location ? ` · ${location}` : ''}`
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        background: OG_BACKGROUND,
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 20,
+        padding: '64px',
+      }}
+    >
+      {/* Decorative bar */}
       <div
         style={{
-          background: OG_BACKGROUND,
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 20,
-          padding: '64px',
+          width: 80,
+          height: 6,
+          background: OG_PRIMARY,
+          borderRadius: 3,
+          marginBottom: 16,
+        }}
+      />
+      <div
+        style={{
+          fontSize: 72,
+          fontWeight: 700,
+          color: OG_PRIMARY,
+          letterSpacing: '-1px',
+          textAlign: 'center',
         }}
       >
-        {/* Decorative bar */}
-        <div
-          style={{
-            width: 80,
-            height: 6,
-            background: OG_PRIMARY,
-            borderRadius: 3,
-            marginBottom: 16,
-          }}
-        />
-        <div
-          style={{
-            fontSize: 72,
-            fontWeight: 700,
-            color: OG_PRIMARY,
-            letterSpacing: '-1px',
-            textAlign: 'center',
-          }}
-        >
-          {ownerName}
-        </div>
-        <div
-          style={{
-            fontSize: 32,
-            color: OG_FOREGROUND,
-            textAlign: 'center',
-          }}
-        >
-          {tagline}
-        </div>
-        <div
-          style={{
-            fontSize: 22,
-            color: OG_MUTED,
-            textAlign: 'center',
-          }}
-        >
-          {specialty}
-        </div>
-        {/* Bottom bar */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 64,
-            width: 120,
-            height: 4,
-            background: OG_PRIMARY,
-            borderRadius: 2,
-            opacity: 0.4,
-          }}
-        />
+        {ownerName}
       </div>
-    ),
-    size,
+      <div
+        style={{
+          fontSize: 32,
+          color: OG_FOREGROUND,
+          textAlign: 'center',
+        }}
+      >
+        {tagline}
+      </div>
+      <div
+        style={{
+          fontSize: 22,
+          color: OG_MUTED,
+          textAlign: 'center',
+        }}
+      >
+        {specialty}
+      </div>
+      {/* Bottom bar */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 64,
+          width: 120,
+          height: 4,
+          background: OG_PRIMARY,
+          borderRadius: 2,
+          opacity: 0.4,
+        }}
+      />
+    </div>,
+    size
   )
 }

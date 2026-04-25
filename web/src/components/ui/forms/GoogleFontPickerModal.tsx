@@ -4,7 +4,7 @@ import { Search, Check, Loader2, AlertCircle, Type } from 'lucide-react'
 import { FONT_CATEGORIES, type GoogleFont } from '@/lib/google-fonts'
 import { Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
-import Badge from '@/components/ui/data-display/Badge'
+import { Badge } from '@/components/ui'
 
 interface GoogleFontPickerModalProps {
   open: boolean

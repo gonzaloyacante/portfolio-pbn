@@ -86,6 +86,10 @@ void initAppUpdateContainer(ProviderContainer container) {
   _globalContainer = container;
 }
 
+void clearAppUpdateContainer() {
+  _globalContainer = null;
+}
+
 /// Dispara una nueva comprobación de actualizaciones desde cualquier contexto
 /// (incluso fuera del árbol de widgets, ej. handler de FCM).
 ///

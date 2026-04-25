@@ -287,17 +287,51 @@ export const contactSettingsSchema = z.object({
   email: z.string().email().optional().nullable(),
   phone: z.string().optional().nullable(),
   whatsapp: z.string().optional().nullable(),
+  instagram: z.string().url().optional().nullable(),
+  instagramUsername: z.string().trim().max(100).optional(),
   location: z.string().optional().nullable(),
-  showSocialLinks: z.boolean(),
+  showSocialLinks: z.boolean().optional(),
   showPhone: z.boolean().optional(),
   showWhatsapp: z.boolean().optional(),
   showEmail: z.boolean().optional(),
   showLocation: z.boolean().optional(),
+  showInstagram: z.boolean().optional(),
   instagramPostUrl: z.string().url().optional().nullable(),
   showInstagramEmbed: z.boolean().optional(),
 })
 
 export type ContactSettingsFormData = z.infer<typeof contactSettingsSchema>
+
+// Site Settings
+export const siteSettingsSchema = z.object({
+  siteName: z.string().min(1).max(200).optional(),
+  siteTagline: z.string().max(500).nullable().optional(),
+  logoUrl: z.string().url().nullable().optional(),
+  faviconUrl: z.string().url().nullable().optional(),
+  defaultEmail: z.string().email().nullable().optional(),
+  defaultPhone: z.string().max(30).nullable().optional(),
+  defaultWhatsapp: z.string().max(30).nullable().optional(),
+  defaultMetaTitle: z.string().max(160).nullable().optional(),
+  defaultMetaDescription: z.string().max(320).nullable().optional(),
+  defaultOgImage: z.string().url().nullable().optional(),
+  defaultAddress: z.string().max(300).nullable().optional(),
+  maintenanceMode: z.boolean().optional(),
+  maintenanceMessage: z.string().max(500).nullable().optional(),
+  showAboutPage: z.boolean().optional(),
+  showGalleryPage: z.boolean().optional(),
+  showServicesPage: z.boolean().optional(),
+  showContactPage: z.boolean().optional(),
+  allowIndexing: z.boolean().optional(),
+  navbarBrandText: z.string().max(100).nullable().optional(),
+  navbarBrandFont: z.string().max(100).nullable().optional(),
+  navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
+  navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
+  navbarBrandColor: z.string().max(30).nullable().optional(),
+  navbarBrandColorDark: z.string().max(30).nullable().optional(),
+  navbarShowBrand: z.boolean().optional(),
+})
+
+export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>
 
 // Category Display Settings
 export const categorySettingsSchema = z.object({
@@ -355,9 +389,9 @@ export const pushUnregisterSchema = z.object({
 
 export const pricingTierSchema = z.array(
   z.object({
-    name: z.string().trim().min(1, 'El nombre del plan es obligatorio').max(100),
-    price: z.number().min(0, 'El precio no puede ser negativo'),
-    features: z.array(z.string().trim().min(1).max(100)).optional(),
+    name: z.string().trim().max(150),
+    price: z.string().trim().max(50),
+    description: z.string().trim().max(500).optional().nullable(),
   })
 )
 
@@ -378,6 +412,16 @@ export const serviceApiSchema = z.object({
   imageUrl: z.string().trim().optional().nullable(),
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
+  pricingTiers: z
+    .array(
+      z.object({
+        id: z.string().optional(),
+        name: z.string().trim().max(150),
+        price: z.string().trim().max(50),
+        description: z.string().trim().max(500).optional().nullable(),
+      })
+    )
+    .optional(),
 })
 
 // ── Category (API — extends base categorySchema) ────────────────────────────
@@ -456,8 +500,8 @@ export const contactUpdateApiSchema = z.object({
 export const socialLinkApiSchema = z.object({
   platform: z.string().min(1, 'Plataforma obligatoria'),
   url: z.string().url('URL inválida'),
-  username: z.string().optional(),
-  icon: z.string().optional(),
+  username: z.string().nullish(),
+  icon: z.string().nullish(),
   isActive: z.boolean().optional(),
   sortOrder: z.number().optional(),
 })

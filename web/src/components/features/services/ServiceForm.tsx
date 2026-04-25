@@ -8,10 +8,13 @@ import { Button, ImageUpload, DurationField } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { generateSlug } from '@/lib/string-utils'
-import { Service } from '@/generated/prisma/client'
+import { Service, ServicePricingTier } from '@/generated/prisma/client'
+import ServicePricingTiersEditor from './ServicePricingTiersEditor'
+
+type ServiceWithTiers = Service & { pricingTiers?: ServicePricingTier[] }
 
 interface ServiceFormProps {
-  service?: Service | null
+  service?: ServiceWithTiers | null
   onSuccess?: () => void
   onCancel?: () => void
 }
@@ -181,13 +184,14 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
             ]}
           />
         </div>
-        <FormField
-          label="Niveles de Precio (JSON: [{name: 'Básico', price: 100}])"
-          name="pricingTiers"
-          type="textarea"
-          defaultValue={service?.pricingTiers ? JSON.stringify(service.pricingTiers) : ''}
-          placeholder='[{"name": "Básico", "price": 5000}]'
-          rows={4}
+        <ServicePricingTiersEditor
+          defaultTiers={
+            service?.pricingTiers?.map((t) => ({
+              name: t.name,
+              price: t.price,
+              description: t.description,
+            })) ?? []
+          }
         />
       </div>
 

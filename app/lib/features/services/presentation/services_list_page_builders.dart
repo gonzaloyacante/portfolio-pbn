@@ -24,7 +24,7 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
               HapticFeedback.mediumImpact();
               _showServiceActions(ctx, items[i]);
             },
-            child: ServiceGridCard(item: items[i], onDelete: _delete),
+            child: ServiceGridCard(item: items[i]),
           ),
         ),
       ),
@@ -39,30 +39,88 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: Dismissible(
-            key: Key(items[i].id),
-            direction: DismissDirection.endToStart,
-            background: Container(
-              color: AppColors.destructive,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: AppSpacing.lg),
-              child: const Icon(Icons.delete_outline, color: Colors.white),
-            ),
-            confirmDismiss: (DismissDirection _) async {
+          child: GestureDetector(
+            onLongPress: () {
               HapticFeedback.mediumImpact();
-              await _delete(ctx, items[i]);
-              return false;
+              _showServiceActions(ctx, items[i]);
             },
-            child: GestureDetector(
-              onLongPress: () {
-                HapticFeedback.mediumImpact();
-                _showServiceActions(ctx, items[i]);
-              },
-              child: ServiceTile(item: items[i], onDelete: _delete),
-            ),
+            child: ServiceTile(item: items[i]),
           ),
         ),
       ),
     );
+  }
+
+  void _showServiceActions(BuildContext ctx, ServiceItem item) {
+    showModalBottomSheet<void>(
+      context: ctx,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: const Text('Editar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.serviceEdit,
+                  pathParameters: {'id': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_today_outlined),
+              title: const Text('Nueva reserva'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                ctx.pushNamed(
+                  RouteNames.bookingNew,
+                  extra: {'serviceId': item.id},
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(
+                item.isActive
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined,
+              ),
+              title: Text(item.isActive ? 'Desactivar' : 'Activar'),
+              onTap: () {
+                Navigator.of(sheetCtx).pop();
+                _toggleServiceActive(ctx, item);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _toggleServiceActive(BuildContext ctx, ServiceItem item) async {
+    try {
+      await ref.read(servicesRepositoryProvider).updateService(item.id, {
+        'isActive': !item.isActive,
+      });
+      ref.invalidate(servicesListProvider);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(
+            content: Text(
+              item.isActive ? 'Servicio desactivado' : 'Servicio activado',
+            ),
+          ),
+        );
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (ctx.mounted) {
+        ScaffoldMessenger.of(
+          ctx,
+        ).showSnackBar(SnackBar(content: Text('Error al actualizar: $e')));
+      }
+    }
   }
 }

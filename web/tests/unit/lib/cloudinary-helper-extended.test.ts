@@ -147,9 +147,9 @@ describe('getVariantUrl — extended', () => {
     expect(result).toContain('w_1600')
   })
 
-  it('applies full variant (w_1920)', () => {
+  it('applies full variant (w_3840)', () => {
     const result = getVariantUrl(VALID_URL, 'full')
-    expect(result).toContain('w_1920')
+    expect(result).toContain('w_3840')
   })
 
   it('applies original variant (no width)', () => {

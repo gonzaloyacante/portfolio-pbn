@@ -52,23 +52,23 @@ export async function GET(req: Request) {
     const now = new Date()
     const today = startOfDay(now)
 
-    // ── Visitas diarias (últimos N días) ──────────────────────────────────────
+    // ── Visitas diarias (últimos N días) — agregado en DB, no en memoria ─────
     const daysAgo = addDays(today, -(daysParam - 1))
 
-    const pageLogs = await prisma.analyticLog.findMany({
-      where: {
-        timestamp: { gte: daysAgo },
-        eventType: { endsWith: '_VIEW' },
-        isBot: false,
-      },
-      select: { timestamp: true },
-    })
+    const dailyRaw = await prisma.$queryRaw<{ day: Date; count: bigint }[]>`
+      SELECT DATE_TRUNC('day', timestamp) AS day, COUNT(*)::bigint AS count
+      FROM "analytic_logs"
+      WHERE timestamp >= ${daysAgo}
+        AND "eventType" LIKE '%_VIEW'
+        AND "isBot" = false
+      GROUP BY DATE_TRUNC('day', timestamp)
+      ORDER BY day ASC
+    `
 
-    // Agrupar por día en JavaScript
     const dailyMap = new Map<string, number>()
-    for (const log of pageLogs) {
-      const dayKey = startOfDay(log.timestamp).toISOString().split('T')[0]
-      dailyMap.set(dayKey, (dailyMap.get(dayKey) ?? 0) + 1)
+    for (const row of dailyRaw) {
+      const key = new Date(row.day).toISOString().split('T')[0]
+      dailyMap.set(key, Number(row.count))
     }
 
     const dailyPageViews = Array.from({ length: daysParam }, (_, i) => {

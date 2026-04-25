@@ -7,7 +7,7 @@ import { resetPassword } from '@/actions/user/auth'
 import { ROUTES } from '@/config/routes'
 import { FadeIn, Button } from '@/components/ui'
 
-import PasswordStrengthMeter from '@/components/ui/forms/PasswordStrengthMeter'
+import { PasswordStrengthMeter } from '@/components/ui'
 
 function ResetPasswordForm() {
   const [message, setMessage] = useState('')

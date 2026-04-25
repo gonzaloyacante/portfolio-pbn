@@ -2,7 +2,7 @@
 
 import { motion } from '@/components/ui'
 import { Button } from '@/components/ui'
-import ImageUpload from '@/components/ui/media/ImageUpload'
+import { ImageUpload } from '@/components/ui'
 import { Save, RotateCcw, Check, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
@@ -16,7 +16,12 @@ interface CategoryGalleryToolbarProps {
   isResetting: boolean
   onSave: () => void
   onReset: () => void
-  onUploadComplete: (urls: string[], publicIds: string[]) => void
+  onUploadComplete: (
+    urls: string[],
+    publicIds: string[],
+    widths?: Array<number | undefined>,
+    heights?: Array<number | undefined>
+  ) => void
 }
 
 export function CategoryGalleryToolbar({

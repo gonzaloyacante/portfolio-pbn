@@ -23,6 +23,7 @@ model Testimonial {
   // Source tracking
   source         String? // "website", "instagram", "referral"
   categoryId     String? // Link to related category (optional)
+  category       Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   // Moderation
   status         String    @default("PENDING") // PENDING, APPROVED, REJECTED
   moderatedAt    DateTime?
@@ -38,6 +39,7 @@ model Testimonial {
   @@index([isActive, sortOrder])
   @@index([status, featured])
   @@index([rating])
+  @@index([categoryId])
   @@map("testimonials")
 }
 
@@ -52,8 +54,7 @@ model Service {
   price              Decimal?  @db.Decimal(10, 2)
   priceLabel         String?   @default("desde") // "desde", "fijo", "consultar", "gratis"
   currency           String    @default("EUR")
-  // Pricing tiers (JSON for flexibility — tier structure varies unpredictably)
-  pricingTiers       Json? // [{name: "Básico", price: 5000}, {name: "Premium", price: 8000}]
+  pricingTiers       ServicePricingTier[]
   // Time
   duration           String? // "2 horas", "3-4 horas", "Todo el día"
   durationMinutes    Int? // For booking calculations
@@ -83,6 +84,21 @@ model Service {
   @@index([isFeatured])
   @@index([isAvailable])
   @@map("services")
+}
+
+/// Pricing tiers for a service (replaces the old pricingTiers Json? field).
+model ServicePricingTier {
+  id          String  @id @default(cuid())
+  serviceId   String
+  name        String
+  price       String  @default("")
+  description String?
+  sortOrder   Int     @default(0)
+
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@index([serviceId, sortOrder])
+  @@map("service_pricing_tiers")
 }
 
 /// Contact form submissions with CRM workflow

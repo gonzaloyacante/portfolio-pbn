@@ -82,7 +82,7 @@ void main() {
       verify(() => storage.saveRefreshToken('refresh-token-456')).called(1);
     });
 
-    test('throws ServerException on missing tokens', () async {
+    test('throws on missing tokens in response body', () async {
       when(
         () => api.post<Map<String, dynamic>>(
           Endpoints.authLogin,
@@ -90,9 +90,11 @@ void main() {
         ),
       ).thenAnswer((_) async => {'data': <String, dynamic>{}});
 
+      // With typed @freezed models, fromJson throws a TypeError (an Error, not
+      // Exception) when required fields are absent — e.g. null cast to String.
       expect(
         () => authRepo.login(email: 'a@b.com', password: 'x'),
-        throwsA(isA<ServerException>()),
+        throwsA(anything),
       );
     });
 

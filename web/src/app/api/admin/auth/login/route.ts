@@ -110,35 +110,38 @@ export async function POST(req: Request) {
       email: user.email,
     })
 
-    const refreshToken = await prisma.refreshToken.create({
-      data: {
-        token: crypto.randomUUID(),
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días (spec AGENTS.md)
-        ipAddress,
-        userAgent,
-        device,
-      },
-    })
-
-    // 5. Registrar push token FCM si viene en el body
-    if (pushToken && device) {
-      await prisma.pushToken.upsert({
-        where: { token: pushToken },
-        create: { userId: user.id, token: pushToken, platform: device },
-        update: { userId: user.id, isActive: true, lastSeen: new Date() },
+    // 5-6. Crear refresh token, push token y actualizar usuario en una transacción atómica
+    const refreshToken = await prisma.$transaction(async (tx) => {
+      const rt = await tx.refreshToken.create({
+        data: {
+          token: crypto.randomUUID(),
+          userId: user.id,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días (spec AGENTS.md)
+          ipAddress,
+          userAgent,
+          device,
+        },
       })
-    }
 
-    // 6. Actualizar lastLoginAt y resetear contador de fallos
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        lastLoginAt: new Date(),
-        lastLoginIp: ipAddress,
-        failedLoginCount: 0,
-        lockedUntil: null,
-      },
+      if (pushToken && device) {
+        await tx.pushToken.upsert({
+          where: { token: pushToken },
+          create: { userId: user.id, token: pushToken, platform: device },
+          update: { userId: user.id, isActive: true, lastSeen: new Date() },
+        })
+      }
+
+      await tx.user.update({
+        where: { id: user.id },
+        data: {
+          lastLoginAt: new Date(),
+          lastLoginIp: ipAddress,
+          failedLoginCount: 0,
+          lockedUntil: null,
+        },
+      })
+
+      return rt
     })
 
     logger.info(`[admin-login] Usuario ${user.email} autenticado desde ${ipAddress}`)

@@ -57,6 +57,22 @@ class AppColors {
   static const Color neutralMedium = Color(0xFF9E9E9E); // gris placeholder imgs
   static const Color featured = Color(0xFF8B5CF6); // violeta para "Destacado"
 
+  // ── Switch / Divider / Form (Light + Dark) ────────────────────────────────
+  static const Color lightSwitchThumb = Color(
+    0xFFFFFFFF,
+  ); // blanco visible ON/OFF
+  static const Color darkSwitchThumb = Color(
+    0xFF6B6B6B,
+  ); // gris visible en dark OFF
+  static const Color lightSwitchTrack = Color(0xFFD9D9D9); // track OFF light
+  static const Color darkSwitchTrack = Color(0xFF3A3A3A); // track OFF dark
+  static const Color lightSwitchOutline = Color(
+    0xFFB0B0B0,
+  ); // borde visible OFF light
+  static const Color darkSwitchOutline = Color(
+    0xFF555555,
+  ); // borde visible OFF dark
+
   // ── Redes sociales ────────────────────────────────────────────────────────
   static const Color instagramPink = Color(0xFFE1306C); // Instagram brand color
 }

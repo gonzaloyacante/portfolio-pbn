@@ -22,11 +22,17 @@ export function GoogleFontPicker({
   const [open, setOpen] = useState(false)
 
   const {
-    search, setSearch,
-    category, setCategory,
-    loading, error,
-    previewText, setPreviewText,
-    filteredFonts, visibleCount, loadMoreRef,
+    search,
+    setSearch,
+    category,
+    setCategory,
+    loading,
+    error,
+    previewText,
+    setPreviewText,
+    filteredFonts,
+    visibleCount,
+    loadMoreRef,
   } = useGoogleFontPicker({ value, open })
 
   const handleSelect = (fontName: string, fontUrl: string) => {
@@ -57,7 +63,11 @@ export function GoogleFontPicker({
               Fuente seleccionada
             </span>
             <span className="truncate text-lg" style={{ fontFamily: value || 'inherit' }}>
-              {loading ? 'Cargando biblioteca...' : error ? 'Error al cargar' : value || 'Seleccionar fuente'}
+              {loading
+                ? 'Cargando biblioteca...'
+                : error
+                  ? 'Error al cargar'
+                  : value || 'Seleccionar fuente'}
             </span>
           </div>
           {loading ? (
@@ -89,4 +99,3 @@ export function GoogleFontPicker({
     </>
   )
 }
-

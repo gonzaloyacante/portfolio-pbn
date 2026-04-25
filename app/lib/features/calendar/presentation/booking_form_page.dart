@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../../../core/utils/draft_service.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../../services/providers/services_provider.dart';
@@ -21,13 +24,18 @@ class BookingFormPage extends ConsumerStatefulWidget {
   ConsumerState<BookingFormPage> createState() => _BookingFormPageState();
 }
 
-class _BookingFormPageState extends ConsumerState<BookingFormPage> {
+class _BookingFormPageState extends ConsumerState<BookingFormPage>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   bool _saving = false;
   bool _isDirty = false;
   bool _prefilled = false;
+  bool _hasDraft = false;
 
   bool get _isEdit => widget.bookingId != null;
+
+  String get _draftScope =>
+      _isEdit ? 'booking_edit__${widget.bookingId}' : 'booking_new';
 
   final _clientNameCtrl = TextEditingController();
   final _clientEmailCtrl = TextEditingController();
@@ -43,10 +51,20 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
   String? _paymentStatus = 'PENDING';
   final _totalAmountCtrl = TextEditingController();
 
+  List<TextEditingController> get _controllers => [
+    _clientNameCtrl,
+    _clientEmailCtrl,
+    _phoneCtrl,
+    _notesCtrl,
+    _adminNotesCtrl,
+    _guestCountCtrl,
+    _totalAmountCtrl,
+  ];
+
   @override
   void initState() {
     super.initState();
-    // Pre-populate serviceId if navigated from service tile/detail.
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final extra = GoRouterState.of(context).extra;
@@ -54,193 +72,78 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage> {
         setState(() => _serviceId = extra['serviceId'] as String);
       }
     });
+    _checkDraft();
+  }
+
+  Future<void> _checkDraft() async {
+    final has = await ref.read(draftServiceProvider).hasDraft(_draftScope);
+    if (mounted && has) setState(() => _hasDraft = true);
+  }
+
+  Future<void> _restoreDraft() async {
+    final data = await ref.read(draftServiceProvider).load(_draftScope);
+    if (data == null || !mounted) return;
+    setState(() {
+      _clientNameCtrl.text = data['clientName'] as String? ?? '';
+      _clientEmailCtrl.text = data['clientEmail'] as String? ?? '';
+      _phoneCtrl.text = data['phone'] as String? ?? '';
+      _notesCtrl.text = data['notes'] as String? ?? '';
+      _adminNotesCtrl.text = data['adminNotes'] as String? ?? '';
+      _guestCountCtrl.text = data['guestCount'] as String? ?? '';
+      _totalAmountCtrl.text = data['totalAmount'] as String? ?? '';
+      _serviceId = data['serviceId'] as String?;
+      _paymentMethod = data['paymentMethod'] as String?;
+      _paymentStatus = data['paymentStatus'] as String? ?? 'PENDING';
+      final dateStr = data['date'] as String?;
+      if (dateStr != null) _date = DateTime.tryParse(dateStr);
+      _isDirty = true;
+      _hasDraft = false;
+    });
+  }
+
+  Future<void> _discardDraft() async {
+    await ref.read(draftServiceProvider).clear(_draftScope);
+    if (mounted) setState(() => _hasDraft = false);
+  }
+
+  Future<void> _saveDraft() async {
+    if (!_isDirty) return;
+    await ref.read(draftServiceProvider).save(_draftScope, {
+      'clientName': _clientNameCtrl.text,
+      'clientEmail': _clientEmailCtrl.text,
+      'phone': _phoneCtrl.text,
+      'notes': _notesCtrl.text,
+      'adminNotes': _adminNotesCtrl.text,
+      'guestCount': _guestCountCtrl.text,
+      'totalAmount': _totalAmountCtrl.text,
+      'serviceId': _serviceId,
+      'paymentMethod': _paymentMethod,
+      'paymentStatus': _paymentStatus,
+      'date': _date?.toIso8601String(),
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _saveDraft();
+    }
   }
 
   @override
   void dispose() {
-    _clientNameCtrl.dispose();
-    _clientEmailCtrl.dispose();
-    _phoneCtrl.dispose();
-    _notesCtrl.dispose();
-    _adminNotesCtrl.dispose();
-    _guestCountCtrl.dispose();
-    _totalAmountCtrl.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+    for (final ctrl in _controllers) {
+      ctrl.dispose();
+    }
     super.dispose();
-  }
-
-  void _populate(BookingDetail detail) {
-    if (_prefilled) return;
-    _clientNameCtrl.text = detail.clientName;
-    _clientEmailCtrl.text = detail.clientEmail;
-    _guestCountCtrl.text = detail.guestCount > 1 ? '${detail.guestCount}' : '';
-    _notesCtrl.text = detail.clientNotes ?? '';
-    _adminNotesCtrl.text = detail.adminNotes ?? '';
-    _phoneCtrl.text = detail.clientPhone ?? '';
-    _totalAmountCtrl.text = detail.totalAmount ?? '';
-    _date = detail.date;
-    _serviceId = detail.serviceId;
-    _currentStatus = detail.status;
-    setState(() {
-      _paymentMethod = detail.paymentMethod;
-      _paymentStatus = detail.paymentStatus ?? 'PENDING';
-    });
-    _prefilled = true;
   }
 
   void _markDirty() {
     if (!_isDirty) setState(() => _isDirty = true);
   }
 
-  Future<void> _maybeLeave(BuildContext context) async {
-    if (!_isDirty) {
-      context.pop();
-      return;
-    }
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => const ConfirmDialog(
-        title: '¿Salir sin guardar?',
-        message: 'Tienes cambios sin guardar.',
-        confirmLabel: 'Salir',
-        cancelLabel: 'Continuar editando',
-      ),
-    );
-    if (confirmed == true && context.mounted) context.pop();
-  }
-
-  Future<void> _pickDateTime() async {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _date ?? today,
-      firstDate: _isEdit ? DateTime(2020) : today,
-      lastDate: DateTime(2035),
-    );
-    if (pickedDate == null || !mounted) return;
-
-    final pickedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_date ?? now),
-    );
-    if (pickedTime == null || !mounted) return;
-
-    setState(() {
-      _date = DateTime(
-        pickedDate.year,
-        pickedDate.month,
-        pickedDate.day,
-        pickedTime.hour,
-        pickedTime.minute,
-      );
-    });
-  }
-
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
-    if (_date == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Selecciona la fecha y hora')),
-      );
-      return;
-    }
-    if (_serviceId == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Selecciona un servicio')));
-      return;
-    }
-
-    setState(() => _saving = true);
-    try {
-      final repo = ref.read(bookingsRepositoryProvider);
-      final data = BookingFormData(
-        date: _date!,
-        clientName: _clientNameCtrl.text.trim(),
-        clientEmail: _clientEmailCtrl.text.trim(),
-        clientPhone: (_phoneCtrl.text.trim().isEmpty)
-            ? null
-            : _phoneCtrl.text.trim(),
-        guestCount: int.tryParse(_guestCountCtrl.text.trim()) ?? 1,
-        clientNotes: _notesCtrl.text.trim().isEmpty
-            ? null
-            : _notesCtrl.text.trim(),
-        adminNotes: _adminNotesCtrl.text.trim().isEmpty
-            ? null
-            : _adminNotesCtrl.text.trim(),
-        serviceId: _serviceId!,
-        status: _currentStatus ?? 'PENDING',
-        totalAmount: _totalAmountCtrl.text.trim().isEmpty
-            ? null
-            : _totalAmountCtrl.text.trim(),
-        paymentMethod: _paymentMethod,
-        paymentStatus: _paymentStatus,
-      );
-      if (_isEdit) {
-        await repo.updateBooking(widget.bookingId!, data.toJson());
-        ref.invalidate(bookingDetailProvider(widget.bookingId!));
-      } else {
-        await repo.createBooking(data);
-      }
-      ref.invalidate(bookingsListProvider);
-      if (mounted) {
-        HapticFeedback.lightImpact();
-        context.pop();
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isEdit
-                  ? 'No se pudo actualizar la reserva. Inténtalo de nuevo.'
-                  : 'No se pudo crear la reserva. Inténtalo de nuevo.',
-            ),
-          ),
-        );
-        setState(() => _saving = false);
-      }
-    }
-  }
-
   @override
-  Widget build(BuildContext context) {
-    if (_isEdit && !_prefilled) {
-      final async = ref.watch(bookingDetailProvider(widget.bookingId!));
-      return async.when(
-        loading: () => Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
-              tooltip: 'Volver',
-            ),
-            title: const Text('Editar reserva'),
-          ),
-          body: const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-        ),
-        error: (e, _) => Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => context.pop(),
-              tooltip: 'Volver',
-            ),
-            title: const Text('Editar reserva'),
-          ),
-          body: ErrorState(
-            message: 'No se pudo cargar la reserva',
-            onRetry: () =>
-                ref.invalidate(bookingDetailProvider(widget.bookingId!)),
-          ),
-        ),
-        data: (detail) {
-          _populate(detail);
-          return _buildFormScaffold(context);
-        },
-      );
-    }
-    return _buildFormScaffold(context);
-  }
+  Widget build(BuildContext context) => _buildPage(context);
 }

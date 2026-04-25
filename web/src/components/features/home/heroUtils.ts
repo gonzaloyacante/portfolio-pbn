@@ -27,7 +27,7 @@ export function mapCtaVariant(
   }
 }
 
-const mob = <T,>(
+const mob = <T>(
   isMobile: boolean,
   mobileVal: T | null | undefined,
   desktopVal: T | null | undefined,

@@ -48,10 +48,8 @@ class DraggableList<T> extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = items[index];
         return RepaintBoundary(
-          child: KeyedSubtree(
-            key: keyBuilder(item),
-            child: itemBuilder(item, index, false),
-          ),
+          key: keyBuilder(item),
+          child: itemBuilder(item, index, false),
         );
       },
     );

@@ -70,14 +70,21 @@ describe('rate-limit-guards', () => {
       await expect(checkApiRateLimit('1.2.3.4')).resolves.toBeUndefined()
     })
 
-    it('throws when rate limited', async () => {
+    it('returns allowed: false when rate limited', async () => {
       mockCheck.mockResolvedValueOnce({ allowed: false, remaining: 0, resetIn: 30 })
-      await expect(checkApiRateLimit('1.2.3.4')).rejects.toThrow('Demasiadas solicitudes')
+      const result = await checkApiRateLimit('1.2.3.4')
+      expect(result).toEqual(
+        expect.objectContaining({
+          allowed: false,
+          error: expect.stringContaining('Demasiadas solicitudes'),
+        })
+      )
     })
 
-    it('includes reset time in error message', async () => {
+    it('includes reset time in return value', async () => {
       mockCheck.mockResolvedValueOnce({ allowed: false, remaining: 0, resetIn: 45 })
-      await expect(checkApiRateLimit('1.2.3.4')).rejects.toThrow('45s')
+      const result = await checkApiRateLimit('1.2.3.4')
+      expect((result as { allowed: false; error: string }).error).toContain('45s')
     })
   })
 
@@ -95,9 +102,10 @@ describe('rate-limit-guards', () => {
   })
 
   describe('error handling', () => {
-    it('rate limit error includes reset info', async () => {
+    it('rate limit return value includes reset info', async () => {
       mockCheck.mockResolvedValueOnce({ allowed: false, remaining: 0, resetIn: 120 })
-      await expect(checkApiRateLimit('1.2.3.4')).rejects.toThrow('Reset en 120s')
+      const result = await checkApiRateLimit('1.2.3.4')
+      expect((result as { allowed: false; error: string }).error).toContain('120s')
     })
 
     it('handles exceptions from limiter gracefully', async () => {

@@ -87,6 +87,8 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
         email: (cleanData.email as string) || '', // Email is required in schema usually, assuming user provides strictly valid partial or defaults logic applies
         phone: (cleanData.phone as string) ?? undefined,
         whatsapp: (cleanData.whatsapp as string) ?? undefined,
+        instagram: (cleanData.instagram as string) ?? undefined,
+        instagramUsername: (cleanData.instagramUsername as string) ?? '',
         location: (cleanData.location as string) ?? undefined,
 
         showSocialLinks: (cleanData.showSocialLinks as boolean) ?? true,
@@ -94,6 +96,7 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
         showWhatsapp: (cleanData.showWhatsapp as boolean) ?? true,
         showEmail: (cleanData.showEmail as boolean) ?? true,
         showLocation: (cleanData.showLocation as boolean) ?? true,
+        showInstagram: (cleanData.showInstagram as boolean) ?? true,
         instagramPostUrl: (cleanData.instagramPostUrl as string) ?? undefined,
         showInstagramEmbed: (cleanData.showInstagramEmbed as boolean) ?? false,
 

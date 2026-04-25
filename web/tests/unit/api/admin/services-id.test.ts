@@ -9,6 +9,7 @@ vi.mock('@/lib/db', () => ({
       findUnique: vi.fn(),
       update: vi.fn(),
     },
+    servicePricingTier: { deleteMany: vi.fn(), createMany: vi.fn() },
   },
 }))
 
@@ -171,6 +172,8 @@ describe('PATCH /api/admin/services/[id]', () => {
 
   it('updates service successfully', async () => {
     const { prisma } = await import('@/lib/db')
+    const mockUpdated = { ...mockServiceFull, name: 'Updated Service', imageUrl: null }
+    vi.mocked(prisma.service.findUnique).mockResolvedValue(mockUpdated as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce({
       ...mockServiceFull,
       name: 'Updated Service',

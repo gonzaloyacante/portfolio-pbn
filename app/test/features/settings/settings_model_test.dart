@@ -101,8 +101,8 @@ void main() {
     test('borderRadius defaults to 40', () => expect(s.borderRadius, 40));
     test('isActive defaults to true', () => expect(s.isActive, true));
     test(
-      'darkPrimaryColor defaults to #ffaadd',
-      () => expect(s.darkPrimaryColor, '#ffaadd'),
+      'darkPrimaryColor defaults to #fb7185',
+      () => expect(s.darkPrimaryColor, '#fb7185'),
     );
   });
 
@@ -139,8 +139,8 @@ void main() {
     test('isActive defaults to true', () => expect(s.isActive, true));
     test('showAboutPage defaults to true', () => expect(s.showAboutPage, true));
     test(
-      'showServicesPage defaults to false',
-      () => expect(s.showServicesPage, false),
+      'showServicesPage defaults to true',
+      () => expect(s.showServicesPage, true),
     );
     test(
       'showGalleryPage defaults to true',

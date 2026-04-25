@@ -21,8 +21,8 @@ void main() {
       () => expect(item.description, isNull),
     );
     test(
-      'thumbnailUrl defaults to null',
-      () => expect(item.thumbnailUrl, isNull),
+      'coverImageUrl defaults to null',
+      () => expect(item.coverImageUrl, isNull),
     );
     test('sortOrder defaults to 0', () => expect(item.sortOrder, 0));
     test('isActive defaults to true', () => expect(item.isActive, true));
@@ -113,44 +113,11 @@ void main() {
 
     test('stores id', () => expect(detail.id, 'c1'));
     test(
-      'metaKeywords defaults to empty list',
-      () => expect(detail.metaKeywords, isEmpty),
-    );
-    test(
       'coverImageUrl defaults to null',
       () => expect(detail.coverImageUrl, isNull),
     );
-    test('metaTitle defaults to null', () => expect(detail.metaTitle, isNull));
-    test(
-      'metaDescription defaults to null',
-      () => expect(detail.metaDescription, isNull),
-    );
-    test('ogImage defaults to null', () => expect(detail.ogImage, isNull));
   });
 
-  group('CategoryDetail — with SEO fields', () {
-    const detail = CategoryDetail(
-      id: 'c1',
-      name: 'Arte',
-      slug: 'arte',
-      metaTitle: 'Arte - Portfolio',
-      metaDescription: 'Trabajos de arte',
-      metaKeywords: ['arte', 'pintura'],
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-    );
-
-    test(
-      'stores metaTitle',
-      () => expect(detail.metaTitle, 'Arte - Portfolio'),
-    );
-    test(
-      'stores metaDescription',
-      () => expect(detail.metaDescription, 'Trabajos de arte'),
-    );
-    test(
-      'stores metaKeywords',
-      () => expect(detail.metaKeywords, ['arte', 'pintura']),
-    );
-  });
+  // SEO fields (metaTitle, metaDescription, metaKeywords, ogImage) were removed
+  // from the Category DB schema in March 2026 — no longer part of CategoryDetail.
 }

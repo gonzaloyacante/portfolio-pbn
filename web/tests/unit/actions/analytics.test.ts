@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     $queryRaw: vi.fn().mockResolvedValue([]),
+    category: { findMany: vi.fn().mockResolvedValue([]) },
     analyticLog: {
       create: vi.fn().mockResolvedValue({}),
       findFirst: vi.fn().mockResolvedValue(null),

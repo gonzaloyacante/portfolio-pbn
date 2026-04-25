@@ -89,12 +89,20 @@ describe('contactFormSchema — extended', () => {
   })
 
   it('accepts PHONE as responsePreference', () => {
-    const result = contactFormSchema.safeParse({ ...validContact, responsePreference: 'PHONE' })
+    const result = contactFormSchema.safeParse({
+      ...validContact,
+      responsePreference: 'PHONE',
+      phone: '+34 600 123 456',
+    })
     expect(result.success).toBe(true)
   })
 
   it('accepts WHATSAPP as responsePreference', () => {
-    const result = contactFormSchema.safeParse({ ...validContact, responsePreference: 'WHATSAPP' })
+    const result = contactFormSchema.safeParse({
+      ...validContact,
+      responsePreference: 'WHATSAPP',
+      phone: '+34 600 123 456',
+    })
     expect(result.success).toBe(true)
   })
 
@@ -457,7 +465,7 @@ describe('testimonialSettingsSchema — extended', () => {
 // ============================================
 
 describe('contactSettingsSchema — extended', () => {
-  const valid = { email: 'admin@test.com', showSocialLinks: true }
+  const valid = { showSocialLinks: true }
 
   it('passes with minimal required fields', () => {
     expect(contactSettingsSchema.safeParse(valid).success).toBe(true)
@@ -468,20 +476,26 @@ describe('contactSettingsSchema — extended', () => {
     expect(result.success).toBe(false)
   })
 
-  it('fails when showSocialLinks is missing', () => {
+  it('passes when showSocialLinks is missing (optional)', () => {
     const result = contactSettingsSchema.safeParse({ email: 'a@b.com' })
-    expect(result.success).toBe(false)
+    expect(result.success).toBe(true)
   })
 
-  it('passes with all optional labels', () => {
+  it('passes with Instagram and visibility fields', () => {
     const result = contactSettingsSchema.safeParse({
       ...valid,
       pageTitle: 'Contact',
       ownerName: 'Paola',
       phone: '+34 612 345 678',
-      formTitle: 'Send message',
-      nameLabel: 'Your Name',
-      emailLabel: 'Your Email',
+      instagram: 'https://instagram.com/paolabolivarnievas',
+      instagramUsername: '@paolabolivarnievas',
+      showPhone: true,
+      showWhatsapp: true,
+      showEmail: true,
+      showLocation: true,
+      showInstagram: true,
+      instagramPostUrl: 'https://www.instagram.com/p/ABC123/',
+      showInstagramEmbed: false,
     })
     expect(result.success).toBe(true)
   })

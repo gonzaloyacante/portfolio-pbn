@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -53,6 +54,9 @@ class NotificationHandler {
 
   final FlutterLocalNotificationsPlugin _localNotif =
       FlutterLocalNotificationsPlugin();
+  StreamSubscription<RemoteMessage>? _onMessageSub;
+  StreamSubscription<RemoteMessage>? _onMessageOpenedAppSub;
+  Timer? _initialMessageNavigationTimer;
 
   // ── init ───────────────────────────────────────────────────────────────────
 
@@ -73,7 +77,10 @@ class NotificationHandler {
 
     // 2. Mensajes recibidos en foreground → notificación del sistema
     try {
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      await _onMessageSub?.cancel();
+      _onMessageSub = FirebaseMessaging.onMessage.listen((
+        RemoteMessage message,
+      ) {
         AppLogger.info(
           'NotificationHandler[fg]: ${message.notification?.title}',
         );
@@ -87,7 +94,10 @@ class NotificationHandler {
 
     // 3. App abierta desde notificación (background → foreground tap)
     try {
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      await _onMessageOpenedAppSub?.cancel();
+      _onMessageOpenedAppSub = FirebaseMessaging.onMessageOpenedApp.listen((
+        RemoteMessage message,
+      ) {
         AppLogger.info(
           'NotificationHandler[tap]: ${message.notification?.title}',
         );
@@ -108,20 +118,34 @@ class NotificationHandler {
             'NotificationHandler[initial]: ${message.notification?.title}',
           );
           // Leve delay para que el router esté montado
-          Future.delayed(const Duration(milliseconds: 600), () {
-            try {
-              _navigateFromMessage(message);
-            } catch (e, st) {
-              AppLogger.warn('Navigation from initial notification failed: $e');
-              AppLogger.debug('Initial notification nav stack: $st');
-            }
-          });
+          _initialMessageNavigationTimer?.cancel();
+          _initialMessageNavigationTimer = Timer(
+            const Duration(milliseconds: 600),
+            () {
+              try {
+                _navigateFromMessage(message);
+              } catch (e, st) {
+                AppLogger.warn(
+                  'Navigation from initial notification failed: $e',
+                );
+                AppLogger.debug('Initial notification nav stack: $st');
+              }
+            },
+          );
         }
       });
     } catch (e, st) {
       AppLogger.warn('Error al obtener initialMessage FCM: $e');
       AppLogger.debug('getInitialMessage stack: $st');
     }
+  }
+
+  void dispose() {
+    _initialMessageNavigationTimer?.cancel();
+    unawaited(_onMessageSub?.cancel());
+    unawaited(_onMessageOpenedAppSub?.cancel());
+    _onMessageSub = null;
+    _onMessageOpenedAppSub = null;
   }
 
   // ── _initLocalNotifications ────────────────────────────────────────────────
@@ -260,7 +284,7 @@ class NotificationHandler {
             ),
           );
       // También mostrar el diálogo directamente en la UI
-      _handleAppUpdateData(data);
+      _handleAppUpdateData();
       return;
     }
 

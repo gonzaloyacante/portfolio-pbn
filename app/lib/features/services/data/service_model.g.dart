@@ -6,6 +6,26 @@ part of 'service_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+_ServicePricingTierItem _$ServicePricingTierItemFromJson(
+  Map<String, dynamic> json,
+) => _ServicePricingTierItem(
+  id: json['id'] as String,
+  name: json['name'] as String,
+  price: json['price'] as String? ?? '',
+  description: json['description'] as String?,
+  sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
+);
+
+Map<String, dynamic> _$ServicePricingTierItemToJson(
+  _ServicePricingTierItem instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'name': instance.name,
+  'price': instance.price,
+  'description': instance.description,
+  'sortOrder': instance.sortOrder,
+};
+
 _ServiceItem _$ServiceItemFromJson(Map<String, dynamic> json) => _ServiceItem(
   id: json['id'] as String,
   name: json['name'] as String,
@@ -63,12 +83,12 @@ _ServiceDetail _$ServiceDetailFromJson(Map<String, dynamic> json) =>
       maxBookingsPerDay: (json['maxBookingsPerDay'] as num?)?.toInt(),
       advanceNoticeDays: (json['advanceNoticeDays'] as num?)?.toInt(),
       sortOrder: (json['sortOrder'] as num?)?.toInt() ?? 0,
-      pricingTiers: json['pricingTiers'] as List<dynamic>? ?? const [],
-      metaTitle: json['metaTitle'] as String?,
-      metaDescription: json['metaDescription'] as String?,
-      metaKeywords:
-          (json['metaKeywords'] as List<dynamic>?)
-              ?.map((e) => e as String)
+      pricingTiers:
+          (json['pricingTiers'] as List<dynamic>?)
+              ?.map(
+                (e) =>
+                    ServicePricingTierItem.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           const [],
       requirements: json['requirements'] as String?,
@@ -98,9 +118,6 @@ Map<String, dynamic> _$ServiceDetailToJson(_ServiceDetail instance) =>
       'advanceNoticeDays': instance.advanceNoticeDays,
       'sortOrder': instance.sortOrder,
       'pricingTiers': instance.pricingTiers,
-      'metaTitle': instance.metaTitle,
-      'metaDescription': instance.metaDescription,
-      'metaKeywords': instance.metaKeywords,
       'requirements': instance.requirements,
       'cancellationPolicy': instance.cancellationPolicy,
       'createdAt': instance.createdAt,

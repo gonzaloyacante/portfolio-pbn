@@ -2,7 +2,7 @@ name: portfolio_pbn
 description: "App de administración para Portfolio Paola Bolívar Nievas."
 publish_to: 'none'
 
-version: 1.4.11+37
+version: 1.5.5+46
 
 environment:
   sdk: ^3.8.0

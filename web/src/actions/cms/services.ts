@@ -4,7 +4,6 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { z } from 'zod'
-import { pricingTierSchema } from '@/lib/validations'
 
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
@@ -31,7 +30,6 @@ const ServiceSchema = z.object({
   price: z.coerce.number().optional().nullable(),
   priceLabel: z.enum(['desde', 'fijo', 'consultar', 'gratis']).default('desde'),
   currency: z.string().default('EUR'),
-  pricingTiers: z.string().optional(), // Receive as JSON string
 
   // Time & Availability
   duration: z.string().optional(),
@@ -87,6 +85,9 @@ export const getServiceBySlug = unstable_cache(
     try {
       const service = await prisma.service.findFirst({
         where: { slug, isActive: true, deletedAt: null },
+        include: {
+          pricingTiers: { orderBy: { sortOrder: 'asc' } },
+        },
       })
       return service
     } catch (error) {
@@ -99,12 +100,13 @@ export const getServiceBySlug = unstable_cache(
 )
 
 /**
- * Get all services for admin view
+ * Get all services for admin view (auth-protected)
  */
-export const getServices = unstable_cache(
+const _getServicesCached = unstable_cache(
   async () => {
     try {
       const services = await prisma.service.findMany({
+        where: { deletedAt: null },
         orderBy: { sortOrder: 'asc' },
       })
       return services
@@ -116,6 +118,11 @@ export const getServices = unstable_cache(
   [CACHE_TAGS.services],
   { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
 )
+
+export async function getServices() {
+  await requireAdmin()
+  return _getServicesCached()
+}
 
 // ============================================
 // ADMIN ACTIONS
@@ -138,7 +145,6 @@ export async function createService(formData: FormData) {
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
     currency: formData.get('currency') || 'EUR',
-    pricingTiers: formData.get('pricingTiers'),
     // Time
     duration: formData.get('duration'),
     durationMinutes: formData.get('durationMinutes') || null,
@@ -166,23 +172,17 @@ export async function createService(formData: FormData) {
   const data = validation.data
 
   try {
-    // Process specialized fields
-    let tiersJson = undefined
-    if (data.pricingTiers) {
-      try {
-        const parsed = JSON.parse(data.pricingTiers)
-        tiersJson = pricingTierSchema.parse(parsed)
-      } catch (e) {
-        logger.warn('Invalid pricingTiers JSON in createService', {
-          input: data.pricingTiers,
-          error: e,
-        })
-        return {
-          success: false,
-          error: 'Formato inválido en Niveles de Precio (Asegúrate de usar JSON válido)',
-        }
-      }
-    }
+    // Read pricing tiers from individual form fields (no JSON blobs)
+    const tierNames = formData.getAll('tierName') as string[]
+    const tierPrices = formData.getAll('tierPrice') as string[]
+    const tierDescriptions = formData.getAll('tierDescription') as string[]
+    const tiersData = tierNames
+      .map((name, i) => ({
+        name: name.trim(),
+        price: (tierPrices[i] ?? '').trim(),
+        description: tierDescriptions[i]?.trim() || null,
+      }))
+      .filter((t) => t.name.length > 0 || t.price.length > 0)
 
     // Prefer multiple inputs `galleryUrls` (from ImageUpload hidden inputs). Fallback to CSV string.
     const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
@@ -195,31 +195,55 @@ export async function createService(formData: FormData) {
             .filter(Boolean)
         : []
 
-    await prisma.service.create({
-      data: {
-        name: data.name,
-        slug: data.slug,
-        description: data.description || null,
-        shortDesc: data.shortDesc,
-        price: data.price ? data.price : null,
-        priceLabel: data.priceLabel,
-        currency: data.currency,
-        pricingTiers: tiersJson || undefined,
-        duration: data.duration || null,
-        durationMinutes: data.durationMinutes || null,
-        isAvailable: data.isAvailable,
-        maxBookingsPerDay: data.maxBookingsPerDay,
-        advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: data.imageUrl || galleryList[0] || null,
-        galleryUrls: galleryList,
-        videoUrl: data.videoUrl || null,
-        isActive: data.isActive,
-        isFeatured: data.isFeatured,
-        sortOrder: data.sortOrder,
-        requirements: data.requirements,
-        cancellationPolicy: data.cancellationPolicy,
-      },
+    const service = await prisma.$transaction(async (tx) => {
+      // Compute next sortOrder atomically if none provided
+      let finalSortOrder = data.sortOrder
+      if (finalSortOrder === 0) {
+        const maxResult = await tx.service.aggregate({
+          _max: { sortOrder: true },
+          where: { deletedAt: null },
+        })
+        finalSortOrder = (maxResult._max.sortOrder ?? 0) + 1
+      }
+
+      return tx.service.create({
+        data: {
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          shortDesc: data.shortDesc,
+          price: data.price ? data.price : null,
+          priceLabel: data.priceLabel,
+          currency: data.currency,
+          duration: data.duration || null,
+          durationMinutes: data.durationMinutes || null,
+          isAvailable: data.isAvailable,
+          maxBookingsPerDay: data.maxBookingsPerDay,
+          advanceNoticeDays: data.advanceNoticeDays,
+          imageUrl: data.imageUrl || galleryList[0] || null,
+          galleryUrls: galleryList,
+          videoUrl: data.videoUrl || null,
+          isActive: data.isActive,
+          isFeatured: data.isFeatured,
+          sortOrder: finalSortOrder,
+          requirements: data.requirements,
+          cancellationPolicy: data.cancellationPolicy,
+        },
+        select: { id: true },
+      })
     })
+
+    if (tiersData.length > 0) {
+      await prisma.servicePricingTier.createMany({
+        data: tiersData.map((t, idx) => ({
+          serviceId: service.id,
+          name: t.name,
+          price: t.price,
+          description: t.description ?? null,
+          sortOrder: idx,
+        })),
+      })
+    }
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services, 'layout')
@@ -258,7 +282,6 @@ export async function updateService(id: string, formData: FormData) {
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
     currency: formData.get('currency') || 'EUR',
-    pricingTiers: formData.get('pricingTiers'),
     // Time
     duration: formData.get('duration'),
     durationMinutes: formData.get('durationMinutes') || null,
@@ -286,23 +309,17 @@ export async function updateService(id: string, formData: FormData) {
   const data = validation.data
 
   try {
-    // Process specialized fields
-    let tiersJson = undefined
-    if (data.pricingTiers) {
-      try {
-        const parsed = JSON.parse(data.pricingTiers)
-        tiersJson = pricingTierSchema.parse(parsed)
-      } catch (e) {
-        logger.warn('Invalid pricingTiers JSON in updateService', {
-          input: data.pricingTiers,
-          error: e,
-        })
-        return {
-          success: false,
-          error: 'Formato inválido en Niveles de Precio (Asegúrate de usar JSON válido)',
-        }
-      }
-    }
+    // Read pricing tiers from individual form fields (no JSON blobs)
+    const tierNames = formData.getAll('tierName') as string[]
+    const tierPrices = formData.getAll('tierPrice') as string[]
+    const tierDescriptions = formData.getAll('tierDescription') as string[]
+    const tiersData = tierNames
+      .map((name, i) => ({
+        name: name.trim(),
+        price: (tierPrices[i] ?? '').trim(),
+        description: tierDescriptions[i]?.trim() || null,
+      }))
+      .filter((t) => t.name.length > 0 || t.price.length > 0)
 
     const rawGalleryInputs = formData.getAll('galleryUrls').filter(Boolean) as string[]
     const galleryList = rawGalleryInputs.length
@@ -331,7 +348,6 @@ export async function updateService(id: string, formData: FormData) {
         price: data.price ? data.price : null,
         priceLabel: data.priceLabel,
         currency: data.currency,
-        pricingTiers: tiersJson || undefined,
         duration: data.duration || null,
         durationMinutes: data.durationMinutes || null,
         isAvailable: data.isAvailable,
@@ -348,7 +364,21 @@ export async function updateService(id: string, formData: FormData) {
       },
     })
 
-    // Cloud Wipe: Find removed images and permanently delete them from Cloudinary
+    // Always sync tiers to match the submitted form state
+    await prisma.servicePricingTier.deleteMany({ where: { serviceId: id } })
+    if (tiersData.length > 0) {
+      await prisma.servicePricingTier.createMany({
+        data: tiersData.map((t, idx) => ({
+          serviceId: id,
+          name: t.name,
+          price: t.price,
+          description: t.description ?? null,
+          sortOrder: idx,
+        })),
+      })
+    }
+
+    // Cloud Wipe and permanently delete them from Cloudinary
     if (previousService) {
       const publicIdsToDelete: string[] = []
 

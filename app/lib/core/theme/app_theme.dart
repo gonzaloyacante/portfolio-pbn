@@ -190,21 +190,27 @@ class AppTheme {
             return isLight ? Colors.white : AppColors.darkBackground;
           }
           // OFF: bolita blanca/oscura siempre visible con elevación visual
-          return isLight ? Colors.white : const Color(0xFF6B6B6B);
+          return isLight
+              ? AppColors.lightSwitchThumb
+              : AppColors.darkSwitchThumb;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return primary;
           }
           // OFF: track gris con suficiente contraste para verse el recuadro
-          return isLight ? const Color(0xFFD9D9D9) : const Color(0xFF3A3A3A);
+          return isLight
+              ? AppColors.lightSwitchTrack
+              : AppColors.darkSwitchTrack;
         }),
         trackOutlineColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return Colors.transparent;
           }
           // OFF: borde visible para diferenciar del fondo
-          return isLight ? const Color(0xFFB0B0B0) : const Color(0xFF555555);
+          return isLight
+              ? AppColors.lightSwitchOutline
+              : AppColors.darkSwitchOutline;
         }),
         thumbIcon: WidgetStateProperty.resolveWith((states) {
           // Sombra visual en la bolita para que se vea "elevada"

@@ -124,6 +124,7 @@ export async function POST(req: Request) {
       imageUrl,
       isActive = true,
       isFeatured = false,
+      pricingTiers,
     } = parsed.data as typeof parsed.data & { priceLabel?: string; currency?: string }
 
     const resolvedCurrency = currency || 'EUR'
@@ -180,6 +181,18 @@ export async function POST(req: Request) {
         updatedAt: true,
       },
     })
+
+    if (pricingTiers && pricingTiers.length > 0) {
+      await prisma.servicePricingTier.createMany({
+        data: pricingTiers.map((tier, idx) => ({
+          serviceId: service.id,
+          name: tier.name,
+          price: tier.price,
+          description: tier.description ?? null,
+          sortOrder: idx,
+        })),
+      })
+    }
 
     try {
       revalidatePath(ROUTES.admin.services)

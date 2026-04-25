@@ -1,10 +1,11 @@
-import { logger } from '@/lib/logger'
 /**
- * Rate limiting para autenticación sin dependencias externas
- * Protección contra ataques de fuerza bruta
+ * Rate limiting para autenticación sin dependencias externas.
+ * Protección contra ataques de fuerza bruta.
+ *
+ * ⚠️  IMPORTANT: Failed login attempts are tracked in-memory only.
+ *     Writing every failed attempt to the DB would keep the Neon compute
+ *     endpoint active and burn compute hours unnecessarily.
  */
-
-import { prisma } from '@/lib/db'
 
 const MAX_LOGIN_ATTEMPTS = 5
 const LOCKOUT_DURATION_MINUTES = 15
@@ -61,7 +62,7 @@ export async function checkAuthRateLimit(
 }
 
 /**
- * Registrar un intento de login fallido
+ * Registrar un intento de login fallido (in-memory only).
  */
 export async function recordFailedLoginAttempt(email: string, ipAddress: string): Promise<void> {
   const key = `${email}:${ipAddress}`
@@ -74,20 +75,6 @@ export async function recordFailedLoginAttempt(email: string, ipAddress: string)
   })
 
   loginAttempts.set(key, attempts)
-
-  // También registrar en BD para analítica
-  try {
-    await prisma.analyticLog.create({
-      data: {
-        eventType: 'FAILED_LOGIN_ATTEMPT',
-        ipAddress,
-        entityType: 'user',
-        entityId: email,
-      },
-    })
-  } catch (error) {
-    logger.error('Error al registrar intento fallido:', { error: error })
-  }
 }
 
 /**

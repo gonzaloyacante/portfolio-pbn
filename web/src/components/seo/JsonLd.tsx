@@ -37,7 +37,7 @@ interface JsonLdProps {
 }
 
 export default function JsonLd({ type, data }: JsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://paolabolivar.es'
 
   const defaultData = {
     name: '',

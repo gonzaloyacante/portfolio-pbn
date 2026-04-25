@@ -100,7 +100,7 @@ describe('Cloudinary Helper', () => {
     it('should apply full variant transformations', () => {
       const result = getVariantUrl(sampleCloudinaryUrl, 'full')
 
-      expect(result).toContain('w_1920')
+      expect(result).toContain('w_3840')
     })
 
     it('should apply original variant with only quality and format', () => {

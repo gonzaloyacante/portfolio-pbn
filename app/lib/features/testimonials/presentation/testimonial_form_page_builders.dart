@@ -10,6 +10,14 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (_hasDraft)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: DraftRestoreBanner(
+                  onRestore: _restoreDraft,
+                  onDiscard: _discardDraft,
+                ),
+              ),
             // ── Datos del autor ────────────────────────────────────────────
             Text('Datos del autor', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
@@ -170,5 +178,92 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
         ),
       ),
     );
+  }
+
+  // ── Actions ──────────────────────────────────────────────────────────────
+
+  void _populateForm(TestimonialDetail d) {
+    if (_populated) return;
+    _populated = true;
+    _nameCtrl.text = d.name;
+    _textCtrl.text = d.text;
+    _emailCtrl.text = d.email ?? '';
+    _completePhone = d.phone;
+    _positionCtrl.text = d.position ?? '';
+    _companyCtrl.text = d.company ?? '';
+    _avatarCtrl.text = d.avatarUrl ?? '';
+    setState(() {
+      _rating = d.rating;
+      _verified = d.verified;
+      _featured = d.featured;
+      _isActive = d.isActive;
+      _status = d.status;
+    });
+  }
+
+  Future<void> _submit() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    setState(() => _loading = true);
+
+    try {
+      if (_pendingAvatar != null) {
+        final uploadSvc = ref.read(uploadServiceProvider);
+        final result = await uploadSvc.uploadImageFull(
+          _pendingAvatar!,
+          folder: 'portfolio/testimonials',
+        );
+        _avatarCtrl.text = result.url;
+      }
+
+      final data = TestimonialFormData(
+        name: _nameCtrl.text.trim(),
+        text: _textCtrl.text.trim(),
+        email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
+        phone: (_completePhone?.trim().isEmpty ?? true)
+            ? null
+            : _completePhone!.trim(),
+        position: _positionCtrl.text.trim().isEmpty
+            ? null
+            : _positionCtrl.text.trim(),
+        company: _companyCtrl.text.trim().isEmpty
+            ? null
+            : _companyCtrl.text.trim(),
+        avatarUrl: _avatarCtrl.text.trim().isEmpty
+            ? null
+            : _avatarCtrl.text.trim(),
+        rating: _rating,
+        verified: _verified,
+        featured: _featured,
+        status: _status,
+        isActive: _isActive,
+      );
+
+      if (_isEdit) {
+        await ref
+            .read(testimonialsRepositoryProvider)
+            .updateTestimonial(widget.testimonialId!, data.toJson());
+      } else {
+        await ref.read(testimonialsRepositoryProvider).createTestimonial(data);
+      }
+
+      ref.invalidate(testimonialsListProvider);
+      if (mounted) {
+        unawaited(ref.read(draftServiceProvider).clear(_draftScope));
+        final msg = _isEdit ? 'Testimonio actualizado' : 'Testimonio creado';
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg)));
+        context.pop();
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 }

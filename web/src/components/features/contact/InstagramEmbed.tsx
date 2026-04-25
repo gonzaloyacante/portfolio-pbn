@@ -24,7 +24,14 @@ export default function InstagramEmbed({ postUrl }: InstagramEmbedProps) {
         data-instgrm-captioned
         data-instgrm-permalink={normalized}
         data-instgrm-version="14"
-        style={{ background: '#FFF', border: 0, margin: 0, padding: 0, width: '100%', maxWidth: '100%' }}
+        style={{
+          background: '#FFF',
+          border: 0,
+          margin: 0,
+          padding: 0,
+          width: '100%',
+          maxWidth: '100%',
+        }}
       >
         <a href={normalized} target="_blank" rel="noopener noreferrer">
           Ver publicación en Instagram

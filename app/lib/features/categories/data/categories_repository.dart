@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/api/endpoints.dart';
+import '../../../core/utils/app_logger.dart';
 import '../../../shared/models/api_response.dart';
 import '../../../shared/models/paginated_response.dart';
 import 'category_model.dart';
@@ -125,7 +126,14 @@ class CategoriesRepository {
     final apiResponse = ApiResponse<List<GalleryImageItem>>.fromJson(
       resp,
       (json) => (json as List<dynamic>)
-          .map((e) => GalleryImageItem.fromJson(e as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .where((e) {
+            final valid =
+                e['id'] != null && e['url'] != null && e['categoryId'] != null;
+            if (!valid) AppLogger.warn('Skipping malformed gallery image: $e');
+            return valid;
+          })
+          .map((e) => GalleryImageItem.fromJson(e))
           .toList(),
     );
 

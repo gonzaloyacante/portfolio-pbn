@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/draft_service.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
@@ -26,7 +28,8 @@ class TestimonialFormPage extends ConsumerStatefulWidget {
       _TestimonialFormPageState();
 }
 
-class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
+class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _textCtrl = TextEditingController();
@@ -44,107 +47,90 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
   String _status = 'PENDING';
   bool _loading = false;
   bool _populated = false;
+  bool _isDirty = false;
+  bool _hasDraft = false;
 
   bool get _isEdit => widget.testimonialId != null;
 
+  String get _draftScope =>
+      _isEdit ? 'testimonial_edit__${widget.testimonialId}' : 'testimonial_new';
+
+  List<TextEditingController> get _controllers => [
+    _nameCtrl,
+    _textCtrl,
+    _emailCtrl,
+    _positionCtrl,
+    _companyCtrl,
+    _avatarCtrl,
+  ];
+
   @override
-  void dispose() {
-    for (final ctrl in [
-      _nameCtrl,
-      _textCtrl,
-      _emailCtrl,
-      _positionCtrl,
-      _companyCtrl,
-      _avatarCtrl,
-    ]) {
-      ctrl.dispose();
-    }
-    super.dispose();
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _checkDraft();
   }
 
-  void _populateForm(TestimonialDetail d) {
-    if (_populated) return;
-    _populated = true;
-    _nameCtrl.text = d.name;
-    _textCtrl.text = d.text;
-    _emailCtrl.text = d.email ?? '';
-    _completePhone = d.phone;
-    _positionCtrl.text = d.position ?? '';
-    _companyCtrl.text = d.company ?? '';
-    _avatarCtrl.text = d.avatarUrl ?? '';
+  Future<void> _checkDraft() async {
+    final has = await ref.read(draftServiceProvider).hasDraft(_draftScope);
+    if (mounted && has) setState(() => _hasDraft = true);
+  }
+
+  Future<void> _restoreDraft() async {
+    final data = await ref.read(draftServiceProvider).load(_draftScope);
+    if (data == null || !mounted) return;
     setState(() {
-      _rating = d.rating;
-      _verified = d.verified;
-      _featured = d.featured;
-      _isActive = d.isActive;
-      _status = d.status;
+      _nameCtrl.text = data['name'] as String? ?? '';
+      _textCtrl.text = data['text'] as String? ?? '';
+      _emailCtrl.text = data['email'] as String? ?? '';
+      _positionCtrl.text = data['position'] as String? ?? '';
+      _companyCtrl.text = data['company'] as String? ?? '';
+      _rating = data['rating'] as int? ?? 5;
+      _verified = data['verified'] as bool? ?? false;
+      _featured = data['featured'] as bool? ?? false;
+      _isActive = data['isActive'] as bool? ?? true;
+      _status = data['status'] as String? ?? 'PENDING';
+      _isDirty = true;
+      _hasDraft = false;
     });
   }
 
-  Future<void> _submit() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    setState(() => _loading = true);
+  Future<void> _discardDraft() async {
+    await ref.read(draftServiceProvider).clear(_draftScope);
+    if (mounted) setState(() => _hasDraft = false);
+  }
 
-    try {
-      // Subir avatar si se seleccionó uno nuevo.
-      if (_pendingAvatar != null) {
-        final uploadSvc = ref.read(uploadServiceProvider);
-        final result = await uploadSvc.uploadImageFull(
-          _pendingAvatar!,
-          folder: 'portfolio/testimonials',
-        );
-        _avatarCtrl.text = result.url;
-      }
+  Future<void> _saveDraft() async {
+    if (!_isDirty) return;
+    await ref.read(draftServiceProvider).save(_draftScope, {
+      'name': _nameCtrl.text,
+      'text': _textCtrl.text,
+      'email': _emailCtrl.text,
+      'position': _positionCtrl.text,
+      'company': _companyCtrl.text,
+      'rating': _rating,
+      'verified': _verified,
+      'featured': _featured,
+      'isActive': _isActive,
+      'status': _status,
+    });
+  }
 
-      final data = TestimonialFormData(
-        name: _nameCtrl.text.trim(),
-        text: _textCtrl.text.trim(),
-        email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
-        phone: (_completePhone?.trim().isEmpty ?? true)
-            ? null
-            : _completePhone!.trim(),
-        position: _positionCtrl.text.trim().isEmpty
-            ? null
-            : _positionCtrl.text.trim(),
-        company: _companyCtrl.text.trim().isEmpty
-            ? null
-            : _companyCtrl.text.trim(),
-        avatarUrl: _avatarCtrl.text.trim().isEmpty
-            ? null
-            : _avatarCtrl.text.trim(),
-        rating: _rating,
-        verified: _verified,
-        featured: _featured,
-        status: _status,
-        isActive: _isActive,
-      );
-
-      if (_isEdit) {
-        await ref
-            .read(testimonialsRepositoryProvider)
-            .updateTestimonial(widget.testimonialId!, data.toJson());
-      } else {
-        await ref.read(testimonialsRepositoryProvider).createTestimonial(data);
-      }
-
-      ref.invalidate(testimonialsListProvider);
-      if (mounted) {
-        final msg = _isEdit ? 'Testimonio actualizado' : 'Testimonio creado';
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg)));
-        context.pop();
-      }
-    } catch (e, st) {
-      Sentry.captureException(e, stackTrace: st);
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error al guardar: $e')));
-      }
-    } finally {
-      if (mounted) setState(() => _loading = false);
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _saveDraft();
     }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    for (final ctrl in _controllers) {
+      ctrl.dispose();
+    }
+    super.dispose();
   }
 
   @override

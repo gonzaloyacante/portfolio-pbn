@@ -163,24 +163,19 @@ export const contactSettings = {
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'paolabolivarnievas@gmail.com',
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || '+34 600 000 000',
   whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || '+34600000000',
-  location: 'Málaga, España',
-
-  // Form Configuration
-  formTitle: 'Envíame un mensaje',
-  nameLabel: 'Tu nombre',
-  emailLabel: 'Tu email',
-  phoneLabel: 'Tu teléfono (opcional)',
-  messageLabel: 'Mensaje',
-  preferenceLabel: '¿Cómo prefieres que te contacte?',
-  submitLabel: 'Enviar mensaje',
-
-  // Success Messages
-  successTitle: '¡Mensaje enviado!',
-  successMessage: 'Gracias por contactarme. Te responderé lo antes posible.',
-  sendAnotherLabel: 'Enviar otro mensaje',
+  instagram: 'https://instagram.com/paolabolivarnievas',
+  instagramUsername: '@paolabolivarnievas',
+  showInstagram: true,
+  instagramPostUrl: null,
+  showInstagramEmbed: false,
+  location: 'Granada, España',
 
   // Show Social Links
   showSocialLinks: true,
+  showPhone: true,
+  showWhatsapp: true,
+  showEmail: true,
+  showLocation: true,
 
   isActive: true,
 }

@@ -8,8 +8,9 @@ model AnalyticLog {
   eventType       String // page_view, gallery_view, contact_submit, download, etc
   entityId        String? // ID of related entity (category, service, etc)
   entityType      String? // category, contact, booking
-  // Event data
-  eventData       Json? // Flexible JSON for event-specific data
+  // Event data — explicit typed columns (no JSON)
+  pageUrl         String? // Full page URL where event occurred
+  consentLevel    String? // 'precise' | 'denied' | 'geoip'
   // Session tracking
   sessionId       String?
   // User tracking
@@ -48,8 +49,6 @@ model AnalyticLog {
   // Quality flags
   isDuplicate     Boolean  @default(false)
   isBot           Boolean  @default(false)
-  // Metadata
-  metadata        String?  @db.Text // Additional JSON data
 
   @@index([eventType, timestamp])
   @@index([entityType, entityId])
@@ -117,7 +116,7 @@ model SecurityEvent {
   email      String?
   ipAddress  String?
   userAgent  String?
-  details    Json? // Event-specific details
+  details    String? @db.Text // Event-specific details (JSON text)
   resolved   Boolean   @default(false)
   resolvedAt DateTime?
   resolvedBy String?

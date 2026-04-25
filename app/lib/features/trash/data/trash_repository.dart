@@ -3,6 +3,7 @@ import 'package:portfolio_pbn/core/api/api_client.dart';
 import 'package:portfolio_pbn/core/api/endpoints.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../shared/models/api_response.dart';
 import 'trash_model.dart';
 
 part 'trash_repository.g.dart';
@@ -18,32 +19,37 @@ class TrashRepository {
       queryParams: {if (type != null) 'type': type},
     );
 
-    final success = resp['success'] as bool? ?? false;
-    if (!success) {
-      throw Exception(resp['error']?.toString() ?? 'Error al obtener papelera');
+    final apiResponse = ApiResponse<Map<String, List<TrashItem>>>.fromJson(
+      resp,
+      (json) {
+        final data = (json as Map<String, dynamic>?) ?? {};
+        final result = <String, List<TrashItem>>{};
+        data.forEach((key, value) {
+          if (value is List) {
+            result[key] = value
+                .whereType<Map<String, dynamic>>()
+                .map((item) => TrashItem.fromMap(key, item))
+                .toList();
+          }
+        });
+        return result;
+      },
+    );
+
+    if (!apiResponse.success || apiResponse.data == null) {
+      throw Exception(apiResponse.error ?? 'Error al obtener papelera');
     }
-    final data = (resp['data'] as Map<String, dynamic>?) ?? {};
-    final result = <String, List<TrashItem>>{};
-    data.forEach((key, value) {
-      if (value is List) {
-        result[key] = value
-            .whereType<Map<String, dynamic>>()
-            .map((item) => TrashItem.fromMap(key, item))
-            .toList();
-      }
-    });
-    return result;
+
+    return apiResponse.data!;
   }
 
   Future<void> restore({required String type, required String id}) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.trashTypedItem(type, id),
     );
-    final success = resp['success'] as bool? ?? false;
-    if (!success) {
-      throw Exception(
-        resp['error']?.toString() ?? 'Error al restaurar elemento',
-      );
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
+      throw Exception(apiResponse.error ?? 'Error al restaurar elemento');
     }
   }
 
@@ -51,11 +57,10 @@ class TrashRepository {
     final resp = await _client.delete<Map<String, dynamic>>(
       Endpoints.trashTypedItem(type, id),
     );
-    final success = resp['success'] as bool? ?? false;
-    if (!success) {
+    final apiResponse = ApiResponse<void>.fromJson(resp, (_) {});
+    if (!apiResponse.success) {
       throw Exception(
-        resp['error']?.toString() ??
-            'Error al eliminar elemento permanentemente',
+        apiResponse.error ?? 'Error al eliminar elemento permanentemente',
       );
     }
   }

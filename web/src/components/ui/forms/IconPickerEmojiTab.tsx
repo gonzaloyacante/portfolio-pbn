@@ -83,9 +83,7 @@ export function IconPickerEmojiTab({
       </div>
 
       {filteredEmojis.length === 0 && (
-        <p className="text-muted-foreground py-6 text-center text-sm">
-          No se encontraron emojis
-        </p>
+        <p className="text-muted-foreground py-6 text-center text-sm">No se encontraron emojis</p>
       )}
     </div>
   )

@@ -18,6 +18,7 @@ import {
   resetCategoryGalleryOrder,
   toggleCategoryImageFeatured,
 } from '@/actions/gallery-ordering'
+import { saveGalleryImages } from '@/actions/cms/content'
 import { Button } from '@/components/ui'
 import { Save, RotateCcw, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -121,39 +122,26 @@ export default function CategoryGalleryEditor({
 
   const activeImage = activeId ? images.find((img) => img.id === activeId) : null
 
-  // ── Empty state ───────────────────────────────────────────────────────────
-  if (images.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <span className="mb-4 text-6xl">🖼️</span>
-        <h3 className="text-foreground mb-2 text-2xl font-bold">Sin imágenes</h3>
-        <p className="text-muted-foreground">Esta categoría no tiene imágenes en la galería.</p>
-        <Button asChild variant="outline" className="mt-6 gap-2">
-          <Link href={ROUTES.admin.categories}>
-            <ArrowLeft size={16} />
-            Volver a Categorías
-          </Link>
-        </Button>
-      </div>
-    )
-  }
-
-  const handleUpload = async (urls: string[], publicIds: string[]) => {
+  const handleUpload = async (
+    urls: string[],
+    publicIds: string[],
+    widths: Array<number | undefined> = [],
+    heights: Array<number | undefined> = []
+  ) => {
     if (!urls || urls.length === 0) return
     try {
-      const payload = urls.map((u, i) => ({ url: u, publicId: publicIds[i] }))
-      const res = await fetch(`/api/admin/categories/${categoryId}/gallery`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: payload }),
-        credentials: 'include',
-      })
-      const data = (await res.json()) as { success: boolean; error?: string }
-      if (data.success) {
+      const payload = urls.map((u, i) => ({
+        url: u,
+        publicId: publicIds[i],
+        width: widths[i],
+        height: heights[i],
+      }))
+      const result = await saveGalleryImages(categoryId, payload)
+      if (result.success) {
         showToast.success('Imágenes agregadas a la galería')
         router.refresh()
       } else {
-        showToast.error(data.error ?? 'Error al agregar imágenes')
+        showToast.error(result.error ?? 'Error al agregar imágenes')
       }
     } catch {
       showToast.error('Error al agregar imágenes a la galería')
@@ -173,52 +161,69 @@ export default function CategoryGalleryEditor({
         onUploadComplete={handleUpload}
       />
 
-      <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-3 text-sm">
-        💡 Este orden es el que verán los visitantes en la galería pública. Arrastra las imágenes
-        para cambiar su posición. El orden de columnas replica exactamente la web pública.
-      </p>
+      {images.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-center">
+          <span className="mb-4 text-6xl">🖼️</span>
+          <h3 className="text-foreground mb-2 text-2xl font-bold">Sin imágenes</h3>
+          <p className="text-muted-foreground">Esta categoría no tiene imágenes en la galería.</p>
+          <Button asChild variant="outline" className="mt-6 gap-2">
+            <Link href={ROUTES.admin.categories}>
+              <ArrowLeft size={16} />
+              Volver a Categorías
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <>
+          <p className="text-muted-foreground rounded-xl border border-dashed px-4 py-3 text-sm">
+            💡 Este orden es el que verán los visitantes en la galería pública. Arrastra las
+            imágenes para cambiar su posición. El orden de columnas replica exactamente la web
+            pública.
+          </p>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={images.map((img) => img.id)}>
-          <div className={cn('grid gap-4', colClass)}>
-            {columnsData.map((col, colIndex) => (
-              <div key={colIndex} className="flex flex-col gap-4">
-                {col.items.map((img) => (
-                  <SortableImageCard
-                    key={img.id}
-                    image={img}
-                    index={img.flatIndex}
-                    onToggleFeatured={handleToggleFeatured}
-                  />
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={images.map((img) => img.id)}>
+              <div className={cn('grid gap-4', colClass)}>
+                {columnsData.map((col, colIndex) => (
+                  <div key={colIndex} className="flex flex-col gap-4">
+                    {col.items.map((img) => (
+                      <SortableImageCard
+                        key={img.id}
+                        image={img}
+                        index={img.flatIndex}
+                        onToggleFeatured={handleToggleFeatured}
+                      />
+                    ))}
+                  </div>
                 ))}
               </div>
-            ))}
-          </div>
-        </SortableContext>
+            </SortableContext>
 
-        <DragOverlay
-          dropAnimation={{ duration: 200, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}
-        >
-          {activeImage ? <DragOverlayCard image={activeImage} /> : null}
-        </DragOverlay>
-      </DndContext>
+            <DragOverlay
+              dropAnimation={{ duration: 200, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}
+            >
+              {activeImage ? <DragOverlayCard image={activeImage} /> : null}
+            </DragOverlay>
+          </DndContext>
 
-      <AnimatePresenceWrapper show={isDirty}>
-        <div className="sticky bottom-6 flex justify-center">
-          <div className="bg-card border-border flex items-center gap-4 rounded-2xl border px-6 py-3 shadow-2xl">
-            <p className="text-foreground text-sm font-medium">¿Guardar el nuevo orden?</p>
-            <Button size="sm" onClick={handleSave} disabled={isSaving} className="gap-2">
-              {isSaving ? <RotateCcw size={14} className="animate-spin" /> : <Save size={14} />}
-              {isSaving ? 'Guardando…' : 'Guardar'}
-            </Button>
-          </div>
-        </div>
-      </AnimatePresenceWrapper>
+          <AnimatePresenceWrapper show={isDirty}>
+            <div className="sticky bottom-6 flex justify-center">
+              <div className="bg-card border-border flex items-center gap-4 rounded-2xl border px-6 py-3 shadow-2xl">
+                <p className="text-foreground text-sm font-medium">¿Guardar el nuevo orden?</p>
+                <Button size="sm" onClick={handleSave} disabled={isSaving} className="gap-2">
+                  {isSaving ? <RotateCcw size={14} className="animate-spin" /> : <Save size={14} />}
+                  {isSaving ? 'Guardando…' : 'Guardar'}
+                </Button>
+              </div>
+            </div>
+          </AnimatePresenceWrapper>
+        </>
+      )}
     </div>
   )
 }

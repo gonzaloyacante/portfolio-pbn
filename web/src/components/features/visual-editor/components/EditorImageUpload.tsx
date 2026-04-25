@@ -1,6 +1,6 @@
 'use client'
 
-import ImageUpload from '@/components/ui/media/ImageUpload'
+import { ImageUpload } from '@/components/ui'
 
 interface EditorImageUploadProps {
   label: string

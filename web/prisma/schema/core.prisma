@@ -46,6 +46,7 @@ model Category {
   updatedAt     DateTime        @updatedAt
   deletedAt     DateTime?
   images        CategoryImage[]
+  testimonials  Testimonial[]
 
   @@index([sortOrder])
   @@index([isActive, deletedAt])

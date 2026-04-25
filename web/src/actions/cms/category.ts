@@ -10,7 +10,7 @@ import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 import { z } from 'zod'
 
-const ReorderCategoriesSchema = z.array(z.string().cuid()).min(1)
+const ReorderCategoriesSchema = z.array(z.string())
 
 export async function deleteCategoryAction(categoryId: string): Promise<void> {
   await requireAdmin()
@@ -51,7 +51,15 @@ export async function getCategoryImages(categoryId: string) {
     const images = await prisma.categoryImage.findMany({
       where: { categoryId },
       orderBy: { order: 'asc' },
-      select: { id: true, url: true, publicId: true, order: true },
+      select: {
+        id: true,
+        url: true,
+        publicId: true,
+        order: true,
+        width: true,
+        height: true,
+        isFeatured: true,
+      },
     })
     return { success: true, data: images }
   } catch {

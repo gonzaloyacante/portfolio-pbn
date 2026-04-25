@@ -8,14 +8,9 @@ import '../../../../core/theme/app_radius.dart';
 import '../../data/category_model.dart';
 
 class CategoryGridCard extends StatelessWidget {
-  const CategoryGridCard({
-    super.key,
-    required this.item,
-    required this.onDelete,
-  });
+  const CategoryGridCard({super.key, required this.item});
 
   final CategoryItem item;
-  final Future<void> Function(BuildContext, CategoryItem) onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +36,10 @@ class CategoryGridCard extends StatelessWidget {
                     top: Radius.circular(8),
                   ),
                   child:
-                      (item.thumbnailUrl ?? item.coverImageUrl) != null &&
-                          (item.thumbnailUrl ?? item.coverImageUrl)!.isNotEmpty
+                      item.coverImageUrl != null &&
+                          item.coverImageUrl!.isNotEmpty
                       ? CachedNetworkImage(
-                          imageUrl: (item.thumbnailUrl ?? item.coverImageUrl)!,
+                          imageUrl: item.coverImageUrl!,
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
