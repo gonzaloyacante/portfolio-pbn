@@ -82,6 +82,17 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        {/* Dynamic theme-color from DB — overrides the static viewport export */}
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: light)"
+          content={settings?.accentColor ?? BRAND.accent}
+        />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: dark)"
+          content={settings?.darkPrimaryColor ?? BRAND.darkPrimary}
+        />
       </head>
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
