@@ -123,7 +123,7 @@ async function extractRequestMeta() {
 async function checkContactRateLimit(sanitized: SanitizedData, ipAddress: string) {
   const result = await contactLimiter.check(ipAddress)
   if (result.allowed) {
-    await contactLimiter.record(ipAddress, { email: sanitized.email, name: sanitized.name })
+    await contactLimiter.record(ipAddress)
   }
   return result
 }

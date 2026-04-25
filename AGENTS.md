@@ -137,10 +137,14 @@ web/src/
 
 ### Base de Datos (Neon Branching)
 
-| Entorno    | Branch Git | Branch Neon       | .env File         |
-| ---------- | ---------- | ----------------- | ----------------- |
-| Producción | `main`     | `main`            | `.env.production` |
-| Desarrollo | `develop`  | `preview/develop` | `.env`            |
+| Entorno    | Branch Git | Branch Neon | .env File         |
+| ---------- | ---------- | ----------- | ----------------- |
+| Producción | `main`     | `main`      | `.env.production` |
+| Desarrollo | `develop`  | `develop`   | `.env`            |
+
+> **Proyecto Neon**: `dry-cake-98386708` (org: Vercel: Gonzalo Yacante's projects)
+> **Pool config**: `max: 3`, `idleTimeoutMillis: 10_000` — crítico para free tier (suspende compute rápido)
+> **⚠️ PROHIBIDO**: escribir en DB desde rate limiters — usar solo memoria. Ver `src/lib/rate-limit.ts`.
 
 ### Scripts Web (ejecutar desde `web/`)
 

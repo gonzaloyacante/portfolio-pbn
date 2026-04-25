@@ -1,11 +1,15 @@
 import { logger } from '@/lib/logger'
 /**
  * Generic Rate Limiter
- * In-memory rate limiting for various use cases
- * For production with multiple instances, consider using Upstash Redis
+ * In-memory rate limiting for various use cases.
+ * For production with multiple instances, consider using Upstash Redis.
+ *
+ * ⚠️  IMPORTANT: Do NOT write rate-limit events to the database.
+ *     Every DB write keeps the Neon compute endpoint active and burns
+ *     compute hours — even when the site has no real traffic.
+ *     Rate-limit state is intentionally kept in-memory only.
  */
 
-import { prisma } from '@/lib/db'
 import type { RateLimitConfig } from './rate-limit-config'
 
 interface RateLimitAttempt {
@@ -60,9 +64,9 @@ export function createRateLimiter(config: RateLimitConfig) {
   }
 
   /**
-   * Record an attempt
+   * Record an attempt (in-memory only — no DB writes).
    */
-  async function record(identifier: string, metadata?: Record<string, unknown>): Promise<void> {
+  async function record(identifier: string): Promise<void> {
     const key = `${config.id}:${identifier}`
     const attempts = rateLimitStore.get(key) || []
 
@@ -77,21 +81,6 @@ export function createRateLimiter(config: RateLimitConfig) {
     if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
       const firstKey = rateLimitStore.keys().next().value
       if (firstKey) rateLimitStore.delete(firstKey)
-    }
-
-    // Log to analytics (optional)
-    try {
-      await prisma.analyticLog.create({
-        data: {
-          eventType: `RATE_LIMIT_${config.id.toUpperCase()}`,
-          ipAddress: identifier,
-          // Mapeo a columnas actuales: pageUrl + consentLevel (el campo `metadata` fue removido en la migración)
-          pageUrl: metadata?.url as string | undefined,
-          consentLevel: metadata?.consentLevel as string | undefined,
-        },
-      })
-    } catch (error) {
-      logger.error(`Error logging rate limit attempt for ${config.id}`, { error })
     }
   }
 

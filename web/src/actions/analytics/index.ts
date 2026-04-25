@@ -73,6 +73,25 @@ const BOT_RE =
  *  se considera la misma sesión (isDuplicate = true). */
 const SESSION_WINDOW_MS = 30 * 60 * 1000
 
+/**
+ * How long to retain analytic logs (90 days).
+ * Rows older than this are deleted lazily during writes to avoid
+ * unbounded table growth that slows queries and burns Neon compute.
+ */
+const LOG_RETENTION_DAYS = 90
+
+/** Probabilistic TTL cleanup: run on ~1% of write requests to avoid
+ *  adding a DELETE to every single event (too expensive). */
+async function maybeCleanupOldLogs(): Promise<void> {
+  if (Math.random() > 0.01) return // 99% of calls skip this
+  try {
+    const cutoff = new Date(Date.now() - LOG_RETENTION_DAYS * 24 * 60 * 60 * 1000)
+    await prisma.analyticLog.deleteMany({ where: { timestamp: { lt: cutoff } } })
+  } catch {
+    // Non-critical — ignore errors silently
+  }
+}
+
 export async function recordAnalyticEvent(
   eventType: string,
   entityId?: string,
@@ -175,6 +194,10 @@ export async function recordAnalyticEvent(
         consentLevel: consentLevel,
       },
     })
+
+    // Lazy TTL cleanup — runs on ~1% of writes, non-blocking
+    void maybeCleanupOldLogs()
+
     return { success: true }
   } catch (error) {
     logger.error('Error recording analytic event:', { error })

@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         { status: 429, headers: { 'Retry-After': String(rateResult.resetIn ?? 60) } }
       )
     }
-    refreshLimiter.record(clientIp, { route: '/api/admin/auth/refresh' }).catch(() => {})
+    refreshLimiter.record(clientIp).catch(() => {})
 
     const body = await req.json().catch(() => null)
     const parsed = refreshSchema.safeParse(body)

@@ -141,7 +141,7 @@ export async function withAdminJwt(
   }
 
   adminApiLimiter
-    .record(clientIp, { route: req.url })
+    .record(clientIp)
     .catch((err) => logger.error('[withAdminJwt] Error recording rate limit', { error: err }))
 
   // ── JWT verification ──────────────────────────────────────────────────────
