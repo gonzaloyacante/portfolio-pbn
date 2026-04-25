@@ -88,7 +88,14 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                // Nombre + Switch + Descripción (responsivo)
+                if (_hasDraft)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: DraftRestoreBanner(
+                      onRestore: _restoreDraft,
+                      onDiscard: _discardDraft,
+                    ),
+                  ), // Nombre + Switch + Descripción (responsivo)
                 Builder(
                   builder: (ctx) {
                     final colorScheme = Theme.of(ctx).colorScheme;
@@ -483,6 +490,7 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
 
       ref.invalidate(categoriesListProvider);
       if (mounted) {
+        unawaited(ref.read(draftServiceProvider).clear(_draftScope));
         HapticFeedback.lightImpact();
         context.pop();
       }

@@ -10,6 +10,14 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (_hasDraft)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: DraftRestoreBanner(
+                  onRestore: _restoreDraft,
+                  onDiscard: _discardDraft,
+                ),
+              ),
             // ── Datos del autor ────────────────────────────────────────────
             Text('Datos del autor', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
@@ -240,6 +248,7 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
 
       ref.invalidate(testimonialsListProvider);
       if (mounted) {
+        unawaited(ref.read(draftServiceProvider).clear(_draftScope));
         final msg = _isEdit ? 'Testimonio actualizado' : 'Testimonio creado';
         ScaffoldMessenger.of(
           context,

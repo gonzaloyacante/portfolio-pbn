@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/draft_service.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
@@ -26,7 +28,8 @@ class TestimonialFormPage extends ConsumerStatefulWidget {
       _TestimonialFormPageState();
 }
 
-class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
+class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   final _nameCtrl = TextEditingController();
   final _textCtrl = TextEditingController();
@@ -44,8 +47,13 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
   String _status = 'PENDING';
   bool _loading = false;
   bool _populated = false;
+  bool _isDirty = false;
+  bool _hasDraft = false;
 
   bool get _isEdit => widget.testimonialId != null;
+
+  String get _draftScope =>
+      _isEdit ? 'testimonial_edit__${widget.testimonialId}' : 'testimonial_new';
 
   List<TextEditingController> get _controllers => [
     _nameCtrl,
@@ -57,7 +65,68 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _checkDraft();
+  }
+
+  Future<void> _checkDraft() async {
+    final has = await ref.read(draftServiceProvider).hasDraft(_draftScope);
+    if (mounted && has) setState(() => _hasDraft = true);
+  }
+
+  Future<void> _restoreDraft() async {
+    final data = await ref.read(draftServiceProvider).load(_draftScope);
+    if (data == null || !mounted) return;
+    setState(() {
+      _nameCtrl.text = data['name'] as String? ?? '';
+      _textCtrl.text = data['text'] as String? ?? '';
+      _emailCtrl.text = data['email'] as String? ?? '';
+      _positionCtrl.text = data['position'] as String? ?? '';
+      _companyCtrl.text = data['company'] as String? ?? '';
+      _rating = data['rating'] as int? ?? 5;
+      _verified = data['verified'] as bool? ?? false;
+      _featured = data['featured'] as bool? ?? false;
+      _isActive = data['isActive'] as bool? ?? true;
+      _status = data['status'] as String? ?? 'PENDING';
+      _isDirty = true;
+      _hasDraft = false;
+    });
+  }
+
+  Future<void> _discardDraft() async {
+    await ref.read(draftServiceProvider).clear(_draftScope);
+    if (mounted) setState(() => _hasDraft = false);
+  }
+
+  Future<void> _saveDraft() async {
+    if (!_isDirty) return;
+    await ref.read(draftServiceProvider).save(_draftScope, {
+      'name': _nameCtrl.text,
+      'text': _textCtrl.text,
+      'email': _emailCtrl.text,
+      'position': _positionCtrl.text,
+      'company': _companyCtrl.text,
+      'rating': _rating,
+      'verified': _verified,
+      'featured': _featured,
+      'isActive': _isActive,
+      'status': _status,
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _saveDraft();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     for (final ctrl in _controllers) {
       ctrl.dispose();
     }

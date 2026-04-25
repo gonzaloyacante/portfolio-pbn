@@ -71,6 +71,14 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                if (_hasDraft)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: DraftRestoreBanner(
+                      onRestore: _restoreDraft,
+                      onDiscard: _discardDraft,
+                    ),
+                  ),
                 // ── Datos del cliente ────────────────────────────────────────
                 AppCard(
                   borderRadius: AppRadius.forCard,
@@ -456,6 +464,7 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
       }
       ref.invalidate(bookingsListProvider);
       if (mounted) {
+        unawaited(ref.read(draftServiceProvider).clear(_draftScope));
         HapticFeedback.lightImpact();
         context.pop();
       }

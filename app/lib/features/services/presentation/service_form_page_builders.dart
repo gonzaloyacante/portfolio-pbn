@@ -33,6 +33,14 @@ extension _ServiceFormPageBuilders on _ServiceFormPageState {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                if (_hasDraft)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: DraftRestoreBanner(
+                      onRestore: _restoreDraft,
+                      onDiscard: _discardDraft,
+                    ),
+                  ),
                 // Nombre
                 TextFormField(
                   controller: _nameCtrl,
@@ -381,6 +389,7 @@ extension _ServiceFormPageBuilders on _ServiceFormPageState {
 
       ref.invalidate(servicesListProvider);
       if (mounted) {
+        unawaited(ref.read(draftServiceProvider).clear(_draftScope));
         HapticFeedback.lightImpact();
         context.pop();
       }
