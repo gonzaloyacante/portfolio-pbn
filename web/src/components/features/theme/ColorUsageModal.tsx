@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Info } from 'lucide-react'
-import Modal from '@/components/ui/overlay/Modal'
+import { Modal } from '@/components/ui'
 
 // Map CSS variable key (as used in COLOR_FIELDS) → UI components that use it
 const COLOR_USAGE_MAP: Record<string, { category: string; items: string[] }[]> = {

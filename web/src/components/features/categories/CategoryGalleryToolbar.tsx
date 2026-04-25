@@ -2,7 +2,7 @@
 
 import { motion } from '@/components/ui'
 import { Button } from '@/components/ui'
-import ImageUpload from '@/components/ui/media/ImageUpload'
+import { ImageUpload } from '@/components/ui'
 import { Save, RotateCcw, Check, ArrowLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
