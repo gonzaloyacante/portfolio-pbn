@@ -125,24 +125,31 @@ describe('auth-rate-limit', () => {
   })
 
   describe('recordFailedLoginAttempt', () => {
-    it('records attempt in DB analytics', async () => {
-      await recordFailedLoginAttempt('dblog@test.com', '10.0.0.7')
+    it('records attempt in memory only (no DB write)', async () => {
+      // After the Neon compute fix, failed login attempts are tracked
+      // in-memory only — no DB writes to avoid keeping compute active.
+      await recordFailedLoginAttempt('memonly@test.com', '10.0.0.7')
 
-      expect(prisma.analyticLog.create).toHaveBeenCalledWith({
-        data: {
-          eventType: 'FAILED_LOGIN_ATTEMPT',
-          ipAddress: '10.0.0.7',
-          entityType: 'user',
-          entityId: 'dblog@test.com',
-        },
-      })
+      // Verify the attempt was recorded in memory by checking it counts
+      const result = await checkAuthRateLimit('memonly@test.com', '10.0.0.7')
+      expect(result.allowed).toBe(true)
+      expect(result.remainingAttempts).toBe(4) // 1 attempt recorded
+
+      // DB should NOT be called
+      expect(prisma.analyticLog.create).not.toHaveBeenCalled()
     })
 
-    it('handles DB error gracefully', async () => {
-      vi.mocked(prisma.analyticLog.create).mockRejectedValueOnce(new Error('DB down'))
+    it('handles multiple attempts correctly', async () => {
+      const email = 'multi@test.com'
+      const ip = '10.0.0.8'
 
-      // Should not throw even if DB fails
-      await expect(recordFailedLoginAttempt('dberr@test.com', '10.0.0.8')).resolves.toBeUndefined()
+      await recordFailedLoginAttempt(email, ip)
+      await recordFailedLoginAttempt(email, ip)
+      await recordFailedLoginAttempt(email, ip)
+
+      const result = await checkAuthRateLimit(email, ip)
+      expect(result.allowed).toBe(true)
+      expect(result.remainingAttempts).toBe(2) // 3 attempts recorded, 2 remaining
     })
   })
 
