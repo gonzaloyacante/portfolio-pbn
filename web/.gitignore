@@ -1,1 +1,2 @@
 web/tests/.auth/*.json
+.vercel
