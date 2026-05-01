@@ -41,7 +41,8 @@ export function HeroSignature({
                   src={illustration}
                   alt={illustrationAlt}
                   fill
-                  className="object-contain"
+                  objectFit="contain"
+                  sizes="(max-width: 1024px) 96px, 320px"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center rounded-full border-2 border-dashed border-pink-500/30 bg-pink-500/10">

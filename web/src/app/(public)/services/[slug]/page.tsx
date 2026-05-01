@@ -110,7 +110,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             src={service.imageUrl}
             alt={service.name}
             fill
-            className="object-cover"
+            sizes="100vw"
             priority
             transparentBackground={false}
           />
@@ -192,7 +192,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                       src={url}
                       alt={`Gallery ${idx}`}
                       fill
-                      className="object-cover"
+                      sizes="(max-width: 768px) 50vw, 33vw"
                       transparentBackground={false}
                     />
                   </div>

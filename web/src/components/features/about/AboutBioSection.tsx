@@ -84,7 +84,7 @@ export function AboutBioColumn({
               src={illustrationUrl}
               alt={illustrationAlt}
               fill
-              className="object-contain"
+              objectFit="contain"
               sizes="120px"
             />
           </div>
@@ -139,7 +139,6 @@ export function AboutProfileImage({
               src={profileImageUrl}
               alt={profileImageAlt}
               fill
-              className="object-cover"
               sizes="(max-width: 768px) 80vw, (max-width: 1024px) 40vw, 400px"
               priority
               variant="card"

@@ -89,7 +89,6 @@ export function SortableImageCard({ image, index, onToggleFeatured }: SortableIm
           src={image.url}
           alt={image.alt}
           fill
-          className="object-cover"
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
       </div>
@@ -109,13 +108,7 @@ export function DragOverlayCard({ image }: { image: GalleryImage }) {
   return (
     <div className="ring-primary w-48 overflow-hidden rounded-2xl shadow-2xl ring-2">
       <div className="bg-muted relative w-full" style={{ paddingBottom: `${aspectRatio * 100}%` }}>
-        <OptimizedImage
-          src={image.url}
-          alt={image.alt}
-          fill
-          className="object-cover"
-          sizes="192px"
-        />
+        <OptimizedImage src={image.url} alt={image.alt} fill sizes="192px" />
       </div>
     </div>
   )

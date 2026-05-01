@@ -54,7 +54,7 @@ export default function FeaturedImagesGallery({ images }: FeaturedImagesGalleryP
                 alt={img.categoryName}
                 fill
                 variant="card"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                className="transition-transform duration-700 ease-out group-hover:scale-110"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
               />
               {/* Subtle hover overlay — no text */}

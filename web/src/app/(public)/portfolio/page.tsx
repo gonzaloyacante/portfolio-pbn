@@ -87,7 +87,7 @@ export default async function PortfolioPage() {
                           src={cardImageUrl}
                           alt={category.name}
                           fill
-                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                          className="transition-transform duration-700 ease-out group-hover:scale-110"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
                           priority={category.sortOrder <= 4}
                           transparentBackground={false}

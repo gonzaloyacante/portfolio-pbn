@@ -49,7 +49,7 @@ export default function PublicContactPage({
                   src={contactSettings.illustrationUrl}
                   alt={contactSettings.illustrationAlt || 'Ilustración contacto'}
                   fill
-                  className="object-contain"
+                  objectFit="contain"
                   sizes="320px"
                 />
               </div>

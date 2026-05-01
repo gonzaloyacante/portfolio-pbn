@@ -1,50 +1,96 @@
 'use client'
 
+/**
+ * `OptimizedImage`: Cloudinary variants, lazy viewport, blur placeholder, unified `objectFit`.
+ * Use plain `next/image` only where conviene (p. ej. mini previews admin drag-only sin necesidad de variant URLs).
+ */
+
 import Image from 'next/image'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, type CSSProperties } from 'react'
 import { getVariantUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
 import { NEUTRAL } from '@/lib/design-tokens'
+import { cn } from '@/lib/utils'
 
 const COMMON_SIZES = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\//
 
-interface OptimizedImageProps {
+function svgMarkupToDataUrl(svgMarkup: string): string {
+  if (typeof btoa === 'function') {
+    const bytes = new TextEncoder().encode(svgMarkup)
+    let binary = ''
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]!)
+    }
+    return `data:image/svg+xml;base64,${btoa(binary)}`
+  }
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`
+}
+
+type OptimizedImageShared = {
   src: string
   alt: string
-  width?: number
-  height?: number
+  /** Classes for the outer wrapper (position, layout, rounded, etc.). */
   className?: string
+  /** Classes for the inner Next.js `<Image>` element. */
+  imgClassName?: string
   priority?: boolean
   quality?: number
-  sizes?: string
   placeholder?: 'blur' | 'empty'
   blurDataURL?: string
   lazy?: boolean
   onLoad?: () => void
   onError?: () => void
-  fill?: boolean
+  /** Applied to the inner `<Image>` elements (main + blur placeholder). Default `cover`. */
+  objectFit?: CSSProperties['objectFit']
   variant?: 'thumbnail' | 'card' | 'hero' | 'full' | 'original'
   transparentBackground?: boolean
 }
 
-export function OptimizedImage({
-  src,
-  alt,
-  width,
-  height,
-  className = '',
-  priority = false,
-  quality,
-  sizes = COMMON_SIZES,
-  placeholder = 'blur',
-  blurDataURL,
-  lazy = true,
-  onLoad,
-  onError,
-  fill = false,
-  variant,
-  transparentBackground = true,
-}: OptimizedImageProps) {
+/** Fixed width/height layout (`fill` omitted or `false`). */
+export type OptimizedImageFixedProps = OptimizedImageShared & {
+  fill?: false
+  width: number
+  height: number
+  sizes?: string
+}
+
+/** Fill parent (`sizes` required). */
+export type OptimizedImageFillProps = OptimizedImageShared & {
+  fill: true
+  sizes: string
+  width?: never
+  height?: never
+}
+
+export type OptimizedImageProps = OptimizedImageFixedProps | OptimizedImageFillProps
+
+function isFillProps(props: OptimizedImageProps): props is OptimizedImageFillProps {
+  return props.fill === true
+}
+
+export function OptimizedImage(props: OptimizedImageProps) {
+  const {
+    src,
+    alt,
+    className = '',
+    imgClassName = '',
+    priority = false,
+    quality,
+    placeholder = 'blur',
+    blurDataURL,
+    lazy = true,
+    onLoad,
+    onError,
+    objectFit = 'cover',
+    variant,
+    transparentBackground = true,
+  } = props
+
+  const fill = isFillProps(props)
+  const width = fill ? undefined : props.width
+  const height = fill ? undefined : props.height
+  const sizes = fill ? props.sizes : (props.sizes ?? COMMON_SIZES)
+
   const [imageError, setImageError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const imgRef = useRef<HTMLDivElement>(null)
@@ -92,19 +138,29 @@ export function OptimizedImage({
   }
 
   // Fallback SVG placeholder
-  const defaultBlurDataURL = `data:image/svg+xml;base64,${Buffer.from(
-    `<svg width="${width || 100}" height="${height || 100}" xmlns="http://www.w3.org/2000/svg">
+  const defaultBlurDataURL = svgMarkupToDataUrl(
+    `<svg width="${width ?? 100}" height="${height ?? 100}" xmlns="http://www.w3.org/2000/svg">
       <rect width="100%" height="100%" fill="${NEUTRAL.gray100}"/>
     </svg>`
-  ).toString('base64')}`
+  )
+
+  const showBlurLayer = Boolean(computedBlurDataURL || placeholder === 'blur')
 
   if (imageError) {
     return (
       <div
         ref={imgRef}
-        className={`border-border flex items-center justify-center border ${transparentBackground ? 'bg-transparent' : 'bg-muted'} ${className} ${fill ? 'absolute inset-0' : 'h-64 w-full'} rounded-lg`}
+        role="alert"
+        className={cn(
+          'border-border flex items-center justify-center border',
+          transparentBackground ? 'bg-transparent' : 'bg-muted',
+          className,
+          fill ? 'absolute inset-0' : 'h-64 w-full',
+          'rounded-lg'
+        )}
       >
-        <div className="p-4 text-center">
+        <span className="sr-only">No se pudo cargar la imagen.</span>
+        <div className="p-4 text-center" aria-hidden="true">
           <div className="text-muted-foreground mx-auto mb-2 h-8 w-8">
             <svg fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -119,26 +175,41 @@ export function OptimizedImage({
     )
   }
 
+  const mainImageClassName = cn(
+    'transition-opacity duration-300',
+    isLoaded ? 'opacity-100' : 'opacity-0',
+    imgClassName,
+    showBlurLayer && (fill ? 'z-[1]' : 'relative z-[1]')
+  )
+
   return (
     <div
       ref={imgRef}
-      className={`${transparentBackground ? 'bg-transparent' : 'bg-muted'} relative overflow-hidden ${className}`}
+      className={cn(
+        transparentBackground ? 'bg-transparent' : 'bg-muted',
+        'relative overflow-hidden',
+        className
+      )}
       style={fill ? { position: 'absolute', inset: 0 } : undefined}
     >
       {(isInView || priority) && (
         <>
-          {/* Blur placeholder — always shown until image loads, regardless of transparentBackground */}
-          {(computedBlurDataURL || placeholder === 'blur') && (
-            <Image
-              src={computedBlurDataURL || defaultBlurDataURL}
-              alt={alt}
-              fill={fill}
-              width={fill ? undefined : width}
-              height={fill ? undefined : height}
-              className={`absolute inset-0 object-cover transition-opacity duration-500 ${isLoaded ? 'opacity-0' : 'opacity-100'}`}
-              priority={true}
-              aria-hidden="true"
-            />
+          {showBlurLayer && (
+            <div className="pointer-events-none absolute inset-0 z-0">
+              <Image
+                src={computedBlurDataURL || defaultBlurDataURL}
+                alt=""
+                fill
+                sizes={sizes}
+                className={cn(
+                  'transition-opacity duration-500',
+                  isLoaded ? 'opacity-0' : 'opacity-100'
+                )}
+                style={{ objectFit }}
+                priority={true}
+                aria-hidden={true}
+              />
+            </div>
           )}
 
           <Image
@@ -150,8 +221,8 @@ export function OptimizedImage({
             quality={quality}
             sizes={sizes}
             priority={priority}
-            className={`transition-opacity duration-300 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${fill ? 'object-cover' : ''}`}
-            style={fill ? { objectFit: 'cover' } : undefined}
+            className={mainImageClassName}
+            style={{ objectFit }}
             onLoad={handleLoad}
             onError={handleError}
           />

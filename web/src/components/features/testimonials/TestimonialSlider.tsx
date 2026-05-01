@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/ui'
 import type { Testimonial } from '@/generated/prisma/client'
 
 const CARDS_VISIBLE = 3
@@ -25,12 +25,14 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       </p>
       <div className="mt-auto flex items-center gap-3">
         {testimonial.avatarUrl ? (
-          <Image
+          <OptimizedImage
             src={testimonial.avatarUrl}
             alt={testimonial.name}
             width={40}
             height={40}
-            className="border-primary/30 h-10 w-10 rounded-full border-2 object-cover"
+            variant="thumbnail"
+            placeholder="empty"
+            imgClassName="border-primary/30 h-10 w-10 rounded-full border-2"
           />
         ) : (
           <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold">
@@ -41,7 +43,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           <div className="flex items-center gap-1">
             <p className="text-card-foreground text-sm font-semibold">{testimonial.name}</p>
             {testimonial.verified && (
-              <span className="text-primary" title="Cliente verificado" aria-label="Cliente verificado">
+              <span
+                className="text-primary"
+                title="Cliente verificado"
+                aria-label="Cliente verificado"
+              >
                 <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>

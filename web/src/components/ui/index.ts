@@ -104,6 +104,11 @@ export { ScrollProgress } from './animations/ScrollProgress'
 
 // Media
 export { OptimizedImage } from './media/OptimizedImage'
+export type {
+  OptimizedImageProps,
+  OptimizedImageFillProps,
+  OptimizedImageFixedProps,
+} from './media/OptimizedImage'
 export { default as ImageUpload } from './media/ImageUpload'
 export { default as SortableImage } from './media/SortableImage'
 export { default as SortableImageGrid } from './media/SortableImageGrid'

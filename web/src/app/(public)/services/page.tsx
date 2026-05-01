@@ -99,7 +99,7 @@ export default async function ServicesPage() {
                             alt={service.name}
                             width={400}
                             height={300}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="h-full w-full transition-transform duration-500 group-hover:scale-110"
                           />
                         ) : (
                           <span className="text-6xl opacity-30">💄</span>
