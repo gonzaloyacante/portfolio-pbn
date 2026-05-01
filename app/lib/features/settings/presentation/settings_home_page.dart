@@ -64,7 +64,7 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   final Map<String, TextEditingController> _extraCtrls = {};
 
   // Numeric / enum design values (font sizes, z-indexes, offsets, styles…)
-  final Map<String, dynamic> _vals = {};
+  final Map<String, Object?> _vals = {};
 
   // ignore: use_setters_to_change_properties
   void _rebuild(VoidCallback fn) => setState(fn);

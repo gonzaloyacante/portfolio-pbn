@@ -59,7 +59,16 @@ export async function GET(req: Request) {
       SELECT DATE_TRUNC('day', timestamp) AS day, COUNT(*)::bigint AS count
       FROM "analytic_logs"
       WHERE timestamp >= ${daysAgo}
-        AND "eventType" LIKE '%_VIEW'
+        AND "eventType" IN (
+          'HOME_VIEW',
+          'GALLERY_VIEW',
+          'GALLERY_DETAIL_VIEW',
+          'ABOUT_VIEW',
+          'CONTACT_VIEW',
+          'PAGE_VIEW',
+          'CATEGORY_VIEW',
+          'PROJECT_DETAIL_VIEW'
+        )
         AND "isBot" = false
       GROUP BY DATE_TRUNC('day', timestamp)
       ORDER BY day ASC
@@ -80,15 +89,19 @@ export async function GET(req: Request) {
     // ── Reservas mensuales (últimos N meses) ──────────────────────────────────
     const monthsAgo = new Date(now.getFullYear(), now.getMonth() - (monthsParam - 1), 1)
 
-    const bookings = await prisma.booking.findMany({
-      where: { date: { gte: monthsAgo }, deletedAt: null },
-      select: { date: true },
-    })
-
+    const monthlyRaw = await prisma.$queryRaw<{ month: Date; count: bigint }[]>`
+      SELECT DATE_TRUNC('month', date) AS month, COUNT(*)::bigint AS count
+      FROM "bookings"
+      WHERE date >= ${monthsAgo}
+        AND "deletedAt" IS NULL
+      GROUP BY DATE_TRUNC('month', date)
+      ORDER BY month ASC
+    `
     const monthlyMap = new Map<string, number>()
-    for (const b of bookings) {
-      const key = `${b.date.getFullYear()}-${String(b.date.getMonth() + 1).padStart(2, '0')}`
-      monthlyMap.set(key, (monthlyMap.get(key) ?? 0) + 1)
+    for (const row of monthlyRaw) {
+      const month = new Date(row.month)
+      const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}`
+      monthlyMap.set(key, Number(row.count))
     }
 
     const monthlyBookings = Array.from({ length: monthsParam }, (_, i) => {

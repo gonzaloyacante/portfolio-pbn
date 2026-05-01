@@ -123,11 +123,15 @@ if [ -f "app/pubspec.yaml" ]; then
     # Preferir dart si está disponible, fallback a flutter
     if command -v dart >/dev/null 2>&1; then
       echo "🔧 Usando 'dart' para formateo y análisis en app/"
+      # Solo re-stagear paths Dart ya staged (evita colar cambios no-intencionados en app/).
+      STAGED_APP_FILES="$(git diff --cached --name-only --diff-filter=ACMR | grep '^app/.*\.dart$' || true)"
       # Auto-format: corrige archivos y los re-stagea automáticamente
       echo "  → Formateando archivos Dart..."
       (cd app && dart format .)
       echo "  → Re-stageando archivos formateados..."
-      git add app/
+      if [ -n "$STAGED_APP_FILES" ]; then
+        echo "$STAGED_APP_FILES" | tr '\n' '\0' | xargs -0 git add
+      fi
       echo "  → Ejecutando dart analyze..."
       if ! (cd app && dart analyze); then
         echo "❌ Dart analyze encontró problemas en app/."
@@ -135,11 +139,14 @@ if [ -f "app/pubspec.yaml" ]; then
       fi
     elif command -v flutter >/dev/null 2>&1; then
       echo "🔧 Usando 'flutter' para formateo y análisis en app/"
+      STAGED_APP_FILES="$(git diff --cached --name-only --diff-filter=ACMR | grep '^app/.*\.dart$' || true)"
       # Auto-format: corrige archivos y los re-stagea automáticamente
       echo "  → Formateando archivos Dart..."
       (cd app && flutter format .)
       echo "  → Re-stageando archivos formateados..."
-      git add app/
+      if [ -n "$STAGED_APP_FILES" ]; then
+        echo "$STAGED_APP_FILES" | tr '\n' '\0' | xargs -0 git add
+      fi
       echo "  → Ejecutando flutter analyze..."
       if ! (cd app && flutter analyze); then
         echo "❌ Flutter analyze encontró problemas en app/."

@@ -1,6 +1,6 @@
-import { Button, Badge } from '@/components/ui'
+import { Badge, Button, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
 import { ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
 import type { Category } from '@/generated/prisma/client'
@@ -29,12 +29,13 @@ export function CategoryListItem({ category, isDragging, onDelete }: CategoryLis
 
       <div className="bg-muted relative h-16 w-24 shrink-0 overflow-hidden rounded-md">
         {thumbnailUrl ? (
-          <Image
+          <OptimizedImage
             src={thumbnailUrl}
             alt={category.name}
             fill
-            className="object-cover"
-            sizes="96px"
+            sizes={IMAGE_SIZES.adminThumbSm}
+            variant="thumbnail"
+            placeholder="empty"
           />
         ) : (
           <div className="flex h-full items-center justify-center opacity-20">

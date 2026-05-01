@@ -5,7 +5,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     category: {
-      findFirst: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn(),
     },
@@ -79,7 +78,10 @@ describe('GET /api/admin/categories/[id]', () => {
 
   it('returns category detail on success', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findFirst).mockResolvedValueOnce(mockCategoryFull as any)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({
+      ...mockCategoryFull,
+      deletedAt: null,
+    } as any)
 
     const { GET } = await import('@/app/api/admin/categories/[id]/route')
     const params = Promise.resolve({ id: 'cat-1' })
@@ -93,7 +95,7 @@ describe('GET /api/admin/categories/[id]', () => {
 
   it('returns 404 for non-existent category', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/categories/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -107,22 +109,22 @@ describe('GET /api/admin/categories/[id]', () => {
 
   it('filters by deletedAt: null', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/categories/[id]/route')
     const params = Promise.resolve({ id: 'cat-1' })
     await GET(makeRequest(BASE_URL), { params })
 
-    expect(prisma.category.findFirst).toHaveBeenCalledWith(
+    expect(prisma.category.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'cat-1', deletedAt: null },
+        where: { id: 'cat-1' },
       })
     )
   })
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.category.findUnique).mockRejectedValueOnce(new Error('DB error'))
 
     const { GET } = await import('@/app/api/admin/categories/[id]/route')
     const params = Promise.resolve({ id: 'cat-1' })
@@ -180,7 +182,10 @@ describe('PATCH /api/admin/categories/[id]', () => {
 
   it('returns 409 for duplicate slug with NOT: { id }', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findFirst).mockResolvedValueOnce({ id: 'other-cat' } as any)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({
+      id: 'other-cat',
+      deletedAt: null,
+    } as any)
 
     const { PATCH } = await import('@/app/api/admin/categories/[id]/route')
     const params = Promise.resolve({ id: 'cat-1' })
@@ -194,8 +199,8 @@ describe('PATCH /api/admin/categories/[id]', () => {
     expect(json.success).toBe(false)
     expect(json.error).toContain('slug')
 
-    expect(prisma.category.findFirst).toHaveBeenCalledWith({
-      where: { slug: 'taken-slug', NOT: { id: 'cat-1' } },
+    expect(prisma.category.findUnique).toHaveBeenCalledWith({
+      where: { slug: 'taken-slug' },
     })
   })
 
@@ -257,7 +262,10 @@ describe('DELETE /api/admin/categories/[id]', () => {
 
   it('soft deletes category (sets deletedAt + slug mangling)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({ slug: 'retratos' } as any)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({
+      slug: 'retratos',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.category.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/categories/[id]/route')
@@ -266,7 +274,7 @@ describe('DELETE /api/admin/categories/[id]', () => {
 
     expect(prisma.category.findUnique).toHaveBeenCalledWith({
       where: { id: 'cat-1' },
-      select: { slug: true },
+      select: { slug: true, deletedAt: true },
     })
     expect(prisma.category.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -281,7 +289,10 @@ describe('DELETE /api/admin/categories/[id]', () => {
 
   it('returns success response', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({ slug: 'retratos' } as any)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({
+      slug: 'retratos',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.category.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/categories/[id]/route')
@@ -296,7 +307,10 @@ describe('DELETE /api/admin/categories/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({ slug: 'retratos' } as any)
+    vi.mocked(prisma.category.findUnique).mockResolvedValueOnce({
+      slug: 'retratos',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.category.update).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/categories/[id]/route')

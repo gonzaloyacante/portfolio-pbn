@@ -7,6 +7,11 @@ const connectionString = process.env.DATABASE_URL
 /**
  * Pool configuration tuned for Neon serverless (free tier).
  *
+ * DATABASE_URL should use Neon’s **pooled** connection string (host ends with
+ * `-pooler.<region>.aws.neon.tech`, or pick “Connection pooling” in the Neon
+ * console). Pooled endpoint + this small Node pool reduces open handles and
+ * pairs better with Vercel/serverless cold starts than the direct host alone.
+ *
  * - max: 3  → never open more than 3 connections at once.
  *            Neon free tier allows up to 100 but each open connection
  *            keeps the compute endpoint active (= billing).

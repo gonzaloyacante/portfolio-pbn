@@ -10,11 +10,13 @@ WHERE timestamp < NOW() - INTERVAL '90 days';
 
 -- Step 2: Add partial index for the most common dashboard query pattern
 -- (non-bot _VIEW events by timestamp) — avoids full table scans.
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "analytic_logs_dashboard_idx"
+-- Note: no CONCURRENTLY — Prisma wraps migrations in a transaction; Postgres forbids
+-- CREATE INDEX CONCURRENTLY inside a transaction block (shadow DB fails with P3006).
+CREATE INDEX IF NOT EXISTS "analytic_logs_dashboard_idx"
   ON "analytic_logs" ("timestamp" DESC)
   WHERE "isBot" = false AND "eventType" LIKE '%_VIEW';
 
 -- Step 3: Add index for rate-limit-style dedup queries (findFirst by IP + timestamp)
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "analytic_logs_dedup_idx"
+CREATE INDEX IF NOT EXISTS "analytic_logs_dedup_idx"
   ON "analytic_logs" ("ipAddress", "timestamp" DESC)
   WHERE "isBot" = false;

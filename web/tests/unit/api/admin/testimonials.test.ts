@@ -7,10 +7,11 @@ vi.mock('@/lib/db', () => ({
     testimonial: {
       findMany: vi.fn(),
       count: vi.fn(),
-      findFirst: vi.fn(),
+      findUnique: vi.fn(),
       create: vi.fn(),
       aggregate: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }))
@@ -55,6 +56,7 @@ const mockTestimonial = {
   viewCount: 50,
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 }
 
 const validTestimonialBody = {
@@ -408,7 +410,7 @@ describe('GET /api/admin/testimonials/[id]', () => {
 
   it('returns testimonial detail on success', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(mockTestimonial as any)
+    vi.mocked(prisma.testimonial.findUnique).mockResolvedValueOnce(mockTestimonial as any)
 
     const { GET } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'test-1' })
@@ -422,7 +424,7 @@ describe('GET /api/admin/testimonials/[id]', () => {
 
   it('returns 404 for non-existent testimonial', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.testimonial.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -436,7 +438,7 @@ describe('GET /api/admin/testimonials/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.testimonial.findUnique).mockRejectedValueOnce(new Error('DB error'))
 
     const { GET } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'test-1' })
@@ -474,7 +476,7 @@ describe('PATCH /api/admin/testimonials/[id]', () => {
 
   it('updates testimonial successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(mockTestimonial as any)
+    vi.mocked(prisma.testimonial.findUnique).mockResolvedValueOnce(mockTestimonial as any)
     vi.mocked(prisma.testimonial.update).mockResolvedValueOnce({
       ...mockTestimonial,
       name: 'Updated Name',
@@ -495,7 +497,7 @@ describe('PATCH /api/admin/testimonials/[id]', () => {
 
   it('returns 404 when testimonial does not exist', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.testimonial.findUnique).mockResolvedValueOnce(null)
 
     const { PATCH } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -511,7 +513,7 @@ describe('PATCH /api/admin/testimonials/[id]', () => {
 
   it('sets moderatedBy and moderatedAt when status changes', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.testimonial.findUnique).mockResolvedValueOnce({
       ...mockTestimonial,
       status: 'PENDING',
     } as any)
@@ -539,7 +541,7 @@ describe('PATCH /api/admin/testimonials/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(mockTestimonial as any)
+    vi.mocked(prisma.testimonial.findUnique).mockResolvedValueOnce(mockTestimonial as any)
     vi.mocked(prisma.testimonial.update).mockRejectedValueOnce(new Error('DB crash'))
 
     const { PATCH } = await import('@/app/api/admin/testimonials/[id]/route')
@@ -578,22 +580,23 @@ describe('DELETE /api/admin/testimonials/[id]', () => {
 
   it('soft deletes testimonial (sets deletedAt)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(mockTestimonial as any)
-    vi.mocked(prisma.testimonial.update).mockResolvedValueOnce({} as any)
+    vi.mocked(prisma.testimonial.updateMany).mockResolvedValueOnce({ count: 1 } as any)
 
     const { DELETE } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'test-1' })
     await DELETE(makeRequest(`${BASE_URL}/test-1`, { method: 'DELETE' }), { params })
 
-    expect(prisma.testimonial.update).toHaveBeenCalledWith({
-      where: { id: 'test-1' },
-      data: { deletedAt: expect.any(Date) },
-    })
+    expect(prisma.testimonial.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: 'test-1', deletedAt: null },
+        data: { deletedAt: expect.any(Date) },
+      })
+    )
   })
 
   it('returns 404 when testimonial not found', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.testimonial.updateMany).mockResolvedValueOnce({ count: 0 } as any)
 
     const { DELETE } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -608,8 +611,7 @@ describe('DELETE /api/admin/testimonials/[id]', () => {
 
   it('returns success response', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(mockTestimonial as any)
-    vi.mocked(prisma.testimonial.update).mockResolvedValueOnce({} as any)
+    vi.mocked(prisma.testimonial.updateMany).mockResolvedValueOnce({ count: 1 } as any)
 
     const { DELETE } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'test-1' })
@@ -623,8 +625,7 @@ describe('DELETE /api/admin/testimonials/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.testimonial.findFirst).mockResolvedValueOnce(mockTestimonial as any)
-    vi.mocked(prisma.testimonial.update).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.testimonial.updateMany).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/testimonials/[id]/route')
     const params = Promise.resolve({ id: 'test-1' })

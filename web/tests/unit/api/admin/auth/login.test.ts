@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
 vi.mock('@/lib/db', () => {
-  const userFindFirst = vi.fn()
+  const userFindUnique = vi.fn()
   const userUpdate = vi.fn()
   const refreshTokenCreate = vi.fn()
   const pushTokenUpsert = vi.fn()
   const analyticLogCreate = vi.fn()
 
   const tx = {
-    user: { findFirst: userFindFirst, update: userUpdate },
+    user: { findUnique: userFindUnique, update: userUpdate },
     refreshToken: { create: refreshTokenCreate },
     pushToken: { upsert: pushTokenUpsert },
     analyticLog: { create: analyticLogCreate },
@@ -64,6 +64,8 @@ const mockUser = {
   avatarUrl: null,
   failedLoginCount: 0,
   lockedUntil: null,
+  isActive: true,
+  deletedAt: null,
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -127,7 +129,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('returns 401 for non-existent user', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
@@ -142,7 +144,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('returns 403 for locked account', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue({
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
       ...mockUser,
       lockedUntil: new Date(Date.now() + 10 * 60 * 1000), // 10 min from now
     } as never)
@@ -157,7 +159,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('returns 401 and records failed attempt for wrong password', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.user.update).mockResolvedValue(mockUser as never)
 
     const bcrypt = (await import('bcryptjs')).default
@@ -174,7 +176,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('locks account after 5 failed attempts', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue({
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
       ...mockUser,
       failedLoginCount: 4, // This will be the 5th attempt
     } as never)
@@ -199,7 +201,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('returns tokens and user on successful login', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.user.update).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValue({
       id: 'rt-1',
@@ -231,7 +233,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('resets failed login count on success', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue({
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
       ...mockUser,
       failedLoginCount: 3,
     } as never)
@@ -267,7 +269,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('registers push token when provided', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.user.update).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.pushToken.upsert).mockResolvedValue({} as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValue({
@@ -303,7 +305,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('returns 500 on unexpected errors', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockRejectedValue(new Error('DB down'))
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error('DB down'))
 
     const { checkAuthRateLimit } = await import('@/lib/auth-rate-limit')
     vi.mocked(checkAuthRateLimit).mockResolvedValue({ allowed: true, remainingAttempts: 5 })
@@ -322,7 +324,7 @@ describe('POST /api/admin/auth/login', () => {
     vi.mocked(checkAuthRateLimit).mockResolvedValue({ allowed: true, remainingAttempts: 5 })
 
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
@@ -347,7 +349,7 @@ describe('POST /api/admin/auth/login', () => {
     vi.mocked(checkAuthRateLimit).mockResolvedValue({ allowed: true, remainingAttempts: 5 })
 
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
@@ -356,7 +358,7 @@ describe('POST /api/admin/auth/login', () => {
     const { POST } = await import('@/app/api/admin/auth/login/route')
     await POST(req)
 
-    expect(prisma.user.findFirst).toHaveBeenCalledWith(
+    expect(prisma.user.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           email: 'admin@test.com',
@@ -367,7 +369,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('does not return password in response', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.user.update).mockResolvedValue(mockUser as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValue({
       id: 'rt-1',
@@ -397,7 +399,7 @@ describe('POST /api/admin/auth/login', () => {
     const { POST } = await import('@/app/api/admin/auth/login/route')
 
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
 
@@ -415,7 +417,7 @@ describe('POST /api/admin/auth/login', () => {
 
   it('allows expired lockedUntil', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue({
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
       ...mockUser,
       lockedUntil: new Date(Date.now() - 60000), // Expired 1 min ago
     } as never)

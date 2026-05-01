@@ -143,8 +143,7 @@ describe('Cloudinary Helper', () => {
       const urlWithoutVersion = 'https://res.cloudinary.com/demo-cloud/image/upload/sample.jpg'
       const result = getOptimizedUrl(urlWithoutVersion, { width: 800 })
 
-      expect(result).toContain('w_800')
-      expect(result).toContain('sample.jpg')
+      expect(result).toBe(urlWithoutVersion)
     })
 
     it('should handle Cloudinary URL with folders', () => {

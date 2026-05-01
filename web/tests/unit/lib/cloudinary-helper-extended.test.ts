@@ -93,8 +93,7 @@ describe('getOptimizedUrl — extended edge cases', () => {
 
   it('handles URL without version', () => {
     const result = getOptimizedUrl(VALID_URL_NO_VERSION, { width: 100 })
-    expect(result).toContain('w_100')
-    expect(result).toContain('folder/image.jpg')
+    expect(result).toBe(VALID_URL_NO_VERSION)
   })
 
   it('handles very large width value', () => {

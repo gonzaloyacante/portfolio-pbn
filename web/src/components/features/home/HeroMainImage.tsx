@@ -1,6 +1,7 @@
 'use client'
 
 import { OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
 import { HeroWrapper } from './HeroWrapper'
@@ -17,6 +18,9 @@ export function HeroMainImage({
   const mainImageAlt = s.heroMainImageAlt || 'Hero Image'
   const caption = s.heroMainImageCaption
   const eff = resolveEffectiveValues(s, isMobile)
+  const isCircle = s.heroImageStyle === 'circle'
+  const isPortrait = s.heroImageStyle === 'portrait'
+  const imageObjectFit = isCircle || isPortrait ? 'cover' : 'contain'
 
   return (
     <div className="order-2 flex w-full justify-center lg:order-0 lg:flex-1 lg:items-center">
@@ -48,12 +52,9 @@ export function HeroMainImage({
                 height={1600}
                 priority
                 variant="hero"
-                className={cn(
-                  'h-auto w-full',
-                  s.heroImageStyle === 'circle' ? 'aspect-square object-cover' : 'object-contain',
-                  s.heroImageStyle === 'portrait' && 'h-full object-cover'
-                )}
-                sizes="(max-width: 768px) 100vw, 50vw"
+                objectFit={imageObjectFit}
+                className={cn('h-auto w-full', isCircle && 'aspect-square', isPortrait && 'h-full')}
+                sizes={IMAGE_SIZES.heroMain}
               />
 
               {caption && (

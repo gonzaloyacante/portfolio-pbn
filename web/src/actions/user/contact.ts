@@ -247,8 +247,11 @@ export async function toggleContactImportant(id: string) {
   const rl = await checkApiRateLimit()
   if (rl) throw new Error(rl.error)
 
-  const contact = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
-  if (!contact) throw new Error('Contacto no encontrado')
+  const contact = await prisma.contact.findUnique({
+    where: { id },
+    select: { isImportant: true, deletedAt: true },
+  })
+  if (!contact || contact.deletedAt !== null) throw new Error('Contacto no encontrado')
 
   const updated = await prisma.contact.update({
     where: { id },

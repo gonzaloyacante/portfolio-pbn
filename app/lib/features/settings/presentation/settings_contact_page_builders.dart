@@ -169,7 +169,7 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
     final async = ref.watch(contactSettingsProvider);
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+      onPopInvokedWithResult: (bool didPop, Object? result) =>
           _maybeLeave(context),
       child: AppScaffold(
         title: 'Contacto',

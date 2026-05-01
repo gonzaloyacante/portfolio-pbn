@@ -55,8 +55,8 @@ export async function POST(req: Request) {
     }
 
     // 1. Buscar usuario activo
-    const user = await prisma.user.findFirst({
-      where: { email: email.toLowerCase(), isActive: true, deletedAt: null },
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
       select: {
         id: true,
         email: true,
@@ -66,10 +66,12 @@ export async function POST(req: Request) {
         avatarUrl: true,
         failedLoginCount: true,
         lockedUntil: true,
+        isActive: true,
+        deletedAt: true,
       },
     })
 
-    if (!user) {
+    if (!user || !user.isActive || user.deletedAt !== null) {
       // Evitar enumeración de usuarios: siempre el mismo tiempo de respuesta
       await bcrypt.compare(password, '$2b$12$invalidhashtopreventtimingattack')
       return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 })

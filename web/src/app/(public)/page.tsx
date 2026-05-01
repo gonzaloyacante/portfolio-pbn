@@ -2,6 +2,7 @@ import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings } from '@/actions/settings/site'
 import HomePage from '@/components/features/home/HomePage'
 import { Metadata } from 'next'
+import { ROUTES } from '@/config/routes'
 
 export const revalidate = 60
 
@@ -20,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title,
     description: `Portfolio profesional de ${ownerName}, maquilladora y caracterizadora${locationSuffix}, España. Especialista en bodas, editoriales, cine, teatro y eventos.`,
     alternates: {
-      canonical: '/',
+      canonical: ROUTES.home,
     },
     openGraph: {
       title,

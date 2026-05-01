@@ -1,31 +1,18 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
+import '../../../../core/theme/app_colors.dart';
+import 'live_hero_preview_utils.dart';
 
 // ── File-level helpers ────────────────────────────────────────────────────────
 
-TextStyle _getFont(String fontName, TextStyle fallback) {
-  if (fontName.isEmpty) return fallback;
-  try {
-    return GoogleFonts.getFont(fontName);
-  } catch (_) {
-    return fallback;
-  }
-}
-
 double _eff(
-  Map<String, dynamic> vals,
+  Map<String, Object?> vals,
   String baseKey,
   String mobileKey,
   double fallback,
   bool isMobile,
-) {
-  final mVal = vals[mobileKey];
-  if (isMobile && mVal != null) return (mVal as num).toDouble();
-  final dVal = vals[baseKey];
-  return dVal != null ? (dVal as num).toDouble() : fallback;
-}
+) => effectivePreviewValue(vals, baseKey, mobileKey, fallback, isMobile);
 
 // ── LiveHeroPreviewGallery ────────────────────────────────────────────────────
 
@@ -43,7 +30,7 @@ class LiveHeroPreviewGallery extends StatelessWidget {
     required this.primaryColor,
   });
 
-  final Map<String, dynamic> vals;
+  final Map<String, Object?> vals;
   final Map<String, TextEditingController> extraCtrls;
   final String cta;
   final File? pendingHeroImage;
@@ -57,11 +44,11 @@ class LiveHeroPreviewGallery extends StatelessWidget {
       return Image.file(pendingHeroImage!, fit: BoxFit.cover);
     }
     if (currentHeroImageUrl.isNotEmpty) {
-      return CachedNetworkImage(
+      return AppNetworkImage(
         imageUrl: currentHeroImageUrl,
         fit: BoxFit.cover,
-        errorWidget: (context, url, error) =>
-            const Center(child: Icon(Icons.broken_image)),
+        placeholder: const ColoredBox(color: AppColors.lightBorder),
+        errorWidget: const Center(child: Icon(Icons.broken_image)),
       );
     }
     return Container(
@@ -131,7 +118,7 @@ class LiveHeroPreviewGallery extends StatelessWidget {
         ),
         child: Text(
           cta,
-          style: _getFont(
+          style: getFontSafe(
             ctaFontName,
             const TextStyle(fontWeight: FontWeight.w600),
           ).copyWith(color: Colors.white, fontSize: effCtaSize),

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
@@ -38,12 +37,12 @@ class CategoryGridCard extends StatelessWidget {
                   child:
                       item.coverImageUrl != null &&
                           item.coverImageUrl!.isNotEmpty
-                      ? CachedNetworkImage(
+                      ? AppNetworkImage(
                           imageUrl: item.coverImageUrl!,
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => ColoredBox(
+                          placeholder: ColoredBox(
                             color: scheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.image_outlined,
@@ -51,7 +50,7 @@ class CategoryGridCard extends StatelessWidget {
                               size: 36,
                             ),
                           ),
-                          errorWidget: (context, url, error) => ColoredBox(
+                          errorWidget: ColoredBox(
                             color: scheme.surfaceContainerHighest,
                             child: Icon(
                               Icons.broken_image_outlined,

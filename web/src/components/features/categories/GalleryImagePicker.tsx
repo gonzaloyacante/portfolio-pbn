@@ -1,6 +1,7 @@
 'use client'
 
-import Image from 'next/image'
+import { OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { Check } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -50,12 +51,13 @@ export function GalleryImagePicker({
               : 'hover:border-primary/50 border-transparent'
           )}
         >
-          <Image
+          <OptimizedImage
             src={img.url}
             alt="Imagen de galería"
             fill
-            className="object-cover"
-            sizes="150px"
+            sizes={IMAGE_SIZES.adminPickerGrid}
+            variant="thumbnail"
+            placeholder="empty"
           />
           {selectedUrl === img.url && (
             <div className="bg-primary/20 absolute inset-0 flex items-center justify-center">

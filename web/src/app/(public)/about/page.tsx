@@ -6,6 +6,7 @@ import JsonLd from '@/components/seo/JsonLd'
 import { AboutBioColumn, AboutProfileImage } from '@/components/features/about/AboutBioSection'
 import { AboutTestimonialsSection } from '@/components/features/about/AboutTestimonialsSection'
 import { Metadata } from 'next'
+import { ROUTES } from '@/config/routes'
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()
@@ -17,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'Sobre Mí',
     description: `Conoce a ${ownerName}, maquilladora profesional y caracterizadora${locationSuffix}. Más de 10 años de experiencia en bodas, editoriales y caracterización artística.`,
     alternates: {
-      canonical: '/sobre-mi',
+      canonical: ROUTES.public.about,
     },
     openGraph: {
       title: `Sobre Mí | ${ownerName}`,

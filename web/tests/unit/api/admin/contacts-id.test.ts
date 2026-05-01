@@ -5,10 +5,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     contact: {
-      findFirst: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn(),
-      delete: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }))
@@ -65,6 +64,7 @@ const mockContactDetail = {
   utmCampaign: null,
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 }
 
 // ── Tests: GET ────────────────────────────────────────────────────────────────
@@ -92,7 +92,7 @@ describe('GET /api/admin/contacts/[id]', () => {
 
   it('returns 404 for non-existent contact', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -106,7 +106,7 @@ describe('GET /api/admin/contacts/[id]', () => {
 
   it('auto-marks contact as read on first view', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce({
       ...mockContactDetail,
       isRead: false,
     } as any)
@@ -128,7 +128,7 @@ describe('GET /api/admin/contacts/[id]', () => {
 
   it('returns contact detail with isRead: true in response', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce({
       ...mockContactDetail,
       isRead: true,
     } as any)
@@ -145,7 +145,7 @@ describe('GET /api/admin/contacts/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.contact.findUnique).mockRejectedValueOnce(new Error('DB error'))
 
     const { GET } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'contact-1' })
@@ -187,7 +187,7 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
   it('returns 404 when contact does not exist', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce(null)
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -205,7 +205,7 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
   it('updates contact successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(mockContactDetail as any)
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce(mockContactDetail as any)
     vi.mocked(prisma.contact.update).mockResolvedValueOnce({
       ...mockContactDetail,
       status: 'IN_PROGRESS',
@@ -227,7 +227,7 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
   it('marks as replied when replyText provided and not previously replied', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce({
       ...mockContactDetail,
       isReplied: false,
     } as any)
@@ -257,7 +257,7 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
   it('does not re-mark as replied when already replied', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce({
       ...mockContactDetail,
       isReplied: true,
       repliedAt: new Date(),
@@ -286,7 +286,7 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(mockContactDetail as any)
+    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce(mockContactDetail as any)
     vi.mocked(prisma.contact.update).mockRejectedValueOnce(new Error('DB error'))
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
@@ -327,7 +327,7 @@ describe('DELETE /api/admin/contacts/[id]', () => {
 
   it('returns 404 when contact does not exist', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.contact.updateMany).mockResolvedValueOnce({ count: 0 } as any)
 
     const { DELETE } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -340,8 +340,7 @@ describe('DELETE /api/admin/contacts/[id]', () => {
 
   it('soft deletes contact (sets deletedAt)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(mockContactDetail as any)
-    vi.mocked(prisma.contact.update).mockResolvedValueOnce({} as any)
+    vi.mocked(prisma.contact.updateMany).mockResolvedValueOnce({ count: 1 } as any)
 
     const { DELETE } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'contact-1' })
@@ -351,9 +350,9 @@ describe('DELETE /api/admin/contacts/[id]', () => {
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
     expect(json.message).toBe('Contacto eliminado')
-    expect(prisma.contact.update).toHaveBeenCalledWith(
+    expect(prisma.contact.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'contact-1' },
+        where: { id: 'contact-1', deletedAt: null },
         data: expect.objectContaining({ deletedAt: expect.any(Date) }),
       })
     )
@@ -361,8 +360,7 @@ describe('DELETE /api/admin/contacts/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findFirst).mockResolvedValueOnce(mockContactDetail as any)
-    vi.mocked(prisma.contact.update).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.contact.updateMany).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/contacts/[id]/route')
     const params = Promise.resolve({ id: 'contact-1' })

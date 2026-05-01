@@ -4,11 +4,29 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    category: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    service: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    testimonial: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    contact: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    booking: { findFirst: vi.fn(), update: vi.fn(), delete: vi.fn() },
+    category: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn(), delete: vi.fn() },
+    service: { findFirst: vi.fn(), findUnique: vi.fn(), update: vi.fn(), delete: vi.fn() },
+    testimonial: {
+      findFirst: vi.fn(),
+      update: vi.fn(),
+      updateMany: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+    },
+    contact: {
+      findFirst: vi.fn(),
+      update: vi.fn(),
+      updateMany: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+    },
+    booking: {
+      findFirst: vi.fn(),
+      update: vi.fn(),
+      updateMany: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+    },
   },
 }))
 
@@ -138,16 +156,16 @@ describe('DELETE /api/admin/trash/[type]/[id]', () => {
 
   it('only deletes already-deleted items', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(mockDeletedItem as any)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce(mockDeletedItem as any)
     vi.mocked(prisma.service.delete).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/trash/[type]/[id]/route')
     const params = Promise.resolve({ type: 'service', id: 'item-1' })
     await DELETE(makeRequest(`${BASE_URL}/service/item-1`, { method: 'DELETE' }), { params })
 
-    expect(prisma.service.findFirst).toHaveBeenCalledWith(
+    expect(prisma.service.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'item-1', deletedAt: { not: null } },
+        where: { id: 'item-1' },
       })
     )
   })

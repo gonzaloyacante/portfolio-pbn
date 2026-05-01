@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 /// Imagen de portada de una categoría con fallback a ícono placeholder.
 class CategoryTileImage extends StatelessWidget {
@@ -17,10 +17,10 @@ class CategoryTileImage extends StatelessWidget {
     return SizedBox(
       width: 80,
       child: coverImageUrl != null && coverImageUrl!.isNotEmpty
-          ? CachedNetworkImage(
+          ? AppNetworkImage(
               imageUrl: coverImageUrl!,
               fit: BoxFit.cover,
-              placeholder: (_, _) => ColoredBox(
+              placeholder: ColoredBox(
                 color: colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.image_outlined,
@@ -28,7 +28,7 @@ class CategoryTileImage extends StatelessWidget {
                   size: 28,
                 ),
               ),
-              errorWidget: (_, _, _) => ColoredBox(
+              errorWidget: ColoredBox(
                 color: colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.broken_image_outlined,

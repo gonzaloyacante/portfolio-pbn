@@ -53,20 +53,22 @@ export async function GET(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const service = await prisma.service.findFirst({
-      where: { id, deletedAt: null },
-      select: SERVICE_FULL_SELECT,
+    const service = await prisma.service.findUnique({
+      where: { id },
+      select: { ...SERVICE_FULL_SELECT, deletedAt: true },
     })
 
-    if (!service) {
+    if (!service || service.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Servicio no encontrado' }, { status: 404 })
     }
+
+    const { deletedAt: _deletedAt, ...serviceData } = service
 
     return NextResponse.json({
       success: true,
       data: {
-        ...service,
-        thumbnailUrl: service.imageUrl ? generateThumbnailUrl(service.imageUrl) : null,
+        ...serviceData,
+        thumbnailUrl: serviceData.imageUrl ? generateThumbnailUrl(serviceData.imageUrl) : null,
       },
     })
   } catch (err) {
@@ -116,10 +118,8 @@ export async function PATCH(req: Request, { params }: Params) {
     } = parsed.data
 
     if (slug) {
-      const existing = await prisma.service.findFirst({
-        where: { slug, NOT: { id } },
-      })
-      if (existing) {
+      const existing = await prisma.service.findUnique({ where: { slug } })
+      if (existing && existing.id !== id) {
         const msg =
           existing.deletedAt !== null
             ? 'El slug ya está en uso por un servicio eliminado. Vacía la papelera o usa otro slug.'
@@ -225,7 +225,13 @@ export async function DELETE(req: Request, { params }: Params) {
     const { id } = await params
 
     // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
-    const svc = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
+    const svc = await prisma.service.findUnique({
+      where: { id },
+      select: { slug: true, deletedAt: true },
+    })
+    if (!svc || svc.deletedAt !== null) {
+      return NextResponse.json({ success: false, error: 'Servicio no encontrado' }, { status: 404 })
+    }
     const mangledSlug = svc ? `${svc.slug}_deleted_${Date.now()}` : undefined
 
     await prisma.service.update({

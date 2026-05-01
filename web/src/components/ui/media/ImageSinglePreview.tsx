@@ -1,6 +1,7 @@
 'use client'
 
-import Image from 'next/image'
+import { IMAGE_SIZES } from '@/config/image-sizes'
+import { OptimizedImage } from './OptimizedImage'
 import { Pencil, Trash2 } from 'lucide-react'
 import type { SingleImagePreviewProps } from './ImageUploadTypes'
 
@@ -23,12 +24,13 @@ export function ImageSinglePreview({
       onDragLeave={onDragLeave}
       onDrop={onDrop}
     >
-      <Image
+      <OptimizedImage
         src={imageUrl}
         alt="Imagen subida"
         fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, 50vw"
+        sizes={IMAGE_SIZES.adminUploadSingle}
+        variant="card"
+        placeholder="empty"
       />
       <div className="bg-foreground/50 absolute inset-0 flex items-center justify-center gap-4 opacity-0 transition-opacity group-hover:opacity-100">
         <button

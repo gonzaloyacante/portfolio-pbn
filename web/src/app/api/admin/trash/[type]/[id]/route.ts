@@ -21,7 +21,12 @@ type TrashItemModel = {
     where: Record<string, unknown>
     data: Record<string, unknown>
   }): Promise<Record<string, unknown>>
+  updateMany(args: {
+    where: Record<string, unknown>
+    data: Record<string, unknown>
+  }): Promise<{ count: number }>
   delete(args: { where: Record<string, unknown> }): Promise<Record<string, unknown>>
+  deleteMany(args: { where: Record<string, unknown> }): Promise<{ count: number }>
 }
 
 const TRASH_MODELS: Record<TrashType, TrashItemModel> = {
@@ -63,18 +68,21 @@ async function unmangleSlug(
 
 async function restoreItem(type: TrashType, id: string) {
   const model = getModel(type)
+  if (type !== 'category' && type !== 'service') {
+    const result = await model.updateMany({
+      where: { id, deletedAt: { not: null } },
+      data: { deletedAt: null },
+    })
+    return result.count > 0 ? { id } : null
+  }
+
   const item = await model.findFirst({ where: { id, deletedAt: { not: null } } })
   if (!item) return null
 
-  const updateData: Record<string, unknown> = { deletedAt: null }
-
-  // category y service tienen isActive — restaurar a true
-  if (type === 'category' || type === 'service') {
-    updateData.isActive = true
-  }
+  const updateData: Record<string, unknown> = { deletedAt: null, isActive: true }
 
   // Para category y service aplicamos un-mangle del slug mangleado al borrar
-  if ((type === 'category' || type === 'service') && item.slug) {
+  if (item.slug) {
     updateData.slug = await unmangleSlug(model, item.slug as string, id)
   }
 
@@ -87,11 +95,11 @@ async function purgeItem(type: TrashType, id: string) {
 
   // Pre-fetch dependencias ricas en media antes de borrarlas para recolectar sus assets huérfanos
   if (type === 'category') {
-    const category = await prisma.category.findFirst({
-      where: { id, deletedAt: { not: null } },
+    const category = await prisma.category.findUnique({
+      where: { id },
       include: { images: true },
     })
-    if (!category) return null
+    if (!category || category.deletedAt === null) return null
 
     if (category.coverImageUrl) {
       const pid = extractPublicIdUrl(category.coverImageUrl)
@@ -99,10 +107,8 @@ async function purgeItem(type: TrashType, id: string) {
     }
     category.images.forEach((img) => publicIdsToDelete.push(img.publicId))
   } else if (type === 'service') {
-    const service = await prisma.service.findFirst({
-      where: { id, deletedAt: { not: null } },
-    })
-    if (!service) return null
+    const service = await prisma.service.findUnique({ where: { id } })
+    if (!service || service.deletedAt === null) return null
     if (service.imageUrl) {
       const pid = extractPublicIdUrl(service.imageUrl)
       if (pid) publicIdsToDelete.push(pid)
@@ -112,8 +118,8 @@ async function purgeItem(type: TrashType, id: string) {
       if (pid) publicIdsToDelete.push(pid)
     }
   } else {
-    const item = await model.findFirst({ where: { id, deletedAt: { not: null } } })
-    if (!item) return null
+    const result = await model.deleteMany({ where: { id, deletedAt: { not: null } } })
+    return result.count > 0 ? { id } : null
   }
 
   // 1. Borrar registro central de la base de datos

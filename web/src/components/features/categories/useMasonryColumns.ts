@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { BREAKPOINTS } from '@/config/breakpoints'
 
 interface MasonryColumn<T> {
   items: (T & { flatIndex: number })[]
@@ -19,8 +20,8 @@ export function useMasonryColumns<T extends { width?: number | null; height?: nu
 
   useEffect(() => {
     const update = () => {
-      if (window.innerWidth >= 1280) setColumns(4)
-      else if (window.innerWidth >= 768) setColumns(3)
+      if (window.innerWidth >= BREAKPOINTS.xl) setColumns(4)
+      else if (window.innerWidth >= BREAKPOINTS.md) setColumns(3)
       else setColumns(2)
     }
     update()

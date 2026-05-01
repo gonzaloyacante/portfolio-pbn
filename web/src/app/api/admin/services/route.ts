@@ -12,6 +12,12 @@ import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import {
+  buildPaginationMeta,
+  normalizeBooleanParam,
+  normalizePagination,
+  normalizeSearchTerm,
+} from '@/lib/search-utils'
 import { serviceApiSchema } from '@/lib/validations'
 
 const SERVICE_SELECT = {
@@ -40,12 +46,14 @@ export async function GET(req: Request) {
 
   try {
     const { searchParams } = new URL(req.url)
-    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') ?? '50', 10)))
-    const search = searchParams.get('search') ?? undefined
-    const active = searchParams.get('active')
-    const featured = searchParams.get('featured')
-    const skip = (page - 1) * limit
+    const { page, limit, skip } = normalizePagination(
+      searchParams.get('page'),
+      searchParams.get('limit'),
+      { defaultLimit: 50, maxLimit: 100 }
+    )
+    const search = normalizeSearchTerm(searchParams.get('search'))
+    const active = normalizeBooleanParam(searchParams.get('active'))
+    const featured = normalizeBooleanParam(searchParams.get('featured'))
 
     const where = {
       deletedAt: null,
@@ -55,8 +63,8 @@ export async function GET(req: Request) {
           { slug: { contains: search, mode: 'insensitive' as const } },
         ],
       }),
-      ...(active !== null && active !== undefined && { isActive: active === 'true' }),
-      ...(featured !== null && featured !== undefined && { isFeatured: featured === 'true' }),
+      ...(active !== undefined && { isActive: active }),
+      ...(featured !== undefined && { isFeatured: featured }),
     }
 
     const [services, total] = await Promise.all([
@@ -77,14 +85,7 @@ export async function GET(req: Request) {
           ...s,
           thumbnailUrl: s.imageUrl ? generateThumbnailUrl(s.imageUrl) : null,
         })),
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-          hasNext: page * limit < total,
-          hasPrev: page > 1,
-        },
+        pagination: buildPaginationMeta(page, limit, total),
       },
     })
   } catch (err) {

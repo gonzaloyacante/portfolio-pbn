@@ -140,15 +140,30 @@ export async function recordAnalyticEvent(
     // Solo deduplicar eventos de página (no acciones como CONTACT_SUBMIT)
     if (!isDuplicate && !isBot && eventType.endsWith('_VIEW')) {
       const windowStart = new Date(Date.now() - SESSION_WINDOW_MS)
-      const recentEvent = await prisma.analyticLog.findFirst({
-        where: {
-          ipAddress,
-          timestamp: { gte: windowStart },
-          isBot: false,
-        },
-        select: { sessionId: true },
-        orderBy: { timestamp: 'desc' },
-      })
+      // Prefer sessionId lookup (index sessionId) — avoids ipAddress scan on repeat views.
+      let recentEvent: { sessionId: string | null } | null = null
+      if (sessionIdToUse) {
+        recentEvent = await prisma.analyticLog.findFirst({
+          where: {
+            sessionId: sessionIdToUse,
+            timestamp: { gte: windowStart },
+            isBot: false,
+          },
+          select: { sessionId: true },
+          orderBy: { timestamp: 'desc' },
+        })
+      }
+      if (recentEvent === null) {
+        recentEvent = await prisma.analyticLog.findFirst({
+          where: {
+            ipAddress,
+            timestamp: { gte: windowStart },
+            isBot: false,
+          },
+          select: { sessionId: true },
+          orderBy: { timestamp: 'desc' },
+        })
+      }
       if (recentEvent !== null) {
         isDuplicate = true
         // Heredar sessionId del primer evento de la sesión
@@ -278,9 +293,18 @@ const _fetchAnalyticsDashboardData = unstable_cache(
       // 4. Trend data: aggregate by day in DB — avoids fetching all timestamps
       prisma.$queryRaw<{ date: Date; count: bigint }[]>`
         SELECT DATE_TRUNC('day', timestamp) AS date, COUNT(*)::bigint AS count
-        FROM "AnalyticLog"
+        FROM "analytic_logs"
         WHERE timestamp >= ${sevenDaysAgo}
-          AND "eventType" LIKE '%_VIEW'
+          AND "eventType" IN (
+            'HOME_VIEW',
+            'GALLERY_VIEW',
+            'GALLERY_DETAIL_VIEW',
+            'ABOUT_VIEW',
+            'CONTACT_VIEW',
+            'PAGE_VIEW',
+            'CATEGORY_VIEW',
+            'PROJECT_DETAIL_VIEW'
+          )
           AND "isBot" = false
         GROUP BY DATE_TRUNC('day', timestamp)
         ORDER BY date ASC

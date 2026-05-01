@@ -1,5 +1,6 @@
 import ServiceForm from '@/components/features/services/ServiceForm'
 import { PageHeader } from '@/components/layout'
+import { ROUTES } from '@/config/routes'
 
 export const metadata = {
   title: 'Crear Servicio | Admin',
@@ -12,7 +13,7 @@ export default function NewServicePage() {
       <PageHeader
         title="✨ Crear Servicio"
         description="Define un nuevo servicio que ofreces a tus clientes."
-        backUrl="/admin/services"
+        backUrl={ROUTES.admin.services}
       />
 
       <div className="max-w-2xl">

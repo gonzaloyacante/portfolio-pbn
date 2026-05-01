@@ -1,9 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import { Button, Card, Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
-import { ImageUpload } from '@/components/ui'
+import {
+  Button,
+  Card,
+  ImageUpload,
+  OptimizedImage,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { getCategoryImages } from '@/actions/cms/category'
 import { Image as ImageIcon, Upload } from 'lucide-react'
 import { GalleryImagePicker } from './GalleryImagePicker'
@@ -47,7 +55,14 @@ export default function CategoryCoverSelector({
 
       {selectedUrl && (
         <div className="border-primary/20 bg-muted/30 relative h-48 w-full overflow-hidden rounded-xl border-2">
-          <Image src={selectedUrl} alt="Portada seleccionada" fill className="object-cover" />
+          <OptimizedImage
+            src={selectedUrl}
+            alt="Portada seleccionada"
+            fill
+            sizes={IMAGE_SIZES.adminCoverPreview}
+            variant="card"
+            placeholder="empty"
+          />
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
             <Button
               variant="destructive"

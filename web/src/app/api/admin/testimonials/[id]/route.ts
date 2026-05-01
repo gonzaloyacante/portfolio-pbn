@@ -51,23 +51,27 @@ export async function GET(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const testimonial = await prisma.testimonial.findFirst({
-      where: { id, deletedAt: null },
-      select: TESTIMONIAL_DETAIL_SELECT,
+    const testimonial = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { ...TESTIMONIAL_DETAIL_SELECT, deletedAt: true },
     })
 
-    if (!testimonial) {
+    if (!testimonial || testimonial.deletedAt !== null) {
       return NextResponse.json(
         { success: false, error: 'Testimonio no encontrado' },
         { status: 404 }
       )
     }
 
+    const { deletedAt: _deletedAt, ...testimonialData } = testimonial
+
     return NextResponse.json({
       success: true,
       data: {
-        ...testimonial,
-        thumbnailUrl: testimonial.avatarUrl ? generateThumbnailUrl(testimonial.avatarUrl) : null,
+        ...testimonialData,
+        thumbnailUrl: testimonialData.avatarUrl
+          ? generateThumbnailUrl(testimonialData.avatarUrl)
+          : null,
       },
     })
   } catch (err) {
@@ -116,8 +120,11 @@ export async function PATCH(req: Request, { params }: Params) {
       sortOrder,
     } = parsed.data
 
-    const existing = await prisma.testimonial.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) {
+    const existing = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { status: true, deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
       return NextResponse.json(
         { success: false, error: 'Testimonio no encontrado' },
         { status: 404 }
@@ -175,15 +182,17 @@ export async function DELETE(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const existing = await prisma.testimonial.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) {
+    const result = await prisma.testimonial.updateMany({
+      where: { id, deletedAt: null },
+      data: { deletedAt: new Date() },
+    })
+
+    if (result.count === 0) {
       return NextResponse.json(
         { success: false, error: 'Testimonio no encontrado' },
         { status: 404 }
       )
     }
-
-    await prisma.testimonial.update({ where: { id }, data: { deletedAt: new Date() } })
 
     revalidatePath(ROUTES.home)
     revalidatePath(ROUTES.public.about, 'layout')

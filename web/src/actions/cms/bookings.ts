@@ -63,8 +63,8 @@ export type BookingForEdit = {
 export async function getBookingForEdit(id: string): Promise<BookingForEdit> {
   await requireAdmin()
 
-  const booking = await prisma.booking.findFirst({
-    where: { id, deletedAt: null },
+  const booking = await prisma.booking.findUnique({
+    where: { id },
     select: {
       id: true,
       date: true,
@@ -81,15 +81,17 @@ export async function getBookingForEdit(id: string): Promise<BookingForEdit> {
       paidAmount: true,
       paymentStatus: true,
       paymentMethod: true,
+      deletedAt: true,
       serviceId: true,
       service: { select: { id: true, name: true } },
     },
   })
 
-  if (!booking) notFound()
+  if (!booking || booking.deletedAt !== null) notFound()
 
+  const { deletedAt: _deletedAt, ...bookingData } = booking
   return {
-    ...booking,
+    ...bookingData,
     date: booking.date.toISOString(),
     endDate: booking.endDate?.toISOString() ?? null,
     totalAmount: booking.totalAmount?.toString() ?? null,
@@ -136,8 +138,13 @@ export async function updateBookingAdmin(
   const data = parsed.data
 
   try {
-    const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) return { success: false, error: 'Reserva no encontrada' }
+    const existing = await prisma.booking.findUnique({
+      where: { id },
+      select: { status: true, deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
+      return { success: false, error: 'Reserva no encontrada' }
+    }
 
     const statusData: Record<string, unknown> = {}
     if (data.status && data.status !== existing.status) {

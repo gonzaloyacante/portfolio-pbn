@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 /// Avatar circular/redondeado para un testimonio con fallback de iniciales.
 class TestimonialAvatar extends StatelessWidget {
@@ -25,12 +25,12 @@ class TestimonialAvatar extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: avatarUrl != null
-          ? CachedNetworkImage(
+          ? AppNetworkImage(
               imageUrl: avatarUrl!,
               fit: BoxFit.cover,
               width: 46,
               height: 46,
-              placeholder: (_, _) => Center(
+              placeholder: Center(
                 child: SizedBox(
                   width: 20,
                   height: 20,
@@ -40,8 +40,7 @@ class TestimonialAvatar extends StatelessWidget {
                   ),
                 ),
               ),
-              errorWidget: (_, _, _) =>
-                  _InitialsWidget(name: name, colorScheme: colorScheme),
+              errorWidget: _InitialsWidget(name: name, colorScheme: colorScheme),
             )
           : _InitialsWidget(name: name, colorScheme: colorScheme),
     );

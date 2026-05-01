@@ -1,8 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type CSSProperties, type ReactNode } from 'react'
 import { motion, AnimatePresence, Variants, useReducedMotion } from 'framer-motion'
-import { ReactNode } from 'react'
+
+const preMountHiddenStyle: CSSProperties = {
+  opacity: 0,
+}
+
+function mergePreMountStyle(style?: CSSProperties, transform?: string): CSSProperties {
+  return {
+    ...style,
+    ...preMountHiddenStyle,
+    ...(transform ? { transform } : {}),
+  }
+}
 
 /**
  * Hook that returns true only after the component has mounted on the client.
@@ -39,7 +50,14 @@ export function FadeIn({
   const shouldReduceMotion = useReducedMotion()
 
   if (disabled || !isMounted || shouldReduceMotion)
-    return <div className={className}>{children}</div>
+    return (
+      <div
+        className={className}
+        style={disabled || shouldReduceMotion ? undefined : mergePreMountStyle(undefined, 'translateY(20px)')}
+      >
+        {children}
+      </div>
+    )
 
   return (
     <motion.div
@@ -76,14 +94,28 @@ export function SlideIn({
   const isMounted = useIsMounted()
   const shouldReduceMotion = useReducedMotion()
 
-  if (disabled || !isMounted || shouldReduceMotion)
-    return <div className={className}>{children}</div>
-
   const directions = {
     left: { x: -50, y: 0 },
     right: { x: 50, y: 0 },
     up: { x: 0, y: 50 },
     down: { x: 0, y: -50 },
+  }
+
+  if (disabled || !isMounted || shouldReduceMotion) {
+    const { x, y } = directions[direction]
+
+    return (
+      <div
+        className={className}
+        style={
+          disabled || shouldReduceMotion
+            ? undefined
+            : mergePreMountStyle(undefined, `translate(${x}px, ${y}px)`)
+        }
+      >
+        {children}
+      </div>
+    )
   }
 
   return (
@@ -120,7 +152,14 @@ export function ScaleIn({
   const shouldReduceMotion = useReducedMotion()
 
   if (disabled || !isMounted || shouldReduceMotion)
-    return <div className={className}>{children}</div>
+    return (
+      <div
+        className={className}
+        style={disabled || shouldReduceMotion ? undefined : mergePreMountStyle(undefined, 'scale(0.9)')}
+      >
+        {children}
+      </div>
+    )
 
   return (
     <motion.div
@@ -151,7 +190,15 @@ export function StaggerChildren({
   const isMounted = useIsMounted()
   const shouldReduceMotion = useReducedMotion()
 
-  if (!isMounted || shouldReduceMotion) return <div className={className}>{children}</div>
+  if (!isMounted || shouldReduceMotion)
+    return (
+      <div
+        className={className}
+        style={shouldReduceMotion ? undefined : mergePreMountStyle(undefined, 'translateY(20px)')}
+      >
+        {children}
+      </div>
+    )
 
   return (
     <motion.div
@@ -204,7 +251,7 @@ export function WordReveal({
 }: {
   text: string
   className?: string
-  style?: React.CSSProperties
+  style?: CSSProperties
   delay?: number
   stagger?: number
   as?: 'span' | 'h1' | 'h2' | 'h3' | 'p'
@@ -216,7 +263,10 @@ export function WordReveal({
   if (!isMounted || shouldReduceMotion) {
     const StaticTag = Tag
     return (
-      <StaticTag className={className} style={style}>
+      <StaticTag
+        className={className}
+        style={shouldReduceMotion ? style : mergePreMountStyle(style, 'translateY(24px)')}
+      >
         {text}
       </StaticTag>
     )

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useId, useEffect } from 'react'
-import Image from 'next/image'
 import {
   DndContext,
   closestCenter,
@@ -20,8 +19,9 @@ import {
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { GripVertical, Trash2, Star } from 'lucide-react'
-import { motion } from '@/components/ui'
-import { useConfirmDialog } from '@/components/ui'
+import { motion, useConfirmDialog } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
+import { OptimizedImage } from './OptimizedImage'
 
 interface CategoryImage {
   id: string
@@ -156,12 +156,13 @@ function SortableImage({ image, isThumbnail, onDelete, onSetThumbnail }: Sortabl
       } ${isDragging ? 'scale-105 opacity-50' : 'opacity-100'}`}
     >
       {/* Image */}
-      <Image
+      <OptimizedImage
         src={image.url}
         alt="Imagen de la galería"
         fill
-        className="object-cover"
-        sizes="200px"
+        sizes={IMAGE_SIZES.adminUploadGrid}
+        variant="thumbnail"
+        placeholder="empty"
       />
 
       {/* Overlay on Hover */}

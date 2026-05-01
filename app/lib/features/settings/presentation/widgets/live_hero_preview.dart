@@ -6,7 +6,7 @@ import 'live_hero_preview_gallery.dart';
 import 'live_hero_preview_header.dart';
 
 class LiveHeroPreview extends StatelessWidget {
-  final Map<String, dynamic> vals;
+  final Map<String, Object?> vals;
   final Map<String, TextEditingController> extraCtrls;
 
   final String title1;

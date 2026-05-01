@@ -28,6 +28,23 @@ function revalidateCategoryGallery(categoryId: string, categorySlug?: string) {
   revalidateTag(CACHE_TAGS.categoryImages, 'max')
 }
 
+async function normalizeCategoryImageOrder(categoryId: string) {
+  await prisma.$executeRaw`
+    WITH ranked AS (
+      SELECT
+        id,
+        ROW_NUMBER() OVER (ORDER BY "order" ASC, "createdAt" ASC) - 1 AS next_order
+      FROM "category_images"
+      WHERE "categoryId" = ${categoryId}
+    )
+    UPDATE "category_images" AS ci
+    SET "order" = ranked.next_order
+    FROM ranked
+    WHERE ci.id = ranked.id
+      AND ci."order" <> ranked.next_order;
+  `
+}
+
 // ── GET ───────────────────────────────────────────────────────────────────────
 
 export async function GET(req: Request, { params }: Params) {
@@ -38,12 +55,12 @@ export async function GET(req: Request, { params }: Params) {
     const { id: categoryId } = await params
 
     // Verificar que la categoría existe
-    const category = await prisma.category.findFirst({
-      where: { id: categoryId, deletedAt: null },
-      select: { id: true, name: true },
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { id: true, name: true, deletedAt: true },
     })
 
-    if (!category) {
+    if (!category || category.deletedAt) {
       return NextResponse.json(
         { success: false, error: 'Categoría no encontrada' },
         { status: 404 }
@@ -95,11 +112,11 @@ export async function POST(req: Request, { params }: Params) {
     }
 
     // Verificar que la categoría existe
-    const category = await prisma.category.findFirst({
-      where: { id: categoryId, deletedAt: null },
-      select: { id: true, slug: true },
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { id: true, slug: true, deletedAt: true },
     })
-    if (!category) {
+    if (!category || category.deletedAt) {
       return NextResponse.json(
         { success: false, error: 'Categoría no encontrada' },
         { status: 404 }
@@ -158,12 +175,12 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     // Verificar que la categoría existe
-    const category = await prisma.category.findFirst({
-      where: { id: categoryId, deletedAt: null },
-      select: { id: true, slug: true },
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { id: true, slug: true, deletedAt: true },
     })
 
-    if (!category) {
+    if (!category || category.deletedAt) {
       return NextResponse.json(
         { success: false, error: 'Categoría no encontrada' },
         { status: 404 }
@@ -171,30 +188,33 @@ export async function PUT(req: Request, { params }: Params) {
     }
 
     if (order.length === 0) {
-      const existingImages = await prisma.categoryImage.findMany({
-        where: { categoryId },
-        orderBy: { order: 'asc' },
-        select: { id: true },
-      })
-
-      await prisma.$transaction(
-        existingImages.map((img, index) =>
-          prisma.categoryImage.update({
-            where: { id: img.id },
-            data: { order: index },
-          })
-        )
-      )
+      await normalizeCategoryImageOrder(categoryId)
 
       revalidateCategoryGallery(categoryId, category.slug)
       return NextResponse.json({ success: true })
     }
 
-    // Actualizar el orden de cada imagen en una transaction
+    const targetIds = Array.from(new Set(order.map(({ id }) => id)))
+    const existingIds = await prisma.categoryImage.findMany({
+      where: { categoryId, id: { in: targetIds } },
+      select: { id: true },
+    })
+
+    if (existingIds.length !== targetIds.length) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Uno o más imageId no pertenecen a la categoría',
+        },
+        { status: 400 }
+      )
+    }
+
+    // Actualizar orden de forma acotada a la categoría
     await prisma.$transaction(
       order.map(({ id, order: newOrder }) =>
-        prisma.categoryImage.update({
-          where: { id },
+        prisma.categoryImage.updateMany({
+          where: { id, categoryId },
           data: { order: newOrder },
         })
       )
@@ -236,10 +256,11 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     // Verificar que la imagen pertenece a esta categoría
-    const image = await prisma.categoryImage.findFirst({
-      where: { id: imageId, categoryId },
+    const image = await prisma.categoryImage.findUnique({
+      where: { id: imageId },
       select: {
         id: true,
+        categoryId: true,
         url: true,
         category: {
           select: {
@@ -250,7 +271,7 @@ export async function DELETE(req: Request, { params }: Params) {
       },
     })
 
-    if (!image) {
+    if (!image || image.categoryId !== categoryId) {
       return NextResponse.json(
         { success: false, error: 'Imagen no encontrada en esta categoría' },
         { status: 404 }
@@ -275,16 +296,7 @@ export async function DELETE(req: Request, { params }: Params) {
     ])
 
     // Reordenar las imágenes restantes
-    const remaining = await prisma.categoryImage.findMany({
-      where: { categoryId },
-      orderBy: { order: 'asc' },
-    })
-
-    await prisma.$transaction(
-      remaining.map((img, i) =>
-        prisma.categoryImage.update({ where: { id: img.id }, data: { order: i } })
-      )
-    )
+    await normalizeCategoryImageOrder(categoryId)
 
     revalidateCategoryGallery(categoryId, image.category.slug)
 
@@ -322,10 +334,11 @@ export async function PATCH(req: Request, { params }: Params) {
       )
     }
 
-    const image = await prisma.categoryImage.findFirst({
-      where: { id: imageId, categoryId },
+    const image = await prisma.categoryImage.findUnique({
+      where: { id: imageId },
       select: {
         id: true,
+        categoryId: true,
         category: {
           select: {
             slug: true,
@@ -334,7 +347,7 @@ export async function PATCH(req: Request, { params }: Params) {
       },
     })
 
-    if (!image) {
+    if (!image || image.categoryId !== categoryId) {
       return NextResponse.json(
         { success: false, error: 'Imagen no encontrada en esta categoría' },
         { status: 404 }

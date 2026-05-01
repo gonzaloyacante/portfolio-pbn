@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { motion, FadeIn, OptimizedImage, Lightbox } from '@/components/ui'
+import { FadeIn, Lightbox, motion, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import type { LightboxImage } from '@/components/ui'
 
 interface FeaturedImage {
@@ -37,7 +38,7 @@ export default function FeaturedImagesGallery({ images }: FeaturedImagesGalleryP
             <motion.div
               role="button"
               tabIndex={0}
-              aria-label={`Ver imagen ${i + 1}`}
+              aria-label={`Ver imagen de ${img.categoryName}`}
               onClick={() => setSelectedIndex(i)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -54,8 +55,8 @@ export default function FeaturedImagesGallery({ images }: FeaturedImagesGalleryP
                 alt={img.categoryName}
                 fill
                 variant="card"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                className="transition-transform duration-700 ease-out group-hover:scale-110"
+                sizes={IMAGE_SIZES.publicThreeColGrid}
               />
               {/* Subtle hover overlay — no text */}
               <div className="absolute inset-0 bg-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />

@@ -43,7 +43,7 @@ export function GalleryImageCard({ image, showTitles, onClick }: GalleryImageCar
           alt={image.alt}
           width={500}
           height={500}
-          className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full transition-transform duration-500 group-hover:scale-105"
           variant="card"
         />
         <div className="bg-foreground/20 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />

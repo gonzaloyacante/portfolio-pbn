@@ -7,7 +7,7 @@ import Captions from 'yet-another-react-lightbox/plugins/captions'
 import type { SlideImage } from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
-import { getVariantUrl } from '@/lib/cloudinary-helper'
+import { getVariantUrl, isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
 
 // ---------- Types ----------
 
@@ -27,10 +27,6 @@ interface LightboxProps {
   onIndexChange?: (index: number) => void
 }
 
-// ---------- Cloudinary detection ----------
-
-const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\//
-
 // ---------- Component ----------
 
 export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: LightboxProps) {
@@ -43,7 +39,7 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
    * When ready, swap the slide src from thumbnail → full (seamlessly, already cached).
    */
   const upgradeImage = useCallback((url: string) => {
-    if (!url || !CLOUDINARY_REGEX.test(url)) return
+    if (!url || !isCloudinaryUploadUrl(url)) return
     if (upgradingSet.current.has(url)) return
     upgradingSet.current.add(url)
 
@@ -76,7 +72,7 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
   const slides = useMemo<SlideImage[]>(
     () =>
       images.map((img) => {
-        const isCloudinary = CLOUDINARY_REGEX.test(img.url)
+        const isCloudinary = isCloudinaryUploadUrl(img.url)
         return {
           src:
             upgradedUrls[img.url] ?? (isCloudinary ? getVariantUrl(img.url, 'thumbnail') : img.url),
