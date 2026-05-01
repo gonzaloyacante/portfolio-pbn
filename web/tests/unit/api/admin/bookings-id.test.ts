@@ -5,9 +5,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     booking: {
-      findFirst: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }))
@@ -65,6 +65,7 @@ const mockBookingDetail = {
   service: { name: 'Sesión Retrato', slug: 'sesion-retrato' },
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 }
 
 // ── Tests: GET ────────────────────────────────────────────────────────────────
@@ -92,7 +93,7 @@ describe('GET /api/admin/bookings/[id]', () => {
 
   it('returns booking detail on success', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
 
     const { GET } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'booking-1' })
@@ -106,7 +107,7 @@ describe('GET /api/admin/bookings/[id]', () => {
 
   it('returns 404 for non-existent booking', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -120,7 +121,7 @@ describe('GET /api/admin/bookings/[id]', () => {
 
   it('serializes totalAmount and paidAmount to string', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce({
       ...mockBookingDetail,
       totalAmount: 200.5,
       paidAmount: 100.0,
@@ -137,7 +138,7 @@ describe('GET /api/admin/bookings/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.booking.findUnique).mockRejectedValueOnce(new Error('DB error'))
 
     const { GET } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'booking-1' })
@@ -177,7 +178,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('returns 404 when booking does not exist', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(null)
 
     const { PATCH } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -193,7 +194,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('updates booking successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
     vi.mocked(prisma.booking.update).mockResolvedValueOnce({
       ...mockBookingDetail,
       adminNotes: 'Updated notes',
@@ -213,7 +214,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('sets confirmedAt/confirmedBy when status changes to CONFIRMED', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
     vi.mocked(prisma.booking.update).mockResolvedValueOnce({
       ...mockBookingDetail,
       status: 'CONFIRMED',
@@ -237,7 +238,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('sets cancelledAt/cancelledBy when status changes to CANCELLED', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
     vi.mocked(prisma.booking.update).mockResolvedValueOnce({
       ...mockBookingDetail,
       status: 'CANCELLED',
@@ -261,7 +262,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('parses totalAmount and paidAmount to float', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
     vi.mocked(prisma.booking.update).mockResolvedValueOnce({
       ...mockBookingDetail,
       totalAmount: 300.5,
@@ -290,7 +291,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('serializes amounts to string in response', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
     vi.mocked(prisma.booking.update).mockResolvedValueOnce({
       ...mockBookingDetail,
       totalAmount: 250.0,
@@ -311,7 +312,7 @@ describe('PATCH /api/admin/bookings/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValueOnce(mockBookingDetail as any)
     vi.mocked(prisma.booking.update).mockRejectedValueOnce(new Error('DB crash'))
 
     const { PATCH } = await import('@/app/api/admin/bookings/[id]/route')
@@ -352,7 +353,7 @@ describe('DELETE /api/admin/bookings/[id]', () => {
 
   it('returns 404 when booking does not exist', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.booking.updateMany).mockResolvedValueOnce({ count: 0 } as any)
 
     const { DELETE } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -365,8 +366,7 @@ describe('DELETE /api/admin/bookings/[id]', () => {
 
   it('soft deletes booking (sets deletedAt)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
-    vi.mocked(prisma.booking.update).mockResolvedValueOnce({} as any)
+    vi.mocked(prisma.booking.updateMany).mockResolvedValueOnce({ count: 1 } as any)
 
     const { DELETE } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'booking-1' })
@@ -376,9 +376,9 @@ describe('DELETE /api/admin/bookings/[id]', () => {
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
     expect(json.message).toBe('Reserva eliminada')
-    expect(prisma.booking.update).toHaveBeenCalledWith(
+    expect(prisma.booking.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'booking-1' },
+        where: { id: 'booking-1', deletedAt: null },
         data: expect.objectContaining({ deletedAt: expect.any(Date) }),
       })
     )
@@ -386,8 +386,7 @@ describe('DELETE /api/admin/bookings/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.booking.findFirst).mockResolvedValueOnce(mockBookingDetail as any)
-    vi.mocked(prisma.booking.update).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.booking.updateMany).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/bookings/[id]/route')
     const params = Promise.resolve({ id: 'booking-1' })

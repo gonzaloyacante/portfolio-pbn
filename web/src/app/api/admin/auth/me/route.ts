@@ -29,7 +29,6 @@ export async function GET(req: Request) {
         name: true,
         role: true,
         avatarUrl: true,
-        bio: true,
         locale: true,
         timezone: true,
         notifications: true,

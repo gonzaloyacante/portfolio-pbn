@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
 vi.mock('@/lib/db', () => {
-  const userFindFirst = vi.fn()
+  const userFindUnique = vi.fn()
   const userUpdate = vi.fn()
   const refreshTokenCreate = vi.fn()
   const pushTokenUpsert = vi.fn()
   const analyticLogCreate = vi.fn()
 
   const tx = {
-    user: { findFirst: userFindFirst, update: userUpdate },
+    user: { findUnique: userFindUnique, update: userUpdate },
     refreshToken: { create: refreshTokenCreate },
     pushToken: { upsert: pushTokenUpsert },
     analyticLog: { create: analyticLogCreate },
@@ -64,6 +64,8 @@ const mockUser = {
   avatarUrl: null,
   failedLoginCount: 0,
   lockedUntil: null,
+  isActive: true,
+  deletedAt: null,
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -98,7 +100,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('handles password with unicode characters', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -113,7 +115,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
     const body = { ...validLogin, extraField: 'ignored', anotherExtra: 123 }
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -126,7 +128,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('takes first IP from x-forwarded-for with multiple IPs', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -147,7 +149,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('falls back to x-real-ip when x-forwarded-for is missing', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -177,7 +179,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('returns 401 for user with role != ADMIN when not found (isActive check)', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(null as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(null as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(false as never)
 
     const { POST } = await import('@/app/api/admin/auth/login/route')
@@ -191,7 +193,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
       ...mockUser,
       lockedUntil: new Date(Date.now() + 60 * 60 * 1000), // 1h in future
     }
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(lockedUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(lockedUser as never)
 
     const { POST } = await import('@/app/api/admin/auth/login/route')
     const res = await POST(makeLoginRequest(validLogin))
@@ -207,7 +209,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
       ...mockUser,
       lockedUntil: new Date(Date.now() - 1000), // in the past
     }
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(expiredLock as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(expiredLock as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -220,7 +222,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('increments failedLoginCount on wrong password', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({
       ...mockUser,
       failedLoginCount: 3,
     } as never)
@@ -240,7 +242,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('locks account at 5 failed attempts', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({
       ...mockUser,
       failedLoginCount: 4,
     } as never)
@@ -263,7 +265,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('does NOT lock at 4 attempts (only at 5)', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce({
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce({
       ...mockUser,
       failedLoginCount: 3,
     } as never)
@@ -286,7 +288,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('device field is optional (login works without it)', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -301,7 +303,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('registers pushToken when device and pushToken are provided', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.pushToken.upsert).mockResolvedValueOnce({} as never)
@@ -323,7 +325,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('does not register pushToken when pushToken provided but no device', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)
@@ -336,7 +338,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
 
   it('returns 500 when DB throws unexpectedly', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockRejectedValueOnce(new Error('DB connection lost'))
+    vi.mocked(prisma.user.findUnique).mockRejectedValueOnce(new Error('DB connection lost'))
 
     const { POST } = await import('@/app/api/admin/auth/login/route')
     const res = await POST(makeLoginRequest(validLogin))
@@ -346,7 +348,7 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
   it('successful login returns user data without password', async () => {
     const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValueOnce(mockUser as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(mockUser as never)
     vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(true as never)
     vi.mocked(prisma.refreshToken.create).mockResolvedValueOnce({ token: 'rt-1' } as never)
     vi.mocked(prisma.user.update).mockResolvedValueOnce(mockUser as never)

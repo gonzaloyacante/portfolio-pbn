@@ -7,9 +7,10 @@ vi.mock('@/lib/db', () => ({
     booking: {
       findMany: vi.fn(),
       count: vi.fn(),
-      findFirst: vi.fn(),
+      findUnique: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }))
@@ -52,6 +53,7 @@ const mockBooking = {
   service: { name: 'Wedding Photography' },
   createdAt: new Date(),
   updatedAt: new Date(),
+  deletedAt: null,
 }
 
 beforeEach(() => {
@@ -345,7 +347,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('GET single booking by ID', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockBooking,
       totalAmount: 100,
       paidAmount: 50,
@@ -364,7 +366,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('GET returns 404 for nonexistent booking', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(null)
 
     const { GET } = await import('@/app/api/admin/bookings/[id]/route')
     const res = await GET(makeRequest(`${BASE_URL}/booking-404`), {
@@ -376,7 +378,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('PATCH updates booking status to CONFIRMED', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
     ;(prisma.booking.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockBooking,
       status: 'CONFIRMED',
@@ -403,7 +405,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('PATCH updates booking status to CANCELLED', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
     ;(prisma.booking.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockBooking,
       status: 'CANCELLED',
@@ -430,7 +432,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('PATCH updates admin notes', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
     ;(prisma.booking.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockBooking,
       totalAmount: null,
@@ -455,7 +457,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('PATCH returns 404 when booking not found', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(null)
 
     const { PATCH } = await import('@/app/api/admin/bookings/[id]/route')
     const res = await PATCH(
@@ -468,8 +470,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('DELETE soft deletes booking', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
-    ;(prisma.booking.update as ReturnType<typeof vi.fn>).mockResolvedValue({})
+    ;(prisma.booking.updateMany as ReturnType<typeof vi.fn>).mockResolvedValue({ count: 1 })
 
     const { DELETE } = await import('@/app/api/admin/bookings/[id]/route')
     const res = await DELETE(makeRequest(`${BASE_URL}/booking-1`, { method: 'DELETE' }), {
@@ -477,8 +478,9 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
     })
 
     expect(res.status).toBe(200)
-    expect(prisma.booking.update).toHaveBeenCalledWith(
+    expect(prisma.booking.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
+        where: expect.objectContaining({ id: 'booking-1', deletedAt: null }),
         data: expect.objectContaining({ deletedAt: expect.any(Date) }),
       })
     )
@@ -486,7 +488,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('DELETE returns 404 when booking not found', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    ;(prisma.booking.updateMany as ReturnType<typeof vi.fn>).mockResolvedValue({ count: 0 })
 
     const { DELETE } = await import('@/app/api/admin/bookings/[id]/route')
     const res = await DELETE(makeRequest(`${BASE_URL}/booking-404`, { method: 'DELETE' }), {
@@ -498,7 +500,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('PATCH handles db error with 500', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
+    ;(prisma.booking.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
     ;(prisma.booking.update as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('fail'))
 
     const { PATCH } = await import('@/app/api/admin/bookings/[id]/route')
@@ -512,8 +514,7 @@ describe('PATCH & DELETE /api/admin/bookings/[id] — extended', () => {
 
   it('DELETE handles db error with 500', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.booking.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(existingBooking)
-    ;(prisma.booking.update as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('fail'))
+    ;(prisma.booking.updateMany as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('fail'))
 
     const { DELETE } = await import('@/app/api/admin/bookings/[id]/route')
     const res = await DELETE(makeRequest(`${BASE_URL}/booking-1`, { method: 'DELETE' }), {

@@ -5,7 +5,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     service: {
-      findFirst: vi.fn(),
       findUnique: vi.fn(),
       update: vi.fn(),
     },
@@ -92,7 +91,10 @@ describe('GET /api/admin/services/[id]', () => {
 
   it('returns service detail on success', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(mockServiceFull as any)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({
+      ...mockServiceFull,
+      deletedAt: null,
+    } as any)
 
     const { GET } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'svc-1' })
@@ -106,7 +108,7 @@ describe('GET /api/admin/services/[id]', () => {
 
   it('returns 404 for non-existent service', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'non-existent' })
@@ -120,22 +122,22 @@ describe('GET /api/admin/services/[id]', () => {
 
   it('filters by deletedAt: null', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce(null)
 
     const { GET } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'svc-1' })
     await GET(makeRequest(BASE_URL), { params })
 
-    expect(prisma.service.findFirst).toHaveBeenCalledWith(
+    expect(prisma.service.findUnique).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: 'svc-1', deletedAt: null },
+        where: { id: 'svc-1' },
       })
     )
   })
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.service.findUnique).mockRejectedValueOnce(new Error('DB error'))
 
     const { GET } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'svc-1' })
@@ -194,7 +196,10 @@ describe('PATCH /api/admin/services/[id]', () => {
 
   it('returns 409 for duplicate slug with NOT: { id }', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce({ id: 'other-svc' } as any)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({
+      id: 'other-svc',
+      deletedAt: null,
+    } as any)
 
     const { PATCH } = await import('@/app/api/admin/services/[id]/route')
     const params = Promise.resolve({ id: 'svc-1' })
@@ -208,8 +213,8 @@ describe('PATCH /api/admin/services/[id]', () => {
     expect(json.success).toBe(false)
     expect(json.error).toContain('slug')
 
-    expect(prisma.service.findFirst).toHaveBeenCalledWith({
-      where: { slug: 'taken-slug', NOT: { id: 'svc-1' } },
+    expect(prisma.service.findUnique).toHaveBeenCalledWith({
+      where: { slug: 'taken-slug' },
     })
   })
 
@@ -285,7 +290,10 @@ describe('DELETE /api/admin/services/[id]', () => {
 
   it('soft deletes service (sets deletedAt)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({ slug: 'sesion-retrato' } as any)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({
+      slug: 'sesion-retrato',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/services/[id]/route')
@@ -302,7 +310,10 @@ describe('DELETE /api/admin/services/[id]', () => {
 
   it('returns success response', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({ slug: 'sesion-retrato' } as any)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({
+      slug: 'sesion-retrato',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.service.update).mockResolvedValueOnce({} as any)
 
     const { DELETE } = await import('@/app/api/admin/services/[id]/route')
@@ -317,7 +328,10 @@ describe('DELETE /api/admin/services/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({ slug: 'sesion-retrato' } as any)
+    vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({
+      slug: 'sesion-retrato',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.service.update).mockRejectedValueOnce(new Error('DB error'))
 
     const { DELETE } = await import('@/app/api/admin/services/[id]/route')

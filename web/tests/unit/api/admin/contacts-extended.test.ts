@@ -7,9 +7,10 @@ vi.mock('@/lib/db', () => ({
     contact: {
       findMany: vi.fn(),
       count: vi.fn(),
-      findFirst: vi.fn(),
+      findUnique: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      updateMany: vi.fn(),
     },
   },
 }))
@@ -206,7 +207,7 @@ describe('GET /api/admin/contacts — extended', () => {
 describe('GET /api/admin/contacts/[id] — auto-read marking', () => {
   it('GET returns contact by id', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
       isRead: true,
     })
@@ -223,7 +224,7 @@ describe('GET /api/admin/contacts/[id] — auto-read marking', () => {
 
   it('GET marks unread contact as read', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
       isRead: false,
     })
@@ -250,7 +251,7 @@ describe('GET /api/admin/contacts/[id] — auto-read marking', () => {
 
   it('GET does not update already-read contact', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
       isRead: true,
     })
@@ -265,7 +266,7 @@ describe('GET /api/admin/contacts/[id] — auto-read marking', () => {
 
   it('GET returns 404 for nonexistent contact', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(null)
 
     const { GET } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await GET(makeRequest(`${BASE_URL}/contact-404`), {
@@ -283,7 +284,7 @@ describe('GET /api/admin/contacts/[id] — auto-read marking', () => {
 describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
   it('PATCH updates status', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
     ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
       status: 'IN_PROGRESS',
@@ -305,7 +306,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
   it('PATCH updates priority', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
     ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
       priority: 'HIGH',
@@ -326,7 +327,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
   it('PATCH sets reply tracking on first reply', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
       ...mockContact,
       isReplied: false,
     })
@@ -355,7 +356,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
   it('PATCH updates admin note', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
     ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({ ...mockContact })
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
@@ -376,7 +377,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
   it('PATCH with assignedTo strips unknown fields (not in schema)', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
     ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({ ...mockContact })
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
@@ -391,7 +392,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
   it('PATCH returns 404 when contact not found', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(null)
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await PATCH(
@@ -404,7 +405,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 
   it('PATCH handles db error with 500', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
+    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
     ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('fail'))
 
     const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
@@ -424,8 +425,7 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
 describe('DELETE /api/admin/contacts/[id] — soft delete', () => {
   it('DELETE soft deletes a contact', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
-    ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({})
+    ;(prisma.contact.updateMany as ReturnType<typeof vi.fn>).mockResolvedValue({ count: 1 })
 
     const { DELETE } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await DELETE(makeRequest(`${BASE_URL}/contact-1`, { method: 'DELETE' }), {
@@ -433,8 +433,9 @@ describe('DELETE /api/admin/contacts/[id] — soft delete', () => {
     })
 
     expect(res.status).toBe(200)
-    expect(prisma.contact.update).toHaveBeenCalledWith(
+    expect(prisma.contact.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
+        where: expect.objectContaining({ id: 'contact-1', deletedAt: null }),
         data: expect.objectContaining({
           deletedAt: expect.any(Date),
         }),
@@ -444,7 +445,7 @@ describe('DELETE /api/admin/contacts/[id] — soft delete', () => {
 
   it('DELETE returns 404 when contact not found', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    ;(prisma.contact.updateMany as ReturnType<typeof vi.fn>).mockResolvedValue({ count: 0 })
 
     const { DELETE } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await DELETE(makeRequest(`${BASE_URL}/contact-404`, { method: 'DELETE' }), {
@@ -456,8 +457,7 @@ describe('DELETE /api/admin/contacts/[id] — soft delete', () => {
 
   it('DELETE handles db error with 500', async () => {
     const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
-    ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('fail'))
+    ;(prisma.contact.updateMany as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('fail'))
 
     const { DELETE } = await import('@/app/api/admin/contacts/[id]/route')
     const res = await DELETE(makeRequest(`${BASE_URL}/contact-1`, { method: 'DELETE' }), {

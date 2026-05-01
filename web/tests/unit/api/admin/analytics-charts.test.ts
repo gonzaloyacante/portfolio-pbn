@@ -8,9 +8,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     $queryRaw: vi.fn(),
-    booking: {
-      findMany: vi.fn(),
-    },
   },
 }))
 
@@ -62,7 +59,7 @@ describe('GET /api/admin/analytics/charts', () => {
   it('returns chart data structure', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
-    vi.mocked(prisma.booking.findMany).mockResolvedValueOnce([])
+    vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
 
     const { GET } = await import('@/app/api/admin/analytics/charts/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -77,7 +74,7 @@ describe('GET /api/admin/analytics/charts', () => {
   it('returns correct number of day labels (7)', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
-    vi.mocked(prisma.booking.findMany).mockResolvedValueOnce([])
+    vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
 
     const { GET } = await import('@/app/api/admin/analytics/charts/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -89,7 +86,7 @@ describe('GET /api/admin/analytics/charts', () => {
   it('returns correct number of month labels (6)', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
-    vi.mocked(prisma.booking.findMany).mockResolvedValueOnce([])
+    vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
 
     const { GET } = await import('@/app/api/admin/analytics/charts/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -101,7 +98,7 @@ describe('GET /api/admin/analytics/charts', () => {
   it('handles empty data gracefully', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
-    vi.mocked(prisma.booking.findMany).mockResolvedValueOnce([])
+    vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
 
     const { GET } = await import('@/app/api/admin/analytics/charts/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -122,7 +119,7 @@ describe('GET /api/admin/analytics/charts', () => {
     // $queryRaw returns rows with { day: Date, count: bigint }
     const today = new Date()
     vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([{ day: today, count: BigInt(1) }])
-    vi.mocked(prisma.booking.findMany).mockResolvedValueOnce([{ date: today }] as any)
+    vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([{ month: today, count: BigInt(1) }])
 
     const { GET } = await import('@/app/api/admin/analytics/charts/route')
     const res = await GET(makeRequest(BASE_URL))
@@ -153,7 +150,7 @@ describe('GET /api/admin/analytics/charts', () => {
       // produces todayKey. We pass today directly (already local midnight).
       { day: today, count: BigInt(5) },
     ])
-    vi.mocked(prisma.booking.findMany).mockResolvedValueOnce([])
+    vi.mocked(prisma.$queryRaw).mockResolvedValueOnce([])
 
     const { GET } = await import('@/app/api/admin/analytics/charts/route')
     const res = await GET(makeRequest(BASE_URL))

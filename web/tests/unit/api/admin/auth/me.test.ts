@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/lib/db', () => ({
   prisma: {
-    user: { findFirst: vi.fn(), update: vi.fn() },
+    user: { findUnique: vi.fn(), update: vi.fn() },
     refreshToken: { updateMany: vi.fn().mockResolvedValue({ count: 0 }) },
   },
 }))
@@ -50,16 +50,19 @@ const mockUserProfile = {
   name: 'Admin',
   role: 'ADMIN',
   avatarUrl: null,
-  bio: 'Bio text',
   locale: 'es',
   timezone: 'Europe/Madrid',
   notifications: true,
   lastLoginAt: new Date('2025-01-01'),
   createdAt: new Date('2024-01-01'),
+  isActive: true,
+  deletedAt: null,
 }
 
 const mockUserWithPassword = {
   password: '$2b$12$existing-hashed-password',
+  isActive: true,
+  deletedAt: null,
 }
 
 // ── Tests: GET /api/admin/auth/me ─────────────────────────────────────────────
@@ -94,7 +97,7 @@ describe('GET /api/admin/auth/me', () => {
 
   it('returns user profile on success', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUserProfile as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUserProfile as never)
 
     const req = makeGetRequest()
     const { GET } = await import('@/app/api/admin/auth/me/route')
@@ -110,7 +113,7 @@ describe('GET /api/admin/auth/me', () => {
 
   it('returns 404 if user not found', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
     const req = makeGetRequest()
     const { GET } = await import('@/app/api/admin/auth/me/route')
@@ -123,7 +126,7 @@ describe('GET /api/admin/auth/me', () => {
 
   it('does not return password field', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUserProfile as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUserProfile as never)
 
     const req = makeGetRequest()
     const { GET } = await import('@/app/api/admin/auth/me/route')
@@ -134,7 +137,7 @@ describe('GET /api/admin/auth/me', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockRejectedValue(new Error('DB down'))
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error('DB down'))
 
     const req = makeGetRequest()
     const { GET } = await import('@/app/api/admin/auth/me/route')
@@ -210,7 +213,7 @@ describe('PATCH /api/admin/auth/me', () => {
 
   it('returns 404 if user not found', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(null)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
     const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
@@ -223,7 +226,7 @@ describe('PATCH /api/admin/auth/me', () => {
 
   it('returns 400 for wrong current password', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUserWithPassword as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUserWithPassword as never)
 
     const bcrypt = (await import('bcryptjs')).default
     vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
@@ -239,7 +242,7 @@ describe('PATCH /api/admin/auth/me', () => {
 
   it('updates password successfully', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUserWithPassword as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUserWithPassword as never)
     vi.mocked(prisma.user.update).mockResolvedValue({} as never)
 
     const bcrypt = (await import('bcryptjs')).default
@@ -262,7 +265,7 @@ describe('PATCH /api/admin/auth/me', () => {
 
   it('hashes password with bcrypt salt 12', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUserWithPassword as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUserWithPassword as never)
     vi.mocked(prisma.user.update).mockResolvedValue({} as never)
 
     const bcrypt = (await import('bcryptjs')).default
@@ -277,7 +280,7 @@ describe('PATCH /api/admin/auth/me', () => {
 
   it('returns success response with message', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUserWithPassword as never)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUserWithPassword as never)
     vi.mocked(prisma.user.update).mockResolvedValue({} as never)
 
     const bcrypt = (await import('bcryptjs')).default
@@ -293,7 +296,7 @@ describe('PATCH /api/admin/auth/me', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.user.findFirst).mockRejectedValue(new Error('DB down'))
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error('DB down'))
 
     const req = makePatchRequest({ currentPassword: 'oldpass123', newPassword: 'NewPass123' })
     const { PATCH } = await import('@/app/api/admin/auth/me/route')
