@@ -42,7 +42,7 @@ class SettingsRepository {
     return AboutSettings.fromJson(_dataMap(resp));
   }
 
-  Future<AboutSettings> updateAbout(Map<String, dynamic> data) async {
+  Future<AboutSettings> updateAbout(Map<String, Object?> data) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.settingsSection('about'),
       data: data,
@@ -59,7 +59,7 @@ class SettingsRepository {
     return ContactSettings.fromJson(_dataMap(resp));
   }
 
-  Future<ContactSettings> updateContact(Map<String, dynamic> data) async {
+  Future<ContactSettings> updateContact(Map<String, Object?> data) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.settingsSection('contact'),
       data: data,
@@ -76,7 +76,7 @@ class SettingsRepository {
     return ThemeSettings.fromJson(_dataMap(resp));
   }
 
-  Future<ThemeSettings> updateTheme(Map<String, dynamic> data) async {
+  Future<ThemeSettings> updateTheme(Map<String, Object?> data) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.settingsSection('theme'),
       data: data,
@@ -93,7 +93,7 @@ class SettingsRepository {
     return SiteSettings.fromJson(_dataMap(resp));
   }
 
-  Future<SiteSettings> updateSite(Map<String, dynamic> data) async {
+  Future<SiteSettings> updateSite(Map<String, Object?> data) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.settingsSection('site'),
       data: data,
@@ -110,7 +110,7 @@ class SettingsRepository {
     return HomeSettings.fromJson(_dataMap(resp));
   }
 
-  Future<HomeSettings> updateHome(Map<String, dynamic> data) async {
+  Future<HomeSettings> updateHome(Map<String, Object?> data) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.settingsSection('home'),
       data: data,
@@ -128,7 +128,7 @@ class SettingsRepository {
   }
 
   Future<CategoryDisplaySettings> updateCategorySettings(
-    Map<String, dynamic> data,
+    Map<String, Object?> data,
   ) async {
     final resp = await _client.patch<Map<String, dynamic>>(
       Endpoints.settingsSection('category'),
@@ -147,7 +147,7 @@ class SettingsRepository {
         .toList();
   }
 
-  Future<SocialLink> upsertSocialLink(Map<String, dynamic> data) async {
+  Future<SocialLink> upsertSocialLink(Map<String, Object?> data) async {
     final resp = await _client.post<Map<String, dynamic>>(
       Endpoints.socialLinks,
       data: data,

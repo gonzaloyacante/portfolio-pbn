@@ -16,7 +16,7 @@ class DraftService {
   static const _maxAgeDays = 7;
 
   /// Saves [data] under [scope].
-  Future<void> save(String scope, Map<String, dynamic> data) async {
+  Future<void> save(String scope, Map<String, Object?> data) async {
     final prefs = await SharedPreferences.getInstance();
     final envelope = {
       'savedAt': DateTime.now().toIso8601String(),
@@ -26,19 +26,19 @@ class DraftService {
   }
 
   /// Returns the saved draft for [scope], or `null` when absent / expired.
-  Future<Map<String, dynamic>?> load(String scope) async {
+  Future<Map<String, Object?>?> load(String scope) async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString('$_prefix$scope');
     if (raw == null) return null;
     try {
-      final envelope = jsonDecode(raw) as Map<String, dynamic>;
+      final envelope = jsonDecode(raw) as Map<String, Object?>;
       final savedAt = DateTime.tryParse(envelope['savedAt'] as String? ?? '');
       if (savedAt == null ||
           DateTime.now().difference(savedAt).inDays > _maxAgeDays) {
         await clear(scope);
         return null;
       }
-      return envelope['data'] as Map<String, dynamic>?;
+      return envelope['data'] as Map<String, Object?>?;
     } catch (_) {
       await clear(scope);
       return null;

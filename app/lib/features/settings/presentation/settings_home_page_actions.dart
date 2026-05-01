@@ -15,12 +15,12 @@ extension _HomePageActions on _SettingsHomePageState {
       _extraCtrls.putIfAbsent(key, TextEditingController.new);
 
   int _intVal(String key, [int fallback = 0]) =>
-      (_vals[key] as int?) ?? fallback;
+      (_vals[key] as num?)?.toInt() ?? fallback;
 
   String _strVal(String key, [String fallback = '']) =>
       (_vals[key] as String?) ?? fallback;
 
-  void _setVal(String key, dynamic v) => setState(() => _vals[key] = v);
+  void _setVal(String key, Object? v) => setState(() => _vals[key] = v);
 
   void _onPreviewChange() {
     _markDirty();
@@ -239,7 +239,7 @@ extension _HomePageActions on _SettingsHomePageState {
         _pendingIllustration = null;
       }
 
-      final data = <String, dynamic>{
+      final data = <String, Object?>{
         // Core text fields
         'heroTitle1Text': _nullIfEmpty(_title1Ctrl.text),
         'heroTitle2Text': _nullIfEmpty(_title2Ctrl.text),
@@ -282,7 +282,7 @@ extension _HomePageActions on _SettingsHomePageState {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+      onPopInvokedWithResult: (bool didPop, Object? result) =>
           _maybeLeave(context),
       child: AppScaffold(
         title: 'Página de inicio',

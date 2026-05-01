@@ -68,7 +68,7 @@ class _BookingFormPageState extends ConsumerState<BookingFormPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final extra = GoRouterState.of(context).extra;
-      if (extra is Map<String, dynamic> && extra['serviceId'] is String) {
+      if (extra is Map<String, Object?> && extra['serviceId'] is String) {
         setState(() => _serviceId = extra['serviceId'] as String);
       }
     });

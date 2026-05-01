@@ -154,7 +154,7 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
 
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) =>
+      onPopInvokedWithResult: (bool didPop, Object? result) =>
           _maybeLeave(context),
       child: AppScaffold(
         title: 'Sobre mí',
