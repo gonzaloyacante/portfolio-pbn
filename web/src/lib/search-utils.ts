@@ -42,3 +42,29 @@ export function normalizePagination(
 
   return { page, limit, skip }
 }
+
+/**
+ * Convierte query param booleano de forma consistente.
+ * - "true"  -> true
+ * - "false" -> false
+ * - null/undefined/otro -> undefined
+ */
+export function normalizeBooleanParam(raw: string | null): boolean | undefined {
+  if (raw === 'true') return true
+  if (raw === 'false') return false
+  return undefined
+}
+
+/**
+ * Construye metadata de paginación uniforme para endpoints admin.
+ */
+export function buildPaginationMeta(page: number, limit: number, total: number) {
+  return {
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+    hasNext: page * limit < total,
+    hasPrev: page > 1,
+  }
+}

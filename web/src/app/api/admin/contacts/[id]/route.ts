@@ -52,24 +52,26 @@ export async function GET(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const contact = await prisma.contact.findFirst({
-      where: { id, deletedAt: null },
-      select: CONTACT_DETAIL_SELECT,
+    const contact = await prisma.contact.findUnique({
+      where: { id },
+      select: { ...CONTACT_DETAIL_SELECT, deletedAt: true },
     })
 
-    if (!contact) {
+    if (!contact || contact.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
 
+    const { deletedAt: _deletedAt, ...contactData } = contact
+
     // Auto mark as read on first view
-    if (!contact.isRead) {
+    if (!contactData.isRead) {
       await prisma.contact.update({
         where: { id },
         data: { isRead: true, readAt: new Date() },
       })
     }
 
-    return NextResponse.json({ success: true, data: { ...contact, isRead: true } })
+    return NextResponse.json({ success: true, data: { ...contactData, isRead: true } })
   } catch (err) {
     logger.error('[admin-contact-get] Error', {
       id,

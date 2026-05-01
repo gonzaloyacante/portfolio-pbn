@@ -49,21 +49,23 @@ export async function GET(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const booking = await prisma.booking.findFirst({
-      where: { id, deletedAt: null },
-      select: BOOKING_DETAIL_SELECT,
+    const booking = await prisma.booking.findUnique({
+      where: { id },
+      select: { ...BOOKING_DETAIL_SELECT, deletedAt: true },
     })
 
-    if (!booking) {
+    if (!booking || booking.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Reserva no encontrada' }, { status: 404 })
     }
+
+    const { deletedAt: _deletedAt, ...bookingData } = booking
 
     return NextResponse.json({
       success: true,
       data: {
-        ...booking,
-        totalAmount: booking.totalAmount?.toString() ?? null,
-        paidAmount: booking.paidAmount?.toString() ?? null,
+        ...bookingData,
+        totalAmount: bookingData.totalAmount?.toString() ?? null,
+        paidAmount: bookingData.paidAmount?.toString() ?? null,
       },
     })
   } catch (err) {

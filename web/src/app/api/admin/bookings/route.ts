@@ -10,7 +10,7 @@ import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
+import { buildPaginationMeta, normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
 import { bookingApiSchema } from '@/lib/validations'
 
 const BOOKING_SELECT = {
@@ -85,14 +85,7 @@ export async function GET(req: Request) {
           ...b,
           totalAmount: b.totalAmount?.toString() ?? null,
         })),
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-          hasNext: page * limit < total,
-          hasPrev: page > 1,
-        },
+        pagination: buildPaginationMeta(page, limit, total),
       },
     })
   } catch (err) {

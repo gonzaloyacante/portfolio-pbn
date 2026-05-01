@@ -59,7 +59,16 @@ export async function GET(req: Request) {
       SELECT DATE_TRUNC('day', timestamp) AS day, COUNT(*)::bigint AS count
       FROM "analytic_logs"
       WHERE timestamp >= ${daysAgo}
-        AND "eventType" LIKE '%_VIEW'
+        AND "eventType" IN (
+          'HOME_VIEW',
+          'GALLERY_VIEW',
+          'GALLERY_DETAIL_VIEW',
+          'ABOUT_VIEW',
+          'CONTACT_VIEW',
+          'PAGE_VIEW',
+          'CATEGORY_VIEW',
+          'PROJECT_DETAIL_VIEW'
+        )
         AND "isBot" = false
       GROUP BY DATE_TRUNC('day', timestamp)
       ORDER BY day ASC

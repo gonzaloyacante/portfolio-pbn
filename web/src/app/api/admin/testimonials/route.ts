@@ -12,7 +12,12 @@ import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
+import {
+  buildPaginationMeta,
+  normalizeBooleanParam,
+  normalizePagination,
+  normalizeSearchTerm,
+} from '@/lib/search-utils'
 import { testimonialApiSchema } from '@/lib/validations'
 
 const TESTIMONIAL_SELECT = {
@@ -48,8 +53,8 @@ export async function GET(req: Request) {
     )
     const search = normalizeSearchTerm(searchParams.get('search'))
     const status = searchParams.get('status') ?? undefined
-    const featured = searchParams.get('featured')
-    const active = searchParams.get('active')
+    const featured = normalizeBooleanParam(searchParams.get('featured'))
+    const active = normalizeBooleanParam(searchParams.get('active'))
 
     const where = {
       deletedAt: null,
@@ -61,8 +66,8 @@ export async function GET(req: Request) {
         ],
       }),
       ...(status && { status }),
-      ...(featured !== null && featured !== undefined && { featured: featured === 'true' }),
-      ...(active !== null && active !== undefined && { isActive: active === 'true' }),
+      ...(featured !== undefined && { featured }),
+      ...(active !== undefined && { isActive: active }),
     }
 
     const [testimonials, total] = await Promise.all([
@@ -83,14 +88,7 @@ export async function GET(req: Request) {
           ...t,
           thumbnailUrl: t.avatarUrl ? generateThumbnailUrl(t.avatarUrl) : null,
         })),
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-          hasNext: page * limit < total,
-          hasPrev: page > 1,
-        },
+        pagination: buildPaginationMeta(page, limit, total),
       },
     })
   } catch (err) {

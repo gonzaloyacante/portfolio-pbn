@@ -51,23 +51,27 @@ export async function GET(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const testimonial = await prisma.testimonial.findFirst({
-      where: { id, deletedAt: null },
-      select: TESTIMONIAL_DETAIL_SELECT,
+    const testimonial = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { ...TESTIMONIAL_DETAIL_SELECT, deletedAt: true },
     })
 
-    if (!testimonial) {
+    if (!testimonial || testimonial.deletedAt !== null) {
       return NextResponse.json(
         { success: false, error: 'Testimonio no encontrado' },
         { status: 404 }
       )
     }
 
+    const { deletedAt: _deletedAt, ...testimonialData } = testimonial
+
     return NextResponse.json({
       success: true,
       data: {
-        ...testimonial,
-        thumbnailUrl: testimonial.avatarUrl ? generateThumbnailUrl(testimonial.avatarUrl) : null,
+        ...testimonialData,
+        thumbnailUrl: testimonialData.avatarUrl
+          ? generateThumbnailUrl(testimonialData.avatarUrl)
+          : null,
       },
     })
   } catch (err) {

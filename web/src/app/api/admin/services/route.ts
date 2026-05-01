@@ -12,7 +12,12 @@ import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
+import {
+  buildPaginationMeta,
+  normalizeBooleanParam,
+  normalizePagination,
+  normalizeSearchTerm,
+} from '@/lib/search-utils'
 import { serviceApiSchema } from '@/lib/validations'
 
 const SERVICE_SELECT = {
@@ -47,8 +52,8 @@ export async function GET(req: Request) {
       { defaultLimit: 50, maxLimit: 100 }
     )
     const search = normalizeSearchTerm(searchParams.get('search'))
-    const active = searchParams.get('active')
-    const featured = searchParams.get('featured')
+    const active = normalizeBooleanParam(searchParams.get('active'))
+    const featured = normalizeBooleanParam(searchParams.get('featured'))
 
     const where = {
       deletedAt: null,
@@ -58,8 +63,8 @@ export async function GET(req: Request) {
           { slug: { contains: search, mode: 'insensitive' as const } },
         ],
       }),
-      ...(active !== null && active !== undefined && { isActive: active === 'true' }),
-      ...(featured !== null && featured !== undefined && { isFeatured: featured === 'true' }),
+      ...(active !== undefined && { isActive: active }),
+      ...(featured !== undefined && { isFeatured: featured }),
     }
 
     const [services, total] = await Promise.all([
@@ -80,14 +85,7 @@ export async function GET(req: Request) {
           ...s,
           thumbnailUrl: s.imageUrl ? generateThumbnailUrl(s.imageUrl) : null,
         })),
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-          hasNext: page * limit < total,
-          hasPrev: page > 1,
-        },
+        pagination: buildPaginationMeta(page, limit, total),
       },
     })
   } catch (err) {

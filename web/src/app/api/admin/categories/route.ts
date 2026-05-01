@@ -11,7 +11,12 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
+import {
+  buildPaginationMeta,
+  normalizeBooleanParam,
+  normalizePagination,
+  normalizeSearchTerm,
+} from '@/lib/search-utils'
 import { categoryApiSchema } from '@/lib/validations'
 
 const CATEGORY_SELECT = {
@@ -41,7 +46,7 @@ export async function GET(req: Request) {
       { defaultLimit: 50, maxLimit: 100 }
     )
     const search = normalizeSearchTerm(searchParams.get('search'))
-    const active = searchParams.get('active')
+    const active = normalizeBooleanParam(searchParams.get('active'))
 
     const where = {
       deletedAt: null,
@@ -51,7 +56,7 @@ export async function GET(req: Request) {
           { slug: { contains: search, mode: 'insensitive' as const } },
         ],
       }),
-      ...(active !== null && active !== undefined && { isActive: active === 'true' }),
+      ...(active !== undefined && { isActive: active }),
     }
 
     const [categories, total] = await Promise.all([
@@ -74,14 +79,7 @@ export async function GET(req: Request) {
       success: true,
       data: {
         data: mapped,
-        pagination: {
-          page,
-          limit,
-          total,
-          totalPages: Math.ceil(total / limit),
-          hasNext: page * limit < total,
-          hasPrev: page > 1,
-        },
+        pagination: buildPaginationMeta(page, limit, total),
       },
     })
   } catch (err) {
