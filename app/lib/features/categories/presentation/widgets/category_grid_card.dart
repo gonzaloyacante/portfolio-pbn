@@ -43,12 +43,14 @@ class CategoryGridCard extends StatelessWidget {
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => ColoredBox(
-                            color: scheme.surfaceContainerHighest,
-                            child: Icon(
-                              Icons.image_outlined,
-                              color: scheme.outlineVariant,
-                              size: 36,
+                          placeholder: (context, url) => ShimmerLoader(
+                            child: ColoredBox(
+                              color: scheme.surfaceContainerHighest,
+                              child: Icon(
+                                Icons.image_outlined,
+                                color: scheme.outlineVariant,
+                                size: 36,
+                              ),
                             ),
                           ),
                           errorWidget: (context, url, error) => ColoredBox(

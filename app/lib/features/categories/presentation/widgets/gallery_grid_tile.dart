@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../data/category_model.dart';
@@ -36,12 +37,14 @@ class GalleryGridTile extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: item.url,
               fit: BoxFit.cover,
-              placeholder: (_, _) => ColoredBox(
-                color: scheme.surfaceContainerHighest,
-                child: Icon(
-                  Icons.image_outlined,
-                  color: scheme.outlineVariant,
-                  size: 32,
+              placeholder: (_, _) => ShimmerLoader(
+                child: ColoredBox(
+                  color: scheme.surfaceContainerHighest,
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: scheme.outlineVariant,
+                    size: 32,
+                  ),
                 ),
               ),
               errorWidget: (_, _, _) => ColoredBox(

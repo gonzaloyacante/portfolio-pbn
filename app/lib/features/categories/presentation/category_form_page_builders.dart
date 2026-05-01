@@ -381,8 +381,10 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                                 imageUrl: img.url,
                                 fit: BoxFit.cover,
                                 placeholder: (BuildContext ctx2, String url) =>
-                                    const ColoredBox(
-                                      color: AppColors.lightBorder,
+                                    const ShimmerLoader(
+                                      child: ColoredBox(
+                                        color: AppColors.lightBorder,
+                                      ),
                                     ),
                                 errorWidget:
                                     (

@@ -10,7 +10,7 @@ import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { normalizeSearchTerm } from '@/lib/search-utils'
+import { normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
 import { bookingApiSchema } from '@/lib/validations'
 
 const BOOKING_SELECT = {
@@ -38,14 +38,16 @@ export async function GET(req: Request) {
 
   try {
     const { searchParams } = new URL(req.url)
-    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
-    const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') ?? '100', 10)))
+    const { page, limit, skip } = normalizePagination(
+      searchParams.get('page'),
+      searchParams.get('limit'),
+      { defaultLimit: 100, maxLimit: 200 }
+    )
     const search = normalizeSearchTerm(searchParams.get('search'))
     const status = searchParams.get('status') ?? undefined
     const dateFrom = searchParams.get('dateFrom')
     const dateTo = searchParams.get('dateTo')
     const serviceId = searchParams.get('serviceId') ?? undefined
-    const skip = (page - 1) * limit
 
     const where = {
       deletedAt: null,

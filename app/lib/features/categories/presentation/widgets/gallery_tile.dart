@@ -55,12 +55,14 @@ class GalleryTile extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: item.url,
                     fit: BoxFit.cover,
-                    placeholder: (ctx2, url) => ColoredBox(
-                      color: scheme.surfaceContainerHighest,
-                      child: Icon(
-                        Icons.image_outlined,
-                        color: scheme.outlineVariant,
-                        size: 28,
+                    placeholder: (ctx2, url) => ShimmerLoader(
+                      child: ColoredBox(
+                        color: scheme.surfaceContainerHighest,
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: scheme.outlineVariant,
+                          size: 28,
+                        ),
                       ),
                     ),
                     errorWidget: (ctx2, url, err) => ColoredBox(

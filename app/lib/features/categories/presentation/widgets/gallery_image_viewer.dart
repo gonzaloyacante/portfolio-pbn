@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 /// Full-screen pinch-to-zoom image viewer.
 class GalleryImageViewer extends StatelessWidget {
@@ -34,8 +35,10 @@ class GalleryImageViewer extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.contain,
-                placeholder: (BuildContext _, String _) => const Center(
-                  child: CircularProgressIndicator(color: Colors.white),
+                placeholder: (BuildContext _, String _) => const ShimmerLoader(
+                  child: Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
                 ),
                 errorWidget: (BuildContext _, String _, Object _) =>
                     const Center(

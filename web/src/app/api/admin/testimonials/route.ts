@@ -12,7 +12,7 @@ import { generateThumbnailUrl } from '@/lib/cloudinary'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { normalizeSearchTerm } from '@/lib/search-utils'
+import { normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
 import { testimonialApiSchema } from '@/lib/validations'
 
 const TESTIMONIAL_SELECT = {
@@ -41,13 +41,15 @@ export async function GET(req: Request) {
 
   try {
     const { searchParams } = new URL(req.url)
-    const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
-    const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') ?? '50', 10)))
+    const { page, limit, skip } = normalizePagination(
+      searchParams.get('page'),
+      searchParams.get('limit'),
+      { defaultLimit: 50, maxLimit: 100 }
+    )
     const search = normalizeSearchTerm(searchParams.get('search'))
     const status = searchParams.get('status') ?? undefined
     const featured = searchParams.get('featured')
     const active = searchParams.get('active')
-    const skip = (page - 1) * limit
 
     const where = {
       deletedAt: null,
