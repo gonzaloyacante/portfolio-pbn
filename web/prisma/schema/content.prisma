@@ -186,5 +186,6 @@ model Booking {
   @@index([paymentStatus])
   @@index([date, status])
   @@index([status, deletedAt])
+  @@index([status, createdAt])
   @@map("bookings")
 }

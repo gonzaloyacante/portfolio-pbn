@@ -10,7 +10,6 @@ model User {
   name             String?
   role             String    @default("ADMIN") // ADMIN, EDITOR, VIEWER
   avatarUrl        String?
-  bio              String?   @db.Text
   // Security
   emailVerified    DateTime?
   twoFactorEnabled Boolean   @default(false)
@@ -58,6 +57,7 @@ model CategoryImage {
   id         String   @id @default(cuid())
   url        String
   publicId   String
+  alt        String? // Accessibility alt text (falls back to category name if null)
   order      Int      @default(0)
   width      Int?
   height     Int?
@@ -69,5 +69,6 @@ model CategoryImage {
 
   @@index([categoryId, order])
   @@index([isFeatured])
+  @@index([isFeatured, categoryId])
   @@map("category_images")
 }
