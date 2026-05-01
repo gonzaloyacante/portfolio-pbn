@@ -36,20 +36,14 @@ flutter run              # dev en dispositivo/emulador
 
 ## Distribución
 
-La app se distribuye via Firebase App Distribution al grupo `admin`.
+La app se distribuye internamente para administración del proyecto (workflow privado del autor).
 
 ```bash
-# Primera vez: generar keystore
-bash scripts/setup_keystore.sh
-
-# Distribuir nueva versión
-bash scripts/distribute.sh
-
-# Con mensaje personalizado
-bash scripts/distribute.sh --release-notes "Nuevas notificaciones push"
+# Generar build local
+flutter build apk --release
+# o
+flutter build ios --release
 ```
-
-Requiere: `firebase-tools` instalado (`npm install -g firebase-tools`) y `firebase login` completado.
 
 ## Notificaciones push
 
