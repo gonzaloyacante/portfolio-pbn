@@ -1,5 +1,6 @@
 import { logger } from '@/lib/logger'
 import { v2 as cloudinary } from 'cloudinary'
+import { CLOUDINARY_PRESETS, getOptimizedUrl, isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Server-side only (not exposed to client)
@@ -23,9 +24,8 @@ cloudinary.config({
  * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
  */
 export function generateThumbnailUrl(originalUrl: string): string {
-  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
-  const THUMB_TRANSFORM = 'c_fill,g_auto,w_800,h_600,q_auto,f_auto'
-  return originalUrl.replace('/image/upload/', `/image/upload/${THUMB_TRANSFORM}/`)
+  if (!isCloudinaryUploadUrl(originalUrl)) return originalUrl
+  return getOptimizedUrl(originalUrl, CLOUDINARY_PRESETS.apiThumbnail)
 }
 
 /**
@@ -44,9 +44,8 @@ export function generateThumbnailUrl(originalUrl: string): string {
  * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
  */
 export function generateLqipUrl(originalUrl: string): string {
-  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
-  const LQIP_TRANSFORM = 'w_30,q_5,e_blur:800,f_jpg'
-  return originalUrl.replace('/image/upload/', `/image/upload/${LQIP_TRANSFORM}/`)
+  if (!isCloudinaryUploadUrl(originalUrl)) return originalUrl
+  return getOptimizedUrl(originalUrl, CLOUDINARY_PRESETS.apiLqip)
 }
 
 /**
@@ -62,9 +61,8 @@ export function generateLqipUrl(originalUrl: string): string {
  * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
  */
 export function generateGalleryCardUrl(originalUrl: string): string {
-  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
-  const CARD_TRANSFORM = 'c_fill,g_auto,w_600,h_600,q_auto,f_auto'
-  return originalUrl.replace('/image/upload/', `/image/upload/${CARD_TRANSFORM}/`)
+  if (!isCloudinaryUploadUrl(originalUrl)) return originalUrl
+  return getOptimizedUrl(originalUrl, CLOUDINARY_PRESETS.apiGalleryCard)
 }
 
 /**
@@ -76,9 +74,8 @@ export function generateGalleryCardUrl(originalUrl: string): string {
  * Si la URL no es de Cloudinary, devuelve la URL original sin modificar.
  */
 export function generateCoverUrl(originalUrl: string): string {
-  if (!originalUrl.includes('res.cloudinary.com')) return originalUrl
-  const COVER_TRANSFORM = 'q_auto:best,f_auto'
-  return originalUrl.replace('/image/upload/', `/image/upload/${COVER_TRANSFORM}/`)
+  if (!isCloudinaryUploadUrl(originalUrl)) return originalUrl
+  return getOptimizedUrl(originalUrl, CLOUDINARY_PRESETS.apiCover)
 }
 
 /**
@@ -89,7 +86,7 @@ export function generateCoverUrl(originalUrl: string): string {
  * Ignora transformaciones (ej. `c_fill,w_800`) y versiones (ej. `v171...`).
  */
 export function extractPublicIdUrl(url: string | null | undefined): string | null {
-  if (!url || !url.includes('res.cloudinary.com')) return null
+  if (!url || !isCloudinaryUploadUrl(url)) return null
   try {
     const parts = url.split('/upload/')
     if (parts.length < 2) return null

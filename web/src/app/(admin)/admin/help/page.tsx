@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 export const metadata: Metadata = {
   title: 'Centro de Ayuda - Admin',
@@ -409,7 +410,7 @@ export default function AyudaPage() {
           </p>
           <p>
             <strong>Documentación Técnica:</strong>{' '}
-            <Link href="/docs" className="text-primary underline hover:no-underline">
+            <Link href={ROUTES.docs} className="text-primary underline hover:no-underline">
               Ver documentación completa
             </Link>
           </p>

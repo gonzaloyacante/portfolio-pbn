@@ -7,12 +7,14 @@
 
 import Image from 'next/image'
 import { useState, useRef, useEffect, type CSSProperties } from 'react'
-import { getVariantUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
+import {
+  getVariantUrl,
+  getBlurPlaceholderUrl,
+  isCloudinaryUploadUrl,
+} from '@/lib/cloudinary-helper'
 import { NEUTRAL } from '@/lib/design-tokens'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
-
-const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\//
 
 function svgMarkupToDataUrl(svgMarkup: string): string {
   if (typeof btoa === 'function') {
@@ -97,7 +99,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const [isInView, setIsInView] = useState(!lazy || priority)
 
   // Use cloudinary-helper for URL optimization instead of manual construction
-  const isCloudinary = CLOUDINARY_REGEX.test(src)
+  const isCloudinary = isCloudinaryUploadUrl(src)
   const optimizedSrc = isCloudinary && variant ? getVariantUrl(src, variant) : src
 
   // Generate blur placeholder automatically for Cloudinary images

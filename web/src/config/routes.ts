@@ -1,5 +1,6 @@
 export const ROUTES = {
   home: '/',
+  docs: '/docs',
   auth: {
     login: '/auth/login',
     forgotPassword: '/auth/forgot-password',

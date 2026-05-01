@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { getContactSettings } from '@/actions/settings/contact'
+import { ROUTES } from '@/config/routes'
 
 export async function generateContactPageMetadata(): Promise<Metadata> {
   const contactSettings = await getContactSettings()
@@ -11,7 +12,7 @@ export async function generateContactPageMetadata(): Promise<Metadata> {
     title: 'Contacto',
     description: `Reserva tu sesión de maquillaje profesional${locationSuffix}. Presupuestos para bodas, editoriales, eventos y caracterización artística.`,
     alternates: {
-      canonical: '/contacto',
+      canonical: ROUTES.public.contact,
     },
     openGraph: {
       title: `Contacto | ${ownerName}`,
