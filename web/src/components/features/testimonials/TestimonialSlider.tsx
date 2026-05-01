@@ -41,8 +41,8 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           <div className="flex items-center gap-1">
             <p className="text-card-foreground text-sm font-semibold">{testimonial.name}</p>
             {testimonial.verified && (
-              <span className="text-primary" title="Cliente verificado">
-                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24">
+              <span className="text-primary" title="Cliente verificado" aria-label="Cliente verificado">
+                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
                 </svg>
               </span>

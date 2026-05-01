@@ -76,8 +76,10 @@ function validateEnv() {
     if (error instanceof z.ZodError) {
       const issues = error.issues.map((issue) => `  - ${issue.path.join('.')}: ${issue.message}`)
 
-      console.error('❌ Invalid environment variables:\n' + issues.join('\n'))
-      console.error('\n💡 Check your .env file and make sure all required variables are set.\n')
+      // Use process.stderr directly — logger is not available yet at this point
+      // (env.ts is imported before any logger initialization)
+      process.stderr.write('❌ Invalid environment variables:\n' + issues.join('\n') + '\n')
+      process.stderr.write('\n💡 Check your .env file and make sure all required variables are set.\n\n')
 
       throw new Error('Environment validation failed')
     }

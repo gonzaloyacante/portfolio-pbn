@@ -37,7 +37,7 @@ export default function FeaturedImagesGallery({ images }: FeaturedImagesGalleryP
             <motion.div
               role="button"
               tabIndex={0}
-              aria-label={`Ver imagen ${i + 1}`}
+              aria-label={`Ver imagen de ${img.categoryName}`}
               onClick={() => setSelectedIndex(i)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
