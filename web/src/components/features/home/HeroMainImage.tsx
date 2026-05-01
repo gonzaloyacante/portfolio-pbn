@@ -1,6 +1,7 @@
 'use client'
 
 import { OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
 import { HeroWrapper } from './HeroWrapper'
@@ -53,7 +54,7 @@ export function HeroMainImage({
                 variant="hero"
                 objectFit={imageObjectFit}
                 className={cn('h-auto w-full', isCircle && 'aspect-square', isPortrait && 'h-full')}
-                sizes="(max-width: 768px) 100vw, 50vw"
+                sizes={IMAGE_SIZES.heroMain}
               />
 
               {caption && (

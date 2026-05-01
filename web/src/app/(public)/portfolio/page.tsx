@@ -2,7 +2,8 @@ import { prisma } from '@/lib/db'
 import { clsx } from 'clsx'
 import Link from 'next/link'
 import { Heart } from 'lucide-react'
-import { OptimizedImage, FadeIn, StaggerChildren } from '@/components/ui'
+import { FadeIn, OptimizedImage, StaggerChildren } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { getCategorySettings } from '@/actions/settings/categories'
 import { ROUTES } from '@/config/routes'
 import type { Metadata } from 'next'
@@ -88,7 +89,7 @@ export default async function PortfolioPage() {
                           alt={category.name}
                           fill
                           className="transition-transform duration-700 ease-out group-hover:scale-110"
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+                          sizes={IMAGE_SIZES.publicCardGrid}
                           priority={category.sortOrder <= 4}
                           transparentBackground={false}
                         />

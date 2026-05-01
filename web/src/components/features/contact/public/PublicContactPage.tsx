@@ -3,6 +3,7 @@ import JsonLd from '@/components/seo/JsonLd'
 import ContactForm from '@/components/features/contact/ContactForm'
 import InstagramEmbed from '@/components/features/contact/InstagramEmbed'
 import { FadeIn, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import type { PublicContactPageData } from './contactPageData'
 import PublicContactMethods from './PublicContactMethods'
 import PublicSocialLinks from './PublicSocialLinks'
@@ -50,7 +51,7 @@ export default function PublicContactPage({
                   alt={contactSettings.illustrationAlt || 'Ilustración contacto'}
                   fill
                   objectFit="contain"
-                  sizes="320px"
+                  sizes={IMAGE_SIZES.illustrationMedium}
                 />
               </div>
             ) : null}

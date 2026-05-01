@@ -1,6 +1,7 @@
 'use client'
 
-import { FadeIn, SlideIn, OptimizedImage } from '@/components/ui'
+import { FadeIn, OptimizedImage, SlideIn } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 
 interface AboutBioColumnProps {
   bioTitle: string
@@ -85,7 +86,7 @@ export function AboutBioColumn({
               alt={illustrationAlt}
               fill
               objectFit="contain"
-              sizes="120px"
+              sizes={IMAGE_SIZES.illustrationSmall}
             />
           </div>
         </FadeIn>
@@ -139,7 +140,7 @@ export function AboutProfileImage({
               src={profileImageUrl}
               alt={profileImageAlt}
               fill
-              sizes="(max-width: 768px) 80vw, (max-width: 1024px) 40vw, 400px"
+              sizes={IMAGE_SIZES.aboutProfile}
               priority
               variant="card"
             />

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Upload, Check } from 'lucide-react'
 import { Button, Card } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { OptimizedImage } from './OptimizedImage'
 import { clsx } from 'clsx'
 
@@ -76,7 +77,7 @@ export default function ThumbnailSelector({
                   src={image.url}
                   alt={image.alt || 'Thumbnail option'}
                   fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  sizes={IMAGE_SIZES.adminThumbSelector}
                   variant="card"
                   placeholder="empty"
                   className="transition-transform group-hover:scale-110"

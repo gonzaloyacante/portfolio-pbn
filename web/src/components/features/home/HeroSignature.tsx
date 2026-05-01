@@ -1,6 +1,7 @@
 'use client'
 
 import { FadeIn, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
 import { HeroWrapper } from './HeroWrapper'
@@ -42,7 +43,7 @@ export function HeroSignature({
                   alt={illustrationAlt}
                   fill
                   objectFit="contain"
-                  sizes="(max-width: 1024px) 96px, 320px"
+                  sizes={IMAGE_SIZES.heroIllustration}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center rounded-full border-2 border-dashed border-pink-500/30 bg-pink-500/10">

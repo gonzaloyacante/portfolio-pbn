@@ -11,6 +11,7 @@ import {
   EmptyState,
   OptimizedImage,
 } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { showToast } from '@/lib/toast'
 
 interface BaseTrashItem {
@@ -110,7 +111,7 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
               src={image}
               alt={title}
               fill
-              sizes="128px"
+              sizes={IMAGE_SIZES.adminThumbMd}
               variant="thumbnail"
               placeholder="empty"
             />

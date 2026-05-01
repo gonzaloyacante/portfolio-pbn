@@ -1,5 +1,6 @@
 'use client'
 
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { OptimizedImage } from './OptimizedImage'
 import { X, Loader2 } from 'lucide-react'
 import type { ImageGridProps } from './ImageUploadTypes'
@@ -23,7 +24,7 @@ export function ImageGridPreview({ images, maxFiles, onRemove }: ImageGridProps)
               src={img.url}
               alt={`Imagen ${index + 1}`}
               fill
-              sizes="(max-width: 768px) 50vw, 20vw"
+              sizes={IMAGE_SIZES.adminUploadGrid}
               variant="thumbnail"
               placeholder="empty"
               imgClassName={img.isUploading ? 'opacity-50' : ''}

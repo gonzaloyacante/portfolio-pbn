@@ -2,6 +2,7 @@ import { getActiveServices, getServiceBySlug } from '@/actions/cms/services'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Button, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
@@ -110,7 +111,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             src={service.imageUrl}
             alt={service.name}
             fill
-            sizes="100vw"
+            sizes={IMAGE_SIZES.fullWidth}
             priority
             transparentBackground={false}
           />
@@ -192,7 +193,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                       src={url}
                       alt={`Gallery ${idx}`}
                       fill
-                      sizes="(max-width: 768px) 50vw, 33vw"
+                      sizes={IMAGE_SIZES.publicServiceGallery}
                       transparentBackground={false}
                     />
                   </div>

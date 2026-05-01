@@ -2,6 +2,7 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { OptimizedImage } from './OptimizedImage'
 
 interface SortableImageProps {
@@ -30,7 +31,7 @@ export default function SortableImage({ id, url, onDelete }: SortableImageProps)
         src={url}
         alt="Imagen de galería"
         fill
-        sizes="(max-width: 640px) 45vw, 160px"
+        sizes={IMAGE_SIZES.adminSortableGrid}
         variant="thumbnail"
         placeholder="empty"
         className="transition-transform group-hover:scale-105"

@@ -1,6 +1,7 @@
 'use client'
 
 import { OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { Check } from 'lucide-react'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -54,7 +55,7 @@ export function GalleryImagePicker({
             src={img.url}
             alt="Imagen de galería"
             fill
-            sizes="(max-width: 640px) 45vw, 150px"
+            sizes={IMAGE_SIZES.adminPickerGrid}
             variant="thumbnail"
             placeholder="empty"
           />

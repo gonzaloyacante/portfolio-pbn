@@ -5,6 +5,7 @@ import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage, Button } from '@/comp
 import Link from 'next/link'
 import { MessageCircle } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
+import { ROUTES } from '@/config/routes'
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()
@@ -16,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: 'Servicios',
     description: `Descubre todos los servicios de maquillaje profesional de ${ownerName}${locationSuffix}: novias, editoriales, caracterización y más.`,
     alternates: {
-      canonical: '/servicios',
+      canonical: ROUTES.public.services,
     },
     openGraph: {
       title: `Servicios de Maquillaje | ${ownerName}`,

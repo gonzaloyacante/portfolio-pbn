@@ -1,5 +1,6 @@
 'use client'
 
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { OptimizedImage } from './OptimizedImage'
 import { Pencil, Trash2 } from 'lucide-react'
 import type { SingleImagePreviewProps } from './ImageUploadTypes'
@@ -27,7 +28,7 @@ export function ImageSinglePreview({
         src={imageUrl}
         alt="Imagen subida"
         fill
-        sizes="(max-width: 768px) 100vw, 50vw"
+        sizes={IMAGE_SIZES.adminUploadSingle}
         variant="card"
         placeholder="empty"
       />

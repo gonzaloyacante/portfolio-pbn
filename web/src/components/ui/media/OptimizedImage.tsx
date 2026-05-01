@@ -9,9 +9,9 @@ import Image from 'next/image'
 import { useState, useRef, useEffect, type CSSProperties } from 'react'
 import { getVariantUrl, getBlurPlaceholderUrl } from '@/lib/cloudinary-helper'
 import { NEUTRAL } from '@/lib/design-tokens'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 
-const COMMON_SIZES = '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 const CLOUDINARY_REGEX = /^https?:\/\/res\.cloudinary\.com\//
 
 function svgMarkupToDataUrl(svgMarkup: string): string {
@@ -89,7 +89,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const fill = isFillProps(props)
   const width = fill ? undefined : props.width
   const height = fill ? undefined : props.height
-  const sizes = fill ? props.sizes : (props.sizes ?? COMMON_SIZES)
+  const sizes = fill ? props.sizes : (props.sizes ?? IMAGE_SIZES.common)
 
   const [imageError, setImageError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)

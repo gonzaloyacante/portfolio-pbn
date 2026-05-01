@@ -1,17 +1,18 @@
 import type { Metadata } from 'next'
+import { ROUTES } from '@/config/routes'
 
 export const metadata: Metadata = {
   title: 'Política de Privacidad - Portfolio Paola Bolívar',
   description:
     'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
   alternates: {
-    canonical: '/privacidad',
+    canonical: ROUTES.public.privacy,
   },
   openGraph: {
     title: 'Política de Privacidad - Portfolio Paola Bolívar',
     description:
       'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
-    url: '/privacidad',
+    url: ROUTES.public.privacy,
     type: 'website',
   },
 }

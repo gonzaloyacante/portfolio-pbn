@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import * as Sentry from '@sentry/nextjs'
+import { ROUTES } from '@/config/routes'
 
 export default function PublicError({
   error,
@@ -30,7 +31,7 @@ export default function PublicError({
             Intentar de nuevo
           </button>
           <Link
-            href="/"
+            href={ROUTES.home}
             className="text-muted-foreground hover:text-foreground text-sm underline transition-colors"
           >
             Volver al inicio

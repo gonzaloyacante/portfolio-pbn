@@ -1,4 +1,5 @@
-import { Button, Card, Badge, OptimizedImage } from '@/components/ui'
+import { Badge, Button, Card, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
@@ -30,7 +31,7 @@ export function CategoryGridCard({ category, isDragging, onDelete }: CategoryGri
             src={thumbnailUrl}
             alt={category.name}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes={IMAGE_SIZES.adminCardGrid}
             variant="card"
             placeholder="empty"
             className="transition-transform duration-300 group-hover:scale-110"

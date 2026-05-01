@@ -11,6 +11,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { getCategoryImages } from '@/actions/cms/category'
 import { Image as ImageIcon, Upload } from 'lucide-react'
 import { GalleryImagePicker } from './GalleryImagePicker'
@@ -58,7 +59,7 @@ export default function CategoryCoverSelector({
             src={selectedUrl}
             alt="Portada seleccionada"
             fill
-            sizes="(max-width: 768px) 100vw, 896px"
+            sizes={IMAGE_SIZES.adminCoverPreview}
             variant="card"
             placeholder="empty"
           />

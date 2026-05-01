@@ -1,4 +1,5 @@
-import { Button, Badge, OptimizedImage } from '@/components/ui'
+import { Badge, Button, OptimizedImage } from '@/components/ui'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 import { ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
@@ -32,7 +33,7 @@ export function CategoryListItem({ category, isDragging, onDelete }: CategoryLis
             src={thumbnailUrl}
             alt={category.name}
             fill
-            sizes="96px"
+            sizes={IMAGE_SIZES.adminThumbSm}
             variant="thumbnail"
             placeholder="empty"
           />
