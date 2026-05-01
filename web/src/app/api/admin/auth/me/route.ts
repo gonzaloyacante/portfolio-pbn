@@ -21,8 +21,8 @@ export async function GET(req: Request) {
   try {
     const { userId } = auth.payload
 
-    const user = await prisma.user.findFirst({
-      where: { id: userId, isActive: true, deletedAt: null },
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
       select: {
         id: true,
         email: true,
@@ -35,14 +35,17 @@ export async function GET(req: Request) {
         notifications: true,
         lastLoginAt: true,
         createdAt: true,
+        isActive: true,
+        deletedAt: true,
       },
     })
 
-    if (!user) {
+    if (!user || !user.isActive || user.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    return NextResponse.json({ success: true, data: user })
+    const { isActive: _isActive, deletedAt: _deletedAt, ...userData } = user
+    return NextResponse.json({ success: true, data: userData })
   } catch (err) {
     logger.error('[admin-me] Error', { error: err instanceof Error ? err.message : String(err) })
     return NextResponse.json(
@@ -108,12 +111,12 @@ export async function PATCH(req: Request) {
       )
     }
 
-    const user = await prisma.user.findFirst({
-      where: { id: userId, isActive: true, deletedAt: null },
-      select: { password: true },
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { password: true, isActive: true, deletedAt: true },
     })
 
-    if (!user) {
+    if (!user || !user.isActive || user.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Usuario no encontrado' }, { status: 404 })
     }
 

@@ -38,19 +38,19 @@ export async function GET(req: Request, { params }: Params) {
 
   try {
     const { id } = await params
-    const category = await prisma.category.findFirst({
-      where: { id, deletedAt: null },
-      select: CATEGORY_FULL_SELECT,
+    const category = await prisma.category.findUnique({
+      where: { id },
+      select: { ...CATEGORY_FULL_SELECT, deletedAt: true },
     })
 
-    if (!category) {
+    if (!category || category.deletedAt !== null) {
       return NextResponse.json(
         { success: false, error: 'Categoría no encontrada' },
         { status: 404 }
       )
     }
 
-    const { _count, ...cat } = category
+    const { _count, deletedAt: _deletedAt, ...cat } = category
     return NextResponse.json({ success: true, data: { ...cat, imageCount: _count.images } })
   } catch (err) {
     logger.error('[admin-category-get] Error', {
@@ -80,10 +80,8 @@ export async function PATCH(req: Request, { params }: Params) {
 
     // Slug único — verificar en TODOS los registros excluyendo el actual
     if (slug) {
-      const existing = await prisma.category.findFirst({
-        where: { slug, NOT: { id } },
-      })
-      if (existing) {
+      const existing = await prisma.category.findUnique({ where: { slug } })
+      if (existing && existing.id !== id) {
         const msg =
           existing.deletedAt !== null
             ? 'El slug ya está en uso por una categoría eliminada. Vacía la papelera o usa otro slug.'
@@ -174,7 +172,16 @@ export async function DELETE(req: Request, { params }: Params) {
     const { id } = await params
 
     // Mangle del slug para liberar la restricción @unique y permitir re-creación futura
-    const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
+    const cat = await prisma.category.findUnique({
+      where: { id },
+      select: { slug: true, deletedAt: true },
+    })
+    if (!cat || cat.deletedAt !== null) {
+      return NextResponse.json(
+        { success: false, error: 'Categoría no encontrada' },
+        { status: 404 }
+      )
+    }
     const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
 
     await prisma.category.update({

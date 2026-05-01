@@ -95,11 +95,11 @@ async function purgeItem(type: TrashType, id: string) {
 
   // Pre-fetch dependencias ricas en media antes de borrarlas para recolectar sus assets huérfanos
   if (type === 'category') {
-    const category = await prisma.category.findFirst({
-      where: { id, deletedAt: { not: null } },
+    const category = await prisma.category.findUnique({
+      where: { id },
       include: { images: true },
     })
-    if (!category) return null
+    if (!category || category.deletedAt === null) return null
 
     if (category.coverImageUrl) {
       const pid = extractPublicIdUrl(category.coverImageUrl)
@@ -107,10 +107,8 @@ async function purgeItem(type: TrashType, id: string) {
     }
     category.images.forEach((img) => publicIdsToDelete.push(img.publicId))
   } else if (type === 'service') {
-    const service = await prisma.service.findFirst({
-      where: { id, deletedAt: { not: null } },
-    })
-    if (!service) return null
+    const service = await prisma.service.findUnique({ where: { id } })
+    if (!service || service.deletedAt === null) return null
     if (service.imageUrl) {
       const pid = extractPublicIdUrl(service.imageUrl)
       if (pid) publicIdsToDelete.push(pid)
