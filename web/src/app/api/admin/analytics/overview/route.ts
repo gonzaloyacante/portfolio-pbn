@@ -5,18 +5,17 @@
  */
 
 import { NextResponse } from 'next/server'
+import { unstable_cache } from 'next/cache'
 
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 
-export async function GET(req: Request) {
-  const auth = await withAdminJwt(req)
-  if (!auth.ok) return auth.response
-
-  try {
+const getAnalyticsOverviewData = unstable_cache(
+  async () => {
     const now = new Date()
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
@@ -135,17 +134,19 @@ export async function GET(req: Request) {
       countryCoords.map((c) => [c.country, { lat: c.latitude, lng: c.longitude }])
     )
 
-    // ── Batch: Top ciudades por país (una sola groupBy con country+city) ──
+    // ── Batch: Top ciudades por país ────────────────────────────────────────
     const citiesRaw = await prisma.analyticLog.groupBy({
       by: ['country', 'city'],
       where: {
         timestamp: { gte: thirtyDaysAgo },
         eventType: { endsWith: '_VIEW' },
         isBot: false,
+        isDuplicate: false,
         country: { in: countryKeys.filter((c): c is string => c !== null) },
       },
       _count: { _all: true },
       orderBy: { _count: { id: 'desc' } },
+      take: 200,
     })
 
     // ── Batch: Coordenadas representativas por ciudad ─────────────────────
@@ -237,7 +238,7 @@ export async function GET(req: Request) {
       }
     })
 
-    // ── Batch: Resolver nombres de categorías ───────────────────────────────────────────
+    // ── Batch: Resolver nombres de categorías ────────────────────────────
     const categoryIds = topViewsRaw.map((r) => r.entityId).filter((id): id is string => id !== null)
     const categoryRecords =
       categoryIds.length > 0
@@ -253,23 +254,36 @@ export async function GET(req: Request) {
       count: _count._all,
     }))
 
+    return {
+      totalImages,
+      totalCategories,
+      totalServices,
+      totalTestimonials,
+      newContacts,
+      pendingBookings,
+      pendingTestimonials,
+      trashCount,
+      pageViews30d,
+      uniqueVisitors30d,
+      deviceUsage,
+      topLocations,
+      topCategories,
+    }
+  },
+  ['admin-analytics-overview-v1'],
+  { revalidate: 45, tags: [CACHE_TAGS.analytics, CACHE_TAGS.categories, CACHE_TAGS.contacts] }
+)
+
+export async function GET(req: Request) {
+  const auth = await withAdminJwt(req)
+  if (!auth.ok) return auth.response
+
+  try {
+    const data = await getAnalyticsOverviewData()
+
     return NextResponse.json({
       success: true,
-      data: {
-        totalImages,
-        totalCategories,
-        totalServices,
-        totalTestimonials,
-        newContacts,
-        pendingBookings,
-        pendingTestimonials,
-        trashCount,
-        pageViews30d,
-        uniqueVisitors30d,
-        deviceUsage,
-        topLocations,
-        topCategories,
-      },
+      data,
     })
   } catch (err) {
     logger.error('[analytics-overview] Error', {

@@ -98,8 +98,11 @@ export async function PATCH(req: Request, { params }: Params) {
     }
     const { status, priority, isRead, isImportant, replyText, adminNote, tags } = parsed.data
 
-    const existing = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) {
+    const existing = await prisma.contact.findUnique({
+      where: { id },
+      select: { isReplied: true, deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
 
@@ -142,12 +145,14 @@ export async function DELETE(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const existing = await prisma.contact.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) {
+    const result = await prisma.contact.updateMany({
+      where: { id, deletedAt: null },
+      data: { deletedAt: new Date() },
+    })
+
+    if (result.count === 0) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
-
-    await prisma.contact.update({ where: { id }, data: { deletedAt: new Date() } })
 
     revalidatePath(ROUTES.admin.contacts)
 

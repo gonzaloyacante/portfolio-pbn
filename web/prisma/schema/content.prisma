@@ -37,6 +37,8 @@ model Testimonial {
   deletedAt      DateTime?
 
   @@index([isActive, sortOrder])
+  @@index([deletedAt, sortOrder])
+  @@index([deletedAt, createdAt])
   @@index([status, featured])
   @@index([rating])
   @@index([categoryId])
@@ -81,6 +83,8 @@ model Service {
   deletedAt          DateTime?
 
   @@index([isActive, sortOrder])
+  @@index([deletedAt, sortOrder])
+  @@index([deletedAt, createdAt])
   @@index([isFeatured])
   @@index([isAvailable])
   @@map("services")
@@ -139,6 +143,7 @@ model Contact {
   @@index([isRead, status])
   @@index([status, priority])
   @@index([isRead, deletedAt])
+  @@index([deletedAt, createdAt])
   @@map("contacts")
 }
 
@@ -187,5 +192,6 @@ model Booking {
   @@index([date, status])
   @@index([status, deletedAt])
   @@index([status, createdAt])
+  @@index([deletedAt, date])
   @@map("bookings")
 }

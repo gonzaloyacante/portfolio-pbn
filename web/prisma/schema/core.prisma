@@ -49,6 +49,7 @@ model Category {
 
   @@index([sortOrder])
   @@index([isActive, deletedAt])
+  @@index([deletedAt, sortOrder])
   @@map("categories")
 }
 

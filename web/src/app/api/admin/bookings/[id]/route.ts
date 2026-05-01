@@ -110,8 +110,11 @@ export async function PATCH(req: Request, { params }: Params) {
       paymentRef,
     } = parsed.data
 
-    const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) {
+    const existing = await prisma.booking.findUnique({
+      where: { id },
+      select: { status: true, deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Reserva no encontrada' }, { status: 404 })
     }
 
@@ -175,12 +178,14 @@ export async function DELETE(req: Request, { params }: Params) {
   const { id } = await params
 
   try {
-    const existing = await prisma.booking.findFirst({ where: { id, deletedAt: null } })
-    if (!existing) {
+    const result = await prisma.booking.updateMany({
+      where: { id, deletedAt: null },
+      data: { deletedAt: new Date() },
+    })
+
+    if (result.count === 0) {
       return NextResponse.json({ success: false, error: 'Reserva no encontrada' }, { status: 404 })
     }
-
-    await prisma.booking.update({ where: { id }, data: { deletedAt: new Date() } })
 
     revalidatePath(ROUTES.admin.calendar)
 
