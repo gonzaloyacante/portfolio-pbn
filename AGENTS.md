@@ -3,7 +3,7 @@
 > **CONTEXTO**: Sitio web personal y CMS de Paola Bolívar Nievas.
 > Portfolio público (Next.js PWA) + Panel de Administración Web + App nativa Flutter para tablet/móvil.
 > **OBJETIVO**: Monorepo ordenado, codebase limpia y moderna. TypeScript estricto en web. Dart idiomático en app.
-> Prioridad: estabilidad, SEO (web), rendimiento, offline-first (app).
+> Prioridad: estabilidad, SEO (web), rendimiento. **App admin:** online-first con borradores y prefs locales (ver §6 Reglas Dart #10); sin SQLite/Drift hasta converger dependencias.
 
 ---
 
@@ -644,8 +644,10 @@ Al terminar cada fase de implementación:
 
 ### Deuda Técnica Activa (ver `Tareas_Pendientes.md` para detalle)
 
-- 🟡 **P1**: Migrar `unstable_cache` → `"use cache"` directive en web/src/actions/
-- 🟡 **P1**: Rate limit — evaluar Upstash Redis para multi-worker
-- 🟢 **P2**: Agregar `AppColors.divider/disabled/hint` y limpiar HEX en `app_theme.dart` si quedan residuos
-- 🟢 **P2**: Cache local tipo Drift + cola sync — bloqueado hasta resolver pin de `sqlite3` compatible con Riverpod codegen (ver decisión cerrada arriba)
+Verificación 2026-05-01: **no hay tests rotos** en app (`flutter test` OK) ni deuda P0 abierta en categorías. Lo siguiente es **mejora/backlog**, no bug en producción:
+
+- 🟡 **P1**: Migrar `unstable_cache` → `"use cache"` en `web/src/actions/**` — **sigue pendiente** (~11 archivos con `unstable_cache`; ver `rg unstable_cache web/src`). Alto riesgo; sprint dedicado cuando se habilite `cacheComponents` de forma segura.
+- 🟡 **P1 (backlog)**: Rate limit multi-worker — **decisión actual**: in-memory en Vercel (documentado). Upstash Redis solo si aparece tráfico multi-región o ataques que lo justifiquen.
+- 🟢 **P2 (opcional)**: Tokens semánticos extra en `AppColors` (`divider` / `disabled` / `hint`) si el diseño los quiere explícitos — **no es corrección de bugs**: `app_theme.dart` ya no tiene HEX sueltos (`Color(0x…)`); colores base están en `app_colors.dart`.
+- 🟢 **P2**: Persistencia local tipo Drift + cola sync — **bloqueado** por pin `sqlite3` vs Riverpod codegen (ver decisión cerrada arriba).
 
