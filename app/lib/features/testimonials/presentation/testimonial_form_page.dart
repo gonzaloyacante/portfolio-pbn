@@ -135,21 +135,31 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
 
   @override
   Widget build(BuildContext context) {
-    Widget body = _buildBody(context);
+    late final Widget body;
 
     if (_isEdit) {
-      final detailAsync = ref.watch(
-        testimonialDetailProvider(widget.testimonialId!),
+      final tid = widget.testimonialId!;
+      ref.listen<AsyncValue<TestimonialDetail>>(
+        testimonialDetailProvider(tid),
+        (_, next) {
+          next.whenData((detail) {
+            if (!mounted || _populated || _isDirty) {
+              return;
+            }
+            _populateForm(detail);
+            _populated = true;
+          });
+        },
       );
+      final detailAsync = ref.watch(testimonialDetailProvider(tid));
       body = detailAsync.when(
         loading: () =>
             const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
         error: (e, _) => Center(child: Text('Error: $e')),
-        data: (detail) {
-          _populateForm(detail);
-          return body;
-        },
+        data: (_) => _buildBody(context),
       );
+    } else {
+      body = _buildBody(context);
     }
 
     return LoadingOverlay(

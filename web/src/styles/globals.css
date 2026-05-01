@@ -137,10 +137,15 @@
   body {
     @apply bg-background text-foreground transition-colors duration-300;
     font-family: var(--font-body);
+    font-size: var(--font-body-size, 1rem);
   }
 
   h1,
-  h2,
+  h2 {
+    @apply font-heading;
+    font-size: var(--font-heading-size, 1.875rem);
+  }
+
   h3,
   h4,
   h5,

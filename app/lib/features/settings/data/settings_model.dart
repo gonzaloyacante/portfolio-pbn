@@ -17,6 +17,13 @@ abstract class AboutSettings with _$AboutSettings {
     String? profileImageUrl,
     String? profileImageAlt,
     String? profileImageShape,
+    @Default(true) bool profileImageShadowEnabled,
+    int? profileImageShadowBlur,
+    int? profileImageShadowSpread,
+    int? profileImageShadowOffsetX,
+    int? profileImageShadowOffsetY,
+    String? profileImageShadowColor,
+    int? profileImageShadowOpacity,
     String? illustrationUrl,
     String? illustrationAlt,
     @Default([]) List<String> skills,
@@ -148,6 +155,10 @@ abstract class SiteSettings with _$SiteSettings {
 abstract class HomeSettings with _$HomeSettings {
   const factory HomeSettings({
     String? id,
+
+    @Default(true) bool showHeroTitle1,
+    @Default(true) bool showHeroTitle2,
+    @Default(true) bool showOwnerName,
 
     // ── Título 1 ──
     String? heroTitle1Text,

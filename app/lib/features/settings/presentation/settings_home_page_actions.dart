@@ -49,9 +49,6 @@ extension _HomePageActions on _SettingsHomePageState {
   // ── Populate ───────────────────────────────────────────────────────────
 
   void _populate(HomeSettings s) {
-    if (_populated) return;
-    _populated = true;
-
     // Core text controllers
     _title1Ctrl.text = s.heroTitle1Text ?? '';
     _title2Ctrl.text = s.heroTitle2Text ?? '';
@@ -88,6 +85,9 @@ extension _HomePageActions on _SettingsHomePageState {
 
     // Numeric / enum values
     _vals.addAll({
+      'showHeroTitle1': s.showHeroTitle1,
+      'showHeroTitle2': s.showHeroTitle2,
+      'showOwnerName': s.showOwnerName,
       'heroTitle1FontSize': s.heroTitle1FontSize,
       'heroTitle1ZIndex': s.heroTitle1ZIndex,
       'heroTitle1OffsetX': s.heroTitle1OffsetX,
@@ -240,6 +240,9 @@ extension _HomePageActions on _SettingsHomePageState {
       }
 
       final data = <String, Object?>{
+        'showHeroTitle1': _vals['showHeroTitle1'] ?? true,
+        'showHeroTitle2': _vals['showHeroTitle2'] ?? true,
+        'showOwnerName': _vals['showOwnerName'] ?? true,
         // Core text fields
         'heroTitle1Text': _nullIfEmpty(_title1Ctrl.text),
         'heroTitle2Text': _nullIfEmpty(_title2Ctrl.text),
@@ -280,6 +283,17 @@ extension _HomePageActions on _SettingsHomePageState {
   Widget _buildScaffold(BuildContext context) {
     final async = ref.watch(homeSettingsProvider);
 
+    ref.listen<AsyncValue<HomeSettings>>(homeSettingsProvider, (_, next) {
+      next.whenData((settings) {
+        if (!mounted || _populated || _isDirty) {
+          return;
+        }
+        _populate(settings);
+        _populated = true;
+        setState(() {});
+      });
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) =>
@@ -303,11 +317,16 @@ extension _HomePageActions on _SettingsHomePageState {
               onRetry: () => ref.invalidate(homeSettingsProvider),
             ),
             data: (settings) {
-              _populate(settings);
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(homeSettingsProvider);
-                  await ref.read(homeSettingsProvider.future);
+                  final s = await ref.read(homeSettingsProvider.future);
+                  if (!mounted || _isDirty) {
+                    return;
+                  }
+                  _populate(s);
+                  _populated = true;
+                  setState(() {});
                 },
                 child: _buildForm(context),
               );

@@ -21,7 +21,13 @@ export function HeroContent({
   const actualIsMobile = useIsMobile()
   const isMobile = forceIsMobile ?? actualIsMobile
 
-  const fontsHash = [s.heroTitle1Font, s.heroTitle2Font, s.ownerNameFont, s.ctaFont]
+  const fontsHash = [
+    s.heroTitle1Font,
+    s.heroTitle2Font,
+    s.ownerNameFont,
+    s.ctaFont,
+    s.featuredTitleFont,
+  ]
     .filter(Boolean)
     .join('|')
 

@@ -64,6 +64,23 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         </div>
       )}
 
+      {fields.visible && (
+        <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
+          <div>
+            <p className="text-sm font-medium">Visible en la web pública</p>
+            <p className="text-muted-foreground text-xs">
+              Oculto en la portada; aquí sigue visible para editar
+            </p>
+          </div>
+          <Switch
+            checked={(settings[fields.visible] as boolean) ?? true}
+            onCheckedChange={(val: boolean) =>
+              onUpdate(fields.visible as keyof HomeSettingsData, val)
+            }
+          />
+        </div>
+      )}
+
       {fields.text && (
         <Input
           label="Texto"

@@ -29,6 +29,7 @@ class BookingDetailPage extends ConsumerStatefulWidget {
 
 class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
   bool _saving = false;
+  bool _fieldsHydrated = false;
   String? _status;
   final _notesController = TextEditingController();
 
@@ -38,8 +39,7 @@ class _BookingDetailPageState extends ConsumerState<BookingDetailPage> {
     super.dispose();
   }
 
-  void _populate(BookingDetail detail) {
-    if (_status != null) return; // ya inicializado
+  void _hydrateEditingFields(BookingDetail detail) {
     _status = detail.status;
     _notesController.text = detail.adminNotes ?? '';
   }

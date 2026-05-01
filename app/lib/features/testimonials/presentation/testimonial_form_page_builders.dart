@@ -183,8 +183,6 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
   // ── Actions ──────────────────────────────────────────────────────────────
 
   void _populateForm(TestimonialDetail d) {
-    if (_populated) return;
-    _populated = true;
     _nameCtrl.text = d.name;
     _textCtrl.text = d.text;
     _emailCtrl.text = d.email ?? '';

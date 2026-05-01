@@ -111,13 +111,13 @@ export const themeEditorSchema = z.object({
   // Typography - Brand
   brandFont: z.string().optional().nullable(),
   brandFontUrl: z.string().optional().nullable(),
-  brandFontSize: z.number().min(10).max(300),
+  brandFontSize: z.number().min(10).max(300).optional().nullable(),
   portfolioFont: z.string().optional().nullable(),
   portfolioFontUrl: z.string().optional().nullable(),
-  portfolioFontSize: z.number().min(10).max(300),
+  portfolioFontSize: z.number().min(10).max(300).optional().nullable(),
   signatureFont: z.string().optional().nullable(),
   signatureFontUrl: z.string().optional().nullable(),
-  signatureFontSize: z.number().min(10).max(200),
+  signatureFontSize: z.number().min(10).max(200).optional().nullable(),
 
   borderRadius: z.number().min(0).max(100),
 })
@@ -126,6 +126,10 @@ export type ThemeEditorData = z.infer<typeof themeEditorSchema>
 
 // Home Settings
 export const homeSettingsSchema = z.object({
+  showHeroTitle1: z.boolean().optional(),
+  showHeroTitle2: z.boolean().optional(),
+  showOwnerName: z.boolean().optional(),
+
   // Título 1
   heroTitle1Text: z.string().optional(),
   heroTitle1Font: z.string().optional().nullable(),
@@ -262,6 +266,17 @@ export const aboutSettingsSchema = z.object({
   profileImageUrl: z.string().optional().nullable(),
   profileImageAlt: z.string().optional().nullable(),
   profileImageShape: z.enum(['ellipse', 'circle', 'rounded', 'none']).optional().nullable(),
+  profileImageShadowEnabled: z.boolean().optional(),
+  profileImageShadowBlur: z.number().int().min(0).max(80).optional().nullable(),
+  profileImageShadowSpread: z.number().int().min(-40).max(40).optional().nullable(),
+  profileImageShadowOffsetX: z.number().int().min(-80).max(80).optional().nullable(),
+  profileImageShadowOffsetY: z.number().int().min(-80).max(80).optional().nullable(),
+  profileImageShadowColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  profileImageShadowOpacity: z.number().int().min(0).max(100).optional().nullable(),
   skills: z.array(z.string()).optional(),
   yearsExperience: z.number().optional().nullable(),
   certifications: z.array(z.string()).optional(),
@@ -326,8 +341,16 @@ export const siteSettingsSchema = z.object({
   navbarBrandFont: z.string().max(100).nullable().optional(),
   navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
   navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
-  navbarBrandColor: z.string().max(30).nullable().optional(),
-  navbarBrandColorDark: z.string().max(30).nullable().optional(),
+  navbarBrandColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido')
+    .nullable()
+    .optional(),
+  navbarBrandColorDark: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido')
+    .nullable()
+    .optional(),
   navbarShowBrand: z.boolean().optional(),
 })
 

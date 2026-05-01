@@ -86,6 +86,13 @@ export default async function AboutPage() {
           profileImageUrl={aboutSettings?.profileImageUrl}
           profileImageAlt={aboutSettings?.profileImageAlt || 'Paola Bolívar Nievas'}
           shape={aboutSettings?.profileImageShape ?? 'ellipse'}
+          shadowEnabled={aboutSettings?.profileImageShadowEnabled ?? true}
+          shadowBlur={aboutSettings?.profileImageShadowBlur}
+          shadowSpread={aboutSettings?.profileImageShadowSpread}
+          shadowOffsetX={aboutSettings?.profileImageShadowOffsetX}
+          shadowOffsetY={aboutSettings?.profileImageShadowOffsetY}
+          shadowColor={aboutSettings?.profileImageShadowColor}
+          shadowOpacity={aboutSettings?.profileImageShadowOpacity}
         />
       </div>
 

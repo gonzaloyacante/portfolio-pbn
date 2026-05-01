@@ -18,6 +18,7 @@ export function HeroSignature({
   const illustration = s.illustrationUrl
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const eff = resolveEffectiveValues(s, isMobile)
+  const showOwner = isEditor || (s.showOwnerName ?? true)
 
   return (
     <div className="order-4 mt-8 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-0 lg:justify-start lg:gap-0">
@@ -55,40 +56,45 @@ export function HeroSignature({
         </div>
 
         {/* Owner name / signature */}
-        <div className="relative z-10">
-          <FadeIn delay={0.6} disabled={isEditor}>
-            <HeroWrapper
-              id="ownerName"
-              isEditor={isEditor}
-              selectedElement={selectedElement}
-              onSelectElement={onSelectElement}
-              style={{
-                zIndex: s.ownerNameZIndex ?? 15,
-                transform: `translate(${eff.ownerOffsetX}px, ${eff.ownerOffsetY}px)`,
-              }}
-            >
-              <p
-                className="text-sm font-bold tracking-widest text-(--foreground)"
+        {showOwner && (
+          <div className="relative z-10">
+            <FadeIn delay={0.6} disabled={isEditor}>
+              <HeroWrapper
+                id="ownerName"
+                isEditor={isEditor}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
                 style={{
-                  fontFamily: s.ownerNameFontUrl
-                    ? s.ownerNameFont!
-                    : 'var(--font-signature, var(--font-heading))',
-                  fontSize: eff.ownerFontSize ? `${eff.ownerFontSize}px` : undefined,
+                  zIndex: s.ownerNameZIndex ?? 15,
+                  transform: `translate(${eff.ownerOffsetX}px, ${eff.ownerOffsetY}px)`,
                 }}
               >
-                <span className="dark:hidden" style={{ color: s.ownerNameColor || 'inherit' }}>
-                  {ownerName}
-                </span>
-                <span
-                  className="hidden dark:inline"
-                  style={{ color: s.ownerNameColorDark || s.ownerNameColor || 'inherit' }}
+                <p
+                  className={cn(
+                    'font-bold tracking-widest text-(--foreground)',
+                    eff.ownerFontSize ? '' : 'text-sm'
+                  )}
+                  style={{
+                    fontFamily: s.ownerNameFontUrl
+                      ? s.ownerNameFont!
+                      : 'var(--font-signature, var(--font-heading))',
+                    fontSize: eff.ownerFontSize ? `${eff.ownerFontSize}px` : undefined,
+                  }}
                 >
-                  {ownerName}
-                </span>
-              </p>
-            </HeroWrapper>
-          </FadeIn>
-        </div>
+                  <span className="dark:hidden" style={{ color: s.ownerNameColor || 'inherit' }}>
+                    {ownerName}
+                  </span>
+                  <span
+                    className="hidden dark:inline"
+                    style={{ color: s.ownerNameColorDark || s.ownerNameColor || 'inherit' }}
+                  >
+                    {ownerName}
+                  </span>
+                </p>
+              </HeroWrapper>
+            </FadeIn>
+          </div>
+        )}
       </div>
     </div>
   )

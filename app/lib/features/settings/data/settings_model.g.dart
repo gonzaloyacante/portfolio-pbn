@@ -6,30 +6,39 @@ part of 'settings_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_AboutSettings _$AboutSettingsFromJson(Map<String, dynamic> json) =>
-    _AboutSettings(
-      id: json['id'] as String?,
-      bioTitle: json['bioTitle'] as String?,
-      bioIntro: json['bioIntro'] as String?,
-      bioDescription: json['bioDescription'] as String?,
-      profileImageUrl: json['profileImageUrl'] as String?,
-      profileImageAlt: json['profileImageAlt'] as String?,
-      profileImageShape: json['profileImageShape'] as String?,
-      illustrationUrl: json['illustrationUrl'] as String?,
-      illustrationAlt: json['illustrationAlt'] as String?,
-      skills:
-          (json['skills'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      certifications:
-          (json['certifications'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      yearsExperience: (json['yearsExperience'] as num?)?.toInt(),
-      isActive: json['isActive'] as bool? ?? true,
-    );
+_AboutSettings _$AboutSettingsFromJson(
+  Map<String, dynamic> json,
+) => _AboutSettings(
+  id: json['id'] as String?,
+  bioTitle: json['bioTitle'] as String?,
+  bioIntro: json['bioIntro'] as String?,
+  bioDescription: json['bioDescription'] as String?,
+  profileImageUrl: json['profileImageUrl'] as String?,
+  profileImageAlt: json['profileImageAlt'] as String?,
+  profileImageShape: json['profileImageShape'] as String?,
+  profileImageShadowEnabled: json['profileImageShadowEnabled'] as bool? ?? true,
+  profileImageShadowBlur: (json['profileImageShadowBlur'] as num?)?.toInt(),
+  profileImageShadowSpread: (json['profileImageShadowSpread'] as num?)?.toInt(),
+  profileImageShadowOffsetX: (json['profileImageShadowOffsetX'] as num?)
+      ?.toInt(),
+  profileImageShadowOffsetY: (json['profileImageShadowOffsetY'] as num?)
+      ?.toInt(),
+  profileImageShadowColor: json['profileImageShadowColor'] as String?,
+  profileImageShadowOpacity: (json['profileImageShadowOpacity'] as num?)
+      ?.toInt(),
+  illustrationUrl: json['illustrationUrl'] as String?,
+  illustrationAlt: json['illustrationAlt'] as String?,
+  skills:
+      (json['skills'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+      const [],
+  certifications:
+      (json['certifications'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList() ??
+      const [],
+  yearsExperience: (json['yearsExperience'] as num?)?.toInt(),
+  isActive: json['isActive'] as bool? ?? true,
+);
 
 Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
     <String, dynamic>{
@@ -40,6 +49,13 @@ Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
       'profileImageUrl': instance.profileImageUrl,
       'profileImageAlt': instance.profileImageAlt,
       'profileImageShape': instance.profileImageShape,
+      'profileImageShadowEnabled': instance.profileImageShadowEnabled,
+      'profileImageShadowBlur': instance.profileImageShadowBlur,
+      'profileImageShadowSpread': instance.profileImageShadowSpread,
+      'profileImageShadowOffsetX': instance.profileImageShadowOffsetX,
+      'profileImageShadowOffsetY': instance.profileImageShadowOffsetY,
+      'profileImageShadowColor': instance.profileImageShadowColor,
+      'profileImageShadowOpacity': instance.profileImageShadowOpacity,
       'illustrationUrl': instance.illustrationUrl,
       'illustrationAlt': instance.illustrationAlt,
       'skills': instance.skills,
@@ -226,6 +242,9 @@ _HomeSettings _$HomeSettingsFromJson(
   Map<String, dynamic> json,
 ) => _HomeSettings(
   id: json['id'] as String?,
+  showHeroTitle1: json['showHeroTitle1'] as bool? ?? true,
+  showHeroTitle2: json['showHeroTitle2'] as bool? ?? true,
+  showOwnerName: json['showOwnerName'] as bool? ?? true,
   heroTitle1Text: json['heroTitle1Text'] as String?,
   heroTitle1Font: json['heroTitle1Font'] as String?,
   heroTitle1FontUrl: json['heroTitle1FontUrl'] as String?,
@@ -314,6 +333,9 @@ _HomeSettings _$HomeSettingsFromJson(
 Map<String, dynamic> _$HomeSettingsToJson(_HomeSettings instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'showHeroTitle1': instance.showHeroTitle1,
+      'showHeroTitle2': instance.showHeroTitle2,
+      'showOwnerName': instance.showOwnerName,
       'heroTitle1Text': instance.heroTitle1Text,
       'heroTitle1Font': instance.heroTitle1Font,
       'heroTitle1FontUrl': instance.heroTitle1FontUrl,

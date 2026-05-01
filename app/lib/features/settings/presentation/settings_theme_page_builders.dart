@@ -336,6 +336,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
   Widget _buildScaffold(BuildContext context) {
     final async = ref.watch(themeSettingsProvider);
 
+    ref.listen<AsyncValue<ThemeSettings>>(themeSettingsProvider, (_, next) {
+      next.whenData((settings) {
+        if (!mounted || _populated || _isDirty) {
+          return;
+        }
+        _assignControllers(settings);
+        _populated = true;
+      });
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) =>
@@ -359,11 +369,16 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
               onRetry: () => ref.invalidate(themeSettingsProvider),
             ),
             data: (settings) {
-              _populate(settings);
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(themeSettingsProvider);
-                  await ref.read(themeSettingsProvider.future);
+                  final s = await ref.read(themeSettingsProvider.future);
+                  if (!mounted || _isDirty) {
+                    return;
+                  }
+                  _assignControllers(s);
+                  _populated = true;
+                  setState(() {});
                 },
                 child: _buildForm(context),
               );
@@ -374,9 +389,7 @@ extension _SettingsThemePageBuilders on _SettingsThemePageState {
     );
   }
 
-  void _populate(ThemeSettings s) {
-    if (_populated) return;
-    _populated = true;
+  void _assignControllers(ThemeSettings s) {
     // Light colors
     _primaryCtrl.text = s.primaryColor;
     _secondaryCtrl.text = s.secondaryColor;

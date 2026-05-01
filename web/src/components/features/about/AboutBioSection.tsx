@@ -2,6 +2,7 @@
 
 import { FadeIn, OptimizedImage, SlideIn } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
+import { BRAND } from '@/lib/design-tokens'
 
 interface AboutBioColumnProps {
   bioTitle: string
@@ -73,7 +74,10 @@ export function AboutBioColumn({
   return (
     <div className="order-2 lg:order-1">
       <FadeIn>
-        <h1 className="font-script mb-4 text-3xl text-(--primary) sm:text-4xl lg:text-5xl">
+        <h1
+          className="font-script mb-4 text-(--primary)"
+          style={{ fontSize: 'var(--font-script-size, 2rem)' }}
+        >
           {bioTitle}
         </h1>
       </FadeIn>
@@ -110,6 +114,48 @@ interface AboutProfileImageProps {
   profileImageUrl?: string | null
   profileImageAlt: string
   shape?: string | null
+  shadowEnabled?: boolean
+  shadowBlur?: number | null
+  shadowSpread?: number | null
+  shadowOffsetX?: number | null
+  shadowOffsetY?: number | null
+  shadowColor?: string | null
+  shadowOpacity?: number | null
+}
+
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  const n = hex.replace('#', '')
+  const full =
+    n.length === 3
+      ? n
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : n
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16),
+  }
+}
+
+function buildProfileImageBoxShadow(
+  enabled: boolean,
+  opts: {
+    ox: number
+    oy: number
+    blur: number
+    spread: number
+    hex: string | null | undefined
+    opacity: number | null | undefined
+  }
+): string {
+  if (!enabled) return 'none'
+  const alpha = (opts.opacity ?? 35) / 100
+  const safeHex =
+    opts.hex && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(opts.hex) ? opts.hex : BRAND.primary
+  const { r, g, b } = hexToRgb(safeHex)
+  return `${opts.ox}px ${opts.oy}px ${opts.blur}px ${opts.spread}px rgba(${r}, ${g}, ${b}, ${alpha})`
 }
 
 const IMAGE_SHAPES: Record<string, string | undefined> = {
@@ -123,17 +169,33 @@ export function AboutProfileImage({
   profileImageUrl,
   profileImageAlt,
   shape,
+  shadowEnabled = true,
+  shadowBlur,
+  shadowSpread,
+  shadowOffsetX,
+  shadowOffsetY,
+  shadowColor,
+  shadowOpacity,
 }: AboutProfileImageProps) {
   const shapeKey = shape ?? 'ellipse'
   const clipPath = IMAGE_SHAPES[shapeKey]
   const borderRadius = shapeKey === 'rounded' ? '2.5rem' : shapeKey === 'none' ? '0' : undefined
 
+  const boxShadow = buildProfileImageBoxShadow(shadowEnabled, {
+    ox: shadowOffsetX ?? 0,
+    oy: shadowOffsetY ?? 8,
+    blur: shadowBlur ?? 24,
+    spread: shadowSpread ?? 0,
+    hex: shadowColor,
+    opacity: shadowOpacity,
+  })
+
   return (
     <div className="order-1 flex justify-center lg:order-2 lg:justify-end">
       <SlideIn direction="right" className="flex w-full justify-center lg:justify-end">
         <div
-          className="relative aspect-3/4 w-full max-w-xs overflow-hidden shadow-2xl sm:max-w-sm lg:max-w-md"
-          style={{ clipPath, borderRadius }}
+          className="relative aspect-3/4 w-full max-w-xs overflow-hidden sm:max-w-sm lg:max-w-md"
+          style={{ clipPath, borderRadius, boxShadow }}
         >
           {profileImageUrl ? (
             <OptimizedImage

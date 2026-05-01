@@ -136,7 +136,7 @@ export const getThemeValues = unstable_cache(
       }
     } catch (error) {
       logger.error('Error getting theme values:', { error: error })
-      return {}
+      return DEFAULT_CSS_VARIABLES
     }
   },
   ['theme-values'],
@@ -160,8 +160,24 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
       return { success: false, error: validated.error }
     }
 
+    const themeNumericKeys = new Set([
+      'headingFontSize',
+      'scriptFontSize',
+      'bodyFontSize',
+      'brandFontSize',
+      'portfolioFontSize',
+      'signatureFontSize',
+      'borderRadius',
+    ])
+    const validatedData = { ...(validated.data || {}) }
+    for (const key of themeNumericKeys) {
+      if (validatedData[key as keyof typeof validatedData] === null) {
+        delete validatedData[key as keyof typeof validatedData]
+      }
+    }
+
     // 3. 🧹 Clean Data strictly typed
-    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
+    const cleanEntries = Object.entries(validatedData).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.ThemeSettingsUpdateInput
 
     // 3. 🎨 Specific Validations (Colors & Fonts)

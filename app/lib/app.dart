@@ -9,11 +9,13 @@ import 'package:portfolio_pbn/core/router/route_names.dart';
 
 import 'core/auth/auth_provider.dart';
 import 'features/app_settings/providers/app_preferences_provider.dart';
+import 'features/settings/providers/settings_provider.dart';
 import 'core/auth/auth_state.dart';
 import 'core/debug/debug_panel.dart';
 import 'core/notifications/notification_handler.dart';
 import 'core/notifications/push_provider.dart';
 import 'core/router/app_router.dart';
+import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'core/updates/app_release_model.dart';
 import 'core/updates/app_update_provider.dart';
@@ -80,6 +82,16 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(themeModeProvider);
+    final themeFromDb = ref.watch(themeSettingsProvider);
+
+    final ThemeData effectiveLight = themeFromDb.maybeWhen(
+      data: (s) => AppTheme.fromThemeSettings(s, Brightness.light),
+      orElse: () => lightTheme,
+    );
+    final ThemeData effectiveDark = themeFromDb.maybeWhen(
+      data: (s) => AppTheme.fromThemeSettings(s, Brightness.dark),
+      orElse: () => darkTheme,
+    );
     final animationsEnabled = ref.watch(animationsEnabledProvider);
     final compactMode = ref.watch(compactModeProvider);
 
@@ -95,6 +107,7 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
 
       // Login exitoso → registrar token FCM + verificar actualizaciones
       if (nextState is Authenticated && prevState is! Authenticated) {
+        ref.invalidate(themeSettingsProvider);
         ref.read(pushRegistrationProvider.notifier).register();
 
         // Pequeño delay para no solapar con la animación de navegación.
@@ -107,8 +120,9 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
         });
       }
 
-      // Logout → desregistrar token FCM
+      // Logout → desregistrar token FCM + tema BD no debe quedar del usuario anterior
       if (nextState is Unauthenticated && prevState is Authenticated) {
+        ref.invalidate(themeSettingsProvider);
         ref.read(pushRegistrationProvider.notifier).unregister();
       }
     });
@@ -142,8 +156,8 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
       debugShowCheckedModeBanner: false,
 
       // ── Tema ──────────────────────────────────────────────────────────────
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: effectiveLight,
+      darkTheme: effectiveDark,
       themeMode: themeMode,
 
       // ── Localización ──────────────────────────────────────────────────────

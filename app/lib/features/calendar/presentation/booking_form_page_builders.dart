@@ -313,7 +313,19 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
 
   Widget _buildPage(BuildContext context) {
     if (_isEdit && !_prefilled) {
-      final async = ref.watch(bookingDetailProvider(widget.bookingId!));
+      final bookingId = widget.bookingId!;
+      final async = ref.watch(bookingDetailProvider(bookingId));
+      ref.listen<AsyncValue<BookingDetail>>(bookingDetailProvider(bookingId), (
+        _,
+        next,
+      ) {
+        next.whenData((detail) {
+          if (!mounted || _prefilled || _isDirty) {
+            return;
+          }
+          _populate(detail);
+        });
+      });
       return async.when(
         loading: () => Scaffold(
           appBar: AppBar(
@@ -342,7 +354,6 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
           ),
         ),
         data: (detail) {
-          _populate(detail);
           return _buildFormScaffold(context);
         },
       );
@@ -353,7 +364,6 @@ extension _BookingFormPageBuilders on _BookingFormPageState {
   // ── Actions ───────────────────────────────────────────────────────────────
 
   void _populate(BookingDetail detail) {
-    if (_prefilled) return;
     _clientNameCtrl.text = detail.clientName;
     _clientEmailCtrl.text = detail.clientEmail;
     _guestCountCtrl.text = detail.guestCount > 1 ? '${detail.guestCount}' : '';

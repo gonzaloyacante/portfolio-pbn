@@ -8,7 +8,7 @@ import { Prisma } from '@/generated/prisma/client'
 import { ROUTES } from '@/config/routes'
 import { aboutSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
-import { validateAndSanitize } from '@/lib/security-client'
+import { validateAndSanitize, validateColor } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
 
@@ -22,6 +22,13 @@ export interface AboutSettingsData {
   profileImageUrl: string | null
   profileImageAlt: string | null
   profileImageShape: string | null
+  profileImageShadowEnabled: boolean
+  profileImageShadowBlur: number | null
+  profileImageShadowSpread: number | null
+  profileImageShadowOffsetX: number | null
+  profileImageShadowOffsetY: number | null
+  profileImageShadowColor: string | null
+  profileImageShadowOpacity: number | null
   skills: string[]
   yearsExperience: number | null
   certifications: string[]
@@ -69,6 +76,14 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
     const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.AboutSettingsUpdateInput
 
+    const shadowColor = cleanData.profileImageShadowColor as string | null | undefined
+    if (shadowColor !== undefined && !validateColor(shadowColor)) {
+      return {
+        success: false,
+        error: `Color de sombra inválido: ${shadowColor}. Usa HEX (#RRGGBB).`,
+      }
+    }
+
     logger.debug('Updating about settings', { userId: user.id })
 
     let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
@@ -83,6 +98,14 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
         bioDescription: (cleanData.bioDescription as string) ?? undefined,
         profileImageUrl: (cleanData.profileImageUrl as string) ?? undefined,
         profileImageAlt: (cleanData.profileImageAlt as string) || 'Paola Bolívar Nievas',
+        profileImageShape: (cleanData.profileImageShape as string) ?? undefined,
+        profileImageShadowEnabled: (cleanData.profileImageShadowEnabled as boolean) ?? true,
+        profileImageShadowBlur: (cleanData.profileImageShadowBlur as number) ?? undefined,
+        profileImageShadowSpread: (cleanData.profileImageShadowSpread as number) ?? undefined,
+        profileImageShadowOffsetX: (cleanData.profileImageShadowOffsetX as number) ?? undefined,
+        profileImageShadowOffsetY: (cleanData.profileImageShadowOffsetY as number) ?? undefined,
+        profileImageShadowColor: (cleanData.profileImageShadowColor as string) ?? undefined,
+        profileImageShadowOpacity: (cleanData.profileImageShadowOpacity as number) ?? undefined,
         skills: (cleanData.skills as string[]) || [],
         yearsExperience: (cleanData.yearsExperience as number) ?? undefined,
         certifications: (cleanData.certifications as string[]) || [],

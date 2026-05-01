@@ -15,6 +15,12 @@ double _eff(
   bool isMobile,
 ) => effectivePreviewValue(vals, baseKey, mobileKey, fallback, isMobile);
 
+bool _previewShow(Map<String, Object?> vals, String key) {
+  final v = vals[key];
+  if (v is bool) return v;
+  return true;
+}
+
 // ── LiveHeroPreviewSignature ──────────────────────────────────────────────────
 
 /// Renders the owner signature + illustration section of the hero preview.
@@ -126,16 +132,24 @@ class LiveHeroPreviewSignature extends StatelessWidget {
     );
     final illOpac = (vals['illustrationOpacity'] as num?)?.toDouble() ?? 100.0;
 
-    final signatureWidget = Transform.translate(
-      offset: Offset(effOwnX, effOwnY),
-      child: Text(
-        owner,
-        style: getFontSafe(
-          ownFontName,
-          const TextStyle(fontWeight: FontWeight.w700),
-        ).copyWith(fontSize: effOwnSize, color: ownColor, letterSpacing: 2.0),
-      ),
-    );
+    final showOwner = _previewShow(vals, 'showOwnerName');
+    final signatureWidget = showOwner
+        ? Transform.translate(
+            offset: Offset(effOwnX, effOwnY),
+            child: Text(
+              owner,
+              style:
+                  getFontSafe(
+                    ownFontName,
+                    const TextStyle(fontWeight: FontWeight.w700),
+                  ).copyWith(
+                    fontSize: effOwnSize,
+                    color: ownColor,
+                    letterSpacing: 2.0,
+                  ),
+            ),
+          )
+        : const SizedBox.shrink();
 
     final illustrationWidget = Transform.translate(
       offset: Offset(effIllX, effIllY),
@@ -299,16 +313,21 @@ class LiveHeroPreviewHeader extends StatelessWidget {
       ),
     );
 
+    final showT1 = _previewShow(vals, 'showHeroTitle1');
+    final showT2 = _previewShow(vals, 'showHeroTitle2');
+
     if (isMobile) {
-      return Column(children: [title1Widget, title2Widget]);
+      return Column(
+        children: [if (showT1) title1Widget, if (showT2) title2Widget],
+      );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        title1Widget,
-        title2Widget,
+        if (showT1) title1Widget,
+        if (showT2) title2Widget,
         const SizedBox(height: 24),
         LiveHeroPreviewSignature(
           vals: vals,

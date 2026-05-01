@@ -34,9 +34,7 @@ class _ContactDetailPageState extends ConsumerState<ContactDetailPage> {
     super.dispose();
   }
 
-  void _populate(ContactDetail detail) {
-    if (_populated) return;
-    _populated = true;
+  void _applyAdminNoteFromDetail(ContactDetail detail) {
     _noteCtrl.text = detail.adminNote ?? '';
   }
 

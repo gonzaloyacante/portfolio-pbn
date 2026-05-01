@@ -17,6 +17,7 @@ model HomeSettings {
   heroTitle1ZIndex    Int?    @default(20)
   heroTitle1OffsetX   Int?    @default(0) // Ajuste horizontal (px)
   heroTitle1OffsetY   Int?    @default(0) // Ajuste vertical (px)
+  showHeroTitle1      Boolean @default(true)
 
   // ===== TÍTULO 2 ("Portfolio") =====
   heroTitle2Text      String? @default("Portfolio")
@@ -28,6 +29,7 @@ model HomeSettings {
   heroTitle2ZIndex    Int?    @default(10)
   heroTitle2OffsetX   Int?    @default(0)
   heroTitle2OffsetY   Int?    @default(0)
+  showHeroTitle2      Boolean @default(true)
 
   // ===== NOMBRE PROPIETARIO ("Paola Bolívar Nievas") =====
   ownerNameText      String? @default("Paola Bolívar Nievas")
@@ -39,6 +41,7 @@ model HomeSettings {
   ownerNameZIndex    Int?    @default(15)
   ownerNameOffsetX   Int?    @default(0)
   ownerNameOffsetY   Int?    @default(0)
+  showOwnerName      Boolean @default(true)
 
   // ===== IMAGEN PRINCIPAL =====
   heroMainImageUrl     String?
@@ -130,6 +133,13 @@ model AboutSettings {
   profileImageUrl   String?
   profileImageAlt   String?  @default("Paola Bolívar Nievas")
   profileImageShape String?  @default("ellipse") // ellipse | rounded | circle | none
+  profileImageShadowEnabled  Boolean @default(true)
+  profileImageShadowBlur     Int?    @default(24)
+  profileImageShadowSpread   Int?    @default(0)
+  profileImageShadowOffsetX  Int?    @default(0)
+  profileImageShadowOffsetY  Int?    @default(8)
+  profileImageShadowColor    String? // #RRGGBB, null = usar --primary
+  profileImageShadowOpacity  Int?    @default(35) // 0–100
   // Skills
   skills            String[] @default([])
   yearsExperience   Int?

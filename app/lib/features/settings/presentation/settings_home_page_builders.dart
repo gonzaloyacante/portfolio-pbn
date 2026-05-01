@@ -8,6 +8,34 @@ extension _SettingsHomePageBuilders on _SettingsHomePageState {
       title: 'Textos del Hero',
       leadingIcon: Icons.title_rounded,
       children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Visible en web: título principal'),
+          value: (_vals['showHeroTitle1'] as bool?) ?? true,
+          onChanged: (v) => _rebuild(() {
+            _vals['showHeroTitle1'] = v;
+            _isDirty = true;
+          }),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Visible en web: segundo título'),
+          value: (_vals['showHeroTitle2'] as bool?) ?? true,
+          onChanged: (v) => _rebuild(() {
+            _vals['showHeroTitle2'] = v;
+            _isDirty = true;
+          }),
+        ),
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Visible en web: nombre de la artista'),
+          value: (_vals['showOwnerName'] as bool?) ?? true,
+          onChanged: (v) => _rebuild(() {
+            _vals['showOwnerName'] = v;
+            _isDirty = true;
+          }),
+        ),
+        const Divider(height: AppSpacing.lg),
         TextFormField(
           controller: _title1Ctrl,
           decoration: const InputDecoration(

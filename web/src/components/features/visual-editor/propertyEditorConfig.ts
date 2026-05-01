@@ -27,6 +27,8 @@ type FieldConfig = {
   alt?: keyof HomeSettingsData
   showFeatured?: keyof HomeSettingsData
   featuredCount?: keyof HomeSettingsData
+  /** Mostrar/ocultar en web pública (editor siempre ve el bloque para editar) */
+  visible?: keyof HomeSettingsData
 }
 
 type MobileFieldConfig = {
@@ -54,6 +56,7 @@ export type { FieldConfig, MobileFieldConfig, ControlConfig }
 export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfig> = {
   heroTitle1: {
     fields: {
+      visible: 'showHeroTitle1',
       text: 'heroTitle1Text',
       font: 'heroTitle1Font',
       fontUrl: 'heroTitle1FontUrl',
@@ -79,6 +82,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   heroTitle2: {
     fields: {
+      visible: 'showHeroTitle2',
       text: 'heroTitle2Text',
       font: 'heroTitle2Font',
       fontUrl: 'heroTitle2FontUrl',
@@ -104,6 +108,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   ownerName: {
     fields: {
+      visible: 'showOwnerName',
       text: 'ownerNameText',
       font: 'ownerNameFont',
       fontUrl: 'ownerNameFontUrl',

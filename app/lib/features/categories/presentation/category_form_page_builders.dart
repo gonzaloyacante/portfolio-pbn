@@ -40,8 +40,22 @@ String _toSlug(String input) {
 extension _CategoryFormPageBuilders on _CategoryFormPageState {
   Widget _buildContent(BuildContext context) {
     if (_isEdit) {
-      final detailAsync = ref.watch(categoryDetailProvider(widget.categoryId!));
-      detailAsync.whenData(_populateForm);
+      final cid = widget.categoryId!;
+      ref.listen<AsyncValue<CategoryDetail>>(categoryDetailProvider(cid), (
+        _,
+        next,
+      ) {
+        next.whenData((detail) {
+          if (!mounted || _isDirty) {
+            return;
+          }
+          if (_populatedFor == cid) {
+            return;
+          }
+          _populateForm(detail);
+        });
+      });
+      ref.watch(categoryDetailProvider(cid));
     }
 
     final mediaSize = MediaQuery.sizeOf(context);
@@ -415,7 +429,6 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
   // ── Actions ──────────────────────────────────────────────────────────────
 
   void _populateForm(CategoryDetail detail) {
-    if (_populatedFor == widget.categoryId) return;
     _populatedFor = widget.categoryId;
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;

@@ -228,6 +228,17 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
   Widget _buildScaffold(BuildContext context) {
     final async = ref.watch(siteSettingsProvider);
 
+    ref.listen<AsyncValue<SiteSettings>>(siteSettingsProvider, (_, next) {
+      next.whenData((settings) {
+        if (!mounted || _populated || _isDirty) {
+          return;
+        }
+        _populate(settings);
+        _populated = true;
+        setState(() {});
+      });
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) =>
@@ -251,11 +262,16 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
               onRetry: () => ref.invalidate(siteSettingsProvider),
             ),
             data: (settings) {
-              _populate(settings);
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(siteSettingsProvider);
-                  await ref.read(siteSettingsProvider.future);
+                  final s = await ref.read(siteSettingsProvider.future);
+                  if (!mounted || _isDirty) {
+                    return;
+                  }
+                  _populate(s);
+                  _populated = true;
+                  setState(() {});
                 },
                 child: _buildForm(context),
               );
@@ -267,8 +283,6 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
   }
 
   void _populate(SiteSettings s) {
-    if (_populated) return;
-    _populated = true;
     _siteNameCtrl.text = s.siteName;
     _siteTaglineCtrl.text = s.siteTagline ?? '';
     _metaTitleCtrl.text = s.defaultMetaTitle ?? '';

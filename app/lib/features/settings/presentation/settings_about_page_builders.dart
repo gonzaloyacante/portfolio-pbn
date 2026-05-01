@@ -76,6 +76,90 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
               ),
               const SizedBox(height: AppSpacing.md),
 
+              SettingsFormCard(
+                title: 'Sombra foto de perfil',
+                children: [
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Activar sombra'),
+                    value: _shadowEnabled,
+                    onChanged: (v) => setState(() {
+                      _shadowEnabled = v;
+                      _isDirty = true;
+                    }),
+                  ),
+                  TextFormField(
+                    controller: _shadowColorCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Color HEX (vacío = marca)',
+                      hintText: '#6c0a0a',
+                    ),
+                    onChanged: (_) => _markDirty(),
+                  ),
+                  Text('Opacidad: $_shadowOpacity%'),
+                  Slider(
+                    value: _shadowOpacity.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 20,
+                    label: '$_shadowOpacity%',
+                    onChanged: (v) => setState(() {
+                      _shadowOpacity = v.round();
+                      _isDirty = true;
+                    }),
+                  ),
+                  Text('Desenfoque: $_shadowBlur px'),
+                  Slider(
+                    value: _shadowBlur.toDouble(),
+                    min: 0,
+                    max: 80,
+                    divisions: 16,
+                    label: '$_shadowBlur',
+                    onChanged: (v) => setState(() {
+                      _shadowBlur = v.round();
+                      _isDirty = true;
+                    }),
+                  ),
+                  Text('Spread: $_shadowSpread px'),
+                  Slider(
+                    value: _shadowSpread.toDouble(),
+                    min: -40,
+                    max: 40,
+                    divisions: 16,
+                    label: '$_shadowSpread',
+                    onChanged: (v) => setState(() {
+                      _shadowSpread = v.round();
+                      _isDirty = true;
+                    }),
+                  ),
+                  Text('Offset X: $_shadowOx px'),
+                  Slider(
+                    value: _shadowOx.toDouble(),
+                    min: -80,
+                    max: 80,
+                    divisions: 16,
+                    label: '$_shadowOx',
+                    onChanged: (v) => setState(() {
+                      _shadowOx = v.round();
+                      _isDirty = true;
+                    }),
+                  ),
+                  Text('Offset Y: $_shadowOy px'),
+                  Slider(
+                    value: _shadowOy.toDouble(),
+                    min: -80,
+                    max: 80,
+                    divisions: 16,
+                    label: '$_shadowOy',
+                    onChanged: (v) => setState(() {
+                      _shadowOy = v.round();
+                      _isDirty = true;
+                    }),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.md),
+
               // ── Habilidades ──────────────────────────────────────────────
               SettingsFormCard(
                 title: 'Habilidades',
@@ -152,6 +236,17 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
   Widget _buildScaffold(BuildContext context) {
     final async = ref.watch(aboutSettingsProvider);
 
+    ref.listen<AsyncValue<AboutSettings>>(aboutSettingsProvider, (_, next) {
+      next.whenData((settings) {
+        if (!mounted || _populated || _isDirty) {
+          return;
+        }
+        _populate(settings);
+        _populated = true;
+        setState(() {});
+      });
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) =>
@@ -175,11 +270,16 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
               onRetry: () => ref.invalidate(aboutSettingsProvider),
             ),
             data: (settings) {
-              _populate(settings);
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(aboutSettingsProvider);
-                  await ref.read(aboutSettingsProvider.future);
+                  final s = await ref.read(aboutSettingsProvider.future);
+                  if (!mounted || _isDirty) {
+                    return;
+                  }
+                  _populate(s);
+                  _populated = true;
+                  setState(() {});
                 },
                 child: _buildForm(context),
               );
@@ -191,13 +291,17 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
   }
 
   void _populate(AboutSettings s) {
-    if (_populated) return;
-    _populated = true;
-
     _bioTitleCtrl.text = s.bioTitle ?? '';
     _bioIntroCtrl.text = s.bioIntro ?? '';
     _bioDescCtrl.text = s.bioDescription ?? '';
     _profileImageCtrl.text = s.profileImageUrl ?? '';
+    _shadowEnabled = s.profileImageShadowEnabled;
+    _shadowBlur = s.profileImageShadowBlur ?? 24;
+    _shadowSpread = s.profileImageShadowSpread ?? 0;
+    _shadowOx = s.profileImageShadowOffsetX ?? 0;
+    _shadowOy = s.profileImageShadowOffsetY ?? 8;
+    _shadowOpacity = s.profileImageShadowOpacity ?? 35;
+    _shadowColorCtrl.text = s.profileImageShadowColor ?? '';
 
     _populateList(s.skills, _skillsCtrls, _skillsFocus);
     _populateList(s.certifications, _certificationsCtrls, _certificationsFocus);
@@ -272,6 +376,13 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
         'bioIntro': _nullIfEmpty(_bioIntroCtrl.text),
         'bioDescription': _nullIfEmpty(_bioDescCtrl.text),
         'profileImageUrl': _nullIfEmpty(_profileImageCtrl.text),
+        'profileImageShadowEnabled': _shadowEnabled,
+        'profileImageShadowBlur': _shadowBlur,
+        'profileImageShadowSpread': _shadowSpread,
+        'profileImageShadowOffsetX': _shadowOx,
+        'profileImageShadowOffsetY': _shadowOy,
+        'profileImageShadowOpacity': _shadowOpacity,
+        'profileImageShadowColor': _nullIfEmpty(_shadowColorCtrl.text),
         'skills': _skillsCtrls
             .map((c) => c.text.trim())
             .where((s) => s.isNotEmpty)

@@ -179,9 +179,9 @@ const tutorials: TutorialSection[] = [
     description: 'Configura tu información de contacto pública',
     steps: [
       'Ve a "Datos de Contacto" en el menú lateral',
-      'Ingresa tu email, teléfono y ubicación',
-      'Agrega tus redes sociales (Instagram, TikTok, WhatsApp)',
-      'Esta información aparecerá en el pie de página y sección de contacto',
+      'Ingresa tu email, teléfono y ubicación; más abajo edita cada red social en la misma página',
+      'Activa u oculta redes una por una con el interruptor de cada fila (ya no hay “mostrar todas”)',
+      'Esta información aparece en la página de contacto según la visibilidad de cada campo',
     ],
     tips: [
       'Usa el email profesional donde recibes consultas de clientes',

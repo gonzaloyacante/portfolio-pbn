@@ -11,6 +11,7 @@ import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
 import FontLoader from '@/components/layout/FontLoader'
 import { BRAND } from '@/lib/design-tokens'
+import { buildThemeInlineStylesheet } from '@/lib/theme-ssr-css'
 
 // Script font para "Make-up", firmas y detalles elegantes
 // Alternativa a Amsterdam Four (Canva)
@@ -65,6 +66,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const [themeValues, settings] = await Promise.all([getThemeValues(), getThemeSettings()])
+  const themeInlineCss = buildThemeInlineStylesheet(themeValues)
 
   // Extract font URLs from settings
   const fonts = {
@@ -93,6 +95,8 @@ export default async function RootLayout({
           media="(prefers-color-scheme: dark)"
           content={settings?.darkPrimaryColor ?? BRAND.darkPrimary}
         />
+        {/* Sin @layer: el bundle globals está en @layer base; este bloque gana en cascada. */}
+        <style id="pbn-db-theme" dangerouslySetInnerHTML={{ __html: themeInlineCss }} />
       </head>
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}
@@ -102,7 +106,7 @@ export default async function RootLayout({
           <NavigationProgress />
         </Suspense>
         <ErrorBoundary>
-          <AppProviders themeValues={themeValues}>
+          <AppProviders>
             {children}
             <CookieConsent />
           </AppProviders>

@@ -1,5 +1,5 @@
 import { getContactSettings } from '@/actions/settings/contact'
-import { getSocialLinks } from '@/actions/settings/social'
+import { getSocialLinksForAdmin } from '@/actions/settings/social'
 import { ContactEditor } from '@/components/features/contact/ContactEditor'
 import { PageHeader } from '@/components/layout'
 
@@ -9,7 +9,10 @@ export const metadata = {
 }
 
 export default async function ContactSettingsPage() {
-  const [settings, socialLinks] = await Promise.all([getContactSettings(), getSocialLinks()])
+  const [settings, socialLinks] = await Promise.all([
+    getContactSettings(),
+    getSocialLinksForAdmin(),
+  ])
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">

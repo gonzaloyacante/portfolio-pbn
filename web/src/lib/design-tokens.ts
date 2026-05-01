@@ -86,6 +86,9 @@ export const DEFAULT_CSS_VARIABLES: Record<string, string> = {
   '--font-script-size': `${TYPOGRAPHY_DEFAULTS.scriptFontSize}px`,
   '--font-body': `"${TYPOGRAPHY_DEFAULTS.bodyFont}", sans-serif`,
   '--font-body-size': `${TYPOGRAPHY_DEFAULTS.bodyFontSize}px`,
+  '--font-brand-size': '112px',
+  '--font-portfolio-size': '96px',
+  '--font-signature-size': '36px',
 
   '--radius': `${TYPOGRAPHY_DEFAULTS.borderRadius}px`,
 }

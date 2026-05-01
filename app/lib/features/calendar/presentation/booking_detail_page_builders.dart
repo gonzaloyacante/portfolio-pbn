@@ -4,6 +4,17 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
   Widget _buildContent(BuildContext context) {
     final async = ref.watch(bookingDetailProvider(widget.bookingId));
 
+    ref.listen(bookingDetailProvider(widget.bookingId), (_, next) {
+      next.whenData((detail) {
+        if (!mounted || _fieldsHydrated) {
+          return;
+        }
+        _hydrateEditingFields(detail);
+        _fieldsHydrated = true;
+        setState(() {});
+      });
+    });
+
     return LoadingOverlay(
       isLoading: _saving,
       child: Scaffold(
@@ -45,11 +56,17 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
                 ref.invalidate(bookingDetailProvider(widget.bookingId)),
           ),
           data: (detail) {
-            _populate(detail);
             return RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(bookingDetailProvider(widget.bookingId));
-                await ref.read(bookingDetailProvider(widget.bookingId).future);
+                final d = await ref.read(
+                  bookingDetailProvider(widget.bookingId).future,
+                );
+                if (!mounted) {
+                  return;
+                }
+                _hydrateEditingFields(d);
+                setState(() {});
               },
               child: _buildDetail(context, detail),
             );

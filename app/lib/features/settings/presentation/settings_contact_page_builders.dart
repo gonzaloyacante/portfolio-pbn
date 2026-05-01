@@ -167,6 +167,18 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
 
   Widget _buildScaffold(BuildContext context) {
     final async = ref.watch(contactSettingsProvider);
+
+    ref.listen<AsyncValue<ContactSettings>>(contactSettingsProvider, (_, next) {
+      next.whenData((settings) {
+        if (!mounted || _populated || _isDirty) {
+          return;
+        }
+        _populate(settings);
+        _populated = true;
+        setState(() {});
+      });
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) =>
@@ -190,11 +202,16 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
               onRetry: () => ref.invalidate(contactSettingsProvider),
             ),
             data: (settings) {
-              _populate(settings);
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(contactSettingsProvider);
-                  await ref.read(contactSettingsProvider.future);
+                  final s = await ref.read(contactSettingsProvider.future);
+                  if (!mounted || _isDirty) {
+                    return;
+                  }
+                  _populate(s);
+                  _populated = true;
+                  setState(() {});
                 },
                 child: _buildForm(context),
               );
@@ -206,8 +223,6 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
   }
 
   void _populate(ContactSettings s) {
-    if (_populated) return;
-    _populated = true;
     _pageTitleCtrl.text = s.pageTitle ?? '';
     _ownerNameCtrl.text = s.ownerName ?? '';
     _emailCtrl.text = s.email ?? '';

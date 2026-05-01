@@ -35,7 +35,10 @@ export default function PublicContactPage({
       />
 
       <div className="flex flex-col items-center px-6 pt-8 pb-0 text-center lg:hidden">
-        <h1 className="text-foreground font-script mb-4 text-4xl">
+        <h1
+          className="text-foreground font-script mb-4"
+          style={{ fontSize: 'var(--font-script-size, 2.25rem)' }}
+        >
           {contactSettings?.pageTitle || 'Contacto'}
         </h1>
         <PublicContactMethods methods={primaryContactMethods} orientation="row" />
@@ -57,7 +60,12 @@ export default function PublicContactPage({
             ) : null}
           </FadeIn>
 
-          <h1 className="text-foreground font-script mb-8 text-5xl">{ownerName}</h1>
+          <h1
+            className="text-foreground font-script mb-8"
+            style={{ fontSize: 'var(--font-script-size, 2.25rem)' }}
+          >
+            {ownerName}
+          </h1>
 
           <div className="mb-8 w-full">
             <PublicContactMethods methods={primaryContactMethods} />
@@ -69,9 +77,7 @@ export default function PublicContactPage({
             </div>
           )}
 
-          {contactSettings?.showSocialLinks && socialLinks.length > 0 && (
-            <PublicSocialLinks links={socialLinks} />
-          )}
+          {socialLinks.length > 0 && <PublicSocialLinks links={socialLinks} />}
         </div>
 
         <div className="w-full">
@@ -81,9 +87,7 @@ export default function PublicContactPage({
             <ContactForm />
           </Suspense>
 
-          {contactSettings?.showSocialLinks && (
-            <PublicSocialLinks links={socialLinks} variant="compact" />
-          )}
+          {socialLinks.length > 0 && <PublicSocialLinks links={socialLinks} variant="compact" />}
 
           <InstagramProfileCard href={instagramProfileUrl} label={instagramProfileLabel} />
         </div>

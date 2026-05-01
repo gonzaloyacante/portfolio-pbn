@@ -3,8 +3,20 @@ part of 'service_form_page.dart';
 extension _ServiceFormPageBuilders on _ServiceFormPageState {
   Widget _buildContent(BuildContext context) {
     if (_isEdit) {
-      final detailAsync = ref.watch(serviceDetailProvider(widget.serviceId!));
-      detailAsync.whenData(_populateForm);
+      final sid = widget.serviceId!;
+      ref.listen<AsyncValue<ServiceDetail>>(serviceDetailProvider(sid), (
+        _,
+        next,
+      ) {
+        next.whenData((detail) {
+          if (!mounted || _populated || _isDirty) {
+            return;
+          }
+          _populateForm(detail);
+          _populated = true;
+        });
+      });
+      ref.watch(serviceDetailProvider(sid));
     }
 
     return LoadingOverlay(
@@ -278,8 +290,6 @@ extension _ServiceFormPageBuilders on _ServiceFormPageState {
   // ── Actions ──────────────────────────────────────────────────────────────
 
   void _populateForm(ServiceDetail detail) {
-    if (_populated) return;
-    _populated = true;
     _nameCtrl.text = detail.name;
     _slugCtrl.text = detail.slug;
     _descCtrl.text = detail.description ?? '';

@@ -67,7 +67,12 @@ export default async function ServicesPage() {
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <FadeIn className="mb-12 text-center">
-          <h1 className="text-foreground mb-4 text-4xl font-bold md:text-5xl">Mis Servicios</h1>
+          <h1
+            className="text-foreground font-heading mb-4 font-semibold"
+            style={{ fontSize: 'var(--font-heading-size, 2rem)' }}
+          >
+            Mis Servicios
+          </h1>
           <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
             Servicios profesionales de maquillaje para cada ocasión. Desde novias hasta producciones
             editoriales, cada look es único y personalizado.
