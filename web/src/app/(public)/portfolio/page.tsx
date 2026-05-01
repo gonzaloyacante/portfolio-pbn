@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { clsx } from 'clsx'
 import Link from 'next/link'
 import { Heart } from 'lucide-react'
 import { OptimizedImage, FadeIn, StaggerChildren } from '@/components/ui'
@@ -71,6 +72,7 @@ export default async function PortfolioPage() {
           >
             {categories.map((category) => {
               const cardImageUrl = category.coverImageUrl ?? category.images[0]?.url ?? null
+              const hasImage = Boolean(cardImageUrl)
 
               return (
                 <FadeIn key={category.id}>
@@ -79,7 +81,7 @@ export default async function PortfolioPage() {
                     className="group relative block aspect-4/5 w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
                   >
                     {/* Background Image */}
-                    {cardImageUrl ? (
+                    {hasImage ? (
                       <>
                         <OptimizedImage
                           src={cardImageUrl}
@@ -94,33 +96,55 @@ export default async function PortfolioPage() {
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent opacity-60 transition-opacity duration-300 group-hover:opacity-40" />
                       </>
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-(--card-bg)">
-                        <span className="text-6xl opacity-20">📷</span>
+                      <div className="bg-muted absolute inset-0 flex h-full w-full items-center justify-center">
+                        <span className="text-muted-foreground text-6xl">📷</span>
                       </div>
                     )}
 
                     {/* Content */}
                     <div className="absolute inset-x-0 bottom-0 p-3 sm:p-6 lg:p-8">
-                      <h2 className="font-heading line-clamp-2 translate-y-2 text-base leading-tight font-bold text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-2xl lg:text-3xl">
+                      <h2
+                        className={clsx(
+                          'font-heading line-clamp-2 translate-y-2 text-base leading-tight font-bold transition-transform duration-300 group-hover:translate-y-0 sm:text-2xl lg:text-3xl',
+                          hasImage ? 'text-white' : 'text-(--foreground)'
+                        )}
+                      >
                         {category.name}
                       </h2>
 
                       {/* Description - Conditional */}
                       {showDesc && category.description && (
-                        <p className="mt-2 line-clamp-2 text-sm text-white/80">
+                        <p
+                          className={clsx(
+                            'mt-2 line-clamp-2 text-sm',
+                            hasImage ? 'text-white/80' : 'text-muted-foreground'
+                          )}
+                        >
                           {category.description}
                         </p>
                       )}
 
                       {/* Count - Conditional */}
                       {showCount && (
-                        <p className="mt-2 text-xs text-white/60">
+                        <p
+                          className={clsx(
+                            'mt-2 text-xs',
+                            hasImage ? 'text-white/60' : 'text-muted-foreground'
+                          )}
+                        >
                           {category._count.images} fotograf
                           {category._count.images !== 1 ? 'ías' : 'ía'}
                         </p>
                       )}
 
-                      <div className="mt-2 h-1 w-12 rounded-full bg-white/50 transition-all group-hover:w-20 group-hover:bg-white" />
+                      <div
+                        className={clsx(
+                          'mt-2 h-1 w-12 rounded-full transition-all group-hover:w-20',
+                          hasImage
+                            ? 'bg-white/50 group-hover:bg-white'
+                            : 'bg-primary/30 group-hover:bg-primary/50'
+                        )}
+                      />
                     </div>
                   </Link>
                 </FadeIn>

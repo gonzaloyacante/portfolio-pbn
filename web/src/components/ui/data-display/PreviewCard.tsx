@@ -26,6 +26,7 @@ export default function PreviewCard({
   // and src/components/public/CategoryGallery.tsx (Images)
 
   const isCategory = variant === 'category'
+  const hasImage = variant === 'image'
 
   // Category Card Style: rounded-[2.5rem], aspect-[4/5]
   // Gallery Image Style: rounded-xl, varies but mostly aspect-square or masonry
@@ -44,7 +45,7 @@ export default function PreviewCard({
       </div>
 
       {/* Overlay Gradient (Same as public) */}
-      {(showTitle || showSubtitle) && (
+      {hasImage && (showTitle || showSubtitle) && (
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
       )}
 
@@ -77,8 +78,9 @@ export default function PreviewCard({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className={clsx(
-              'font-bold text-white',
-              isCategory ? 'font-heading translate-y-2 text-2xl' : 'text-lg leading-tight'
+              'font-bold',
+              isCategory ? 'font-heading translate-y-2 text-2xl' : 'text-lg leading-tight',
+              hasImage ? 'text-white' : 'text-foreground'
             )}
           >
             {title}
@@ -86,7 +88,14 @@ export default function PreviewCard({
         )}
 
         {/* Decorator line for Category Card (as seen in code) */}
-        {isCategory && <div className="mt-2 h-1 w-12 rounded-full bg-white/50" />}
+        {isCategory && (
+          <div
+            className={clsx(
+              'mt-2 h-1 w-12 rounded-full',
+              hasImage ? 'bg-white/50' : 'bg-primary/30'
+            )}
+          />
+        )}
       </div>
     </div>
   )
