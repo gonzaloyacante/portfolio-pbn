@@ -265,8 +265,8 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
           child: async.when(
             loading: () =>
                 const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-            error: (e, _) => ErrorState(
-              message: e.toString(),
+            error: (e, _) => ErrorState.forFailure(
+              e,
               onRetry: () => ref.invalidate(aboutSettingsProvider),
             ),
             data: (settings) {

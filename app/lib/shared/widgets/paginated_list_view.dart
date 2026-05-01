@@ -51,8 +51,7 @@ class PaginatedListView<T> extends StatelessWidget {
         Expanded(
           child: asyncValue.when(
             loading: () => loadingWidget,
-            error: (e, _) =>
-                ErrorState(message: e.toString(), onRetry: onRetry),
+            error: (e, _) => ErrorState.forFailure(e, onRetry: onRetry),
             data: (paginated) => paginated.data.isEmpty
                 ? emptyState
                 : RefreshIndicator(

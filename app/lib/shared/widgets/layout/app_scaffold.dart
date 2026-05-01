@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/network/connectivity_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../../features/dashboard/providers/dashboard_provider.dart';
+import '../feedback/offline_connectivity_banner.dart';
 import 'app_drawer.dart';
 import 'nav_items.dart';
 
@@ -28,7 +30,9 @@ import 'nav_items.dart';
 ///   body: MyPage(),
 /// )
 /// ```
-class AppScaffold extends StatelessWidget {
+///
+/// Cuando [isOnlineProvider] es false, muestra [OfflineConnectivityBanner] encima del body.
+class AppScaffold extends ConsumerWidget {
   const AppScaffold({
     super.key,
     required this.body,
@@ -47,7 +51,18 @@ class AppScaffold extends StatelessWidget {
   final bool resizeToAvoidBottomInset;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final online = ref.watch(isOnlineProvider);
+    final wrappedBody = online
+        ? body
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const OfflineConnectivityBanner(),
+              Expanded(child: body),
+            ],
+          );
+
     Widget child;
     if (AppBreakpoints.isExpanded(context)) {
       child = _ExpandedScaffold(
@@ -56,7 +71,7 @@ class AppScaffold extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         floatingActionButtonLocation: floatingActionButtonLocation,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        body: body,
+        body: wrappedBody,
       );
     } else if (AppBreakpoints.isMedium(context)) {
       child = _MediumScaffold(
@@ -65,7 +80,7 @@ class AppScaffold extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         floatingActionButtonLocation: floatingActionButtonLocation,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        body: body,
+        body: wrappedBody,
       );
     } else {
       child = _CompactScaffold(
@@ -74,7 +89,7 @@ class AppScaffold extends StatelessWidget {
         floatingActionButton: floatingActionButton,
         floatingActionButtonLocation: floatingActionButtonLocation,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-        body: body,
+        body: wrappedBody,
       );
     }
 

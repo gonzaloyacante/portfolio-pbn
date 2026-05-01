@@ -27,8 +27,9 @@ class DashboardChartsSection extends ConsumerWidget {
       loading: () => _buildSkeleton(isExpanded),
       error: (err, st) {
         Sentry.captureException(err, stackTrace: st);
-        return ErrorState(
-          message: 'No se pudieron cargar los gráficos',
+        return ErrorState.forFailure(
+          err,
+          fallbackMessage: 'No se pudieron cargar los gráficos',
           onRetry: () => ref.invalidate(dashboardChartsProvider),
         );
       },

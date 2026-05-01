@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:portfolio_pbn/core/api/api_exceptions.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
@@ -48,6 +50,57 @@ void main() {
         _wrap(const ErrorState(message: 'Error', icon: Icons.wifi_off_rounded)),
       );
       expect(find.byIcon(Icons.error_outline_rounded), findsNothing);
+    });
+  });
+
+  group('ErrorState — offline / forFailure', () {
+    testWidgets('Offline constructor shows Sin conexión heading', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_wrap(const ErrorState.offline()));
+      expect(find.text('Sin conexión'), findsOneWidget);
+      expect(find.byIcon(Icons.wifi_off_rounded), findsOneWidget);
+    });
+
+    testWidgets('forFailure maps NetworkException to offline UI', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(ErrorState.forFailure(const NetworkException())),
+      );
+      expect(find.text('Sin conexión'), findsOneWidget);
+    });
+
+    testWidgets('forFailure maps DioException+NetworkException to offline UI', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          ErrorState.forFailure(
+            DioException(
+              requestOptions: RequestOptions(path: '/'),
+              type: DioExceptionType.connectionError,
+              error: const NetworkException(),
+            ),
+          ),
+        ),
+      );
+      expect(find.text('Sin conexión'), findsOneWidget);
+    });
+
+    testWidgets('forFailure uses fallbackMessage for other errors', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          ErrorState.forFailure(
+            Exception('boom'),
+            fallbackMessage: 'Falló la carga',
+          ),
+        ),
+      );
+      expect(find.text('Falló la carga'), findsOneWidget);
+      expect(find.text('Algo salió mal'), findsOneWidget);
     });
   });
 

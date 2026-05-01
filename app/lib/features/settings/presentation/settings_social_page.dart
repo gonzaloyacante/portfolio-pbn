@@ -57,8 +57,8 @@ class SettingsSocialPage extends ConsumerWidget {
       title: 'Redes Sociales',
       body: async.when(
         loading: () => const SkeletonSocialList(),
-        error: (e, _) => ErrorState(
-          message: e.toString(),
+        error: (e, _) => ErrorState.forFailure(
+          e,
           onRetry: () => ref.invalidate(socialLinksProvider),
         ),
         data: (links) => RefreshIndicator(

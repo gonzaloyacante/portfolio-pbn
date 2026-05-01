@@ -64,7 +64,10 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
   void _onSearch(String value) => setState(() => _searchQuery = value.trim());
 
   Future<void> _onRefresh() async {
-    setState(() => _items = null);
+    setState(() {
+      _items = null;
+      _dirty = false;
+    });
     ref.invalidate(_categoryGalleryProvider(widget.categoryId));
     await ref.read(_categoryGalleryProvider(widget.categoryId).future);
   }
@@ -80,14 +83,34 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(_categoryGalleryProvider(widget.categoryId));
+    final galleryAsync = ref.watch(_categoryGalleryProvider(widget.categoryId));
+
+    ref.listen<AsyncValue<List<GalleryImageItem>>>(
+      _categoryGalleryProvider(widget.categoryId),
+      (_, next) {
+        next.whenData((images) {
+          if (!mounted) return;
+          if (_items == null) {
+            setState(() {
+              _items = List.of(images);
+              _dirty = false;
+            });
+            return;
+          }
+          if (!_dirty) {
+            setState(() => _items = List.of(images));
+          }
+        });
+      },
+    );
+
     final viewMode = ref.watch(categoryGalleryViewModeProvider);
 
     return AppScaffold(
       title: 'Galería — ${widget.categoryName}',
       floatingActionButton: _buildFAB(context),
       actions: _buildActions(context, viewMode),
-      body: _buildBody(context, async, viewMode),
+      body: _buildBody(context, galleryAsync, viewMode),
     );
   }
 }

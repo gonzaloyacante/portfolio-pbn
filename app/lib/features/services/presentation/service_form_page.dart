@@ -16,7 +16,10 @@ import '../providers/services_provider.dart';
 import 'widgets/pricing_tiers_editor.dart';
 import 'widgets/video_url_field.dart';
 
-part 'service_form_page_builders.dart';
+part 'service_form_page_draft.dart';
+part 'service_form_page_builders_actions.dart';
+part 'service_form_page_builders_fields.dart';
+part 'service_form_page_builders_shell.dart';
 
 final _reServiceWhitespace = RegExp(r'\s+');
 // ignore: deprecated_member_use
@@ -84,74 +87,14 @@ class _ServiceFormPageState extends ConsumerState<ServiceFormPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _checkDraft();
-  }
-
-  Future<void> _checkDraft() async {
-    final has = await ref.read(draftServiceProvider).hasDraft(_draftScope);
-    if (mounted && has) setState(() => _hasDraft = true);
-  }
-
-  Future<void> _restoreDraft() async {
-    final data = await ref.read(draftServiceProvider).load(_draftScope);
-    if (data == null || !mounted) return;
-    setState(() {
-      _nameCtrl.text = data['name'] as String? ?? '';
-      _slugCtrl.text = data['slug'] as String? ?? '';
-      _descCtrl.text = data['description'] as String? ?? '';
-      _shortDescCtrl.text = data['shortDesc'] as String? ?? '';
-      _priceCtrl.text = data['price'] as String? ?? '';
-      _durationCtrl.text = data['duration'] as String? ?? '';
-      _durationMinutesCtrl.text = data['durationMinutes'] as String? ?? '';
-      _maxBookingsCtrl.text = data['maxBookingsPerDay'] as String? ?? '';
-      _advanceNoticeCtrl.text = data['advanceNoticeDays'] as String? ?? '';
-      _requirementsCtrl.text = data['requirements'] as String? ?? '';
-      _cancellationPolicyCtrl.text =
-          data['cancellationPolicy'] as String? ?? '';
-      _imageCtrl.text = data['imageUrl'] as String? ?? '';
-      _videoUrlCtrl.text = data['videoUrl'] as String? ?? '';
-      _priceLabel = data['priceLabel'] as String? ?? 'desde';
-      _isActive = data['isActive'] as bool? ?? true;
-      _isFeatured = data['isFeatured'] as bool? ?? false;
-      _isAvailable = data['isAvailable'] as bool? ?? true;
-      _isDirty = true;
-      _hasDraft = false;
-    });
-  }
-
-  Future<void> _discardDraft() async {
-    await ref.read(draftServiceProvider).clear(_draftScope);
-    if (mounted) setState(() => _hasDraft = false);
-  }
-
-  Future<void> _saveDraft() async {
-    if (!_isDirty) return;
-    await ref.read(draftServiceProvider).save(_draftScope, {
-      'name': _nameCtrl.text,
-      'slug': _slugCtrl.text,
-      'description': _descCtrl.text,
-      'shortDesc': _shortDescCtrl.text,
-      'price': _priceCtrl.text,
-      'duration': _durationCtrl.text,
-      'durationMinutes': _durationMinutesCtrl.text,
-      'maxBookingsPerDay': _maxBookingsCtrl.text,
-      'advanceNoticeDays': _advanceNoticeCtrl.text,
-      'requirements': _requirementsCtrl.text,
-      'cancellationPolicy': _cancellationPolicyCtrl.text,
-      'imageUrl': _imageCtrl.text,
-      'videoUrl': _videoUrlCtrl.text,
-      'priceLabel': _priceLabel,
-      'isActive': _isActive,
-      'isFeatured': _isFeatured,
-      'isAvailable': _isAvailable,
-    });
+    checkDraft();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      _saveDraft();
+      saveDraftToDisk();
     }
   }
 

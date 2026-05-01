@@ -312,8 +312,8 @@ extension _HomePageActions on _SettingsHomePageState {
           child: async.when(
             loading: () =>
                 const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
-            error: (e, _) => ErrorState(
-              message: e.toString(),
+            error: (e, _) => ErrorState.forFailure(
+              e,
               onRetry: () => ref.invalidate(homeSettingsProvider),
             ),
             data: (settings) {

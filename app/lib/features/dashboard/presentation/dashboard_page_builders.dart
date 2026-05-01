@@ -64,8 +64,9 @@ extension _DashboardPageBuilders on DashboardPage {
               error: (err, _) => SliverPadding(
                 padding: padding,
                 sliver: SliverToBoxAdapter(
-                  child: ErrorState(
-                    message: 'No se pudieron cargar las métricas',
+                  child: ErrorState.forFailure(
+                    err,
+                    fallbackMessage: 'No se pudieron cargar las métricas',
                     onRetry: () => ref.invalidate(dashboardStatsProvider),
                   ),
                 ),
@@ -193,8 +194,9 @@ extension _DashboardPageBuilders on DashboardPage {
               error: (err, _) => SliverPadding(
                 padding: padding.copyWith(top: AppSpacing.lg),
                 sliver: SliverToBoxAdapter(
-                  child: ErrorState(
-                    message: 'Error al cargar dispositivos',
+                  child: ErrorState.forFailure(
+                    err,
+                    fallbackMessage: 'Error al cargar dispositivos',
                     onRetry: () => ref.invalidate(dashboardStatsProvider),
                   ),
                 ),
@@ -249,8 +251,9 @@ extension _DashboardPageBuilders on DashboardPage {
               error: (err, _) => SliverPadding(
                 padding: padding.copyWith(top: AppSpacing.lg),
                 sliver: SliverToBoxAdapter(
-                  child: ErrorState(
-                    message: 'Error al cargar ranking',
+                  child: ErrorState.forFailure(
+                    err,
+                    fallbackMessage: 'Error al cargar ranking',
                     onRetry: () => ref.invalidate(dashboardStatsProvider),
                   ),
                 ),
@@ -301,8 +304,9 @@ extension _DashboardPageBuilders on DashboardPage {
               error: (err, _) => SliverPadding(
                 padding: padding.copyWith(top: AppSpacing.lg),
                 sliver: SliverToBoxAdapter(
-                  child: ErrorState(
-                    message: 'Error al cargar mapa de visitantes',
+                  child: ErrorState.forFailure(
+                    err,
+                    fallbackMessage: 'Error al cargar mapa de visitantes',
                     onRetry: () => ref.invalidate(dashboardStatsProvider),
                   ),
                 ),

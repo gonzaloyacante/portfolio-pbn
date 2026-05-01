@@ -197,8 +197,8 @@ extension _SettingsContactPageBuilders on _SettingsContactPageState {
           child: async.when(
             loading: () =>
                 const SkeletonSettingsPage(cardCount: 2, fieldsPerCard: 3),
-            error: (e, _) => ErrorState(
-              message: e.toString(),
+            error: (e, _) => ErrorState.forFailure(
+              e,
               onRetry: () => ref.invalidate(contactSettingsProvider),
             ),
             data: (settings) {

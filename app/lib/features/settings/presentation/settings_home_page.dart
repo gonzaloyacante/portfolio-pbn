@@ -21,7 +21,10 @@ import 'widgets/hero_image_picker.dart';
 import 'widgets/live_hero_preview.dart';
 import 'widgets/sticky_preview_column.dart';
 
-part 'settings_home_page_builders.dart';
+part 'settings_home_page_builders_design.dart';
+part 'settings_home_page_builders_sections.dart';
+part 'settings_home_page_builders_layout.dart';
+part 'settings_home_page_builders_form.dart';
 part 'settings_home_page_actions.dart';
 
 class SettingsHomePage extends ConsumerStatefulWidget {

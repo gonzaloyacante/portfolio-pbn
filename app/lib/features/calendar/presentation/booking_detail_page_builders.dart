@@ -50,8 +50,8 @@ extension _BookingDetailPageBuilders on _BookingDetailPageState {
         body: async.when(
           loading: () =>
               const SkeletonSettingsPage(cardCount: 3, fieldsPerCard: 3),
-          error: (e, _) => ErrorState(
-            message: e.toString(),
+          error: (e, _) => ErrorState.forFailure(
+            e,
             onRetry: () =>
                 ref.invalidate(bookingDetailProvider(widget.bookingId)),
           ),

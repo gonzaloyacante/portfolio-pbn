@@ -14,8 +14,8 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DraftRestoreBanner(
-                  onRestore: _restoreDraft,
-                  onDiscard: _discardDraft,
+                  onRestore: () => restoreDraft(),
+                  onDiscard: () => discardDraft(),
                 ),
               ),
             // ── Datos del autor ────────────────────────────────────────────

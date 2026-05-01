@@ -16,7 +16,9 @@ import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
+
 part 'testimonial_form_page_builders.dart';
+part 'testimonial_form_page_draft.dart';
 
 class TestimonialFormPage extends ConsumerStatefulWidget {
   const TestimonialFormPage({super.key, this.testimonialId});
@@ -68,59 +70,14 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _checkDraft();
-  }
-
-  Future<void> _checkDraft() async {
-    final has = await ref.read(draftServiceProvider).hasDraft(_draftScope);
-    if (mounted && has) setState(() => _hasDraft = true);
-  }
-
-  Future<void> _restoreDraft() async {
-    final data = await ref.read(draftServiceProvider).load(_draftScope);
-    if (data == null || !mounted) return;
-    setState(() {
-      _nameCtrl.text = data['name'] as String? ?? '';
-      _textCtrl.text = data['text'] as String? ?? '';
-      _emailCtrl.text = data['email'] as String? ?? '';
-      _positionCtrl.text = data['position'] as String? ?? '';
-      _companyCtrl.text = data['company'] as String? ?? '';
-      _rating = data['rating'] as int? ?? 5;
-      _verified = data['verified'] as bool? ?? false;
-      _featured = data['featured'] as bool? ?? false;
-      _isActive = data['isActive'] as bool? ?? true;
-      _status = data['status'] as String? ?? 'PENDING';
-      _isDirty = true;
-      _hasDraft = false;
-    });
-  }
-
-  Future<void> _discardDraft() async {
-    await ref.read(draftServiceProvider).clear(_draftScope);
-    if (mounted) setState(() => _hasDraft = false);
-  }
-
-  Future<void> _saveDraft() async {
-    if (!_isDirty) return;
-    await ref.read(draftServiceProvider).save(_draftScope, {
-      'name': _nameCtrl.text,
-      'text': _textCtrl.text,
-      'email': _emailCtrl.text,
-      'position': _positionCtrl.text,
-      'company': _companyCtrl.text,
-      'rating': _rating,
-      'verified': _verified,
-      'featured': _featured,
-      'isActive': _isActive,
-      'status': _status,
-    });
+    checkDraft();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      _saveDraft();
+      saveDraftToDisk();
     }
   }
 
@@ -155,7 +112,13 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
       body = detailAsync.when(
         loading: () =>
             const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(
+          child: ErrorState.forFailure(
+            e,
+            fallbackMessage: 'No se pudo cargar el testimonio',
+            onRetry: () => ref.invalidate(testimonialDetailProvider(tid)),
+          ),
+        ),
         data: (_) => _buildBody(context),
       );
     } else {
