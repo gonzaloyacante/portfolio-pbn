@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import MaintenanceModeView from '@/components/layout/MaintenanceModeView'
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
-import PageTransitionWrapper from '@/components/layout/PageTransitionWrapper'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
 
@@ -142,13 +141,13 @@ export default async function PublicLayout({ children }: { children: React.React
         {/* Skip navigation link - accesibilidad para lectores de pantalla y teclado */}
         <a
           href="#main-content"
-          className="bg-primary text-background sr-only absolute top-4 left-4 z-100 rounded px-4 py-2 text-sm font-semibold focus:not-sr-only focus:block"
+          className="bg-primary text-primary-foreground sr-only absolute top-4 left-4 z-200 rounded px-4 py-2 text-sm font-semibold focus:not-sr-only focus:block focus:ring-2 focus:ring-white focus:outline-none"
         >
           Saltar al contenido principal
         </a>
         <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} visibility={visibility} />
         <main id="main-content" className="flex-1" tabIndex={-1}>
-          <PageTransitionWrapper>{children}</PageTransitionWrapper>
+          {children}
         </main>
       </div>
     </>
