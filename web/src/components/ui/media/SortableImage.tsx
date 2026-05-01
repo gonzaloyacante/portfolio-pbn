@@ -2,7 +2,7 @@
 
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import Image from 'next/image'
+import { OptimizedImage } from './OptimizedImage'
 
 interface SortableImageProps {
   id: string
@@ -26,11 +26,14 @@ export default function SortableImage({ id, url, onDelete }: SortableImageProps)
     >
       <div {...attributes} {...listeners} className="absolute inset-0 z-10 cursor-move" />
 
-      <Image
+      <OptimizedImage
         src={url}
         alt="Imagen de galería"
         fill
-        className="object-cover transition-transform group-hover:scale-105"
+        sizes="(max-width: 640px) 45vw, 160px"
+        variant="thumbnail"
+        placeholder="empty"
+        className="transition-transform group-hover:scale-105"
       />
 
       <button

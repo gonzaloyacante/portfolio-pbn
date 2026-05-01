@@ -1,9 +1,16 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { Button, Tabs, TabsList, TabsTrigger, TabsContent, EmptyState } from '@/components/ui'
+import {
+  Button,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  EmptyState,
+  OptimizedImage,
+} from '@/components/ui'
 import { showToast } from '@/lib/toast'
 
 interface BaseTrashItem {
@@ -99,7 +106,14 @@ export function TrashTabs({ categories, services, testimonials }: TrashTabsProps
         {/* Thumbnail */}
         {image && (
           <div className="bg-muted relative h-28 w-full shrink-0 overflow-hidden rounded-lg md:w-32">
-            <Image src={image} alt={title} fill className="object-cover" />
+            <OptimizedImage
+              src={image}
+              alt={title}
+              fill
+              sizes="128px"
+              variant="thumbnail"
+              placeholder="empty"
+            />
           </div>
         )}
 

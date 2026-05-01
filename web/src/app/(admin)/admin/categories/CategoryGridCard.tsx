@@ -1,6 +1,5 @@
-import { Button, Card, Badge } from '@/components/ui'
+import { Button, Card, Badge, OptimizedImage } from '@/components/ui'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ROUTES } from '@/config/routes'
 import { ExternalLink, Pencil, Trash2, Images } from 'lucide-react'
 import type { Category } from '@/generated/prisma/client'
@@ -27,12 +26,14 @@ export function CategoryGridCard({ category, isDragging, onDelete }: CategoryGri
     >
       <div className="bg-muted relative aspect-video overflow-hidden">
         {thumbnailUrl ? (
-          <Image
+          <OptimizedImage
             src={thumbnailUrl}
             alt={category.name}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            variant="card"
+            placeholder="empty"
+            className="transition-transform duration-300 group-hover:scale-110"
           />
         ) : (
           <div className="flex h-full items-center justify-center opacity-20">

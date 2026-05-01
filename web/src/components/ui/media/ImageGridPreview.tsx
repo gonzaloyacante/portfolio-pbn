@@ -1,6 +1,6 @@
 'use client'
 
-import Image from 'next/image'
+import { OptimizedImage } from './OptimizedImage'
 import { X, Loader2 } from 'lucide-react'
 import type { ImageGridProps } from './ImageUploadTypes'
 
@@ -19,12 +19,14 @@ export function ImageGridPreview({ images, maxFiles, onRemove }: ImageGridProps)
                   : 'border-border'
             }`}
           >
-            <Image
+            <OptimizedImage
               src={img.url}
               alt={`Imagen ${index + 1}`}
               fill
-              className={`object-cover ${img.isUploading ? 'opacity-50' : ''}`}
               sizes="(max-width: 768px) 50vw, 20vw"
+              variant="thumbnail"
+              placeholder="empty"
+              imgClassName={img.isUploading ? 'opacity-50' : ''}
             />
             {img.isUploading && (
               <div className="bg-foreground/30 absolute inset-0 flex items-center justify-center">

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { Upload, Check } from 'lucide-react'
 import { Button, Card } from '@/components/ui'
+import { OptimizedImage } from './OptimizedImage'
 import { clsx } from 'clsx'
 
 interface ImageOption {
@@ -72,12 +72,14 @@ export default function ThumbnailSelector({
                   isSelected ? 'border-primary shadow-md' : 'border-border hover:border-primary/50'
                 )}
               >
-                <Image
+                <OptimizedImage
                   src={image.url}
                   alt={image.alt || 'Thumbnail option'}
                   fill
-                  className="object-cover transition-transform group-hover:scale-110"
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  variant="card"
+                  placeholder="empty"
+                  className="transition-transform group-hover:scale-110"
                 />
                 {isSelected && (
                   <div className="bg-primary/20 absolute inset-0 flex items-center justify-center backdrop-blur-[1px]">

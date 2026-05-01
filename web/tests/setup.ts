@@ -1,6 +1,28 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
+/** jsdom no define IntersectionObserver; OptimizedImage lazy necesita observe → montar imágenes en tests. */
+globalThis.IntersectionObserver = class IntersectionObserver {
+  readonly root: Element | null = null
+  readonly rootMargin = ''
+  readonly thresholds: ReadonlyArray<number> = []
+  constructor(
+    readonly callback: IntersectionObserverCallback,
+    _options?: IntersectionObserverInit
+  ) {}
+  disconnect() {}
+  observe(element: Element) {
+    this.callback(
+      [{ isIntersecting: true, target: element }] as IntersectionObserverEntry[],
+      this as unknown as IntersectionObserver
+    )
+  }
+  takeRecords(): IntersectionObserverEntry[] {
+    return []
+  }
+  unobserve() {}
+} as unknown as typeof IntersectionObserver
+
 // Mock de Next.js hooks
 vi.mock('next/navigation', () => ({
   useRouter: () => ({
