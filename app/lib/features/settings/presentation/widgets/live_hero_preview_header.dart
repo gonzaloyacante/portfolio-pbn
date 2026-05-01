@@ -1,44 +1,20 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import 'live_hero_preview_utils.dart';
 
 // ── File-level helpers ────────────────────────────────────────────────────────
 
-Color? _parseHexColor(String? hexColor) {
-  if (hexColor == null || hexColor.isEmpty) return null;
-  var hex = hexColor.replaceAll('#', '').trim();
-  if (hex.length == 6) hex = 'FF$hex';
-  if (hex.length == 8) {
-    final val = int.tryParse(hex, radix: 16);
-    if (val != null) return Color(val);
-  }
-  return null;
-}
-
-TextStyle _getFont(String fontName, TextStyle fallback) {
-  if (fontName.isEmpty) return fallback;
-  try {
-    return GoogleFonts.getFont(fontName);
-  } catch (_) {
-    return fallback;
-  }
-}
-
 double _eff(
-  Map<String, dynamic> vals,
+  Map<String, Object?> vals,
   String baseKey,
   String mobileKey,
   double fallback,
   bool isMobile,
-) {
-  final mVal = vals[mobileKey];
-  if (isMobile && mVal != null) return (mVal as num).toDouble();
-  final dVal = vals[baseKey];
-  return dVal != null ? (dVal as num).toDouble() : fallback;
-}
+) => effectivePreviewValue(vals, baseKey, mobileKey, fallback, isMobile);
 
 // ── LiveHeroPreviewSignature ──────────────────────────────────────────────────
 
@@ -56,7 +32,7 @@ class LiveHeroPreviewSignature extends StatelessWidget {
     required this.isDarkMode,
   });
 
-  final Map<String, dynamic> vals;
+  final Map<String, Object?> vals;
   final Map<String, TextEditingController> extraCtrls;
   final String owner;
   final File? pendingIllustration;
@@ -72,6 +48,9 @@ class LiveHeroPreviewSignature extends StatelessWidget {
       return CachedNetworkImage(
         imageUrl: currentIllustrationUrl,
         fit: BoxFit.contain,
+        placeholder: (context, url) => const ShimmerLoader(
+          child: ColoredBox(color: AppColors.lightBorder),
+        ),
         errorWidget: (context, url, error) =>
             const Center(child: Icon(Icons.broken_image)),
       );
@@ -111,7 +90,7 @@ class LiveHeroPreviewSignature extends StatelessWidget {
         ? extraCtrls['ownerNameColorDark']?.text
         : extraCtrls['ownerNameColor']?.text;
     final ownColor =
-        _parseHexColor(
+        parseHexColor(
           ownColorStr?.isNotEmpty == true
               ? ownColorStr
               : extraCtrls['ownerNameColor']?.text,
@@ -155,7 +134,7 @@ class LiveHeroPreviewSignature extends StatelessWidget {
       offset: Offset(effOwnX, effOwnY),
       child: Text(
         owner,
-        style: _getFont(
+        style: getFontSafe(
           ownFontName,
           const TextStyle(fontWeight: FontWeight.w700),
         ).copyWith(fontSize: effOwnSize, color: ownColor, letterSpacing: 2.0),
@@ -215,7 +194,7 @@ class LiveHeroPreviewHeader extends StatelessWidget {
     required this.primaryColor,
   });
 
-  final Map<String, dynamic> vals;
+  final Map<String, Object?> vals;
   final Map<String, TextEditingController> extraCtrls;
   final String title1;
   final String title2;
@@ -253,7 +232,7 @@ class LiveHeroPreviewHeader extends StatelessWidget {
         ? extraCtrls['heroTitle1ColorDark']?.text
         : extraCtrls['heroTitle1Color']?.text;
     final t1Color =
-        _parseHexColor(
+        parseHexColor(
           t1ColorStr?.isNotEmpty == true
               ? t1ColorStr
               : extraCtrls['heroTitle1Color']?.text,
@@ -286,7 +265,7 @@ class LiveHeroPreviewHeader extends StatelessWidget {
         ? extraCtrls['heroTitle2ColorDark']?.text
         : extraCtrls['heroTitle2Color']?.text;
     final t2Color =
-        _parseHexColor(
+        parseHexColor(
           t2ColorStr?.isNotEmpty == true
               ? t2ColorStr
               : extraCtrls['heroTitle2Color']?.text,
@@ -299,7 +278,7 @@ class LiveHeroPreviewHeader extends StatelessWidget {
       child: Text(
         title1,
         textAlign: isMobile ? TextAlign.center : TextAlign.left,
-        style: _getFont(
+        style: getFontSafe(
           t1FontName,
           const TextStyle(),
         ).copyWith(fontSize: effT1Size, color: t1Color, height: 0.9),
@@ -312,7 +291,7 @@ class LiveHeroPreviewHeader extends StatelessWidget {
         title2,
         textAlign: isMobile ? TextAlign.center : TextAlign.left,
         style:
-            _getFont(
+            getFontSafe(
               t2FontName,
               const TextStyle(fontWeight: FontWeight.bold),
             ).copyWith(
