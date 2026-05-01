@@ -21,7 +21,9 @@ Monorepo con dos componentes independientes:
 - [Portfolio PBN](#portfolio-pbn)
   - [Índice](#índice)
   - [Descripción del proyecto](#descripción-del-proyecto)
+    - [Valor profesional del proyecto](#valor-profesional-del-proyecto)
   - [Arquitectura del monorepo](#arquitectura-del-monorepo)
+  - [Arquitectura detallada](#arquitectura-detallada)
   - [Web — Next.js (`web/`)](#web--nextjs-web)
     - [Stack](#stack)
     - [Sistema de diseño](#sistema-de-diseño)
@@ -34,12 +36,20 @@ Monorepo con dos componentes independientes:
   - [Sistema de notificaciones push](#sistema-de-notificaciones-push)
   - [Seguridad](#seguridad)
   - [Autor](#autor)
+  - [Licencia](#licencia)
 
 ---
 
 ## Descripción del proyecto
 
 Portfolio dinámico para una maquilladora profesional. El sitio público muestra una galería de imágenes organizada por categorías y permite a los visitantes contactar o hacer reservas. Toda la gestión de contenido (imágenes de galería, categorías, servicios, testimoniales, reservas) se realiza desde dos herramientas de administración: el panel web y la app nativa Flutter.
+
+### Valor profesional del proyecto
+
+- Arquitectura real de producción en monorepo (`web` + `app`)
+- Backend/API compartida para panel web y app móvil
+- Enfoque en performance, SEO, escalabilidad y mantenibilidad
+- Sistema completo de administración de contenido con flujo end-to-end
 
 **Flujo de administración:**
 
@@ -85,6 +95,10 @@ portfolio-pbn/
 ├── docs/                 # Documentación técnica adicional
 └── AGENTS.md             # Reglas del proyecto para agentes AI (leer antes de tocar código)
 ```
+
+## Arquitectura detallada
+
+Para una vista técnica de responsabilidades, límites de sistema y flujo entre `web` y `app`, ver `ARCHITECTURE.md`.
 
 ---
 
@@ -191,7 +205,9 @@ Las notificaciones se envían via FCM HTTP v1 desde el servidor Next.js. Cada ti
 
 ## Seguridad
 
-Repositorio público solo con fines de portafolio. No se aceptan contribuciones.
+Repositorio público con fines de portafolio profesional.
+
+**Política de contribución:** este proyecto no acepta contribuciones externas (ver `CONTRIBUTING.md`).
 
 Los siguientes archivos están en `.gitignore` y **nunca se deben commitear**:
 
@@ -221,6 +237,10 @@ Mecanismos de seguridad implementados:
 - Portfolio: [gonzaloyacante.com](https://gonzaloyacante.com)
 - LinkedIn: [/in/gonzaloyacante](https://linkedin.com/in/gonzaloyacante)
 - GitHub: [@gonzaloyacante](https://github.com/gonzaloyacante)
+
+## Licencia
+
+Este repositorio usa licencia MIT para referencia de implementación y showcase técnico.
 
 ---
 
