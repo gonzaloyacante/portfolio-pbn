@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
@@ -18,20 +17,18 @@ class CategoryTileImage extends StatelessWidget {
     return SizedBox(
       width: 80,
       child: coverImageUrl != null && coverImageUrl!.isNotEmpty
-          ? CachedNetworkImage(
+          ? AppNetworkImage(
               imageUrl: coverImageUrl!,
               fit: BoxFit.cover,
-              placeholder: (_, _) => ShimmerLoader(
-                child: ColoredBox(
-                  color: colorScheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: colorScheme.outlineVariant,
-                    size: 28,
-                  ),
+              placeholder: ColoredBox(
+                color: colorScheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.image_outlined,
+                  color: colorScheme.outlineVariant,
+                  size: 28,
                 ),
               ),
-              errorWidget: (_, _, _) => ColoredBox(
+              errorWidget: ColoredBox(
                 color: colorScheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.broken_image_outlined,

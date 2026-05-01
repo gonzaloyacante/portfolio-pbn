@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
@@ -34,20 +33,18 @@ class GalleryGridTile extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: onTap,
-            child: CachedNetworkImage(
+            child: AppNetworkImage(
               imageUrl: item.url,
               fit: BoxFit.cover,
-              placeholder: (_, _) => ShimmerLoader(
-                child: ColoredBox(
-                  color: scheme.surfaceContainerHighest,
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: scheme.outlineVariant,
-                    size: 32,
-                  ),
+              placeholder: ColoredBox(
+                color: scheme.surfaceContainerHighest,
+                child: Icon(
+                  Icons.image_outlined,
+                  color: scheme.outlineVariant,
+                  size: 32,
                 ),
               ),
-              errorWidget: (_, _, _) => ColoredBox(
+              errorWidget: ColoredBox(
                 color: scheme.surfaceContainerHighest,
                 child: Icon(
                   Icons.broken_image_outlined,

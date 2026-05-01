@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 
@@ -45,10 +45,13 @@ class HeroImagePicker extends StatelessWidget {
                   children: [
                     pendingFile != null
                         ? Image.file(pendingFile!, fit: BoxFit.cover)
-                        : CachedNetworkImage(
+                        : AppNetworkImage(
                             imageUrl: imageUrl,
                             fit: BoxFit.cover,
-                            errorWidget: (_, url, error) => const Center(
+                            placeholder: ColoredBox(
+                              color: colorScheme.surfaceContainerHighest,
+                            ),
+                            errorWidget: const Center(
                               child: Icon(
                                 Icons.broken_image_outlined,
                                 size: 40,

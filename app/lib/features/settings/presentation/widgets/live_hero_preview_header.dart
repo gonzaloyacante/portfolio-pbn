@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/theme/app_colors.dart';
@@ -45,14 +44,11 @@ class LiveHeroPreviewSignature extends StatelessWidget {
       return Image.file(pendingIllustration!, fit: BoxFit.contain);
     }
     if (currentIllustrationUrl.isNotEmpty) {
-      return CachedNetworkImage(
+      return AppNetworkImage(
         imageUrl: currentIllustrationUrl,
         fit: BoxFit.contain,
-        placeholder: (context, url) => const ShimmerLoader(
-          child: ColoredBox(color: AppColors.lightBorder),
-        ),
-        errorWidget: (context, url, error) =>
-            const Center(child: Icon(Icons.broken_image)),
+        placeholder: const ColoredBox(color: AppColors.lightBorder),
+        errorWidget: const Center(child: Icon(Icons.broken_image)),
       );
     }
     return Container(

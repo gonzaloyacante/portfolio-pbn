@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'live_hero_preview_utils.dart';
 
 // ── File-level helpers ────────────────────────────────────────────────────────
@@ -44,14 +44,11 @@ class LiveHeroPreviewGallery extends StatelessWidget {
       return Image.file(pendingHeroImage!, fit: BoxFit.cover);
     }
     if (currentHeroImageUrl.isNotEmpty) {
-      return CachedNetworkImage(
+      return AppNetworkImage(
         imageUrl: currentHeroImageUrl,
         fit: BoxFit.cover,
-        placeholder: (context, url) => const ShimmerLoader(
-          child: ColoredBox(color: AppColors.lightBorder),
-        ),
-        errorWidget: (context, url, error) =>
-            const Center(child: Icon(Icons.broken_image)),
+        placeholder: const ColoredBox(color: AppColors.lightBorder),
+        errorWidget: const Center(child: Icon(Icons.broken_image)),
       );
     }
     return Container(

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
@@ -52,20 +51,18 @@ class GalleryTile extends StatelessWidget {
                 child: SizedBox(
                   width: 72,
                   height: 72,
-                  child: CachedNetworkImage(
+                  child: AppNetworkImage(
                     imageUrl: item.url,
                     fit: BoxFit.cover,
-                    placeholder: (ctx2, url) => ShimmerLoader(
-                      child: ColoredBox(
-                        color: scheme.surfaceContainerHighest,
-                        child: Icon(
-                          Icons.image_outlined,
-                          color: scheme.outlineVariant,
-                          size: 28,
-                        ),
+                    placeholder: ColoredBox(
+                      color: scheme.surfaceContainerHighest,
+                      child: Icon(
+                        Icons.image_outlined,
+                        color: scheme.outlineVariant,
+                        size: 28,
                       ),
                     ),
-                    errorWidget: (ctx2, url, err) => ColoredBox(
+                    errorWidget: ColoredBox(
                       color: scheme.surfaceContainerHighest,
                       child: Icon(
                         Icons.broken_image_outlined,

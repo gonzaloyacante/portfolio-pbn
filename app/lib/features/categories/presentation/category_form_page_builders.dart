@@ -377,24 +377,16 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(8),
-                              child: CachedNetworkImage(
+                              child: AppNetworkImage(
                                 imageUrl: img.url,
                                 fit: BoxFit.cover,
-                                placeholder: (BuildContext ctx2, String url) =>
-                                    const ShimmerLoader(
-                                      child: ColoredBox(
-                                        color: AppColors.lightBorder,
-                                      ),
-                                    ),
-                                errorWidget:
-                                    (
-                                      BuildContext ctx2,
-                                      String url,
-                                      Object err,
-                                    ) => const Icon(
-                                      Icons.broken_image,
-                                      color: AppColors.neutralMedium,
-                                    ),
+                                placeholder: const ColoredBox(
+                                  color: AppColors.lightBorder,
+                                ),
+                                errorWidget: const Icon(
+                                  Icons.broken_image,
+                                  color: AppColors.neutralMedium,
+                                ),
                               ),
                             ),
                           ),
