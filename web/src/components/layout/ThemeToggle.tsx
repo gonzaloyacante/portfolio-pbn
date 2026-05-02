@@ -18,9 +18,7 @@ export default function ThemeToggle() {
   }, [])
 
   if (!mounted) {
-    return (
-      <div className="bg-muted h-10 w-10 animate-pulse rounded-full"></div> // Skeleton placeholder
-    )
+    return <div className="bg-muted h-11 w-11 shrink-0 animate-pulse rounded-full" />
   }
 
   const isDark = resolvedTheme === 'dark'
@@ -32,7 +30,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="bg-secondary text-secondary-foreground hover:bg-secondary/80 flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
+      className="bg-secondary text-secondary-foreground hover:bg-secondary/80 flex h-11 min-h-11 w-11 min-w-11 shrink-0 items-center justify-center rounded-full transition-all hover:scale-110 active:scale-95"
       aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
       title={isDark ? 'Modo claro' : 'Modo oscuro'}
     >

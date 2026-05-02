@@ -2,22 +2,28 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useReducedMotion } from 'framer-motion'
 import { motion } from '@/components/ui'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
 import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { Heart, Sparkles, Home } from 'lucide-react'
+import { Heart, Home, Sparkles, Star } from 'lucide-react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { ROUTES } from '@/config/routes'
+import { cn } from '@/lib/utils'
 
 /**
  * TestimonialForm - Refactored to use UI components
  * Uses Input, TextArea, Button from @/components/ui instead of inline styles
  */
+const publicFieldClass =
+  'rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none'
+
 export default function TestimonialForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [rating, setRating] = useState(5)
+  const prefersReducedMotion = useReducedMotion()
   const { executeRecaptcha } = useGoogleReCaptcha()
 
   async function handleSubmit(formData: FormData) {
@@ -53,7 +59,11 @@ export default function TestimonialForm() {
         <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
           <motion.div
             animate={{ scale: [1, 1.15, 1] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            transition={{
+              duration: 2,
+              repeat: prefersReducedMotion ? 0 : Infinity,
+              ease: 'easeInOut',
+            }}
             className="bg-primary/10 absolute inset-0 rounded-full"
           />
           <motion.div
@@ -113,11 +123,27 @@ export default function TestimonialForm() {
 
   return (
     <form action={handleSubmit} className="space-y-6">
-      <Input label="Tu nombre *" name="name" required placeholder="¿Cómo te llamas?" />
+      <Input
+        label="Tu nombre *"
+        name="name"
+        required
+        placeholder="¿Cómo te llamas?"
+        className={publicFieldClass}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Input label="Cargo / Profesión" name="position" placeholder="ej. Diseñadora gráfica" />
-        <Input label="Empresa / Negocio" name="company" placeholder="ej. Studio Creativo" />
+        <Input
+          label="Cargo / Profesión"
+          name="position"
+          placeholder="ej. Diseñadora gráfica"
+          className={publicFieldClass}
+        />
+        <Input
+          label="Empresa / Negocio"
+          name="company"
+          placeholder="ej. Studio Creativo"
+          className={publicFieldClass}
+        />
       </div>
 
       <Input
@@ -126,23 +152,37 @@ export default function TestimonialForm() {
         type="email"
         inputMode="email"
         placeholder="tu@email.com"
+        className={publicFieldClass}
       />
 
-      <div>
-        <label className="text-foreground mb-2 block text-sm font-medium">Tu calificación *</label>
-        <div className="flex gap-2">
+      <fieldset>
+        <legend className="text-foreground mb-2 block text-sm font-medium">
+          Tu calificación *
+        </legend>
+        <div
+          className="flex flex-wrap gap-1 sm:gap-2"
+          role="group"
+          aria-label="Valoración de 1 a 5"
+        >
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
               type="button"
               onClick={() => setRating(star)}
-              className="cursor-pointer text-3xl transition-transform hover:scale-110"
+              aria-label={`Valoración de ${star} de 5 estrellas`}
+              className="cursor-pointer rounded-md p-1 transition-transform hover:scale-110 focus-visible:ring-2 focus-visible:ring-(--primary) focus-visible:outline-none"
             >
-              {star <= rating ? '⭐' : '☆'}
+              <Star
+                className={cn(
+                  'size-9 sm:size-10',
+                  star <= rating ? 'fill-warning text-warning' : 'text-muted-foreground'
+                )}
+                aria-hidden
+              />
             </button>
           ))}
         </div>
-      </div>
+      </fieldset>
 
       <TextArea
         label="Tu experiencia *"
@@ -151,9 +191,10 @@ export default function TestimonialForm() {
         rows={4}
         placeholder="Cuéntanos tu experiencia trabajando con Paola..."
         helperText="Entre 20 y 500 caracteres"
+        className={publicFieldClass}
       />
 
-      <Button type="submit" loading={isSubmitting} className="w-full">
+      <Button type="submit" loading={isSubmitting} className="w-full rounded-xl py-4">
         Enviar Testimonio
       </Button>
     </form>

@@ -1,14 +1,15 @@
 import { getActiveServices, getServiceBySlug } from '@/actions/cms/services'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
+import JsonLd from '@/components/seo/JsonLd'
 import { Button, OptimizedImage } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
+import { ROUTES } from '@/config/routes'
+import { getPublicSiteUrl } from '@/lib/site-url'
+import Link from 'next/link'
 import { Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
-import JsonLd from '@/components/seo/JsonLd'
-import { ROUTES } from '@/config/routes'
+import { notFound } from 'next/navigation'
 
-// ISR: revalidar cada 60s + on-demand via revalidatePath()
+/** ISR — alineado con `web/src/config/public-isr.ts` */
 export const revalidate = 60
 
 export async function generateStaticParams() {
@@ -99,13 +100,17 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         data={{
           name: service.name,
           description: service.shortDesc || service.description?.slice(0, 160) || service.name,
-          url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios/${slug}`,
+          url: `${getPublicSiteUrl()}${ROUTES.public.serviceDetail(slug)}`,
           image: service.imageUrl ?? undefined,
-          offers: tiers.map((t) => ({ name: t.name, price: parseFloat(t.price) || 0 })),
+          offers: tiers.map((t) => {
+            const normalized = String(t.price).replace(',', '.').trim()
+            const n = Number.parseFloat(normalized)
+            return { name: t.name, price: Number.isFinite(n) ? n : 0 }
+          }),
         }}
       />
       {/* Hero Section */}
-      <div className="relative h-[60vh] min-h-125 w-full overflow-hidden">
+      <div className="relative h-[60dvh] min-h-125 w-full overflow-hidden">
         {service.imageUrl ? (
           <OptimizedImage
             src={service.imageUrl}
@@ -121,7 +126,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         <div className="bg-background/60 absolute inset-0 backdrop-blur-sm" />
 
         <div className="relative z-10 container mx-auto flex h-full flex-col justify-end px-6 pb-20">
-          <h1 className="text-foreground mb-4 text-5xl font-bold md:text-7xl">{service.name}</h1>
+          <h1 className="text-foreground mb-4 max-w-full text-4xl leading-tight font-bold break-words sm:text-5xl md:text-6xl lg:text-7xl">
+            {service.name}
+          </h1>
           <p className="text-foreground/80 max-w-2xl text-xl">
             {service.shortDesc || service.description?.slice(0, 100) + '...'}
           </p>
@@ -151,7 +158,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           {/* Description */}
           <section>
             <h2 className="mb-4 text-2xl font-bold">Sobre el servicio</h2>
-            <div className="prose dark:prose-invert text-muted-foreground max-w-none whitespace-pre-line">
+            <div className="prose prose-neutral dark:prose-invert text-muted-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary max-w-none whitespace-pre-line">
               {service.description}
             </div>
           </section>
@@ -191,7 +198,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                   >
                     <OptimizedImage
                       src={url}
-                      alt={`Gallery ${idx}`}
+                      alt={`${service.name} — imagen ${idx + 1}`}
                       fill
                       sizes={IMAGE_SIZES.publicServiceGallery}
                       transparentBackground={false}
@@ -207,7 +214,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             {service.requirements && (
               <div className="bg-muted/30 rounded-2xl p-6">
                 <h3 className="mb-3 flex items-center gap-2 font-bold">
-                  <AlertCircle className="h-5 w-5 text-yellow-500" /> Requisitos
+                  <AlertCircle className="text-warning h-5 w-5" aria-hidden /> Requisitos
                 </h3>
                 <p className="text-muted-foreground text-sm whitespace-pre-line">
                   {service.requirements}
@@ -217,7 +224,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             {service.cancellationPolicy && (
               <div className="bg-muted/30 rounded-2xl p-6">
                 <h3 className="mb-3 flex items-center gap-2 font-bold">
-                  <Calendar className="h-5 w-5 text-red-500" /> Cancelaciones
+                  <Calendar className="text-destructive h-5 w-5" aria-hidden /> Cancelaciones
                 </h3>
                 <p className="text-muted-foreground text-sm whitespace-pre-line">
                   {service.cancellationPolicy}
@@ -229,7 +236,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          <div className="border-border bg-card sticky top-24 rounded-2xl border p-6 shadow-sm">
+          <div className="border-border bg-card sticky top-28 rounded-2xl border p-6 shadow-sm lg:top-32">
             <h3 className="mb-4 text-xl font-bold">Reserva tu Cita</h3>
             <p className="text-muted-foreground mb-6 text-sm">
               Para asegurar tu fecha, contáctame con anticipación.

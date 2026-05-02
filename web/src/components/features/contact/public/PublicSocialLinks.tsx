@@ -30,7 +30,7 @@ export default function PublicSocialLinks({ links, variant = 'grid' }: PublicSoc
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.platform}
-              className="bg-card text-foreground hover:bg-primary hover:text-background flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110"
+              className="bg-card text-foreground hover:bg-primary hover:text-primary-foreground flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110"
             >
               {Icon ? <Icon className="h-5 w-5" /> : <span className="text-lg">🔗</span>}
             </a>

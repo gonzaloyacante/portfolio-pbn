@@ -1,4 +1,8 @@
 import type { Metadata } from 'next'
+import { Mail, MapPin, Target } from 'lucide-react'
+import { getContactSettings } from '@/actions/settings/contact'
+import { PrivacyTableOfContents } from '@/components/legal/PrivacyTableOfContents'
+import { PRIVACY_POLICY_LAST_UPDATED } from '@/config/legal'
 import { ROUTES } from '@/config/routes'
 
 export const metadata: Metadata = {
@@ -17,15 +21,17 @@ export const metadata: Metadata = {
   },
 }
 
-import { getContactSettings } from '@/actions/settings/contact'
-
 export default async function PrivacyPage() {
-  // Fetch dynamic contact info
   const contactSettings = await getContactSettings()
   const email = contactSettings?.email || 'admin@paolabolivar.com'
   const location = contactSettings?.location || 'Granada, España'
   const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
   const phone = contactSettings?.phone || ''
+
+  const privacyUpdatedDisplay = new Intl.DateTimeFormat('es-ES', {
+    dateStyle: 'long',
+    timeZone: 'Europe/Madrid',
+  }).format(new Date(`${PRIVACY_POLICY_LAST_UPDATED}T12:00:00Z`))
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12">
@@ -33,9 +39,11 @@ export default async function PrivacyPage() {
         Política de Privacidad
       </h1>
 
+      <PrivacyTableOfContents />
+
       <div className="text-foreground space-y-8">
         {/* Introducción */}
-        <section>
+        <section id="priv-1">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">1. Información General</h2>
           <p className="leading-relaxed">
             En cumplimiento de la normativa vigente en materia de protección de datos personales, el
@@ -56,7 +64,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Datos recopilados */}
-        <section>
+        <section id="priv-2">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             2. ¿Qué datos recopilamos?
           </h2>
@@ -95,7 +103,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Finalidad */}
-        <section>
+        <section id="priv-3">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             3. ¿Para qué utilizamos sus datos?
           </h2>
@@ -120,7 +128,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Base Legal */}
-        <section>
+        <section id="priv-4">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             4. Base Legal del Tratamiento
           </h2>
@@ -133,7 +141,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Conservación */}
-        <section>
+        <section id="priv-5">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             5. ¿Cuánto tiempo conservamos sus datos?
           </h2>
@@ -146,7 +154,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Destinatarios */}
-        <section>
+        <section id="priv-6">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             6. ¿Compartimos sus datos con terceros?
           </h2>
@@ -176,7 +184,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Derechos */}
-        <section>
+        <section id="priv-7">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             7. Sus Derechos (ARCO + otros)
           </h2>
@@ -236,7 +244,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Cookies */}
-        <section>
+        <section id="priv-8">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">8. Uso de Cookies</h2>
           <p className="mb-4 leading-relaxed">
             Este sitio web utiliza cookies propias y de terceros para mejorar la experiencia del
@@ -264,7 +272,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Geolocalización */}
-        <section>
+        <section id="priv-9">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             9. Geolocalización y Datos de Ubicación
           </h2>
@@ -275,8 +283,9 @@ export default async function PrivacyPage() {
 
           <div className="space-y-4">
             <div className="bg-muted/50 rounded-2xl p-4">
-              <h3 className="text-foreground mb-2 font-semibold">
-                📍 Geolocalización por IP (GeoIP) — Automática
+              <h3 className="text-foreground mb-2 flex items-center gap-2 font-semibold">
+                <MapPin className="text-primary size-5 shrink-0" aria-hidden />
+                Geolocalización por IP (GeoIP) — Automática
               </h3>
               <p className="text-sm leading-relaxed">
                 A través de la dirección IP anonimizada (sin el último octeto), inferimos el{' '}
@@ -293,8 +302,9 @@ export default async function PrivacyPage() {
             </div>
 
             <div className="bg-muted/50 rounded-2xl p-4">
-              <h3 className="text-foreground mb-2 font-semibold">
-                🎯 Geolocalización Precisa del Navegador — Con Consentimiento Explícito
+              <h3 className="text-foreground mb-2 flex items-center gap-2 font-semibold">
+                <Target className="text-primary size-5 shrink-0" aria-hidden />
+                Geolocalización precisa del navegador — Con consentimiento explícito
               </h3>
               <p className="text-sm leading-relaxed">
                 Si usted acepta la categoría &quot;Geolocalización&quot; en el banner de cookies, el
@@ -334,7 +344,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Seguridad */}
-        <section>
+        <section id="priv-10">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             10. Seguridad de los Datos
           </h2>
@@ -353,7 +363,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Modificaciones */}
-        <section>
+        <section id="priv-11">
           <h2 className="text-foreground mb-4 text-2xl font-semibold">
             11. Modificaciones de la Política de Privacidad
           </h2>
@@ -364,13 +374,16 @@ export default async function PrivacyPage() {
             protegemos sus datos.
           </p>
           <p className="text-muted-foreground mt-4 text-sm">
-            <strong>Última actualización:</strong> {new Date().toLocaleDateString('es-ES')}
+            <strong>Última actualización:</strong> {privacyUpdatedDisplay}
           </p>
         </section>
 
         {/* Contacto */}
-        <section className="bg-muted/50 rounded-3xl p-6">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">📧 ¿Tienes dudas?</h2>
+        <section id="priv-12" className="bg-muted/50 rounded-3xl p-6">
+          <h2 className="text-foreground mb-4 flex items-center gap-2 text-2xl font-semibold">
+            <Mail className="text-primary size-7 shrink-0" aria-hidden />
+            ¿Tienes dudas?
+          </h2>
           <p className="leading-relaxed">
             Si tiene alguna pregunta sobre esta Política de Privacidad o sobre el tratamiento de sus
             datos personales, puede contactarnos en:

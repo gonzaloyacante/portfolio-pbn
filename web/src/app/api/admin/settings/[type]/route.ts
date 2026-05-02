@@ -15,6 +15,7 @@ import {
   themeEditorSchema,
   testimonialSettingsSchema,
   categorySettingsSchema,
+  servicesPageSettingsSchema,
 } from '@/lib/validations'
 import type { ZodSchema, ZodObject, ZodRawShape } from 'zod'
 
@@ -36,6 +37,7 @@ const SETTINGS_MODELS = {
   site: prisma.siteSettings as unknown as SettingsModel,
   testimonial: prisma.testimonialSettings as unknown as SettingsModel,
   category: prisma.categorySettings as unknown as SettingsModel,
+  servicesPage: prisma.servicesPageSettings as unknown as SettingsModel,
 } satisfies Record<string, SettingsModel>
 
 type SettingsType = keyof typeof SETTINGS_MODELS
@@ -199,6 +201,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         revalidatePath(ROUTES.public.portfolio, 'layout')
         revalidatePath(ROUTES.admin.categories)
         revalidateTag(CACHE_TAGS.categorySettings, 'max')
+        break
+      case 'servicesPage':
+        revalidatePath(ROUTES.public.services, 'layout')
+        revalidateTag(CACHE_TAGS.servicesPageSettings, 'max')
+        revalidatePath(ROUTES.admin.services)
         break
     }
 

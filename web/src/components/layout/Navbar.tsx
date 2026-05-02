@@ -66,15 +66,15 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
           </Link>
         )}
 
-        {/* Navegación con block-active */}
-        <div className="relative flex flex-wrap items-center justify-center gap-1 md:gap-0">
+        {/* Navegación: columna en móvil (mejor táctil); fila desde md */}
+        <div className="relative flex w-full max-w-full flex-col items-center gap-2 md:flex-row md:flex-wrap md:justify-center md:gap-1 md:gap-x-0">
           {navItems.map((item) => {
             const active = isActive(item.href)
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-heading relative px-6 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 md:px-8 md:text-base"
+                className="font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 md:px-8 md:text-base"
               >
                 {/* Fondo animado para el estado activo */}
                 {active && (
@@ -88,7 +88,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
                 {/* Texto */}
                 <span
                   className={`relative z-10 ${
-                    active ? 'text-background' : 'text-foreground hover:text-accent'
+                    active ? 'text-primary-foreground' : 'text-foreground hover:text-primary'
                   }`}
                 >
                   {item.label}
@@ -97,8 +97,8 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
             )
           })}
 
-          {/* Theme Toggle + Language Toggle */}
-          <div className="ml-4 flex items-center gap-2">
+          {/* Theme Toggle — mismo ancho táctil que enlaces */}
+          <div className="flex items-center justify-center gap-2 pt-1 md:ml-4 md:pt-0">
             <ThemeToggle />
             {/* <LanguageToggle /> */}
           </div>

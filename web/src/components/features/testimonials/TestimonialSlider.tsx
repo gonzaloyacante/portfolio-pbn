@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { OptimizedImage } from '@/components/ui'
+import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
 import type { Testimonial } from '@/generated/prisma/client'
 
 const CARDS_VISIBLE = 3
@@ -15,11 +16,7 @@ interface TestimonialSliderProps {
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <div className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg">
-      <div className="mb-3 flex gap-0.5 text-yellow-400">
-        {Array.from({ length: testimonial.rating }).map((_, i) => (
-          <span key={i}>⭐</span>
-        ))}
-      </div>
+      <TestimonialRatingStars rating={testimonial.rating} className="mb-3" />
       <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed italic">
         &ldquo;{testimonial.text}&rdquo;
       </p>
@@ -75,6 +72,8 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
 
   useEffect(() => {
     if (total <= CARDS_VISIBLE) return
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mq.matches) return
     const interval = setInterval(
       () => setStart((s) => (s >= maxStart ? 0 : s + 1)),
       AUTO_ADVANCE_MS

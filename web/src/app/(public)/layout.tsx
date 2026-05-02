@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Footer from '@/components/layout/Footer'
 import MaintenanceModeView from '@/components/layout/MaintenanceModeView'
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
@@ -137,7 +138,7 @@ export default async function PublicLayout({ children }: { children: React.React
         </style>
       )}
 
-      <div className="bg-background flex min-h-screen flex-col transition-colors duration-300">
+      <div className="bg-background flex min-h-dvh flex-col transition-colors duration-300">
         {/* Skip navigation link - accesibilidad para lectores de pantalla y teclado */}
         <a
           href="#main-content"
@@ -149,6 +150,7 @@ export default async function PublicLayout({ children }: { children: React.React
         <main id="main-content" className="flex-1" tabIndex={-1}>
           {children}
         </main>
+        <Footer ownerName={contactSettings?.ownerName} />
       </div>
     </>
   )

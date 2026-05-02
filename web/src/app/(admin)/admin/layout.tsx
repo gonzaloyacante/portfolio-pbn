@@ -7,7 +7,7 @@ import AdminProviders from '@/components/providers/AdminProviders'
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <AdminProviders>
-      <div className="bg-background flex min-h-screen flex-col transition-colors duration-300 lg:flex-row">
+      <div className="bg-background flex min-h-dvh flex-col transition-colors duration-300 lg:flex-row">
         {/* Sidebar desktop (hidden en mobile, visible en lg+) */}
         <AdminSidebar />
         {/* Header mobile con hamburger (visible solo en mobile) */}

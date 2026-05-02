@@ -1,11 +1,18 @@
 import { getActiveServices } from '@/actions/cms/services'
 import { getContactSettings } from '@/actions/settings/contact'
+import { getServicesPageSettings } from '@/actions/settings/services-page'
 import { Metadata } from 'next'
 import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage, Button } from '@/components/ui'
+import { ServicesPublicHero } from '@/components/features/services/ServicesPublicHero'
 import Link from 'next/link'
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle, Palette, Star } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
+import { getPublicSiteUrl } from '@/lib/site-url'
+
+function whatsappHref(phoneDigits: string, message: string): string {
+  return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()
@@ -34,8 +41,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const services = await getActiveServices()
-  const contactSettings = await getContactSettings()
+  const [services, contactSettings, servicesPageSettings] = await Promise.all([
+    getActiveServices(),
+    getContactSettings(),
+    getServicesPageSettings(),
+  ])
 
   const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
   const location = contactSettings?.location || ''
@@ -43,11 +53,11 @@ export default async function ServicesPage() {
 
   // Generate WhatsApp link
   const whatsappNumber = contactSettings?.whatsapp?.replace(/\D/g, '') || ''
-  const whatsappMessage = encodeURIComponent(
-    '¡Hola! Me gustaría reservar una cita para un servicio de maquillaje.'
-  )
-  const whatsappLink = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`
+  const whatsappIntro = whatsappNumber
+    ? whatsappHref(
+        whatsappNumber,
+        '¡Hola! Me gustaría reservar una cita para un servicio de maquillaje.'
+      )
     : null
 
   return (
@@ -57,7 +67,7 @@ export default async function ServicesPage() {
         data={{
           name: `${ownerName} - Servicios de Maquillaje`,
           description: `Servicios profesionales de maquillaje${locationSuffix}: bodas, editoriales, caracterización artística y eventos.`,
-          url: `${process.env.NEXT_PUBLIC_BASE_URL}/servicios`,
+          url: `${getPublicSiteUrl()}${ROUTES.public.services}`,
           address: {
             addressLocality: location,
             addressCountry: 'ES',
@@ -65,19 +75,7 @@ export default async function ServicesPage() {
         }}
       />
       <div className="container mx-auto max-w-6xl px-4">
-        {/* Header */}
-        <FadeIn className="mb-12 text-center">
-          <h1
-            className="text-foreground font-heading mb-4 font-semibold"
-            style={{ fontSize: 'var(--font-heading-size, 2rem)' }}
-          >
-            Mis Servicios
-          </h1>
-          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-            Servicios profesionales de maquillaje para cada ocasión. Desde novias hasta producciones
-            editoriales, cada look es único y personalizado.
-          </p>
-        </FadeIn>
+        <ServicesPublicHero settings={servicesPageSettings} />
 
         {/* Services Grid */}
         {services.length === 0 ? (
@@ -93,7 +91,7 @@ export default async function ServicesPage() {
                 <ScaleIn key={service.id}>
                   <article className="border-border bg-card group relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                     <Link
-                      href={`/servicios/${service.slug}`}
+                      href={ROUTES.public.serviceDetail(service.slug)}
                       className="relative block"
                       aria-label={`Ver servicio: ${service.name}`}
                     >
@@ -108,11 +106,15 @@ export default async function ServicesPage() {
                             className="h-full w-full transition-transform duration-500 group-hover:scale-110"
                           />
                         ) : (
-                          <span className="text-6xl opacity-30">💄</span>
+                          <Palette
+                            className="text-muted-foreground size-16 opacity-40"
+                            aria-hidden
+                          />
                         )}
                         {service.isFeatured && (
-                          <span className="bg-primary text-primary-foreground absolute top-4 right-4 rounded-full px-3 py-1 text-xs font-bold shadow-lg">
-                            ⭐ Destacado
+                          <span className="bg-primary text-primary-foreground absolute top-4 right-4 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-lg">
+                            <Star className="size-3.5 shrink-0 fill-current" aria-hidden />
+                            Destacado
                           </span>
                         )}
                       </div>
@@ -120,7 +122,7 @@ export default async function ServicesPage() {
 
                     {/* Content */}
                     <div className="flex flex-1 flex-col p-6">
-                      <Link href={`/servicios/${service.slug}`}>
+                      <Link href={ROUTES.public.serviceDetail(service.slug)}>
                         <h2 className="text-foreground hover:text-primary mb-2 text-xl font-bold transition-colors">
                           {service.name}
                         </h2>
@@ -159,13 +161,16 @@ export default async function ServicesPage() {
 
                       {/* CTA Buttons */}
                       <div className="mt-auto flex flex-col gap-3">
-                        {whatsappLink && (
+                        {whatsappIntro && whatsappNumber && (
                           <Button
                             asChild
                             className="w-full rounded-xl py-3 font-semibold hover:shadow-lg"
                           >
                             <Link
-                              href={`${whatsappLink}&text=${encodeURIComponent(`¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`)}`}
+                              href={whatsappHref(
+                                whatsappNumber,
+                                `¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`
+                              )}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -180,7 +185,9 @@ export default async function ServicesPage() {
                           variant="outline"
                           className="w-full rounded-xl py-3 font-semibold"
                         >
-                          <Link href={`/servicios/${service.slug}`}>Ver Detalles & Precios</Link>
+                          <Link href={ROUTES.public.serviceDetail(service.slug)}>
+                            Ver Detalles & Precios
+                          </Link>
                         </Button>
                       </div>
                     </div>
@@ -192,7 +199,7 @@ export default async function ServicesPage() {
         )}
 
         {/* Bottom CTA */}
-        {whatsappLink && (
+        {whatsappIntro && (
           <FadeIn className="mt-16 text-center">
             <div className="bg-card border-border mx-auto max-w-2xl rounded-3xl border p-8 backdrop-blur-sm">
               <h2 className="text-foreground mb-3 text-2xl font-bold">
@@ -203,9 +210,9 @@ export default async function ServicesPage() {
               </p>
               <Button
                 asChild
-                className="rounded-xl bg-green-500 px-6 py-3 font-semibold text-white hover:bg-green-600 hover:shadow-lg"
+                className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-lg"
               >
-                <Link href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                <Link href={whatsappIntro} target="_blank" rel="noopener noreferrer">
                   <MessageCircle className="h-5 w-5" />
                   Escribirme por WhatsApp
                 </Link>

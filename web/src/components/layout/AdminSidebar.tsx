@@ -22,7 +22,7 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="bg-card border-border sticky top-0 hidden h-screen w-64 flex-col border-r backdrop-blur-md transition-colors duration-300 lg:flex">
+    <aside className="bg-card border-border sticky top-0 hidden h-dvh w-64 flex-col border-r backdrop-blur-md transition-colors duration-300 lg:flex">
       {/* Header */}
       <div className="border-border flex items-center justify-between border-b p-6">
         <Link

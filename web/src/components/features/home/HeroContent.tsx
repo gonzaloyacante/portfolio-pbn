@@ -36,10 +36,10 @@ export function HeroContent({
   const sectionProps = { s, isEditor, selectedElement, onSelectElement, isMobile }
 
   return (
-    <section className="relative flex min-h-[calc(100dvh-80px)] w-full flex-col justify-center overflow-x-hidden bg-(--background) px-4 transition-colors duration-500 sm:px-8 lg:px-16">
+    <section className="relative flex min-h-[calc(100svh-var(--public-nav-offset))] w-full flex-col justify-center overflow-x-hidden bg-(--background) px-4 transition-colors duration-500 sm:px-8 md:min-h-[calc(100dvh-var(--public-nav-offset))] lg:px-16">
       <FontLoader fonts={fontsToLoad} />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80vh] lg:grid-cols-12 lg:gap-12 lg:py-0">
+      <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80dvh] lg:grid-cols-12 lg:gap-12 lg:py-0">
         {/* Left column: Titles + Signature */}
         <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
           <HeroTitles {...sectionProps} />
@@ -50,7 +50,7 @@ export function HeroContent({
         <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
           <HeroMainImage {...sectionProps} />
           <HeroCta {...sectionProps} />
-          <div className="pointer-events-none absolute bottom-0 -left-10 z-0 h-32 w-32 rounded-full bg-(--secondary) opacity-20 blur-2xl" />
+          <div className="pointer-events-none absolute bottom-0 left-0 z-0 h-32 w-32 rounded-full bg-(--secondary) opacity-20 blur-2xl md:-left-6 lg:-left-10" />
         </div>
       </div>
     </section>

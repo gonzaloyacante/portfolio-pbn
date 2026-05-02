@@ -125,8 +125,20 @@ model AboutSettings {
   // Illustration
   illustrationUrl   String?
   illustrationAlt   String?  @default("Ilustración sobre mí")
+  /// Cuadrado máximo (px) — escritorio / `sm+`
+  illustrationMaxPx        Int? @default(112)
+  /// Cuadrado máximo (px) — vista estrecha
+  illustrationMobileMaxPx  Int? @default(96)
   // Bio
   bioTitle          String?  @default("Hola, soy Paola.")
+  /// Null = hereda fuente script del tema + FontLoader no aplica URL propia
+  bioTitleFont       String?
+  bioTitleFontUrl    String?
+  /// Null = tamaño vía `--font-script-size` del tema
+  bioTitleFontSize   Int?
+  bioTitleMobileFontSize Int?
+  bioTitleColor      String?
+  bioTitleColorDark  String?
   bioIntro          String?  @db.Text
   bioDescription    String?  @db.Text
   // Profile Image (oval)
@@ -151,6 +163,27 @@ model AboutSettings {
   updatedAt         DateTime @updatedAt
 
   @@map("about_settings")
+}
+
+/// Public services listing hero (/servicios) — textos y tipografía del bloque superior
+model ServicesPageSettings {
+  id    String @id @default(cuid())
+  key   String @unique @default("singleton")
+
+  listTitle         String? @default("Mis Servicios")
+  listIntro         String? @db.Text
+  listTitleFont     String?
+  listTitleFontUrl  String?
+  listTitleFontSize Int?
+  listTitleMobileFontSize Int?
+  listTitleColor    String?
+  listTitleColorDark String?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("services_page_settings")
 }
 
 /// Contact Page Settings with Form Labels
@@ -222,20 +255,20 @@ model TestimonialSettings {
 model ThemeSettings {
   id                  String   @id @default(cuid())
   key                 String   @unique @default("singleton")
-  // Light Theme Colors
+  // Light Theme Colors — alineado con web/src/lib/design-tokens.ts (BRAND)
   primaryColor        String   @default("#6c0a0a")
-  secondaryColor      String   @default("#ffaadd")
+  secondaryColor      String   @default("#fce7f3")
   accentColor         String   @default("#fff1f9")
-  backgroundColor     String   @default("#fff1f9")
-  textColor           String   @default("#000000")
-  cardBgColor         String   @default("#ffaadd")
+  backgroundColor     String   @default("#fff8fc")
+  textColor           String   @default("#1a050a")
+  cardBgColor         String   @default("#ffffff")
   // Dark Theme Colors
-  darkPrimaryColor    String   @default("#ffaadd")
-  darkSecondaryColor  String   @default("#6c0a0a")
-  darkAccentColor     String   @default("#000000")
-  darkBackgroundColor String   @default("#6c0a0a")
-  darkTextColor       String   @default("#fff1f9")
-  darkCardBgColor     String   @default("#ffaadd")
+  darkPrimaryColor    String   @default("#fb7185")
+  darkSecondaryColor  String   @default("#881337")
+  darkAccentColor     String   @default("#2a1015")
+  darkBackgroundColor String   @default("#0f0505")
+  darkTextColor       String   @default("#fafafa")
+  darkCardBgColor     String   @default("#1c0a0f")
   // Typography - Base
   headingFont         String   @default("Poppins")
   headingFontUrl      String?

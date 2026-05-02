@@ -16,7 +16,15 @@ export interface AboutSettingsData {
   id: string
   illustrationUrl: string | null
   illustrationAlt: string | null
+  illustrationMaxPx: number | null
+  illustrationMobileMaxPx: number | null
   bioTitle: string | null
+  bioTitleFont: string | null
+  bioTitleFontUrl: string | null
+  bioTitleFontSize: number | null
+  bioTitleMobileFontSize: number | null
+  bioTitleColor: string | null
+  bioTitleColorDark: string | null
   bioIntro: string | null
   bioDescription: string | null
   profileImageUrl: string | null
@@ -84,6 +92,19 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
       }
     }
 
+    const bioTitleColor = cleanData.bioTitleColor as string | null | undefined
+    const bioTitleColorDark = cleanData.bioTitleColorDark as string | null | undefined
+    if (bioTitleColor !== undefined && bioTitleColor !== null && !validateColor(bioTitleColor)) {
+      return { success: false, error: `Color del título (claro) inválido: ${bioTitleColor}` }
+    }
+    if (
+      bioTitleColorDark !== undefined &&
+      bioTitleColorDark !== null &&
+      !validateColor(bioTitleColorDark)
+    ) {
+      return { success: false, error: `Color del título (oscuro) inválido: ${bioTitleColorDark}` }
+    }
+
     logger.debug('Updating about settings', { userId: user.id })
 
     let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
@@ -93,7 +114,15 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
       const createData: Prisma.AboutSettingsCreateInput = {
         illustrationUrl: (cleanData.illustrationUrl as string) ?? undefined,
         illustrationAlt: (cleanData.illustrationAlt as string) || 'Ilustración sobre mí',
+        illustrationMaxPx: (cleanData.illustrationMaxPx as number) ?? 112,
+        illustrationMobileMaxPx: (cleanData.illustrationMobileMaxPx as number) ?? 96,
         bioTitle: (cleanData.bioTitle as string) || 'Hola, soy Paola.',
+        bioTitleFont: (cleanData.bioTitleFont as string) ?? undefined,
+        bioTitleFontUrl: (cleanData.bioTitleFontUrl as string) ?? undefined,
+        bioTitleFontSize: (cleanData.bioTitleFontSize as number) ?? undefined,
+        bioTitleMobileFontSize: (cleanData.bioTitleMobileFontSize as number) ?? undefined,
+        bioTitleColor: (cleanData.bioTitleColor as string) ?? undefined,
+        bioTitleColorDark: (cleanData.bioTitleColorDark as string) ?? undefined,
         bioIntro: (cleanData.bioIntro as string) ?? undefined,
         bioDescription: (cleanData.bioDescription as string) ?? undefined,
         profileImageUrl: (cleanData.profileImageUrl as string) ?? undefined,

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Heart } from 'lucide-react'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
+import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
 import { FadeIn, StaggerChildren, StaggerItem, WordReveal } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import type { Testimonial } from '@/generated/prisma/client'
@@ -8,7 +9,7 @@ import type { Testimonial } from '@/generated/prisma/client'
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   return (
     <div className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg">
-      <div className="mb-3 text-yellow-400">{'⭐'.repeat(testimonial.rating)}</div>
+      <TestimonialRatingStars rating={testimonial.rating} className="mb-3" />
       <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed italic">
         &ldquo;{testimonial.text}&rdquo;
       </p>

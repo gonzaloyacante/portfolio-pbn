@@ -17,6 +17,7 @@ export const CACHE_TAGS = {
   contactSettings: 'contact-settings',
   categorySettings: 'category-settings',
   testimonialSettings: 'testimonial-settings',
+  servicesPageSettings: 'services-page-settings',
   themeSettings: 'theme-settings',
 
   // Content

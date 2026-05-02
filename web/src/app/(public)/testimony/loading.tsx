@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui'
  */
 export default function TestimonyLoading() {
   return (
-    <section className="bg-background min-h-[70vh] py-16 transition-colors duration-500">
+    <section className="bg-background min-h-[70dvh] py-16 transition-colors duration-500">
       <div className="mx-auto max-w-lg px-6">
         {/* Form section */}
         <div className="mb-16">

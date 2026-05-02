@@ -1,3 +1,5 @@
+import { getPublicSiteUrl } from '@/lib/site-url'
+
 interface JsonLdProps {
   type:
     | 'Person'
@@ -37,7 +39,7 @@ interface JsonLdProps {
 }
 
 export default function JsonLd({ type, data }: JsonLdProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://paolabolivar.es'
+  const baseUrl = getPublicSiteUrl()
 
   const defaultData = {
     name: '',

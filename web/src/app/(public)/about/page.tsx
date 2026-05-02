@@ -7,6 +7,7 @@ import { AboutBioColumn, AboutProfileImage } from '@/components/features/about/A
 import { AboutTestimonialsSection } from '@/components/features/about/AboutTestimonialsSection'
 import { Metadata } from 'next'
 import { ROUTES } from '@/config/routes'
+import { getPublicSiteUrl } from '@/lib/site-url'
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()
@@ -44,7 +45,7 @@ function buildJsonLdData(
     description: aboutSettings?.bioIntro || undefined,
     image: aboutSettings?.profileImageUrl || undefined,
     jobTitle: 'Maquilladora Profesional',
-    url: `${process.env.NEXT_PUBLIC_BASE_URL}/sobre-mi`,
+    url: `${getPublicSiteUrl()}${ROUTES.public.about}`,
     address: {
       addressLocality: location,
       addressCountry: 'ES',
@@ -71,13 +72,21 @@ export default async function AboutPage() {
     <section className="w-full bg-(--background) transition-colors duration-500">
       <JsonLd type="Person" data={buildJsonLdData(aboutSettings, ownerName, location)} />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-8 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 py-8 sm:px-6 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         <AboutBioColumn
           bioTitle={aboutSettings?.bioTitle || 'Hola, soy Paola.'}
           bioIntro={aboutSettings?.bioIntro || ''}
           bioDescription={aboutSettings?.bioDescription || ''}
           illustrationUrl={aboutSettings?.illustrationUrl}
           illustrationAlt={aboutSettings?.illustrationAlt || 'Ilustración'}
+          illustrationMaxPx={aboutSettings?.illustrationMaxPx}
+          illustrationMobileMaxPx={aboutSettings?.illustrationMobileMaxPx}
+          bioTitleFont={aboutSettings?.bioTitleFont}
+          bioTitleFontUrl={aboutSettings?.bioTitleFontUrl}
+          bioTitleFontSize={aboutSettings?.bioTitleFontSize}
+          bioTitleMobileFontSize={aboutSettings?.bioTitleMobileFontSize}
+          bioTitleColor={aboutSettings?.bioTitleColor}
+          bioTitleColorDark={aboutSettings?.bioTitleColorDark}
           skills={aboutSettings?.skills || []}
           certifications={aboutSettings?.certifications || []}
         />

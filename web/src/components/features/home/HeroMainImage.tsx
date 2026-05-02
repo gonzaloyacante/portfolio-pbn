@@ -59,7 +59,9 @@ export function HeroMainImage({
 
               {caption && (
                 <div className="bg-foreground/10 absolute right-4 bottom-4 max-w-xs rounded-xl p-3 backdrop-blur-md lg:right-8 lg:bottom-8 lg:p-4">
-                  <p className="font-script text-background text-xl lg:text-2xl">{caption}</p>
+                  <p className="font-script text-xl text-white drop-shadow-md lg:text-2xl">
+                    {caption}
+                  </p>
                 </div>
               )}
             </div>

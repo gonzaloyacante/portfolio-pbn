@@ -260,7 +260,23 @@ export type HomeSettingsFormData = z.infer<typeof homeSettingsSchema>
 export const aboutSettingsSchema = z.object({
   illustrationUrl: z.string().optional().nullable(),
   illustrationAlt: z.string().optional().nullable(),
+  illustrationMaxPx: z.number().int().min(32).max(480).optional().nullable(),
+  illustrationMobileMaxPx: z.number().int().min(32).max(480).optional().nullable(),
   bioTitle: z.string().optional().nullable(),
+  bioTitleFont: z.string().optional().nullable(),
+  bioTitleFontUrl: z.string().max(2048).optional().nullable(),
+  bioTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  bioTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  bioTitleColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  bioTitleColorDark: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
   bioIntro: z.string().optional().nullable(),
   bioDescription: z.string().optional().nullable(),
   profileImageUrl: z.string().optional().nullable(),
@@ -283,6 +299,27 @@ export const aboutSettingsSchema = z.object({
 })
 
 export type AboutSettingsFormData = z.infer<typeof aboutSettingsSchema>
+
+export const servicesPageSettingsSchema = z.object({
+  listTitle: z.string().optional().nullable(),
+  listIntro: z.string().optional().nullable(),
+  listTitleFont: z.string().optional().nullable(),
+  listTitleFontUrl: z.string().max(2048).optional().nullable(),
+  listTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  listTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  listTitleColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  listTitleColorDark: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+})
+
+export type ServicesPageSettingsFormData = z.infer<typeof servicesPageSettingsSchema>
 
 // Testimonial Display Settings (SRP: separate from About)
 export const testimonialSettingsSchema = z.object({

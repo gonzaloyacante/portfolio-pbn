@@ -45,7 +45,7 @@ export default async function FeaturedCategories({
   const fontsToLoad = titleFont ? [titleFont] : []
 
   return (
-    <section className="bg-(--background) py-16 transition-colors duration-500 lg:py-24">
+    <section className="bg-(--background) py-12 transition-colors duration-500 lg:py-20">
       {fontsToLoad.length > 0 && <FontLoader fonts={fontsToLoad} />}
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {/* Header */}
@@ -74,7 +74,7 @@ export default async function FeaturedCategories({
           </div>
           <Link
             href={ROUTES.public.portfolio}
-            className="group flex items-center gap-2 text-(--primary) transition-colors hover:text-(--accent)"
+            className="group flex items-center gap-2 text-(--primary) underline-offset-4 transition-colors hover:text-(--primary)/80 hover:underline"
           >
             <span className="font-medium">Ver todo el portfolio</span>
             <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />

@@ -3,14 +3,16 @@ import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ImageOff } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
+import { getPublicSiteUrl } from '@/lib/site-url'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
+import { getContactSettings } from '@/actions/settings/contact'
 import { getCategorySettings } from '@/actions/settings/categories'
 
-// ISR: revalidar cada 60s + on-demand via revalidatePath()
+/** ISR — alineado con `web/src/config/public-isr.ts` */
 export const revalidate = 60
 
 export async function generateStaticParams() {
@@ -36,27 +38,29 @@ export async function generateMetadata({
   params: Promise<{ category: string }>
 }): Promise<Metadata> {
   const { category: categorySlug } = await params
-  const category = await getCategory(categorySlug)
+  const [category, contact] = await Promise.all([getCategory(categorySlug), getContactSettings()])
 
   if (!category) {
     return { title: 'Categoría no encontrada' }
   }
 
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+
   return {
-    title: `${category.name} | Portfolio PBN`,
+    title: `${category.name} | ${ownerName}`,
     description: category.description || `Galería de ${category.name}`,
     alternates: {
       canonical: `${ROUTES.public.portfolio}/${categorySlug}`,
     },
     openGraph: {
-      title: `${category.name} | Portfolio PBN`,
+      title: `${category.name} | ${ownerName}`,
       description: category.description || `Galería de ${category.name}`,
       url: `${ROUTES.public.portfolio}/${categorySlug}`,
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${category.name} | Portfolio PBN`,
+      title: `${category.name} | ${ownerName}`,
       description: category.description || `Galería de ${category.name}`,
     },
   }
@@ -98,7 +102,7 @@ export default async function CategoryGalleryPage({
         data={{
           name: category.name,
           description: category.description || `Galería de ${category.name}`,
-          url: `${process.env.NEXT_PUBLIC_BASE_URL}${ROUTES.public.portfolio}/${category.slug}`,
+          url: `${getPublicSiteUrl()}${ROUTES.public.portfolio}/${category.slug}`,
         }}
       />
 
@@ -131,7 +135,7 @@ export default async function CategoryGalleryPage({
           <CategoryGallery images={allImages} showTitles={showTitles} />
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
-            <span className="mb-4 text-4xl">📷</span>
+            <ImageOff className="text-muted-foreground mb-4 size-12 shrink-0" aria-hidden />
             <p className="text-muted-foreground text-lg">
               No hay imágenes disponibles en esta categoría.
             </p>

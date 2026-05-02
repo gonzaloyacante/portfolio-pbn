@@ -76,7 +76,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-background flex min-h-screen items-center justify-center p-4">
+    <div className="bg-background flex min-h-dvh items-center justify-center p-4">
       <FadeIn duration={0.5}>
         <div className="w-full max-w-md space-y-8">
           {/* Header */}

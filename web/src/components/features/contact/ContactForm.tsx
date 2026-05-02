@@ -93,7 +93,7 @@ export default function ContactForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-[2.5rem] bg-(--card) p-8 text-center shadow-lg"
+        className="rounded-[2.5rem] bg-(--card) p-5 text-center shadow-lg sm:p-8"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -128,7 +128,7 @@ export default function ContactForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-[2.5rem] bg-(--card) p-8 shadow-lg"
+      className="rounded-[2.5rem] bg-(--card) p-5 shadow-lg sm:p-8"
     >
       <h2 className="font-heading mb-6 text-2xl font-bold text-(--foreground)">
         Envíame un mensaje

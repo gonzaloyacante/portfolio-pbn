@@ -1,24 +1,24 @@
+import { RESET_THEME_DEFAULTS } from '@/lib/design-tokens'
+
+/**
+ * Valores iniciales del tema — mismos colores/tipografía base que `RESET_THEME_DEFAULTS`
+ * / BRAND en design-tokens. `borderRadius` 40px alinea con cards públicas (rounded-[2.5rem]).
+ */
 export const themeSettings = {
-  id: 'default-theme',
-  // Light Theme
-  primaryColor: '#6c0a0a',
-  secondaryColor: '#ffaadd',
-  accentColor: '#fff1f9',
-  backgroundColor: '#fff1f9',
-  textColor: '#000000',
-  cardBgColor: '#ffaadd',
-  // Dark Theme
-  darkPrimaryColor: '#ffaadd',
-  darkSecondaryColor: '#6c0a0a',
-  darkAccentColor: '#000000',
-  darkBackgroundColor: '#6c0a0a',
-  darkTextColor: '#fff1f9',
-  darkCardBgColor: '#ffaadd',
-  // Typography
-  headingFont: 'Poppins',
-  scriptFont: 'Great Vibes',
-  bodyFont: 'Open Sans',
-  // Layout
+  key: 'singleton' as const,
+  ...RESET_THEME_DEFAULTS,
   borderRadius: 40,
+  headingFontUrl: null as string | null,
+  scriptFontUrl: null as string | null,
+  bodyFontUrl: null as string | null,
+  brandFont: 'Saira Extra Condensed',
+  brandFontUrl: null as string | null,
+  brandFontSize: 112,
+  portfolioFont: 'Saira Extra Condensed',
+  portfolioFontUrl: null as string | null,
+  portfolioFontSize: 96,
+  signatureFont: 'Dawning of a New Day',
+  signatureFontUrl: null as string | null,
+  signatureFontSize: 36,
   isActive: true,
 }

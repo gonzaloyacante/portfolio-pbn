@@ -34,6 +34,17 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--foreground', t['--foreground']!],
     ['--card', t['--card-bg']!],
     ['--card-bg', t['--card-bg']!],
+    /* Encadenan al texto/fondo del tema CMS para no quedar huérfanos respecto a globals */
+    ['--card-foreground', 'var(--foreground)'],
+    ['--popover', 'var(--card-bg)'],
+    ['--popover-foreground', 'var(--foreground)'],
+    ['--muted', 'color-mix(in srgb, var(--foreground) 6%, var(--background))'],
+    ['--muted-foreground', 'color-mix(in srgb, var(--foreground) 52%, var(--background))'],
+    ['--border', 'color-mix(in srgb, var(--foreground) 14%, var(--background))'],
+    ['--input', 'color-mix(in srgb, var(--foreground) 14%, var(--background))'],
+    ['--accent-foreground', 'var(--primary)'],
+    ['--secondary-foreground', 'var(--primary)'],
+    ['--primary-foreground', '#ffffff'],
   ]
 
   const darkSemantic: Array<[string, string]> = [
@@ -44,6 +55,16 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--foreground', t['--dark-foreground']!],
     ['--card', t['--dark-card-bg']!],
     ['--card-bg', t['--dark-card-bg']!],
+    ['--card-foreground', 'var(--foreground)'],
+    ['--popover', 'var(--card-bg)'],
+    ['--popover-foreground', 'var(--foreground)'],
+    ['--muted', 'color-mix(in srgb, var(--foreground) 8%, var(--background))'],
+    ['--muted-foreground', 'color-mix(in srgb, var(--foreground) 55%, var(--background))'],
+    ['--border', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
+    ['--input', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
+    ['--accent-foreground', 'var(--foreground)'],
+    ['--secondary-foreground', '#ffffff'],
+    ['--primary-foreground', '#1a050a'],
   ]
 
   const shared: Array<[string, string]> = [

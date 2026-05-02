@@ -41,10 +41,7 @@ const bodyFont = Open_Sans({
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: BRAND.accent },
-    { media: '(prefers-color-scheme: dark)', color: BRAND.primary },
-  ],
+  /* theme-color: solo <meta> en <head> (BD + BRAND) — evita duplicar con viewport export */
 }
 
 export const metadata: Metadata = {
@@ -84,7 +81,7 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://res.cloudinary.com" />
-        {/* Dynamic theme-color from DB — overrides the static viewport export */}
+        {/* theme-color único: valores desde BD o BRAND (design-tokens) */}
         <meta
           name="theme-color"
           media="(prefers-color-scheme: light)"
