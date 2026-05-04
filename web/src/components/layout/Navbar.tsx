@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { motion } from '@/components/ui'
-import ThemeToggle from '@/components/layout/ThemeToggle'
+// import ThemeToggle from '@/components/layout/ThemeToggle'
 import { ROUTES } from '@/config/routes'
 import type { PageVisibility } from '@/actions/settings/site'
 
@@ -97,11 +97,13 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
             )
           })}
 
-          {/* Theme Toggle — mismo ancho táctil que enlaces */}
-          <div className="flex items-center justify-center gap-2 pt-1 md:ml-4 md:pt-0">
-            <ThemeToggle />
-            {/* <LanguageToggle /> */}
-          </div>
+          {/*
+            Modo oscuro deshabilitado temporalmente.
+            Reactivar cuando bug esté resuelto:
+            <div className="flex items-center justify-center gap-2 pt-1 md:ml-4 md:pt-0">
+              <ThemeToggle />
+            </div>
+          */}
         </div>
       </div>
     </nav>

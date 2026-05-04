@@ -26,7 +26,13 @@ export default function AppProviders({ children }: AppProvidersProps) {
       reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ''}
       scriptProps={{ async: true, defer: true }}
     >
-      <NextThemesProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme="light"
+        // Modo oscuro deshabilitado temporalmente en toda la web (pública + admin).
+        forcedTheme="light"
+        enableSystem={false}
+      >
         <SWRConfig value={swrConfig}>
           <AnalyticsProvider>
             {children}
