@@ -367,12 +367,14 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
   String _responsePreferenceLabel(String pref) => switch (pref) {
     'PHONE' => 'Teléfono',
     'WHATSAPP' => 'WhatsApp',
+    'INSTAGRAM' => 'Instagram',
     _ => 'Email',
   };
 
   IconData _responsePreferenceIcon(String pref) => switch (pref) {
     'PHONE' => Icons.phone_outlined,
     'WHATSAPP' => Icons.chat_outlined,
+    'INSTAGRAM' => Icons.camera_alt_outlined,
     _ => Icons.email_outlined,
   };
 }
