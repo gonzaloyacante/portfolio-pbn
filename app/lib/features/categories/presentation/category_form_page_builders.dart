@@ -99,221 +99,213 @@ extension _CategoryFormPageBuilders on _CategoryFormPageState {
           isLoading: _loading,
           child: Form(
             key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                if (_hasDraft)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: DraftRestoreBanner(
-                      onRestore: _restoreDraft,
-                      onDiscard: _discardDraft,
-                    ),
-                  ), // Nombre + Switch + Descripción (responsivo)
-                Builder(
-                  builder: (ctx) {
-                    final colorScheme = Theme.of(ctx).colorScheme;
-                    final isTablet = mediaSize.width >= 600;
-
-                    final nameField = TextFormField(
-                      controller: _nameCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Nombre *',
-                        hintText: 'ej. Fotografía',
-                        helperText: 'Nombre público de la categoría',
-                      ),
-                      textCapitalization: TextCapitalization.words,
-                      maxLength: 100,
-                      onChanged: _autoSlug,
-                      validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Nombre requerido'
-                          : null,
-                    );
-
-                    final switchTile = DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: colorScheme.outline.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      child: SwitchListTile(
-                        title: const Text('Categoría activa'),
-                        subtitle: const Text('Visible en el portfolio'),
-                        value: _isActive,
-                        onChanged: (v) => _rebuild(() {
-                          _isActive = v;
-                          _isDirty = true;
-                        }),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                        ),
-                        visualDensity: VisualDensity.compact,
-                        controlAffinity: ListTileControlAffinity.trailing,
-                      ),
-                    );
-
-                    if (isTablet) {
-                      return IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  nameField,
-                                  const SizedBox(height: 8),
-                                  switchTile,
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _descriptionCtrl,
-                                decoration: const InputDecoration(
-                                  labelText: 'Descripción',
-                                  hintText:
-                                      'Breve descripción de esta categoría',
-                                  helperText:
-                                      'Se muestra en la página de la categoría',
-                                ),
-                                maxLength: 500,
-                                maxLines: null,
-                                expands: true,
-                                onChanged: (_) => _markDirty(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    // Mobile: apilado
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        nameField,
-                        const SizedBox(height: 8),
-                        switchTile,
-                        const SizedBox(height: 12),
-                        TextFormField(
-                          controller: _descriptionCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Descripción',
-                            hintText: 'Breve descripción de esta categoría',
-                            helperText:
-                                'Se muestra en la página de la categoría',
-                          ),
-                          maxLength: 500,
-                          maxLines: 3,
-                          onChanged: (_) => _markDirty(),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-
-                // Thumbnail
-                // Wrapper con key para medir su posición en pantalla
-                Container(
-                  key: _imageSlotKey,
-                  child: ImageUploadWidget(
-                    label: 'Imagen de portada',
-                    currentImageUrl: _coverImageCtrl.text.isNotEmpty
-                        ? _coverImageCtrl.text
-                        : null,
-                    onImageSelected: (file) {
-                      _rebuild(() {
-                        _pendingThumbnail = file;
-                        _isDirty = true;
-                      });
-                    },
-                    onImageRemoved: () {
-                      _rebuild(() {
-                        _pendingThumbnail = null;
-                        _coverImageCtrl.clear();
-                        _isDirty = true;
-                      });
-                    },
-                    height: imageHeight,
-                  ),
-                ),
-
-                if (_isEdit) ...[
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(
-                    icon: const Icon(Icons.photo_library_outlined, size: 18),
-                    label: const Text('Seleccionar de la galería'),
-                    onPressed: _loading ? null : _pickFromGallery,
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 44),
-                    ),
-                  ),
-                ],
-
-                const SizedBox(height: 24),
-
-                // Sección separada para gestionar la galería (no confundir con la portada)
-                const SizedBox(height: 16),
-                Text('Galería', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.photo_album_outlined, size: 18),
-                  label: const Text('Gestionar galería'),
-                  onPressed: _loading
-                      ? null
-                      : () async {
-                          if (!_isEdit) return;
-                          final result = await context.pushNamed(
-                            RouteNames.categoryGallery,
-                            pathParameters: {'id': widget.categoryId!},
-                            queryParameters: {'name': _nameCtrl.text},
-                          );
-
-                          if (result == true) {
-                            if (!mounted) return;
-                            // Usar post-frame callback para evitar advertencias de
-                            // uso de BuildContext tras await.
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              try {
-                                ref.invalidate(
-                                  categoryDetailProvider(widget.categoryId!),
-                                );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Galería actualizada, recargando...',
-                                    ),
-                                  ),
-                                );
-                              } catch (_) {}
-                            });
-                          }
-                        },
-
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 44),
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
-                FilledButton(
-                  onPressed: _loading ? null : _submit,
-                  child: Text(
-                    _isEdit ? 'Actualizar categoría' : 'Crear categoría',
-                  ),
-                ),
-              ],
-            ),
+            child: _isEdit
+                ? RefreshIndicator(
+                    onRefresh: _refreshFromServer,
+                    child: _buildFormListView(context, imageHeight),
+                  )
+                : _buildFormListView(context, imageHeight),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildFormListView(BuildContext context, double imageHeight) {
+    final mediaSize = MediaQuery.sizeOf(context);
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        if (_hasDraft)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: DraftRestoreBanner(
+              onRestore: _restoreDraft,
+              onDiscard: _discardDraft,
+            ),
+          ),
+        Builder(
+          builder: (ctx) {
+            final colorScheme = Theme.of(ctx).colorScheme;
+            final isTablet = mediaSize.width >= 600;
+
+            final nameField = TextFormField(
+              controller: _nameCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Nombre *',
+                hintText: 'ej. Fotografía',
+                helperText: 'Nombre público de la categoría',
+              ),
+              textCapitalization: TextCapitalization.words,
+              maxLength: 100,
+              onChanged: _autoSlug,
+              validator: (v) =>
+                  (v == null || v.trim().isEmpty) ? 'Nombre requerido' : null,
+            );
+
+            final switchTile = DecoratedBox(
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: colorScheme.outline.withValues(alpha: 0.3),
+                ),
+              ),
+              child: SwitchListTile(
+                title: const Text('Categoría activa'),
+                subtitle: const Text('Visible en el portfolio'),
+                value: _isActive,
+                onChanged: (v) => _rebuild(() {
+                  _isActive = v;
+                  _isDirty = true;
+                }),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                visualDensity: VisualDensity.compact,
+                controlAffinity: ListTileControlAffinity.trailing,
+              ),
+            );
+
+            if (isTablet) {
+              return IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          nameField,
+                          const SizedBox(height: 8),
+                          switchTile,
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextFormField(
+                        controller: _descriptionCtrl,
+                        decoration: const InputDecoration(
+                          labelText: 'Descripción',
+                          hintText: 'Breve descripción de esta categoría',
+                          helperText: 'Se muestra en la página de la categoría',
+                        ),
+                        maxLength: 500,
+                        maxLines: null,
+                        expands: true,
+                        onChanged: (_) => _markDirty(),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                nameField,
+                const SizedBox(height: 8),
+                switchTile,
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _descriptionCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Descripción',
+                    hintText: 'Breve descripción de esta categoría',
+                    helperText: 'Se muestra en la página de la categoría',
+                  ),
+                  maxLength: 500,
+                  maxLines: 3,
+                  onChanged: (_) => _markDirty(),
+                ),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+        Container(
+          key: _imageSlotKey,
+          child: ImageUploadWidget(
+            label: 'Imagen de portada',
+            currentImageUrl: _coverImageCtrl.text.isNotEmpty
+                ? _coverImageCtrl.text
+                : null,
+            onImageSelected: (file) {
+              _rebuild(() {
+                _pendingThumbnail = file;
+                _isDirty = true;
+              });
+            },
+            onImageRemoved: () {
+              _rebuild(() {
+                _pendingThumbnail = null;
+                _coverImageCtrl.clear();
+                _isDirty = true;
+              });
+            },
+            height: imageHeight,
+          ),
+        ),
+        if (_isEdit) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.photo_library_outlined, size: 18),
+            label: const Text('Seleccionar de la galería'),
+            onPressed: _loading ? null : _pickFromGallery,
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 44),
+            ),
+          ),
+        ],
+        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+        Text('Galería', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          icon: const Icon(Icons.photo_album_outlined, size: 18),
+          label: const Text('Gestionar galería'),
+          onPressed: _loading
+              ? null
+              : () async {
+                  if (!_isEdit) return;
+                  final result = await context.pushNamed(
+                    RouteNames.categoryGallery,
+                    pathParameters: {'id': widget.categoryId!},
+                    queryParameters: {'name': _nameCtrl.text},
+                  );
+                  if (result == true) {
+                    if (!mounted) return;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      try {
+                        ref.invalidate(
+                          categoryDetailProvider(widget.categoryId!),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Galería actualizada, recargando...'),
+                          ),
+                        );
+                      } catch (_) {}
+                    });
+                  }
+                },
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 44),
+          ),
+        ),
+        const SizedBox(height: 24),
+        FilledButton(
+          onPressed: _loading ? null : _submit,
+          child: Text(_isEdit ? 'Actualizar categoría' : 'Crear categoría'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _refreshFromServer() async {
+    if (!_isDirty) setState(() => _populatedFor = null);
+    ref.invalidate(categoryDetailProvider(widget.categoryId!));
+    await ref.read(categoryDetailProvider(widget.categoryId!).future);
   }
 
   Future<void> _pickFromGallery() async {
