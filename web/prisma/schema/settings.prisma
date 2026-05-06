@@ -241,6 +241,7 @@ model TestimonialSettings {
   id          String   @id @default(cuid())
   key         String   @unique @default("singleton")
   showOnAbout Boolean  @default(true)
+  showOnAll   Boolean  @default(false)
   title       String?  @default("Lo que dicen mis clientes")
   maxDisplay  Int      @default(6)
   // Meta

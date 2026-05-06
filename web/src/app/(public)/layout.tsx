@@ -5,6 +5,8 @@ import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
+import { getTestimonialSettings } from '@/actions/settings/testimonials'
+import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
 
@@ -87,9 +89,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [contactSettings, visibility] = await Promise.all([
+  const [contactSettings, visibility, testimonialSettings] = await Promise.all([
     getContactSettings(),
     getPageVisibility(),
+    getTestimonialSettings(),
   ])
 
   // ── Maintenance mode: show a styled, responsive maintenance card
@@ -150,6 +153,7 @@ export default async function PublicLayout({ children }: { children: React.React
         <main id="main-content" className="flex-1" tabIndex={-1}>
           {children}
         </main>
+        {testimonialSettings?.showOnAll && <PublicTestimonialsSection />}
         <Footer ownerName={contactSettings?.ownerName} />
       </div>
     </>
