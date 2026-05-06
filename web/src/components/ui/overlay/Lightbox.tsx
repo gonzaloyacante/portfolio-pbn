@@ -7,7 +7,11 @@ import Captions from 'yet-another-react-lightbox/plugins/captions'
 import type { SlideImage } from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
-import { getVariantUrl, isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
+import {
+  getVariantUrl,
+  getBlurPlaceholderUrl,
+  isCloudinaryUploadUrl,
+} from '@/lib/cloudinary-helper'
 
 // ---------- Types ----------
 
@@ -109,6 +113,50 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
       controller={{ closeOnBackdropClick: true }}
       styles={{ container: { backgroundColor: 'rgba(0, 0, 0, 0.95)' } }}
       animation={{ fade: 200, swipe: 300 }}
+      render={{
+        slide: ({ slide }) => {
+          if (!slide) return null
+          const src = slide.src ?? ''
+          const blurSrc = isCloudinaryUploadUrl(src) ? getBlurPlaceholderUrl(src) : null
+          return (
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+                position: 'relative',
+              }}
+            >
+              {blurSrc && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    backgroundImage: `url(${blurSrc})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'blur(20px)',
+                    transform: 'scale(1.1)',
+                    opacity: 0.6,
+                  }}
+                />
+              )}
+              <img
+                src={slide.src ?? ''}
+                alt={slide.alt ?? ''}
+                style={{
+                  position: 'relative',
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain',
+                }}
+              />
+            </div>
+          )
+        },
+      }}
     />
   )
 }
