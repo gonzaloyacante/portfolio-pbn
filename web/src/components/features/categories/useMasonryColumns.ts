@@ -20,8 +20,7 @@ export function useMasonryColumns<T extends { width?: number | null; height?: nu
 
   useEffect(() => {
     const update = () => {
-      if (window.innerWidth >= BREAKPOINTS.xl) setColumns(4)
-      else if (window.innerWidth >= BREAKPOINTS.md) setColumns(3)
+      if (window.innerWidth >= BREAKPOINTS.md) setColumns(3)
       else setColumns(2)
     }
     update()
@@ -44,7 +43,7 @@ export function useMasonryColumns<T extends { width?: number | null; height?: nu
     columnsData[minCol].height += ar
   })
 
-  const colClass = columns === 2 ? 'grid-cols-2' : columns === 3 ? 'grid-cols-3' : 'grid-cols-4'
+  const colClass = columns === 2 ? 'grid-cols-2' : 'grid-cols-3'
 
   return { columns, columnsData, colClass }
 }
