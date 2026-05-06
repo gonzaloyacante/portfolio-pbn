@@ -36,7 +36,9 @@ export default function TestimonialForm() {
       const result = await submitPublicTestimonial(formData)
 
       if (result.success) {
-        showToast.success(result.message || '¡Gracias por tu testimonio!')
+        showToast.success(result.message || '¡Gracias por tu testimonio!', undefined, {
+          icon: '❤️',
+        })
         setIsSubmitted(true)
       } else {
         showToast.error(result.error || 'Error al enviar')

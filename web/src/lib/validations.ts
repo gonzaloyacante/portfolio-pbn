@@ -323,9 +323,10 @@ export type ServicesPageSettingsFormData = z.infer<typeof servicesPageSettingsSc
 
 // Testimonial Display Settings (SRP: separate from About)
 export const testimonialSettingsSchema = z.object({
-  showOnAbout: z.boolean(),
+  showOnAbout: z.boolean().optional(),
+  showOnAll: z.boolean().optional(),
   title: z.string().optional(),
-  maxDisplay: z.number().min(1).max(20),
+  maxDisplay: z.number().min(1).max(20).optional(),
 })
 
 export type TestimonialSettingsFormData = z.infer<typeof testimonialSettingsSchema>
