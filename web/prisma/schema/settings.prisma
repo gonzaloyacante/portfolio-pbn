@@ -227,7 +227,7 @@ model CategorySettings {
   key             String   @unique @default("singleton")
   showDescription Boolean  @default(true)
   // Layout
-  gridColumns     Int      @default(4)
+  gridColumns     Int      @default(3)
   // Meta
   isActive         Boolean  @default(true)
   createdAt        DateTime @default(now())
