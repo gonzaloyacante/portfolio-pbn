@@ -27,7 +27,8 @@ const PREFERENCES: { id: ResponsePreference; icon: React.ReactNode; label: strin
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
   const searchParams = useSearchParams()
-  const serviceName = searchParams.get('service')
+  const serviceSlug = searchParams.get('service')
+  const serviceDisplayName = searchParams.get('serviceName')
   const { executeRecaptcha } = useGoogleReCaptcha()
 
   const {
@@ -51,13 +52,13 @@ export default function ContactForm() {
   })
 
   useEffect(() => {
-    if (serviceName) {
+    if (serviceDisplayName) {
       setValue(
         'message',
-        `Hola, estoy interesado/a en recibir más información sobre el servicio de "${serviceName}".`
+        `Hola, estoy interesado/a en recibir más información sobre el servicio de "${serviceDisplayName}".`
       )
     }
-  }, [serviceName, setValue])
+  }, [serviceDisplayName, setValue])
 
   const responsePreference = useWatch({ control, name: 'responsePreference' })
 

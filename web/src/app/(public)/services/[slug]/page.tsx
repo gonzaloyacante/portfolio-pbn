@@ -246,7 +246,9 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
             <div className="flex flex-col gap-3">
               <Button asChild size="lg" className="w-full">
-                <Link href={`${ROUTES.public.contact}?service=${encodeURIComponent(service.name)}`}>
+                <Link
+                  href={`${ROUTES.public.contact}?service=${encodeURIComponent(service.slug)}&serviceName=${encodeURIComponent(service.name)}`}
+                >
                   Agendar Cita
                 </Link>
               </Button>
