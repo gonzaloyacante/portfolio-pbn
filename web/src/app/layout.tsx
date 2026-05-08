@@ -80,6 +80,14 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Preload Great Vibes — script font, mayor impacto visual */}
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN-XCg6UKDXlCbA.woff2"
+          crossOrigin="anonymous"
+        />
         <link rel="preconnect" href="https://res.cloudinary.com" />
         {/* theme-color único: valores desde BD o BRAND (design-tokens) */}
         <meta

@@ -20,7 +20,13 @@ class HelpPage extends ConsumerWidget {
         );
     return AppScaffold(
       title: 'Ayuda',
-      body: HelpContent(version: version),
+      body: RefreshIndicator(
+        onRefresh: () async => ref.invalidate(appBuildInfoProvider),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [HelpContent(version: version)],
+        ),
+      ),
     );
   }
 }

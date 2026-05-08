@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
+import '../../../core/debug/debug_provider.dart';
 import '../../../core/router/route_names.dart';
 import '../../../core/theme/app_breakpoints.dart';
 import '../../../core/theme/app_spacing.dart';
 import 'widgets/settings_tile.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   static const _items = [
@@ -49,15 +51,19 @@ class SettingsPage extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hPad = AppBreakpoints.pageMargin(context);
     return AppScaffold(
       title: 'Configuración',
-      body: ListView.separated(
-        padding: EdgeInsets.all(hPad),
-        itemCount: _items.length,
-        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-        itemBuilder: (_, i) => SettingsTile(_items[i]),
+      body: RefreshIndicator(
+        onRefresh: () async => ref.invalidate(appBuildInfoProvider),
+        child: ListView.separated(
+          padding: EdgeInsets.all(hPad),
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: _items.length,
+          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+          itemBuilder: (_, i) => SettingsTile(_items[i]),
+        ),
       ),
     );
   }
