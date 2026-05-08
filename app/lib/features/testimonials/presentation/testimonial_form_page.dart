@@ -127,16 +127,20 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
 
     return LoadingOverlay(
       isLoading: _loading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) => _maybeLeave(context),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => _maybeLeave(context),
+              tooltip: 'Volver',
+            ),
+            title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),
           ),
-          title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),
+          body: body,
         ),
-        body: body,
       ),
     );
   }

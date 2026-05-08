@@ -264,4 +264,21 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
       if (mounted) setState(() => _loading = false);
     }
   }
+
+  Future<void> _maybeLeave(BuildContext context) async {
+    if (!_isDirty) {
+      if (context.mounted) context.pop();
+      return;
+    }
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const ConfirmDialog(
+        title: '¿Salir sin guardar?',
+        message: 'Tienes cambios sin guardar.',
+        confirmLabel: 'Salir',
+        cancelLabel: 'Continuar editando',
+      ),
+    );
+    if (confirmed == true && context.mounted) context.pop();
+  }
 }
