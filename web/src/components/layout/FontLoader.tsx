@@ -1,7 +1,5 @@
 'use client'
 
-// Imports removed (unused)
-
 interface FontLoaderProps {
   fonts: {
     headingUrl?: string | null
