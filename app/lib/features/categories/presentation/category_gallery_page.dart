@@ -72,13 +72,24 @@ class _CategoryGalleryPageState extends ConsumerState<CategoryGalleryPage> {
     await ref.read(_categoryGalleryProvider(widget.categoryId).future);
   }
 
+  bool _matchesSearch(GalleryImageItem img, String query) {
+    final orderLabel = '${img.order} imagen ${img.order} #${img.order}';
+    final haystack = [
+      widget.categoryName,
+      img.publicId,
+      Uri.tryParse(img.url)?.pathSegments.last,
+      img.url,
+      orderLabel,
+    ].whereType<String>().join(' ').toLowerCase();
+
+    return haystack.contains(query);
+  }
+
   List<GalleryImageItem> get _displayItems {
     if (_items == null) return const [];
     if (_searchQuery.isEmpty) return _items!;
     final query = _searchQuery.toLowerCase();
-    return _items!
-        .where((img) => img.publicId?.toLowerCase().contains(query) ?? false)
-        .toList();
+    return _items!.where((img) => _matchesSearch(img, query)).toList();
   }
 
   @override
