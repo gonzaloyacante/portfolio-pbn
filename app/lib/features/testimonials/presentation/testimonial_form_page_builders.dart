@@ -61,18 +61,12 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: IntlPhoneField(
-                    decoration: const InputDecoration(
-                      labelText: 'Teléfono',
-                      counterText: '',
+                  child: PhoneInputField(
+                    key: ValueKey<String>(
+                      '${widget.testimonialId ?? 'new'}|$_populated',
                     ),
-                    initialValue: _completePhone,
-                    initialCountryCode: 'ES',
-                    invalidNumberMessage: 'Número de teléfono inválido',
-                    keyboardType: TextInputType.phone,
-                    onChanged: (phone) {
-                      _completePhone = phone.completeNumber;
-                    },
+                    controller: _phoneCtrl,
+                    label: 'Teléfono',
                   ),
                 ),
               ],
@@ -186,11 +180,12 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
     _nameCtrl.text = d.name;
     _textCtrl.text = d.text;
     _emailCtrl.text = d.email ?? '';
-    _completePhone = d.phone;
+    _phoneCtrl.text = d.phone ?? '';
     _positionCtrl.text = d.position ?? '';
     _companyCtrl.text = d.company ?? '';
     _avatarCtrl.text = d.avatarUrl ?? '';
     setState(() {
+      _populated = true;
       _rating = d.rating;
       _verified = d.verified;
       _featured = d.featured;
@@ -217,9 +212,7 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
         name: _nameCtrl.text.trim(),
         text: _textCtrl.text.trim(),
         email: _emailCtrl.text.trim().isEmpty ? null : _emailCtrl.text.trim(),
-        phone: (_completePhone?.trim().isEmpty ?? true)
-            ? null
-            : _completePhone!.trim(),
+        phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
         position: _positionCtrl.text.trim().isEmpty
             ? null
             : _positionCtrl.text.trim(),
