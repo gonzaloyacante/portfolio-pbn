@@ -20,68 +20,123 @@ try {
   // noop: in production, @next/bundle-analyzer is not installed (devDependency only)
 }
 
+/** Origin for Reporting API absolute URLs (NEXT_PUBLIC_SITE_URL, VERCEL_URL, or localhost). */
+function getReportingOrigin(): string {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '')
+  if (fromEnv) return fromEnv
+  const vercel = process.env.VERCEL_URL?.trim()
+  if (vercel) {
+    const host = vercel.replace(/^https?:\/\//, '')
+    return `https://${host}`
+  }
+  return 'http://localhost:3000'
+}
+
+const CSP_REPORT_GROUP = 'csp-endpoint'
+const NEL_REPORT_GROUP = 'network-errors'
+
 /**
  * Security Headers
  * CSP configured for: Cloudinary, Google Fonts, Sentry tunnel, Next.js
  */
-const securityHeaders = [
-  {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on',
-  },
-  {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload',
-  },
-  {
-    key: 'X-Frame-Options',
-    value: 'DENY',
-  },
-  {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff',
-  },
-  {
-    key: 'Referrer-Policy',
-    value: 'strict-origin-when-cross-origin',
-  },
-  {
-    key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
-  },
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      // Scripts: Next.js (unsafe-inline para hydration), Sentry, Google Analytics, Vercel Live, reCAPTCHA, Instagram embed
-      "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live https://*.vercel.live https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.instagram.com/",
-      // Styles: inline (Next.js/Tailwind) + Google Fonts
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel, Instagram
-      "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://cdnjs.cloudflare.com https://*.cdninstagram.com https://www.instagram.com/",
-      // Fonts: self, data URIs, Google Fonts CDN
-      "font-src 'self' data: https://fonts.gstatic.com",
-      // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation, reCAPTCHA, Instagram oEmbed
-      "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/ https://www.instagram.com/ https://graph.instagram.com/",
-      // Media: Cloudinary (videos)
-      "media-src 'self' https://res.cloudinary.com",
-      // Objects: none (no Flash/plugins)
-      "object-src 'none'",
-      // Workers: Next.js + PWA service worker
-      "worker-src 'self' blob:",
-      // Frames: Vercel Live (preview comments toolbar), reCAPTCHA, Instagram embed
-      'frame-src https://vercel.live https://www.google.com/recaptcha/ https://recaptcha.google.com/ https://www.instagram.com/',
-      // Base URI: only self
-      "base-uri 'self'",
-      // Form actions: only self (Server Actions)
-      "form-action 'self'",
-      // Frame ancestors: none (prevents clickjacking, redundant with X-Frame-Options)
-      "frame-ancestors 'none'",
-      // Report CSP violations to /api/csp-report
-      'report-uri /api/csp-report',
-    ].join('; '),
-  },
-]
+function buildSecurityHeaders(): { key: string; value: string }[] {
+  const reportAbsUrl = `${getReportingOrigin()}/api/csp-report`
+
+  const reportingEndpointsHeader = `${CSP_REPORT_GROUP}="${reportAbsUrl}"`
+
+  const reportToHeader = JSON.stringify([
+    {
+      group: CSP_REPORT_GROUP,
+      max_age: 10_886_400,
+      endpoints: [{ url: reportAbsUrl }],
+    },
+    {
+      group: NEL_REPORT_GROUP,
+      max_age: 2_592_000,
+      endpoints: [{ url: reportAbsUrl }],
+    },
+  ])
+
+  const nelHeader = JSON.stringify({
+    report_to: NEL_REPORT_GROUP,
+    max_age: 2_592_000,
+    success_fraction: 0.05,
+    failure_fraction: 1.0,
+  })
+
+  return [
+    {
+      key: 'X-DNS-Prefetch-Control',
+      value: 'on',
+    },
+    {
+      key: 'Strict-Transport-Security',
+      value: 'max-age=63072000; includeSubDomains; preload',
+    },
+    {
+      key: 'X-Frame-Options',
+      value: 'DENY',
+    },
+    {
+      key: 'X-Content-Type-Options',
+      value: 'nosniff',
+    },
+    {
+      key: 'Referrer-Policy',
+      value: 'strict-origin-when-cross-origin',
+    },
+    {
+      key: 'Permissions-Policy',
+      value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
+    },
+    {
+      key: 'Reporting-Endpoints',
+      value: reportingEndpointsHeader,
+    },
+    {
+      key: 'Report-To',
+      value: reportToHeader,
+    },
+    {
+      key: 'NEL',
+      value: nelHeader,
+    },
+    {
+      key: 'Content-Security-Policy',
+      value: [
+        "default-src 'self'",
+        // Scripts: Next.js (unsafe-inline para hydration), Sentry, Google Analytics, Vercel Live, reCAPTCHA, Instagram embed
+        "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://browser.sentry-cdn.com https://js.sentry-cdn.com https://www.googletagmanager.com https://www.google-analytics.com https://vercel.live https://*.vercel.live https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.instagram.com/",
+        // Styles: inline (Next.js/Tailwind) + Google Fonts
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel, Instagram
+        "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://cdnjs.cloudflare.com https://*.cdninstagram.com https://www.instagram.com/",
+        // Fonts: self, data URIs, Google Fonts CDN
+        "font-src 'self' data: https://fonts.gstatic.com",
+        // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation, reCAPTCHA, Instagram oEmbed
+        "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/ https://www.instagram.com/ https://graph.instagram.com/",
+        // Media: Cloudinary (videos)
+        "media-src 'self' https://res.cloudinary.com",
+        // Objects: none (no Flash/plugins)
+        "object-src 'none'",
+        // Workers: Next.js + PWA service worker
+        "worker-src 'self' blob:",
+        // Frames: Vercel Live (preview comments toolbar), reCAPTCHA, Instagram embed
+        'frame-src https://vercel.live https://www.google.com/recaptcha/ https://recaptcha.google.com/ https://www.instagram.com/',
+        // Base URI: only self
+        "base-uri 'self'",
+        // Form actions: only self (Server Actions)
+        "form-action 'self'",
+        // Frame ancestors: none (prevents clickjacking, redundant with X-Frame-Options)
+        "frame-ancestors 'none'",
+        // Reporting API (modern + legacy): group name matches Reporting-Endpoints / Report-To
+        `report-to ${CSP_REPORT_GROUP}`,
+        // Legacy reporting (still observed by older agents)
+        'report-uri /api/csp-report',
+      ].join('; '),
+    },
+  ]
+}
 
 const nextConfig: NextConfig = {
   // Enable source maps in production for better Sentry stack traces and Lighthouse audits
@@ -102,7 +157,7 @@ const nextConfig: NextConfig = {
       {
         // Apply to all routes
         source: '/(.*)',
-        headers: securityHeaders,
+        headers: buildSecurityHeaders(),
       },
     ]
   },
