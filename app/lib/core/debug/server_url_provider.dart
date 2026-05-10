@@ -1,7 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../api/endpoints.dart';
 import '../utils/app_logger.dart';
 
 // ── Modelos ──────────────────────────────────────────────────────────────────
@@ -131,3 +133,30 @@ class ServerUrlNotifier extends Notifier<ServerUrlState> {
 final serverUrlProvider = NotifierProvider<ServerUrlNotifier, ServerUrlState>(
   ServerUrlNotifier.new,
 );
+
+/// GET público — comprueba que la base URL responde antes de persistir el cambio (solo debug).
+Future<void> verifyAdminApiReachable(String baseUrl) async {
+  final trimmed = baseUrl.trim();
+  if (trimmed.isEmpty) {
+    throw DioException(
+      requestOptions: RequestOptions(path: Endpoints.appLatestRelease),
+      message: 'URL vacía',
+    );
+  }
+  final normalized = trimmed.endsWith('/')
+      ? trimmed.substring(0, trimmed.length - 1)
+      : trimmed;
+
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: normalized,
+      connectTimeout: const Duration(seconds: 8),
+      receiveTimeout: const Duration(seconds: 8),
+      headers: const {'Accept': 'application/json'},
+      validateStatus: (status) =>
+          status != null && status >= 200 && status < 400,
+    ),
+  );
+
+  await dio.get<Object?>(Endpoints.appLatestRelease);
+}

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -51,6 +52,7 @@ class DebugPanel extends ConsumerStatefulWidget {
 
 class _DebugPanelState extends ConsumerState<DebugPanel> {
   bool _clearingCache = false;
+  bool _serverSwitching = false;
 
   // ── Acciones ──────────────────────────────────────────────────────────────
 
@@ -123,105 +125,115 @@ class _DebugPanelState extends ConsumerState<DebugPanel> {
       maxChildSize: 0.95,
       expand: false,
       builder: (context, scrollController) {
-        return Column(
-          children: [
-            // ── Drag handle ────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.only(top: 12, bottom: 8),
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
+        return LoadingOverlay(
+          isLoading: _serverSwitching,
+          message: 'Verificando conexión con el servidor...',
+          child: Column(
+            children: [
+              // ── Drag handle ────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 8),
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: colorScheme.outlineVariant,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
-            // ── Header ─────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.developer_mode,
-                    color: colorScheme.primary,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    'Developer Tools',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+              // ── Header ─────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 4,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.developer_mode,
+                      color: colorScheme.primary,
+                      size: 22,
                     ),
-                  ),
-                  const Spacer(),
-                  // Badge de entorno
-                  _EnvBadge(environment: EnvConfig.environment),
-                ],
-              ),
-            ),
-            const Divider(),
-            // ── Contenido scrollable ────────────────────────────────────
-            Expanded(
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(16),
-                children: [
-                  // ── 🌐 Server Switcher (solo debug) ─────────────────
-                  const _ServerSwitcherCard(),
-                  const SizedBox(height: 12),
-
-                  // ── Build Info ──────────────────────────────────────
-                  buildInfoAsync.when(
-                    data: (info) =>
-                        _BuildInfoCard(info: info, onCopy: _copyToClipboard),
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Text('Error cargando build info: $e'),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // ── Auth Status ─────────────────────────────────────
-                  _AuthInfoCard(
-                    authAsync: authAsync,
-                    onClearTokens: _clearTokens,
-                    onCopy: _copyToClipboard,
-                  ),
-                  const SizedBox(height: 12),
-
-                  // ── Acciones de Debug ───────────────────────────────
-                  _DebugActionsCard(
-                    clearingCache: _clearingCache,
-                    onClearCache: _clearCache,
-                    onOpenLogs: () {
-                      // Navigator.push used intentionally — debug-only page
-                      // not registered in GoRouter (excluded from production).
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const DebugLogPage(),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 12),
-
-                  // ── Info del sistema ────────────────────────────────
-                  _SystemInfoCard(),
-
-                  const SizedBox(height: 24),
-                  Text(
-                    'Solo visible en builds debug/profile.\n'
-                    'No aparece en producción (kReleaseMode = true).',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: colorScheme.onSurface.withValues(alpha: 0.4),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Developer Tools',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                    const Spacer(),
+                    // Badge de entorno
+                    _EnvBadge(environment: EnvConfig.environment),
+                  ],
+                ),
               ),
-            ),
-          ],
+              const Divider(),
+              // ── Contenido scrollable ────────────────────────────────────
+              Expanded(
+                child: ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    // ── 🌐 Server Switcher (solo debug) ─────────────────
+                    _ServerSwitcherCard(
+                      onBusyChanged: (busy) =>
+                          setState(() => _serverSwitching = busy),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ── Build Info ──────────────────────────────────────
+                    buildInfoAsync.when(
+                      data: (info) =>
+                          _BuildInfoCard(info: info, onCopy: _copyToClipboard),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (e, _) => Text('Error cargando build info: $e'),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ── Auth Status ─────────────────────────────────────
+                    _AuthInfoCard(
+                      authAsync: authAsync,
+                      onClearTokens: _clearTokens,
+                      onCopy: _copyToClipboard,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ── Acciones de Debug ───────────────────────────────
+                    _DebugActionsCard(
+                      clearingCache: _clearingCache,
+                      onClearCache: _clearCache,
+                      onOpenLogs: () {
+                        // Navigator.push used intentionally — debug-only page
+                        // not registered in GoRouter (excluded from production).
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const DebugLogPage(),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ── Info del sistema ────────────────────────────────
+                    _SystemInfoCard(),
+
+                    const SizedBox(height: 24),
+                    Text(
+                      'Solo visible en builds debug/profile.\n'
+                      'No aparece en producción (kReleaseMode = true).',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: colorScheme.onSurface.withValues(alpha: 0.4),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
