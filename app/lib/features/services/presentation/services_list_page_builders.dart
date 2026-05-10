@@ -32,10 +32,11 @@ extension _ServicesListPageBuilders on _ServicesListPageState {
   }
 
   Widget _buildList(List<ServiceItem> items, double hPad) {
-    return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: hPad),
+    return AdaptiveTileListScroll(
+      horizontalPadding: hPad,
+      separatorExtent: 8,
+      estimatedTileHeight: 92,
       itemCount: items.length,
-      separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),

@@ -48,19 +48,25 @@ extension _TestimonialsListPageBuilders on _TestimonialsListPageState {
   }
 
   Widget _buildList(List<TestimonialItem> items, double hPad) {
-    return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: hPad),
-      itemCount: items.length,
-      separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
-      itemBuilder: (ctx, i) => RepaintBoundary(
-        child: FadeSlideIn(
-          delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
-          child: GestureDetector(
-            onLongPress: () {
-              HapticFeedback.mediumImpact();
-              _showTestimonialActions(ctx, items[i]);
-            },
-            child: TestimonialTile(item: items[i], statusOf: _statusFromString),
+    return ExpandedLandscapeBody(
+      maxWidth: 920,
+      child: ListView.separated(
+        padding: EdgeInsets.symmetric(horizontal: hPad),
+        itemCount: items.length,
+        separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
+        itemBuilder: (ctx, i) => RepaintBoundary(
+          child: FadeSlideIn(
+            delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
+            child: GestureDetector(
+              onLongPress: () {
+                HapticFeedback.mediumImpact();
+                _showTestimonialActions(ctx, items[i]);
+              },
+              child: TestimonialTile(
+                item: items[i],
+                statusOf: _statusFromString,
+              ),
+            ),
           ),
         ),
       ),

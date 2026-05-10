@@ -22,9 +22,12 @@ class HelpPage extends ConsumerWidget {
       title: 'Ayuda',
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(appBuildInfoProvider),
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: [HelpContent(version: version)],
+        child: ExpandedLandscapeBody(
+          maxWidth: 760,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [HelpContent(version: version)],
+          ),
         ),
       ),
     );
