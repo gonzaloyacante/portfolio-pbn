@@ -7,8 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/draft_service.dart';
@@ -36,7 +34,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
   final _nameCtrl = TextEditingController();
   final _textCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  String? _completePhone;
+  final _phoneCtrl = TextEditingController();
   final _positionCtrl = TextEditingController();
   final _companyCtrl = TextEditingController();
   final _avatarCtrl = TextEditingController();
@@ -61,6 +59,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
     _nameCtrl,
     _textCtrl,
     _emailCtrl,
+    _phoneCtrl,
     _positionCtrl,
     _companyCtrl,
     _avatarCtrl,
@@ -104,7 +103,6 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
               return;
             }
             _populateForm(detail);
-            _populated = true;
           });
         },
       );
