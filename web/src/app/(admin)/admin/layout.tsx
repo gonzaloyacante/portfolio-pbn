@@ -1,6 +1,5 @@
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminMobileHeader from '@/components/layout/AdminMobileHeader'
-import ToastProvider from '@/components/layout/ToastProvider'
 import PageTransition from '@/components/layout/PageTransition'
 import AdminProviders from '@/components/providers/AdminProviders'
 
@@ -15,7 +14,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <main className="flex-1 overflow-auto p-4 transition-colors duration-300 sm:p-6 lg:p-8">
           <PageTransition>{children}</PageTransition>
         </main>
-        <ToastProvider />
       </div>
     </AdminProviders>
   )

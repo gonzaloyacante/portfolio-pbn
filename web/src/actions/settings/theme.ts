@@ -265,7 +265,7 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
         signatureFontUrl: (cleanData.signatureFontUrl as string) ?? undefined,
         signatureFontSize: (cleanData.signatureFontSize as number) ?? undefined,
 
-        borderRadius: (cleanData.borderRadius as number) ?? 8,
+        borderRadius: (cleanData.borderRadius as number) ?? RESET_THEME_DEFAULTS.borderRadius,
 
         isActive: true,
       }

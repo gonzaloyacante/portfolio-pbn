@@ -21,6 +21,12 @@ Color _parseThemeHex(String hex, Color fallback) {
   return fallback;
 }
 
+/// Alineado con `color-mix(in srgb, fg p%, bg)` en `web/src/lib/theme-ssr-css.ts`.
+Color _mixSrgbFgIntoBg(Color fg, Color bg, double fgFraction) {
+  final t = fgFraction.clamp(0.0, 1.0);
+  return Color.lerp(bg, fg, t) ?? bg;
+}
+
 TextStyle _safeGoogleFont(String name, TextStyle fallback) {
   final t = name.trim();
   if (t.isEmpty) {
@@ -223,10 +229,21 @@ class AppTheme {
       isLight ? s.accentColor : s.darkAccentColor,
       isLight ? AppColors.lightAccent : AppColors.darkAccent,
     );
-    final border = isLight ? AppColors.lightBorder : AppColors.darkBorder;
-    final muted = isLight ? AppColors.lightMuted : AppColors.darkMuted;
-
-    final mutedFg = foreground.withValues(alpha: 153 / 255);
+    final border = _mixSrgbFgIntoBg(
+      foreground,
+      background,
+      isLight ? 0.14 : 0.18,
+    );
+    final muted = _mixSrgbFgIntoBg(
+      foreground,
+      background,
+      isLight ? 0.06 : 0.08,
+    );
+    final mutedFg = _mixSrgbFgIntoBg(
+      foreground,
+      background,
+      isLight ? 0.52 : 0.55,
+    );
     final textTheme = _dynamicTextTheme(s, brightness, foreground, mutedFg);
     final radii = _Radii.fromBorderRadiusPx(s.borderRadius);
 
@@ -244,6 +261,7 @@ class AppTheme {
       textTheme: textTheme,
       radii: radii,
       snackBarBgLightAsForeground: true,
+      onPrimary: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF1A050A),
     );
   }
 
@@ -296,8 +314,10 @@ class AppTheme {
     required TextTheme textTheme,
     required _Radii radii,
     required bool snackBarBgLightAsForeground,
+    Color? onPrimary,
   }) {
-    final onPrimaryContrasting = isLight ? Colors.white : background;
+    final onPrimaryContrasting =
+        onPrimary ?? (isLight ? Colors.white : background);
 
     final colorScheme = ColorScheme(
       brightness: brightness,

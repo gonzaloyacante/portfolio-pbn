@@ -3,6 +3,7 @@ import {
   BRAND,
   STATUS_COLORS,
   TYPOGRAPHY_DEFAULTS,
+  THEME_DEFAULT_BORDER_RADIUS,
   DEFAULT_CSS_VARIABLES,
   RESET_THEME_DEFAULTS,
   NEUTRAL,
@@ -68,8 +69,8 @@ describe('design-tokens', () => {
       expect(DEFAULT_CSS_VARIABLES['--font-body']).toBeDefined()
     })
 
-    it('has --radius variable', () => {
-      expect(DEFAULT_CSS_VARIABLES['--radius']).toBeDefined()
+    it('has --radius variable aligned with THEME_DEFAULT_BORDER_RADIUS', () => {
+      expect(DEFAULT_CSS_VARIABLES['--radius']).toBe(`${THEME_DEFAULT_BORDER_RADIUS}px`)
     })
   })
 
@@ -82,6 +83,11 @@ describe('design-tokens', () => {
     it('has typography properties', () => {
       expect(RESET_THEME_DEFAULTS.headingFont).toBe(TYPOGRAPHY_DEFAULTS.headingFont)
       expect(RESET_THEME_DEFAULTS.bodyFont).toBe(TYPOGRAPHY_DEFAULTS.bodyFont)
+    })
+
+    it('uses THEME_DEFAULT_BORDER_RADIUS for layout reset', () => {
+      expect(RESET_THEME_DEFAULTS.borderRadius).toBe(THEME_DEFAULT_BORDER_RADIUS)
+      expect(THEME_DEFAULT_BORDER_RADIUS).toBe(40)
     })
   })
 
