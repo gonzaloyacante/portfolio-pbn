@@ -54,6 +54,12 @@ if [ -f "web/package.json" ]; then
       fi
     fi
 
+    echo "🔸 Audit migration coverage (web, sin DB)"
+    if ! (cd web && $NPX_CMD tsx prisma/audit-schema-migrations.ts); then
+      echo "❌ Audit de migraciones falló en web/"
+      exit 1
+    fi
+
     # Next build (production) - can be heavy
     echo "🔸 Next.js build (web) — this may be slow"
     if ! (cd web && $NPX_CMD next build); then
