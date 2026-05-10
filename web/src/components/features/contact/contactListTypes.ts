@@ -8,14 +8,13 @@ export interface Contact {
   status: string
   priority: string
   isRead: boolean
-  isReplied: boolean
   isImportant: boolean
   adminNote: string | null
   createdAt: Date
   updatedAt: Date
 }
 
-export type ContactFilter = 'all' | 'unread' | 'replied' | 'important'
+export type ContactFilter = 'all' | 'unread' | 'important'
 
 export const STATUS_LABEL: Record<string, string> = {
   IN_PROGRESS: 'En curso',

@@ -51,10 +51,6 @@ const mockContact = {
   priority: 'NORMAL',
   assignedTo: null,
   tags: [],
-  isReplied: false,
-  repliedAt: null,
-  repliedBy: null,
-  replyText: null,
   adminNote: null,
   isDeleted: false,
   deletedAt: null,
@@ -278,10 +274,10 @@ describe('GET /api/admin/contacts/[id] — auto-read marking', () => {
 })
 
 // ============================================
-// PATCH /api/admin/contacts/[id] — reply tracking
+// PATCH /api/admin/contacts/[id]
 // ============================================
 
-describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
+describe('PATCH /api/admin/contacts/[id]', () => {
   it('PATCH updates status', async () => {
     const { prisma } = await import('@/lib/db')
     ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue(mockContact)
@@ -321,35 +317,6 @@ describe('PATCH /api/admin/contacts/[id] — reply tracking', () => {
     expect(prisma.contact.update).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ priority: 'HIGH' }),
-      })
-    )
-  })
-
-  it('PATCH sets reply tracking on first reply', async () => {
-    const { prisma } = await import('@/lib/db')
-    ;(prisma.contact.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ...mockContact,
-      isReplied: false,
-    })
-    ;(prisma.contact.update as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ...mockContact,
-      isReplied: true,
-      replyText: 'Thank you!',
-    })
-
-    const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
-    await PATCH(
-      makeRequest(`${BASE_URL}/contact-1`, { method: 'PATCH', body: { replyText: 'Thank you!' } }),
-      { params: Promise.resolve({ id: 'contact-1' }) }
-    )
-
-    expect(prisma.contact.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          replyText: 'Thank you!',
-          isReplied: true,
-          repliedAt: expect.any(Date),
-        }),
       })
     )
   })

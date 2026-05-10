@@ -262,48 +262,6 @@ describe('markContactAsRead', () => {
   })
 })
 
-// ── Tests: markContactAsReplied ───────────────────────────────────────────────
-
-describe('markContactAsReplied', () => {
-  beforeEach(() => vi.clearAllMocks())
-
-  it('should update contact as replied and read', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.update).mockResolvedValue({} as never)
-
-    const { markContactAsReplied } = await import('@/actions/user/contact')
-    await markContactAsReplied('c-1', 'Admin note here')
-    expect(prisma.contact.update).toHaveBeenCalledWith({
-      where: { id: 'c-1' },
-      data: {
-        isReplied: true,
-        isRead: true,
-        adminNote: 'Admin note here',
-        repliedAt: expect.any(Date),
-        readAt: expect.any(Date),
-      },
-    })
-  })
-
-  it('should handle missing admin note', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.update).mockResolvedValue({} as never)
-
-    const { markContactAsReplied } = await import('@/actions/user/contact')
-    await markContactAsReplied('c-1')
-    expect(prisma.contact.update).toHaveBeenCalledWith({
-      where: { id: 'c-1' },
-      data: {
-        isReplied: true,
-        isRead: true,
-        adminNote: undefined,
-        repliedAt: expect.any(Date),
-        readAt: expect.any(Date),
-      },
-    })
-  })
-})
-
 // ── Tests: deleteContact ──────────────────────────────────────────────────────
 
 describe('deleteContact', () => {
