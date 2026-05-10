@@ -35,7 +35,7 @@ class ContactsListHeader extends StatelessWidget {
     null => 'Todos',
     'UNREAD' => 'No leídos',
     'IN_PROGRESS' => 'En curso',
-    'REPLIED' => 'Respondidos',
+    'REPLIED' => 'Atendidos',
     'CLOSED' => 'Cerrados',
     'SPAM' => 'Spam',
     _ => 'Nuevos',

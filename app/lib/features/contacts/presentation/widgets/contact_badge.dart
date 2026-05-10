@@ -5,7 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 /// Retorna la etiqueta legible de un estado de contacto.
 String contactStatusLabel(String status) => switch (status) {
   'IN_PROGRESS' => 'En curso',
-  'REPLIED' => 'Respondido',
+  'REPLIED' => 'Atendido',
   'CLOSED' => 'Cerrado',
   'SPAM' => 'Spam',
   _ => 'Nuevo',

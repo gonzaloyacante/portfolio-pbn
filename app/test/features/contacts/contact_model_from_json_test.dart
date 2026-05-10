@@ -52,10 +52,6 @@ void main() {
       () => expect(ContactItem.fromJson(base).isRead, isFalse),
     );
     test(
-      'isReplied defaults to false',
-      () => expect(ContactItem.fromJson(base).isReplied, isFalse),
-    );
-    test(
       'tags defaults to empty list',
       () => expect(ContactItem.fromJson(base).tags, isEmpty),
     );
@@ -71,10 +67,6 @@ void main() {
       'readAt is null',
       () => expect(ContactItem.fromJson(base).readAt, isNull),
     );
-    test(
-      'repliedAt is null',
-      () => expect(ContactItem.fromJson(base).repliedAt, isNull),
-    );
   });
 
   group('ContactItem.fromJson — optional fields', () {
@@ -87,7 +79,6 @@ void main() {
       'status': 'REPLIED',
       'priority': 'HIGH',
       'isRead': true,
-      'isReplied': true,
       'tags': ['vip', 'boda'],
       'createdAt': '2024-02-10T09:00:00Z',
       'updatedAt': '2024-02-12T10:00:00Z',
@@ -112,10 +103,6 @@ void main() {
     test(
       'parses isRead = true',
       () => expect(ContactItem.fromJson(full()).isRead, isTrue),
-    );
-    test(
-      'parses isReplied = true',
-      () => expect(ContactItem.fromJson(full()).isReplied, isTrue),
     );
     test(
       'parses tags list',
@@ -224,10 +211,6 @@ void main() {
       () => expect(ContactDetail.fromJson(base).isRead, isFalse),
     );
     test(
-      'isReplied defaults to false',
-      () => expect(ContactDetail.fromJson(base).isReplied, isFalse),
-    );
-    test(
       'tags defaults to empty',
       () => expect(ContactDetail.fromJson(base).tags, isEmpty),
     );
@@ -265,8 +248,6 @@ void main() {
       'status': 'ARCHIVED',
       'priority': 'LOW',
       'isRead': true,
-      'isReplied': true,
-      'replyText': 'We replied',
       'adminNote': 'VIP client',
       'tags': ['client', 'vip'],
       'ipAddress': '192.168.1.1',
@@ -293,10 +274,6 @@ void main() {
     test(
       'parses isRead = true',
       () => expect(ContactDetail.fromJson(full()).isRead, isTrue),
-    );
-    test(
-      'parses replyText',
-      () => expect(ContactDetail.fromJson(full()).replyText, 'We replied'),
     );
     test(
       'parses adminNote',

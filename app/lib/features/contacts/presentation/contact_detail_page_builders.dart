@@ -343,7 +343,7 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
 
   String _statusLabel(String s) => switch (s) {
     'IN_PROGRESS' => 'En curso',
-    'REPLIED' => 'Respondido',
+    'REPLIED' => 'Atendido',
     'CLOSED' => 'Cerrado',
     'SPAM' => 'Spam',
     _ => 'Nuevo',

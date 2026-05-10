@@ -31,7 +31,7 @@ extension _ContactsListPageBuilders on _ContactsListPageState {
       };
 
   IconData _statusIcon(String status) => switch (status) {
-    'REPLIED' => Icons.reply,
+    'REPLIED' => Icons.mark_email_read_outlined,
     'CLOSED' => Icons.check_circle_outline,
     'SPAM' => Icons.block,
     'IN_PROGRESS' => Icons.pending_outlined,
