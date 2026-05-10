@@ -66,27 +66,30 @@ class SettingsSocialPage extends ConsumerWidget {
             ref.invalidate(socialLinksProvider);
             await ref.read(socialLinksProvider.future);
           },
-          child: ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: AppBreakpoints.pagePadding(context),
-            itemCount: _kPlatforms.length,
-            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-            itemBuilder: (_, i) {
-              final platform = _kPlatforms[i];
-              final existing = links.where((l) => l.platform == platform.$2);
-              final link = existing.isEmpty ? null : existing.first;
+          child: ExpandedLandscapeBody(
+            maxWidth: 880,
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: AppBreakpoints.pagePadding(context),
+              itemCount: _kPlatforms.length,
+              separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+              itemBuilder: (_, i) {
+                final platform = _kPlatforms[i];
+                final existing = links.where((l) => l.platform == platform.$2);
+                final link = existing.isEmpty ? null : existing.first;
 
-              return RepaintBoundary(
-                child: SocialLinkTile(
-                  platform: platform.$1,
-                  platformId: platform.$2,
-                  icon: platform.$3,
-                  urlHint: platform.$4,
-                  link: link,
-                  onSaved: () => ref.invalidate(socialLinksProvider),
-                ),
-              );
-            },
+                return RepaintBoundary(
+                  child: SocialLinkTile(
+                    platform: platform.$1,
+                    platformId: platform.$2,
+                    icon: platform.$3,
+                    urlHint: platform.$4,
+                    link: link,
+                    onSaved: () => ref.invalidate(socialLinksProvider),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

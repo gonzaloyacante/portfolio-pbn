@@ -53,17 +53,34 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hPad = AppBreakpoints.pageMargin(context);
+    final gridHub = AppBreakpoints.isTabletLandscapeWide(context);
+
+    final scrollChild = gridHub
+        ? GridView.builder(
+            padding: EdgeInsets.all(hPad),
+            physics: const AlwaysScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: AppSpacing.sm,
+              crossAxisSpacing: AppSpacing.sm,
+              childAspectRatio: 2.75,
+            ),
+            itemCount: _items.length,
+            itemBuilder: (_, i) => SettingsTile(_items[i]),
+          )
+        : ListView.separated(
+            padding: EdgeInsets.all(hPad),
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemCount: _items.length,
+            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            itemBuilder: (_, i) => SettingsTile(_items[i]),
+          );
+
     return AppScaffold(
       title: 'Configuración',
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(appBuildInfoProvider),
-        child: ListView.separated(
-          padding: EdgeInsets.all(hPad),
-          physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: _items.length,
-          separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
-          itemBuilder: (_, i) => SettingsTile(_items[i]),
-        ),
+        child: scrollChild,
       ),
     );
   }

@@ -123,10 +123,11 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
   }
 
   Widget _buildList(List<CategoryItem> items, double hPad) {
-    return ListView.separated(
-      padding: EdgeInsets.symmetric(horizontal: hPad),
+    return AdaptiveTileListScroll(
+      horizontalPadding: hPad,
+      separatorExtent: 8,
+      estimatedTileHeight: 84,
       itemCount: items.length,
-      separatorBuilder: (BuildContext _, int _) => const SizedBox(height: 8),
       itemBuilder: (ctx, i) => RepaintBoundary(
         child: FadeSlideIn(
           delay: Duration(milliseconds: (i * 40).clamp(0, 300)),
@@ -143,14 +144,18 @@ extension _CategoriesListPageBuilders on _CategoriesListPageState {
   }
 
   Widget _buildGrid(List<CategoryItem> items, double hPad) {
-    final width = MediaQuery.sizeOf(context).width;
-    final cols = width >= 900 ? 3 : 2;
+    final gutter = AppBreakpoints.gutter(context);
     return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: hPad),
+      padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.base),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: cols,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
+        crossAxisCount: AppBreakpoints.gridColumns(
+          context,
+          compact: 2,
+          medium: 3,
+          expanded: 4,
+        ),
+        mainAxisSpacing: gutter,
+        crossAxisSpacing: gutter,
         childAspectRatio: 1.1,
       ),
       itemCount: items.length,
