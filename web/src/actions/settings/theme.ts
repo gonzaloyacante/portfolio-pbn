@@ -5,7 +5,7 @@ import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 
-import { themeEditorSchema } from '@/lib/validations'
+import { themeEditorSchema, type ThemeEditorData } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize, validateFontUrl, validateColor } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
@@ -16,6 +16,7 @@ import {
   TYPOGRAPHY_DEFAULTS,
   RESET_THEME_DEFAULTS,
 } from '@/lib/design-tokens'
+import { themeEditorDataToCssVars } from '@/lib/theme-css-vars-from-editor'
 
 export interface ThemeSettingsData {
   id: string
@@ -61,6 +62,43 @@ export interface ThemeSettingsData {
   isActive: boolean
 }
 
+function themeSettingsToCssVars(settings: ThemeSettingsData): Record<string, string> {
+  const shape: ThemeEditorData = {
+    primaryColor: settings.primaryColor,
+    secondaryColor: settings.secondaryColor,
+    accentColor: settings.accentColor,
+    backgroundColor: settings.backgroundColor,
+    textColor: settings.textColor,
+    cardBgColor: settings.cardBgColor,
+    darkPrimaryColor: settings.darkPrimaryColor,
+    darkSecondaryColor: settings.darkSecondaryColor,
+    darkAccentColor: settings.darkAccentColor,
+    darkBackgroundColor: settings.darkBackgroundColor,
+    darkTextColor: settings.darkTextColor,
+    darkCardBgColor: settings.darkCardBgColor,
+    headingFont: settings.headingFont,
+    headingFontUrl: settings.headingFontUrl ?? undefined,
+    headingFontSize: settings.headingFontSize,
+    scriptFont: settings.scriptFont,
+    scriptFontUrl: settings.scriptFontUrl ?? undefined,
+    scriptFontSize: settings.scriptFontSize,
+    bodyFont: settings.bodyFont,
+    bodyFontUrl: settings.bodyFontUrl ?? undefined,
+    bodyFontSize: settings.bodyFontSize,
+    brandFont: settings.brandFont ?? undefined,
+    brandFontUrl: settings.brandFontUrl ?? undefined,
+    brandFontSize: settings.brandFontSize ?? undefined,
+    portfolioFont: settings.portfolioFont ?? undefined,
+    portfolioFontUrl: settings.portfolioFontUrl ?? undefined,
+    portfolioFontSize: settings.portfolioFontSize ?? undefined,
+    signatureFont: settings.signatureFont ?? undefined,
+    signatureFontUrl: settings.signatureFontUrl ?? undefined,
+    signatureFontSize: settings.signatureFontSize ?? undefined,
+    borderRadius: settings.borderRadius,
+  }
+  return themeEditorDataToCssVars(shape)
+}
+
 /**
  * Get theme settings
  */
@@ -91,49 +129,7 @@ export const getThemeValues = unstable_cache(
         return DEFAULT_CSS_VARIABLES
       }
 
-      return {
-        '--primary': settings.primaryColor,
-        '--secondary': settings.secondaryColor,
-        '--accent': settings.accentColor,
-        '--background': settings.backgroundColor,
-        '--foreground': settings.textColor,
-        '--card-bg': settings.cardBgColor,
-
-        '--dark-primary': settings.darkPrimaryColor,
-        '--dark-secondary': settings.darkSecondaryColor,
-        '--dark-accent': settings.darkAccentColor,
-        '--dark-background': settings.darkBackgroundColor,
-        '--dark-foreground': settings.darkTextColor,
-        '--dark-card-bg': settings.darkCardBgColor,
-
-        '--font-heading': settings.headingFont
-          ? `"${settings.headingFont}", sans-serif`
-          : 'inherit',
-        '--font-heading-size': `${settings.headingFontSize}px`,
-        '--font-script': settings.scriptFont ? `"${settings.scriptFont}", cursive` : 'inherit',
-        '--font-script-size': `${settings.scriptFontSize}px`,
-        '--font-body': settings.bodyFont ? `"${settings.bodyFont}", sans-serif` : 'inherit',
-        '--font-body-size': `${settings.bodyFontSize}px`,
-
-        '--font-brand': settings.brandFont ? `"${settings.brandFont}", sans-serif` : 'inherit',
-        '--font-brand-size': settings.brandFontSize ? `${settings.brandFontSize}px` : 'inherit',
-
-        '--font-portfolio': settings.portfolioFont
-          ? `"${settings.portfolioFont}", sans-serif`
-          : 'inherit',
-        '--font-portfolio-size': settings.portfolioFontSize
-          ? `${settings.portfolioFontSize}px`
-          : 'inherit',
-
-        '--font-signature': settings.signatureFont
-          ? `"${settings.signatureFont}", cursive`
-          : 'inherit',
-        '--font-signature-size': settings.signatureFontSize
-          ? `${settings.signatureFontSize}px`
-          : 'inherit',
-
-        '--radius': `${settings.borderRadius}px`,
-      }
+      return themeSettingsToCssVars(settings)
     } catch (error) {
       logger.error('Error getting theme values:', { error: error })
       return DEFAULT_CSS_VARIABLES

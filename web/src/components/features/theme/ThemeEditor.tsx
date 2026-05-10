@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui'
 import { Button } from '@/components/ui'
 import { updateThemeSettings, resetThemeToDefaults } from '@/actions/settings/theme'
 import { RESET_THEME_DEFAULTS } from '@/lib/design-tokens'
+import { buildThemeInlineStylesheet } from '@/lib/theme-ssr-css'
+import { themeEditorDataToCssVars } from '@/lib/theme-css-vars-from-editor'
 import { showToast } from '@/lib/toast'
 import { logger } from '@/lib/logger'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
@@ -53,12 +55,18 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
       scriptFontUrl: initialData?.scriptFontUrl || undefined,
       bodyFont: initialData?.bodyFont || 'Open Sans',
       bodyFontUrl: initialData?.bodyFontUrl || undefined,
+      headingFontSize: initialData?.headingFontSize ?? RESET_THEME_DEFAULTS.headingFontSize,
+      scriptFontSize: initialData?.scriptFontSize ?? RESET_THEME_DEFAULTS.scriptFontSize,
+      bodyFontSize: initialData?.bodyFontSize ?? RESET_THEME_DEFAULTS.bodyFontSize,
       brandFont: initialData?.brandFont || 'Saira Extra Condensed',
       brandFontUrl: initialData?.brandFontUrl || undefined,
       portfolioFont: initialData?.portfolioFont || 'Saira Extra Condensed',
       portfolioFontUrl: initialData?.portfolioFontUrl || undefined,
       signatureFont: initialData?.signatureFont || 'Dawning of a New Day',
       signatureFontUrl: initialData?.signatureFontUrl || undefined,
+      brandFontSize: initialData?.brandFontSize ?? undefined,
+      portfolioFontSize: initialData?.portfolioFontSize ?? undefined,
+      signatureFontSize: initialData?.signatureFontSize ?? undefined,
       // Layout
       borderRadius: initialData?.borderRadius || 40,
     },
@@ -75,42 +83,27 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
   // Watch values for live preview
   const watchedValues = watch()
 
-  // Live Live Preview: Inject variables into :root and .dark
+  const LIVE_PREVIEW_STYLE_ID = 'theme-editor-live-ssr-preview'
+
+  /** Misma hoja que SSR (`layout.tsx`): `--muted`, `--border`, `--radius`, `.dark`, etc. */
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    const root = document.documentElement
-
-    // Helper to set variable
-    const setVar = (name: string, value: string) => {
-      if (value) root.style.setProperty(name, value)
+    const css = buildThemeInlineStylesheet(themeEditorDataToCssVars(watchedValues))
+    let el = document.getElementById(LIVE_PREVIEW_STYLE_ID) as HTMLStyleElement | null
+    if (!el) {
+      el = document.createElement('style')
+      el.id = LIVE_PREVIEW_STYLE_ID
+      document.head.appendChild(el)
     }
-
-    // Determine if we should apply to root (light) or .dark based on current active class
-    // Ideally we apply both or conditionally.
-    // To support "Live Preview" of the mode the user is currently VIEWING in admin panel:
-    const isDark = root.classList.contains('dark')
-
-    if (isDark) {
-      // Apply dark variables to CSS vars used by the site
-      setVar('--primary', watchedValues.darkPrimaryColor)
-      setVar('--secondary', watchedValues.darkSecondaryColor)
-      setVar('--accent', watchedValues.darkAccentColor)
-      setVar('--background', watchedValues.darkBackgroundColor)
-      setVar('--foreground', watchedValues.darkTextColor)
-      setVar('--card', watchedValues.darkCardBgColor)
-    } else {
-      // Apply light variables
-      setVar('--primary', watchedValues.primaryColor)
-      setVar('--secondary', watchedValues.secondaryColor)
-      setVar('--accent', watchedValues.accentColor)
-      setVar('--background', watchedValues.backgroundColor)
-      setVar('--foreground', watchedValues.textColor)
-      setVar('--card', watchedValues.cardBgColor)
-    }
-
-    setVar('--layout-border-radius', String(watchedValues.borderRadius || 40) + 'px')
+    el.textContent = css
   }, [watchedValues])
+
+  useEffect(() => {
+    return () => {
+      document.getElementById(LIVE_PREVIEW_STYLE_ID)?.remove()
+    }
+  }, [])
 
   const onSubmit = async (data: ThemeEditorData) => {
     try {

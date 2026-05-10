@@ -87,6 +87,8 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
       t['--font-signature-size'] ?? DEFAULT_CSS_VARIABLES['--font-signature-size']!,
     ],
     ['--radius', t['--radius']!],
+    /* Tailwind `rounded-theme` — mismo valor px que CMS (--radius) */
+    ['--layout-border-radius', t['--radius']!],
   ]
 
   return `:root{${declBlock([...lightSemantic, ...shared])}}.dark{${declBlock(darkSemantic)}}`
