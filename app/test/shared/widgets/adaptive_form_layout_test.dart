@@ -136,4 +136,40 @@ void main() {
       expect(find.text('Y'), findsOneWidget);
     });
   });
+
+  group('AdaptiveFormLayout — maxWidth', () {
+    testWidgets('double.infinity uses full parent width for columns', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          const AdaptiveFormLayout(
+            maxWidth: double.infinity,
+            twoColumnBreakpoint: 600,
+            children: [Text('Izq'), Text('Der')],
+          ),
+          width: 800,
+        ),
+      );
+      expect(find.text('Izq'), findsOneWidget);
+      expect(find.text('Der'), findsOneWidget);
+    });
+
+    testWidgets('narrow maxWidth forces single column even on wide parent', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          const AdaptiveFormLayout(
+            maxWidth: 480,
+            twoColumnBreakpoint: 600,
+            children: [Text('Uno'), Text('Dos')],
+          ),
+          width: 900,
+        ),
+      );
+      expect(find.text('Uno'), findsOneWidget);
+      expect(find.text('Dos'), findsOneWidget);
+    });
+  });
 }

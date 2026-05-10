@@ -44,7 +44,13 @@ extension _ServiceFormShell on _ServiceFormPageState {
             key: _formKey,
             child: ListView(
               padding: const EdgeInsets.all(16),
-              children: _serviceFormListChildren(context),
+              children: [
+                AdaptiveFormLayout(
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 12,
+                  children: _serviceFormAdaptiveChildren(context),
+                ),
+              ],
             ),
           ),
         ),

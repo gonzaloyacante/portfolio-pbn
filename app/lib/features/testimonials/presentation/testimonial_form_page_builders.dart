@@ -7,20 +7,23 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
       padding: const EdgeInsets.all(16),
       child: Form(
         key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: AdaptiveFormLayout(
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 12,
           children: [
             if (_hasDraft)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: DraftRestoreBanner(
-                  onRestore: () => restoreDraft(),
-                  onDiscard: () => discardDraft(),
+              AdaptiveFormLayout.fullWidth(
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: DraftRestoreBanner(
+                    onRestore: () => restoreDraft(),
+                    onDiscard: () => discardDraft(),
+                  ),
                 ),
               ),
-            // ── Datos del autor ────────────────────────────────────────────
-            Text('Datos del autor', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
+            AdaptiveFormLayout.fullWidth(
+              Text('Datos del autor', style: theme.textTheme.titleMedium),
+            ),
             TextFormField(
               controller: _nameCtrl,
               decoration: const InputDecoration(
@@ -30,119 +33,98 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Requerido' : null,
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _positionCtrl,
-                    decoration: const InputDecoration(labelText: 'Cargo'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextFormField(
-                    controller: _companyCtrl,
-                    decoration: const InputDecoration(labelText: 'Empresa'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextFormField(
-                    controller: _emailCtrl,
-                    decoration: const InputDecoration(labelText: 'Email'),
-                    keyboardType: TextInputType.emailAddress,
-                    validator: AppValidators.emailOptional,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: PhoneInputField(
-                    key: ValueKey<String>(
-                      '${widget.testimonialId ?? 'new'}|$_populated',
-                    ),
-                    controller: _phoneCtrl,
-                    label: 'Teléfono',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Avatar del cliente
-            ImageUploadWidget(
-              label: 'Foto del cliente (opcional)',
-              currentImageUrl: _avatarCtrl.text.isNotEmpty
-                  ? _avatarCtrl.text
-                  : null,
-              hint: 'Toca para seleccionar foto del cliente',
-              aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-              onImageSelected: (file) {
-                setState(() => _pendingAvatar = file);
-              },
-              onImageRemoved: () {
-                setState(() {
-                  _pendingAvatar = null;
-                  _avatarCtrl.clear();
-                });
-              },
-              height: 140,
-            ),
-            const SizedBox(height: 24),
-
-            // ── Testimonio ─────────────────────────────────────────────────
-            Text('Testimonio', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
             TextFormField(
-              controller: _textCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Texto completo *',
-                helperText: 'La reseña completa del cliente',
+              controller: _positionCtrl,
+              decoration: const InputDecoration(labelText: 'Cargo'),
+            ),
+            TextFormField(
+              controller: _companyCtrl,
+              decoration: const InputDecoration(labelText: 'Empresa'),
+            ),
+            TextFormField(
+              controller: _emailCtrl,
+              decoration: const InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+              validator: AppValidators.emailOptional,
+            ),
+            PhoneInputField(
+              key: ValueKey<String>(
+                '${widget.testimonialId ?? 'new'}|$_populated',
               ),
-              maxLines: 5,
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+              controller: _phoneCtrl,
+              label: 'Teléfono',
             ),
-            const SizedBox(height: 12),
-            // Rating
-            Row(
-              children: [
-                Text('Valoración:', style: theme.textTheme.bodyMedium),
-                const SizedBox(width: 12),
-                for (int i = 1; i <= 5; i++)
-                  GestureDetector(
-                    onTap: () => setState(() => _rating = i),
-                    child: Icon(
-                      i <= _rating ? Icons.star : Icons.star_border,
-                      color: AppColors.warning,
-                      size: 28,
+            AdaptiveFormLayout.fullWidth(
+              ImageUploadWidget(
+                label: 'Foto del cliente (opcional)',
+                currentImageUrl: _avatarCtrl.text.isNotEmpty
+                    ? _avatarCtrl.text
+                    : null,
+                hint: 'Toca para seleccionar foto del cliente',
+                aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+                onImageSelected: (file) {
+                  setState(() => _pendingAvatar = file);
+                },
+                onImageRemoved: () {
+                  setState(() {
+                    _pendingAvatar = null;
+                    _avatarCtrl.clear();
+                  });
+                },
+                height: 140,
+              ),
+            ),
+            AdaptiveFormLayout.fullWidth(
+              Text('Testimonio', style: theme.textTheme.titleMedium),
+            ),
+            AdaptiveFormLayout.fullWidth(
+              TextFormField(
+                controller: _textCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Texto completo *',
+                  helperText: 'La reseña completa del cliente',
+                ),
+                maxLines: 5,
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Requerido' : null,
+              ),
+            ),
+            AdaptiveFormLayout.fullWidth(
+              Row(
+                children: [
+                  Text('Valoración:', style: theme.textTheme.bodyMedium),
+                  const SizedBox(width: 12),
+                  for (int i = 1; i <= 5; i++)
+                    GestureDetector(
+                      onTap: () => setState(() => _rating = i),
+                      child: Icon(
+                        i <= _rating ? Icons.star : Icons.star_border,
+                        color: AppColors.warning,
+                        size: 28,
+                      ),
                     ),
-                  ),
-                const SizedBox(width: 8),
-                Text('$_rating/5', style: theme.textTheme.bodySmall),
-              ],
+                  const SizedBox(width: 8),
+                  Text('$_rating/5', style: theme.textTheme.bodySmall),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-
-            // ── Moderación ─────────────────────────────────────────────────
-            Text('Moderación', style: theme.textTheme.titleMedium),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: _status,
-              decoration: const InputDecoration(labelText: 'Estado'),
-              items: const [
-                DropdownMenuItem(value: 'PENDING', child: Text('Pendiente')),
-                DropdownMenuItem(value: 'APPROVED', child: Text('Aprobado')),
-                DropdownMenuItem(value: 'REJECTED', child: Text('Rechazado')),
-              ],
-              onChanged: (v) {
-                if (v != null) setState(() => _status = v);
-              },
+            AdaptiveFormLayout.fullWidth(
+              Text('Moderación', style: theme.textTheme.titleMedium),
             ),
-            const SizedBox(height: 12),
+            AdaptiveFormLayout.fullWidth(
+              DropdownButtonFormField<String>(
+                value: _status,
+                decoration: const InputDecoration(labelText: 'Estado'),
+                items: const [
+                  DropdownMenuItem(value: 'PENDING', child: Text('Pendiente')),
+                  DropdownMenuItem(value: 'APPROVED', child: Text('Aprobado')),
+                  DropdownMenuItem(value: 'REJECTED', child: Text('Rechazado')),
+                ],
+                onChanged: (v) {
+                  if (v != null) setState(() => _status = v);
+                },
+              ),
+            ),
             SwitchListTile(
               title: const Text('Verificado'),
               subtitle: const Text('Testimonio confirmado por el autor'),
@@ -161,12 +143,15 @@ extension _TestimonialFormPageBuilders on _TestimonialFormPageState {
               value: _isActive,
               onChanged: (v) => setState(() => _isActive = v),
             ),
-            const SizedBox(height: 32),
-
-            FilledButton.icon(
-              onPressed: _submit,
-              icon: const Icon(Icons.save),
-              label: Text(_isEdit ? 'Guardar cambios' : 'Crear testimonio'),
+            AdaptiveFormLayout.fullWidth(
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: FilledButton.icon(
+                  onPressed: _submit,
+                  icon: const Icon(Icons.save),
+                  label: Text(_isEdit ? 'Guardar cambios' : 'Crear testimonio'),
+                ),
+              ),
             ),
           ],
         ),
