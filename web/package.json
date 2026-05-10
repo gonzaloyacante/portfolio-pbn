@@ -27,6 +27,7 @@
     "test:unit:ui": "vitest --ui",
     "test:unit:coverage": "vitest run --coverage",
     "validate:env": "npx tsx scripts/validate-env.ts",
+    "audit:migrations": "npx tsx prisma/audit-schema-migrations.ts",
     "db:migrate": "prisma migrate deploy",
     "pre-commit": "npx tsx scripts/pre-commit-checks.ts",
     "stress:seed": "npx tsx scripts/seed-stress-test.ts",
