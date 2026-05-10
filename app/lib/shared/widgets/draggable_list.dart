@@ -1,5 +1,82 @@
 import 'package:flutter/material.dart';
 
+/// Duración alineada con huecos de drop en rejilla (galería admin).
+const Duration kDragReorderSlotDuration = Duration(milliseconds: 150);
+
+/// Escala del tile durante drag: el hueco candidato se agranda; el resto se “corre”.
+double dragReorderTileScale({
+  required bool dragActive,
+  required bool isDraggingThis,
+  required bool isDropCandidate,
+}) {
+  if (!dragActive || isDraggingThis) return 1.0;
+  return isDropCandidate ? 1.04 : 0.96;
+}
+
+/// Preview semitransparente de la imagen arrastrada sobre el hueco destino.
+class DragReorderGhostPreview extends StatelessWidget {
+  const DragReorderGhostPreview({
+    super.key,
+    required this.imageUrl,
+    required this.aspectRatio,
+    required this.borderRadius,
+    this.opacity = 0.45,
+  });
+
+  final String imageUrl;
+  final double aspectRatio;
+  final BorderRadius borderRadius;
+  final double opacity;
+
+  @override
+  Widget build(BuildContext context) {
+    final surface = Theme.of(context).colorScheme.surfaceContainerHighest;
+
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Opacity(
+              opacity: opacity,
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                gaplessPlayback: true,
+                errorBuilder: (_, _, _) =>
+                    ColoredBox(color: surface.withValues(alpha: 0.5)),
+              ),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0),
+                    Colors.black.withValues(alpha: 0.25),
+                  ],
+                ),
+              ),
+            ),
+            Center(
+              child: Icon(
+                Icons.vertical_align_center_rounded,
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.85),
+                size: 28,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // ── DraggableList ─────────────────────────────────────────────────────────────
 
 /// Lista reordenable mediante drag-and-drop.
@@ -59,18 +136,23 @@ class DraggableList<T> extends StatelessWidget {
     return AnimatedBuilder(
       animation: animation,
       builder: (context, child) {
-        final elevation = Tween<double>(begin: 0, end: 8)
-            .animate(
-              CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-            )
-            .value;
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOut,
+        );
+        final elevation = Tween<double>(begin: 0, end: 10).evaluate(curved);
+        final scale = Tween<double>(begin: 1.0, end: 1.03).evaluate(curved);
 
-        return Material(
-          elevation: elevation,
-          color: Colors.transparent,
-          shadowColor: Colors.black.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12),
-          child: child,
+        return Transform.scale(
+          scale: scale,
+          alignment: Alignment.center,
+          child: Material(
+            elevation: elevation,
+            color: Colors.transparent,
+            shadowColor: Colors.black.withValues(alpha: 0.22),
+            borderRadius: BorderRadius.circular(12),
+            child: child,
+          ),
         );
       },
       child: child,
