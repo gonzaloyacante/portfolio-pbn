@@ -43,7 +43,6 @@ export function ContactListPanel({
         >
           <option value="all">Todos</option>
           <option value="unread">No leídos</option>
-          <option value="replied">Respondidos</option>
           <option value="important">⭐ Importantes</option>
         </select>
       </div>

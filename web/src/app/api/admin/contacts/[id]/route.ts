@@ -28,9 +28,6 @@ const CONTACT_DETAIL_SELECT = {
   priority: true,
   isRead: true,
   readAt: true,
-  isReplied: true,
-  repliedAt: true,
-  replyText: true,
   isImportant: true,
   adminNote: true,
   tags: true,
@@ -98,18 +95,15 @@ export async function PATCH(req: Request, { params }: Params) {
         { status: 400 }
       )
     }
-    const { status, priority, isRead, isImportant, replyText, adminNote, tags } = parsed.data
+    const { status, priority, isRead, isImportant, adminNote, tags } = parsed.data
 
     const existing = await prisma.contact.findUnique({
       where: { id },
-      select: { isReplied: true, deletedAt: true },
+      select: { deletedAt: true },
     })
     if (!existing || existing.deletedAt !== null) {
       return NextResponse.json({ success: false, error: 'Contacto no encontrado' }, { status: 404 })
     }
-
-    const replyData =
-      replyText && !existing.isReplied ? { isReplied: true, repliedAt: new Date() } : {}
 
     const updated = await prisma.contact.update({
       where: { id },
@@ -118,10 +112,8 @@ export async function PATCH(req: Request, { params }: Params) {
         ...(priority !== undefined && { priority }),
         ...(isRead !== undefined && { isRead, readAt: isRead ? new Date() : null }),
         ...(isImportant !== undefined && { isImportant }),
-        ...(replyText !== undefined && { replyText }),
         ...(adminNote !== undefined && { adminNote }),
         ...(tags !== undefined && { tags }),
-        ...replyData,
       },
       select: CONTACT_DETAIL_SELECT,
     })

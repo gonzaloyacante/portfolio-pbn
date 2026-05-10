@@ -543,11 +543,6 @@ export const contactUpdateApiSchema = z.object({
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   isRead: z.boolean().optional(),
   isImportant: z.boolean().optional(),
-  replyText: z
-    .string()
-    .optional()
-    .nullable()
-    .transform((v) => v ?? undefined),
   adminNote: z
     .string()
     .optional()

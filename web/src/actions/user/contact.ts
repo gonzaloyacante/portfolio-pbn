@@ -212,24 +212,6 @@ export async function markContactAsRead(id: string) {
   revalidatePath(ROUTES.admin.contacts)
 }
 
-export async function markContactAsReplied(id: string, adminNote?: string) {
-  await requireAdmin()
-  const rl = await checkApiRateLimit()
-  if (rl) throw new Error(rl.error)
-
-  await prisma.contact.update({
-    where: { id },
-    data: {
-      isReplied: true,
-      repliedAt: new Date(),
-      isRead: true,
-      readAt: new Date(),
-      adminNote,
-    },
-  })
-  revalidatePath(ROUTES.admin.contacts)
-}
-
 export async function deleteContact(id: string) {
   await requireAdmin()
   const rl = await checkApiRateLimit()
