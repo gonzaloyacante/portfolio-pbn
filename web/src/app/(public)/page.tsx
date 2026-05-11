@@ -4,6 +4,7 @@ import HomePage from '@/components/features/home/HomePage'
 import { Metadata } from 'next'
 import { ROUTES } from '@/config/routes'
 
+/** ISR segmento público (seg) — mantener alineado con `web/src/config/public-isr.ts`. */
 export const revalidate = 60
 
 export async function generateMetadata(): Promise<Metadata> {

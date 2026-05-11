@@ -1,12 +1,26 @@
 'use client'
 
+import dynamic from 'next/dynamic'
 import { AboutSettingsData, updateAboutSettings } from '@/actions/settings/about'
 import { useRouter } from 'next/navigation'
-import { Button, Input, ImageUpload } from '@/components/ui'
+import { EditorSliderControl } from '@/components/features/visual-editor/components/EditorSliderControl'
+import { BRAND } from '@/lib/design-tokens'
+import { Button, ColorPicker, Input, ImageUpload, Switch } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { useForm, useWatch } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
+
+const GoogleFontPicker = dynamic(
+  () =>
+    import('@/components/ui/forms/GoogleFontPicker').then((m) => ({
+      default: m.GoogleFontPicker,
+    })),
+  {
+    ssr: false,
+    loading: () => <div className="bg-muted h-14 w-full animate-pulse rounded-md" />,
+  }
+)
 
 interface AboutEditorProps {
   settings: AboutSettingsData | null
@@ -25,6 +39,14 @@ export function AboutEditor({ settings }: AboutEditorProps) {
     resolver: zodResolver(aboutSettingsSchema),
     defaultValues: {
       bioTitle: settings?.bioTitle || 'Hola, soy Paola.',
+      bioTitleFont: settings?.bioTitleFont ?? '',
+      bioTitleFontUrl: settings?.bioTitleFontUrl ?? '',
+      bioTitleFontSize: settings?.bioTitleFontSize ?? undefined,
+      bioTitleMobileFontSize: settings?.bioTitleMobileFontSize ?? undefined,
+      bioTitleColor: settings?.bioTitleColor ?? undefined,
+      bioTitleColorDark: settings?.bioTitleColorDark ?? undefined,
+      illustrationMaxPx: settings?.illustrationMaxPx ?? 112,
+      illustrationMobileMaxPx: settings?.illustrationMobileMaxPx ?? 96,
       bioIntro: settings?.bioIntro || '',
       bioDescription: settings?.bioDescription || '',
       profileImageUrl: settings?.profileImageUrl || undefined,
@@ -39,6 +61,13 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       skills: settings?.skills || [],
       yearsExperience: settings?.yearsExperience || 0,
       certifications: settings?.certifications || [],
+      profileImageShadowEnabled: settings?.profileImageShadowEnabled ?? true,
+      profileImageShadowBlur: settings?.profileImageShadowBlur ?? 24,
+      profileImageShadowSpread: settings?.profileImageShadowSpread ?? 0,
+      profileImageShadowOffsetX: settings?.profileImageShadowOffsetX ?? 0,
+      profileImageShadowOffsetY: settings?.profileImageShadowOffsetY ?? 8,
+      profileImageShadowColor: settings?.profileImageShadowColor ?? undefined,
+      profileImageShadowOpacity: settings?.profileImageShadowOpacity ?? 35,
     },
   })
 
@@ -47,6 +76,17 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   const illustrationUrl = useWatch({ control, name: 'illustrationUrl' })
   const skillsRaw = useWatch({ control, name: 'skills' })
   const certificationsRaw = useWatch({ control, name: 'certifications' })
+  const profileImageShadowEnabled = useWatch({ control, name: 'profileImageShadowEnabled' })
+  const profileImageShadowOpacity = useWatch({ control, name: 'profileImageShadowOpacity' })
+  const profileImageShadowBlur = useWatch({ control, name: 'profileImageShadowBlur' })
+  const profileImageShadowSpread = useWatch({ control, name: 'profileImageShadowSpread' })
+  const profileImageShadowOffsetX = useWatch({ control, name: 'profileImageShadowOffsetX' })
+  const profileImageShadowOffsetY = useWatch({ control, name: 'profileImageShadowOffsetY' })
+  const bioTitleFontSize = useWatch({ control, name: 'bioTitleFontSize' })
+  const bioTitleMobileFontSize = useWatch({ control, name: 'bioTitleMobileFontSize' })
+  const illustrationMaxPx = useWatch({ control, name: 'illustrationMaxPx' })
+  const illustrationMobileMaxPx = useWatch({ control, name: 'illustrationMobileMaxPx' })
+  const bioTitleFontWatch = useWatch({ control, name: 'bioTitleFont' })
 
   // Helper for array fields (one per line)
   const skillsString = skillsRaw?.join('\n') || ''
@@ -54,7 +94,15 @@ export function AboutEditor({ settings }: AboutEditorProps) {
 
   const onSubmit = async (data: AboutSettingsFormData) => {
     try {
-      const result = await updateAboutSettings(data)
+      const trimmedColor = data.profileImageShadowColor?.trim()
+      const result = await updateAboutSettings({
+        ...data,
+        profileImageShadowColor: trimmedColor && trimmedColor.length > 0 ? trimmedColor : null,
+        bioTitleFont: data.bioTitleFont?.trim() || null,
+        bioTitleFontUrl: data.bioTitleFontUrl?.trim() || null,
+        bioTitleColor: data.bioTitleColor?.trim() ? data.bioTitleColor.trim() : null,
+        bioTitleColorDark: data.bioTitleColorDark?.trim() ? data.bioTitleColorDark.trim() : null,
+      })
       if (result.success) {
         showToast.success('Página Sobre Mí actualizada')
         router.refresh()
@@ -81,6 +129,85 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             {...register('bioTitle')}
             error={errors.bioTitle?.message}
           />
+
+          <GoogleFontPicker
+            value={bioTitleFontWatch || ''}
+            onValueChange={(fontName, url) => {
+              setValue('bioTitleFont', fontName, { shouldDirty: true })
+              setValue('bioTitleFontUrl', url, { shouldDirty: true })
+            }}
+            label="Tipografía del título (“Hola…”)"
+            description="Vacío = usa la fuente script del tema (Great Vibes por defecto)."
+          />
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <EditorSliderControl
+              label="Tamaño título — escritorio"
+              value={bioTitleFontSize ?? 36}
+              onChange={(v) => setValue('bioTitleFontSize', v, { shouldDirty: true })}
+              min={12}
+              max={120}
+              suffix=" px"
+            />
+            <EditorSliderControl
+              label="Tamaño título — móvil"
+              value={bioTitleMobileFontSize ?? 32}
+              onChange={(v) => setValue('bioTitleMobileFontSize', v, { shouldDirty: true })}
+              min={12}
+              max={96}
+              suffix=" px"
+            />
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Color título — modo claro</p>
+              <p className="text-muted-foreground text-xs">Vacío = color primario del tema.</p>
+              <Controller
+                name="bioTitleColor"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-3">
+                    <ColorPicker
+                      color={field.value?.trim() ? field.value : BRAND.primary}
+                      onChange={(hex) => field.onChange(hex)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => field.onChange(null)}
+                    >
+                      Usar primario del tema
+                    </Button>
+                  </div>
+                )}
+              />
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Color título — modo oscuro</p>
+              <Controller
+                name="bioTitleColorDark"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-3">
+                    <ColorPicker
+                      color={field.value?.trim() ? field.value : BRAND.darkPrimary}
+                      onChange={(hex) => field.onChange(hex)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => field.onChange(null)}
+                    >
+                      Usar color por defecto oscuro
+                    </Button>
+                  </div>
+                )}
+              />
+            </div>
+          </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Intro (Primer párrafo)</label>
@@ -128,12 +255,119 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             </select>
           </div>
 
+          <div className="border-border space-y-4 rounded-lg border p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium">Sombra de la foto</p>
+                <p className="text-muted-foreground text-xs">
+                  Desactiva si el recorte deja la sombra “en el aire”
+                </p>
+              </div>
+              <Switch
+                checked={profileImageShadowEnabled ?? true}
+                onCheckedChange={(v) =>
+                  setValue('profileImageShadowEnabled', v, { shouldDirty: true })
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Color de la sombra</p>
+              <p className="text-muted-foreground text-xs">
+                Vacío = usa el color primario del tema en la web pública.
+              </p>
+              <Controller
+                name="profileImageShadowColor"
+                control={control}
+                render={({ field }) => (
+                  <div className="space-y-3">
+                    <ColorPicker
+                      color={field.value?.trim() ? field.value : BRAND.primary}
+                      onChange={(hex) => field.onChange(hex)}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => field.onChange(null)}
+                    >
+                      Usar color primario del tema (automático)
+                    </Button>
+                  </div>
+                )}
+              />
+              {errors.profileImageShadowColor?.message && (
+                <p className="text-destructive text-xs">{errors.profileImageShadowColor.message}</p>
+              )}
+            </div>
+            <EditorSliderControl
+              label="Opacidad sombra"
+              value={profileImageShadowOpacity ?? 35}
+              onChange={(v) => setValue('profileImageShadowOpacity', v, { shouldDirty: true })}
+              min={0}
+              max={100}
+              suffix="%"
+            />
+            <EditorSliderControl
+              label="Desenfoque (blur)"
+              value={profileImageShadowBlur ?? 24}
+              onChange={(v) => setValue('profileImageShadowBlur', v, { shouldDirty: true })}
+              min={0}
+              max={80}
+              suffix=" px"
+            />
+            <EditorSliderControl
+              label="Expansión (spread)"
+              value={profileImageShadowSpread ?? 0}
+              onChange={(v) => setValue('profileImageShadowSpread', v, { shouldDirty: true })}
+              min={-40}
+              max={40}
+              suffix=" px"
+            />
+            <div className="grid grid-cols-2 gap-3">
+              <EditorSliderControl
+                label="Offset X"
+                value={profileImageShadowOffsetX ?? 0}
+                onChange={(v) => setValue('profileImageShadowOffsetX', v, { shouldDirty: true })}
+                min={-80}
+                max={80}
+                suffix=" px"
+              />
+              <EditorSliderControl
+                label="Offset Y"
+                value={profileImageShadowOffsetY ?? 8}
+                onChange={(v) => setValue('profileImageShadowOffsetY', v, { shouldDirty: true })}
+                min={-80}
+                max={80}
+                suffix=" px"
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Ilustración Decorativa</label>
             <ImageUpload
               name="illustrationUrl"
               value={illustrationUrl ? [illustrationUrl] : []}
               onChange={(urls) => setValue('illustrationUrl', urls[0], { shouldDirty: true })}
+            />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <EditorSliderControl
+              label="Tamaño ilustración — escritorio"
+              value={illustrationMaxPx ?? 112}
+              onChange={(v) => setValue('illustrationMaxPx', v, { shouldDirty: true })}
+              min={48}
+              max={320}
+              suffix=" px"
+            />
+            <EditorSliderControl
+              label="Tamaño ilustración — móvil"
+              value={illustrationMobileMaxPx ?? 96}
+              onChange={(v) => setValue('illustrationMobileMaxPx', v, { shouldDirty: true })}
+              min={48}
+              max={280}
+              suffix=" px"
             />
           </div>
         </div>

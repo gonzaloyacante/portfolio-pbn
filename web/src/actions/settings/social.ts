@@ -23,6 +23,22 @@ export interface SocialLinkData {
 }
 
 /**
+ * Todas las redes (ordenadas) — solo para admin.
+ * La web pública usa {@link getSocialLinks} (solo `isActive`).
+ */
+export async function getSocialLinksForAdmin(): Promise<SocialLinkData[]> {
+  try {
+    const links = await prisma.socialLink.findMany({
+      orderBy: { sortOrder: 'asc' },
+    })
+    return links
+  } catch (error) {
+    logger.error('Error getting social links (admin):', { error: error })
+    return []
+  }
+}
+
+/**
  * Get all active social links
  */
 export const getSocialLinks = unstable_cache(

@@ -20,59 +20,67 @@ extension _AccountPageBuilders on _AccountPageState {
             constraints: BoxConstraints(
               maxWidth: isExpanded ? 640.0 : double.infinity,
             ),
-            child: ListView(
-              padding: EdgeInsets.symmetric(
-                horizontal: hPad,
-                vertical: AppSpacing.xl,
-              ),
-              children: [
-                AccountProfileCard(user: user),
-                const SizedBox(height: 24),
-                _buildPasswordCard(context),
-                const SizedBox(height: 24),
-                const AccountGoogleCalendarCard(),
-                const SizedBox(height: 12),
-                AppCard(
-                  onTap: _logout,
-                  child: ListTile(
-                    leading: Icon(Icons.logout, color: colorScheme.error),
-                    title: Text(
-                      'Cerrar sesión',
-                      style: TextStyle(
-                        color: colorScheme.error,
-                        fontWeight: FontWeight.w600,
+            child: RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(authProvider);
+                ref.invalidate(appBuildInfoProvider);
+              },
+              child: ListView(
+                padding: EdgeInsets.symmetric(
+                  horizontal: hPad,
+                  vertical: AppSpacing.xl,
+                ),
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  AccountProfileCard(user: user),
+                  const SizedBox(height: 24),
+                  _buildPasswordCard(context),
+                  const SizedBox(height: 24),
+                  const AccountGoogleCalendarCard(),
+                  const SizedBox(height: 12),
+                  AppCard(
+                    onTap: _logout,
+                    child: ListTile(
+                      leading: Icon(Icons.logout, color: colorScheme.error),
+                      title: Text(
+                        'Cerrar sesión',
+                        style: TextStyle(
+                          color: colorScheme.error,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                ref
-                    .watch(appBuildInfoProvider)
-                    .when(
-                      data: (info) => Center(
-                        child: Text(
-                          'Versión ${info.fullVersion}',
+                  const SizedBox(height: 24),
+                  ref
+                      .watch(appBuildInfoProvider)
+                      .when(
+                        data: (info) => Center(
+                          child: Text(
+                            'Versión ${info.fullVersion}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                          ),
+                        ),
+                        loading: () => const Center(
+                          child: ShimmerBox(
+                            width: 120,
+                            height: 12,
+                            borderRadius: 4,
+                          ),
+                        ),
+                        error: (_, _) => Text(
+                          'v—',
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                         ),
                       ),
-                      loading: () => const Center(
-                        child: ShimmerBox(
-                          width: 120,
-                          height: 12,
-                          borderRadius: 4,
-                        ),
-                      ),
-                      error: (_, _) => Text(
-                        'v—',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                      ),
-                    ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

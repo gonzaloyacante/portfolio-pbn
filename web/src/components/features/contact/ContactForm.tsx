@@ -27,7 +27,8 @@ const PREFERENCES: { id: ResponsePreference; icon: React.ReactNode; label: strin
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false)
   const searchParams = useSearchParams()
-  const serviceName = searchParams.get('service')
+  const serviceSlug = searchParams.get('service')
+  const serviceDisplayName = searchParams.get('serviceName')
   const { executeRecaptcha } = useGoogleReCaptcha()
 
   const {
@@ -51,13 +52,13 @@ export default function ContactForm() {
   })
 
   useEffect(() => {
-    if (serviceName) {
+    if (serviceDisplayName) {
       setValue(
         'message',
-        `Hola, estoy interesado/a en recibir más información sobre el servicio de "${serviceName}".`
+        `Hola, estoy interesado/a en recibir más información sobre el servicio de "${serviceDisplayName}".`
       )
     }
-  }, [serviceName, setValue])
+  }, [serviceDisplayName, setValue])
 
   const responsePreference = useWatch({ control, name: 'responsePreference' })
 
@@ -93,7 +94,7 @@ export default function ContactForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-[2.5rem] bg-(--card) p-8 text-center shadow-lg"
+        className="rounded-[2.5rem] bg-(--card) p-5 text-center shadow-lg sm:p-8"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -128,7 +129,7 @@ export default function ContactForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-[2.5rem] bg-(--card) p-8 shadow-lg"
+      className="rounded-[2.5rem] bg-(--card) p-5 shadow-lg sm:p-8"
     >
       <h2 className="font-heading mb-6 text-2xl font-bold text-(--foreground)">
         Envíame un mensaje

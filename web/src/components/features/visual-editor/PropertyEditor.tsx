@@ -20,6 +20,7 @@ import { MobileOverridableSlider } from './components/MobileOverridableSlider'
 import { MobileOverridablePosition } from './components/MobileOverridablePosition'
 import { ELEMENT_CONFIG } from './propertyEditorConfig'
 import type { EditableElement, ViewportMode } from './types'
+import { HeroBackdropPropertyEditor } from './HeroBackdropPropertyEditor'
 
 const IMAGE_STYLES = [
   { value: 'original', label: 'Original' },
@@ -45,6 +46,16 @@ interface PropertyEditorProps {
  * edit mobile-specific DB fields. Non-overridable properties are shared across viewports.
  */
 export function PropertyEditor({ element, settings, onUpdate, viewportMode }: PropertyEditorProps) {
+  if (element === 'heroBackdrop') {
+    return (
+      <HeroBackdropPropertyEditor
+        settings={settings}
+        onUpdate={onUpdate}
+        viewportMode={viewportMode}
+      />
+    )
+  }
+
   const config = ELEMENT_CONFIG[element]
 
   if (!config) {
@@ -61,6 +72,23 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
           <Smartphone className="h-3.5 w-3.5 shrink-0" />
           Editando valores para <strong>móvil</strong>. Los campos vacíos heredan el valor de
           escritorio.
+        </div>
+      )}
+
+      {fields.visible && (
+        <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
+          <div>
+            <p className="text-sm font-medium">Visible en la web pública</p>
+            <p className="text-muted-foreground text-xs">
+              Oculto en la portada; aquí sigue visible para editar
+            </p>
+          </div>
+          <Switch
+            checked={(settings[fields.visible] as boolean) ?? true}
+            onCheckedChange={(val: boolean) =>
+              onUpdate(fields.visible as keyof HomeSettingsData, val)
+            }
+          />
         </div>
       )}
 
@@ -87,6 +115,19 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
             onChange={(val: string) => onUpdate(fields.variant as keyof HomeSettingsData, val)}
           />
         </div>
+      )}
+
+      {fields.buttonSize && (
+        <EditorSelectControl
+          label="Tamaño del botón"
+          value={(settings[fields.buttonSize] as string) ?? 'default'}
+          options={[
+            { value: 'sm', label: 'Pequeño' },
+            { value: 'default', label: 'Normal' },
+            { value: 'lg', label: 'Grande' },
+          ]}
+          onChange={(val: string) => onUpdate(fields.buttonSize as keyof HomeSettingsData, val)}
+        />
       )}
 
       {fields.imageUrl && (

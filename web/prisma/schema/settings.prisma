@@ -17,6 +17,7 @@ model HomeSettings {
   heroTitle1ZIndex    Int?    @default(20)
   heroTitle1OffsetX   Int?    @default(0) // Ajuste horizontal (px)
   heroTitle1OffsetY   Int?    @default(0) // Ajuste vertical (px)
+  showHeroTitle1      Boolean @default(true)
 
   // ===== TÍTULO 2 ("Portfolio") =====
   heroTitle2Text      String? @default("Portfolio")
@@ -28,6 +29,7 @@ model HomeSettings {
   heroTitle2ZIndex    Int?    @default(10)
   heroTitle2OffsetX   Int?    @default(0)
   heroTitle2OffsetY   Int?    @default(0)
+  showHeroTitle2      Boolean @default(true)
 
   // ===== NOMBRE PROPIETARIO ("Paola Bolívar Nievas") =====
   ownerNameText      String? @default("Paola Bolívar Nievas")
@@ -39,6 +41,7 @@ model HomeSettings {
   ownerNameZIndex    Int?    @default(15)
   ownerNameOffsetX   Int?    @default(0)
   ownerNameOffsetY   Int?    @default(0)
+  showOwnerName      Boolean @default(true)
 
   // ===== IMAGEN PRINCIPAL =====
   heroMainImageUrl     String?
@@ -48,6 +51,36 @@ model HomeSettings {
   heroMainImageZIndex  Int?    @default(5)
   heroMainImageOffsetX Int?    @default(0)
   heroMainImageOffsetY Int?    @default(0)
+
+  // ===== HERO FONDO INMERSIVO (full-bleed bajo navbar; imagen / vídeo / GIF Cloudinary) =====
+  heroImmersiveEnabled Boolean @default(false)
+  /// auto | image | video — auto detecta Cloudinary /video/upload y extensiones .mp4/.webm/.mov
+  heroBackdropMediaKind String @default("auto")
+  heroBackdropUrl              String?
+  heroBackdropPosterUrl        String?
+  heroBackdropLoop             Boolean @default(true)
+  heroBackdropMuted            Boolean @default(true)
+  heroBackdropPlaysInline      Boolean @default(true)
+  /// cover | contain
+  heroBackdropObjectFit       String @default("cover")
+  heroBackdropObjectPosition    String @default("center")
+  heroBackdropMobileUrl         String?
+  heroBackdropMobileObjectPosition String?
+  /// Retrato inline en columna derecha cuando hay fondo inmersivo
+  heroForegroundPortraitShow Boolean @default(true)
+
+  /// Borde del degradado lateral: left | right | both | none
+  heroScrimEdge           String @default("left")
+  heroScrimExtentPercent  Int    @default(45)
+  heroScrimOpacity        Int    @default(80)
+  heroScrimColor          String?
+  heroScrimColorDark      String?
+  /// Suavidad del degradado (0 = duro, 100 = muy suave)
+  heroScrimFeatherPercent Int    @default(50)
+  /// Oscurecimiento uniforme 0–100 sobre todo el fondo
+  heroBackdropTintOpacity Int    @default(0)
+  heroScrimMobileExtentPercent Int?
+  heroScrimMobileOpacity        Int?
 
   // ===== ILUSTRACIÓN =====
   illustrationUrl      String?
@@ -122,14 +155,33 @@ model AboutSettings {
   // Illustration
   illustrationUrl   String?
   illustrationAlt   String?  @default("Ilustración sobre mí")
+  /// Cuadrado máximo (px) — escritorio / `sm+`
+  illustrationMaxPx        Int? @default(112)
+  /// Cuadrado máximo (px) — vista estrecha
+  illustrationMobileMaxPx  Int? @default(96)
   // Bio
   bioTitle          String?  @default("Hola, soy Paola.")
+  /// Null = hereda fuente script del tema + FontLoader no aplica URL propia
+  bioTitleFont       String?
+  bioTitleFontUrl    String?
+  /// Null = tamaño vía `--font-script-size` del tema
+  bioTitleFontSize   Int?
+  bioTitleMobileFontSize Int?
+  bioTitleColor      String?
+  bioTitleColorDark  String?
   bioIntro          String?  @db.Text
   bioDescription    String?  @db.Text
   // Profile Image (oval)
   profileImageUrl   String?
   profileImageAlt   String?  @default("Paola Bolívar Nievas")
   profileImageShape String?  @default("ellipse") // ellipse | rounded | circle | none
+  profileImageShadowEnabled  Boolean @default(true)
+  profileImageShadowBlur     Int?    @default(24)
+  profileImageShadowSpread   Int?    @default(0)
+  profileImageShadowOffsetX  Int?    @default(0)
+  profileImageShadowOffsetY  Int?    @default(8)
+  profileImageShadowColor    String? // #RRGGBB, null = usar --primary
+  profileImageShadowOpacity  Int?    @default(35) // 0–100
   // Skills
   skills            String[] @default([])
   yearsExperience   Int?
@@ -141,6 +193,27 @@ model AboutSettings {
   updatedAt         DateTime @updatedAt
 
   @@map("about_settings")
+}
+
+/// Public services listing hero (/servicios) — textos y tipografía del bloque superior
+model ServicesPageSettings {
+  id    String @id @default(cuid())
+  key   String @unique @default("singleton")
+
+  listTitle         String? @default("Mis Servicios")
+  listIntro         String? @db.Text
+  listTitleFont     String?
+  listTitleFontUrl  String?
+  listTitleFontSize Int?
+  listTitleMobileFontSize Int?
+  listTitleColor    String?
+  listTitleColorDark String?
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("services_page_settings")
 }
 
 /// Contact Page Settings with Form Labels
@@ -184,7 +257,7 @@ model CategorySettings {
   key             String   @unique @default("singleton")
   showDescription Boolean  @default(true)
   // Layout
-  gridColumns     Int      @default(4)
+  gridColumns     Int      @default(3)
   // Meta
   isActive         Boolean  @default(true)
   createdAt        DateTime @default(now())
@@ -198,6 +271,7 @@ model TestimonialSettings {
   id          String   @id @default(cuid())
   key         String   @unique @default("singleton")
   showOnAbout Boolean  @default(true)
+  showOnAll   Boolean  @default(false)
   title       String?  @default("Lo que dicen mis clientes")
   maxDisplay  Int      @default(6)
   // Meta
@@ -212,20 +286,20 @@ model TestimonialSettings {
 model ThemeSettings {
   id                  String   @id @default(cuid())
   key                 String   @unique @default("singleton")
-  // Light Theme Colors
+  // Light Theme Colors — alineado con web/src/lib/design-tokens.ts (BRAND)
   primaryColor        String   @default("#6c0a0a")
-  secondaryColor      String   @default("#ffaadd")
+  secondaryColor      String   @default("#fce7f3")
   accentColor         String   @default("#fff1f9")
-  backgroundColor     String   @default("#fff1f9")
-  textColor           String   @default("#000000")
-  cardBgColor         String   @default("#ffaadd")
+  backgroundColor     String   @default("#fff8fc")
+  textColor           String   @default("#1a050a")
+  cardBgColor         String   @default("#ffffff")
   // Dark Theme Colors
-  darkPrimaryColor    String   @default("#ffaadd")
-  darkSecondaryColor  String   @default("#6c0a0a")
-  darkAccentColor     String   @default("#000000")
-  darkBackgroundColor String   @default("#6c0a0a")
-  darkTextColor       String   @default("#fff1f9")
-  darkCardBgColor     String   @default("#ffaadd")
+  darkPrimaryColor    String   @default("#fb7185")
+  darkSecondaryColor  String   @default("#881337")
+  darkAccentColor     String   @default("#2a1015")
+  darkBackgroundColor String   @default("#0f0505")
+  darkTextColor       String   @default("#fafafa")
+  darkCardBgColor     String   @default("#1c0a0f")
   // Typography - Base
   headingFont         String   @default("Poppins")
   headingFontUrl      String?

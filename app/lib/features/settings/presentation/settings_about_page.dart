@@ -32,6 +32,14 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   final _bioIntroCtrl = TextEditingController();
   final _bioDescCtrl = TextEditingController();
   final _profileImageCtrl = TextEditingController();
+  final _shadowColorCtrl = TextEditingController();
+
+  bool _shadowEnabled = true;
+  int _shadowBlur = 24;
+  int _shadowSpread = 0;
+  int _shadowOx = 0;
+  int _shadowOy = 8;
+  int _shadowOpacity = 35;
 
   final List<TextEditingController> _skillsCtrls = [];
   final List<FocusNode> _skillsFocus = [];
@@ -46,6 +54,7 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
     _bioIntroCtrl,
     _bioDescCtrl,
     _profileImageCtrl,
+    _shadowColorCtrl,
   ];
 
   @override

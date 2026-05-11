@@ -5,6 +5,17 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
     final async = ref.watch(contactDetailProvider(widget.contactId));
     final isImportant = async.value?.isImportant ?? false;
 
+    ref.listen(contactDetailProvider(widget.contactId), (_, next) {
+      next.whenData((detail) {
+        if (!mounted || _populated) {
+          return;
+        }
+        _applyAdminNoteFromDetail(detail);
+        _populated = true;
+        setState(() {});
+      });
+    });
+
     return LoadingOverlay(
       isLoading: _loading,
       child: Scaffold(
@@ -30,12 +41,18 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
           loading: () => const SkeletonContactDetail(),
           error: (e, _) => Center(child: Text('Error: $e')),
           data: (detail) {
-            _populate(detail);
             final theme = Theme.of(context);
             return RefreshIndicator(
               onRefresh: () async {
                 ref.invalidate(contactDetailProvider(widget.contactId));
-                await ref.read(contactDetailProvider(widget.contactId).future);
+                final d = await ref.read(
+                  contactDetailProvider(widget.contactId).future,
+                );
+                if (!mounted) {
+                  return;
+                }
+                _applyAdminNoteFromDetail(d);
+                setState(() {});
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -326,7 +343,7 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
 
   String _statusLabel(String s) => switch (s) {
     'IN_PROGRESS' => 'En curso',
-    'REPLIED' => 'Respondido',
+    'REPLIED' => 'Atendido',
     'CLOSED' => 'Cerrado',
     'SPAM' => 'Spam',
     _ => 'Nuevo',
@@ -350,12 +367,14 @@ extension _ContactDetailPageBuilders on _ContactDetailPageState {
   String _responsePreferenceLabel(String pref) => switch (pref) {
     'PHONE' => 'Teléfono',
     'WHATSAPP' => 'WhatsApp',
+    'INSTAGRAM' => 'Instagram',
     _ => 'Email',
   };
 
   IconData _responsePreferenceIcon(String pref) => switch (pref) {
     'PHONE' => Icons.phone_outlined,
     'WHATSAPP' => Icons.chat_outlined,
+    'INSTAGRAM' => Icons.camera_alt_outlined,
     _ => Icons.email_outlined,
   };
 }

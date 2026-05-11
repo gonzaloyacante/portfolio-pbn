@@ -15,6 +15,7 @@ import {
   themeEditorSchema,
   testimonialSettingsSchema,
   categorySettingsSchema,
+  servicesPageSettingsSchema,
 } from '@/lib/validations'
 import type { ZodSchema, ZodObject, ZodRawShape } from 'zod'
 
@@ -36,6 +37,7 @@ const SETTINGS_MODELS = {
   site: prisma.siteSettings as unknown as SettingsModel,
   testimonial: prisma.testimonialSettings as unknown as SettingsModel,
   category: prisma.categorySettings as unknown as SettingsModel,
+  servicesPage: prisma.servicesPageSettings as unknown as SettingsModel,
 } satisfies Record<string, SettingsModel>
 
 type SettingsType = keyof typeof SETTINGS_MODELS
@@ -56,6 +58,29 @@ const FORBIDDEN_FIELDS = ['id', 'createdAt', 'updatedAt', 'isActive']
 
 function isValidType(t: string): t is SettingsType {
   return t in SETTINGS_MODELS
+}
+
+/** Theme PATCH: Flutter a veces manda `null` en ints NOT NULL de Prisma → quitar = no actualizar. */
+const THEME_PATCH_DROP_NULL_NUMERIC = new Set([
+  'headingFontSize',
+  'scriptFontSize',
+  'bodyFontSize',
+  'brandFontSize',
+  'portfolioFontSize',
+  'signatureFontSize',
+  'borderRadius',
+])
+
+function preparePatchBody(
+  type: SettingsType,
+  body: Record<string, unknown>
+): Record<string, unknown> {
+  if (type !== 'theme') return body
+  const next = { ...body }
+  for (const key of THEME_PATCH_DROP_NULL_NUMERIC) {
+    if (next[key] === null) delete next[key]
+  }
+  return next
 }
 
 function getPrismaModel(type: SettingsType): SettingsModel {
@@ -117,10 +142,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
   try {
     await checkSettingsRateLimit(auth.payload.userId)
 
-    const body = await req.json().catch(() => null)
-    if (!body || typeof body !== 'object') {
+    const rawBody = await req.json().catch(() => null)
+    if (!rawBody || typeof rawBody !== 'object') {
       return NextResponse.json({ success: false, error: 'Body JSON inválido' }, { status: 400 })
     }
+
+    const body = preparePatchBody(type, rawBody as Record<string, unknown>)
 
     // Validate with type-specific Zod schema (partial for PATCH semantics)
     const schema = SETTINGS_SCHEMA_MAP[type]
@@ -174,6 +201,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         revalidatePath(ROUTES.public.portfolio, 'layout')
         revalidatePath(ROUTES.admin.categories)
         revalidateTag(CACHE_TAGS.categorySettings, 'max')
+        break
+      case 'servicesPage':
+        revalidatePath(ROUTES.public.services, 'layout')
+        revalidateTag(CACHE_TAGS.servicesPageSettings, 'max')
+        revalidatePath(ROUTES.admin.services)
         break
     }
 

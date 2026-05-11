@@ -11,8 +11,13 @@ extension _HomePageActions on _SettingsHomePageState {
     setState(() => _previewDarkMode = !_previewDarkMode);
   }
 
-  TextEditingController _ctrl(String key) =>
-      _extraCtrls.putIfAbsent(key, TextEditingController.new);
+  TextEditingController _ctrl(String key) {
+    return _extraCtrls.putIfAbsent(key, () {
+      final c = TextEditingController();
+      c.addListener(_onPreviewChange);
+      return c;
+    });
+  }
 
   int _intVal(String key, [int fallback = 0]) =>
       (_vals[key] as num?)?.toInt() ?? fallback;
@@ -23,6 +28,7 @@ extension _HomePageActions on _SettingsHomePageState {
   void _setVal(String key, Object? v) => setState(() => _vals[key] = v);
 
   void _onPreviewChange() {
+    if (_mutePreviewListeners) return;
     _markDirty();
     setState(() {});
   }
@@ -49,9 +55,15 @@ extension _HomePageActions on _SettingsHomePageState {
   // ── Populate ───────────────────────────────────────────────────────────
 
   void _populate(HomeSettings s) {
-    if (_populated) return;
-    _populated = true;
+    _mutePreviewListeners = true;
+    try {
+      _populateInner(s);
+    } finally {
+      _mutePreviewListeners = false;
+    }
+  }
 
+  void _populateInner(HomeSettings s) {
     // Core text controllers
     _title1Ctrl.text = s.heroTitle1Text ?? '';
     _title2Ctrl.text = s.heroTitle2Text ?? '';
@@ -85,9 +97,20 @@ extension _HomePageActions on _SettingsHomePageState {
     _ctrl('featuredTitleFontUrl').text = s.featuredTitleFontUrl ?? '';
     _ctrl('featuredTitleColor').text = s.featuredTitleColor ?? '';
     _ctrl('featuredTitleColorDark').text = s.featuredTitleColorDark ?? '';
+    _ctrl('heroBackdropUrl').text = s.heroBackdropUrl ?? '';
+    _ctrl('heroBackdropPosterUrl').text = s.heroBackdropPosterUrl ?? '';
+    _ctrl('heroBackdropMobileUrl').text = s.heroBackdropMobileUrl ?? '';
+    _ctrl('heroBackdropObjectPosition').text = s.heroBackdropObjectPosition;
+    _ctrl('heroBackdropMobileObjectPosition').text =
+        s.heroBackdropMobileObjectPosition ?? '';
+    _ctrl('heroScrimColor').text = s.heroScrimColor ?? '';
+    _ctrl('heroScrimColorDark').text = s.heroScrimColorDark ?? '';
 
     // Numeric / enum values
     _vals.addAll({
+      'showHeroTitle1': s.showHeroTitle1,
+      'showHeroTitle2': s.showHeroTitle2,
+      'showOwnerName': s.showOwnerName,
       'heroTitle1FontSize': s.heroTitle1FontSize,
       'heroTitle1ZIndex': s.heroTitle1ZIndex,
       'heroTitle1OffsetX': s.heroTitle1OffsetX,
@@ -104,6 +127,20 @@ extension _HomePageActions on _SettingsHomePageState {
       'heroMainImageZIndex': s.heroMainImageZIndex,
       'heroMainImageOffsetX': s.heroMainImageOffsetX,
       'heroMainImageOffsetY': s.heroMainImageOffsetY,
+      'heroImmersiveEnabled': s.heroImmersiveEnabled,
+      'heroBackdropMediaKind': s.heroBackdropMediaKind,
+      'heroBackdropLoop': s.heroBackdropLoop,
+      'heroBackdropMuted': s.heroBackdropMuted,
+      'heroBackdropPlaysInline': s.heroBackdropPlaysInline,
+      'heroBackdropObjectFit': s.heroBackdropObjectFit,
+      'heroForegroundPortraitShow': s.heroForegroundPortraitShow,
+      'heroScrimEdge': s.heroScrimEdge,
+      'heroScrimExtentPercent': s.heroScrimExtentPercent,
+      'heroScrimOpacity': s.heroScrimOpacity,
+      'heroScrimFeatherPercent': s.heroScrimFeatherPercent,
+      'heroBackdropTintOpacity': s.heroBackdropTintOpacity,
+      'heroScrimMobileExtentPercent': s.heroScrimMobileExtentPercent,
+      'heroScrimMobileOpacity': s.heroScrimMobileOpacity,
       'illustrationUrl': s.illustrationUrl,
       'illustrationZIndex': s.illustrationZIndex,
       'illustrationOpacity': s.illustrationOpacity,
@@ -240,6 +277,9 @@ extension _HomePageActions on _SettingsHomePageState {
       }
 
       final data = <String, Object?>{
+        'showHeroTitle1': _vals['showHeroTitle1'] ?? true,
+        'showHeroTitle2': _vals['showHeroTitle2'] ?? true,
+        'showOwnerName': _vals['showOwnerName'] ?? true,
         // Core text fields
         'heroTitle1Text': _nullIfEmpty(_title1Ctrl.text),
         'heroTitle2Text': _nullIfEmpty(_title2Ctrl.text),
@@ -280,6 +320,17 @@ extension _HomePageActions on _SettingsHomePageState {
   Widget _buildScaffold(BuildContext context) {
     final async = ref.watch(homeSettingsProvider);
 
+    ref.listen<AsyncValue<HomeSettings>>(homeSettingsProvider, (_, next) {
+      next.whenData((settings) {
+        if (!mounted || _populated || _isDirty) {
+          return;
+        }
+        _populate(settings);
+        _populated = true;
+        setState(() {});
+      });
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) =>
@@ -298,16 +349,21 @@ extension _HomePageActions on _SettingsHomePageState {
           child: async.when(
             loading: () =>
                 const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
-            error: (e, _) => ErrorState(
-              message: e.toString(),
+            error: (e, _) => ErrorState.forFailure(
+              e,
               onRetry: () => ref.invalidate(homeSettingsProvider),
             ),
             data: (settings) {
-              _populate(settings);
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(homeSettingsProvider);
-                  await ref.read(homeSettingsProvider.future);
+                  final s = await ref.read(homeSettingsProvider.future);
+                  if (!mounted || _isDirty) {
+                    return;
+                  }
+                  _populate(s);
+                  _populated = true;
+                  setState(() {});
                 },
                 child: _buildForm(context),
               );

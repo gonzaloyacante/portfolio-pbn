@@ -30,8 +30,8 @@ class _TrashPageState extends ConsumerState<TrashPage> {
       title: 'Papelera',
       body: trashAsync.when(
         loading: () => const SkeletonTrashList(),
-        error: (e, _) => ErrorState(
-          message: e.toString(),
+        error: (e, _) => ErrorState.forFailure(
+          e,
           onRetry: () => ref.invalidate(trashItemsProvider),
         ),
         data: (grouped) => _buildContent(context, grouped),

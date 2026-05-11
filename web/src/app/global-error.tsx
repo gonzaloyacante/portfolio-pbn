@@ -20,7 +20,7 @@ export default function GlobalError({
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          minHeight: '100vh',
+          minHeight: '100dvh',
           fontFamily: 'system-ui, sans-serif',
           /* eslint-disable-next-line no-restricted-syntax */
           backgroundColor: '#fff8fc',

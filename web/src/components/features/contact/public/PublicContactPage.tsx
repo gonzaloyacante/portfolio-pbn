@@ -4,6 +4,8 @@ import ContactForm from '@/components/features/contact/ContactForm'
 import InstagramEmbed from '@/components/features/contact/InstagramEmbed'
 import { FadeIn, OptimizedImage } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
+import { ROUTES } from '@/config/routes'
+import { getPublicSiteUrl } from '@/lib/site-url'
 import type { PublicContactPageData } from './contactPageData'
 import PublicContactMethods from './PublicContactMethods'
 import PublicSocialLinks from './PublicSocialLinks'
@@ -28,20 +30,23 @@ export default function PublicContactPage({
         data={{
           name: ownerName,
           description: `Maquilladora profesional y caracterizadora${locationSuffix}. Servicios para bodas, editoriales, eventos y caracterización artística.`,
-          url: `${process.env.NEXT_PUBLIC_BASE_URL}/contacto`,
+          url: `${getPublicSiteUrl()}${ROUTES.public.contact}`,
           telephone: contactSettings?.phone ?? undefined,
           email: contactSettings?.email ?? undefined,
         }}
       />
 
-      <div className="flex flex-col items-center px-6 pt-8 pb-0 text-center lg:hidden">
-        <h1 className="text-foreground font-script mb-4 text-4xl">
+      <div className="flex flex-col items-center px-4 pt-8 pb-0 text-center sm:px-6 lg:hidden">
+        <h1
+          className="text-foreground font-script mb-4"
+          style={{ fontSize: 'var(--font-script-size, 2.25rem)' }}
+        >
           {contactSettings?.pageTitle || 'Contacto'}
         </h1>
         <PublicContactMethods methods={primaryContactMethods} orientation="row" />
       </div>
 
-      <div className="text-foreground mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+      <div className="text-foreground mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         <div className="hidden flex-col items-start pt-10 lg:flex">
           <FadeIn className="mb-8">
             {contactSettings?.illustrationUrl ? (
@@ -57,7 +62,12 @@ export default function PublicContactPage({
             ) : null}
           </FadeIn>
 
-          <h1 className="text-foreground font-script mb-8 text-5xl">{ownerName}</h1>
+          <h1
+            className="text-foreground font-script mb-8"
+            style={{ fontSize: 'var(--font-script-size, 2.25rem)' }}
+          >
+            {ownerName}
+          </h1>
 
           <div className="mb-8 w-full">
             <PublicContactMethods methods={primaryContactMethods} />
@@ -69,9 +79,7 @@ export default function PublicContactPage({
             </div>
           )}
 
-          {contactSettings?.showSocialLinks && socialLinks.length > 0 && (
-            <PublicSocialLinks links={socialLinks} />
-          )}
+          {socialLinks.length > 0 && <PublicSocialLinks links={socialLinks} />}
         </div>
 
         <div className="w-full">
@@ -81,9 +89,7 @@ export default function PublicContactPage({
             <ContactForm />
           </Suspense>
 
-          {contactSettings?.showSocialLinks && (
-            <PublicSocialLinks links={socialLinks} variant="compact" />
-          )}
+          {socialLinks.length > 0 && <PublicSocialLinks links={socialLinks} variant="compact" />}
 
           <InstagramProfileCard href={instagramProfileUrl} label={instagramProfileLabel} />
         </div>

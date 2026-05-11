@@ -111,13 +111,13 @@ export const themeEditorSchema = z.object({
   // Typography - Brand
   brandFont: z.string().optional().nullable(),
   brandFontUrl: z.string().optional().nullable(),
-  brandFontSize: z.number().min(10).max(300),
+  brandFontSize: z.number().min(10).max(300).optional().nullable(),
   portfolioFont: z.string().optional().nullable(),
   portfolioFontUrl: z.string().optional().nullable(),
-  portfolioFontSize: z.number().min(10).max(300),
+  portfolioFontSize: z.number().min(10).max(300).optional().nullable(),
   signatureFont: z.string().optional().nullable(),
   signatureFontUrl: z.string().optional().nullable(),
-  signatureFontSize: z.number().min(10).max(200),
+  signatureFontSize: z.number().min(10).max(200).optional().nullable(),
 
   borderRadius: z.number().min(0).max(100),
 })
@@ -126,6 +126,10 @@ export type ThemeEditorData = z.infer<typeof themeEditorSchema>
 
 // Home Settings
 export const homeSettingsSchema = z.object({
+  showHeroTitle1: z.boolean().optional(),
+  showHeroTitle2: z.boolean().optional(),
+  showOwnerName: z.boolean().optional(),
+
   // Título 1
   heroTitle1Text: z.string().optional(),
   heroTitle1Font: z.string().optional().nullable(),
@@ -191,6 +195,37 @@ export const homeSettingsSchema = z.object({
   heroMainImageZIndex: z.number().int().optional(),
   heroMainImageOffsetX: z.number().optional(),
   heroMainImageOffsetY: z.number().optional(),
+
+  heroImmersiveEnabled: z.boolean().optional(),
+  heroBackdropMediaKind: z.enum(['auto', 'image', 'video']).optional(),
+  heroBackdropUrl: z.string().optional().nullable(),
+  heroBackdropPosterUrl: z.string().optional().nullable(),
+  heroBackdropLoop: z.boolean().optional(),
+  heroBackdropMuted: z.boolean().optional(),
+  heroBackdropPlaysInline: z.boolean().optional(),
+  heroBackdropObjectFit: z.enum(['cover', 'contain']).optional(),
+  heroBackdropObjectPosition: z.string().max(80).optional().nullable(),
+  heroBackdropMobileUrl: z.string().optional().nullable(),
+  heroBackdropMobileObjectPosition: z.string().max(80).optional().nullable(),
+  heroForegroundPortraitShow: z.boolean().optional(),
+  heroScrimEdge: z.enum(['left', 'right', 'both', 'none']).optional(),
+  heroScrimExtentPercent: z.number().int().min(5).max(100).optional(),
+  heroScrimOpacity: z.number().int().min(0).max(100).optional(),
+  heroScrimColor: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  heroScrimColorDark: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  heroScrimFeatherPercent: z.number().int().min(0).max(100).optional(),
+  heroBackdropTintOpacity: z.number().int().min(0).max(100).optional(),
+  heroScrimMobileExtentPercent: z.number().int().min(5).max(100).optional().nullable(),
+  heroScrimMobileOpacity: z.number().int().min(0).max(100).optional().nullable(),
+
   illustrationUrl: z.string().optional().nullable(),
   illustrationAlt: z.string().optional().nullable(),
   illustrationZIndex: z.number().int().optional(),
@@ -256,12 +291,39 @@ export type HomeSettingsFormData = z.infer<typeof homeSettingsSchema>
 export const aboutSettingsSchema = z.object({
   illustrationUrl: z.string().optional().nullable(),
   illustrationAlt: z.string().optional().nullable(),
+  illustrationMaxPx: z.number().int().min(32).max(480).optional().nullable(),
+  illustrationMobileMaxPx: z.number().int().min(32).max(480).optional().nullable(),
   bioTitle: z.string().optional().nullable(),
+  bioTitleFont: z.string().optional().nullable(),
+  bioTitleFontUrl: z.string().max(2048).optional().nullable(),
+  bioTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  bioTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  bioTitleColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  bioTitleColorDark: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
   bioIntro: z.string().optional().nullable(),
   bioDescription: z.string().optional().nullable(),
   profileImageUrl: z.string().optional().nullable(),
   profileImageAlt: z.string().optional().nullable(),
   profileImageShape: z.enum(['ellipse', 'circle', 'rounded', 'none']).optional().nullable(),
+  profileImageShadowEnabled: z.boolean().optional(),
+  profileImageShadowBlur: z.number().int().min(0).max(80).optional().nullable(),
+  profileImageShadowSpread: z.number().int().min(-40).max(40).optional().nullable(),
+  profileImageShadowOffsetX: z.number().int().min(-80).max(80).optional().nullable(),
+  profileImageShadowOffsetY: z.number().int().min(-80).max(80).optional().nullable(),
+  profileImageShadowColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  profileImageShadowOpacity: z.number().int().min(0).max(100).optional().nullable(),
   skills: z.array(z.string()).optional(),
   yearsExperience: z.number().optional().nullable(),
   certifications: z.array(z.string()).optional(),
@@ -269,11 +331,33 @@ export const aboutSettingsSchema = z.object({
 
 export type AboutSettingsFormData = z.infer<typeof aboutSettingsSchema>
 
+export const servicesPageSettingsSchema = z.object({
+  listTitle: z.string().optional().nullable(),
+  listIntro: z.string().optional().nullable(),
+  listTitleFont: z.string().optional().nullable(),
+  listTitleFontUrl: z.string().max(2048).optional().nullable(),
+  listTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  listTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
+  listTitleColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+  listTitleColorDark: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
+    .optional()
+    .nullable(),
+})
+
+export type ServicesPageSettingsFormData = z.infer<typeof servicesPageSettingsSchema>
+
 // Testimonial Display Settings (SRP: separate from About)
 export const testimonialSettingsSchema = z.object({
-  showOnAbout: z.boolean(),
+  showOnAbout: z.boolean().optional(),
+  showOnAll: z.boolean().optional(),
   title: z.string().optional(),
-  maxDisplay: z.number().min(1).max(20),
+  maxDisplay: z.number().min(1).max(20).optional(),
 })
 
 export type TestimonialSettingsFormData = z.infer<typeof testimonialSettingsSchema>
@@ -326,8 +410,16 @@ export const siteSettingsSchema = z.object({
   navbarBrandFont: z.string().max(100).nullable().optional(),
   navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
   navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
-  navbarBrandColor: z.string().max(30).nullable().optional(),
-  navbarBrandColorDark: z.string().max(30).nullable().optional(),
+  navbarBrandColor: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido')
+    .nullable()
+    .optional(),
+  navbarBrandColorDark: z
+    .string()
+    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido')
+    .nullable()
+    .optional(),
   navbarShowBrand: z.boolean().optional(),
 })
 
@@ -482,11 +574,6 @@ export const contactUpdateApiSchema = z.object({
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']).optional(),
   isRead: z.boolean().optional(),
   isImportant: z.boolean().optional(),
-  replyText: z
-    .string()
-    .optional()
-    .nullable()
-    .transform((v) => v ?? undefined),
   adminNote: z
     .string()
     .optional()

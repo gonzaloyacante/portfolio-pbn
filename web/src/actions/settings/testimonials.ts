@@ -14,6 +14,7 @@ import { ROUTES } from '@/config/routes'
 
 export interface TestimonialSettingsData {
   showOnAbout: boolean
+  showOnAll: boolean
   title: string | null
   maxDisplay: number
 }
@@ -62,8 +63,9 @@ export async function updateTestimonialSettings(data: TestimonialSettingsFormDat
       // Manual mapping for strict Creation
       const createData: Prisma.TestimonialSettingsCreateInput = {
         showOnAbout: (cleanData.showOnAbout as boolean) ?? true,
+        showOnAll: (cleanData.showOnAll as boolean) ?? false,
         title: (cleanData.title as string) ?? undefined,
-        maxDisplay: (cleanData.maxDisplay as number) ?? 3,
+        maxDisplay: (cleanData.maxDisplay as number) ?? 6,
       }
 
       await prisma.testimonialSettings.create({

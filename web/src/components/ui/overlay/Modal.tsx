@@ -100,7 +100,7 @@ export default function Modal({
     >
       <div
         ref={dialogRef}
-        className={`w-full ${sizeClasses[size]} border-border/50 bg-card max-h-[90vh] overflow-auto rounded-xl border shadow-2xl`}
+        className={`w-full ${sizeClasses[size]} border-border/50 bg-card max-h-[90dvh] overflow-auto rounded-xl border shadow-2xl`}
       >
         {/* Header */}
         {(title || showCloseButton) && (

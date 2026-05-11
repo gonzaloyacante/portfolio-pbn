@@ -28,6 +28,9 @@ class LiveHeroPreviewGallery extends StatelessWidget {
     required this.isMobile,
     required this.isDarkMode,
     required this.primaryColor,
+    this.hidePortrait = false,
+    this.onTapHeroImage,
+    this.onTapCta,
   });
 
   final Map<String, Object?> vals;
@@ -38,6 +41,9 @@ class LiveHeroPreviewGallery extends StatelessWidget {
   final bool isMobile;
   final bool isDarkMode;
   final Color primaryColor;
+  final bool hidePortrait;
+  final VoidCallback? onTapHeroImage;
+  final VoidCallback? onTapCta;
 
   Widget _buildImage() {
     if (pendingHeroImage != null) {
@@ -110,25 +116,63 @@ class LiveHeroPreviewGallery extends StatelessWidget {
 
     final ctaWidget = Transform.translate(
       offset: Offset(effCtaX, effCtaY),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          color: primaryColor,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTapCta,
           borderRadius: BorderRadius.circular(100),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: primaryColor,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Text(
+              cta,
+              style: getFontSafe(
+                ctaFontName,
+                const TextStyle(fontWeight: FontWeight.w600),
+              ).copyWith(color: Colors.white, fontSize: effCtaSize),
+            ),
+          ),
         ),
-        child: Text(
-          cta,
-          style: getFontSafe(
-            ctaFontName,
-            const TextStyle(fontWeight: FontWeight.w600),
-          ).copyWith(color: Colors.white, fontSize: effCtaSize),
-        ),
+      ),
+    );
+
+    if (hidePortrait) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              'Retrato oculto en web (solo fondo inmersivo). Activa «Mostrar retrato» en Fondo inmersivo para verlo aquí.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.55),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ctaWidget,
+        ],
+      );
+    }
+
+    final heroImg = Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTapHeroImage,
+        borderRadius: imgShapeRadius,
+        child: imageWidget,
       ),
     );
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [imageWidget, const SizedBox(height: 32), ctaWidget],
+      children: [heroImg, const SizedBox(height: 32), ctaWidget],
     );
   }
 }

@@ -1,4 +1,5 @@
 export type EditableElement =
+  | 'heroBackdrop'
   | 'heroTitle1'
   | 'heroTitle2'
   | 'ownerName'

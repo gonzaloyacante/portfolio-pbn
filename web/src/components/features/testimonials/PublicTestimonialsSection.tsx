@@ -3,6 +3,7 @@ import { Heart } from 'lucide-react'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
+import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
 import { ROUTES } from '@/config/routes'
 import type { Testimonial } from '@/generated/prisma/client'
 
@@ -22,7 +23,7 @@ function TestimonialsGrid({ testimonials }: { testimonials: Testimonial[] }) {
           key={t.id}
           className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md"
         >
-          <div className="mb-3 text-yellow-400">{'⭐'.repeat(t.rating)}</div>
+          <TestimonialRatingStars rating={t.rating} className="mb-3" />
           <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed italic">
             &ldquo;{t.text}&rdquo;
           </p>
@@ -43,7 +44,7 @@ export default async function PublicTestimonialsSection() {
   ])
 
   return (
-    <div className="border-border bg-muted/30 border-t py-16 transition-colors duration-500">
+    <div className="border-border bg-muted/30 border-t py-12 transition-colors duration-500 lg:py-14">
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {testimonials.length > 0 && (
           <>

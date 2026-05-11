@@ -14,6 +14,7 @@ export 'media/barrel.dart';
 // Widgets raíz
 export 'adaptive_form_layout.dart';
 export 'adaptive_grid.dart';
+export 'adaptive_tile_list_scroll.dart';
 export 'app_card.dart';
 export 'draggable_list.dart';
 export 'paginated_list_view.dart';

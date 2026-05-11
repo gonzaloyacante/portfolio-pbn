@@ -3,7 +3,7 @@
 > **CONTEXTO**: Sitio web personal y CMS de Paola Bolívar Nievas.
 > Portfolio público (Next.js PWA) + Panel de Administración Web + App nativa Flutter para tablet/móvil.
 > **OBJETIVO**: Monorepo ordenado, codebase limpia y moderna. TypeScript estricto en web. Dart idiomático en app.
-> Prioridad: estabilidad, SEO (web), rendimiento, offline-first (app).
+> Prioridad: estabilidad, SEO (web), rendimiento. **App admin:** online-first con borradores y prefs locales (ver §6 Reglas Dart #10); sin SQLite/Drift hasta converger dependencias.
 
 ---
 
@@ -212,7 +212,7 @@ Cards: `rounded-[2.5rem]`. Transiciones: `duration-500`.
 | **HTTP Client**          | `dio` + interceptors                | Un solo `ApiClient` singleton. Prohibido `http` package.       |
 | **Navegación**           | `go_router`                         | Rutas tipadas, guards en `redirect`. Sin `Navigator.push`.     |
 | **Auth Storage**         | `flutter_secure_storage`            | JWT access + refresh token. NUNCA en SharedPreferences.        |
-| **DB Local**             | `drift` (SQLite)                    | Tablas tipadas, DAOs, streams reactivos.                       |
+| **DB Local**             | *Roadmap:* `drift` (SQLite)          | **No activo:** conflicto `sqlite3` vs `riverpod_generator` (ver Decisiones Cerradas). Hoy: prefs + borradores + secure storage. |
 | **Imágenes - Upload**    | `image_picker` + `image_cropper`    | Calidad 100% (sin compresión — portafolio artístico, calidad máxima intencional). Ver `AppConstants.imageQuality`. |
 | **Push Notifications**   | `firebase_messaging`                | FCM. Token registrado en backend al login.                     |
 | **Imágenes - Red**       | `cached_network_image`              | Siempre con placeholder shimmer.                               |
@@ -398,7 +398,7 @@ app/lib/
 7. **Const**: Usar `const` siempre que sea posible en widgets.
 8. **BuildContext**: No pasar `BuildContext` a repositories o providers.
 9. **Error Handling**: Usar `Either<Failure, Success>` o `AsyncValue.error`. Nunca silenciar excepciones.
-10. **Offline**: Todo Repository debe implementar el patrón network-first con fallback a cache local.
+10. **Offline**: Objetivo documentado = network-first + cache local cuando exista Drift; **hoy** la app es online-first: interceptor bloquea HTTP sin red; UX debe informar offline (`AppScaffold` + `ErrorState.forFailure`). Fallback local actual: perfil auth cacheado, borradores de formularios, prefs.
 
 ### Sistema de Diseño App (réplica exacta de web)
 
@@ -640,13 +640,14 @@ Al terminar cada fase de implementación:
 | Theme DB-driven | Permite al cliente cambiar colores sin redeploy; caché con `revalidateTag` |
 | JWT custom (Flutter) independiente de NextAuth | NextAuth no tiene endpoint REST consumible desde Flutter nativo |
 | Refresh tokens como UUID en DB (no JWT) | Permite revocación inmediata; JWTs de refresh son irrevocables |
+| Sin Drift/SQLite local (por ahora) | `drift` + `drift_dev` chocaban con `riverpod_generator` ≥4.0.1 por **conflicto de versiones del paquete `sqlite3`**; persistencia local real = SecureStorage + SharedPreferences + borradores (`DraftService`). Re-evaluar cuando converjan dependencias. |
 
 ### Deuda Técnica Activa (ver `Tareas_Pendientes.md` para detalle)
 
-- 🔴 **P0**: 3 tests failing — `thumbnailUrl` → `coverImageUrl` en test/features/categories/
-- 🟡 **P1**: Migrar `unstable_cache` → `"use cache"` directive en web/src/actions/
-- 🟡 **P1**: Plan de testing Flutter — cobertura mínima de repositories
-- 🟡 **P1**: Rate limit — evaluar Upstash Redis para multi-worker
-- 🟢 **P2**: Agregar `AppColors.divider/disabled/hint` y limpiar HEX en `app_theme.dart`
-- 🟢 **P2**: Crear modelo `@freezed CloudinaryUploadResponse` en upload_service.dart
+Verificación 2026-05-01: **no hay tests rotos** en app (`flutter test` OK) ni deuda P0 abierta en categorías. Lo siguiente es **mejora/backlog**, no bug en producción:
+
+- 🟡 **P1**: Migrar `unstable_cache` → `"use cache"` en `web/src/actions/**` — **sigue pendiente** (~11 archivos con `unstable_cache`; ver `rg unstable_cache web/src`). Alto riesgo; sprint dedicado cuando se habilite `cacheComponents` de forma segura.
+- 🟡 **P1 (backlog)**: Rate limit multi-worker — **decisión actual**: in-memory en Vercel (documentado). Upstash Redis solo si aparece tráfico multi-región o ataques que lo justifiquen.
+- 🟢 **P2 (opcional)**: Tokens semánticos extra en `AppColors` (`divider` / `disabled` / `hint`) si el diseño los quiere explícitos — **no es corrección de bugs**: `app_theme.dart` ya no tiene HEX sueltos (`Color(0x…)`); colores base están en `app_colors.dart`.
+- 🟢 **P2**: Persistencia local tipo Drift + cola sync — **bloqueado** por pin `sqlite3` vs Riverpod codegen (ver decisión cerrada arriba).
 

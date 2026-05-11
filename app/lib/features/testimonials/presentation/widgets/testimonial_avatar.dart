@@ -40,7 +40,10 @@ class TestimonialAvatar extends StatelessWidget {
                   ),
                 ),
               ),
-              errorWidget: _InitialsWidget(name: name, colorScheme: colorScheme),
+              errorWidget: _InitialsWidget(
+                name: name,
+                colorScheme: colorScheme,
+              ),
             )
           : _InitialsWidget(name: name, colorScheme: colorScheme),
     );

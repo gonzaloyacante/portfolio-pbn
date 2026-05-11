@@ -1,19 +1,35 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
 import { ROUTES } from '@/config/routes'
 
 interface FooterProps {
   ownerName?: string | null
   copyrightText?: string | null
+  immersiveHeroBackdrop?: boolean
 }
 
-export default function Footer({ ownerName, copyrightText }: FooterProps) {
+export default function Footer({
+  ownerName,
+  copyrightText,
+  immersiveHeroBackdrop = false,
+}: FooterProps) {
+  const pathname = usePathname()
   const displayName = ownerName || 'Paola Bolívar Nievas'
   const year = new Date().getFullYear()
+  const immersiveGlass = pathname === ROUTES.home && immersiveHeroBackdrop
 
   return (
-    <footer className="border-primary/20 bg-background text-foreground border-t py-12 text-center font-sans transition-colors duration-300">
+    <footer
+      className={cn(
+        'border-primary/20 text-foreground border-t py-12 text-center font-sans transition-colors duration-300',
+        immersiveGlass
+          ? 'supports-[backdrop-filter]:bg-background/60 bg-background/80 backdrop-blur-sm'
+          : 'bg-background'
+      )}
+    >
       <div className="container mx-auto px-4">
         <p className="mb-4 text-sm font-light tracking-widest uppercase">
           © {year} {displayName.toUpperCase()}

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { ROUTES } from '@/config/routes'
 
 interface CategoryCardProps {
   name: string
@@ -9,15 +10,13 @@ interface CategoryCardProps {
 }
 
 /**
- * CategoryCard - Canva Spec
- * - Fondo: var(--card-bg) (#ffaadd)
- * - Bordes: rounded-[2.5rem]
+ * CategoryCard — usa tokens `--card-bg` / `rounded-[2.5rem]` del tema.
  * - Hover: Scale suave
  */
 export default function CategoryCard({ name, slug, count = 0 }: CategoryCardProps) {
   return (
     <Link
-      href={`/portfolio/${slug}`}
+      href={`${ROUTES.public.portfolio}/${slug}`}
       className="group relative flex aspect-square flex-col items-center justify-center rounded-[2.5rem] bg-(--card-bg) p-8 text-center shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
     >
       <h3 className="font-heading text-lg font-bold text-(--foreground) sm:text-xl md:text-2xl">

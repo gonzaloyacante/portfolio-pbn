@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { motion } from '@/components/ui'
-import ThemeToggle from '@/components/layout/ThemeToggle'
+// import ThemeToggle from '@/components/layout/ThemeToggle'
 import { ROUTES } from '@/config/routes'
 import type { PageVisibility } from '@/actions/settings/site'
 
@@ -26,9 +26,15 @@ const allNavItems = [
 interface NavbarProps {
   brandName?: string | null
   visibility?: PageVisibility | null
+  /** Home con hero full-bleed: barra más translúcida para ver el fondo */
+  immersiveHeroBackdrop?: boolean
 }
 
-export default function Navbar({ brandName, visibility }: NavbarProps) {
+export default function Navbar({
+  brandName,
+  visibility,
+  immersiveHeroBackdrop = false,
+}: NavbarProps) {
   const pathname = usePathname()
   const displayBrand = visibility?.navbarBrandText ?? brandName ?? 'PBN'
   const showBrand = visibility?.navbarShowBrand ?? true
@@ -50,10 +56,17 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
     return pathname?.startsWith(href) ?? false
   }
 
+  const isHome = pathname === ROUTES.home
+  const immersiveGlass = isHome && immersiveHeroBackdrop
+
   return (
     <nav
       aria-label="Navegación principal"
-      className="bg-background/95 sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-500"
+      className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-500 ${
+        immersiveGlass
+          ? 'border-border/40 bg-background/45 supports-[backdrop-filter]:bg-background/30 border-b'
+          : 'bg-background/95'
+      }`}
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
         {/* Logo - visible en pantallas grandes */}
@@ -66,15 +79,15 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
           </Link>
         )}
 
-        {/* Navegación con block-active */}
-        <div className="relative flex flex-wrap items-center justify-center gap-1 md:gap-0">
+        {/* Navegación: columna en móvil (mejor táctil); fila desde md */}
+        <div className="relative flex w-full max-w-full flex-col items-center gap-2 md:flex-row md:flex-wrap md:justify-center md:gap-1 md:gap-x-0">
           {navItems.map((item) => {
             const active = isActive(item.href)
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-heading relative px-6 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 md:px-8 md:text-base"
+                className="font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 md:px-8 md:text-base"
               >
                 {/* Fondo animado para el estado activo */}
                 {active && (
@@ -88,7 +101,7 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
                 {/* Texto */}
                 <span
                   className={`relative z-10 ${
-                    active ? 'text-background' : 'text-foreground hover:text-accent'
+                    active ? 'text-primary-foreground' : 'text-foreground hover:text-primary'
                   }`}
                 >
                   {item.label}
@@ -97,11 +110,13 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
             )
           })}
 
-          {/* Theme Toggle + Language Toggle */}
-          <div className="ml-4 flex items-center gap-2">
-            <ThemeToggle />
-            {/* <LanguageToggle /> */}
-          </div>
+          {/*
+            Modo oscuro deshabilitado temporalmente.
+            Reactivar cuando bug esté resuelto:
+            <div className="flex items-center justify-center gap-2 pt-1 md:ml-4 md:pt-0">
+              <ThemeToggle />
+            </div>
+          */}
         </div>
       </div>
     </nav>

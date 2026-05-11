@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
 import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
@@ -30,7 +31,7 @@ function TestimonialsRow({ testimonials }: { testimonials: Testimonial[] }) {
           key={t.id}
           className="bg-card border-border/50 flex flex-col rounded-2xl border p-5 shadow-sm"
         >
-          <div className="mb-2 text-sm text-yellow-400">{'⭐'.repeat(t.rating)}</div>
+          <TestimonialRatingStars rating={t.rating} className="mb-2" />
           <p className="text-muted-foreground flex-1 text-sm leading-relaxed italic">
             &ldquo;{t.text}&rdquo;
           </p>
@@ -46,7 +47,7 @@ export default async function TestimonyPage() {
   const testimonials = await getActiveTestimonials(6)
 
   return (
-    <section className="bg-background min-h-[70vh] py-16 transition-colors duration-500">
+    <section className="bg-background min-h-[70dvh] py-16 transition-colors duration-500">
       <div className="mx-auto max-w-lg px-6">
         {/* Form */}
         <div className="mb-16">
@@ -61,7 +62,7 @@ export default async function TestimonyPage() {
             </p>
           </div>
 
-          <div className="bg-card border-border/50 rounded-2xl border p-8 shadow-md">
+          <div className="bg-card border-border/50 rounded-2xl border p-5 shadow-md sm:p-8">
             <TestimonialForm />
           </div>
         </div>

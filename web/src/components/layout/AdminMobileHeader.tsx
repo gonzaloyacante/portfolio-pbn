@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { Menu, X, Globe, LogOut } from 'lucide-react'
 import { showToast } from '@/lib/toast'
-import ThemeToggle from '@/components/layout/ThemeToggle'
+// import ThemeToggle from '@/components/layout/ThemeToggle'
 import { menuItems, type SidebarItem } from '@/config/admin-sidebar'
 import { ROUTES } from '@/config/routes'
 
@@ -62,7 +62,12 @@ export default function AdminMobileHeader() {
           Admin Panel
         </Link>
 
-        <ThemeToggle />
+        {/*
+          Modo oscuro deshabilitado temporalmente.
+          Reactivar cuando bug esté resuelto:
+          <ThemeToggle />
+        */}
+        <span className="h-9 w-9" aria-hidden="true" />
       </header>
 
       {/* Overlay */}

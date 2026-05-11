@@ -9,6 +9,7 @@ import {
   contactSettings,
   testimonialSettings,
   categorySettings,
+  servicesPageSettings,
 } from './seeds/settings'
 import { categories, services, testimonials, socialLinks } from './seeds/content'
 import { galleryImagesByCategorySlug } from './seeds/gallery-images'
@@ -63,6 +64,14 @@ async function main() {
     where: { key: 'singleton' },
     update: aboutUpdate,
     create: aboutSettings,
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id: _svcPageId, ...servicesPageUpdate } = servicesPageSettings
+  await prisma.servicesPageSettings.upsert({
+    where: { key: 'singleton' },
+    update: servicesPageUpdate,
+    create: servicesPageSettings,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

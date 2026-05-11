@@ -107,4 +107,8 @@ abstract final class AppBreakpoints {
         size.height < _compact &&
         isLandscape(context);
   }
+
+  /// Tablet/desktop ancha en horizontal: típico 12" landscape con drawer — rejillas 2 cols en listas.
+  static bool isTabletLandscapeWide(BuildContext context) =>
+      isExpanded(context) && isLandscape(context);
 }

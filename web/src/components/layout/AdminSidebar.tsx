@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { signOut } from 'next-auth/react'
 import { Globe, LogOut } from 'lucide-react'
 import { showToast } from '@/lib/toast'
-import ThemeToggle from '@/components/layout/ThemeToggle'
+// import ThemeToggle from '@/components/layout/ThemeToggle'
 import { menuItems, type SidebarItem } from '@/config/admin-sidebar'
 import { ROUTES } from '@/config/routes'
 
@@ -22,7 +22,7 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="bg-card border-border sticky top-0 hidden h-screen w-64 flex-col border-r backdrop-blur-md transition-colors duration-300 lg:flex">
+    <aside className="bg-card border-border sticky top-0 hidden h-dvh w-64 flex-col border-r backdrop-blur-md transition-colors duration-300 lg:flex">
       {/* Header */}
       <div className="border-border flex items-center justify-between border-b p-6">
         <Link
@@ -31,7 +31,11 @@ export default function AdminSidebar() {
         >
           <h1 className="font-script text-primary text-2xl">Admin Panel</h1>
         </Link>
-        <ThemeToggle />
+        {/*
+          Modo oscuro deshabilitado temporalmente.
+          Reactivar cuando bug esté resuelto:
+          <ThemeToggle />
+        */}
       </div>
 
       {/* Navigation - Scrollable */}

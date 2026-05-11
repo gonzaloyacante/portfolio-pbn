@@ -17,7 +17,7 @@ export default function PublicError({
   }, [error])
 
   return (
-    <div className="bg-background text-foreground flex min-h-[60vh] items-center justify-center p-4">
+    <div className="bg-background text-foreground flex min-h-[60dvh] items-center justify-center p-4">
       <div className="bg-card w-full max-w-lg rounded-2xl p-8 text-center shadow-lg">
         <h2 className="font-heading mb-4 text-2xl font-bold">Algo salió mal</h2>
         <p className="text-muted-foreground mb-6">

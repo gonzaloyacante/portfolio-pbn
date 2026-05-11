@@ -23,7 +23,7 @@ export default function MaintenanceModeView({ message, settings }: MaintenanceMo
 
   return (
     <div
-      className="bg-background text-foreground flex min-h-screen items-center justify-center p-4"
+      className="bg-background text-foreground flex min-h-dvh items-center justify-center p-4"
       style={{
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',

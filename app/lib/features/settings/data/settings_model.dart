@@ -17,6 +17,13 @@ abstract class AboutSettings with _$AboutSettings {
     String? profileImageUrl,
     String? profileImageAlt,
     String? profileImageShape,
+    @Default(true) bool profileImageShadowEnabled,
+    int? profileImageShadowBlur,
+    int? profileImageShadowSpread,
+    int? profileImageShadowOffsetX,
+    int? profileImageShadowOffsetY,
+    String? profileImageShadowColor,
+    int? profileImageShadowOpacity,
     String? illustrationUrl,
     String? illustrationAlt,
     @Default([]) List<String> skills,
@@ -149,6 +156,10 @@ abstract class HomeSettings with _$HomeSettings {
   const factory HomeSettings({
     String? id,
 
+    @Default(true) bool showHeroTitle1,
+    @Default(true) bool showHeroTitle2,
+    @Default(true) bool showOwnerName,
+
     // ── Título 1 ──
     String? heroTitle1Text,
     String? heroTitle1Font,
@@ -190,6 +201,28 @@ abstract class HomeSettings with _$HomeSettings {
     int? heroMainImageZIndex,
     int? heroMainImageOffsetX,
     int? heroMainImageOffsetY,
+
+    @Default(false) bool heroImmersiveEnabled,
+    @Default('auto') String heroBackdropMediaKind,
+    String? heroBackdropUrl,
+    String? heroBackdropPosterUrl,
+    @Default(true) bool heroBackdropLoop,
+    @Default(true) bool heroBackdropMuted,
+    @Default(true) bool heroBackdropPlaysInline,
+    @Default('cover') String heroBackdropObjectFit,
+    @Default('center') String heroBackdropObjectPosition,
+    String? heroBackdropMobileUrl,
+    String? heroBackdropMobileObjectPosition,
+    @Default(true) bool heroForegroundPortraitShow,
+    @Default('left') String heroScrimEdge,
+    @Default(45) int heroScrimExtentPercent,
+    @Default(80) int heroScrimOpacity,
+    String? heroScrimColor,
+    String? heroScrimColorDark,
+    @Default(50) int heroScrimFeatherPercent,
+    @Default(0) int heroBackdropTintOpacity,
+    int? heroScrimMobileExtentPercent,
+    int? heroScrimMobileOpacity,
 
     // ── Ilustración ──
     String? illustrationUrl,

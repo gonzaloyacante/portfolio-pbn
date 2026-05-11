@@ -69,8 +69,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
       ],
       body: bookingsAsync.when(
         loading: () => _buildContent(context, colorScheme, null, loading: true),
-        error: (e, _) => ErrorState(
-          message: e.toString(),
+        error: (e, _) => ErrorState.forFailure(
+          e,
           onRetry: () => ref.invalidate(bookingsListProvider),
         ),
         data: (paged) => _buildContent(context, colorScheme, paged.data),

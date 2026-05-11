@@ -37,6 +37,7 @@
 /* Base Styles */
 @layer base {
   :root {
+    --font-primary: var(--font-body);
     /* Light Mode - Professional & Clean */
     --background: #fff8fc;
     /* Very subtle pink-white (tinted) */
@@ -74,6 +75,9 @@
     /* Radius */
     --radius: 0.5rem;
 
+    /* Hero viewport minus sticky navbar (mobile nav is stacked taller than md row). */
+    --public-nav-offset: 12rem;
+
     /* Semantic Status Colors */
     --success: #10b981; /* Emerald-500 */
     --success-foreground: #ffffff;
@@ -86,6 +90,7 @@
   }
 
   .dark {
+    --font-primary: var(--font-body);
     /* Dark Mode - Elegant & Contrast */
     --background: #0f0505;
     /* Deep dark wine-black */
@@ -130,6 +135,12 @@
     --info-foreground: #000000;
   }
 
+  @media (min-width: 768px) {
+    :root {
+      --public-nav-offset: 5.25rem;
+    }
+  }
+
   * {
     @apply border-border;
   }
@@ -137,10 +148,15 @@
   body {
     @apply bg-background text-foreground transition-colors duration-300;
     font-family: var(--font-body);
+    font-size: var(--font-body-size, 1rem);
   }
 
   h1,
-  h2,
+  h2 {
+    @apply font-heading;
+    font-size: var(--font-heading-size, 1.875rem);
+  }
+
   h3,
   h4,
   h5,

@@ -46,9 +46,7 @@ extension _TrashPageBuilders on _TrashPageState {
         subtitle: 'No hay elementos eliminados',
       );
     }
-    final sections = filteredGrouped.entries
-        .where((e) => e.value.isNotEmpty)
-        .toList();
+    final sections = filteredGrouped.entries.toList();
 
     return LayoutBuilder(
       builder: (context, constraints) {

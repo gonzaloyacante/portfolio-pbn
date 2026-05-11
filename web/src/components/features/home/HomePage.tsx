@@ -1,4 +1,5 @@
 import { getHomeSettings } from '@/actions/settings/home'
+import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import HeroSection from '@/components/features/home/HeroSection'
 import FeaturedCategories from '@/components/features/home/FeaturedCategories'
 import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
@@ -8,10 +9,15 @@ import PublicTestimonialsSection from '@/components/features/testimonials/Public
  * Keeps route files thin while composing the public home feature.
  */
 export default async function HomePage() {
-  const homeSettings = await getHomeSettings()
+  const [homeSettings, testimonialSettings] = await Promise.all([
+    getHomeSettings(),
+    getTestimonialSettings(),
+  ])
+
+  const testimonialsInLayout = testimonialSettings?.showOnAll === true
 
   return (
-    <main className="flex w-full flex-1 flex-col items-center justify-between bg-(--background) transition-colors duration-500">
+    <div className="flex w-full flex-1 flex-col items-center justify-between bg-(--background) transition-colors duration-500">
       <HeroSection settings={homeSettings} />
 
       {homeSettings?.showFeaturedImages && (
@@ -26,7 +32,7 @@ export default async function HomePage() {
         />
       )}
 
-      <PublicTestimonialsSection />
-    </main>
+      {!testimonialsInLayout && <PublicTestimonialsSection />}
+    </div>
   )
 }

@@ -14,6 +14,9 @@ import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 
 export interface HomeSettingsData {
   id: string
+  showHeroTitle1: boolean
+  showHeroTitle2: boolean
+  showOwnerName: boolean
   // Título 1
   heroTitle1Text: string | null
   heroTitle1Font: string | null
@@ -56,6 +59,28 @@ export interface HomeSettingsData {
   heroMainImageZIndex: number | null
   heroMainImageOffsetX: number | null
   heroMainImageOffsetY: number | null
+
+  heroImmersiveEnabled: boolean
+  heroBackdropMediaKind: string | null
+  heroBackdropUrl: string | null
+  heroBackdropPosterUrl: string | null
+  heroBackdropLoop: boolean
+  heroBackdropMuted: boolean
+  heroBackdropPlaysInline: boolean
+  heroBackdropObjectFit: string | null
+  heroBackdropObjectPosition: string | null
+  heroBackdropMobileUrl: string | null
+  heroBackdropMobileObjectPosition: string | null
+  heroForegroundPortraitShow: boolean
+  heroScrimEdge: string | null
+  heroScrimExtentPercent: number | null
+  heroScrimOpacity: number | null
+  heroScrimColor: string | null
+  heroScrimColorDark: string | null
+  heroScrimFeatherPercent: number | null
+  heroBackdropTintOpacity: number | null
+  heroScrimMobileExtentPercent: number | null
+  heroScrimMobileOpacity: number | null
 
   illustrationUrl: string | null
   illustrationAlt: string | null
@@ -155,6 +180,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
       cleanData.heroTitle2FontUrl as string | undefined,
       cleanData.ownerNameFontUrl as string | undefined,
       cleanData.ctaFontUrl as string | undefined,
+      cleanData.featuredTitleFontUrl as string | undefined,
     ]
     for (const url of fontUrls) {
       if (!validateFontUrl(url)) {
@@ -172,6 +198,10 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
       cleanData.heroTitle2ColorDark as string | undefined,
       cleanData.ownerNameColor as string | undefined,
       cleanData.ownerNameColorDark as string | undefined,
+      cleanData.featuredTitleColor as string | undefined,
+      cleanData.featuredTitleColorDark as string | undefined,
+      cleanData.heroScrimColor as string | undefined,
+      cleanData.heroScrimColorDark as string | undefined,
     ]
     for (const color of colors) {
       if (!validateColor(color)) {
@@ -187,6 +217,9 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
     if (!settings) {
       // 4. Manual mapping for strict Type Safety during Creation
       const createData: Prisma.HomeSettingsCreateInput = {
+        showHeroTitle1: (cleanData.showHeroTitle1 as boolean) ?? true,
+        showHeroTitle2: (cleanData.showHeroTitle2 as boolean) ?? true,
+        showOwnerName: (cleanData.showOwnerName as boolean) ?? true,
         // Título 1
         heroTitle1Text: (cleanData.heroTitle1Text as string) ?? undefined,
         heroTitle1Font: (cleanData.heroTitle1Font as string) ?? undefined,

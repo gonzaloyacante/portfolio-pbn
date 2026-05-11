@@ -53,6 +53,10 @@ export const STATUS_COLORS = {
   info: '#2563eb', // Blue-600
 } as const
 
+// ─── Layout (tema CMS) ───────────────────────────────────────────────────────
+/** Radio por defecto — igual que Prisma `ThemeSettings.borderRadius` @default y seed `theme.ts`. */
+export const THEME_DEFAULT_BORDER_RADIUS = 40 as const
+
 // ─── Typography Defaults ──────────────────────────────────────────────────────
 export const TYPOGRAPHY_DEFAULTS = {
   headingFont: 'Poppins',
@@ -61,7 +65,6 @@ export const TYPOGRAPHY_DEFAULTS = {
   scriptFontSize: 24,
   bodyFont: 'Open Sans',
   bodyFontSize: 16,
-  borderRadius: 8,
 } as const
 
 // ─── Default Theme (defaults para `getThemeValues` sin DB) ───────────────────
@@ -86,8 +89,11 @@ export const DEFAULT_CSS_VARIABLES: Record<string, string> = {
   '--font-script-size': `${TYPOGRAPHY_DEFAULTS.scriptFontSize}px`,
   '--font-body': `"${TYPOGRAPHY_DEFAULTS.bodyFont}", sans-serif`,
   '--font-body-size': `${TYPOGRAPHY_DEFAULTS.bodyFontSize}px`,
+  '--font-brand-size': '112px',
+  '--font-portfolio-size': '96px',
+  '--font-signature-size': '36px',
 
-  '--radius': `${TYPOGRAPHY_DEFAULTS.borderRadius}px`,
+  '--radius': `${THEME_DEFAULT_BORDER_RADIUS}px`,
 }
 
 // ─── Reset Theme Defaults (para resetThemeToDefaults) ────────────────────────
@@ -113,7 +119,7 @@ export const RESET_THEME_DEFAULTS = {
   scriptFontSize: TYPOGRAPHY_DEFAULTS.scriptFontSize,
   bodyFont: TYPOGRAPHY_DEFAULTS.bodyFont,
   bodyFontSize: TYPOGRAPHY_DEFAULTS.bodyFontSize,
-  borderRadius: TYPOGRAPHY_DEFAULTS.borderRadius,
+  borderRadius: THEME_DEFAULT_BORDER_RADIUS,
 } as const
 
 // ─── Neutral Gray Scale ───────────────────────────────────────────────────────

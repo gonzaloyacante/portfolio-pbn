@@ -27,9 +27,7 @@ void main() {
     test('status defaults to NEW', () => expect(item.status, 'NEW'));
     test('priority defaults to MEDIUM', () => expect(item.priority, 'MEDIUM'));
     test('isRead defaults to false', () => expect(item.isRead, false));
-    test('isReplied defaults to false', () => expect(item.isReplied, false));
     test('readAt defaults to null', () => expect(item.readAt, isNull));
-    test('repliedAt defaults to null', () => expect(item.repliedAt, isNull));
     test('tags defaults to empty list', () => expect(item.tags, isEmpty));
   });
 
@@ -88,12 +86,10 @@ void main() {
         name: 'N',
         email: 'e@e.com',
         isRead: true,
-        isReplied: true,
         createdAt: now,
         updatedAt: now,
       );
       expect(item.isRead, true);
-      expect(item.isReplied, true);
     });
   });
 
@@ -175,7 +171,6 @@ void main() {
       'responsePreference defaults to EMAIL',
       () => expect(detail.responsePreference, 'EMAIL'),
     );
-    test('replyText defaults to null', () => expect(detail.replyText, isNull));
     test('adminNote defaults to null', () => expect(detail.adminNote, isNull));
     test('ipAddress defaults to null', () => expect(detail.ipAddress, isNull));
     test('utmSource defaults to null', () => expect(detail.utmSource, isNull));

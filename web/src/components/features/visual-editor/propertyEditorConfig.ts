@@ -7,6 +7,8 @@ import type { EditableElement } from './types'
  */
 
 type FieldConfig = {
+  /** Tamaño del botón CTA (sm | default | lg), sin confundir con `size` del retrato */
+  buttonSize?: keyof HomeSettingsData
   text?: keyof HomeSettingsData
   font?: keyof HomeSettingsData
   fontUrl?: keyof HomeSettingsData
@@ -27,6 +29,8 @@ type FieldConfig = {
   alt?: keyof HomeSettingsData
   showFeatured?: keyof HomeSettingsData
   featuredCount?: keyof HomeSettingsData
+  /** Mostrar/ocultar en web pública (editor siempre ve el bloque para editar) */
+  visible?: keyof HomeSettingsData
 }
 
 type MobileFieldConfig = {
@@ -52,8 +56,14 @@ type ControlConfig = {
 export type { FieldConfig, MobileFieldConfig, ControlConfig }
 
 export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfig> = {
+  heroBackdrop: {
+    fields: {},
+    defaults: {},
+    label: 'Fondo inmersivo',
+  },
   heroTitle1: {
     fields: {
+      visible: 'showHeroTitle1',
       text: 'heroTitle1Text',
       font: 'heroTitle1Font',
       fontUrl: 'heroTitle1FontUrl',
@@ -79,6 +89,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   heroTitle2: {
     fields: {
+      visible: 'showHeroTitle2',
       text: 'heroTitle2Text',
       font: 'heroTitle2Font',
       fontUrl: 'heroTitle2FontUrl',
@@ -104,6 +115,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   ownerName: {
     fields: {
+      visible: 'showOwnerName',
       text: 'ownerNameText',
       font: 'ownerNameFont',
       fontUrl: 'ownerNameFontUrl',
@@ -153,6 +165,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       text: 'ctaText',
       link: 'ctaLink',
       variant: 'ctaVariant',
+      buttonSize: 'ctaSize',
       font: 'ctaFont',
       fontUrl: 'ctaFontUrl',
       fontSize: 'ctaFontSize',

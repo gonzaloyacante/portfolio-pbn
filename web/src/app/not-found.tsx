@@ -3,7 +3,7 @@ import { ROUTES } from '@/config/routes'
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-8 px-4 text-center">
+    <div className="flex min-h-[70dvh] flex-col items-center justify-center gap-8 px-4 text-center">
       {/* Emoji decorativo */}
       <div className="text-8xl">🔍</div>
 

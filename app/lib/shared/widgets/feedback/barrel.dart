@@ -5,3 +5,4 @@ export 'app_snack_bar.dart';
 export 'confirm_dialog.dart';
 export 'help_tooltip.dart';
 export 'draft_restore_banner.dart';
+export 'offline_connectivity_banner.dart';

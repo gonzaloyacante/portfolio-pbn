@@ -49,6 +49,28 @@ export const homeSettings = {
   heroMainImageOffsetX: 0,
   heroMainImageOffsetY: -46,
 
+  heroImmersiveEnabled: false,
+  heroBackdropMediaKind: 'auto',
+  heroBackdropUrl: null,
+  heroBackdropPosterUrl: null,
+  heroBackdropLoop: true,
+  heroBackdropMuted: true,
+  heroBackdropPlaysInline: true,
+  heroBackdropObjectFit: 'cover',
+  heroBackdropObjectPosition: 'center',
+  heroBackdropMobileUrl: null,
+  heroBackdropMobileObjectPosition: null,
+  heroForegroundPortraitShow: true,
+  heroScrimEdge: 'left',
+  heroScrimExtentPercent: 45,
+  heroScrimOpacity: 80,
+  heroScrimColor: null,
+  heroScrimColorDark: null,
+  heroScrimFeatherPercent: 50,
+  heroBackdropTintOpacity: 0,
+  heroScrimMobileExtentPercent: null,
+  heroScrimMobileOpacity: null,
+
   // Illustration
   illustrationUrl:
     'https://res.cloudinary.com/djlknirsd/image/upload/v1771671681/pbn-prod/projects/j787hsm9buv1qcjx1jud.png',
@@ -110,9 +132,17 @@ export const aboutSettings = {
   // Illustration (to be set via admin)
   illustrationUrl: null,
   illustrationAlt: 'Ilustración sobre mí',
+  illustrationMaxPx: 112,
+  illustrationMobileMaxPx: 96,
 
   // Bio - Real Paola content
   bioTitle: 'Hola, soy Paola.',
+  bioTitleFont: null,
+  bioTitleFontUrl: null,
+  bioTitleFontSize: null,
+  bioTitleMobileFontSize: null,
+  bioTitleColor: null,
+  bioTitleColorDark: null,
   bioIntro:
     'Maquilladora especializada en audiovisuales, llevo formándome desde 2021 adquiriendo títulos como técnica en estética y belleza, y técnica en caracterización y maquillaje profesional.',
   bioDescription: `A lo largo de mis estudios y experiencia he trabajado en distintos entornos creativos que me han permitido desarrollar habilidades tanto en maquillaje social como en caracterización, efectos especiales, peluquería de plató y creación de personajes.
@@ -142,6 +172,22 @@ En este portfolio, encontrarás mis trabajos, cada uno fruto de dedicación, cre
     'Técnica en Estética y Belleza',
     'Técnica en Caracterización y Maquillaje Profesional',
   ],
+
+  isActive: true,
+}
+
+export const servicesPageSettings = {
+  id: 'default-services-page',
+
+  listTitle: 'Mis Servicios',
+  listIntro:
+    'Servicios profesionales de maquillaje para cada ocasión. Desde novias hasta producciones editoriales, cada look es único y personalizado.',
+  listTitleFont: null,
+  listTitleFontUrl: null,
+  listTitleFontSize: null,
+  listTitleMobileFontSize: null,
+  listTitleColor: null,
+  listTitleColorDark: null,
 
   isActive: true,
 }

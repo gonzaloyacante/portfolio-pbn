@@ -1,33 +1,40 @@
 import { prisma } from '@/lib/db'
 import { clsx } from 'clsx'
 import Link from 'next/link'
-import { Heart } from 'lucide-react'
+import { Heart, ImageOff, Palette } from 'lucide-react'
 import { FadeIn, OptimizedImage, StaggerChildren } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { getCategorySettings } from '@/actions/settings/categories'
+import { getContactSettings } from '@/actions/settings/contact'
 import { ROUTES } from '@/config/routes'
 import type { Metadata } from 'next'
 
-// ISR: revalidar cada 60s + on-demand via revalidatePath()
+/** ISR — alineado con `web/src/config/public-isr.ts` */
 export const revalidate = 60
 
-export const metadata: Metadata = {
-  title: 'Portfolio | Portfolio Paola Bolívar Nievas',
-  description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
-  alternates: {
-    canonical: ROUTES.public.portfolio,
-  },
-  openGraph: {
-    title: 'Portfolio | Portfolio Paola Bolívar Nievas',
-    description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
-    url: ROUTES.public.portfolio,
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Portfolio | Portfolio Paola Bolívar Nievas',
-    description: 'Explora mis trabajos de maquillaje social, caracterización, FX y más.',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const contact = await getContactSettings()
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const title = `Portfolio | ${ownerName}`
+  const description = 'Explora trabajos de maquillaje social, caracterización, FX y más.'
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: ROUTES.public.portfolio,
+    },
+    openGraph: {
+      title,
+      description,
+      url: ROUTES.public.portfolio,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  }
 }
 
 /**
@@ -98,7 +105,10 @@ export default async function PortfolioPage() {
                       </>
                     ) : (
                       <div className="bg-muted absolute inset-0 flex h-full w-full items-center justify-center">
-                        <span className="text-muted-foreground text-6xl">📷</span>
+                        <ImageOff
+                          className="text-muted-foreground size-14 shrink-0 sm:size-16"
+                          aria-hidden
+                        />
                       </div>
                     )}
 
@@ -154,7 +164,10 @@ export default async function PortfolioPage() {
           </StaggerChildren>
         ) : (
           <div className="flex flex-col items-center justify-center rounded-[3rem] bg-(--card-bg) py-24 text-center">
-            <span className="mb-4 text-6xl">🎨</span>
+            <Palette
+              className="text-muted-foreground mb-4 size-14 shrink-0 sm:size-16"
+              aria-hidden
+            />
             <h2 className="font-heading mb-2 text-2xl font-bold text-(--foreground)">
               Próximamente
             </h2>
@@ -165,7 +178,7 @@ export default async function PortfolioPage() {
         )}
 
         {/* Inline testimonials CTA */}
-        <FadeIn className="mt-12 flex items-center justify-center gap-3 border-t border-(--border) pt-10">
+        <FadeIn className="mt-14 flex flex-col items-center justify-center gap-3 border-t border-(--border) pt-12 sm:mt-16 sm:flex-row sm:pt-14">
           <span className="text-muted-foreground text-sm">¿Ya fui tu maquilladora?</span>
           <Link
             href={ROUTES.public.testimonialForm}

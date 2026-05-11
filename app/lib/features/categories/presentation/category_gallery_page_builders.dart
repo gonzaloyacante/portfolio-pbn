@@ -100,16 +100,13 @@ extension _CategoryGalleryPageBuilders on _CategoryGalleryPageState {
   ) {
     return async.when(
       loading: () => GallerySkeleton(viewMode: viewMode),
-      error: (e, _) => ErrorState(
-        message: e.toString(),
+      error: (e, _) => ErrorState.forFailure(
+        e,
         onRetry: () =>
             ref.invalidate(_categoryGalleryProvider(widget.categoryId)),
       ),
-      data: (images) {
+      data: (_) {
         if (_items == null) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) setState(() => _items = List.of(images));
-          });
           return GallerySkeleton(viewMode: viewMode);
         }
 

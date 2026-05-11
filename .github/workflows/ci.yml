@@ -40,6 +40,10 @@ jobs:
         working-directory: web
         run: pnpm prisma generate
 
+      - name: Audit migration coverage (no DB)
+        working-directory: web
+        run: pnpm audit:migrations
+
       - name: Type check
         working-directory: web
         run: pnpm type-check

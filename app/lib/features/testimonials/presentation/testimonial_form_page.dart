@@ -7,8 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
-import 'package:intl_phone_field/intl_phone_field.dart';
-
 import '../../../core/api/upload_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/draft_service.dart';
@@ -16,7 +14,9 @@ import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/testimonial_model.dart';
 import '../providers/testimonials_provider.dart';
+
 part 'testimonial_form_page_builders.dart';
+part 'testimonial_form_page_draft.dart';
 
 class TestimonialFormPage extends ConsumerStatefulWidget {
   const TestimonialFormPage({super.key, this.testimonialId});
@@ -34,7 +34,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
   final _nameCtrl = TextEditingController();
   final _textCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
-  String? _completePhone;
+  final _phoneCtrl = TextEditingController();
   final _positionCtrl = TextEditingController();
   final _companyCtrl = TextEditingController();
   final _avatarCtrl = TextEditingController();
@@ -59,6 +59,7 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
     _nameCtrl,
     _textCtrl,
     _emailCtrl,
+    _phoneCtrl,
     _positionCtrl,
     _companyCtrl,
     _avatarCtrl,
@@ -68,59 +69,14 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _checkDraft();
-  }
-
-  Future<void> _checkDraft() async {
-    final has = await ref.read(draftServiceProvider).hasDraft(_draftScope);
-    if (mounted && has) setState(() => _hasDraft = true);
-  }
-
-  Future<void> _restoreDraft() async {
-    final data = await ref.read(draftServiceProvider).load(_draftScope);
-    if (data == null || !mounted) return;
-    setState(() {
-      _nameCtrl.text = data['name'] as String? ?? '';
-      _textCtrl.text = data['text'] as String? ?? '';
-      _emailCtrl.text = data['email'] as String? ?? '';
-      _positionCtrl.text = data['position'] as String? ?? '';
-      _companyCtrl.text = data['company'] as String? ?? '';
-      _rating = data['rating'] as int? ?? 5;
-      _verified = data['verified'] as bool? ?? false;
-      _featured = data['featured'] as bool? ?? false;
-      _isActive = data['isActive'] as bool? ?? true;
-      _status = data['status'] as String? ?? 'PENDING';
-      _isDirty = true;
-      _hasDraft = false;
-    });
-  }
-
-  Future<void> _discardDraft() async {
-    await ref.read(draftServiceProvider).clear(_draftScope);
-    if (mounted) setState(() => _hasDraft = false);
-  }
-
-  Future<void> _saveDraft() async {
-    if (!_isDirty) return;
-    await ref.read(draftServiceProvider).save(_draftScope, {
-      'name': _nameCtrl.text,
-      'text': _textCtrl.text,
-      'email': _emailCtrl.text,
-      'position': _positionCtrl.text,
-      'company': _companyCtrl.text,
-      'rating': _rating,
-      'verified': _verified,
-      'featured': _featured,
-      'isActive': _isActive,
-      'status': _status,
-    });
+    checkDraft();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.inactive) {
-      _saveDraft();
+      saveDraftToDisk();
     }
   }
 
@@ -135,35 +91,54 @@ class _TestimonialFormPageState extends ConsumerState<TestimonialFormPage>
 
   @override
   Widget build(BuildContext context) {
-    Widget body = _buildBody(context);
+    late final Widget body;
 
     if (_isEdit) {
-      final detailAsync = ref.watch(
-        testimonialDetailProvider(widget.testimonialId!),
+      final tid = widget.testimonialId!;
+      ref.listen<AsyncValue<TestimonialDetail>>(
+        testimonialDetailProvider(tid),
+        (_, next) {
+          next.whenData((detail) {
+            if (!mounted || _populated || _isDirty) {
+              return;
+            }
+            _populateForm(detail);
+          });
+        },
       );
+      final detailAsync = ref.watch(testimonialDetailProvider(tid));
       body = detailAsync.when(
         loading: () =>
             const SkeletonSettingsPage(cardCount: 4, fieldsPerCard: 3),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (detail) {
-          _populateForm(detail);
-          return body;
-        },
+        error: (e, _) => Center(
+          child: ErrorState.forFailure(
+            e,
+            fallbackMessage: 'No se pudo cargar el testimonio',
+            onRetry: () => ref.invalidate(testimonialDetailProvider(tid)),
+          ),
+        ),
+        data: (_) => _buildBody(context),
       );
+    } else {
+      body = _buildBody(context);
     }
 
     return LoadingOverlay(
       isLoading: _loading,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-            tooltip: 'Volver',
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) => _maybeLeave(context),
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => _maybeLeave(context),
+              tooltip: 'Volver',
+            ),
+            title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),
           ),
-          title: Text(_isEdit ? 'Editar testimonio' : 'Nuevo testimonio'),
+          body: body,
         ),
-        body: body,
       ),
     );
   }

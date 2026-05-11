@@ -15,6 +15,12 @@ double _eff(
   bool isMobile,
 ) => effectivePreviewValue(vals, baseKey, mobileKey, fallback, isMobile);
 
+bool _previewShow(Map<String, Object?> vals, String key) {
+  final v = vals[key];
+  if (v is bool) return v;
+  return true;
+}
+
 // ── LiveHeroPreviewSignature ──────────────────────────────────────────────────
 
 /// Renders the owner signature + illustration section of the hero preview.
@@ -29,6 +35,8 @@ class LiveHeroPreviewSignature extends StatelessWidget {
     required this.currentIllustrationUrl,
     required this.isMobile,
     required this.isDarkMode,
+    this.onTapIllustration,
+    this.onTapOwnerName,
   });
 
   final Map<String, Object?> vals;
@@ -38,6 +46,8 @@ class LiveHeroPreviewSignature extends StatelessWidget {
   final String currentIllustrationUrl;
   final bool isMobile;
   final bool isDarkMode;
+  final VoidCallback? onTapIllustration;
+  final VoidCallback? onTapOwnerName;
 
   Widget _buildIllustration() {
     if (pendingIllustration != null) {
@@ -126,29 +136,56 @@ class LiveHeroPreviewSignature extends StatelessWidget {
     );
     final illOpac = (vals['illustrationOpacity'] as num?)?.toDouble() ?? 100.0;
 
-    final signatureWidget = Transform.translate(
-      offset: Offset(effOwnX, effOwnY),
-      child: Text(
-        owner,
-        style: getFontSafe(
-          ownFontName,
-          const TextStyle(fontWeight: FontWeight.w700),
-        ).copyWith(fontSize: effOwnSize, color: ownColor, letterSpacing: 2.0),
-      ),
-    );
+    final showOwner = _previewShow(vals, 'showOwnerName');
+    final signatureWidget = showOwner
+        ? Transform.translate(
+            offset: Offset(effOwnX, effOwnY),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onTapOwnerName,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4,
+                    horizontal: 2,
+                  ),
+                  child: Text(
+                    owner,
+                    style:
+                        getFontSafe(
+                          ownFontName,
+                          const TextStyle(fontWeight: FontWeight.w700),
+                        ).copyWith(
+                          fontSize: effOwnSize,
+                          color: ownColor,
+                          letterSpacing: 2.0,
+                        ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
 
     final illustrationWidget = Transform.translate(
       offset: Offset(effIllX, effIllY),
-      child: Transform.rotate(
-        angle: effIllRot * 3.14159 / 180,
-        child: Opacity(
-          opacity: (illOpac / 100).clamp(0.0, 1.0),
-          child: SizedBox(
-            width: isMobile ? 96 : 320,
-            height: isMobile ? 96 : 320,
-            child: Transform.scale(
-              scale: effIllScale,
-              child: _buildIllustration(),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTapIllustration,
+          customBorder: const CircleBorder(),
+          child: Transform.rotate(
+            angle: effIllRot * 3.14159 / 180,
+            child: Opacity(
+              opacity: (illOpac / 100).clamp(0.0, 1.0),
+              child: SizedBox(
+                width: isMobile ? 96 : 320,
+                height: isMobile ? 96 : 320,
+                child: Transform.scale(
+                  scale: effIllScale,
+                  child: _buildIllustration(),
+                ),
+              ),
             ),
           ),
         ),
@@ -188,6 +225,9 @@ class LiveHeroPreviewHeader extends StatelessWidget {
     required this.isMobile,
     required this.isDarkMode,
     required this.primaryColor,
+    this.onTapTexts,
+    this.onTapIllustration,
+    this.onTapOwnerName,
   });
 
   final Map<String, Object?> vals;
@@ -200,6 +240,9 @@ class LiveHeroPreviewHeader extends StatelessWidget {
   final bool isMobile;
   final bool isDarkMode;
   final Color primaryColor;
+  final VoidCallback? onTapTexts;
+  final VoidCallback? onTapIllustration;
+  final VoidCallback? onTapOwnerName;
 
   @override
   Widget build(BuildContext context) {
@@ -269,46 +312,71 @@ class LiveHeroPreviewHeader extends StatelessWidget {
         (isDarkMode ? AppColors.darkAccent : AppColors.lightAccent);
     final t2FontName = extraCtrls['heroTitle2Font']?.text ?? 'Poppins';
 
+    Widget wrapTap(VoidCallback? onTap, Widget child) {
+      if (onTap == null) return child;
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: child,
+          ),
+        ),
+      );
+    }
+
     final title1Widget = Transform.translate(
       offset: Offset(effT1X, effT1Y),
-      child: Text(
-        title1,
-        textAlign: isMobile ? TextAlign.center : TextAlign.left,
-        style: getFontSafe(
-          t1FontName,
-          const TextStyle(),
-        ).copyWith(fontSize: effT1Size, color: t1Color, height: 0.9),
+      child: wrapTap(
+        onTapTexts,
+        Text(
+          title1,
+          textAlign: isMobile ? TextAlign.center : TextAlign.left,
+          style: getFontSafe(
+            t1FontName,
+            const TextStyle(),
+          ).copyWith(fontSize: effT1Size, color: t1Color, height: 0.9),
+        ),
       ),
     );
 
     final title2Widget = Transform.translate(
       offset: Offset(effT2X, effT2Y),
-      child: Text(
-        title2,
-        textAlign: isMobile ? TextAlign.center : TextAlign.left,
-        style:
-            getFontSafe(
-              t2FontName,
-              const TextStyle(fontWeight: FontWeight.bold),
-            ).copyWith(
-              fontSize: effT2Size,
-              color: t2Color,
-              height: 1.0,
-              letterSpacing: -1,
-            ),
+      child: wrapTap(
+        onTapTexts,
+        Text(
+          title2,
+          textAlign: isMobile ? TextAlign.center : TextAlign.left,
+          style:
+              getFontSafe(
+                t2FontName,
+                const TextStyle(fontWeight: FontWeight.bold),
+              ).copyWith(
+                fontSize: effT2Size,
+                color: t2Color,
+                height: 1.0,
+                letterSpacing: -1,
+              ),
+        ),
       ),
     );
 
+    final showT1 = _previewShow(vals, 'showHeroTitle1');
+    final showT2 = _previewShow(vals, 'showHeroTitle2');
+
     if (isMobile) {
-      return Column(children: [title1Widget, title2Widget]);
+      return Column(
+        children: [if (showT1) title1Widget, if (showT2) title2Widget],
+      );
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        title1Widget,
-        title2Widget,
+        if (showT1) title1Widget,
+        if (showT2) title2Widget,
         const SizedBox(height: 24),
         LiveHeroPreviewSignature(
           vals: vals,
@@ -318,6 +386,8 @@ class LiveHeroPreviewHeader extends StatelessWidget {
           currentIllustrationUrl: currentIllustrationUrl,
           isMobile: false,
           isDarkMode: isDarkMode,
+          onTapIllustration: onTapIllustration,
+          onTapOwnerName: onTapOwnerName,
         ),
       ],
     );

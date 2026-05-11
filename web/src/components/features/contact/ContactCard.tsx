@@ -45,11 +45,6 @@ export function ContactCard({
                 Nuevo
               </span>
             )}
-            {contact.isReplied && (
-              <span className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-bold">
-                ✓
-              </span>
-            )}
             {STATUS_LABEL[contact.status] && (
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-bold ${STATUS_CLASS[contact.status]}`}

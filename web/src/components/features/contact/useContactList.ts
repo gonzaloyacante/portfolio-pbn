@@ -19,7 +19,6 @@ export function useContactList(contacts: Contact[]) {
 
   const filteredContacts = contacts.filter((contact) => {
     if (filter === 'unread') return !contact.isRead
-    if (filter === 'replied') return contact.isReplied
     if (filter === 'important') return importantIds.has(contact.id)
     return true
   })

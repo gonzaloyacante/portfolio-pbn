@@ -51,10 +51,6 @@ const mockContactDetail = {
   isRead: false,
   readAt: null,
   readBy: null,
-  isReplied: false,
-  repliedAt: null,
-  repliedBy: null,
-  replyText: null,
   adminNote: null,
   tags: [],
   ipAddress: null,
@@ -223,65 +219,6 @@ describe('PATCH /api/admin/contacts/[id]', () => {
 
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
-  })
-
-  it('marks as replied when replyText provided and not previously replied', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce({
-      ...mockContactDetail,
-      isReplied: false,
-    } as any)
-    vi.mocked(prisma.contact.update).mockResolvedValueOnce({
-      ...mockContactDetail,
-      isReplied: true,
-      replyText: 'Gracias por tu consulta.',
-    } as any)
-
-    const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
-    const params = Promise.resolve({ id: 'contact-1' })
-    await PATCH(
-      makeRequest(BASE_URL, { method: 'PATCH', body: { replyText: 'Gracias por tu consulta.' } }),
-      { params }
-    )
-
-    expect(prisma.contact.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.objectContaining({
-          replyText: 'Gracias por tu consulta.',
-          isReplied: true,
-          repliedAt: expect.any(Date),
-        }),
-      })
-    )
-  })
-
-  it('does not re-mark as replied when already replied', async () => {
-    const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.contact.findUnique).mockResolvedValueOnce({
-      ...mockContactDetail,
-      isReplied: true,
-      repliedAt: new Date(),
-    } as any)
-    vi.mocked(prisma.contact.update).mockResolvedValueOnce({
-      ...mockContactDetail,
-      isReplied: true,
-    } as any)
-
-    const { PATCH } = await import('@/app/api/admin/contacts/[id]/route')
-    const params = Promise.resolve({ id: 'contact-1' })
-    await PATCH(makeRequest(BASE_URL, { method: 'PATCH', body: { replyText: 'Updated reply' } }), {
-      params,
-    })
-
-    // Should NOT include isReplied: true / repliedAt in update since already replied
-    expect(prisma.contact.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        data: expect.not.objectContaining({
-          isReplied: true,
-          repliedAt: expect.any(Date),
-        }),
-      })
-    )
   })
 
   it('returns 500 on DB error', async () => {

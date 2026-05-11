@@ -147,11 +147,13 @@ extension _CalendarPageBuilders on _CalendarPageState {
             physics: const AlwaysScrollableScrollPhysics(),
             children: const [EmptyDay()],
           )
-        : ListView.separated(
+        : AdaptiveTileListScroll(
+            horizontalPadding: hPad,
+            scrollPadding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
+            separatorExtent: 8,
+            estimatedTileHeight: 104,
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(hPad, 0, hPad, AppSpacing.xl),
             itemCount: dayItems.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 8),
             itemBuilder: (_, i) =>
                 RepaintBoundary(child: BookingCard(dayItems[i])),
           );

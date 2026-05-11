@@ -50,8 +50,12 @@ class AppUpdatePage extends ConsumerWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
           ),
         ),
-        body: Center(
+        body: RefreshIndicator(
+          onRefresh: () async {
+            ref.read(appUpdatePageProvider.notifier).retry();
+          },
           child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.symmetric(
               horizontal: size.width > 600 ? size.width * 0.2 : 24.0,
               vertical: 24.0,
