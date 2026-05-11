@@ -74,6 +74,12 @@ extension _SettingsHomeForm on _SettingsHomePageState {
       );
     }
 
+    final vpLabel = switch (_previewDevice) {
+      'mobile' => '375×812',
+      'tablet' => '768×1024',
+      _ => '1280×900',
+    };
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -109,21 +115,82 @@ extension _SettingsHomeForm on _SettingsHomePageState {
             currentIllustrationUrl: _extraCtrls['illustrationUrl']?.text ?? '',
             device: _previewDevice,
             isDarkMode: _previewDarkMode,
+            onSelectPanel: (panel) => _rebuild(() => _editorPanel = panel),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(
-          "El simulador escala el viewport (${_previewDevice == 'mobile'
-              ? '390px'
-              : _previewDevice == 'tablet'
-              ? '768px'
-              : '1200px'}) a esta caja en tiempo real. Utilízalo para probar los overrides móviles.",
+          'Viewport $vpLabel px — igual que el CMS web. Máx. alto vista ${650}px. '
+          'Toca títulos, foto, CTA o fondo para abrir ese panel.',
           style: theme.textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurface.withValues(alpha: 150 / 255),
             fontStyle: FontStyle.italic,
           ),
           textAlign: TextAlign.center,
         ),
+      ],
+    );
+  }
+
+  Widget _buildPanelChips(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (final p in HomeEditorPanel.values)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                selected: _editorPanel == p,
+                showCheckmark: false,
+                avatar: Icon(p.icon, size: 18),
+                label: Text(p.label),
+                onSelected: (_) => _rebuild(() => _editorPanel = p),
+                selectedColor: cs.primaryContainer,
+                checkmarkColor: cs.onPrimaryContainer,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActiveEditorPanel(BuildContext context) {
+    return switch (_editorPanel) {
+      HomeEditorPanel.texts => _buildHeroTextsSection(),
+      HomeEditorPanel.immersive => _buildImmersiveSection(),
+      HomeEditorPanel.heroImage => _buildHeroImageSection(),
+      HomeEditorPanel.illustration => _buildIllustrationSection(),
+      HomeEditorPanel.cta => _buildCtaSection(),
+      HomeEditorPanel.featured => _buildFeaturedSection(),
+      HomeEditorPanel.position => _buildPositionSection(),
+      HomeEditorPanel.mobile => _buildMobileSection(),
+    };
+  }
+
+  Widget _buildEditorColumn(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildPanelChips(context),
+        const SizedBox(height: AppSpacing.md),
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          child: KeyedSubtree(
+            key: ValueKey(_editorPanel),
+            child: _buildActiveEditorPanel(context),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        FilledButton.icon(
+          onPressed: _saving ? null : _save,
+          icon: const Icon(Icons.save_outlined),
+          label: const Text('Guardar cambios'),
+        ),
+        const SizedBox(height: AppSpacing.base),
       ],
     );
   }
@@ -135,75 +202,55 @@ extension _SettingsHomeForm on _SettingsHomePageState {
       context,
       compact: double.infinity,
       medium: 760,
-      expanded: 1200,
+      expanded: 1400,
     );
 
-    final formContent = _buildFormContent(context);
+    final editor = _buildEditorColumn(context);
 
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
+    final scrollBody = isExpanded
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 55,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.only(right: AppSpacing.sm),
+                  child: editor,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.xl),
+              Expanded(
+                flex: 45,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: StickyPreviewColumn(
+                    preview: _buildHeroPreview(context),
+                  ),
+                ),
+              ),
+            ],
+          )
+        : SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CollapsiblePreview(preview: _buildHeroPreview(context)),
+                const SizedBox(height: AppSpacing.md),
+                editor,
+              ],
+            ),
+          );
+
+    return Padding(
       padding: padding,
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxWidth),
-          child: isExpanded
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 58,
-                      child: Padding(
-                        padding: EdgeInsets.zero,
-                        child: formContent,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.xl),
-                    Expanded(
-                      flex: 42,
-                      child: StickyPreviewColumn(
-                        preview: _buildHeroPreview(context),
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CollapsiblePreview(preview: _buildHeroPreview(context)),
-                    const SizedBox(height: AppSpacing.md),
-                    formContent,
-                  ],
-                ),
+          child: scrollBody,
         ),
       ),
-    );
-  }
-
-  Widget _buildFormContent(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _buildHeroTextsSection(),
-        const SizedBox(height: AppSpacing.md),
-        _buildHeroImageSection(),
-        const SizedBox(height: AppSpacing.md),
-        _buildIllustrationSection(),
-        const SizedBox(height: AppSpacing.md),
-        _buildCtaSection(),
-        const SizedBox(height: AppSpacing.md),
-        _buildFeaturedSection(),
-        const SizedBox(height: AppSpacing.md),
-        _buildPositionSection(),
-        const SizedBox(height: AppSpacing.md),
-        _buildMobileSection(),
-        const SizedBox(height: AppSpacing.xl),
-        FilledButton.icon(
-          onPressed: _saving ? null : _save,
-          icon: const Icon(Icons.save_outlined),
-          label: const Text('Guardar cambios'),
-        ),
-        const SizedBox(height: AppSpacing.base),
-      ],
     );
   }
 }

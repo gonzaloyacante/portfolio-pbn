@@ -14,6 +14,7 @@ import '../../../core/utils/app_logger.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
+import 'home_editor_panel.dart';
 import 'widgets/settings_form_card.dart';
 import 'widgets/collapsible_preview.dart';
 import 'widgets/featured_count_picker.dart';
@@ -62,6 +63,12 @@ class _SettingsHomePageState extends ConsumerState<SettingsHomePage> {
   // Preview options
   String _previewDevice = 'desktop'; // desktop, tablet, mobile
   bool _previewDarkMode = false;
+
+  /// Panel activo (propiedades por zona; tap en preview también cambia).
+  HomeEditorPanel _editorPanel = HomeEditorPanel.texts;
+
+  /// Evita marcar dirty al rellenar controllers en [_populate].
+  bool _mutePreviewListeners = false;
 
   // Extended design fields (fonts, font URLs, colors, caption, alt texts)
   final Map<String, TextEditingController> _extraCtrls = {};

@@ -11,8 +11,13 @@ extension _HomePageActions on _SettingsHomePageState {
     setState(() => _previewDarkMode = !_previewDarkMode);
   }
 
-  TextEditingController _ctrl(String key) =>
-      _extraCtrls.putIfAbsent(key, TextEditingController.new);
+  TextEditingController _ctrl(String key) {
+    return _extraCtrls.putIfAbsent(key, () {
+      final c = TextEditingController();
+      c.addListener(_onPreviewChange);
+      return c;
+    });
+  }
 
   int _intVal(String key, [int fallback = 0]) =>
       (_vals[key] as num?)?.toInt() ?? fallback;
@@ -23,6 +28,7 @@ extension _HomePageActions on _SettingsHomePageState {
   void _setVal(String key, Object? v) => setState(() => _vals[key] = v);
 
   void _onPreviewChange() {
+    if (_mutePreviewListeners) return;
     _markDirty();
     setState(() {});
   }
@@ -49,6 +55,15 @@ extension _HomePageActions on _SettingsHomePageState {
   // ── Populate ───────────────────────────────────────────────────────────
 
   void _populate(HomeSettings s) {
+    _mutePreviewListeners = true;
+    try {
+      _populateInner(s);
+    } finally {
+      _mutePreviewListeners = false;
+    }
+  }
+
+  void _populateInner(HomeSettings s) {
     // Core text controllers
     _title1Ctrl.text = s.heroTitle1Text ?? '';
     _title2Ctrl.text = s.heroTitle2Text ?? '';
@@ -82,6 +97,14 @@ extension _HomePageActions on _SettingsHomePageState {
     _ctrl('featuredTitleFontUrl').text = s.featuredTitleFontUrl ?? '';
     _ctrl('featuredTitleColor').text = s.featuredTitleColor ?? '';
     _ctrl('featuredTitleColorDark').text = s.featuredTitleColorDark ?? '';
+    _ctrl('heroBackdropUrl').text = s.heroBackdropUrl ?? '';
+    _ctrl('heroBackdropPosterUrl').text = s.heroBackdropPosterUrl ?? '';
+    _ctrl('heroBackdropMobileUrl').text = s.heroBackdropMobileUrl ?? '';
+    _ctrl('heroBackdropObjectPosition').text = s.heroBackdropObjectPosition;
+    _ctrl('heroBackdropMobileObjectPosition').text =
+        s.heroBackdropMobileObjectPosition ?? '';
+    _ctrl('heroScrimColor').text = s.heroScrimColor ?? '';
+    _ctrl('heroScrimColorDark').text = s.heroScrimColorDark ?? '';
 
     // Numeric / enum values
     _vals.addAll({
@@ -106,21 +129,14 @@ extension _HomePageActions on _SettingsHomePageState {
       'heroMainImageOffsetY': s.heroMainImageOffsetY,
       'heroImmersiveEnabled': s.heroImmersiveEnabled,
       'heroBackdropMediaKind': s.heroBackdropMediaKind,
-      'heroBackdropUrl': s.heroBackdropUrl,
-      'heroBackdropPosterUrl': s.heroBackdropPosterUrl,
       'heroBackdropLoop': s.heroBackdropLoop,
       'heroBackdropMuted': s.heroBackdropMuted,
       'heroBackdropPlaysInline': s.heroBackdropPlaysInline,
       'heroBackdropObjectFit': s.heroBackdropObjectFit,
-      'heroBackdropObjectPosition': s.heroBackdropObjectPosition,
-      'heroBackdropMobileUrl': s.heroBackdropMobileUrl,
-      'heroBackdropMobileObjectPosition': s.heroBackdropMobileObjectPosition,
       'heroForegroundPortraitShow': s.heroForegroundPortraitShow,
       'heroScrimEdge': s.heroScrimEdge,
       'heroScrimExtentPercent': s.heroScrimExtentPercent,
       'heroScrimOpacity': s.heroScrimOpacity,
-      'heroScrimColor': s.heroScrimColor,
-      'heroScrimColorDark': s.heroScrimColorDark,
       'heroScrimFeatherPercent': s.heroScrimFeatherPercent,
       'heroBackdropTintOpacity': s.heroBackdropTintOpacity,
       'heroScrimMobileExtentPercent': s.heroScrimMobileExtentPercent,
