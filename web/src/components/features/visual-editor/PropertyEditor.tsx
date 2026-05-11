@@ -20,6 +20,7 @@ import { MobileOverridableSlider } from './components/MobileOverridableSlider'
 import { MobileOverridablePosition } from './components/MobileOverridablePosition'
 import { ELEMENT_CONFIG } from './propertyEditorConfig'
 import type { EditableElement, ViewportMode } from './types'
+import { HeroBackdropPropertyEditor } from './HeroBackdropPropertyEditor'
 
 const IMAGE_STYLES = [
   { value: 'original', label: 'Original' },
@@ -45,6 +46,16 @@ interface PropertyEditorProps {
  * edit mobile-specific DB fields. Non-overridable properties are shared across viewports.
  */
 export function PropertyEditor({ element, settings, onUpdate, viewportMode }: PropertyEditorProps) {
+  if (element === 'heroBackdrop') {
+    return (
+      <HeroBackdropPropertyEditor
+        settings={settings}
+        onUpdate={onUpdate}
+        viewportMode={viewportMode}
+      />
+    )
+  }
+
   const config = ELEMENT_CONFIG[element]
 
   if (!config) {
@@ -104,6 +115,19 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
             onChange={(val: string) => onUpdate(fields.variant as keyof HomeSettingsData, val)}
           />
         </div>
+      )}
+
+      {fields.buttonSize && (
+        <EditorSelectControl
+          label="Tamaño del botón"
+          value={(settings[fields.buttonSize] as string) ?? 'default'}
+          options={[
+            { value: 'sm', label: 'Pequeño' },
+            { value: 'default', label: 'Normal' },
+            { value: 'lg', label: 'Grande' },
+          ]}
+          onChange={(val: string) => onUpdate(fields.buttonSize as keyof HomeSettingsData, val)}
+        />
       )}
 
       {fields.imageUrl && (

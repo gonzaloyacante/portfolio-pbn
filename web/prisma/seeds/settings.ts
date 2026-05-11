@@ -49,6 +49,28 @@ export const homeSettings = {
   heroMainImageOffsetX: 0,
   heroMainImageOffsetY: -46,
 
+  heroImmersiveEnabled: false,
+  heroBackdropMediaKind: 'auto',
+  heroBackdropUrl: null,
+  heroBackdropPosterUrl: null,
+  heroBackdropLoop: true,
+  heroBackdropMuted: true,
+  heroBackdropPlaysInline: true,
+  heroBackdropObjectFit: 'cover',
+  heroBackdropObjectPosition: 'center',
+  heroBackdropMobileUrl: null,
+  heroBackdropMobileObjectPosition: null,
+  heroForegroundPortraitShow: true,
+  heroScrimEdge: 'left',
+  heroScrimExtentPercent: 45,
+  heroScrimOpacity: 80,
+  heroScrimColor: null,
+  heroScrimColorDark: null,
+  heroScrimFeatherPercent: 50,
+  heroBackdropTintOpacity: 0,
+  heroScrimMobileExtentPercent: null,
+  heroScrimMobileOpacity: null,
+
   // Illustration
   illustrationUrl:
     'https://res.cloudinary.com/djlknirsd/image/upload/v1771671681/pbn-prod/projects/j787hsm9buv1qcjx1jud.png',

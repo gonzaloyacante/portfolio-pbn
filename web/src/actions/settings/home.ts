@@ -60,6 +60,28 @@ export interface HomeSettingsData {
   heroMainImageOffsetX: number | null
   heroMainImageOffsetY: number | null
 
+  heroImmersiveEnabled: boolean
+  heroBackdropMediaKind: string | null
+  heroBackdropUrl: string | null
+  heroBackdropPosterUrl: string | null
+  heroBackdropLoop: boolean
+  heroBackdropMuted: boolean
+  heroBackdropPlaysInline: boolean
+  heroBackdropObjectFit: string | null
+  heroBackdropObjectPosition: string | null
+  heroBackdropMobileUrl: string | null
+  heroBackdropMobileObjectPosition: string | null
+  heroForegroundPortraitShow: boolean
+  heroScrimEdge: string | null
+  heroScrimExtentPercent: number | null
+  heroScrimOpacity: number | null
+  heroScrimColor: string | null
+  heroScrimColorDark: string | null
+  heroScrimFeatherPercent: number | null
+  heroBackdropTintOpacity: number | null
+  heroScrimMobileExtentPercent: number | null
+  heroScrimMobileOpacity: number | null
+
   illustrationUrl: string | null
   illustrationAlt: string | null
   illustrationZIndex: number | null
@@ -178,6 +200,8 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
       cleanData.ownerNameColorDark as string | undefined,
       cleanData.featuredTitleColor as string | undefined,
       cleanData.featuredTitleColorDark as string | undefined,
+      cleanData.heroScrimColor as string | undefined,
+      cleanData.heroScrimColorDark as string | undefined,
     ]
     for (const color of colors) {
       if (!validateColor(color)) {

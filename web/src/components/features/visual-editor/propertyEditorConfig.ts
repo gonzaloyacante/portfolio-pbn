@@ -7,6 +7,8 @@ import type { EditableElement } from './types'
  */
 
 type FieldConfig = {
+  /** Tamaño del botón CTA (sm | default | lg), sin confundir con `size` del retrato */
+  buttonSize?: keyof HomeSettingsData
   text?: keyof HomeSettingsData
   font?: keyof HomeSettingsData
   fontUrl?: keyof HomeSettingsData
@@ -54,6 +56,11 @@ type ControlConfig = {
 export type { FieldConfig, MobileFieldConfig, ControlConfig }
 
 export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfig> = {
+  heroBackdrop: {
+    fields: {},
+    defaults: {},
+    label: 'Fondo inmersivo',
+  },
   heroTitle1: {
     fields: {
       visible: 'showHeroTitle1',
@@ -158,6 +165,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       text: 'ctaText',
       link: 'ctaLink',
       variant: 'ctaVariant',
+      buttonSize: 'ctaSize',
       font: 'ctaFont',
       fontUrl: 'ctaFontUrl',
       fontSize: 'ctaFontSize',

@@ -52,6 +52,36 @@ model HomeSettings {
   heroMainImageOffsetX Int?    @default(0)
   heroMainImageOffsetY Int?    @default(0)
 
+  // ===== HERO FONDO INMERSIVO (full-bleed bajo navbar; imagen / vídeo / GIF Cloudinary) =====
+  heroImmersiveEnabled Boolean @default(false)
+  /// auto | image | video — auto detecta Cloudinary /video/upload y extensiones .mp4/.webm/.mov
+  heroBackdropMediaKind String @default("auto")
+  heroBackdropUrl              String?
+  heroBackdropPosterUrl        String?
+  heroBackdropLoop             Boolean @default(true)
+  heroBackdropMuted            Boolean @default(true)
+  heroBackdropPlaysInline      Boolean @default(true)
+  /// cover | contain
+  heroBackdropObjectFit       String @default("cover")
+  heroBackdropObjectPosition    String @default("center")
+  heroBackdropMobileUrl         String?
+  heroBackdropMobileObjectPosition String?
+  /// Retrato inline en columna derecha cuando hay fondo inmersivo
+  heroForegroundPortraitShow Boolean @default(true)
+
+  /// Borde del degradado lateral: left | right | both | none
+  heroScrimEdge           String @default("left")
+  heroScrimExtentPercent  Int    @default(45)
+  heroScrimOpacity        Int    @default(80)
+  heroScrimColor          String?
+  heroScrimColorDark      String?
+  /// Suavidad del degradado (0 = duro, 100 = muy suave)
+  heroScrimFeatherPercent Int    @default(50)
+  /// Oscurecimiento uniforme 0–100 sobre todo el fondo
+  heroBackdropTintOpacity Int    @default(0)
+  heroScrimMobileExtentPercent Int?
+  heroScrimMobileOpacity        Int?
+
   // ===== ILUSTRACIÓN =====
   illustrationUrl      String?
   illustrationAlt      String? @default("Ilustración maquilladora")

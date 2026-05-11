@@ -4,6 +4,7 @@ import MaintenanceModeView from '@/components/layout/MaintenanceModeView'
 import Navbar from '@/components/layout/Navbar'
 import JsonLd from '@/components/seo/JsonLd'
 import { getContactSettings } from '@/actions/settings/contact'
+import { getHomeSettings } from '@/actions/settings/home'
 import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import PublicTestimonialsSection from '@/components/features/testimonials/PublicTestimonialsSection'
@@ -89,10 +90,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [contactSettings, visibility, testimonialSettings] = await Promise.all([
+  const [contactSettings, visibility, testimonialSettings, homeSettings] = await Promise.all([
     getContactSettings(),
     getPageVisibility(),
     getTestimonialSettings(),
+    getHomeSettings(),
   ])
 
   // ── Maintenance mode: show a styled, responsive maintenance card
@@ -149,12 +151,19 @@ export default async function PublicLayout({ children }: { children: React.React
         >
           Saltar al contenido principal
         </a>
-        <Navbar brandName={contactSettings?.ownerName || 'Paola BN'} visibility={visibility} />
+        <Navbar
+          brandName={contactSettings?.ownerName || 'Paola BN'}
+          visibility={visibility}
+          immersiveHeroBackdrop={homeSettings?.heroImmersiveEnabled ?? false}
+        />
         <main id="main-content" className="flex-1" tabIndex={-1}>
           {children}
         </main>
         {testimonialSettings?.showOnAll && <PublicTestimonialsSection />}
-        <Footer ownerName={contactSettings?.ownerName} />
+        <Footer
+          ownerName={contactSettings?.ownerName}
+          immersiveHeroBackdrop={homeSettings?.heroImmersiveEnabled ?? false}
+        />
       </div>
     </>
   )

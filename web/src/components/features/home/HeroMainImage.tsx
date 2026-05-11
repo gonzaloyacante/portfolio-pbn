@@ -14,6 +14,8 @@ export function HeroMainImage({
   onSelectElement,
   isMobile,
 }: HeroSectionProps) {
+  const hidePortrait = !!s.heroImmersiveEnabled && s.heroForegroundPortraitShow === false
+
   const mainImage = s.heroMainImageUrl
   const mainImageAlt = s.heroMainImageAlt || 'Hero Image'
   const caption = s.heroMainImageCaption
@@ -21,6 +23,19 @@ export function HeroMainImage({
   const isCircle = s.heroImageStyle === 'circle'
   const isPortrait = s.heroImageStyle === 'portrait'
   const imageObjectFit = isCircle || isPortrait ? 'cover' : 'contain'
+
+  if (hidePortrait && !isEditor) {
+    return null
+  }
+
+  if (hidePortrait && isEditor) {
+    return (
+      <div className="text-muted-foreground order-2 flex w-full justify-center text-center text-sm lg:order-0">
+        Retrato oculto en web (solo fondo inmersivo). Activa “Mostrar retrato” en Fondo inmersivo
+        para volver a verlo aquí.
+      </div>
+    )
+  }
 
   return (
     <div className="order-2 flex w-full justify-center lg:order-0 lg:flex-1 lg:items-center">

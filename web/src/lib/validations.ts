@@ -195,6 +195,37 @@ export const homeSettingsSchema = z.object({
   heroMainImageZIndex: z.number().int().optional(),
   heroMainImageOffsetX: z.number().optional(),
   heroMainImageOffsetY: z.number().optional(),
+
+  heroImmersiveEnabled: z.boolean().optional(),
+  heroBackdropMediaKind: z.enum(['auto', 'image', 'video']).optional(),
+  heroBackdropUrl: z.string().optional().nullable(),
+  heroBackdropPosterUrl: z.string().optional().nullable(),
+  heroBackdropLoop: z.boolean().optional(),
+  heroBackdropMuted: z.boolean().optional(),
+  heroBackdropPlaysInline: z.boolean().optional(),
+  heroBackdropObjectFit: z.enum(['cover', 'contain']).optional(),
+  heroBackdropObjectPosition: z.string().max(80).optional().nullable(),
+  heroBackdropMobileUrl: z.string().optional().nullable(),
+  heroBackdropMobileObjectPosition: z.string().max(80).optional().nullable(),
+  heroForegroundPortraitShow: z.boolean().optional(),
+  heroScrimEdge: z.enum(['left', 'right', 'both', 'none']).optional(),
+  heroScrimExtentPercent: z.number().int().min(5).max(100).optional(),
+  heroScrimOpacity: z.number().int().min(0).max(100).optional(),
+  heroScrimColor: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  heroScrimColorDark: z
+    .string()
+    .regex(/^#[A-Fa-f0-9]{6}$/)
+    .optional()
+    .nullable(),
+  heroScrimFeatherPercent: z.number().int().min(0).max(100).optional(),
+  heroBackdropTintOpacity: z.number().int().min(0).max(100).optional(),
+  heroScrimMobileExtentPercent: z.number().int().min(5).max(100).optional().nullable(),
+  heroScrimMobileOpacity: z.number().int().min(0).max(100).optional().nullable(),
+
   illustrationUrl: z.string().optional().nullable(),
   illustrationAlt: z.string().optional().nullable(),
   illustrationZIndex: z.number().int().optional(),

@@ -22,6 +22,8 @@ export const IMAGE_SIZES = {
   fullWidth: '100vw',
   /** Public/Editor: hero primary image block. */
   heroMain: '(max-width: 768px) 100vw, 50vw',
+  /** Hero inmersivo full-bleed: prioriza unidades dinámicas del viewport cuando el navegador las soporta. */
+  heroBackdrop: '(max-width: 768px) 100dvw, 100dvw',
   /** Decorative illustration sizes in hero/contact/about. */
   illustrationSmall: '120px',
   illustrationMedium: '320px',
