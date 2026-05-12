@@ -26,6 +26,9 @@ export const BRAND = {
   darkForeground: '#fafafa', // Near-white
   darkCard: '#1c0a0f', // Dark card
 
+  /** Punto intermedio rampa clusters mapa analytics (MapLibre, basemap oscuro CARTO). */
+  mapClusterMid: '#fda4af',
+
   // Fallbacks genéricos (usados cuando no hay tema guardado en DB)
   fallbackLight: {
     primary: '#000000',

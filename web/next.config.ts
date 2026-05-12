@@ -110,11 +110,11 @@ function buildSecurityHeaders(): { key: string; value: string }[] {
         // Styles: inline (Next.js/Tailwind) + Google Fonts
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel, Instagram
-        "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://cdnjs.cloudflare.com https://*.cdninstagram.com https://www.instagram.com/",
+        "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://cdnjs.cloudflare.com https://*.cdninstagram.com https://www.instagram.com/ https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com",
         // Fonts: self, data URIs, Google Fonts CDN
-        "font-src 'self' data: https://fonts.gstatic.com",
+        "font-src 'self' data: https://fonts.gstatic.com https://*.basemaps.cartocdn.com",
         // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation, reCAPTCHA, Instagram oEmbed
-        "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/ https://www.instagram.com/ https://graph.instagram.com/",
+        "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/ https://www.instagram.com/ https://graph.instagram.com/ https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com",
         // Media: Cloudinary (videos)
         "media-src 'self' https://res.cloudinary.com",
         // Objects: none (no Flash/plugins)

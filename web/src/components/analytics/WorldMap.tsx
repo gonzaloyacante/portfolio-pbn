@@ -1,14 +1,10 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { ComposableMap, Geographies, Geography, Marker, ZoomableGroup } from 'react-simple-maps'
-import { scaleLinear } from 'd3-scale'
-import { interpolateRgb } from 'd3-interpolate'
+import type { FeatureCollection, Point } from 'geojson'
+import { useMemo, useState } from 'react'
+import { Map, MapClusterLayer, MapControls } from '@/components/ui'
 import { BRAND } from '@/lib/design-tokens'
-import type { MouseEvent as ReactMouseEvent } from 'react'
-
-// Public domain topology from naturalearth
-const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
+import { cn } from '@/lib/utils'
 
 interface GeoPoint {
   lat: number
@@ -28,117 +24,97 @@ interface WorldMapProps {
   className?: string
 }
 
+/** Centro inicial (Europa / Atlántico) alineado con el mapa anterior. */
+const DEFAULT_CENTER: [number, number] = [10, 22]
+const DEFAULT_ZOOM = 1.35
+
+/**
+ * Mapa de visitantes (admin): MapLibre + estilos CARTO (componente mapcn / shadcn registry).
+ * Agrupa visitas por proximidad; la leyenda resume el máximo por país.
+ */
 export default function WorldMap({
   geoPoints = [],
   topCountries = [],
   className = '',
 }: WorldMapProps) {
-  const [tooltip, setTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
+  const [hoverLabel, setHoverLabel] = useState<string | null>(null)
 
-  // Build country → count map for choropleth coloring
-  const countryCountMap = useMemo(() => {
-    const map = new Map<string, number>()
-    topCountries.forEach((c) => map.set(c.country.toUpperCase(), c.count))
-    return map
-  }, [topCountries])
+  const clusterData = useMemo(
+    () =>
+      ({
+        type: 'FeatureCollection',
+        features: geoPoints.map((p, i) => ({
+          type: 'Feature',
+          id: `visit-${i}`,
+          properties: {
+            id: `visit-${i}`,
+            city: p.city ?? '',
+            country: p.country ?? '',
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [p.lon, p.lat],
+          },
+        })),
+      }) as FeatureCollection<Point>,
+    [geoPoints]
+  )
 
   const maxCount = useMemo(() => Math.max(...topCountries.map((c) => c.count), 1), [topCountries])
 
-  // Color scale: light pink → deep primary (use design tokens)
-  const colorScale = scaleLinear<string>()
-    .domain([0, maxCount])
-    .range([BRAND.secondary, BRAND.primary])
-    .interpolate(interpolateRgb)
+  if (geoPoints.length === 0) {
+    return (
+      <div
+        className={cn(
+          'border-border bg-muted/15 text-muted-foreground relative flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed text-sm',
+          className
+        )}
+      >
+        No hay visitas con ubicación en este período.
+      </div>
+    )
+  }
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl ${className}`}>
-      {/* Tooltip */}
-      {tooltip && (
-        <div
-          className="bg-card border-border pointer-events-none absolute z-10 rounded-xl border px-3 py-2 shadow-lg"
-          style={{ left: tooltip.x + 12, top: tooltip.y - 10 }}
-        >
-          <p className="text-foreground text-sm font-semibold">{tooltip.text}</p>
+    <div className={cn('border-border relative overflow-hidden rounded-2xl border', className)}>
+      {hoverLabel ? (
+        <div className="bg-card border-border pointer-events-none absolute top-3 left-3 z-20 max-w-[min(100%,18rem)] rounded-xl border px-3 py-2 shadow-md">
+          <p className="text-foreground text-sm font-semibold">{hoverLabel}</p>
         </div>
-      )}
+      ) : null}
 
-      <ComposableMap
-        projectionConfig={{ scale: 140, center: [10, 20] }}
-        style={{ width: '100%', height: 'auto' }}
-      >
-        <ZoomableGroup>
-          <Geographies geography={GEO_URL}>
-            {({
-              geographies,
-            }: {
-              geographies: Array<{ rsmKey: string; properties: Record<string, string> }>
-            }) =>
-              geographies.map((geo) => {
-                // Match country by ISO alpha-2 or alpha-3
-                const countryCode =
-                  geo.properties?.ISO_A2?.toUpperCase() || geo.properties?.name?.toUpperCase()
-                const count = countryCountMap.get(countryCode) ?? 0
-                const fill = count > 0 ? colorScale(count) : 'var(--muted)'
+      <div className="h-[min(420px,55vh)] min-h-[280px] w-full">
+        <Map
+          center={DEFAULT_CENTER}
+          zoom={DEFAULT_ZOOM}
+          pitch={0}
+          bearing={0}
+          minZoom={0.8}
+          maxZoom={12}
+          scrollZoom
+          dragRotate={false}
+          touchPitch={false}
+          className="min-h-[280px]"
+        >
+          <MapControls position="bottom-right" showZoom showCompass={false} />
+          <MapClusterLayer
+            data={clusterData}
+            clusterMaxZoom={14}
+            clusterRadius={52}
+            clusterColors={[BRAND.secondary, BRAND.mapClusterMid, BRAND.primary]}
+            clusterThresholds={[8, 32]}
+            pointColor={BRAND.primary}
+            onPointClick={(feature) => {
+              const props = feature.properties as { city?: string; country?: string }
+              const label = [props.city, props.country].filter(Boolean).join(', ')
+              setHoverLabel(label || 'Visita')
+            }}
+          />
+        </Map>
+      </div>
 
-                return (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill={fill}
-                    stroke="var(--border)"
-                    strokeWidth={0.4}
-                    onMouseEnter={(evt: ReactMouseEvent<SVGPathElement>) => {
-                      if (count > 0) {
-                        setTooltip({
-                          text: `${geo.properties?.name ?? countryCode}: ${count} visit${count !== 1 ? 's' : ''}`,
-                          x: evt.nativeEvent.offsetX,
-                          y: evt.nativeEvent.offsetY,
-                        })
-                      }
-                    }}
-                    onMouseLeave={() => setTooltip(null)}
-                    style={{
-                      default: { outline: 'none' },
-                      hover: {
-                        fill: count > 0 ? BRAND.darkSecondary : 'var(--muted)',
-                        outline: 'none',
-                        transition: 'all 0.2s',
-                      },
-                      pressed: { outline: 'none' },
-                    }}
-                  />
-                )
-              })
-            }
-          </Geographies>
-
-          {/* City dots */}
-          {geoPoints.map((point, i) => (
-            <Marker key={i} coordinates={[point.lon, point.lat]}>
-              <circle
-                r={3}
-                fill="var(--primary)"
-                fillOpacity={0.8}
-                stroke="white"
-                strokeWidth={1}
-                onMouseEnter={(evt: ReactMouseEvent<SVGCircleElement>) =>
-                  setTooltip({
-                    text: [point.city, point.country].filter(Boolean).join(', ') || 'Unknown',
-                    x: evt.nativeEvent.offsetX,
-                    y: evt.nativeEvent.offsetY,
-                  })
-                }
-                onMouseLeave={() => setTooltip(null)}
-                className="hover:r-5 cursor-pointer transition-all"
-              />
-            </Marker>
-          ))}
-        </ZoomableGroup>
-      </ComposableMap>
-
-      {/* Legend */}
-      {topCountries.length > 0 && (
-        <div className="absolute bottom-3 left-3 flex items-center gap-2 rounded-xl bg-black/40 px-3 py-1.5 backdrop-blur-sm">
+      {topCountries.length > 0 ? (
+        <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-2 rounded-xl bg-black/40 px-3 py-1.5 backdrop-blur-sm">
           <div
             className="h-3 w-20 rounded-sm"
             style={{
@@ -146,10 +122,10 @@ export default function WorldMap({
             }}
           />
           <span className="text-foreground text-[10px] font-medium opacity-90">
-            1 — {maxCount} visitas
+            Países: 1 — {maxCount} visitas
           </span>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }
