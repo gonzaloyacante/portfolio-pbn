@@ -300,7 +300,7 @@ extension _SettingsHomeSections on _SettingsHomePageState {
           subtitle: const Text(
             'Medio a pantalla detrás del hero y bajo la barra (como la web)',
           ),
-          value: (_vals['heroImmersiveEnabled'] as bool?) ?? false,
+          value: (_vals['heroImmersiveEnabled'] as bool?) ?? true,
           onChanged: (v) => _rebuild(() {
             _vals['heroImmersiveEnabled'] = v;
             _isDirty = true;

@@ -55,7 +55,7 @@ export function HeroBackdropPropertyEditor({
           </p>
         </div>
         <Switch
-          checked={settings.heroImmersiveEnabled ?? false}
+          checked={settings.heroImmersiveEnabled ?? true}
           onCheckedChange={(val: boolean) => onUpdate('heroImmersiveEnabled', val)}
         />
       </div>

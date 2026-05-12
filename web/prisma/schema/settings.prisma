@@ -53,7 +53,7 @@ model HomeSettings {
   heroMainImageOffsetY Int?    @default(0)
 
   // ===== HERO FONDO INMERSIVO (full-bleed bajo navbar; imagen / vídeo / GIF Cloudinary) =====
-  heroImmersiveEnabled Boolean @default(false)
+  heroImmersiveEnabled Boolean @default(true)
   /// auto | image | video — auto detecta Cloudinary /video/upload y extensiones .mp4/.webm/.mov
   heroBackdropMediaKind String @default("auto")
   heroBackdropUrl              String?

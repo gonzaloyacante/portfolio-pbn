@@ -202,7 +202,7 @@ abstract class HomeSettings with _$HomeSettings {
     int? heroMainImageOffsetX,
     int? heroMainImageOffsetY,
 
-    @Default(false) bool heroImmersiveEnabled,
+    @Default(true) bool heroImmersiveEnabled,
     @Default('auto') String heroBackdropMediaKind,
     String? heroBackdropUrl,
     String? heroBackdropPosterUrl,

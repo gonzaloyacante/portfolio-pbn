@@ -279,7 +279,7 @@ _HomeSettings _$HomeSettingsFromJson(
   heroMainImageZIndex: (json['heroMainImageZIndex'] as num?)?.toInt(),
   heroMainImageOffsetX: (json['heroMainImageOffsetX'] as num?)?.toInt(),
   heroMainImageOffsetY: (json['heroMainImageOffsetY'] as num?)?.toInt(),
-  heroImmersiveEnabled: json['heroImmersiveEnabled'] as bool? ?? false,
+  heroImmersiveEnabled: json['heroImmersiveEnabled'] as bool? ?? true,
   heroBackdropMediaKind: json['heroBackdropMediaKind'] as String? ?? 'auto',
   heroBackdropUrl: json['heroBackdropUrl'] as String?,
   heroBackdropPosterUrl: json['heroBackdropPosterUrl'] as String?,

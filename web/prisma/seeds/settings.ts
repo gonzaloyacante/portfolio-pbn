@@ -49,7 +49,7 @@ export const homeSettings = {
   heroMainImageOffsetX: 0,
   heroMainImageOffsetY: -46,
 
-  heroImmersiveEnabled: false,
+  heroImmersiveEnabled: true,
   heroBackdropMediaKind: 'auto',
   heroBackdropUrl: null,
   heroBackdropPosterUrl: null,
