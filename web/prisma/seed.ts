@@ -13,6 +13,13 @@ import {
 } from './seeds/settings'
 import { categories, services, testimonials, socialLinks } from './seeds/content'
 import { galleryImagesByCategorySlug } from './seeds/gallery-images'
+import { siteSettings } from './seeds/site-settings'
+import { emailSettings } from './seeds/email-settings'
+import { contacts } from './seeds/contacts'
+import { bookings } from './seeds/bookings'
+import { pricingTiers } from './seeds/pricing-tiers'
+import { appReleases } from './seeds/app-release'
+import { analyticsLogs } from './seeds/analytics'
 
 const _adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter: _adapter })
@@ -20,15 +27,12 @@ const prisma = new PrismaClient({ adapter: _adapter })
 async function main() {
   console.log('🌱 Starting Comprehensive Seed...\n')
 
-  // 1. Admin User (with bcrypt hashing)
+  // 1. Admin User
   console.log('👤 Seeding Admin User...')
   const hashedPassword = await bcrypt.hash(adminUser.password, 12)
   await prisma.user.upsert({
     where: { email: adminUser.email },
-    update: {
-      password: hashedPassword,
-      name: adminUser.name,
-    },
+    update: { password: hashedPassword, name: adminUser.name },
     create: {
       email: adminUser.email,
       password: hashedPassword,
@@ -38,12 +42,10 @@ async function main() {
   })
   console.log(`   ✅ Admin: ${adminUser.email}`)
 
-  // 2. Settings (Theme & Pages)
-  // All settings models are singletons identified by key='singleton'
-  // Use key-based upsert to handle existing records with any CUID id
+  // 2. Settings (Theme & Pages) — singletons
   console.log('\n⚙️ Seeding Settings...')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _themeId, ...themeUpdate } = themeSettings
+  const { id: _, ...themeUpdate } = themeSettings
   await prisma.themeSettings.upsert({
     where: { key: 'singleton' },
     update: themeUpdate,
@@ -51,7 +53,7 @@ async function main() {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _homeId, ...homeUpdate } = homeSettings
+  const { id: _hId, ...homeUpdate } = homeSettings
   await prisma.homeSettings.upsert({
     where: { key: 'singleton' },
     update: homeUpdate,
@@ -59,7 +61,7 @@ async function main() {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _aboutId, ...aboutUpdate } = aboutSettings
+  const { id: _aId, ...aboutUpdate } = aboutSettings
   await prisma.aboutSettings.upsert({
     where: { key: 'singleton' },
     update: aboutUpdate,
@@ -67,23 +69,23 @@ async function main() {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _svcPageId, ...servicesPageUpdate } = servicesPageSettings
+  const { id: _sId, ...svcUpdate } = servicesPageSettings
   await prisma.servicesPageSettings.upsert({
     where: { key: 'singleton' },
-    update: servicesPageUpdate,
+    update: svcUpdate,
     create: servicesPageSettings,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _contactId, ...contactUpdate } = contactSettings
+  const { id: _cId, ...contactPgUpdate } = contactSettings
   await prisma.contactSettings.upsert({
     where: { key: 'singleton' },
-    update: contactUpdate,
+    update: contactPgUpdate,
     create: contactSettings,
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _testimonialSettingsId, ...testimonialSettingsUpdate } = testimonialSettings
+  const { id: _tId, ...testimonialSettingsUpdate } = testimonialSettings
   await prisma.testimonialSettings.upsert({
     where: { key: 'singleton' },
     update: testimonialSettingsUpdate,
@@ -91,7 +93,7 @@ async function main() {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id: _categorySettingsId, ...categorySettingsUpdate } = categorySettings
+  const { id: _catId, ...categorySettingsUpdate } = categorySettings
   await prisma.categorySettings.upsert({
     where: { key: 'singleton' },
     update: categorySettingsUpdate,
@@ -112,65 +114,121 @@ async function main() {
 
   // 4. Content (Categories, Services, Testimonials)
   console.log('\n📚 Seeding Content...')
-
-  // Categories
   for (const cat of categories) {
-    await prisma.category.upsert({
-      where: { slug: cat.slug },
-      update: cat,
-      create: cat,
-    })
+    await prisma.category.upsert({ where: { slug: cat.slug }, update: cat, create: cat })
   }
   console.log(`   ✅ ${categories.length} categories`)
 
-  // Services
   for (const service of services) {
-    await prisma.service.upsert({
-      where: { slug: service.slug },
-      update: service,
-      create: service,
-    })
+    await prisma.service.upsert({ where: { slug: service.slug }, update: service, create: service })
   }
   console.log(`   ✅ ${services.length} services`)
 
-  // Testimonials - delete existing first to avoid duplicates
-  await prisma.testimonial.deleteMany({})
+  await prisma.testimonial.deleteMany({ where: { id: { startsWith: 'testimonial-' } } })
   for (const t of testimonials) {
-    await prisma.testimonial.create({
-      data: t,
-    })
+    await prisma.testimonial.create({ data: t })
   }
   console.log(`   ✅ ${testimonials.length} testimonials`)
 
-  // 5. Gallery Images (per category)
+  // 5. Gallery Images
   console.log('\n🖼️  Seeding Gallery Images...')
   let imageCount = 0
-
   for (const [categorySlug, images] of Object.entries(galleryImagesByCategorySlug)) {
     const category = await prisma.category.findUnique({ where: { slug: categorySlug } })
-
     if (!category) {
-      console.warn(`   ⚠️  Category "${categorySlug}" not found — skipping images`)
+      console.warn(`   ⚠️  Category "${categorySlug}" not found`)
       continue
     }
-
-    // Clear existing seed images to avoid duplicates on re-seed
     await prisma.categoryImage.deleteMany({ where: { categoryId: category.id } })
-
     for (const img of images) {
       await prisma.categoryImage.create({
-        data: {
-          url: img.url,
-          publicId: img.publicId,
-          order: img.order,
-          categoryId: category.id,
-        },
+        data: { url: img.url, publicId: img.publicId, order: img.order, categoryId: category.id },
       })
       imageCount++
     }
     console.log(`   ✅ ${images.length} images → ${categorySlug}`)
   }
   console.log(`   ✅ ${imageCount} total images`)
+
+  // 6. Global Settings (Site + Email)
+  console.log('\n🌍 Seeding Global Settings...')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id: _siteId, ...siteUpdate } = siteSettings
+  await prisma.siteSettings.upsert({
+    where: { key: 'singleton' },
+    update: siteUpdate,
+    create: siteSettings,
+  })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id: _emailId, ...emailUpdate } = emailSettings
+  await prisma.emailSettings.upsert({
+    where: { key: 'singleton' },
+    update: emailUpdate,
+    create: emailSettings,
+  })
+  console.log('   ✅ SiteSettings + EmailSettings')
+
+  // 7. Pricing Tiers
+  console.log('\n💰 Seeding Pricing Tiers...')
+  await prisma.servicePricingTier.deleteMany({})
+  let tierCount = 0
+  for (const tier of pricingTiers) {
+    const service = await prisma.service.findUnique({ where: { slug: tier.serviceSlug } })
+    if (!service) {
+      console.warn(`   ⚠️  Service "${tier.serviceSlug}" not found`)
+      continue
+    }
+    await prisma.servicePricingTier.create({
+      data: {
+        serviceId: service.id,
+        name: tier.name,
+        price: tier.price,
+        description: tier.description,
+        sortOrder: tier.sortOrder,
+      },
+    })
+    tierCount++
+  }
+  console.log(`   ✅ ${tierCount} pricing tiers`)
+
+  // 8. Contacts & Bookings
+  console.log('\n📋 Seeding CRM Data...')
+  await prisma.contact.deleteMany({ where: { id: { startsWith: 'seed-contact-' } } })
+  let contactCount = 0
+  for (const c of contacts) {
+    await prisma.contact.create({ data: c })
+    contactCount++
+  }
+  console.log(`   ✅ ${contactCount} contacts`)
+
+  await prisma.booking.deleteMany({ where: { id: { startsWith: 'seed-booking-' } } })
+  let bookingCount = 0
+  for (const b of bookings) {
+    const service = await prisma.service.findUnique({ where: { slug: b.serviceSlug } })
+    if (!service) {
+      console.warn(`   ⚠️  Service "${b.serviceSlug}" not found`)
+      continue
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { serviceSlug, ...bookingData } = b
+    await prisma.booking.create({ data: { ...bookingData, serviceId: service.id } })
+    bookingCount++
+  }
+  console.log(`   ✅ ${bookingCount} bookings`)
+
+  // 9. App Release + Analytics
+  console.log('\n📱 Seeding App Release & Analytics...')
+  await prisma.appRelease.deleteMany({ where: { version: appReleases[0].version } })
+  await prisma.appRelease.create({ data: appReleases[0] })
+  console.log(`   ✅ v${appReleases[0].version}`)
+
+  await prisma.analyticLog.deleteMany({ where: { sessionId: { startsWith: 'seed-session-' } } })
+  let analyticsCount = 0
+  for (const log of analyticsLogs) {
+    await prisma.analyticLog.create({ data: log })
+    analyticsCount++
+  }
+  console.log(`   ✅ ${analyticsCount} sample events`)
 
   console.log('\n🎉 Seeding Completed Successfully!')
   console.log(
@@ -180,6 +238,10 @@ async function main() {
   console.log(`   💼 Services: ${services.length}`)
   console.log(`   💬 Testimonials: ${testimonials.length}`)
   console.log(`   🖼️ Images: ${imageCount}`)
+  console.log(`   💰 Pricing tiers: ${tierCount}`)
+  console.log(`   📋 Contacts: ${contactCount}`)
+  console.log(`   📅 Bookings: ${bookingCount}`)
+  console.log(`   📊 Analytics: ${analyticsCount}`)
 }
 
 main()

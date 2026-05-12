@@ -209,11 +209,11 @@ export const contactSettings = {
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'paolabolivarnievas@gmail.com',
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE || '+34 600 000 000',
   whatsapp: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || '+34600000000',
-  instagram: 'https://instagram.com/paolabolivarnievas',
-  instagramUsername: '@paolabolivarnievas',
+  instagram: 'https://www.instagram.com/paolabolivar.makeup/',
+  instagramUsername: '@paolabolivar.makeup',
   showInstagram: true,
-  instagramPostUrl: null,
-  showInstagramEmbed: false,
+  instagramPostUrl: 'https://www.instagram.com/p/DPmJnzeiK2h/',
+  showInstagramEmbed: true,
   location: 'Granada, España',
 
   // Show Social Links

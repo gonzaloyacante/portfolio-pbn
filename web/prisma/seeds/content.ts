@@ -284,8 +284,8 @@ export const testimonials = [
 export const socialLinks = [
   {
     platform: 'instagram',
-    url: 'https://instagram.com/paolabolivarnievas',
-    username: '@paolabolivarnievas',
+    url: 'https://www.instagram.com/paolabolivar.makeup/',
+    username: '@paolabolivar.makeup',
     icon: 'Instagram',
     sortOrder: 1,
   },
