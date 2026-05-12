@@ -65,6 +65,12 @@ export const TYPOGRAPHY_DEFAULTS = {
   scriptFontSize: 24,
   bodyFont: 'Open Sans',
   bodyFontSize: 16,
+  brandFont: 'Saira Extra Condensed',
+  brandFontSize: 112,
+  portfolioFont: 'Saira Extra Condensed',
+  portfolioFontSize: 96,
+  signatureFont: 'Dawning of a New Day',
+  signatureFontSize: 36,
 } as const
 
 // ─── Default Theme (defaults para `getThemeValues` sin DB) ───────────────────
@@ -89,9 +95,12 @@ export const DEFAULT_CSS_VARIABLES: Record<string, string> = {
   '--font-script-size': `${TYPOGRAPHY_DEFAULTS.scriptFontSize}px`,
   '--font-body': `"${TYPOGRAPHY_DEFAULTS.bodyFont}", sans-serif`,
   '--font-body-size': `${TYPOGRAPHY_DEFAULTS.bodyFontSize}px`,
-  '--font-brand-size': '112px',
-  '--font-portfolio-size': '96px',
-  '--font-signature-size': '36px',
+  '--font-brand': `"${TYPOGRAPHY_DEFAULTS.brandFont}", sans-serif`,
+  '--font-brand-size': `${TYPOGRAPHY_DEFAULTS.brandFontSize}px`,
+  '--font-portfolio': `"${TYPOGRAPHY_DEFAULTS.portfolioFont}", sans-serif`,
+  '--font-portfolio-size': `${TYPOGRAPHY_DEFAULTS.portfolioFontSize}px`,
+  '--font-signature': `"${TYPOGRAPHY_DEFAULTS.signatureFont}", cursive`,
+  '--font-signature-size': `${TYPOGRAPHY_DEFAULTS.signatureFontSize}px`,
 
   '--radius': `${THEME_DEFAULT_BORDER_RADIUS}px`,
 }
@@ -119,6 +128,12 @@ export const RESET_THEME_DEFAULTS = {
   scriptFontSize: TYPOGRAPHY_DEFAULTS.scriptFontSize,
   bodyFont: TYPOGRAPHY_DEFAULTS.bodyFont,
   bodyFontSize: TYPOGRAPHY_DEFAULTS.bodyFontSize,
+  brandFont: TYPOGRAPHY_DEFAULTS.brandFont,
+  brandFontSize: TYPOGRAPHY_DEFAULTS.brandFontSize,
+  portfolioFont: TYPOGRAPHY_DEFAULTS.portfolioFont,
+  portfolioFontSize: TYPOGRAPHY_DEFAULTS.portfolioFontSize,
+  signatureFont: TYPOGRAPHY_DEFAULTS.signatureFont,
+  signatureFontSize: TYPOGRAPHY_DEFAULTS.signatureFontSize,
   borderRadius: THEME_DEFAULT_BORDER_RADIUS,
 } as const
 

@@ -3,333 +3,385 @@ part of 'settings_theme_page.dart';
 extension _SettingsThemePageBuilders on _SettingsThemePageState {
   Widget _buildForm(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);
-    final maxWidth = AppBreakpoints.value<double>(
-      context,
-      compact: double.infinity,
-      medium: 760,
-      expanded: 960,
-    );
+    if (AppBreakpoints.isExpanded(context)) {
+      return Padding(
+        padding: padding,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 460,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: _buildEditorColumn(context),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xl),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [_buildThemeMap(context), _buildLivePreview()],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: padding,
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: maxWidth),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Colores — Modo claro ───────────────────────────────
-              SettingsFormCard(
-                title: 'Colores — Modo claro',
-                children: [
-                  ColorField(
-                    controller: _primaryCtrl,
-                    label: 'Primario',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Primario',
-                      hexColor: _primaryCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _secondaryCtrl,
-                    label: 'Secundario',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Secundario',
-                      hexColor: _secondaryCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _accentCtrl,
-                    label: 'Acento',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Acento',
-                      hexColor: _accentCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _bgCtrl,
-                    label: 'Fondo',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Fondo',
-                      hexColor: _bgCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _textCtrl,
-                    label: 'Texto',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Texto',
-                      hexColor: _textCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _cardBgCtrl,
-                    label: 'Fondo tarjetas',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Fondo tarjetas',
-                      hexColor: _cardBgCtrl.text,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildThemeMap(context),
+          _buildLivePreview(),
+          const SizedBox(height: AppSpacing.md),
+          _buildEditorColumn(context),
+        ],
+      ),
+    );
+  }
 
-              // ── Colores — Modo oscuro ──────────────────────────────
-              SettingsFormCard(
-                title: 'Colores — Modo oscuro',
-                children: [
-                  ColorField(
-                    controller: _darkPrimaryCtrl,
-                    label: 'Primario (dark)',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Primario (dark)',
-                      hexColor: _darkPrimaryCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _darkSecondaryCtrl,
-                    label: 'Secundario (dark)',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Secundario (dark)',
-                      hexColor: _darkSecondaryCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _darkAccentCtrl,
-                    label: 'Acento (dark)',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Acento (dark)',
-                      hexColor: _darkAccentCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _darkBgCtrl,
-                    label: 'Fondo (dark)',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Fondo (dark)',
-                      hexColor: _darkBgCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _darkTextCtrl,
-                    label: 'Texto (dark)',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Texto (dark)',
-                      hexColor: _darkTextCtrl.text,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  ColorField(
-                    controller: _darkCardBgCtrl,
-                    label: 'Fondo tarjetas (dark)',
-                    onInfoTap: () => showColorUsageSheet(
-                      context,
-                      label: 'Fondo tarjetas (dark)',
-                      hexColor: _darkCardBgCtrl.text,
-                    ),
-                  ),
-                ],
+  Widget _buildEditorColumn(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildThemeSection(
+          context,
+          icon: Icons.layers_outlined,
+          title: 'Canvas claro',
+          subtitle:
+              'Define fondo general, texto base, tarjetas y acentos del sitio en modo claro.',
+          initiallyExpanded: true,
+          children: [
+            _colorField(
+              context,
+              controller: _bgCtrl,
+              label: 'Canvas de página',
+              helperText: 'Fondos generales y secciones públicas.',
+            ),
+            _colorField(
+              context,
+              controller: _textCtrl,
+              label: 'Texto principal',
+              helperText: 'Párrafos, títulos normales y contenido legible.',
+            ),
+            _colorField(
+              context,
+              controller: _cardBgCtrl,
+              label: 'Superficie / tarjetas',
+              helperText: 'Cards, paneles y bloques elevados.',
+            ),
+            _colorField(
+              context,
+              controller: _secondaryCtrl,
+              label: 'Superficie suave',
+              helperText: 'Fondos secundarios, hover y zonas destacadas.',
+            ),
+            _colorField(
+              context,
+              controller: _accentCtrl,
+              label: 'Acento suave',
+              helperText: 'Fondos decorativos y énfasis no principal.',
+            ),
+            _colorField(
+              context,
+              controller: _primaryCtrl,
+              label: 'Acento / CTA',
+              helperText: 'Botones principales, links y estado activo.',
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildThemeSection(
+          context,
+          icon: Icons.dark_mode_outlined,
+          title: 'Canvas oscuro',
+          subtitle:
+              'Mismos roles que modo claro, pero para visitante con dark mode activo.',
+          children: [
+            _colorField(
+              context,
+              controller: _darkBgCtrl,
+              label: 'Canvas oscuro',
+              helperText: 'Fondo general en modo oscuro.',
+            ),
+            _colorField(
+              context,
+              controller: _darkTextCtrl,
+              label: 'Texto oscuro',
+              helperText: 'Texto legible sobre fondos oscuros.',
+            ),
+            _colorField(
+              context,
+              controller: _darkCardBgCtrl,
+              label: 'Tarjetas oscuras',
+              helperText: 'Paneles, cards y superficies elevadas oscuras.',
+            ),
+            _colorField(
+              context,
+              controller: _darkSecondaryCtrl,
+              label: 'Superficie suave oscura',
+              helperText: 'Hover, chips y zonas secundarias.',
+            ),
+            _colorField(
+              context,
+              controller: _darkAccentCtrl,
+              label: 'Acento suave oscuro',
+              helperText: 'Decoración y fondos de apoyo.',
+            ),
+            _colorField(
+              context,
+              controller: _darkPrimaryCtrl,
+              label: 'Acento / CTA oscuro',
+              helperText: 'Botones, links y navegación activa en dark mode.',
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildThemeSection(
+          context,
+          icon: Icons.text_fields_outlined,
+          title: 'Tipografías base',
+          subtitle:
+              'Roles visibles en todo el sitio: títulos, párrafos y firma decorativa.',
+          children: [
+            _fontPicker(
+              label: 'Títulos',
+              controller: _headingFontCtrl,
+              sizeController: _headingFontSizeCtrl,
+              sizeLabel: 'Tamaño títulos (px)',
+            ),
+            _fontPicker(
+              label: 'Cuerpo',
+              controller: _bodyFontCtrl,
+              sizeController: _bodyFontSizeCtrl,
+              sizeLabel: 'Tamaño cuerpo (px)',
+            ),
+            _fontPicker(
+              label: 'Script / decorativa',
+              controller: _scriptFontCtrl,
+              sizeController: _scriptFontSizeCtrl,
+              sizeLabel: 'Tamaño script (px)',
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildThemeSection(
+          context,
+          icon: Icons.draw_outlined,
+          title: 'Tipografías de marca',
+          subtitle:
+              'Afectan bloques especiales del hero y marca, no todos los textos.',
+          children: [
+            _fontPicker(
+              label: 'Make-up',
+              controller: _brandFontCtrl,
+              sizeController: _brandFontSizeCtrl,
+              sizeLabel: 'Tamaño Make-up (px)',
+            ),
+            _fontPicker(
+              label: 'Portfolio',
+              controller: _portfolioFontCtrl,
+              sizeController: _portfolioFontSizeCtrl,
+              sizeLabel: 'Tamaño Portfolio (px)',
+            ),
+            _fontPicker(
+              label: 'Firma',
+              controller: _signatureFontCtrl,
+              sizeController: _signatureFontSizeCtrl,
+              sizeLabel: 'Tamaño firma (px)',
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        _buildThemeSection(
+          context,
+          icon: Icons.rounded_corner,
+          title: 'Forma y radio',
+          subtitle: 'Define cuán redondeadas se ven cards, botones y paneles.',
+          children: [
+            TextFormField(
+              controller: _borderRadiusCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Radio global (px)',
+                prefixIcon: Icon(Icons.rounded_corner),
+                helperText: 'Ej: 40 para cards suaves tipo marca PBN.',
               ),
-              const SizedBox(height: AppSpacing.md),
+              keyboardType: TextInputType.number,
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        FilledButton.icon(
+          onPressed: _save,
+          icon: const Icon(Icons.save_outlined),
+          label: const Text('Guardar tema'),
+        ),
+        const SizedBox(height: AppSpacing.base),
+      ],
+    );
+  }
 
-              // ── Tipografías base ───────────────────────────────────
-              SettingsFormCard(
-                title: 'Tipografías — Base',
-                children: [
-                  FontPickerField(
-                    label: 'Fuente de títulos',
-                    value: _headingFontCtrl.text.isEmpty
-                        ? null
-                        : _headingFontCtrl.text,
-                    onChanged: (name, _) {
-                      _headingFontCtrl.text = name;
-                      _markDirty();
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextFormField(
-                    controller: _headingFontSizeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Tamaño títulos (px)',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  FontPickerField(
-                    label: 'Fuente de cuerpo',
-                    value: _bodyFontCtrl.text.isEmpty
-                        ? null
-                        : _bodyFontCtrl.text,
-                    onChanged: (name, _) {
-                      _bodyFontCtrl.text = name;
-                      _markDirty();
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextFormField(
-                    controller: _bodyFontSizeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Tamaño cuerpo (px)',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  FontPickerField(
-                    label: 'Fuente script/decorativa',
-                    value: _scriptFontCtrl.text.isEmpty
-                        ? null
-                        : _scriptFontCtrl.text,
-                    onChanged: (name, _) {
-                      _scriptFontCtrl.text = name;
-                      _markDirty();
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextFormField(
-                    controller: _scriptFontSizeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Tamaño script (px)',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Tipografías — Marca ────────────────────────────────
-              SettingsFormCard(
-                title: 'Tipografías — Marca',
-                children: [
-                  FontPickerField(
-                    label: 'Fuente título "Make-up"',
-                    value: _brandFontCtrl.text.isEmpty
-                        ? null
-                        : _brandFontCtrl.text,
-                    onChanged: (name, _) {
-                      _brandFontCtrl.text = name;
-                      _markDirty();
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextFormField(
-                    controller: _brandFontSizeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Tamaño (px)',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  FontPickerField(
-                    label: 'Fuente título "Portfolio"',
-                    value: _portfolioFontCtrl.text.isEmpty
-                        ? null
-                        : _portfolioFontCtrl.text,
-                    onChanged: (name, _) {
-                      _portfolioFontCtrl.text = name;
-                      _markDirty();
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextFormField(
-                    controller: _portfolioFontSizeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Tamaño (px)',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  FontPickerField(
-                    label: 'Fuente firma',
-                    value: _signatureFontCtrl.text.isEmpty
-                        ? null
-                        : _signatureFontCtrl.text,
-                    onChanged: (name, _) {
-                      _signatureFontCtrl.text = name;
-                      _markDirty();
-                      setState(() {});
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  TextFormField(
-                    controller: _signatureFontSizeCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Tamaño (px)',
-                      prefixIcon: Icon(Icons.format_size),
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Layout ─────────────────────────────────────────────
-              SettingsFormCard(
-                title: 'Layout',
-                children: [
-                  TextFormField(
-                    controller: _borderRadiusCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Border radius (px)',
-                      prefixIcon: Icon(Icons.rounded_corner),
-                      hintText: 'Ej: 40',
-                    ),
-                    keyboardType: TextInputType.number,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-
-              // ── Vista previa de colores ────────────────────────────
-              ThemeColorPreview(
-                lightPrimary: _primaryCtrl.text,
-                lightSecondary: _secondaryCtrl.text,
-                lightBg: _bgCtrl.text,
-                darkPrimary: _darkPrimaryCtrl.text,
-                darkBg: _darkBgCtrl.text,
-              ),
-              const SizedBox(height: AppSpacing.xl),
-
-              FilledButton.icon(
-                onPressed: _save,
-                icon: const Icon(Icons.save_outlined),
-                label: const Text('Guardar tema'),
-              ),
-              const SizedBox(height: AppSpacing.base),
-            ],
+  Widget _buildThemeMap(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return SettingsFormCard(
+      title: 'Mapa del tema',
+      leadingIcon: Icons.map_outlined,
+      children: [
+        Text(
+          'Editá por capas. Cada color tiene un rol concreto: fondo, texto, tarjeta, navegación, botones o estados. Mirá el preview antes de guardar.',
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurface.withValues(alpha: 0.72),
           ),
         ),
+        const SizedBox(height: AppSpacing.md),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            _layerChip(context, 'Canvas'),
+            _layerChip(context, 'Tarjetas'),
+            _layerChip(context, 'Navegación'),
+            _layerChip(context, 'CTA'),
+            _layerChip(context, 'Tipografía'),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildThemeSection(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required List<Widget> children,
+    bool initiallyExpanded = false,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+        ),
       ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: initiallyExpanded,
+          tilePadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.base,
+            vertical: AppSpacing.sm,
+          ),
+          childrenPadding: const EdgeInsets.fromLTRB(
+            AppSpacing.base,
+            0,
+            AppSpacing.base,
+            AppSpacing.base,
+          ),
+          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+          leading: Icon(icon, color: colorScheme.primary),
+          title: Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+          ),
+          subtitle: Text(subtitle),
+          children: [
+            AdaptiveFormLayout(maxWidth: double.infinity, children: children),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLivePreview() {
+    return ThemeColorPreview(
+      lightPrimary: _primaryCtrl.text,
+      lightSecondary: _secondaryCtrl.text,
+      lightAccent: _accentCtrl.text,
+      lightBg: _bgCtrl.text,
+      lightText: _textCtrl.text,
+      lightCard: _cardBgCtrl.text,
+      darkPrimary: _darkPrimaryCtrl.text,
+      darkSecondary: _darkSecondaryCtrl.text,
+      darkAccent: _darkAccentCtrl.text,
+      darkBg: _darkBgCtrl.text,
+      darkText: _darkTextCtrl.text,
+      darkCard: _darkCardBgCtrl.text,
+      headingFont: _headingFontCtrl.text,
+      bodyFont: _bodyFontCtrl.text,
+      scriptFont: _scriptFontCtrl.text,
+      borderRadius: _intOrNull(_borderRadiusCtrl.text) ?? 40,
+    );
+  }
+
+  Widget _layerChip(BuildContext context, String label) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Chip(
+      label: Text(label),
+      backgroundColor: colorScheme.secondaryContainer.withValues(alpha: 0.55),
+      side: BorderSide(color: colorScheme.outlineVariant),
+      labelStyle: TextStyle(
+        color: colorScheme.onSecondaryContainer,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
+  Widget _colorField(
+    BuildContext context, {
+    required TextEditingController controller,
+    required String label,
+    required String helperText,
+  }) {
+    return ColorField(
+      controller: controller,
+      label: label,
+      helperText: helperText,
+      onInfoTap: () =>
+          showColorUsageSheet(context, label: label, hexColor: controller.text),
+    );
+  }
+
+  Widget _fontPicker({
+    required String label,
+    required TextEditingController controller,
+    required TextEditingController sizeController,
+    required String sizeLabel,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        FontPickerField(
+          label: label,
+          value: controller.text.isEmpty ? null : controller.text,
+          onChanged: (name, _) {
+            controller.text = name;
+            _markDirty();
+            setState(() {});
+          },
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        TextFormField(
+          controller: sizeController,
+          decoration: InputDecoration(
+            labelText: sizeLabel,
+            prefixIcon: const Icon(Icons.format_size),
+            helperText: 'Se ve en el preview de tipografías.',
+          ),
+          keyboardType: TextInputType.number,
+        ),
+      ],
     );
   }
 

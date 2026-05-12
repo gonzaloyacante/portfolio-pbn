@@ -19,6 +19,7 @@ import { Save, RotateCcw, Palette, Type, LayoutTemplate } from 'lucide-react'
 import ThemeColorSection from './ThemeColorSection'
 import ThemeTypographySection from './ThemeTypographySection'
 import ThemeLayoutSection from './ThemeLayoutSection'
+import { ThemeSemanticPreview } from './ThemeSemanticPreview'
 
 interface ThemeEditorProps {
   initialData: ThemeSettingsData | null
@@ -226,54 +227,8 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
 
         {/* Live Preview Sidebar */}
         <div className="hidden lg:col-span-4 lg:block">
-          <div className="bg-card sticky top-24 space-y-4 rounded-xl border p-4 shadow-sm transition-colors">
-            <div className="flex items-center justify-between border-b pb-2">
-              <h3 className="text-sm font-semibold">Vista Previa</h3>
-              <span className="text-muted-foreground bg-muted rounded-full px-2 py-0.5 text-xs">
-                Live
-              </span>
-            </div>
-
-            {/* Mock Card */}
-            <div
-              className="rounded-lg border p-4 shadow-sm transition-colors"
-              style={{
-                backgroundColor: 'var(--card)',
-                color: 'var(--card-foreground)',
-                borderColor: 'var(--border)',
-              }}
-            >
-              <div className="mb-3 flex items-center gap-3">
-                <div
-                  className="flex h-10 w-10 items-center justify-center rounded-full font-bold text-white"
-                  style={{ backgroundColor: 'var(--primary)' }}
-                >
-                  PB
-                </div>
-                <div>
-                  <div className="bg-muted/50 mb-1 h-4 w-24 rounded"></div>
-                  <div className="bg-muted/30 h-3 w-16 rounded"></div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="bg-muted/20 h-16 rounded"></div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="primary" className="w-full">
-                    Primario
-                  </Button>
-                  <Button size="sm" variant="outline" className="w-full">
-                    Secundario
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="text-muted-foreground bg-muted/30 rounded-lg p-3 text-xs">
-              <p>
-                Los colores que ves aquí reflejan tus cambios en tiempo real si coinciden con tu
-                modo actual (Claro/Oscuro).
-              </p>
-            </div>
+          <div className="sticky top-24">
+            <ThemeSemanticPreview values={watchedValues} />
           </div>
         </div>
       </div>

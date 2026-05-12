@@ -33,7 +33,7 @@ class SettingsPage extends ConsumerWidget {
     SettingsItem(
       icon: Icons.palette_outlined,
       title: 'Tema',
-      subtitle: 'Colores y tipografías del sitio',
+      subtitle: 'Capas visuales, tipografías y preview del sitio',
       routeName: RouteNames.settingsTheme,
     ),
     SettingsItem(

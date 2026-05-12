@@ -1,4 +1,4 @@
-import { DEFAULT_CSS_VARIABLES } from '@/lib/design-tokens'
+import { BRAND, DEFAULT_CSS_VARIABLES } from '@/lib/design-tokens'
 
 /** Une BD + defaults (evita huecos si falta clave o falla lectura). */
 function mergeThemeValues(themeValues: Record<string, string>): Record<string, string> {
@@ -44,7 +44,7 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--input', 'color-mix(in srgb, var(--foreground) 14%, var(--background))'],
     ['--accent-foreground', 'var(--primary)'],
     ['--secondary-foreground', 'var(--primary)'],
-    ['--primary-foreground', '#ffffff'],
+    ['--primary-foreground', BRAND.card],
   ]
 
   const darkSemantic: Array<[string, string]> = [
@@ -63,8 +63,8 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--border', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
     ['--input', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
     ['--accent-foreground', 'var(--foreground)'],
-    ['--secondary-foreground', '#ffffff'],
-    ['--primary-foreground', '#1a050a'],
+    ['--secondary-foreground', BRAND.card],
+    ['--primary-foreground', BRAND.foreground],
   ]
 
   const shared: Array<[string, string]> = [

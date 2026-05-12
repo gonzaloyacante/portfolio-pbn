@@ -83,21 +83,21 @@ extension _DashboardPageBuilders on DashboardPage {
                       icon: Icons.photo_library_outlined,
                       label: 'Imágenes',
                       value: stats.totalImages.toString(),
-                      color: AppColors.lightPrimary,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: () => context.goNamed(RouteNames.categories),
                     ),
                     StatCard(
                       icon: Icons.category_outlined,
                       label: 'Categorías',
                       value: stats.totalCategories.toString(),
-                      color: AppColors.categoriesColor,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: () => context.goNamed(RouteNames.categories),
                     ),
                     StatCard(
                       icon: Icons.design_services_outlined,
                       label: 'Servicios',
                       value: stats.totalServices.toString(),
-                      color: AppColors.servicesColor,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: () => context.goNamed(RouteNames.services),
                     ),
                     StatCard(
@@ -110,7 +110,7 @@ extension _DashboardPageBuilders on DashboardPage {
                       valueSuffixIcon: stats.pendingTestimonials > 0
                           ? Icons.schedule
                           : null,
-                      color: AppColors.success,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: () => context.goNamed(RouteNames.testimonials),
                     ),
                     StatCard(
@@ -121,7 +121,7 @@ extension _DashboardPageBuilders on DashboardPage {
                           ? '+${stats.newContacts}'
                           : null,
                       trendPositive: true,
-                      color: AppColors.darkPrimary,
+                      color: Theme.of(context).colorScheme.primary,
                       onTap: () => context.goNamed(RouteNames.contacts),
                     ),
                     StatCard(
@@ -140,7 +140,7 @@ extension _DashboardPageBuilders on DashboardPage {
                       label: 'Visitantes (30d)',
                       value: _formatNumber(stats.uniqueVisitors30d),
                       trendPositive: true,
-                      color: AppColors.success,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     StatCard(
                       icon: Icons.delete_outline_rounded,

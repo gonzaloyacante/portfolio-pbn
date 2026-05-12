@@ -87,7 +87,11 @@ export default function Navbar({
               <Link
                 key={item.href}
                 href={item.href}
-                className="font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 md:px-8 md:text-base"
+                className={`font-heading focus-visible:bg-accent focus-visible:text-accent-foreground relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none md:px-8 md:text-base ${
+                  active
+                    ? 'text-primary-foreground'
+                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                }`}
               >
                 {/* Fondo animado para el estado activo */}
                 {active && (
@@ -99,13 +103,7 @@ export default function Navbar({
                   />
                 )}
                 {/* Texto */}
-                <span
-                  className={`relative z-10 ${
-                    active ? 'text-primary-foreground' : 'text-foreground hover:text-primary'
-                  }`}
-                >
-                  {item.label}
-                </span>
+                <span className="relative z-10">{item.label}</span>
               </Link>
             )
           })}

@@ -69,6 +69,12 @@ describe('design-tokens', () => {
       expect(DEFAULT_CSS_VARIABLES['--font-body']).toBeDefined()
     })
 
+    it('has brand font variables so clean seeds do not inherit random fonts', () => {
+      expect(DEFAULT_CSS_VARIABLES['--font-brand']).toContain('Saira Extra Condensed')
+      expect(DEFAULT_CSS_VARIABLES['--font-portfolio']).toContain('Saira Extra Condensed')
+      expect(DEFAULT_CSS_VARIABLES['--font-signature']).toContain('Dawning of a New Day')
+    })
+
     it('has --radius variable aligned with THEME_DEFAULT_BORDER_RADIUS', () => {
       expect(DEFAULT_CSS_VARIABLES['--radius']).toBe(`${THEME_DEFAULT_BORDER_RADIUS}px`)
     })
@@ -83,6 +89,12 @@ describe('design-tokens', () => {
     it('has typography properties', () => {
       expect(RESET_THEME_DEFAULTS.headingFont).toBe(TYPOGRAPHY_DEFAULTS.headingFont)
       expect(RESET_THEME_DEFAULTS.bodyFont).toBe(TYPOGRAPHY_DEFAULTS.bodyFont)
+    })
+
+    it('resets brand typography too', () => {
+      expect(RESET_THEME_DEFAULTS.brandFont).toBe(TYPOGRAPHY_DEFAULTS.brandFont)
+      expect(RESET_THEME_DEFAULTS.portfolioFont).toBe(TYPOGRAPHY_DEFAULTS.portfolioFont)
+      expect(RESET_THEME_DEFAULTS.signatureFont).toBe(TYPOGRAPHY_DEFAULTS.signatureFont)
     })
 
     it('uses THEME_DEFAULT_BORDER_RADIUS for layout reset', () => {

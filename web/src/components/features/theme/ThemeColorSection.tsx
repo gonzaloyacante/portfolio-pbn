@@ -2,6 +2,7 @@ import React from 'react'
 import { Control, Controller, Path } from 'react-hook-form'
 import { FormLabel, FormMessage, ColorPicker } from '@/components/ui'
 import { ThemeEditorData } from '@/lib/validations'
+import { BRAND } from '@/lib/design-tokens'
 import { ColorUsageModal } from './ColorUsageModal'
 
 interface ThemeColorSectionProps {
@@ -13,26 +14,34 @@ interface ThemeColorSectionProps {
 const COLOR_FIELDS = [
   {
     name: 'PrimaryColor',
-    label: 'Color Primario',
-    description: 'Botones principales, enlaces activos, bordes destacados.',
+    label: 'Acento / CTA',
+    description: 'Botones principales, links y navegación activa. No es color de texto general.',
   },
   {
     name: 'SecondaryColor',
-    label: 'Color Secundario',
-    description: 'Fondos secundarios, elementos decorativos.',
+    label: 'Superficie suave',
+    description: 'Fondos secundarios, chips y zonas de apoyo.',
   },
   {
     name: 'AccentColor',
-    label: 'Color de Acento',
-    description: 'Detalles sutiles, hovers, bordes suaves.',
+    label: 'Acento suave',
+    description: 'Hover, fondos decorativos y énfasis liviano.',
   },
-  { name: 'BackgroundColor', label: 'Color de Fondo', description: 'Fondo general de la página.' },
+  {
+    name: 'BackgroundColor',
+    label: 'Canvas de página',
+    description: 'Fondo general del sitio público.',
+  },
   {
     name: 'CardBgColor',
-    label: 'Fondo de Tarjetas',
-    description: 'Fondo para contenedores, sidebar y tarjetas.',
+    label: 'Superficie / tarjetas',
+    description: 'Cards, paneles, contenedores y superficies elevadas.',
   },
-  { name: 'TextColor', label: 'Color de Texto', description: 'Texto principal y títulos.' },
+  {
+    name: 'TextColor',
+    label: 'Texto principal',
+    description: 'Párrafos, títulos normales y contenido legible.',
+  },
 ]
 
 export const ThemeColorSection: React.FC<ThemeColorSectionProps> = ({ mode, control }) => {
@@ -70,7 +79,7 @@ export const ThemeColorSection: React.FC<ThemeColorSectionProps> = ({ mode, cont
                       <ColorUsageModal
                         fieldKey={fieldKey}
                         label={field.label}
-                        currentColor={(value as string) || '#000000'}
+                        currentColor={(value as string) || BRAND.foreground}
                       />
                     )}
                   />
@@ -83,7 +92,7 @@ export const ThemeColorSection: React.FC<ThemeColorSectionProps> = ({ mode, cont
                 render={({ field: { value, onChange } }) => (
                   <div>
                     <ColorPicker
-                      color={(value as string) || '#000000'} // Fallback
+                      color={(value as string) || BRAND.foreground}
                       onChange={onChange}
                     />
                     <FormMessage />

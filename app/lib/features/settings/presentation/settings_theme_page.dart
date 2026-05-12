@@ -61,15 +61,6 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
   // ── Layout ──────────────────────────────────────────────────────────────
   final _borderRadiusCtrl = TextEditingController();
 
-  /// Controllers that drive the live color preview.
-  List<TextEditingController> get _previewControllers => [
-    _primaryCtrl,
-    _secondaryCtrl,
-    _bgCtrl,
-    _darkPrimaryCtrl,
-    _darkBgCtrl,
-  ];
-
   /// All controllers — used in dispose.
   List<TextEditingController> get _allControllers => [
     _primaryCtrl,
@@ -102,7 +93,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
   @override
   void initState() {
     super.initState();
-    for (final c in _previewControllers) {
+    for (final c in _allControllers) {
       c.addListener(_refresh);
     }
   }
@@ -118,7 +109,7 @@ class _SettingsThemePageState extends ConsumerState<SettingsThemePage> {
 
   @override
   void dispose() {
-    for (final c in _previewControllers) {
+    for (final c in _allControllers) {
       c.removeListener(_refresh);
     }
     for (final c in _allControllers) {
