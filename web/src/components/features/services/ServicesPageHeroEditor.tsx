@@ -14,6 +14,7 @@ import { BRAND } from '@/lib/design-tokens'
 import { Button, ColorPicker, Input } from '@/components/ui'
 import { servicesPageSettingsSchema, type ServicesPageSettingsFormData } from '@/lib/validations'
 import { showToast } from '@/lib/toast'
+import { ServicesListTitlePreview } from './ServicesListTitlePreview'
 
 const GoogleFontPicker = dynamic(
   () =>
@@ -56,6 +57,11 @@ export function ServicesPageHeroEditor({ settings }: ServicesPageHeroEditorProps
   const listTitleFontSize = useWatch({ control, name: 'listTitleFontSize' })
   const listTitleMobileFontSize = useWatch({ control, name: 'listTitleMobileFontSize' })
   const listTitleFontWatch = useWatch({ control, name: 'listTitleFont' })
+  const listTitleWatch = useWatch({ control, name: 'listTitle' })
+  const listTitleFontUrlWatch = useWatch({ control, name: 'listTitleFontUrl' })
+  const listTitleColorWatch = useWatch({ control, name: 'listTitleColor' })
+  const listTitleColorDarkWatch = useWatch({ control, name: 'listTitleColorDark' })
+  const listIntroWatch = useWatch({ control, name: 'listIntro' })
 
   const onSubmit = async (data: ServicesPageSettingsFormData) => {
     try {
@@ -78,117 +84,133 @@ export function ServicesPageHeroEditor({ settings }: ServicesPageHeroEditorProps
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm"
-    >
-      <div>
-        <h2 className="text-lg font-semibold">Cabecera pública — Lista de servicios</h2>
-        <p className="text-muted-foreground text-sm">
-          Título e introducción que ven las visitas en <strong>/servicios</strong>. Tipografía y
-          colores son opcionales; si los dejas vacíos, se usa el tema global (Poppins / tokens).
-        </p>
-      </div>
-
-      <Input label="Título" {...register('listTitle')} error={errors.listTitle?.message} />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium">Texto introductorio</label>
-        <textarea
-          {...register('listIntro')}
-          rows={3}
-          className="dark:bg-muted w-full rounded border p-2 text-sm"
-          placeholder={DEFAULT_SERVICES_PAGE_LIST_INTRO}
-        />
-      </div>
-
-      <GoogleFontPicker
-        value={listTitleFontWatch || ''}
-        onValueChange={(fontName, url) => {
-          setValue('listTitleFont', fontName, { shouldDirty: true })
-          setValue('listTitleFontUrl', url, { shouldDirty: true })
-        }}
-        label="Tipografía del título"
-        description="Google Fonts (igual que en Inicio / tema)."
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <EditorSliderControl
-          label="Tamaño título — escritorio"
-          value={listTitleFontSize ?? 32}
-          onChange={(v) => setValue('listTitleFontSize', v, { shouldDirty: true })}
-          min={12}
-          max={96}
-          suffix=" px"
-        />
-        <EditorSliderControl
-          label="Tamaño título — móvil"
-          value={listTitleMobileFontSize ?? 28}
-          onChange={(v) => setValue('listTitleMobileFontSize', v, { shouldDirty: true })}
-          min={12}
-          max={72}
-          suffix=" px"
-        />
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Color título — modo claro</p>
-          <p className="text-muted-foreground text-xs">Vacío = color del tema (--foreground).</p>
-          <Controller
-            name="listTitleColor"
-            control={control}
-            render={({ field }) => (
-              <div className="space-y-3">
-                <ColorPicker
-                  color={field.value?.trim() ? field.value : BRAND.foreground}
-                  onChange={(hex) => field.onChange(hex)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => field.onChange(null)}
-                >
-                  Usar color por defecto del tema
-                </Button>
-              </div>
-            )}
-          />
-        </div>
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Color título — modo oscuro</p>
-          <p className="text-muted-foreground text-xs">
-            Vacío = mismo que claro o foreground oscuro.
+    <div className="grid gap-6 xl:grid-cols-[1fr_320px]">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="border-border bg-card space-y-6 rounded-lg border p-6 shadow-sm"
+      >
+        <div>
+          <h2 className="text-lg font-semibold">Cabecera pública — Lista de servicios</h2>
+          <p className="text-muted-foreground text-sm">
+            Título e introducción que ven las visitas en <strong>/servicios</strong>. Tipografía y
+            colores son opcionales; si los dejas vacíos, se usa el tema global (Poppins / tokens).
           </p>
-          <Controller
-            name="listTitleColorDark"
-            control={control}
-            render={({ field }) => (
-              <div className="space-y-3">
-                <ColorPicker
-                  color={field.value?.trim() ? field.value : BRAND.darkPrimary}
-                  onChange={(hex) => field.onChange(hex)}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => field.onChange(null)}
-                >
-                  Usar color por defecto del tema
-                </Button>
-              </div>
-            )}
+        </div>
+
+        <Input label="Título" {...register('listTitle')} error={errors.listTitle?.message} />
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Texto introductorio</label>
+          <textarea
+            {...register('listIntro')}
+            rows={3}
+            className="dark:bg-muted w-full rounded border p-2 text-sm"
+            placeholder={DEFAULT_SERVICES_PAGE_LIST_INTRO}
           />
         </div>
-      </div>
 
-      <div className="flex justify-end border-t pt-4">
-        <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
-          Guardar cabecera de servicios
-        </Button>
+        <GoogleFontPicker
+          value={listTitleFontWatch || ''}
+          onValueChange={(fontName, url) => {
+            setValue('listTitleFont', fontName, { shouldDirty: true })
+            setValue('listTitleFontUrl', url, { shouldDirty: true })
+          }}
+          label="Tipografía del título"
+          description="Google Fonts (igual que en Inicio / tema)."
+        />
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <EditorSliderControl
+            label="Tamaño título — escritorio"
+            value={listTitleFontSize ?? 32}
+            onChange={(v) => setValue('listTitleFontSize', v, { shouldDirty: true })}
+            min={12}
+            max={96}
+            suffix=" px"
+          />
+          <EditorSliderControl
+            label="Tamaño título — móvil"
+            value={listTitleMobileFontSize ?? 28}
+            onChange={(v) => setValue('listTitleMobileFontSize', v, { shouldDirty: true })}
+            min={12}
+            max={72}
+            suffix=" px"
+          />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Color título — modo claro</p>
+            <p className="text-muted-foreground text-xs">Vacío = color del tema (--foreground).</p>
+            <Controller
+              name="listTitleColor"
+              control={control}
+              render={({ field }) => (
+                <div className="space-y-3">
+                  <ColorPicker
+                    color={field.value?.trim() ? field.value : BRAND.foreground}
+                    onChange={(hex) => field.onChange(hex)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => field.onChange(null)}
+                  >
+                    Usar color por defecto del tema
+                  </Button>
+                </div>
+              )}
+            />
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Color título — modo oscuro</p>
+            <p className="text-muted-foreground text-xs">
+              Vacío = mismo que claro o foreground oscuro.
+            </p>
+            <Controller
+              name="listTitleColorDark"
+              control={control}
+              render={({ field }) => (
+                <div className="space-y-3">
+                  <ColorPicker
+                    color={field.value?.trim() ? field.value : BRAND.darkPrimary}
+                    onChange={(hex) => field.onChange(hex)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => field.onChange(null)}
+                  >
+                    Usar color por defecto del tema
+                  </Button>
+                </div>
+              )}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end border-t pt-4">
+          <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+            Guardar cabecera de servicios
+          </Button>
+        </div>
+      </form>
+
+      {/* Preview sticky en escritorio */}
+      <div className="xl:sticky xl:top-4 xl:self-start">
+        <ServicesListTitlePreview
+          listTitle={listTitleWatch ?? 'Mis Servicios'}
+          listIntro={listIntroWatch ?? ''}
+          listTitleFont={listTitleFontWatch ?? ''}
+          listTitleFontUrl={listTitleFontUrlWatch ?? ''}
+          listTitleFontSize={listTitleFontSize ?? undefined}
+          listTitleMobileFontSize={listTitleMobileFontSize ?? undefined}
+          listTitleColor={listTitleColorWatch ?? undefined}
+          listTitleColorDark={listTitleColorDarkWatch ?? undefined}
+        />
       </div>
-    </form>
+    </div>
   )
 }
