@@ -83,11 +83,11 @@ class LiveHeroPreview extends StatelessWidget {
         (isMobileDevice && (_strVal('heroBackdropMobileUrl').trim().isNotEmpty))
         ? _strVal('heroBackdropMobileUrl')
         : _strVal('heroBackdropUrl');
-    final fallbackPortrait = currentHeroImageUrl;
-    final backdropUrl = rawBackdrop.isNotEmpty ? rawBackdrop : fallbackPortrait;
+    final mainPortrait = currentHeroImageUrl;
+    final backdropUrl = rawBackdrop.isNotEmpty ? rawBackdrop : mainPortrait;
 
-    final hidePortrait =
-        immersive && vals['heroForegroundPortraitShow'] == false;
+    /// Igual que web pública: inmersivo = una sola capa (fondo), sin retrato duplicado.
+    final hidePortrait = immersive;
 
     final extent = _effectiveScrimExtent(isMobileDevice);
     final opacity = _effectiveScrimOpacity(isMobileDevice);

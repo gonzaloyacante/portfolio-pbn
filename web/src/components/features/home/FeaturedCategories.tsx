@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { cn } from '@/lib/utils'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { WordReveal } from '@/components/ui'
@@ -14,6 +15,8 @@ interface FeaturedCategoriesProps {
   titleFontSize?: number | null
   titleColor?: string | null
   titleColorDark?: string | null
+  /** Hero inmersivo: sin tapar el fondo que continúa bajo el bloque */
+  ambientUnderlay?: boolean
 }
 
 export default async function FeaturedCategories({
@@ -24,6 +27,7 @@ export default async function FeaturedCategories({
   titleFontSize,
   titleColor,
   titleColorDark,
+  ambientUnderlay = false,
 }: FeaturedCategoriesProps) {
   const featuredImages = await prisma.categoryImage.findMany({
     where: { isFeatured: true, category: { isActive: true, deletedAt: null } },
@@ -45,7 +49,14 @@ export default async function FeaturedCategories({
   const fontsToLoad = titleFont ? [titleFont] : []
 
   return (
-    <section className="bg-(--background) py-12 transition-colors duration-500 lg:py-20">
+    <section
+      className={cn(
+        'relative z-10 py-12 transition-colors duration-500 lg:py-20',
+        ambientUnderlay
+          ? 'bg-transparent bg-gradient-to-b from-transparent via-transparent to-(--background)'
+          : 'bg-(--background)'
+      )}
+    >
       {fontsToLoad.length > 0 && <FontLoader fonts={fontsToLoad} />}
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {/* Header */}

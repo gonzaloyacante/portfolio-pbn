@@ -18,6 +18,7 @@ export function HeroContent({
   selectedElement = null,
   onSelectElement,
   forceIsMobile,
+  ambientExtendsFeatured = false,
 }: HeroContentProps) {
   const s = settings || ({} as Partial<HomeSettingsData>)
   const actualIsMobile = useIsMobile()
@@ -45,7 +46,13 @@ export function HeroContent({
         immersive && '-mt-[var(--public-nav-offset)] pt-[var(--public-nav-offset)]'
       )}
     >
-      {immersive ? <HeroImmersiveBackdrop settings={s} isMobile={isMobile} /> : null}
+      {immersive ? (
+        <HeroImmersiveBackdrop
+          settings={s}
+          isMobile={isMobile}
+          extendBelowFeatured={ambientExtendsFeatured && !isEditor}
+        />
+      ) : null}
 
       <section
         className={cn(

@@ -60,7 +60,7 @@ export const homeSettings = {
   heroBackdropObjectPosition: 'center',
   heroBackdropMobileUrl: null,
   heroBackdropMobileObjectPosition: null,
-  heroForegroundPortraitShow: true,
+  heroForegroundPortraitShow: false,
   heroScrimEdge: 'left',
   heroScrimExtentPercent: 45,
   heroScrimOpacity: 80,

@@ -25,9 +25,7 @@ export default function Footer({
     <footer
       className={cn(
         'border-primary/20 text-foreground border-t py-12 text-center font-sans transition-colors duration-300',
-        immersiveGlass
-          ? 'supports-[backdrop-filter]:bg-background/60 bg-background/80 backdrop-blur-sm'
-          : 'bg-background'
+        immersiveGlass ? 'bg-background/95' : 'bg-background'
       )}
     >
       <div className="container mx-auto px-4">

@@ -21,21 +21,29 @@ function prefersReducedMotion(): boolean {
 interface HeroImmersiveBackdropProps {
   settings: Partial<HomeSettingsData>
   isMobile: boolean
+  /** Fondo fijo más alto + leve parallax bajo la sección de destacados */
+  extendBelowFeatured?: boolean
 }
 
 /**
  * Capa de fondo detrás del contenido del hero: imagen/GIF (Next Image) o vídeo nativo (Cloudinary).
  * Sin interactividad por puntero — animación viene del asset (vídeo/GIF).
  */
-export function HeroImmersiveBackdrop({ settings, isMobile }: HeroImmersiveBackdropProps) {
+export function HeroImmersiveBackdrop({
+  settings,
+  isMobile,
+  extendBelowFeatured = false,
+}: HeroImmersiveBackdropProps) {
   const { resolvedTheme } = useNextTheme()
   const videoRef = useRef<HTMLVideoElement>(null)
+  const parallaxWrapRef = useRef<HTMLDivElement>(null)
 
   const prefersDark = resolvedTheme === 'dark'
 
   const rawUrl = (isMobile && settings.heroBackdropMobileUrl) || settings.heroBackdropUrl || ''
-  const fallbackPortrait = settings.heroMainImageUrl || ''
-  const backdropUrl = rawUrl || fallbackPortrait
+  const mainUrl = settings.heroMainImageUrl || ''
+  /** Prioridad: medio de fondo explícito; si no hay, una sola vez la imagen destacada como ambiente. */
+  const backdropUrl = rawUrl || mainUrl
 
   const kind = settings.heroBackdropMediaKind ?? 'auto'
   const isVideo = backdropUrl ? isHeroBackdropVideoUrl(backdropUrl, kind) : false
@@ -93,6 +101,30 @@ export function HeroImmersiveBackdrop({ settings, isMobile }: HeroImmersiveBackd
     })
   }, [isVideo, backdropUrl])
 
+  useEffect(() => {
+    const el = parallaxWrapRef.current
+    if (!extendBelowFeatured || prefersReducedMotion()) {
+      if (el) el.style.transform = ''
+      return
+    }
+    let raf = 0
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        if (!el) return
+        const y = Math.min(window.scrollY * 0.12, 80)
+        el.style.transform = `translate3d(0, ${y}px, 0)`
+      })
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      if (el) el.style.transform = ''
+    }
+  }, [extendBelowFeatured, backdropUrl])
+
   if (!backdropUrl) return null
 
   const poster = settings.heroBackdropPosterUrl || undefined
@@ -103,45 +135,50 @@ export function HeroImmersiveBackdrop({ settings, isMobile }: HeroImmersiveBackd
   return (
     <div
       className={cn(
-        'pointer-events-none absolute inset-0 z-0 overflow-hidden',
-        // Dynamic viewport: menos saltos con barras del navegador en móvil
-        'w-full max-w-full supports-[width:1dvw]:w-[min(100dvw,100%)]'
+        'pointer-events-none z-0 overflow-hidden',
+        extendBelowFeatured
+          ? 'fixed inset-x-0 top-0 h-[min(420vh,5200px)] w-full max-w-full supports-[width:1dvw]:w-[min(100dvw,100%)]'
+          : 'absolute inset-0 w-full max-w-full supports-[width:1dvw]:w-[min(100dvw,100%)]'
       )}
       aria-hidden
     >
-      {isVideo ? (
-        <video
-          ref={videoRef}
-          className={cn(
-            'absolute inset-0 z-0 h-full w-full',
-            objectFit === 'contain' ? 'object-contain' : 'object-cover'
-          )}
-          style={{ objectPosition }}
-          src={backdropUrl}
-          poster={poster}
-          loop={loop}
-          muted={muted}
-          playsInline={playsInline}
-          preload="metadata"
-        />
-      ) : (
-        <Image
-          src={backdropUrl}
-          alt=""
-          fill
-          priority
-          sizes={IMAGE_SIZES.heroBackdrop}
-          className={cn(
-            'absolute inset-0 z-0 h-full w-full',
-            objectFit === 'contain' ? 'object-contain' : 'object-cover'
-          )}
-          style={{ objectPosition }}
-        />
-      )}
+      <div ref={parallaxWrapRef} className="absolute inset-0 z-0 will-change-transform">
+        {isVideo ? (
+          <video
+            ref={videoRef}
+            className={cn(
+              'absolute inset-0 z-0 h-full w-full',
+              objectFit === 'contain' ? 'object-contain' : 'object-cover'
+            )}
+            style={{ objectPosition }}
+            src={backdropUrl}
+            poster={poster}
+            loop={loop}
+            muted={muted}
+            playsInline={playsInline}
+            preload="metadata"
+          />
+        ) : (
+          <Image
+            src={backdropUrl}
+            alt=""
+            fill
+            priority
+            sizes={IMAGE_SIZES.heroBackdrop}
+            className={cn(
+              'absolute inset-0 z-0 h-full w-full',
+              objectFit === 'contain' ? 'object-contain' : 'object-cover'
+            )}
+            style={{ objectPosition }}
+          />
+        )}
 
-      {tint ? <div className="absolute inset-0 z-[1]" style={{ backgroundColor: tint }} /> : null}
+        {tint ? <div className="absolute inset-0 z-[1]" style={{ backgroundColor: tint }} /> : null}
 
-      {scrim ? <div className="absolute inset-0 z-[2]" style={{ backgroundImage: scrim }} /> : null}
+        {scrim ? (
+          <div className="absolute inset-0 z-[2]" style={{ backgroundImage: scrim }} />
+        ) : null}
+      </div>
     </div>
   )
 }

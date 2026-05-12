@@ -62,13 +62,16 @@ export function HeroBackdropPropertyEditor({
 
       <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
         <div>
-          <p className="text-sm font-medium">Mostrar retrato en columna</p>
+          <p className="text-sm font-medium">
+            Mostrar retrato en columna (solo vista previa editor)
+          </p>
           <p className="text-muted-foreground text-xs">
-            Desactivar si el retrato ya va solo en el fondo (vídeo/GIF)
+            En la web pública con hero inmersivo, el retrato no se duplica: solo el fondo. Aquí
+            sigues viendo la imagen para editarla.
           </p>
         </div>
         <Switch
-          checked={settings.heroForegroundPortraitShow ?? true}
+          checked={settings.heroForegroundPortraitShow ?? false}
           onCheckedChange={(val: boolean) => onUpdate('heroForegroundPortraitShow', val)}
         />
       </div>

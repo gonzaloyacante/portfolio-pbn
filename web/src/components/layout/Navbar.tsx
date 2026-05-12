@@ -62,10 +62,10 @@ export default function Navbar({
   return (
     <nav
       aria-label="Navegación principal"
-      className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-500 ${
+      className={`sticky top-0 z-50 w-full border-b transition-all duration-500 ${
         immersiveGlass
-          ? 'border-border/40 bg-background/45 supports-[backdrop-filter]:bg-background/30 border-b'
-          : 'bg-background/95'
+          ? 'border-border/50 bg-background/90'
+          : 'bg-background/95 supports-[backdrop-filter]:bg-background/90 backdrop-blur-md'
       }`}
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
