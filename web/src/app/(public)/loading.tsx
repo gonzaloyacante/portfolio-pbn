@@ -16,7 +16,7 @@ export default function PublicLoading() {
 
         {/* Right Column Skeleton */}
         <div className="hidden lg:block">
-          <Skeleton className="h-[600px] w-full max-w-md rounded-[2.5rem]" />
+          <Skeleton className="rounded-card h-[600px] w-full max-w-md" />
         </div>
       </div>
     </div>

@@ -94,7 +94,7 @@ export default function ContactForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-[2.5rem] bg-(--card) p-5 text-center shadow-lg sm:p-8"
+        className="rounded-card bg-card p-5 text-center shadow-lg sm:p-8"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -129,7 +129,7 @@ export default function ContactForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-[2.5rem] bg-(--card) p-5 shadow-lg sm:p-8"
+      className="rounded-card bg-card p-5 shadow-lg sm:p-8"
     >
       <h2 className="font-heading mb-6 text-2xl font-bold text-(--foreground)">
         Envíame un mensaje
@@ -148,7 +148,7 @@ export default function ContactForm() {
             placeholder="Tu nombre completo"
             autoComplete="name"
           />
-          {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
+          {errors.name && <p className="text-destructive mt-1 text-sm">{errors.name.message}</p>}
         </div>
 
         {/* Response Preference Selector */}
@@ -207,7 +207,9 @@ export default function ContactForm() {
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
           />
-          {errors.message && <p className="mt-1 text-sm text-red-500">{errors.message.message}</p>}
+          {errors.message && (
+            <p className="text-destructive mt-1 text-sm">{errors.message.message}</p>
+          )}
         </div>
 
         {/* Privacy Checkbox */}
@@ -228,10 +230,10 @@ export default function ContactForm() {
             >
               Política de Privacidad
             </Link>
-            . <span className="text-red-500">*</span>
+            . <span className="text-destructive">*</span>
           </label>
         </div>
-        {errors.privacy && <p className="text-sm text-red-500">{errors.privacy.message}</p>}
+        {errors.privacy && <p className="text-destructive text-sm">{errors.privacy.message}</p>}
 
         {/* Submit — uses Button directly (RHF form, not Server Action) */}
         <Button

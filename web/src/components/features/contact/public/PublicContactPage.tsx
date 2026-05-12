@@ -83,9 +83,7 @@ export default function PublicContactPage({
         </div>
 
         <div className="w-full">
-          <Suspense
-            fallback={<div className="bg-muted h-96 w-full animate-pulse rounded-[2.5rem]" />}
-          >
+          <Suspense fallback={<div className="bg-muted rounded-card h-96 w-full animate-pulse" />}>
             <ContactForm />
           </Suspense>
 

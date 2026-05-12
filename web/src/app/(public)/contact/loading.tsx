@@ -53,7 +53,7 @@ export default function ContactLoading() {
 
         {/* Right: Contact Form */}
         <div className="w-full">
-          <Skeleton className="h-[520px] w-full rounded-[2.5rem]" />
+          <Skeleton className="rounded-card h-[520px] w-full" />
         </div>
       </div>
 
