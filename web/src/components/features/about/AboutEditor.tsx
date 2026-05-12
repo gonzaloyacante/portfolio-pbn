@@ -10,6 +10,7 @@ import { showToast } from '@/lib/toast'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aboutSettingsSchema, type AboutSettingsFormData } from '@/lib/validations'
+import { AboutBioPreview } from './AboutBioPreview'
 
 const GoogleFontPicker = dynamic(
   () =>
@@ -87,6 +88,12 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   const illustrationMaxPx = useWatch({ control, name: 'illustrationMaxPx' })
   const illustrationMobileMaxPx = useWatch({ control, name: 'illustrationMobileMaxPx' })
   const bioTitleFontWatch = useWatch({ control, name: 'bioTitleFont' })
+  const bioTitleWatch = useWatch({ control, name: 'bioTitle' })
+  const bioTitleColorWatch = useWatch({ control, name: 'bioTitleColor' })
+  const bioTitleColorDarkWatch = useWatch({ control, name: 'bioTitleColorDark' })
+  const bioTitleFontUrlWatch = useWatch({ control, name: 'bioTitleFontUrl' })
+  const profileImageShapeWatch = useWatch({ control, name: 'profileImageShape' })
+  const profileImageShadowColorWatch = useWatch({ control, name: 'profileImageShadowColor' })
 
   // Helper for array fields (one per line)
   const skillsString = skillsRaw?.join('\n') || ''
@@ -115,328 +122,355 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="border-border bg-card space-y-8 rounded-lg border p-6 shadow-sm"
-    >
-      {/* Intro Section */}
-      <h2 className="text-lg font-semibold">Introducción y Bio</h2>
+    <div className="grid gap-6 xl:grid-cols-[1fr_340px]">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="border-border bg-card space-y-8 rounded-lg border p-6 shadow-sm"
+      >
+        {/* Intro Section */}
+        <h2 className="text-lg font-semibold">Introducción y Bio</h2>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-4">
-          <Input
-            label="Título de Presentación"
-            {...register('bioTitle')}
-            error={errors.bioTitle?.message}
-          />
-
-          <GoogleFontPicker
-            value={bioTitleFontWatch || ''}
-            onValueChange={(fontName, url) => {
-              setValue('bioTitleFont', fontName, { shouldDirty: true })
-              setValue('bioTitleFontUrl', url, { shouldDirty: true })
-            }}
-            label="Tipografía del título (“Hola…”)"
-            description="Vacío = usa la fuente script del tema (Great Vibes por defecto)."
-          />
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <EditorSliderControl
-              label="Tamaño título — escritorio"
-              value={bioTitleFontSize ?? 36}
-              onChange={(v) => setValue('bioTitleFontSize', v, { shouldDirty: true })}
-              min={12}
-              max={120}
-              suffix=" px"
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-4">
+            <Input
+              label="Título de Presentación"
+              {...register('bioTitle')}
+              error={errors.bioTitle?.message}
             />
-            <EditorSliderControl
-              label="Tamaño título — móvil"
-              value={bioTitleMobileFontSize ?? 32}
-              onChange={(v) => setValue('bioTitleMobileFontSize', v, { shouldDirty: true })}
-              min={12}
-              max={96}
-              suffix=" px"
-            />
-          </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Color título — modo claro</p>
-              <p className="text-muted-foreground text-xs">Vacío = color primario del tema.</p>
-              <Controller
-                name="bioTitleColor"
-                control={control}
-                render={({ field }) => (
-                  <div className="space-y-3">
-                    <ColorPicker
-                      color={field.value?.trim() ? field.value : BRAND.primary}
-                      onChange={(hex) => field.onChange(hex)}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => field.onChange(null)}
-                    >
-                      Usar primario del tema
-                    </Button>
-                  </div>
-                )}
+            <GoogleFontPicker
+              value={bioTitleFontWatch || ''}
+              onValueChange={(fontName, url) => {
+                setValue('bioTitleFont', fontName, { shouldDirty: true })
+                setValue('bioTitleFontUrl', url, { shouldDirty: true })
+              }}
+              label="Tipografía del título (“Hola…”)"
+              description="Vacío = usa la fuente script del tema (Great Vibes por defecto)."
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <EditorSliderControl
+                label="Tamaño título — escritorio"
+                value={bioTitleFontSize ?? 36}
+                onChange={(v) => setValue('bioTitleFontSize', v, { shouldDirty: true })}
+                min={12}
+                max={120}
+                suffix=" px"
+              />
+              <EditorSliderControl
+                label="Tamaño título — móvil"
+                value={bioTitleMobileFontSize ?? 32}
+                onChange={(v) => setValue('bioTitleMobileFontSize', v, { shouldDirty: true })}
+                min={12}
+                max={96}
+                suffix=" px"
               />
             </div>
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Color título — modo oscuro</p>
-              <Controller
-                name="bioTitleColorDark"
-                control={control}
-                render={({ field }) => (
-                  <div className="space-y-3">
-                    <ColorPicker
-                      color={field.value?.trim() ? field.value : BRAND.darkPrimary}
-                      onChange={(hex) => field.onChange(hex)}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => field.onChange(null)}
-                    >
-                      Usar color por defecto oscuro
-                    </Button>
-                  </div>
-                )}
-              />
-            </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Intro (Primer párrafo)</label>
-            <textarea
-              {...register('bioIntro')}
-              rows={3}
-              className="dark:bg-muted w-full rounded border p-2 text-sm"
-              placeholder="Breve introducción..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Biografía Completa</label>
-            <textarea
-              {...register('bioDescription')}
-              rows={8}
-              className="dark:bg-muted w-full rounded border p-2 text-sm"
-              placeholder="Historia completa..."
-            />
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Foto de Perfil</label>
-            <ImageUpload
-              name="profileImageUrl"
-              value={profileImageUrl ? [profileImageUrl] : []}
-              onChange={(urls: string[]) =>
-                setValue('profileImageUrl', urls[0], { shouldDirty: true })
-              }
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Forma de la Foto</label>
-            <select
-              {...register('profileImageShape')}
-              className="dark:bg-muted w-full rounded border p-2 text-sm"
-            >
-              <option value="ellipse">Óvalo (Elipse)</option>
-              <option value="circle">Círculo</option>
-              <option value="rounded">Esquinas Redondeadas</option>
-              <option value="none">Rectangular (Sin recorte)</option>
-            </select>
-          </div>
-
-          <div className="border-border space-y-4 rounded-lg border p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium">Sombra de la foto</p>
-                <p className="text-muted-foreground text-xs">
-                  Desactiva si el recorte deja la sombra “en el aire”
-                </p>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Color título — modo claro</p>
+                <p className="text-muted-foreground text-xs">Vacío = color primario del tema.</p>
+                <Controller
+                  name="bioTitleColor"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="space-y-3">
+                      <ColorPicker
+                        color={field.value?.trim() ? field.value : BRAND.primary}
+                        onChange={(hex) => field.onChange(hex)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => field.onChange(null)}
+                      >
+                        Usar primario del tema
+                      </Button>
+                    </div>
+                  )}
+                />
               </div>
-              <Switch
-                checked={profileImageShadowEnabled ?? true}
-                onCheckedChange={(v) =>
-                  setValue('profileImageShadowEnabled', v, { shouldDirty: true })
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Color título — modo oscuro</p>
+                <Controller
+                  name="bioTitleColorDark"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="space-y-3">
+                      <ColorPicker
+                        color={field.value?.trim() ? field.value : BRAND.darkPrimary}
+                        onChange={(hex) => field.onChange(hex)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => field.onChange(null)}
+                      >
+                        Usar color por defecto oscuro
+                      </Button>
+                    </div>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Intro (Primer párrafo)</label>
+              <textarea
+                {...register('bioIntro')}
+                rows={3}
+                className="dark:bg-muted w-full rounded border p-2 text-sm"
+                placeholder="Breve introducción..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Biografía Completa</label>
+              <textarea
+                {...register('bioDescription')}
+                rows={8}
+                className="dark:bg-muted w-full rounded border p-2 text-sm"
+                placeholder="Historia completa..."
+              />
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Foto de Perfil</label>
+              <ImageUpload
+                name="profileImageUrl"
+                value={profileImageUrl ? [profileImageUrl] : []}
+                onChange={(urls: string[]) =>
+                  setValue('profileImageUrl', urls[0], { shouldDirty: true })
                 }
               />
             </div>
+
             <div className="space-y-2">
-              <p className="text-sm font-medium">Color de la sombra</p>
-              <p className="text-muted-foreground text-xs">
-                Vacío = usa el color primario del tema en la web pública.
-              </p>
-              <Controller
-                name="profileImageShadowColor"
-                control={control}
-                render={({ field }) => (
-                  <div className="space-y-3">
-                    <ColorPicker
-                      color={field.value?.trim() ? field.value : BRAND.primary}
-                      onChange={(hex) => field.onChange(hex)}
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => field.onChange(null)}
-                    >
-                      Usar color primario del tema (automático)
-                    </Button>
-                  </div>
+              <label className="text-sm font-medium">Forma de la Foto</label>
+              <select
+                {...register('profileImageShape')}
+                className="dark:bg-muted w-full rounded border p-2 text-sm"
+              >
+                <option value="ellipse">Óvalo (Elipse)</option>
+                <option value="circle">Círculo</option>
+                <option value="rounded">Esquinas Redondeadas</option>
+                <option value="none">Rectangular (Sin recorte)</option>
+              </select>
+            </div>
+
+            <div className="border-border space-y-4 rounded-lg border p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium">Sombra de la foto</p>
+                  <p className="text-muted-foreground text-xs">
+                    Desactiva si el recorte deja la sombra “en el aire”
+                  </p>
+                </div>
+                <Switch
+                  checked={profileImageShadowEnabled ?? true}
+                  onCheckedChange={(v) =>
+                    setValue('profileImageShadowEnabled', v, { shouldDirty: true })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Color de la sombra</p>
+                <p className="text-muted-foreground text-xs">
+                  Vacío = usa el color primario del tema en la web pública.
+                </p>
+                <Controller
+                  name="profileImageShadowColor"
+                  control={control}
+                  render={({ field }) => (
+                    <div className="space-y-3">
+                      <ColorPicker
+                        color={field.value?.trim() ? field.value : BRAND.primary}
+                        onChange={(hex) => field.onChange(hex)}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => field.onChange(null)}
+                      >
+                        Usar color primario del tema (automático)
+                      </Button>
+                    </div>
+                  )}
+                />
+                {errors.profileImageShadowColor?.message && (
+                  <p className="text-destructive text-xs">
+                    {errors.profileImageShadowColor.message}
+                  </p>
                 )}
-              />
-              {errors.profileImageShadowColor?.message && (
-                <p className="text-destructive text-xs">{errors.profileImageShadowColor.message}</p>
-              )}
-            </div>
-            <EditorSliderControl
-              label="Opacidad sombra"
-              value={profileImageShadowOpacity ?? 35}
-              onChange={(v) => setValue('profileImageShadowOpacity', v, { shouldDirty: true })}
-              min={0}
-              max={100}
-              suffix="%"
-            />
-            <EditorSliderControl
-              label="Desenfoque (blur)"
-              value={profileImageShadowBlur ?? 24}
-              onChange={(v) => setValue('profileImageShadowBlur', v, { shouldDirty: true })}
-              min={0}
-              max={80}
-              suffix=" px"
-            />
-            <EditorSliderControl
-              label="Expansión (spread)"
-              value={profileImageShadowSpread ?? 0}
-              onChange={(v) => setValue('profileImageShadowSpread', v, { shouldDirty: true })}
-              min={-40}
-              max={40}
-              suffix=" px"
-            />
-            <div className="grid grid-cols-2 gap-3">
+              </div>
               <EditorSliderControl
-                label="Offset X"
-                value={profileImageShadowOffsetX ?? 0}
-                onChange={(v) => setValue('profileImageShadowOffsetX', v, { shouldDirty: true })}
-                min={-80}
+                label="Opacidad sombra"
+                value={profileImageShadowOpacity ?? 35}
+                onChange={(v) => setValue('profileImageShadowOpacity', v, { shouldDirty: true })}
+                min={0}
+                max={100}
+                suffix="%"
+              />
+              <EditorSliderControl
+                label="Desenfoque (blur)"
+                value={profileImageShadowBlur ?? 24}
+                onChange={(v) => setValue('profileImageShadowBlur', v, { shouldDirty: true })}
+                min={0}
                 max={80}
                 suffix=" px"
               />
               <EditorSliderControl
-                label="Offset Y"
-                value={profileImageShadowOffsetY ?? 8}
-                onChange={(v) => setValue('profileImageShadowOffsetY', v, { shouldDirty: true })}
-                min={-80}
-                max={80}
+                label="Expansión (spread)"
+                value={profileImageShadowSpread ?? 0}
+                onChange={(v) => setValue('profileImageShadowSpread', v, { shouldDirty: true })}
+                min={-40}
+                max={40}
+                suffix=" px"
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <EditorSliderControl
+                  label="Offset X"
+                  value={profileImageShadowOffsetX ?? 0}
+                  onChange={(v) => setValue('profileImageShadowOffsetX', v, { shouldDirty: true })}
+                  min={-80}
+                  max={80}
+                  suffix=" px"
+                />
+                <EditorSliderControl
+                  label="Offset Y"
+                  value={profileImageShadowOffsetY ?? 8}
+                  onChange={(v) => setValue('profileImageShadowOffsetY', v, { shouldDirty: true })}
+                  min={-80}
+                  max={80}
+                  suffix=" px"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Ilustración Decorativa</label>
+              <ImageUpload
+                name="illustrationUrl"
+                value={illustrationUrl ? [illustrationUrl] : []}
+                onChange={(urls) => setValue('illustrationUrl', urls[0], { shouldDirty: true })}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <EditorSliderControl
+                label="Tamaño ilustración — escritorio"
+                value={illustrationMaxPx ?? 112}
+                onChange={(v) => setValue('illustrationMaxPx', v, { shouldDirty: true })}
+                min={48}
+                max={320}
+                suffix=" px"
+              />
+              <EditorSliderControl
+                label="Tamaño ilustración — móvil"
+                value={illustrationMobileMaxPx ?? 96}
+                onChange={(v) => setValue('illustrationMobileMaxPx', v, { shouldDirty: true })}
+                min={48}
+                max={280}
                 suffix=" px"
               />
             </div>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Ilustración Decorativa</label>
-            <ImageUpload
-              name="illustrationUrl"
-              value={illustrationUrl ? [illustrationUrl] : []}
-              onChange={(urls) => setValue('illustrationUrl', urls[0], { shouldDirty: true })}
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <EditorSliderControl
-              label="Tamaño ilustración — escritorio"
-              value={illustrationMaxPx ?? 112}
-              onChange={(v) => setValue('illustrationMaxPx', v, { shouldDirty: true })}
-              min={48}
-              max={320}
-              suffix=" px"
-            />
-            <EditorSliderControl
-              label="Tamaño ilustración — móvil"
-              value={illustrationMobileMaxPx ?? 96}
-              onChange={(v) => setValue('illustrationMobileMaxPx', v, { shouldDirty: true })}
-              min={48}
-              max={280}
-              suffix=" px"
-            />
-          </div>
         </div>
-      </div>
 
-      {/* Skills & Certs */}
-      <div className="border-t pt-6">
-        <h2 className="mb-4 text-lg font-semibold">Habilidades y Formación</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Habilidades (una por línea)</label>
-            <textarea
-              defaultValue={skillsString}
-              onChange={(e) =>
-                setValue(
-                  'skills',
-                  e.target.value
-                    .split(/\r?\n/) // one skill per line
-                    .map((s) => s.trim())
-                    .filter(Boolean)
-                )
-              }
-              className="dark:bg-muted w-full rounded border p-2 text-sm"
-              rows={4}
-            />
-            <p className="text-muted-foreground text-xs">
-              Ej:
-              <br />
-              Maquillaje social
-              <br />
-              FX
-              <br />
-              Caracterización
-            </p>
-          </div>
+        {/* Skills & Certs */}
+        <div className="border-t pt-6">
+          <h2 className="mb-4 text-lg font-semibold">Habilidades y Formación</h2>
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Habilidades (una por línea)</label>
+              <textarea
+                defaultValue={skillsString}
+                onChange={(e) =>
+                  setValue(
+                    'skills',
+                    e.target.value
+                      .split(/\r?\n/) // one skill per line
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                  )
+                }
+                className="dark:bg-muted w-full rounded border p-2 text-sm"
+                rows={4}
+              />
+              <p className="text-muted-foreground text-xs">
+                Ej:
+                <br />
+                Maquillaje social
+                <br />
+                FX
+                <br />
+                Caracterización
+              </p>
+            </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Certificaciones (una por línea)</label>
-            <textarea
-              defaultValue={certificationsString}
-              onChange={(e) =>
-                setValue(
-                  'certifications',
-                  e.target.value
-                    .split(/\r?\n/) // one certification per line
-                    .map((s) => s.trim())
-                    .filter(Boolean)
-                )
-              }
-              className="dark:bg-muted w-full rounded border p-2 text-sm"
-              rows={4}
-            />
-            <p className="text-muted-foreground text-xs">
-              Ej:
-              <br />
-              Master en Maquillaje 2023
-              <br />
-              Curso FX Avanzado
-            </p>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Certificaciones (una por línea)</label>
+              <textarea
+                defaultValue={certificationsString}
+                onChange={(e) =>
+                  setValue(
+                    'certifications',
+                    e.target.value
+                      .split(/\r?\n/) // one certification per line
+                      .map((s) => s.trim())
+                      .filter(Boolean)
+                  )
+                }
+                className="dark:bg-muted w-full rounded border p-2 text-sm"
+                rows={4}
+              />
+              <p className="text-muted-foreground text-xs">
+                Ej:
+                <br />
+                Master en Maquillaje 2023
+                <br />
+                Curso FX Avanzado
+              </p>
+            </div>
           </div>
+          {/* yearsExperience removed from admin editor (not shown publicly) */}
         </div>
-        {/* yearsExperience removed from admin editor (not shown publicly) */}
-      </div>
 
-      <div className="flex justify-end border-t pt-6">
-        <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
-          Guardar Página Sobre Mí
-        </Button>
+        <div className="flex justify-end border-t pt-6">
+          <Button type="submit" disabled={isSubmitting} loading={isSubmitting}>
+            Guardar Página Sobre Mí
+          </Button>
+        </div>
+      </form>
+
+      {/* Preview sticky en escritorio */}
+      <div className="xl:sticky xl:top-4 xl:self-start">
+        <AboutBioPreview
+          bioTitle={bioTitleWatch || 'Hola, soy Paola.'}
+          bioTitleFont={bioTitleFontWatch}
+          bioTitleFontUrl={bioTitleFontUrlWatch}
+          bioTitleFontSize={bioTitleFontSize}
+          bioTitleColor={bioTitleColorWatch}
+          bioTitleColorDark={bioTitleColorDarkWatch}
+          profileImageUrl={profileImageUrl}
+          profileImageShape={profileImageShapeWatch}
+          shadowEnabled={profileImageShadowEnabled}
+          shadowColor={profileImageShadowColorWatch}
+          shadowOpacity={profileImageShadowOpacity}
+          shadowBlur={profileImageShadowBlur}
+          shadowSpread={profileImageShadowSpread}
+          shadowOffsetX={profileImageShadowOffsetX}
+          shadowOffsetY={profileImageShadowOffsetY}
+          illustrationUrl={illustrationUrl}
+          illustrationMaxPx={illustrationMaxPx}
+        />
       </div>
-    </form>
+    </div>
   )
 }
