@@ -80,9 +80,9 @@ function ResetPasswordForm() {
           <div className="bg-card dark:bg-muted/10 border-primary rounded-2xl border-t-4 p-8 shadow-xl">
             {status === 'success' ? (
               <div className="space-y-6 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
+                <div className="bg-success/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
                   <svg
-                    className="h-8 w-8 text-green-600 dark:text-green-400"
+                    className="text-success h-8 w-8"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -111,7 +111,7 @@ function ResetPasswordForm() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 {status === 'error' && (
-                  <div className="rounded-lg bg-red-50 p-4 text-center text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+                  <div className="bg-destructive/10 text-destructive rounded-lg p-4 text-center text-sm">
                     ⚠️ {message}
                   </div>
                 )}

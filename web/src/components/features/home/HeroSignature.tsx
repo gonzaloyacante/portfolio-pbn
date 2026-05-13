@@ -47,8 +47,8 @@ export function HeroSignature({
                   sizes={IMAGE_SIZES.heroIllustration}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center rounded-full border-2 border-dashed border-pink-500/30 bg-pink-500/10">
-                  <span className="text-xs text-pink-500">Sin Ilustración</span>
+                <div className="border-primary/30 bg-primary/10 flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">
+                  <span className="text-primary text-xs">Sin Ilustración</span>
                 </div>
               )}
             </div>

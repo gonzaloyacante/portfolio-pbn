@@ -68,7 +68,7 @@ export function ContactCard({
       <div className="mb-1 flex items-center gap-2">
         <p className="text-muted-foreground text-sm">{contact.email}</p>
         {contact.instagramUser && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-pink-100 px-2 py-0.5 text-xs font-medium text-pink-700 dark:bg-pink-900/30 dark:text-pink-300">
+          <span className="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium">
             <Instagram className="h-3 w-3" />@{contact.instagramUser}
           </span>
         )}

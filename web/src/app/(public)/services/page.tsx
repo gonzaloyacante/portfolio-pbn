@@ -96,7 +96,7 @@ export default async function ServicesPage() {
                       aria-label={`Ver servicio: ${service.name}`}
                     >
                       {/* Image or Icon Header */}
-                      <div className="bg-muted/30 relative flex h-48 items-center justify-center overflow-hidden">
+                      <div className="bg-muted relative flex h-48 items-center justify-center overflow-hidden">
                         {service.imageUrl ? (
                           <OptimizedImage
                             src={service.imageUrl}

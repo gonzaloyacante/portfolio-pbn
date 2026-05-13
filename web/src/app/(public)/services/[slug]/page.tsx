@@ -123,7 +123,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         ) : (
           <div className="bg-muted h-full w-full" />
         )}
-        <div className="bg-background/60 absolute inset-0 backdrop-blur-sm" />
+        <div className="bg-foreground/40 absolute inset-0 backdrop-blur-sm" />
 
         <div className="relative z-10 container mx-auto flex h-full flex-col justify-end px-6 pb-20">
           <h1 className="text-foreground mb-4 max-w-full text-4xl leading-tight font-bold break-words sm:text-5xl md:text-6xl lg:text-7xl">

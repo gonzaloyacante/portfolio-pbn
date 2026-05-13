@@ -36,15 +36,15 @@ export default function Error({
 
         {/* Error details - SOLO en desarrollo */}
         {isDev && error.message && (
-          <div className="mx-auto mt-4 max-w-2xl rounded-2xl border-2 border-red-300 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/30">
-            <p className="mb-2 font-semibold text-red-800 dark:text-red-400">
+          <div className="border-destructive/30 bg-destructive/10 mx-auto mt-4 max-w-2xl rounded-2xl border-2 p-4">
+            <p className="text-destructive mb-2 font-semibold">
               Error (solo visible en desarrollo):
             </p>
-            <pre className="overflow-x-auto font-mono text-xs whitespace-pre-wrap text-red-700 dark:text-red-300">
+            <pre className="text-destructive/80 overflow-x-auto font-mono text-xs whitespace-pre-wrap">
               {error.message}
             </pre>
             {error.digest && (
-              <p className="mt-2 text-xs text-red-600 dark:text-red-400">Digest: {error.digest}</p>
+              <p className="text-destructive/70 mt-2 text-xs">Digest: {error.digest}</p>
             )}
           </div>
         )}

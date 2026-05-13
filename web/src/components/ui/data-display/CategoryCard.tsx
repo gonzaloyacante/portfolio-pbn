@@ -10,14 +10,14 @@ interface CategoryCardProps {
 }
 
 /**
- * CategoryCard — usa tokens `--card-bg` / `rounded-[2.5rem]` del tema.
+ * CategoryCard — usa tokens `--card` / `rounded-card` del design system.
  * - Hover: Scale suave
  */
 export default function CategoryCard({ name, slug, count = 0 }: CategoryCardProps) {
   return (
     <Link
       href={`${ROUTES.public.portfolio}/${slug}`}
-      className="group relative flex aspect-square flex-col items-center justify-center rounded-[2.5rem] bg-(--card-bg) p-8 text-center shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
+      className="group rounded-card bg-card relative flex aspect-square flex-col items-center justify-center p-8 text-center shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
     >
       <h3 className="font-heading text-lg font-bold text-(--foreground) sm:text-xl md:text-2xl">
         {name}

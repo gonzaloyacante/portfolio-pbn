@@ -43,7 +43,7 @@ export default function SortableImage({ id, url, onDelete }: SortableImageProps)
           e.stopPropagation()
           onDelete(id)
         }}
-        className="absolute top-2 right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-red-500 text-white opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:scale-110 hover:bg-red-600"
+        className="bg-destructive hover:bg-destructive/80 absolute top-2 right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full text-white opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:scale-110"
       >
         <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path
