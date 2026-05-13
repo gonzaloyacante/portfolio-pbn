@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { OptimizedImage } from '@/components/ui'
 import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
@@ -87,9 +88,19 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
     <div className="relative">
       {/* Cards row */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {visible.map((t) => (
-          <TestimonialCard key={t.id} testimonial={t} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {visible.map((t, i) => (
+            <motion.div
+              key={t.id}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.35, delay: i * 0.08, ease: 'easeOut' }}
+            >
+              <TestimonialCard testimonial={t} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* Navigation — only when more than CARDS_VISIBLE */}

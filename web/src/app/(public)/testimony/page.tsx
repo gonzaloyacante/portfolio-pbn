@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
-import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
+import { AnimatedTestimonialsGrid } from '@/components/features/testimonials/AnimatedTestimonialsGrid'
 import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { ROUTES } from '@/config/routes'
-import type { Testimonial } from '@/generated/prisma/client'
 
 export const metadata: Metadata = {
   title: 'Deja tu testimonio | Paola Bolívar Nievas',
@@ -13,34 +12,6 @@ export const metadata: Metadata = {
     canonical: ROUTES.public.testimonialForm,
   },
   robots: { index: false },
-}
-
-function TestimonialsRow({ testimonials }: { testimonials: Testimonial[] }) {
-  return (
-    <div
-      className={`grid gap-6 ${
-        testimonials.length === 1
-          ? 'mx-auto max-w-md'
-          : testimonials.length === 2
-            ? 'mx-auto max-w-2xl sm:grid-cols-2'
-            : 'sm:grid-cols-2 lg:grid-cols-3'
-      }`}
-    >
-      {testimonials.map((t) => (
-        <div
-          key={t.id}
-          className="bg-card border-border/50 flex flex-col rounded-2xl border p-5 shadow-sm"
-        >
-          <TestimonialRatingStars rating={t.rating} className="mb-2" />
-          <p className="text-muted-foreground flex-1 text-sm leading-relaxed italic">
-            &ldquo;{t.text}&rdquo;
-          </p>
-          <p className="mt-3 text-xs font-semibold text-(--foreground)">— {t.name}</p>
-          {t.position && <p className="text-muted-foreground text-xs">{t.position}</p>}
-        </div>
-      ))}
-    </div>
-  )
 }
 
 export default async function TestimonyPage() {
@@ -74,7 +45,7 @@ export default async function TestimonyPage() {
               Lo que dicen otras clientas
             </h2>
             {testimonials.length <= 3 ? (
-              <TestimonialsRow testimonials={testimonials} />
+              <AnimatedTestimonialsGrid testimonials={testimonials} compact />
             ) : (
               <TestimonialSlider testimonials={testimonials} />
             )}

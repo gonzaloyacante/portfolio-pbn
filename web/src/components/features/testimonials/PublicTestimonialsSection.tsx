@@ -3,39 +3,8 @@ import { Heart } from 'lucide-react'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
-import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
+import { AnimatedTestimonialsGrid } from '@/components/features/testimonials/AnimatedTestimonialsGrid'
 import { ROUTES } from '@/config/routes'
-import type { Testimonial } from '@/generated/prisma/client'
-
-function TestimonialsGrid({ testimonials }: { testimonials: Testimonial[] }) {
-  return (
-    <div
-      className={`grid gap-6 ${
-        testimonials.length === 1
-          ? 'mx-auto max-w-md'
-          : testimonials.length === 2
-            ? 'mx-auto max-w-2xl md:grid-cols-2'
-            : 'md:grid-cols-2 lg:grid-cols-3'
-      }`}
-    >
-      {testimonials.map((t) => (
-        <div
-          key={t.id}
-          className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md"
-        >
-          <TestimonialRatingStars rating={t.rating} className="mb-3" />
-          <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed italic">
-            &ldquo;{t.text}&rdquo;
-          </p>
-          <div className="mt-auto">
-            <p className="text-card-foreground font-semibold">— {t.name}</p>
-            {t.position && <p className="text-muted-foreground text-xs">{t.position}</p>}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
 
 export default async function PublicTestimonialsSection() {
   const [testimonials, settings] = await Promise.all([
@@ -53,7 +22,7 @@ export default async function PublicTestimonialsSection() {
             </h2>
 
             {testimonials.length <= 3 ? (
-              <TestimonialsGrid testimonials={testimonials} />
+              <AnimatedTestimonialsGrid testimonials={testimonials} />
             ) : (
               <TestimonialSlider testimonials={testimonials} />
             )}
