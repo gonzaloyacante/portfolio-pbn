@@ -212,7 +212,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           {/* Requirements & Policy */}
           <section className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {service.requirements && (
-              <div className="bg-muted/30 rounded-2xl p-6">
+              <div className="bg-accent/40 rounded-2xl p-6">
                 <h3 className="mb-3 flex items-center gap-2 font-bold">
                   <AlertCircle className="text-warning h-5 w-5" aria-hidden /> Requisitos
                 </h3>
@@ -222,7 +222,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
               </div>
             )}
             {service.cancellationPolicy && (
-              <div className="bg-muted/30 rounded-2xl p-6">
+              <div className="bg-accent/40 rounded-2xl p-6">
                 <h3 className="mb-3 flex items-center gap-2 font-bold">
                   <Calendar className="text-destructive h-5 w-5" aria-hidden /> Cancelaciones
                 </h3>

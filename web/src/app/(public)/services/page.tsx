@@ -201,7 +201,7 @@ export default async function ServicesPage() {
         {/* Bottom CTA */}
         {whatsappIntro && (
           <FadeIn className="mt-16 text-center">
-            <div className="bg-card border-border mx-auto max-w-2xl rounded-3xl border p-8 backdrop-blur-sm">
+            <div className="bg-accent border-border mx-auto max-w-2xl rounded-3xl border p-8 backdrop-blur-sm">
               <h2 className="text-foreground mb-3 text-2xl font-bold">
                 ¿No encuentras lo que buscas?
               </h2>
