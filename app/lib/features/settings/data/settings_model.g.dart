@@ -11,6 +11,12 @@ _AboutSettings _$AboutSettingsFromJson(
 ) => _AboutSettings(
   id: json['id'] as String?,
   bioTitle: json['bioTitle'] as String?,
+  bioTitleFont: json['bioTitleFont'] as String?,
+  bioTitleFontUrl: json['bioTitleFontUrl'] as String?,
+  bioTitleFontSize: (json['bioTitleFontSize'] as num?)?.toInt(),
+  bioTitleMobileFontSize: (json['bioTitleMobileFontSize'] as num?)?.toInt(),
+  bioTitleColor: json['bioTitleColor'] as String?,
+  bioTitleColorDark: json['bioTitleColorDark'] as String?,
   bioIntro: json['bioIntro'] as String?,
   bioDescription: json['bioDescription'] as String?,
   profileImageUrl: json['profileImageUrl'] as String?,
@@ -28,6 +34,8 @@ _AboutSettings _$AboutSettingsFromJson(
       ?.toInt(),
   illustrationUrl: json['illustrationUrl'] as String?,
   illustrationAlt: json['illustrationAlt'] as String?,
+  illustrationMaxPx: (json['illustrationMaxPx'] as num?)?.toInt(),
+  illustrationMobileMaxPx: (json['illustrationMobileMaxPx'] as num?)?.toInt(),
   skills:
       (json['skills'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
@@ -44,6 +52,12 @@ Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
     <String, dynamic>{
       'id': instance.id,
       'bioTitle': instance.bioTitle,
+      'bioTitleFont': instance.bioTitleFont,
+      'bioTitleFontUrl': instance.bioTitleFontUrl,
+      'bioTitleFontSize': instance.bioTitleFontSize,
+      'bioTitleMobileFontSize': instance.bioTitleMobileFontSize,
+      'bioTitleColor': instance.bioTitleColor,
+      'bioTitleColorDark': instance.bioTitleColorDark,
       'bioIntro': instance.bioIntro,
       'bioDescription': instance.bioDescription,
       'profileImageUrl': instance.profileImageUrl,
@@ -58,6 +72,8 @@ Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
       'profileImageShadowOpacity': instance.profileImageShadowOpacity,
       'illustrationUrl': instance.illustrationUrl,
       'illustrationAlt': instance.illustrationAlt,
+      'illustrationMaxPx': instance.illustrationMaxPx,
+      'illustrationMobileMaxPx': instance.illustrationMobileMaxPx,
       'skills': instance.skills,
       'certifications': instance.certifications,
       'yearsExperience': instance.yearsExperience,

@@ -2,6 +2,48 @@ part of 'settings_about_page.dart';
 
 extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
   Widget _buildForm(BuildContext context) {
+    final isExpanded = AppBreakpoints.isExpanded(context);
+    final preview = _buildPreview();
+
+    if (isExpanded) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(flex: 55, child: _buildEditorScroll(context)),
+          Expanded(flex: 45, child: StickyPreviewColumn(preview: preview)),
+        ],
+      );
+    }
+
+    return _buildEditorScroll(
+      context,
+      headerPreview: CollapsiblePreview(preview: preview),
+    );
+  }
+
+  Widget _buildPreview() {
+    return LiveAboutPreview(
+      isDarkMode: _isDarkPreview,
+      onToggleDark: (v) => setState(() => _isDarkPreview = v),
+      bioTitle: _bioTitleCtrl.text,
+      bioTitleColorHex: _bioTitleColorCtrl.text,
+      bioTitleColorDarkHex: _bioTitleColorDarkCtrl.text,
+      profileImageUrl: _profileImageCtrl.text.isNotEmpty
+          ? _profileImageCtrl.text
+          : null,
+      pendingProfileImage: _pendingProfileImage,
+      profileImageShape: _profileImageShape,
+      shadowEnabled: _shadowEnabled,
+      shadowColorHex: _shadowColorCtrl.text,
+      shadowOpacity: _shadowOpacity,
+      shadowBlur: _shadowBlur,
+      shadowSpread: _shadowSpread,
+      shadowOffsetX: _shadowOx,
+      shadowOffsetY: _shadowOy,
+    );
+  }
+
+  Widget _buildEditorScroll(BuildContext context, {Widget? headerPreview}) {
     final padding = AppBreakpoints.pagePadding(context);
     final maxWidth = AppBreakpoints.value<double>(
       context,
@@ -19,6 +61,10 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (headerPreview != null) ...[
+                headerPreview,
+                const SizedBox(height: AppSpacing.md),
+              ],
               // ── Bio ──────────────────────────────────────────────────────
               SettingsFormCard(
                 title: 'Bio',
@@ -26,6 +72,16 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
                   TextFormField(
                     controller: _bioTitleCtrl,
                     decoration: const InputDecoration(labelText: 'Título'),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  ColorField(
+                    controller: _bioTitleColorCtrl,
+                    label: 'Color del título (modo claro)',
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  ColorField(
+                    controller: _bioTitleColorDarkCtrl,
+                    label: 'Color del título (modo oscuro)',
                   ),
                   const SizedBox(height: AppSpacing.md),
                   TextFormField(
@@ -71,6 +127,27 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
                       medium: 200,
                       expanded: 220,
                     ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  DropdownButtonFormField<String>(
+                    value: _profileImageShape,
+                    decoration: const InputDecoration(labelText: 'Forma'),
+                    items: const [
+                      DropdownMenuItem(value: 'ellipse', child: Text('Elipse')),
+                      DropdownMenuItem(value: 'circle', child: Text('Círculo')),
+                      DropdownMenuItem(
+                        value: 'rounded',
+                        child: Text('Redondeada'),
+                      ),
+                      DropdownMenuItem(
+                        value: 'none',
+                        child: Text('Sin bordes'),
+                      ),
+                    ],
+                    onChanged: (v) => setState(() {
+                      _profileImageShape = v ?? 'ellipse';
+                      _isDirty = true;
+                    }),
                   ),
                 ],
               ),
@@ -302,6 +379,9 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
     _shadowOy = s.profileImageShadowOffsetY ?? 8;
     _shadowOpacity = s.profileImageShadowOpacity ?? 35;
     _shadowColorCtrl.text = s.profileImageShadowColor ?? '';
+    _bioTitleColorCtrl.text = s.bioTitleColor ?? '';
+    _bioTitleColorDarkCtrl.text = s.bioTitleColorDark ?? '';
+    _profileImageShape = s.profileImageShape ?? 'ellipse';
 
     _populateList(s.skills, _skillsCtrls, _skillsFocus);
     _populateList(s.certifications, _certificationsCtrls, _certificationsFocus);
@@ -383,6 +463,9 @@ extension _SettingsAboutPageBuilders on _SettingsAboutPageState {
         'profileImageShadowOffsetY': _shadowOy,
         'profileImageShadowOpacity': _shadowOpacity,
         'profileImageShadowColor': _nullIfEmpty(_shadowColorCtrl.text),
+        'bioTitleColor': _nullIfEmpty(_bioTitleColorCtrl.text),
+        'bioTitleColorDark': _nullIfEmpty(_bioTitleColorDarkCtrl.text),
+        'profileImageShape': _profileImageShape,
         'skills': _skillsCtrls
             .map((c) => c.text.trim())
             .where((s) => s.isNotEmpty)
