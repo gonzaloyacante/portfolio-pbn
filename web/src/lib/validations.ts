@@ -309,6 +309,7 @@ export const testimonialSettingsSchema = z.object({
   showOnAll: z.boolean().optional(),
   title: z.string().optional(),
   maxDisplay: z.number().min(1).max(20).optional(),
+  sliderAutoAdvanceMs: z.number().min(1000).max(30000).optional(),
 })
 
 export type TestimonialSettingsFormData = z.infer<typeof testimonialSettingsSchema>

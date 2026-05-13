@@ -8,10 +8,10 @@ import { TestimonialRatingStars } from '@/components/features/testimonials/Testi
 import type { Testimonial } from '@/generated/prisma/client'
 
 const CARDS_VISIBLE = 3
-const AUTO_ADVANCE_MS = 5000
 
 interface TestimonialSliderProps {
   testimonials: Testimonial[]
+  autoAdvanceMs?: number
 }
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
@@ -63,7 +63,10 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   )
 }
 
-export default function TestimonialSlider({ testimonials }: TestimonialSliderProps) {
+export default function TestimonialSlider({
+  testimonials,
+  autoAdvanceMs = 5000,
+}: TestimonialSliderProps) {
   const total = testimonials.length
   const maxStart = Math.max(0, total - CARDS_VISIBLE)
   const [start, setStart] = useState(0)
@@ -75,10 +78,7 @@ export default function TestimonialSlider({ testimonials }: TestimonialSliderPro
     if (total <= CARDS_VISIBLE) return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     if (mq.matches) return
-    const interval = setInterval(
-      () => setStart((s) => (s >= maxStart ? 0 : s + 1)),
-      AUTO_ADVANCE_MS
-    )
+    const interval = setInterval(() => setStart((s) => (s >= maxStart ? 0 : s + 1)), autoAdvanceMs)
     return () => clearInterval(interval)
   }, [total, maxStart])
 

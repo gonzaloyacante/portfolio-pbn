@@ -17,6 +17,7 @@ export interface TestimonialSettingsData {
   showOnAll: boolean
   title: string | null
   maxDisplay: number
+  sliderAutoAdvanceMs: number
 }
 
 /**
@@ -66,6 +67,7 @@ export async function updateTestimonialSettings(data: TestimonialSettingsFormDat
         showOnAll: (cleanData.showOnAll as boolean) ?? false,
         title: (cleanData.title as string) ?? undefined,
         maxDisplay: (cleanData.maxDisplay as number) ?? 6,
+        sliderAutoAdvanceMs: (cleanData.sliderAutoAdvanceMs as number) ?? 5000,
       }
 
       await prisma.testimonialSettings.create({

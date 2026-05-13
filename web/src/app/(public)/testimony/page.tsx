@@ -3,6 +3,7 @@ import { AnimatedTestimonialsGrid } from '@/components/features/testimonials/Ani
 import TestimonialForm from '@/components/features/testimonials/TestimonialForm'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
+import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import { ROUTES } from '@/config/routes'
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export const metadata: Metadata = {
 }
 
 export default async function TestimonyPage() {
-  const testimonials = await getActiveTestimonials(6)
+  const [testimonials, settings] = await Promise.all([
+    getActiveTestimonials(6),
+    getTestimonialSettings(),
+  ])
 
   return (
     <section className="bg-background min-h-[70dvh] py-16 transition-colors duration-500">
@@ -47,7 +51,10 @@ export default async function TestimonyPage() {
             {testimonials.length <= 3 ? (
               <AnimatedTestimonialsGrid testimonials={testimonials} compact />
             ) : (
-              <TestimonialSlider testimonials={testimonials} />
+              <TestimonialSlider
+                testimonials={testimonials}
+                autoAdvanceMs={settings?.sliderAutoAdvanceMs}
+              />
             )}
           </div>
         )}

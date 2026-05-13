@@ -274,6 +274,8 @@ model TestimonialSettings {
   showOnAll   Boolean  @default(false)
   title       String?  @default("Lo que dicen mis clientes")
   maxDisplay  Int      @default(6)
+  /// Velocidad del slider automático en ms (1000–30000)
+  sliderAutoAdvanceMs Int @default(5000)
   // Meta
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())

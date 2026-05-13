@@ -24,7 +24,10 @@ export default async function PublicTestimonialsSection() {
             {testimonials.length <= 3 ? (
               <AnimatedTestimonialsGrid testimonials={testimonials} />
             ) : (
-              <TestimonialSlider testimonials={testimonials} />
+              <TestimonialSlider
+                testimonials={testimonials}
+                autoAdvanceMs={settings?.sliderAutoAdvanceMs}
+              />
             )}
           </>
         )}
