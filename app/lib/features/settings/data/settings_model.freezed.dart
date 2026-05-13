@@ -2242,6 +2242,287 @@ as bool,
 
 
 /// @nodoc
+mixin _$TestimonialSettings {
+
+ String? get id; bool get showOnAbout; bool get showOnAll; String? get title; int get maxDisplay; int get sliderAutoAdvanceMs; bool get isActive;
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TestimonialSettingsCopyWith<TestimonialSettings> get copyWith => _$TestimonialSettingsCopyWithImpl<TestimonialSettings>(this as TestimonialSettings, _$identity);
+
+  /// Serializes this TestimonialSettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestimonialSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.showOnAbout, showOnAbout) || other.showOnAbout == showOnAbout)&&(identical(other.showOnAll, showOnAll) || other.showOnAll == showOnAll)&&(identical(other.title, title) || other.title == title)&&(identical(other.maxDisplay, maxDisplay) || other.maxDisplay == maxDisplay)&&(identical(other.sliderAutoAdvanceMs, sliderAutoAdvanceMs) || other.sliderAutoAdvanceMs == sliderAutoAdvanceMs)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,showOnAbout,showOnAll,title,maxDisplay,sliderAutoAdvanceMs,isActive);
+
+@override
+String toString() {
+  return 'TestimonialSettings(id: $id, showOnAbout: $showOnAbout, showOnAll: $showOnAll, title: $title, maxDisplay: $maxDisplay, sliderAutoAdvanceMs: $sliderAutoAdvanceMs, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TestimonialSettingsCopyWith<$Res>  {
+  factory $TestimonialSettingsCopyWith(TestimonialSettings value, $Res Function(TestimonialSettings) _then) = _$TestimonialSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String? id, bool showOnAbout, bool showOnAll, String? title, int maxDisplay, int sliderAutoAdvanceMs, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class _$TestimonialSettingsCopyWithImpl<$Res>
+    implements $TestimonialSettingsCopyWith<$Res> {
+  _$TestimonialSettingsCopyWithImpl(this._self, this._then);
+
+  final TestimonialSettings _self;
+  final $Res Function(TestimonialSettings) _then;
+
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? showOnAbout = null,Object? showOnAll = null,Object? title = freezed,Object? maxDisplay = null,Object? sliderAutoAdvanceMs = null,Object? isActive = null,}) {
+  return _then(_self.copyWith(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,showOnAbout: null == showOnAbout ? _self.showOnAbout : showOnAbout // ignore: cast_nullable_to_non_nullable
+as bool,showOnAll: null == showOnAll ? _self.showOnAll : showOnAll // ignore: cast_nullable_to_non_nullable
+as bool,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,maxDisplay: null == maxDisplay ? _self.maxDisplay : maxDisplay // ignore: cast_nullable_to_non_nullable
+as int,sliderAutoAdvanceMs: null == sliderAutoAdvanceMs ? _self.sliderAutoAdvanceMs : sliderAutoAdvanceMs // ignore: cast_nullable_to_non_nullable
+as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [TestimonialSettings].
+extension TestimonialSettingsPatterns on TestimonialSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TestimonialSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TestimonialSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _TestimonialSettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TestimonialSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  bool showOnAbout,  bool showOnAll,  String? title,  int maxDisplay,  int sliderAutoAdvanceMs,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that.id,_that.showOnAbout,_that.showOnAll,_that.title,_that.maxDisplay,_that.sliderAutoAdvanceMs,_that.isActive);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  bool showOnAbout,  bool showOnAll,  String? title,  int maxDisplay,  int sliderAutoAdvanceMs,  bool isActive)  $default,) {final _that = this;
+switch (_that) {
+case _TestimonialSettings():
+return $default(_that.id,_that.showOnAbout,_that.showOnAll,_that.title,_that.maxDisplay,_that.sliderAutoAdvanceMs,_that.isActive);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  bool showOnAbout,  bool showOnAll,  String? title,  int maxDisplay,  int sliderAutoAdvanceMs,  bool isActive)?  $default,) {final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that.id,_that.showOnAbout,_that.showOnAll,_that.title,_that.maxDisplay,_that.sliderAutoAdvanceMs,_that.isActive);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _TestimonialSettings implements TestimonialSettings {
+  const _TestimonialSettings({this.id, this.showOnAbout = true, this.showOnAll = false, this.title, this.maxDisplay = 6, this.sliderAutoAdvanceMs = 5000, this.isActive = true});
+  factory _TestimonialSettings.fromJson(Map<String, dynamic> json) => _$TestimonialSettingsFromJson(json);
+
+@override final  String? id;
+@override@JsonKey() final  bool showOnAbout;
+@override@JsonKey() final  bool showOnAll;
+@override final  String? title;
+@override@JsonKey() final  int maxDisplay;
+@override@JsonKey() final  int sliderAutoAdvanceMs;
+@override@JsonKey() final  bool isActive;
+
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TestimonialSettingsCopyWith<_TestimonialSettings> get copyWith => __$TestimonialSettingsCopyWithImpl<_TestimonialSettings>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TestimonialSettingsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestimonialSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.showOnAbout, showOnAbout) || other.showOnAbout == showOnAbout)&&(identical(other.showOnAll, showOnAll) || other.showOnAll == showOnAll)&&(identical(other.title, title) || other.title == title)&&(identical(other.maxDisplay, maxDisplay) || other.maxDisplay == maxDisplay)&&(identical(other.sliderAutoAdvanceMs, sliderAutoAdvanceMs) || other.sliderAutoAdvanceMs == sliderAutoAdvanceMs)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,showOnAbout,showOnAll,title,maxDisplay,sliderAutoAdvanceMs,isActive);
+
+@override
+String toString() {
+  return 'TestimonialSettings(id: $id, showOnAbout: $showOnAbout, showOnAll: $showOnAll, title: $title, maxDisplay: $maxDisplay, sliderAutoAdvanceMs: $sliderAutoAdvanceMs, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TestimonialSettingsCopyWith<$Res> implements $TestimonialSettingsCopyWith<$Res> {
+  factory _$TestimonialSettingsCopyWith(_TestimonialSettings value, $Res Function(_TestimonialSettings) _then) = __$TestimonialSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? id, bool showOnAbout, bool showOnAll, String? title, int maxDisplay, int sliderAutoAdvanceMs, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class __$TestimonialSettingsCopyWithImpl<$Res>
+    implements _$TestimonialSettingsCopyWith<$Res> {
+  __$TestimonialSettingsCopyWithImpl(this._self, this._then);
+
+  final _TestimonialSettings _self;
+  final $Res Function(_TestimonialSettings) _then;
+
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? showOnAbout = null,Object? showOnAll = null,Object? title = freezed,Object? maxDisplay = null,Object? sliderAutoAdvanceMs = null,Object? isActive = null,}) {
+  return _then(_TestimonialSettings(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,showOnAbout: null == showOnAbout ? _self.showOnAbout : showOnAbout // ignore: cast_nullable_to_non_nullable
+as bool,showOnAll: null == showOnAll ? _self.showOnAll : showOnAll // ignore: cast_nullable_to_non_nullable
+as bool,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,maxDisplay: null == maxDisplay ? _self.maxDisplay : maxDisplay // ignore: cast_nullable_to_non_nullable
+as int,sliderAutoAdvanceMs: null == sliderAutoAdvanceMs ? _self.sliderAutoAdvanceMs : sliderAutoAdvanceMs // ignore: cast_nullable_to_non_nullable
+as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$SocialLink {
 
  String get id; String get platform; String get url; String? get username; String? get icon; bool get isActive; int get sortOrder; DateTime? get createdAt; DateTime? get updatedAt;

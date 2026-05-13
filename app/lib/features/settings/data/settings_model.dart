@@ -306,6 +306,24 @@ abstract class CategoryDisplaySettings with _$CategoryDisplaySettings {
       _$CategoryDisplaySettingsFromJson(json);
 }
 
+// ── Testimonial Settings ─────────────────────────────────────────────────────
+
+@freezed
+abstract class TestimonialSettings with _$TestimonialSettings {
+  const factory TestimonialSettings({
+    String? id,
+    @Default(true) bool showOnAbout,
+    @Default(false) bool showOnAll,
+    String? title,
+    @Default(6) int maxDisplay,
+    @Default(5000) int sliderAutoAdvanceMs,
+    @Default(true) bool isActive,
+  }) = _TestimonialSettings;
+
+  factory TestimonialSettings.fromJson(Map<String, dynamic> json) =>
+      _$TestimonialSettingsFromJson(json);
+}
+
 // ── Social Link ───────────────────────────────────────────────────────────────
 
 @freezed

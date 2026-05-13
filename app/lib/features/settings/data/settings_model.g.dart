@@ -500,6 +500,30 @@ Map<String, dynamic> _$CategoryDisplaySettingsToJson(
   'isActive': instance.isActive,
 };
 
+_TestimonialSettings _$TestimonialSettingsFromJson(Map<String, dynamic> json) =>
+    _TestimonialSettings(
+      id: json['id'] as String?,
+      showOnAbout: json['showOnAbout'] as bool? ?? true,
+      showOnAll: json['showOnAll'] as bool? ?? false,
+      title: json['title'] as String?,
+      maxDisplay: (json['maxDisplay'] as num?)?.toInt() ?? 6,
+      sliderAutoAdvanceMs:
+          (json['sliderAutoAdvanceMs'] as num?)?.toInt() ?? 5000,
+      isActive: json['isActive'] as bool? ?? true,
+    );
+
+Map<String, dynamic> _$TestimonialSettingsToJson(
+  _TestimonialSettings instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'showOnAbout': instance.showOnAbout,
+  'showOnAll': instance.showOnAll,
+  'title': instance.title,
+  'maxDisplay': instance.maxDisplay,
+  'sliderAutoAdvanceMs': instance.sliderAutoAdvanceMs,
+  'isActive': instance.isActive,
+};
+
 _SocialLink _$SocialLinkFromJson(Map<String, dynamic> json) => _SocialLink(
   id: json['id'] as String,
   platform: json['platform'] as String,

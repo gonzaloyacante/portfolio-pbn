@@ -137,6 +137,25 @@ class SettingsRepository {
     return CategoryDisplaySettings.fromJson(_dataMap(resp));
   }
 
+  // ── Testimonial Settings ──────────────────────────────────────────────────
+
+  Future<TestimonialSettings> getTestimonialSettings() async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.settingsSection('testimonial'),
+    );
+    return TestimonialSettings.fromJson(_dataMap(resp));
+  }
+
+  Future<TestimonialSettings> updateTestimonialSettings(
+    Map<String, Object?> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.settingsSection('testimonial'),
+      data: data,
+    );
+    return TestimonialSettings.fromJson(_dataMap(resp));
+  }
+
   // ── Social Links ──────────────────────────────────────────────────────────
 
   Future<List<SocialLink>> getSocialLinks() async {
