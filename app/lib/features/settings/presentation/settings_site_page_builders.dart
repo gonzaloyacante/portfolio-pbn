@@ -1,7 +1,27 @@
 part of 'settings_site_page.dart';
 
 extension _SettingsSitePageBuilders on _SettingsSitePageState {
-  Widget _buildForm(BuildContext context) {
+  // ── Preview builder ───────────────────────────────────────────────────────
+
+  Widget _buildPreview() {
+    return LiveNavbarPreview(
+      brandText: _navbarBrandTextCtrl.text,
+      brandFont: _navbarBrandFont,
+      brandFontSize: int.tryParse(_navbarBrandFontSizeCtrl.text) ?? 30,
+      brandColorHex: _navbarBrandColorCtrl.text.isNotEmpty
+          ? _navbarBrandColorCtrl.text
+          : '#1A050A',
+      brandColorDarkHex: _navbarBrandColorDarkCtrl.text.isNotEmpty
+          ? _navbarBrandColorDarkCtrl.text
+          : '#FB7185',
+      isDarkMode: _isDarkPreview,
+      onToggleDark: (v) => setState(() => _isDarkPreview = v),
+    );
+  }
+
+  // ── Editor scroll (form only) ─────────────────────────────────────────────
+
+  Widget _buildEditorScroll(BuildContext context) {
     final padding = AppBreakpoints.pagePadding(context);
     final maxWidth = AppBreakpoints.value<double>(
       context,
@@ -9,17 +29,30 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
       medium: 760,
       expanded: 960,
     );
+    final isExpanded = AppBreakpoints.isExpanded(context);
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: padding,
+      padding: isExpanded
+          ? EdgeInsets.only(
+              left: padding.left,
+              right: padding.right,
+              top: padding.top,
+              bottom: padding.bottom,
+            )
+          : padding,
       child: Center(
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxWidth),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Encabezado ───────────────────────────────────────────────────
+              // ── Compact: collapsible preview ──────────────────────────────
+              if (!isExpanded && _navbarShowBrand) ...[
+                CollapsiblePreview(preview: _buildPreview()),
+                const SizedBox(height: AppSpacing.md),
+              ],
+              // ── Encabezado ────────────────────────────────────────────────
               SettingsFormCard(
                 title: 'Encabezado',
                 children: [
@@ -66,7 +99,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              // ── Branding ─────────────────────────────────────────────────────
+              // ── Branding ──────────────────────────────────────────────────
               SettingsFormCard(
                 title: 'Branding',
                 children: [
@@ -84,7 +117,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              // ── SEO ────────────────────────────────────────────────────────
+              // ── SEO ───────────────────────────────────────────────────────
               SettingsFormCard(
                 title: 'SEO',
                 children: [
@@ -108,7 +141,7 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
                 ],
               ),
               const SizedBox(height: AppSpacing.md),
-              // ── Mantenimiento ──────────────────────────────────────────────
+              // ── Mantenimiento ─────────────────────────────────────────────
               AppCard(
                 color: _maintenanceMode
                     ? AppColors.warning.withValues(alpha: 0.12)
@@ -163,6 +196,37 @@ extension _SettingsSitePageBuilders on _SettingsSitePageState {
         ),
       ),
     );
+  }
+
+  // ── Main form layout ──────────────────────────────────────────────────────
+
+  Widget _buildForm(BuildContext context) {
+    final isExpanded = AppBreakpoints.isExpanded(context);
+
+    if (isExpanded && _navbarShowBrand) {
+      final padding = AppBreakpoints.pagePadding(context);
+      return Padding(
+        padding: EdgeInsets.only(top: padding.top),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 55, child: _buildEditorScroll(context)),
+            Expanded(
+              flex: 45,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: padding.right,
+                  top: AppSpacing.xs,
+                ),
+                child: StickyPreviewColumn(preview: _buildPreview()),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return _buildEditorScroll(context);
   }
 
   List<Widget> _buildNavbarBrandFields(BuildContext context) {
