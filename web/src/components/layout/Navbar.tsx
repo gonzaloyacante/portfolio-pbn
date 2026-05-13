@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useMemo } from 'react'
-import { motion } from '@/components/ui'
+import { useMemo, useState, useRef } from 'react'
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
 // import ThemeToggle from '@/components/layout/ThemeToggle'
 import { ROUTES } from '@/config/routes'
 import type { PageVisibility } from '@/actions/settings/site'
@@ -50,10 +50,23 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
     return pathname?.startsWith(href) ?? false
   }
 
+  const { scrollY } = useScroll()
+  const [visible, setVisible] = useState(true)
+  const lastScrollY = useRef(0)
+
+  useMotionValueEvent(scrollY, 'change', (current) => {
+    const prev = lastScrollY.current
+    lastScrollY.current = current
+    if (current < prev) setVisible(true)
+    else if (current > prev && current > 80) setVisible(false)
+  })
+
   return (
-    <nav
+    <motion.nav
       aria-label="Navegación principal"
-      className="sticky top-0 z-50 w-full transition-all duration-500"
+      className="sticky top-0 z-50 w-full"
+      animate={{ y: visible ? 0 : '-100%' }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
         {/* Logo / Firma — link a Inicio */}
@@ -108,6 +121,6 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
           */}
         </div>
       </div>
-    </nav>
+    </motion.nav>
   )
 }
