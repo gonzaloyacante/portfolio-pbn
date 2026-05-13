@@ -12,12 +12,12 @@ import type { PageVisibility } from '@/actions/settings/site'
  * Navbar - Block-Active Design (Canva Spec)
  * - Rectángulos perfectos (rounded-none)
  * - Animación suave del fondo activo con framer-motion layoutId
- * - Mobile: Links apilados verticalmente
+ * - Siempre horizontal: los items NUNCA se apilan verticalmente
+ * - El logo/firma es el link a Inicio — no existe "Inicio" en los nav items
  */
 
 const allNavItems = [
-  { href: ROUTES.home, label: 'Inicio', key: 'home' as const },
-  { href: ROUTES.public.about, label: 'Sobre mi', key: 'about' as const },
+  { href: ROUTES.public.about, label: 'Sobre mí', key: 'about' as const },
   { href: ROUTES.public.portfolio, label: 'Portfolio', key: 'galleries' as const },
   { href: ROUTES.public.services, label: 'Servicios', key: 'services' as const },
   { href: ROUTES.public.contact, label: 'Contacto', key: 'contact' as const },
@@ -38,7 +38,6 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
   const navItems = useMemo(() => {
     if (!visibility) return allNavItems
     return allNavItems.filter((item) => {
-      if (item.key === 'home') return true
       if (item.key === 'about') return visibility.showAboutPage
       if (item.key === 'galleries') return visibility.showGalleryPage
       if (item.key === 'services') return visibility.showServicesPage
@@ -48,7 +47,6 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
   }, [visibility])
 
   const isActive = (href: string) => {
-    if (href === ROUTES.home) return pathname === ROUTES.home
     return pathname?.startsWith(href) ?? false
   }
 
@@ -58,25 +56,29 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
       className="sticky top-0 z-50 w-full transition-all duration-500"
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
-        {/* Logo - visible en pantallas grandes */}
+        {/* Logo / Firma — link a Inicio */}
         {showBrand && (
           <Link
             href={ROUTES.home}
-            className="nb-brand font-script text-foreground mb-4 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
+            className="nb-brand font-script text-foreground mb-3 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
           >
             {displayBrand}
           </Link>
         )}
 
-        {/* Navegación: columna en móvil (mejor táctil); fila desde md */}
-        <div className="relative flex w-full max-w-full flex-col items-center gap-2 md:flex-row md:flex-wrap md:justify-center md:gap-1 md:gap-x-0">
+        {/*
+          Nav items: SIEMPRE fila horizontal.
+          px-4/text-xs en mobile → 4 items caben en una sola fila incluso en 320px.
+          flex-wrap + justify-center: si algún item forzara wrap, queda centrado.
+        */}
+        <div className="relative flex flex-row flex-wrap items-center justify-center">
           {navItems.map((item) => {
             const active = isActive(item.href)
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`font-heading focus-visible:bg-accent focus-visible:text-accent-foreground relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-5 py-3 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none md:px-8 md:text-base ${
+                className={`font-heading focus-visible:bg-accent focus-visible:text-accent-foreground relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-4 py-2.5 text-xs font-semibold tracking-normal uppercase transition-colors duration-300 focus-visible:outline-none sm:px-5 sm:text-sm sm:tracking-wide md:px-8 md:py-3 md:text-base ${
                   active
                     ? 'text-primary-foreground'
                     : 'text-foreground hover:bg-accent hover:text-accent-foreground'
