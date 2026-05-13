@@ -16,7 +16,7 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
     description: 'Portfolio profesional de maquillaje artístico y belleza - Paola Bolívar Nievas',
     theme_color: themeColor,
     background_color: backgroundColor,
-    display: 'standalone',
+    display: 'browser',
     orientation: 'portrait',
     scope: '/',
     start_url: '/',

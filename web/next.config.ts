@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next'
-import withPWA from '@ducanh2912/next-pwa'
 import { withSentryConfig } from '@sentry/nextjs'
 
 // @next/bundle-analyzer is a devDependency — not available in production Vercel builds.
@@ -119,7 +118,7 @@ function buildSecurityHeaders(): { key: string; value: string }[] {
         "media-src 'self' https://res.cloudinary.com",
         // Objects: none (no Flash/plugins)
         "object-src 'none'",
-        // Workers: Next.js + PWA service worker
+        // Workers: Next.js inline workers
         "worker-src 'self' blob:",
         // Frames: Vercel Live (preview comments toolbar), reCAPTCHA, Instagram embed
         'frame-src https://vercel.live https://www.google.com/recaptcha/ https://recaptcha.google.com/ https://www.instagram.com/',
@@ -257,55 +256,8 @@ const nextConfig: NextConfig = {
   },
 }
 
-// Wrap with PWA plugin
-const pwaConfig = withPWA({
-  dest: 'public',
-  register: true,
-  disable: process.env.NODE_ENV === 'development',
-  fallbacks: {
-    document: '/offline',
-  },
-  workboxOptions: {
-    runtimeCaching: [
-      {
-        urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'cloudinary-images',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 60 * 60 * 24, // 1 day
-          },
-        },
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-        handler: 'CacheFirst',
-        options: {
-          cacheName: 'google-fonts-stylesheets',
-          expiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-          },
-        },
-      },
-      {
-        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'static-images',
-          expiration: {
-            maxEntries: 64,
-            maxAgeSeconds: 60 * 60 * 24, // 1 day
-          },
-        },
-      },
-    ],
-  },
-})(withBundleAnalyzer(nextConfig))
-
 // Wrap with Sentry
-export default withSentryConfig(pwaConfig, {
+export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
