@@ -41,9 +41,9 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex min-h-100 items-center justify-center p-8">
           <div className="max-w-md text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
+            <div className="bg-destructive/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
               <svg
-                className="h-8 w-8 text-red-600 dark:text-red-400"
+                className="text-destructive h-8 w-8"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

@@ -43,7 +43,7 @@ export default function AboutLoading() {
 
         {/* Right: Profile Image */}
         <div className="flex items-center justify-center">
-          <Skeleton className="h-[500px] w-full max-w-sm rounded-[3rem]" />
+          <Skeleton className="rounded-jumbo h-[500px] w-full max-w-sm" />
         </div>
       </div>
 

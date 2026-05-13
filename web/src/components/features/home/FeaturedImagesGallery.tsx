@@ -48,7 +48,7 @@ export default function FeaturedImagesGallery({ images }: FeaturedImagesGalleryP
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-              className="group relative block aspect-4/5 cursor-pointer overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl"
+              className="group rounded-card bg-card relative block aspect-4/5 cursor-pointer overflow-hidden shadow-lg transition-transform duration-500 hover:-translate-y-2 hover:shadow-2xl"
             >
               <OptimizedImage
                 src={img.url}

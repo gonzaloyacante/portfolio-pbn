@@ -78,7 +78,7 @@ export function ContactDetail({
                 href={`https://instagram.com/${contact.instagramUser}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-pink-600 hover:underline dark:text-pink-400"
+                className="text-primary text-sm hover:underline"
               >
                 @{contact.instagramUser}
               </a>

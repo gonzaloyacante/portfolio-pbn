@@ -13,7 +13,7 @@ interface PreviewCardProps {
 
 /**
  * Preview Card
- * Mimics the EXACT style of public cards (rounded-[2.5rem], etc.)
+ * Mimics the EXACT style of public cards (rounded-card, etc.)
  */
 export default function PreviewCard({
   variant,
@@ -28,11 +28,11 @@ export default function PreviewCard({
   const isCategory = variant === 'category'
   const hasImage = variant === 'image'
 
-  // Category Card Style: rounded-[2.5rem], aspect-[4/5]
+  // Category Card Style: rounded-card, aspect-[4/5]
   // Gallery Image Style: rounded-xl, varies but mostly aspect-square or masonry
   const containerClasses = clsx(
     'relative overflow-hidden shadow-lg transition-transform group hover:scale-[1.02] bg-card',
-    isCategory ? 'rounded-[2.5rem] aspect-[4/5]' : 'rounded-2xl aspect-square'
+    isCategory ? 'rounded-card aspect-[4/5]' : 'rounded-2xl aspect-square'
   )
 
   return (

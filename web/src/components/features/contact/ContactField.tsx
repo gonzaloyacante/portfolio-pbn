@@ -34,7 +34,7 @@ export function ContactField({ preference, register, control, errors }: ContactF
           autoComplete="off"
         />
         {errors.instagramUser && (
-          <p className="mt-1 text-sm text-red-500">{errors.instagramUser.message}</p>
+          <p className="text-destructive mt-1 text-sm">{errors.instagramUser.message}</p>
         )}
       </div>
     )
@@ -72,7 +72,7 @@ export function ContactField({ preference, register, control, errors }: ContactF
         placeholder="tu@email.com"
         autoComplete="email"
       />
-      {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+      {errors.email && <p className="text-destructive mt-1 text-sm">{errors.email.message}</p>}
     </div>
   )
 }

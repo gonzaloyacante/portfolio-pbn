@@ -1,20 +1,23 @@
-# Contribution Policy
+# Contributing
 
-This repository is published as a **professional portfolio showcase**.
+This repository is published as a **professional work showcase** and is
+governed by a restrictive source-available license.
 
-## External Contributions
+## External contributions are not accepted
 
-External code contributions are not accepted.
+- Pull requests from forks will not be reviewed or merged.
+- Feature requests for roadmap inclusion are not considered.
+- No community maintenance model exists for this project.
 
-- No pull requests from forks
-- No feature requests for roadmap inclusion
-- No community maintenance model
+## What is allowed
 
-## What Is Allowed
-
-- Read-only reference of architecture and implementation
-- Private security disclosure (see `SECURITY.md`)
+- Reading and reviewing the source code for reference or educational purposes.
+- Opening an issue to privately report a security vulnerability
+  (see [SECURITY.md](./SECURITY.md)).
 
 ## Ownership
 
-All product direction, implementation, and maintenance decisions are handled exclusively by the project author.
+All product direction, implementation, and maintenance decisions are
+handled exclusively by the author.
+
+© 2026 Gonzalo Yacante — All rights reserved.

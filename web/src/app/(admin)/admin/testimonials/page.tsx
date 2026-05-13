@@ -107,7 +107,7 @@ export default async function TestimonialsPage() {
                       .repeat(t.rating)
                       .split('')
                       .map((s, i) => (
-                        <span key={i} className="text-yellow-400 drop-shadow-sm">
+                        <span key={i} className="text-warning drop-shadow-sm">
                           {s}
                         </span>
                       ))}

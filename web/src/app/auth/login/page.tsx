@@ -87,7 +87,7 @@ export default function LoginPage() {
           </div>
 
           {/* Card - Matcha ContactForm style strict */}
-          <div className="bg-card rounded-[2.5rem] p-8 shadow-lg">
+          <div className="bg-card rounded-card p-8 shadow-lg">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <Input
                 label="Email"

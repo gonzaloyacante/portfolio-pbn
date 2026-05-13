@@ -188,6 +188,13 @@ function ModePreview({ mode, values }: { mode: PreviewMode; values: ThemeEditorD
           Firma decorativa
         </p>
       </div>
+
+      <LayerTitle title="Contraste WCAG" mode={mode} />
+      <div className="flex flex-wrap gap-1.5">
+        <ContrastBadge fg={mode.foreground} bg={mode.background} label="Texto/fondo" />
+        <ContrastBadge fg={mode.primary} bg={mode.background} label="Primary/fondo" />
+        <ContrastBadge fg={mode.primaryForeground} bg={mode.primary} label="Botón" />
+      </div>
     </section>
   )
 }
@@ -250,4 +257,69 @@ function TokenSwatches({ mode }: { mode: PreviewMode }) {
 
 function colorMix(foreground: string, background: string, amount: number) {
   return `color-mix(in srgb, ${foreground} ${amount}%, ${background})`
+}
+
+// ── WCAG Contrast helpers ─────────────────────────────────────────────────────
+
+function hexToLinear(hex: string): [number, number, number] | null {
+  const m = hex.replace('#', '').match(/^([0-9a-f]{6})$/i)
+  if (!m) return null
+  const r = parseInt(m[1].slice(0, 2), 16) / 255
+  const g = parseInt(m[1].slice(2, 4), 16) / 255
+  const b = parseInt(m[1].slice(4, 6), 16) / 255
+  const toLinear = (c: number) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
+  return [toLinear(r), toLinear(g), toLinear(b)]
+}
+
+function relativeLuminance(hex: string): number {
+  const ch = hexToLinear(hex)
+  if (!ch) return 0
+  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2]
+}
+
+function contrastRatio(hex1: string, hex2: string): number {
+  const l1 = relativeLuminance(hex1) + 0.05
+  const l2 = relativeLuminance(hex2) + 0.05
+  return l1 > l2 ? l1 / l2 : l2 / l1
+}
+
+type WcagLevel = 'AAA' | 'AA' | 'AA Large' | 'Fail'
+
+function wcagLevel(ratio: number): WcagLevel {
+  if (ratio >= 7) return 'AAA'
+  if (ratio >= 4.5) return 'AA'
+  if (ratio >= 3) return 'AA Large'
+  return 'Fail'
+}
+
+function ContrastBadge({ fg, bg, label }: { fg: string; bg: string; label: string }) {
+  const ratio = contrastRatio(fg, bg)
+  const level = wcagLevel(ratio)
+  const colorMap: Record<WcagLevel, string> = {
+    AAA: '#15803d',
+    AA: '#2563eb',
+    'AA Large': '#d97706',
+    Fail: '#dc2626',
+  }
+  const bgMap: Record<WcagLevel, string> = {
+    AAA: '#dcfce7',
+    AA: '#dbeafe',
+    'AA Large': '#fef3c7',
+    Fail: '#fee2e2',
+  }
+  return (
+    <span
+      className="flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold"
+      style={{
+        color: colorMap[level],
+        backgroundColor: bgMap[level],
+        borderColor: colorMap[level],
+      }}
+      title={`${label}: ${ratio.toFixed(2)}:1`}
+    >
+      {level === 'Fail' ? '✕' : '✓'} {level}
+      <span className="font-normal opacity-70">{ratio.toFixed(1)}:1</span>
+      <span className="ml-0.5 font-normal opacity-60">{label}</span>
+    </span>
+  )
 }

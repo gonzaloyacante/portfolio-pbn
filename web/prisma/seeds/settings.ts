@@ -34,7 +34,7 @@ export const homeSettings = {
   ownerNameFontUrl: 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
   ownerNameFontSize: 50,
   ownerNameColor: null,
-  ownerNameColorDark: '#dd4646',
+  ownerNameColorDark: null,
   ownerNameZIndex: 15,
   ownerNameOffsetX: 0,
   ownerNameOffsetY: 0,

@@ -30,8 +30,8 @@ export default async function PapeleraPage() {
         description="Elementos eliminados. Se borran permanentemente después de 30 días."
       />
 
-      <div className="mb-8 rounded-2xl border-l-4 border-yellow-400 bg-yellow-50 p-6 dark:bg-yellow-900/10">
-        <p className="flex items-center gap-2 text-sm text-yellow-800 dark:text-yellow-200">
+      <div className="border-warning bg-warning/10 mb-8 rounded-2xl border-l-4 p-6">
+        <p className="text-warning flex items-center gap-2 text-sm">
           <span className="text-xl">⚠️</span>
           <span>
             <strong>Importante:</strong> Una vez eliminado permanentemente, el elemento y sus

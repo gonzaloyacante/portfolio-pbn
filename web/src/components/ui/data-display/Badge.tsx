@@ -26,7 +26,7 @@ export default function Badge({
     success: 'bg-success/15 text-success dark:text-success border-success/20',
     warning: 'bg-warning/15 text-warning dark:text-warning border-warning/20',
     purple: 'bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200', // Kept for legacy compatibility if needed
-    pink: 'bg-pink-100 text-pink-800 dark:bg-pink-900/50 dark:text-pink-200',
+    pink: 'bg-secondary/50 text-secondary-foreground border-secondary/20',
     info: 'bg-info/15 text-info dark:text-info border-info/20',
   }
 

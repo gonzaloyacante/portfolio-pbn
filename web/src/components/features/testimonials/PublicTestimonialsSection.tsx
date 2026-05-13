@@ -44,7 +44,7 @@ export default async function PublicTestimonialsSection() {
   ])
 
   return (
-    <div className="border-border bg-muted/30 border-t py-12 transition-colors duration-500 lg:py-14">
+    <div className="border-border bg-accent border-t py-12 transition-colors duration-500 lg:py-14">
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {testimonials.length > 0 && (
           <>

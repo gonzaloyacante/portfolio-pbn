@@ -137,7 +137,7 @@ export function HeroImmersiveBackdrop({
       className={cn(
         'pointer-events-none z-0 overflow-hidden',
         extendBelowFeatured
-          ? 'fixed inset-x-0 top-0 h-[min(420vh,5200px)] w-full max-w-full supports-[width:1dvw]:w-[min(100dvw,100%)]'
+          ? 'fixed inset-x-0 top-0 h-screen w-full max-w-full supports-[height:1dvh]:h-dvh supports-[width:1dvw]:w-[min(100dvw,100%)]'
           : 'absolute inset-0 w-full max-w-full supports-[width:1dvw]:w-[min(100dvw,100%)]'
       )}
       aria-hidden

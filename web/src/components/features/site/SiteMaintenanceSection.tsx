@@ -17,15 +17,13 @@ export function SiteMaintenanceSection({
   return (
     <section
       className={`space-y-4 rounded-2xl border p-6 transition-colors ${
-        maintenanceMode
-          ? 'border-orange-300 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/30'
-          : 'border-border bg-card'
+        maintenanceMode ? 'border-warning/50 bg-warning/10' : 'border-border bg-card'
       }`}
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-start gap-3">
           <AlertTriangle
-            className={`mt-0.5 size-5 shrink-0 ${maintenanceMode ? 'text-orange-500' : 'text-muted-foreground'}`}
+            className={`mt-0.5 size-5 shrink-0 ${maintenanceMode ? 'text-warning' : 'text-muted-foreground'}`}
           />
           <div>
             <p className="font-semibold">Modo mantenimiento</p>
@@ -51,7 +49,7 @@ export function SiteMaintenanceSection({
         />
       )}
       {maintenanceMode && (
-        <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
+        <p className="text-warning text-sm font-medium">
           ⚠️ El sitio público está en mantenimiento — los visitantes no pueden ver el contenido.
         </p>
       )}

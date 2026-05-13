@@ -50,7 +50,7 @@ interface AboutTestimonialsSectionProps {
 
 export function AboutTestimonialsSection({ testimonials, title }: AboutTestimonialsSectionProps) {
   return (
-    <div className="border-border bg-muted/30 border-t py-16 transition-colors duration-500">
+    <div className="border-border bg-accent border-t py-16 transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {testimonials.length > 0 && (
           <>

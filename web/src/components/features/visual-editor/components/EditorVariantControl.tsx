@@ -39,7 +39,7 @@ export function EditorVariantControl({
           >
             {v.label}
             {value === v.id && (
-              <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
+              <div className="bg-success absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-white shadow-sm">
                 <Check className="h-2.5 w-2.5" />
               </div>
             )}

@@ -52,11 +52,11 @@ export default function ForgotPasswordPage() {
           </div>
 
           {/* Card */}
-          <div className="bg-card rounded-[2.5rem] p-8 shadow-lg">
+          <div className="bg-card rounded-card p-8 shadow-lg">
             {status === 'success' ? (
               <div className="space-y-6 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                <div className="bg-success/10 mx-auto flex h-16 w-16 items-center justify-center rounded-full">
+                  <CheckCircle2 className="text-success h-8 w-8" />
                 </div>
                 <div>
                   <h3 className="text-foreground text-lg font-semibold">¡Email enviado!</h3>
@@ -69,7 +69,7 @@ export default function ForgotPasswordPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
                 {status === 'error' && (
-                  <div className="rounded-lg bg-red-50 p-4 text-center text-sm text-red-600">
+                  <div className="bg-destructive/10 text-destructive rounded-lg p-4 text-center text-sm">
                     ⚠️ {message}
                   </div>
                 )}

@@ -86,7 +86,7 @@ export default async function PortfolioPage() {
                 <FadeIn key={category.id}>
                   <Link
                     href={`${ROUTES.public.portfolio}/${category.slug}`}
-                    className="group relative block aspect-4/5 w-full cursor-pointer overflow-hidden rounded-[2.5rem] bg-(--card-bg) shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
+                    className="group rounded-card bg-card relative block aspect-4/5 w-full cursor-pointer overflow-hidden shadow-lg transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl"
                   >
                     {/* Background Image */}
                     {hasImage ? (
@@ -163,7 +163,7 @@ export default async function PortfolioPage() {
             })}
           </StaggerChildren>
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-[3rem] bg-(--card-bg) py-24 text-center">
+          <div className="rounded-jumbo bg-muted flex flex-col items-center justify-center py-24 text-center">
             <Palette
               className="text-muted-foreground mb-4 size-14 shrink-0 sm:size-16"
               aria-hidden

@@ -28,6 +28,10 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
 
+  /* Radius */
+  --radius-card: 2.5rem;
+  --radius-jumbo: 3rem;
+
   /* Fonts */
   --font-heading: 'Poppins', sans-serif;
   --font-script: 'Great Vibes', cursive;
