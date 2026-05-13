@@ -52,7 +52,7 @@ export default async function PrivacyPage() {
             de diciembre, de Protección de Datos Personales y garantía de los derechos digitales
             (LOPDGDD), le informamos de la presente Política de Privacidad.
           </p>
-          <div className="bg-muted/50 mt-4 rounded-2xl p-4">
+          <div className="bg-accent/40 mt-4 rounded-2xl p-4">
             <p className="text-sm">
               <strong>Responsable del tratamiento:</strong> {ownerName}
               <br />
@@ -218,7 +218,7 @@ export default async function PrivacyPage() {
               a la licitud del tratamiento basado en el consentimiento previo.
             </li>
           </ul>
-          <div className="bg-muted/50 mt-4 rounded-2xl p-4">
+          <div className="bg-accent/40 mt-4 rounded-2xl p-4">
             <p className="text-sm">
               Para ejercer sus derechos, envíe un email a{' '}
               <a href={`mailto:${email}`} className="text-primary underline hover:no-underline">
@@ -282,7 +282,7 @@ export default async function PrivacyPage() {
           </p>
 
           <div className="space-y-4">
-            <div className="bg-muted/50 rounded-2xl p-4">
+            <div className="bg-accent/40 rounded-2xl p-4">
               <h3 className="text-foreground mb-2 flex items-center gap-2 font-semibold">
                 <MapPin className="text-primary size-5 shrink-0" aria-hidden />
                 Geolocalización por IP (GeoIP) — Automática
@@ -301,7 +301,7 @@ export default async function PrivacyPage() {
               </p>
             </div>
 
-            <div className="bg-muted/50 rounded-2xl p-4">
+            <div className="bg-accent/40 rounded-2xl p-4">
               <h3 className="text-foreground mb-2 flex items-center gap-2 font-semibold">
                 <Target className="text-primary size-5 shrink-0" aria-hidden />
                 Geolocalización precisa del navegador — Con consentimiento explícito
@@ -379,7 +379,7 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Contacto */}
-        <section id="priv-12" className="bg-muted/50 rounded-3xl p-6">
+        <section id="priv-12" className="bg-accent/40 rounded-3xl p-6">
           <h2 className="text-foreground mb-4 flex items-center gap-2 text-2xl font-semibold">
             <Mail className="text-primary size-7 shrink-0" aria-hidden />
             ¿Tienes dudas?

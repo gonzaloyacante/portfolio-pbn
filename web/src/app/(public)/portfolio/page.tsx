@@ -163,7 +163,7 @@ export default async function PortfolioPage() {
             })}
           </StaggerChildren>
         ) : (
-          <div className="rounded-jumbo bg-muted flex flex-col items-center justify-center py-24 text-center">
+          <div className="rounded-jumbo bg-accent flex flex-col items-center justify-center py-24 text-center">
             <Palette
               className="text-muted-foreground mb-4 size-14 shrink-0 sm:size-16"
               aria-hidden

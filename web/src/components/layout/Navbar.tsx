@@ -30,11 +30,7 @@ interface NavbarProps {
   immersiveHeroBackdrop?: boolean
 }
 
-export default function Navbar({
-  brandName,
-  visibility,
-  immersiveHeroBackdrop = false,
-}: NavbarProps) {
+export default function Navbar({ brandName, visibility }: NavbarProps) {
   const pathname = usePathname()
   const displayBrand = visibility?.navbarBrandText ?? brandName ?? 'PBN'
   const showBrand = visibility?.navbarShowBrand ?? true
@@ -56,17 +52,10 @@ export default function Navbar({
     return pathname?.startsWith(href) ?? false
   }
 
-  const isHome = pathname === ROUTES.home
-  const immersiveGlass = isHome && immersiveHeroBackdrop
-
   return (
     <nav
       aria-label="Navegación principal"
-      className={`sticky top-0 z-50 w-full border-b transition-all duration-500 ${
-        immersiveGlass
-          ? 'border-border/50 bg-background/90'
-          : 'bg-background/95 supports-[backdrop-filter]:bg-background/90 backdrop-blur-md'
-      }`}
+      className="sticky top-0 z-50 w-full transition-all duration-500"
     >
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
         {/* Logo - visible en pantallas grandes */}
