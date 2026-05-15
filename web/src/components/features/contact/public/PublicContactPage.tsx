@@ -9,7 +9,6 @@ import { getPublicSiteUrl } from '@/lib/site-url'
 import type { PublicContactPageData } from './contactPageData'
 import PublicContactMethods from './PublicContactMethods'
 import PublicSocialLinks from './PublicSocialLinks'
-import InstagramProfileCard from './InstagramProfileCard'
 import PublicContactFooter from './PublicContactFooter'
 
 export default function PublicContactPage({
@@ -18,11 +17,7 @@ export default function PublicContactPage({
   contactMethods,
   ownerName,
   locationSuffix,
-  instagramProfileUrl,
-  instagramProfileLabel,
 }: PublicContactPageData) {
-  const primaryContactMethods = contactMethods.filter((method) => method.id !== 'instagram')
-
   return (
     <section className="bg-background w-full transition-colors duration-500">
       <JsonLd
@@ -36,19 +31,9 @@ export default function PublicContactPage({
         }}
       />
 
-      <div className="flex flex-col items-center px-4 pt-8 pb-0 text-center sm:px-6 lg:hidden">
-        <h1
-          className="text-foreground font-script mb-4"
-          style={{ fontSize: 'var(--font-script-size, 2.25rem)' }}
-        >
-          {contactSettings?.pageTitle || 'Contacto'}
-        </h1>
-        <PublicContactMethods methods={primaryContactMethods} orientation="row" />
-      </div>
-
       <div className="text-foreground mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
-        <div className="hidden flex-col items-start pt-10 lg:flex">
-          <FadeIn className="mb-8">
+        <div className="flex flex-col items-start">
+          <FadeIn className="mb-8 hidden lg:block">
             {contactSettings?.illustrationUrl ? (
               <div className="relative h-80 w-80">
                 <OptimizedImage
@@ -62,34 +47,27 @@ export default function PublicContactPage({
             ) : null}
           </FadeIn>
 
-          <h1
-            className="text-foreground font-script mb-8"
-            style={{ fontSize: 'var(--font-script-size, 2.25rem)' }}
-          >
-            {ownerName}
-          </h1>
-
           <div className="mb-8 w-full">
-            <PublicContactMethods methods={primaryContactMethods} />
+            <PublicContactMethods methods={contactMethods} />
           </div>
+
+          {contactSettings?.showSocialLinks && socialLinks.length > 0 ? (
+            <div className="mb-8 w-full">
+              <PublicSocialLinks links={socialLinks} variant="list" />
+            </div>
+          ) : null}
 
           {contactSettings?.showInstagramEmbed && contactSettings?.instagramPostUrl && (
             <div className="mb-6 w-full max-w-sm">
               <InstagramEmbed postUrl={contactSettings.instagramPostUrl} />
             </div>
           )}
-
-          {socialLinks.length > 0 && <PublicSocialLinks links={socialLinks} />}
         </div>
 
         <div className="w-full">
           <Suspense fallback={<div className="bg-muted rounded-card h-96 w-full animate-pulse" />}>
             <ContactForm />
           </Suspense>
-
-          {socialLinks.length > 0 && <PublicSocialLinks links={socialLinks} variant="compact" />}
-
-          <InstagramProfileCard href={instagramProfileUrl} label={instagramProfileLabel} />
         </div>
       </div>
 

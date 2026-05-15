@@ -12,7 +12,7 @@ const socialIconMap = {
 
 interface PublicSocialLinksProps {
   links: SocialLinkData[]
-  variant?: 'grid' | 'compact'
+  variant?: 'grid' | 'compact' | 'list'
 }
 
 export default function PublicSocialLinks({ links, variant = 'grid' }: PublicSocialLinksProps) {
@@ -33,6 +33,30 @@ export default function PublicSocialLinks({ links, variant = 'grid' }: PublicSoc
               className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110"
             >
               {Icon ? <Icon className="h-5 w-5" /> : <span className="text-lg">🔗</span>}
+            </a>
+          )
+        })}
+      </div>
+    )
+  }
+
+  if (variant === 'list') {
+    return (
+      <div className="space-y-4 text-left font-sans text-lg">
+        {links.map((link) => {
+          const Icon = socialIconMap[link.platform as keyof typeof socialIconMap]
+          const username = link.username ? `@${link.username.replace(/^@/, '')}` : link.platform
+
+          return (
+            <a
+              key={link.id}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
+            >
+              {Icon ? <Icon className="h-6 w-6" /> : <span className="text-lg">🔗</span>}
+              <span>{username}</span>
             </a>
           )
         })}
