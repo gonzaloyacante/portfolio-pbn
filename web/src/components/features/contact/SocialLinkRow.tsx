@@ -57,9 +57,19 @@ export function SocialLinkRow({ link, isNew }: SocialLinkRowProps) {
     })
     if (isConfirmed) {
       setLoading(true)
-      await deleteSocialLink(link.id)
-      router.refresh()
-      setLoading(false)
+      try {
+        const result = await deleteSocialLink(link.id)
+        if (result.success) {
+          showToast.success('Link eliminado')
+          router.refresh()
+        } else {
+          showToast.error(result.error || 'Error al eliminar')
+        }
+      } catch {
+        showToast.error('Error de conexión')
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
