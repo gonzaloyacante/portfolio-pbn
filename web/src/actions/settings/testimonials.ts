@@ -25,8 +25,13 @@ export interface TestimonialSettingsData {
  */
 export const getTestimonialSettings = unstable_cache(
   async (): Promise<TestimonialSettingsData | null> => {
-    const settings = await prisma.testimonialSettings.findFirst()
-    return settings
+    try {
+      const settings = await prisma.testimonialSettings.findFirst()
+      return settings
+    } catch (error) {
+      logger.error('Error getting testimonial settings:', { error })
+      return null
+    }
   },
   [CACHE_TAGS.testimonialSettings],
   { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.testimonialSettings] }
