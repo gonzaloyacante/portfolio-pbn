@@ -5,19 +5,12 @@ import { HeroContent } from './HeroContent'
 
 interface HeroSectionProps {
   settings: HomeSettingsData | null
-  ambientExtendsFeatured?: boolean
 }
 
 /**
  * Public Hero Section
  * Simply wraps the Shared HeroContent
  */
-export default function HeroSection({ settings, ambientExtendsFeatured }: HeroSectionProps) {
-  return (
-    <HeroContent
-      settings={settings}
-      isEditor={false}
-      ambientExtendsFeatured={ambientExtendsFeatured}
-    />
-  )
+export default function HeroSection({ settings }: HeroSectionProps) {
+  return <HeroContent settings={settings} isEditor={false} />
 }

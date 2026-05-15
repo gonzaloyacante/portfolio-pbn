@@ -1,6 +1,6 @@
 'use client'
 
-import { FadeIn, OptimizedImage } from '@/components/ui'
+import { FadeIn, OptimizedImage, motion } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
@@ -18,26 +18,29 @@ export function HeroSignature({
   const illustration = s.illustrationUrl
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const eff = resolveEffectiveValues(s, isMobile)
-  const showOwner = isEditor || (s.showOwnerName ?? true)
+  const showOwner = isEditor || ((s.showOwnerName ?? true) && !s.heroImmersiveEnabled)
 
   return (
-    <div className="order-4 mt-8 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-0 lg:justify-start lg:gap-0">
-      <div className="flex flex-row items-center justify-center lg:flex-col lg:items-end lg:justify-start">
+    <div className="order-4 mt-6 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-2 lg:justify-start lg:gap-0">
+      <div className="flex flex-row items-center justify-center lg:flex-col lg:items-start lg:justify-start">
         {/* Illustration */}
-        <div className="relative z-0 lg:-mr-20 lg:mb-0 lg:-ml-10">
+        <div className="relative z-0 lg:mb-0">
           <HeroWrapper
             id="illustration"
             isEditor={isEditor}
             selectedElement={selectedElement}
             onSelectElement={onSelectElement}
-            className={cn('relative h-24 w-24 lg:h-80 lg:w-80', !isEditor && 'opacity-80')}
+            className={cn('relative h-28 w-28 lg:h-72 lg:w-72', !isEditor && 'opacity-90')}
             style={{
               zIndex: s.illustrationZIndex ?? 0,
               opacity: (s.illustrationOpacity ?? 80) / 100,
               transform: `translate(${eff.illOffsetX}px, ${eff.illOffsetY}px) rotate(${eff.illRotation}deg) scale(${eff.illSize / 100})`,
             }}
           >
-            <div className="relative h-full w-full">
+            <motion.div
+              layoutId={!isEditor && illustration ? 'public-brand-mark' : undefined}
+              className="relative h-full w-full"
+            >
               {illustration ? (
                 <OptimizedImage
                   src={illustration}
@@ -51,13 +54,13 @@ export function HeroSignature({
                   <span className="text-primary text-xs">Sin Ilustración</span>
                 </div>
               )}
-            </div>
+            </motion.div>
           </HeroWrapper>
         </div>
 
         {/* Owner name / signature */}
         {showOwner && (
-          <div className="relative z-10">
+          <div className="relative z-10 lg:mt-3">
             <FadeIn delay={0.6} disabled={isEditor}>
               <HeroWrapper
                 id="ownerName"

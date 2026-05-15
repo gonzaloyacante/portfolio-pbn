@@ -7,8 +7,6 @@ export interface HeroContentProps {
   selectedElement?: EditableElement
   onSelectElement?: (element: EditableElement) => void
   forceIsMobile?: boolean
-  /** Inmersivo + bloque destacados: fondo fijo continúa bajo esa sección */
-  ambientExtendsFeatured?: boolean
 }
 
 export interface WrapperProps {

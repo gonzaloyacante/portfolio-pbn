@@ -21,22 +21,15 @@ function prefersReducedMotion(): boolean {
 interface HeroImmersiveBackdropProps {
   settings: Partial<HomeSettingsData>
   isMobile: boolean
-  /** Fondo fijo más alto + leve parallax bajo la sección de destacados */
-  extendBelowFeatured?: boolean
 }
 
 /**
  * Capa de fondo detrás del contenido del hero: imagen/GIF (Next Image) o vídeo nativo (Cloudinary).
  * Sin interactividad por puntero — animación viene del asset (vídeo/GIF).
  */
-export function HeroImmersiveBackdrop({
-  settings,
-  isMobile,
-  extendBelowFeatured = false,
-}: HeroImmersiveBackdropProps) {
+export function HeroImmersiveBackdrop({ settings, isMobile }: HeroImmersiveBackdropProps) {
   const { resolvedTheme } = useNextTheme()
   const videoRef = useRef<HTMLVideoElement>(null)
-  const parallaxWrapRef = useRef<HTMLDivElement>(null)
 
   const prefersDark = resolvedTheme === 'dark'
 
@@ -101,30 +94,6 @@ export function HeroImmersiveBackdrop({
     })
   }, [isVideo, backdropUrl])
 
-  useEffect(() => {
-    const el = parallaxWrapRef.current
-    if (!extendBelowFeatured || prefersReducedMotion()) {
-      if (el) el.style.transform = ''
-      return
-    }
-    let raf = 0
-    const onScroll = () => {
-      cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        if (!el) return
-        const y = Math.min(window.scrollY * 0.12, 80)
-        el.style.transform = `translate3d(0, ${y}px, 0)`
-      })
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('scroll', onScroll)
-      if (el) el.style.transform = ''
-    }
-  }, [extendBelowFeatured, backdropUrl])
-
   if (!backdropUrl) return null
 
   const poster = settings.heroBackdropPosterUrl || undefined
@@ -135,14 +104,11 @@ export function HeroImmersiveBackdrop({
   return (
     <div
       className={cn(
-        'pointer-events-none z-[-1] overflow-hidden',
-        extendBelowFeatured
-          ? 'fixed inset-x-0 top-0 h-screen w-full max-w-full supports-[height:1dvh]:h-dvh supports-[width:1dvw]:w-[min(100dvw,100%)]'
-          : 'absolute inset-0 w-full max-w-full supports-[width:1dvw]:w-[min(100dvw,100%)]'
+        'pointer-events-none absolute inset-0 z-[-1] w-full max-w-full overflow-hidden supports-[width:1dvw]:w-[min(100dvw,100%)]'
       )}
       aria-hidden
     >
-      <div ref={parallaxWrapRef} className="absolute inset-0 z-0 will-change-transform">
+      <div className="absolute inset-0 z-0">
         {isVideo ? (
           <video
             ref={videoRef}

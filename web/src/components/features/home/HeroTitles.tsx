@@ -15,9 +15,11 @@ export function HeroTitles({
 }: HeroSectionProps) {
   const title1 = s.heroTitle1Text || 'Make-up'
   const title2 = s.heroTitle2Text || 'Portfolio'
+  const normalizedTitle2 = title2.trim().toLowerCase()
   const eff = resolveEffectiveValues(s, isMobile)
   const show1 = isEditor || (s.showHeroTitle1 ?? true)
-  const show2 = isEditor || (s.showHeroTitle2 ?? true)
+  const shouldSuppressDefaultTitle2 = !isEditor && normalizedTitle2 === 'portfolio'
+  const show2 = (isEditor || (s.showHeroTitle2 ?? true)) && !shouldSuppressDefaultTitle2
 
   return (
     <div className="order-1 flex w-full flex-col items-center text-center lg:order-0 lg:items-start lg:text-left">

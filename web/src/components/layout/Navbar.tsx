@@ -1,20 +1,15 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useMemo, useState, useRef } from 'react'
-import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
-// import ThemeToggle from '@/components/layout/ThemeToggle'
+import { useMemo, useRef, useState } from 'react'
+import { useScroll, useMotionValueEvent } from 'framer-motion'
+import { motion, AnimatePresence } from '@/components/ui'
+import { Menu, X } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
+import { cn } from '@/lib/utils'
 import type { PageVisibility } from '@/actions/settings/site'
-
-/**
- * Navbar - Block-Active Design (Canva Spec)
- * - Rectángulos perfectos (rounded-none)
- * - Animación suave del fondo activo con framer-motion layoutId
- * - Siempre horizontal: los items NUNCA se apilan verticalmente
- * - El logo/firma es el link a Inicio — no existe "Inicio" en los nav items
- */
 
 const allNavItems = [
   { href: ROUTES.public.about, label: 'Sobre mí', key: 'about' as const },
@@ -23,15 +18,64 @@ const allNavItems = [
   { href: ROUTES.public.contact, label: 'Contacto', key: 'contact' as const },
 ]
 
+const mobileHomeItem = { href: ROUTES.home, label: 'Inicio', key: 'home' as const }
+
 interface NavbarProps {
   brandName?: string | null
   visibility?: PageVisibility | null
-  /** Home con hero full-bleed: barra más translúcida para ver el fondo */
   immersiveHeroBackdrop?: boolean
+  brandLogoUrl?: string | null
+  brandLogoAlt?: string | null
 }
 
-export default function Navbar({ brandName, visibility }: NavbarProps) {
+function NavbarBrand({
+  href,
+  displayBrand,
+  brandLogoUrl,
+  brandLogoAlt,
+  imageClassName,
+}: {
+  href: string
+  displayBrand: string
+  brandLogoUrl?: string | null
+  brandLogoAlt?: string | null
+  imageClassName?: string
+}) {
+  return (
+    <Link
+      href={href}
+      className="flex items-center gap-3 transition-transform duration-200 hover:scale-105"
+    >
+      {brandLogoUrl ? (
+        <motion.div
+          layoutId="public-brand-mark"
+          className={cn('relative h-14 w-14 shrink-0', imageClassName)}
+        >
+          <Image
+            src={brandLogoUrl}
+            alt={brandLogoAlt || displayBrand}
+            fill
+            sizes="56px"
+            className="object-contain"
+            priority
+          />
+        </motion.div>
+      ) : (
+        <span className="nb-brand font-script text-foreground text-3xl">{displayBrand}</span>
+      )}
+    </Link>
+  )
+}
+
+export default function Navbar({
+  brandName,
+  visibility,
+  immersiveHeroBackdrop = false,
+  brandLogoUrl,
+  brandLogoAlt,
+}: NavbarProps) {
   const pathname = usePathname()
+  const isHome = pathname === ROUTES.home
   const displayBrand = visibility?.navbarBrandText ?? brandName ?? 'PBN'
   const showBrand = visibility?.navbarShowBrand ?? true
 
@@ -46,20 +90,34 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
     })
   }, [visibility])
 
+  const mobileNavItems = useMemo(() => [mobileHomeItem, ...navItems], [navItems])
+
   const isActive = (href: string) => {
+    if (href === ROUTES.home) return pathname === ROUTES.home
     return pathname?.startsWith(href) ?? false
   }
 
   const { scrollY } = useScroll()
   const [visible, setVisible] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [atTop, setAtTop] = useState(true)
   const lastScrollY = useRef(0)
 
-  useMotionValueEvent(scrollY, 'change', (current) => {
+  useMotionValueEvent(scrollY, 'change', (current: number) => {
     const prev = lastScrollY.current
     lastScrollY.current = current
+
+    setAtTop(current < 16)
+
     if (current < prev) setVisible(true)
-    else if (current > prev && current > 80) setVisible(false)
+    else if (current > prev && current > 80 && !menuOpen) setVisible(false)
   })
+
+  const transparentAtTop = isHome && immersiveHeroBackdrop && atTop
+  const showBrandInBar = showBrand && !(transparentAtTop && !!brandLogoUrl)
+  const navSurfaceClass = transparentAtTop
+    ? 'bg-transparent border-transparent'
+    : 'border-border/60 bg-background/92 supports-[backdrop-filter]:bg-background/78 shadow-sm backdrop-blur-md'
 
   return (
     <motion.nav
@@ -68,58 +126,115 @@ export default function Navbar({ brandName, visibility }: NavbarProps) {
       animate={{ y: visible ? 0 : '-100%' }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
-      <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-4 md:flex-row md:justify-between md:px-8 lg:px-16">
-        {/* Logo / Firma — link a Inicio */}
-        {showBrand && (
-          <Link
-            href={ROUTES.home}
-            className="nb-brand font-script text-foreground mb-3 text-3xl transition-transform duration-200 hover:scale-105 md:mb-0"
-          >
-            {displayBrand}
-          </Link>
-        )}
+      <div className={cn('border-b transition-all duration-300', navSurfaceClass)}>
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8 lg:px-16">
+          <div className="flex min-w-0 items-center gap-3">
+            {showBrandInBar ? (
+              <NavbarBrand
+                href={ROUTES.home}
+                displayBrand={displayBrand}
+                brandLogoUrl={brandLogoUrl}
+                brandLogoAlt={brandLogoAlt}
+                imageClassName="h-12 w-12 md:h-14 md:w-14"
+              />
+            ) : null}
+          </div>
 
-        {/*
-          Nav items: SIEMPRE fila horizontal.
-          px-4/text-xs en mobile → 4 items caben en una sola fila incluso en 320px.
-          flex-wrap + justify-center: si algún item forzara wrap, queda centrado.
-        */}
-        <div className="relative flex flex-row flex-wrap items-center justify-center">
-          {navItems.map((item) => {
-            const active = isActive(item.href)
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`font-heading focus-visible:bg-accent focus-visible:text-accent-foreground relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-4 py-2.5 text-xs font-semibold tracking-normal uppercase transition-colors duration-300 focus-visible:outline-none sm:px-5 sm:text-sm sm:tracking-wide md:px-8 md:py-3 md:text-base ${
-                  active
-                    ? 'text-primary-foreground'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                {/* Fondo animado para el estado activo */}
-                {active && (
-                  <motion.span
-                    layoutId="navbar-active-bg"
-                    className="bg-primary absolute inset-0 rounded-none"
-                    initial={false}
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-                {/* Texto */}
-                <span className="relative z-10">{item.label}</span>
-              </Link>
-            )
-          })}
-
-          {/*
-            Modo oscuro deshabilitado temporalmente.
-            Reactivar cuando bug esté resuelto:
-            <div className="flex items-center justify-center gap-2 pt-1 md:ml-4 md:pt-0">
-              <ThemeToggle />
+          <div className="hidden items-center justify-center md:flex">
+            <div className="relative flex flex-row flex-wrap items-center justify-center">
+              {navItems.map((item) => {
+                const active = isActive(item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      'font-heading focus-visible:bg-accent focus-visible:text-accent-foreground relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-4 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none lg:px-8 lg:py-3 lg:text-base',
+                      active
+                        ? 'text-primary-foreground'
+                        : transparentAtTop
+                          ? 'text-white hover:bg-white/12 hover:text-white'
+                          : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                    )}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="navbar-active-bg"
+                        className={cn(
+                          'absolute inset-0 rounded-none',
+                          transparentAtTop ? 'bg-black/35' : 'bg-primary'
+                        )}
+                        initial={false}
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative z-10">{item.label}</span>
+                  </Link>
+                )
+              })}
             </div>
-          */}
+          </div>
+
+          <button
+            type="button"
+            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={menuOpen}
+            onClick={() => {
+              setVisible(true)
+              setMenuOpen((open) => !open)
+            }}
+            className={cn(
+              'inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden',
+              transparentAtTop
+                ? 'border-white/25 bg-black/15 text-white'
+                : 'border-border bg-card text-foreground'
+            )}
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.24, ease: 'easeInOut' }}
+              className="overflow-hidden border-t border-white/10 md:hidden"
+            >
+              <div
+                className={cn(
+                  'px-4 pb-4',
+                  transparentAtTop ? 'bg-black/20 backdrop-blur-md' : 'bg-background'
+                )}
+              >
+                <div className="grid gap-2 pt-3">
+                  {mobileNavItems.map((item) => {
+                    const active = isActive(item.href)
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMenuOpen(false)}
+                        className={cn(
+                          'font-heading inline-flex min-h-11 items-center rounded-xl px-4 py-3 text-sm font-semibold uppercase transition-colors',
+                          active
+                            ? 'bg-primary text-primary-foreground'
+                            : transparentAtTop
+                              ? 'text-white hover:bg-white/12'
+                              : 'text-foreground hover:bg-accent'
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   )

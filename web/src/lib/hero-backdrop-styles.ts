@@ -59,6 +59,9 @@ export function buildHeroScrimBackground(opts: {
   if (edge === 'right') {
     return `linear-gradient(270deg, ${solidStart} 0%, ${midTone} ${softStop}, transparent ${extent}%)`
   }
+  if (edge === 'top') {
+    return `linear-gradient(180deg, ${solidStart} 0%, ${midTone} ${softStop}, transparent ${extent}%)`
+  }
   if (edge === 'both') {
     const half = extent / 2
     const softHalf = `${Math.min(half - 0.25, half * softness)}%`

@@ -18,7 +18,6 @@ export function HeroContent({
   selectedElement = null,
   onSelectElement,
   forceIsMobile,
-  ambientExtendsFeatured = false,
 }: HeroContentProps) {
   const s = settings || ({} as Partial<HomeSettingsData>)
   const actualIsMobile = useIsMobile()
@@ -38,6 +37,7 @@ export function HeroContent({
 
   const sectionProps = { s, isEditor, selectedElement, onSelectElement, isMobile }
   const immersive = !!s.heroImmersiveEnabled
+  const useUnifiedLayout = immersive && !isEditor
 
   return (
     <div
@@ -46,13 +46,7 @@ export function HeroContent({
         immersive && '-mt-[var(--public-nav-offset)] pt-[var(--public-nav-offset)]'
       )}
     >
-      {immersive ? (
-        <HeroImmersiveBackdrop
-          settings={s}
-          isMobile={isMobile}
-          extendBelowFeatured={ambientExtendsFeatured && !isEditor}
-        />
-      ) : null}
+      {immersive ? <HeroImmersiveBackdrop settings={s} isMobile={isMobile} /> : null}
 
       <section
         className={cn(
@@ -62,22 +56,28 @@ export function HeroContent({
       >
         <FontLoader fonts={fontsToLoad} />
 
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80dvh] lg:grid-cols-12 lg:gap-12 lg:py-0">
-          {/* Left column: Titles + Signature */}
-          <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
+        {useUnifiedLayout ? (
+          <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-8 py-10 sm:py-14 lg:min-h-[80dvh] lg:items-start lg:justify-center lg:py-16">
             <HeroTitles {...sectionProps} />
+            <HeroCta {...sectionProps} />
             <HeroSignature {...sectionProps} />
           </div>
+        ) : (
+          <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80dvh] lg:grid-cols-12 lg:gap-12 lg:py-0">
+            <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
+              <HeroTitles {...sectionProps} />
+              <HeroSignature {...sectionProps} />
+            </div>
 
-          {/* Right column: Main image + CTA */}
-          <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
-            <HeroMainImage {...sectionProps} />
-            <HeroCta {...sectionProps} />
-            {!immersive ? (
-              <div className="pointer-events-none absolute bottom-0 left-0 z-0 h-32 w-32 rounded-full bg-(--secondary) opacity-20 blur-2xl md:-left-6 lg:-left-10" />
-            ) : null}
+            <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
+              <HeroMainImage {...sectionProps} />
+              <HeroCta {...sectionProps} />
+              {!immersive ? (
+                <div className="pointer-events-none absolute bottom-0 left-0 z-0 h-32 w-32 rounded-full bg-(--secondary) opacity-20 blur-2xl md:-left-6 lg:-left-10" />
+              ) : null}
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   )

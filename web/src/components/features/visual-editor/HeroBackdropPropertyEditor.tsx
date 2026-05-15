@@ -18,6 +18,7 @@ const MEDIA_KIND = [
 const SCRIM_EDGE = [
   { value: 'left', label: 'Izquierda → derecha' },
   { value: 'right', label: 'Derecha → izquierda' },
+  { value: 'top', label: 'Arriba → abajo' },
   { value: 'both', label: 'Ambos lados' },
   { value: 'none', label: 'Sin degradado lateral' },
 ] as const
@@ -163,7 +164,7 @@ export function HeroBackdropPropertyEditor({
       </div>
 
       <div className="space-y-4 border-t border-(--border) pt-4">
-        <h4 className="text-sm font-semibold">Degradado lateral (legibilidad textos)</h4>
+        <h4 className="text-sm font-semibold">Degradado / sombra de contraste</h4>
 
         <EditorSelectControl
           label="Dirección / forma"

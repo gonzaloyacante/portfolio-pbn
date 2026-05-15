@@ -21,8 +21,6 @@ export function HeroPreview({
   onSelectElement,
   forceIsMobile,
 }: HeroPreviewProps) {
-  const ambientExtendsFeatured = !!settings?.heroImmersiveEnabled && !!settings?.showFeaturedImages
-
   return (
     <HeroContent
       settings={settings}
@@ -30,7 +28,6 @@ export function HeroPreview({
       selectedElement={selectedElement}
       onSelectElement={onSelectElement}
       forceIsMobile={forceIsMobile}
-      ambientExtendsFeatured={ambientExtendsFeatured}
     />
   )
 }

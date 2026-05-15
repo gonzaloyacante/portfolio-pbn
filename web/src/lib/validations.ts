@@ -195,7 +195,7 @@ export const homeSettingsSchema = z.object({
   heroBackdropMobileUrl: z.string().optional().nullable(),
   heroBackdropMobileObjectPosition: z.string().max(80).optional().nullable(),
   heroForegroundPortraitShow: z.boolean().optional(),
-  heroScrimEdge: z.enum(['left', 'right', 'both', 'none']).optional(),
+  heroScrimEdge: z.enum(['left', 'right', 'top', 'both', 'none']).optional(),
   heroScrimExtentPercent: z.number().int().min(5).max(100).optional(),
   heroScrimOpacity: z.number().int().min(0).max(100).optional(),
   heroScrimColor: zHexColorNullable,

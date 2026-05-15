@@ -13,7 +13,9 @@ export function HeroCta({
   onSelectElement,
   isMobile,
 }: HeroSectionProps) {
-  const ctaText = s.ctaText || 'Ver Portfolio'
+  const rawCtaText = s.ctaText || 'Ver Portfolio'
+  const ctaText =
+    !isEditor && rawCtaText.trim().toLowerCase() === 'ver portfolio' ? 'Portfolio' : rawCtaText
   const ctaLink = s.ctaLink || '/portfolio'
   const eff = resolveEffectiveValues(s, isMobile)
 

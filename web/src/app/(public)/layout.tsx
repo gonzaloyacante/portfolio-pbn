@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Footer from '@/components/layout/Footer'
 import MaintenanceModeView from '@/components/layout/MaintenanceModeView'
 import Navbar from '@/components/layout/Navbar'
+import PageTransitionWrapper from '@/components/layout/PageTransitionWrapper'
 import JsonLd from '@/components/seo/JsonLd'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getHomeSettings } from '@/actions/settings/home'
@@ -155,9 +156,11 @@ export default async function PublicLayout({ children }: { children: React.React
           brandName={contactSettings?.ownerName || 'Paola BN'}
           visibility={visibility}
           immersiveHeroBackdrop={homeSettings?.heroImmersiveEnabled ?? false}
+          brandLogoUrl={homeSettings?.illustrationUrl}
+          brandLogoAlt={homeSettings?.illustrationAlt || contactSettings?.ownerName || 'PBN'}
         />
         <main id="main-content" className="flex-1" tabIndex={-1}>
-          {children}
+          <PageTransitionWrapper>{children}</PageTransitionWrapper>
         </main>
         {testimonialSettings?.showOnAll && <PublicTestimonialsSection />}
         <Footer
