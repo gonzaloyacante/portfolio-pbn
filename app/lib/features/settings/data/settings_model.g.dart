@@ -500,6 +500,36 @@ Map<String, dynamic> _$CategoryDisplaySettingsToJson(
   'isActive': instance.isActive,
 };
 
+_ServicesPageSettings _$ServicesPageSettingsFromJson(
+  Map<String, dynamic> json,
+) => _ServicesPageSettings(
+  id: json['id'] as String?,
+  listTitle: json['listTitle'] as String?,
+  listIntro: json['listIntro'] as String?,
+  listTitleFont: json['listTitleFont'] as String?,
+  listTitleFontUrl: json['listTitleFontUrl'] as String?,
+  listTitleFontSize: (json['listTitleFontSize'] as num?)?.toInt(),
+  listTitleMobileFontSize: (json['listTitleMobileFontSize'] as num?)?.toInt(),
+  listTitleColor: json['listTitleColor'] as String?,
+  listTitleColorDark: json['listTitleColorDark'] as String?,
+  isActive: json['isActive'] as bool? ?? true,
+);
+
+Map<String, dynamic> _$ServicesPageSettingsToJson(
+  _ServicesPageSettings instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'listTitle': instance.listTitle,
+  'listIntro': instance.listIntro,
+  'listTitleFont': instance.listTitleFont,
+  'listTitleFontUrl': instance.listTitleFontUrl,
+  'listTitleFontSize': instance.listTitleFontSize,
+  'listTitleMobileFontSize': instance.listTitleMobileFontSize,
+  'listTitleColor': instance.listTitleColor,
+  'listTitleColorDark': instance.listTitleColorDark,
+  'isActive': instance.isActive,
+};
+
 _TestimonialSettings _$TestimonialSettingsFromJson(Map<String, dynamic> json) =>
     _TestimonialSettings(
       id: json['id'] as String?,

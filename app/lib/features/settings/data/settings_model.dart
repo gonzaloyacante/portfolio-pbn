@@ -306,6 +306,27 @@ abstract class CategoryDisplaySettings with _$CategoryDisplaySettings {
       _$CategoryDisplaySettingsFromJson(json);
 }
 
+// ── Services Page Settings ──────────────────────────────────────────────────
+
+@freezed
+abstract class ServicesPageSettings with _$ServicesPageSettings {
+  const factory ServicesPageSettings({
+    String? id,
+    String? listTitle,
+    String? listIntro,
+    String? listTitleFont,
+    String? listTitleFontUrl,
+    int? listTitleFontSize,
+    int? listTitleMobileFontSize,
+    String? listTitleColor,
+    String? listTitleColorDark,
+    @Default(true) bool isActive,
+  }) = _ServicesPageSettings;
+
+  factory ServicesPageSettings.fromJson(Map<String, dynamic> json) =>
+      _$ServicesPageSettingsFromJson(json);
+}
+
 // ── Testimonial Settings ─────────────────────────────────────────────────────
 
 @freezed

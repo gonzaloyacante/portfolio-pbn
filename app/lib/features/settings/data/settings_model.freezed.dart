@@ -2242,6 +2242,296 @@ as bool,
 
 
 /// @nodoc
+mixin _$ServicesPageSettings {
+
+ String? get id; String? get listTitle; String? get listIntro; String? get listTitleFont; String? get listTitleFontUrl; int? get listTitleFontSize; int? get listTitleMobileFontSize; String? get listTitleColor; String? get listTitleColorDark; bool get isActive;
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ServicesPageSettingsCopyWith<ServicesPageSettings> get copyWith => _$ServicesPageSettingsCopyWithImpl<ServicesPageSettings>(this as ServicesPageSettings, _$identity);
+
+  /// Serializes this ServicesPageSettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ServicesPageSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.listTitle, listTitle) || other.listTitle == listTitle)&&(identical(other.listIntro, listIntro) || other.listIntro == listIntro)&&(identical(other.listTitleFont, listTitleFont) || other.listTitleFont == listTitleFont)&&(identical(other.listTitleFontUrl, listTitleFontUrl) || other.listTitleFontUrl == listTitleFontUrl)&&(identical(other.listTitleFontSize, listTitleFontSize) || other.listTitleFontSize == listTitleFontSize)&&(identical(other.listTitleMobileFontSize, listTitleMobileFontSize) || other.listTitleMobileFontSize == listTitleMobileFontSize)&&(identical(other.listTitleColor, listTitleColor) || other.listTitleColor == listTitleColor)&&(identical(other.listTitleColorDark, listTitleColorDark) || other.listTitleColorDark == listTitleColorDark)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,listTitle,listIntro,listTitleFont,listTitleFontUrl,listTitleFontSize,listTitleMobileFontSize,listTitleColor,listTitleColorDark,isActive);
+
+@override
+String toString() {
+  return 'ServicesPageSettings(id: $id, listTitle: $listTitle, listIntro: $listIntro, listTitleFont: $listTitleFont, listTitleFontUrl: $listTitleFontUrl, listTitleFontSize: $listTitleFontSize, listTitleMobileFontSize: $listTitleMobileFontSize, listTitleColor: $listTitleColor, listTitleColorDark: $listTitleColorDark, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ServicesPageSettingsCopyWith<$Res>  {
+  factory $ServicesPageSettingsCopyWith(ServicesPageSettings value, $Res Function(ServicesPageSettings) _then) = _$ServicesPageSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String? id, String? listTitle, String? listIntro, String? listTitleFont, String? listTitleFontUrl, int? listTitleFontSize, int? listTitleMobileFontSize, String? listTitleColor, String? listTitleColorDark, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class _$ServicesPageSettingsCopyWithImpl<$Res>
+    implements $ServicesPageSettingsCopyWith<$Res> {
+  _$ServicesPageSettingsCopyWithImpl(this._self, this._then);
+
+  final ServicesPageSettings _self;
+  final $Res Function(ServicesPageSettings) _then;
+
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? listTitle = freezed,Object? listIntro = freezed,Object? listTitleFont = freezed,Object? listTitleFontUrl = freezed,Object? listTitleFontSize = freezed,Object? listTitleMobileFontSize = freezed,Object? listTitleColor = freezed,Object? listTitleColorDark = freezed,Object? isActive = null,}) {
+  return _then(_self.copyWith(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,listTitle: freezed == listTitle ? _self.listTitle : listTitle // ignore: cast_nullable_to_non_nullable
+as String?,listIntro: freezed == listIntro ? _self.listIntro : listIntro // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFont: freezed == listTitleFont ? _self.listTitleFont : listTitleFont // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontUrl: freezed == listTitleFontUrl ? _self.listTitleFontUrl : listTitleFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontSize: freezed == listTitleFontSize ? _self.listTitleFontSize : listTitleFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleMobileFontSize: freezed == listTitleMobileFontSize ? _self.listTitleMobileFontSize : listTitleMobileFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleColor: freezed == listTitleColor ? _self.listTitleColor : listTitleColor // ignore: cast_nullable_to_non_nullable
+as String?,listTitleColorDark: freezed == listTitleColorDark ? _self.listTitleColorDark : listTitleColorDark // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ServicesPageSettings].
+extension ServicesPageSettingsPatterns on ServicesPageSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ServicesPageSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ServicesPageSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _ServicesPageSettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ServicesPageSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? listTitle,  String? listIntro,  String? listTitleFont,  String? listTitleFontUrl,  int? listTitleFontSize,  int? listTitleMobileFontSize,  String? listTitleColor,  String? listTitleColorDark,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that.id,_that.listTitle,_that.listIntro,_that.listTitleFont,_that.listTitleFontUrl,_that.listTitleFontSize,_that.listTitleMobileFontSize,_that.listTitleColor,_that.listTitleColorDark,_that.isActive);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? listTitle,  String? listIntro,  String? listTitleFont,  String? listTitleFontUrl,  int? listTitleFontSize,  int? listTitleMobileFontSize,  String? listTitleColor,  String? listTitleColorDark,  bool isActive)  $default,) {final _that = this;
+switch (_that) {
+case _ServicesPageSettings():
+return $default(_that.id,_that.listTitle,_that.listIntro,_that.listTitleFont,_that.listTitleFontUrl,_that.listTitleFontSize,_that.listTitleMobileFontSize,_that.listTitleColor,_that.listTitleColorDark,_that.isActive);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? listTitle,  String? listIntro,  String? listTitleFont,  String? listTitleFontUrl,  int? listTitleFontSize,  int? listTitleMobileFontSize,  String? listTitleColor,  String? listTitleColorDark,  bool isActive)?  $default,) {final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that.id,_that.listTitle,_that.listIntro,_that.listTitleFont,_that.listTitleFontUrl,_that.listTitleFontSize,_that.listTitleMobileFontSize,_that.listTitleColor,_that.listTitleColorDark,_that.isActive);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ServicesPageSettings implements ServicesPageSettings {
+  const _ServicesPageSettings({this.id, this.listTitle, this.listIntro, this.listTitleFont, this.listTitleFontUrl, this.listTitleFontSize, this.listTitleMobileFontSize, this.listTitleColor, this.listTitleColorDark, this.isActive = true});
+  factory _ServicesPageSettings.fromJson(Map<String, dynamic> json) => _$ServicesPageSettingsFromJson(json);
+
+@override final  String? id;
+@override final  String? listTitle;
+@override final  String? listIntro;
+@override final  String? listTitleFont;
+@override final  String? listTitleFontUrl;
+@override final  int? listTitleFontSize;
+@override final  int? listTitleMobileFontSize;
+@override final  String? listTitleColor;
+@override final  String? listTitleColorDark;
+@override@JsonKey() final  bool isActive;
+
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ServicesPageSettingsCopyWith<_ServicesPageSettings> get copyWith => __$ServicesPageSettingsCopyWithImpl<_ServicesPageSettings>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ServicesPageSettingsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServicesPageSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.listTitle, listTitle) || other.listTitle == listTitle)&&(identical(other.listIntro, listIntro) || other.listIntro == listIntro)&&(identical(other.listTitleFont, listTitleFont) || other.listTitleFont == listTitleFont)&&(identical(other.listTitleFontUrl, listTitleFontUrl) || other.listTitleFontUrl == listTitleFontUrl)&&(identical(other.listTitleFontSize, listTitleFontSize) || other.listTitleFontSize == listTitleFontSize)&&(identical(other.listTitleMobileFontSize, listTitleMobileFontSize) || other.listTitleMobileFontSize == listTitleMobileFontSize)&&(identical(other.listTitleColor, listTitleColor) || other.listTitleColor == listTitleColor)&&(identical(other.listTitleColorDark, listTitleColorDark) || other.listTitleColorDark == listTitleColorDark)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,listTitle,listIntro,listTitleFont,listTitleFontUrl,listTitleFontSize,listTitleMobileFontSize,listTitleColor,listTitleColorDark,isActive);
+
+@override
+String toString() {
+  return 'ServicesPageSettings(id: $id, listTitle: $listTitle, listIntro: $listIntro, listTitleFont: $listTitleFont, listTitleFontUrl: $listTitleFontUrl, listTitleFontSize: $listTitleFontSize, listTitleMobileFontSize: $listTitleMobileFontSize, listTitleColor: $listTitleColor, listTitleColorDark: $listTitleColorDark, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ServicesPageSettingsCopyWith<$Res> implements $ServicesPageSettingsCopyWith<$Res> {
+  factory _$ServicesPageSettingsCopyWith(_ServicesPageSettings value, $Res Function(_ServicesPageSettings) _then) = __$ServicesPageSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? id, String? listTitle, String? listIntro, String? listTitleFont, String? listTitleFontUrl, int? listTitleFontSize, int? listTitleMobileFontSize, String? listTitleColor, String? listTitleColorDark, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class __$ServicesPageSettingsCopyWithImpl<$Res>
+    implements _$ServicesPageSettingsCopyWith<$Res> {
+  __$ServicesPageSettingsCopyWithImpl(this._self, this._then);
+
+  final _ServicesPageSettings _self;
+  final $Res Function(_ServicesPageSettings) _then;
+
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? listTitle = freezed,Object? listIntro = freezed,Object? listTitleFont = freezed,Object? listTitleFontUrl = freezed,Object? listTitleFontSize = freezed,Object? listTitleMobileFontSize = freezed,Object? listTitleColor = freezed,Object? listTitleColorDark = freezed,Object? isActive = null,}) {
+  return _then(_ServicesPageSettings(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,listTitle: freezed == listTitle ? _self.listTitle : listTitle // ignore: cast_nullable_to_non_nullable
+as String?,listIntro: freezed == listIntro ? _self.listIntro : listIntro // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFont: freezed == listTitleFont ? _self.listTitleFont : listTitleFont // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontUrl: freezed == listTitleFontUrl ? _self.listTitleFontUrl : listTitleFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontSize: freezed == listTitleFontSize ? _self.listTitleFontSize : listTitleFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleMobileFontSize: freezed == listTitleMobileFontSize ? _self.listTitleMobileFontSize : listTitleMobileFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleColor: freezed == listTitleColor ? _self.listTitleColor : listTitleColor // ignore: cast_nullable_to_non_nullable
+as String?,listTitleColorDark: freezed == listTitleColorDark ? _self.listTitleColorDark : listTitleColorDark // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
 mixin _$TestimonialSettings {
 
  String? get id; bool get showOnAbout; bool get showOnAll; String? get title; int get maxDisplay; int get sliderAutoAdvanceMs; bool get isActive;

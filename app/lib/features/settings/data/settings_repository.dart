@@ -137,6 +137,25 @@ class SettingsRepository {
     return CategoryDisplaySettings.fromJson(_dataMap(resp));
   }
 
+  // ── Services Page Settings ────────────────────────────────────────────────
+
+  Future<ServicesPageSettings> getServicesPageSettings() async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.settingsSection('servicesPage'),
+    );
+    return ServicesPageSettings.fromJson(_dataMap(resp));
+  }
+
+  Future<ServicesPageSettings> updateServicesPageSettings(
+    Map<String, Object?> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.settingsSection('servicesPage'),
+      data: data,
+    );
+    return ServicesPageSettings.fromJson(_dataMap(resp));
+  }
+
   // ── Testimonial Settings ──────────────────────────────────────────────────
 
   Future<TestimonialSettings> getTestimonialSettings() async {

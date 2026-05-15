@@ -27,6 +27,9 @@ import '../../features/settings/presentation/settings_page.dart';
 import '../../features/settings/presentation/settings_site_page.dart';
 import '../../features/settings/presentation/settings_social_page.dart';
 import '../../features/settings/presentation/settings_theme_page.dart';
+import '../../features/settings/presentation/settings_testimonial_page.dart';
+import '../../features/settings/presentation/settings_services_page.dart';
+import '../../features/settings/presentation/settings_category_page.dart';
 import '../../features/services/presentation/service_form_page.dart';
 import '../../features/services/presentation/services_list_page.dart';
 import '../../features/testimonials/presentation/testimonial_form_page.dart';
@@ -331,6 +334,24 @@ final List<RouteBase> _routes = [
     name: RouteNames.settingsSocial,
     pageBuilder: (BuildContext context, GoRouterState state) =>
         _fadePage(state: state, child: const SettingsSocialPage()),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsTestimonial,
+    name: RouteNames.settingsTestimonial,
+    pageBuilder: (BuildContext context, GoRouterState state) =>
+        _fadePage(state: state, child: const SettingsTestimonialPage()),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsServicesPage,
+    name: RouteNames.settingsServicesPage,
+    pageBuilder: (BuildContext context, GoRouterState state) =>
+        _fadePage(state: state, child: const SettingsServicesPage()),
+  ),
+  GoRoute(
+    path: RoutePaths.settingsCategory,
+    name: RouteNames.settingsCategory,
+    pageBuilder: (BuildContext context, GoRouterState state) =>
+        _fadePage(state: state, child: const SettingsCategoryPage()),
   ),
   // ── Cuenta ────────────────────────────────────────────────────────────────
   GoRoute(

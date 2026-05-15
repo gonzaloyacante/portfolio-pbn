@@ -116,6 +116,18 @@ void main() {
       'settingsSocial == "settings-social"',
       () => expect(RouteNames.settingsSocial, 'settings-social'),
     );
+    test(
+      'settingsTestimonial == "settings-testimonial"',
+      () => expect(RouteNames.settingsTestimonial, 'settings-testimonial'),
+    );
+    test(
+      'settingsServicesPage == "settings-services-page"',
+      () => expect(RouteNames.settingsServicesPage, 'settings-services-page'),
+    );
+    test(
+      'settingsCategory == "settings-category"',
+      () => expect(RouteNames.settingsCategory, 'settings-category'),
+    );
   });
 
   group('RouteNames — other', () {
@@ -156,6 +168,9 @@ void main() {
         RouteNames.settingsTheme,
         RouteNames.settingsSite,
         RouteNames.settingsSocial,
+        RouteNames.settingsTestimonial,
+        RouteNames.settingsServicesPage,
+        RouteNames.settingsCategory,
         RouteNames.trash,
         RouteNames.account,
         RouteNames.help,
@@ -310,6 +325,18 @@ void main() {
       'settingsSocial == "/settings/social"',
       () => expect(RoutePaths.settingsSocial, '/settings/social'),
     );
+    test(
+      'settingsTestimonial == "/settings/testimonial"',
+      () => expect(RoutePaths.settingsTestimonial, '/settings/testimonial'),
+    );
+    test(
+      'settingsServicesPage == "/settings/services-page"',
+      () => expect(RoutePaths.settingsServicesPage, '/settings/services-page'),
+    );
+    test(
+      'settingsCategory == "/settings/category"',
+      () => expect(RoutePaths.settingsCategory, '/settings/category'),
+    );
     test('all settings subpaths start with /settings/', () {
       final subPaths = [
         RoutePaths.settingsHome,
@@ -318,6 +345,9 @@ void main() {
         RoutePaths.settingsTheme,
         RoutePaths.settingsSite,
         RoutePaths.settingsSocial,
+        RoutePaths.settingsTestimonial,
+        RoutePaths.settingsServicesPage,
+        RoutePaths.settingsCategory,
       ];
       for (final p in subPaths) {
         expect(p.startsWith('/settings/'), true);
@@ -363,6 +393,9 @@ void main() {
         RoutePaths.settingsTheme,
         RoutePaths.settingsSite,
         RoutePaths.settingsSocial,
+        RoutePaths.settingsTestimonial,
+        RoutePaths.settingsServicesPage,
+        RoutePaths.settingsCategory,
         RoutePaths.trash,
         RoutePaths.account,
         RoutePaths.help,

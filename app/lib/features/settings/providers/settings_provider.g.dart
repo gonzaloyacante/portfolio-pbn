@@ -294,6 +294,90 @@ final class CategoryDisplaySettingsProvider
 String _$categoryDisplaySettingsHash() =>
     r'8dd6f06133622d4889f6aeda58a77c0310503a66';
 
+@ProviderFor(servicesPageSettings)
+final servicesPageSettingsProvider = ServicesPageSettingsProvider._();
+
+final class ServicesPageSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<ServicesPageSettings>,
+          ServicesPageSettings,
+          FutureOr<ServicesPageSettings>
+        >
+    with
+        $FutureModifier<ServicesPageSettings>,
+        $FutureProvider<ServicesPageSettings> {
+  ServicesPageSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'servicesPageSettingsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$servicesPageSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<ServicesPageSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<ServicesPageSettings> create(Ref ref) {
+    return servicesPageSettings(ref);
+  }
+}
+
+String _$servicesPageSettingsHash() =>
+    r'a274eea08c1cf42245413006e45dad2ebc328bee';
+
+@ProviderFor(testimonialSettings)
+final testimonialSettingsProvider = TestimonialSettingsProvider._();
+
+final class TestimonialSettingsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<TestimonialSettings>,
+          TestimonialSettings,
+          FutureOr<TestimonialSettings>
+        >
+    with
+        $FutureModifier<TestimonialSettings>,
+        $FutureProvider<TestimonialSettings> {
+  TestimonialSettingsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'testimonialSettingsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$testimonialSettingsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<TestimonialSettings> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<TestimonialSettings> create(Ref ref) {
+    return testimonialSettings(ref);
+  }
+}
+
+String _$testimonialSettingsHash() =>
+    r'6118cebe03137c17c43a48c7b7cc8e0ecbb09cd6';
+
 @ProviderFor(socialLinks)
 final socialLinksProvider = SocialLinksProvider._();
 
