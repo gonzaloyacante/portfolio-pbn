@@ -115,9 +115,10 @@ export default function Navbar({
 
   const transparentAtTop = isHome && immersiveHeroBackdrop && atTop
   const showBrandInBar = showBrand && !(transparentAtTop && !!brandLogoUrl)
+  const showCollapsedMobileNav = !isHome
   const navSurfaceClass = transparentAtTop
     ? 'bg-transparent border-transparent'
-    : 'border-border/60 bg-background/92 supports-[backdrop-filter]:bg-background/78 shadow-sm backdrop-blur-md'
+    : 'border-border/60 bg-background shadow-sm'
 
   return (
     <motion.nav
@@ -127,7 +128,12 @@ export default function Navbar({
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       <div className={cn('border-b transition-all duration-300', navSurfaceClass)}>
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-8 lg:px-16">
+        <div
+          className={cn(
+            'mx-auto max-w-7xl px-4 py-3 md:px-8 lg:px-16',
+            isHome ? 'flex flex-col items-center' : 'flex items-center justify-between'
+          )}
+        >
           <div className="flex min-w-0 items-center gap-3">
             {showBrandInBar ? (
               <NavbarBrand
@@ -140,7 +146,7 @@ export default function Navbar({
             ) : null}
           </div>
 
-          <div className="hidden items-center justify-center md:flex">
+          <div className={cn('items-center justify-center', isHome ? 'flex' : 'hidden md:flex')}>
             <div className="relative flex flex-row flex-wrap items-center justify-center">
               {navItems.map((item) => {
                 const active = isActive(item.href)
@@ -175,40 +181,32 @@ export default function Navbar({
             </div>
           </div>
 
-          <button
-            type="button"
-            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            aria-expanded={menuOpen}
-            onClick={() => {
-              setVisible(true)
-              setMenuOpen((open) => !open)
-            }}
-            className={cn(
-              'inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors md:hidden',
-              transparentAtTop
-                ? 'border-white/25 bg-black/15 text-white'
-                : 'border-border bg-card text-foreground'
-            )}
-          >
-            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          {showCollapsedMobileNav ? (
+            <button
+              type="button"
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={menuOpen}
+              onClick={() => {
+                setVisible(true)
+                setMenuOpen((open) => !open)
+              }}
+              className="text-foreground inline-flex h-11 w-11 items-center justify-center transition-colors md:hidden"
+            >
+              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          ) : null}
         </div>
 
         <AnimatePresence initial={false}>
-          {menuOpen && (
+          {showCollapsedMobileNav && menuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.24, ease: 'easeInOut' }}
-              className="overflow-hidden border-t border-white/10 md:hidden"
+              className="border-border bg-background absolute top-full right-0 left-0 z-50 overflow-hidden border-t shadow-md md:hidden"
             >
-              <div
-                className={cn(
-                  'px-4 pb-4',
-                  transparentAtTop ? 'bg-black/20 backdrop-blur-md' : 'bg-background'
-                )}
-              >
+              <div className="px-4 pb-4">
                 <div className="grid gap-2 pt-3">
                   {mobileNavItems.map((item) => {
                     const active = isActive(item.href)

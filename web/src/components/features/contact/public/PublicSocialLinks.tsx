@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Linkedin, MessageCircle, Music2, Youtube } from 'lucide-react'
 import type { SocialLinkData } from '@/actions/settings/social'
+import { cn } from '@/lib/utils'
 
 const socialIconMap = {
   instagram: Instagram,
@@ -13,9 +14,14 @@ const socialIconMap = {
 interface PublicSocialLinksProps {
   links: SocialLinkData[]
   variant?: 'grid' | 'compact' | 'list'
+  className?: string
 }
 
-export default function PublicSocialLinks({ links, variant = 'grid' }: PublicSocialLinksProps) {
+export default function PublicSocialLinks({
+  links,
+  variant = 'grid',
+  className,
+}: PublicSocialLinksProps) {
   if (links.length === 0) return null
 
   if (variant === 'compact') {
@@ -42,7 +48,7 @@ export default function PublicSocialLinks({ links, variant = 'grid' }: PublicSoc
 
   if (variant === 'list') {
     return (
-      <div className="space-y-4 text-left font-sans text-lg">
+      <div className={cn('space-y-4 text-left font-sans text-lg', className)}>
         {links.map((link) => {
           const Icon = socialIconMap[link.platform as keyof typeof socialIconMap]
           const username = link.username ? `@${link.username.replace(/^@/, '')}` : link.platform
@@ -65,7 +71,7 @@ export default function PublicSocialLinks({ links, variant = 'grid' }: PublicSoc
   }
 
   return (
-    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2">
+    <div className={cn('grid w-full grid-cols-1 gap-4 sm:grid-cols-2', className)}>
       {links.map((link) => {
         const Icon = socialIconMap[link.platform as keyof typeof socialIconMap]
         const username = link.username ? `@${link.username.replace(/^@/, '')}` : link.platform

@@ -18,6 +18,8 @@ export default function PublicContactPage({
   ownerName,
   locationSuffix,
 }: PublicContactPageData) {
+  const primaryContactMethods = contactMethods.filter((method) => method.id !== 'instagram')
+
   return (
     <section className="bg-background w-full transition-colors duration-500">
       <JsonLd
@@ -47,15 +49,12 @@ export default function PublicContactPage({
             ) : null}
           </FadeIn>
 
-          <div className="mb-8 w-full">
-            <PublicContactMethods methods={contactMethods} />
+          <div className="mb-8 w-full space-y-4">
+            <PublicContactMethods methods={primaryContactMethods} />
+            {contactSettings?.showSocialLinks && socialLinks.length > 0 ? (
+              <PublicSocialLinks links={socialLinks} variant="list" className="!space-y-4" />
+            ) : null}
           </div>
-
-          {contactSettings?.showSocialLinks && socialLinks.length > 0 ? (
-            <div className="mb-8 w-full">
-              <PublicSocialLinks links={socialLinks} variant="list" />
-            </div>
-          ) : null}
 
           {contactSettings?.showInstagramEmbed && contactSettings?.instagramPostUrl && (
             <div className="mb-6 w-full max-w-sm">
