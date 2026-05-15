@@ -48,6 +48,42 @@ export async function GET(req: Request) {
   }
 }
 
+// ── DELETE /api/admin/settings/social ───────────────────────────────────────
+export async function DELETE(req: Request) {
+  const auth = await withAdminJwt(req)
+  if (!auth.ok) return auth.response
+
+  try {
+    await checkSettingsRateLimit(auth.payload.userId)
+
+    const body = (await req.json().catch(() => null)) as { id?: string; platform?: string } | null
+    const id = body?.id?.trim()
+    const platform = body?.platform?.trim()
+
+    if (!id && !platform) {
+      return NextResponse.json(
+        { success: false, error: 'Debes indicar id o platform' },
+        { status: 400 }
+      )
+    }
+
+    await prisma.socialLink.delete({
+      where: id ? { id } : { platform: platform! },
+    })
+
+    revalidatePath(ROUTES.public.contact)
+    revalidateTag(CACHE_TAGS.socialLinks, 'max')
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    logger.error('[settings/social] DELETE error', { error })
+    return NextResponse.json(
+      { success: false, error: 'Error al eliminar red social' },
+      { status: 500 }
+    )
+  }
+}
+
 // ── POST /api/admin/settings/social ──────────────────────────────────────────
 export async function POST(req: Request) {
   const auth = await withAdminJwt(req)

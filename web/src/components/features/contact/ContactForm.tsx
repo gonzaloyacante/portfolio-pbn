@@ -94,7 +94,7 @@ export default function ContactForm() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-card bg-card p-5 text-center shadow-lg sm:p-8"
+        className="px-1 py-2 text-center sm:px-0"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -129,7 +129,7 @@ export default function ContactForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="rounded-card bg-card p-5 shadow-lg sm:p-8"
+      className="px-1 py-2 sm:px-0"
     >
       <h2 className="font-heading mb-6 text-2xl font-bold text-(--foreground)">
         Envíame un mensaje
@@ -144,7 +144,7 @@ export default function ContactForm() {
           <input
             {...register('name')}
             id="name"
-            className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+            className="w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-3 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none sm:px-4"
             placeholder="Tu nombre completo"
             autoComplete="name"
           />
@@ -156,13 +156,13 @@ export default function ContactForm() {
           <legend className="mb-3 block text-sm font-semibold text-(--foreground)">
             ¿Cómo preferís que te contacte? *
           </legend>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
             {PREFERENCES.map(({ id, icon, label }) => (
               <button
                 key={id}
                 type="button"
                 onClick={() => setValue('responsePreference', id, { shouldValidate: false })}
-                className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all duration-200 ${
+                className={`flex min-h-24 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 p-3 transition-all duration-200 sm:p-4 ${
                   responsePreference === id
                     ? 'border-(--primary) bg-(--primary)/10 text-(--primary)'
                     : 'border-(--primary)/20 bg-(--background) text-(--foreground) hover:border-(--primary)/50'
@@ -203,7 +203,7 @@ export default function ContactForm() {
             {...register('message')}
             id="message"
             rows={5}
-            className="w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none"
+            className="w-full resize-none rounded-xl border-2 border-(--primary)/20 bg-(--background) px-3 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none sm:px-4"
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
           />

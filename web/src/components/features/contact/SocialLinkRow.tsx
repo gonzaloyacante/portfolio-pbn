@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { SocialLinkData, upsertSocialLink, deleteSocialLink } from '@/actions/settings/social'
-import { Button, Input, useConfirmDialog } from '@/components/ui'
+import { Button, Input, Switch, useConfirmDialog } from '@/components/ui'
 import { Plus, Trash2, Save } from 'lucide-react'
 import { showToast } from '@/lib/toast'
 
@@ -98,7 +98,16 @@ export function SocialLinkRow({ link, isNew }: SocialLinkRowProps) {
             className="h-9 text-xs"
           />
         </div>
-        <div className="col-span-3 flex justify-end gap-2">
+        <div className="col-span-3 flex items-center justify-end gap-3">
+          {!isNew && (
+            <label className="flex items-center gap-2 text-xs">
+              <Switch
+                checked={data.isActive}
+                onCheckedChange={(v) => setData({ ...data, isActive: v })}
+              />
+              <span>{data.isActive ? 'Visible' : 'Oculta'}</span>
+            </label>
+          )}
           <Button
             size="sm"
             variant={isNew ? 'primary' : 'ghost'}

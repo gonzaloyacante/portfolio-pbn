@@ -192,4 +192,20 @@ class SettingsRepository {
     );
     return SocialLink.fromJson(_dataMap(resp));
   }
+
+  Future<void> deleteSocialLink({String? id, String? platform}) async {
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.socialLinks,
+      data: {
+        if (id != null) 'id': id,
+        if (platform != null) 'platform': platform,
+      },
+    );
+    final success = resp['success'] as bool? ?? false;
+    if (!success) {
+      throw Exception(
+        resp['error']?.toString() ?? 'Error al eliminar red social',
+      );
+    }
+  }
 }

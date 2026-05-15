@@ -40,8 +40,22 @@ class _SocialLinkTileState extends ConsumerState<SocialLinkTile> {
   @override
   void initState() {
     super.initState();
-    _urlCtrl = TextEditingController(text: widget.link?.url ?? '');
-    _usernameCtrl = TextEditingController(text: widget.link?.username ?? '');
+    _urlCtrl = TextEditingController();
+    _usernameCtrl = TextEditingController();
+    _syncFromWidget();
+  }
+
+  @override
+  void didUpdateWidget(covariant SocialLinkTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.link != widget.link) {
+      _syncFromWidget();
+    }
+  }
+
+  void _syncFromWidget() {
+    _urlCtrl.text = widget.link?.url ?? '';
+    _usernameCtrl.text = widget.link?.username ?? '';
     _isActive = widget.link?.isActive ?? true;
   }
 
@@ -74,6 +88,33 @@ class _SocialLinkTileState extends ConsumerState<SocialLinkTile> {
       Sentry.captureException(e, stackTrace: st);
       if (mounted) {
         AppSnackBar.error(context, 'No se pudo guardar. Inténtalo de nuevo.');
+      }
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _delete() async {
+    if (widget.link == null) return;
+
+    setState(() => _saving = true);
+    try {
+      await ref
+          .read(settingsRepositoryProvider)
+          .deleteSocialLink(
+            id: widget.link!.id,
+            platform: widget.link!.platform,
+          );
+      widget.onSaved();
+      if (mounted) {
+        setState(() => _expanded = false);
+        _syncFromWidget();
+        AppSnackBar.success(context, '${widget.platform} eliminada');
+      }
+    } catch (e, st) {
+      Sentry.captureException(e, stackTrace: st);
+      if (mounted) {
+        AppSnackBar.error(context, 'No se pudo eliminar. Inténtalo de nuevo.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -171,15 +212,28 @@ class _SocialLinkTileState extends ConsumerState<SocialLinkTile> {
                   const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
-                    child: FilledButton(
-                      onPressed: _saving ? null : _save,
-                      child: _saving
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : const Text('Guardar'),
+                    child: Column(
+                      children: [
+                        FilledButton(
+                          onPressed: _saving ? null : _save,
+                          child: _saving
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text('Guardar'),
+                        ),
+                        if (widget.link != null) ...[
+                          const SizedBox(height: AppSpacing.sm),
+                          OutlinedButton(
+                            onPressed: _saving ? null : _delete,
+                            child: const Text('Eliminar'),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ],

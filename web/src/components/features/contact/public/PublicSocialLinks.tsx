@@ -61,7 +61,13 @@ export default function PublicSocialLinks({
               rel="noopener noreferrer"
               className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
             >
-              {Icon ? <Icon className="h-6 w-6" /> : <span className="text-lg">🔗</span>}
+              {Icon ? (
+                <Icon className="h-6 w-6 shrink-0" />
+              ) : (
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center text-lg">
+                  🔗
+                </span>
+              )}
               <span>{username}</span>
             </a>
           )
