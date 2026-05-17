@@ -101,8 +101,21 @@ void main() {
     test('borderRadius defaults to 40', () => expect(s.borderRadius, 40));
     test('isActive defaults to true', () => expect(s.isActive, true));
     test(
-      'darkPrimaryColor defaults to #fb7185',
-      () => expect(s.darkPrimaryColor, '#fb7185'),
+      'secondaryColor defaults to #ffaadd',
+      () => expect(s.secondaryColor, '#ffaadd'),
+    );
+    test(
+      'backgroundColor defaults to #fff1f9',
+      () => expect(s.backgroundColor, '#fff1f9'),
+    );
+    test('textColor defaults to #000000', () => expect(s.textColor, '#000000'));
+    test(
+      'darkPrimaryColor defaults to #ffaadd',
+      () => expect(s.darkPrimaryColor, '#ffaadd'),
+    );
+    test(
+      'darkSecondaryColor defaults to #6c0a0a',
+      () => expect(s.darkSecondaryColor, '#6c0a0a'),
     );
   });
 

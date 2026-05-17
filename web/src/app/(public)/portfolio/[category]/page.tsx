@@ -95,7 +95,7 @@ export default async function CategoryGalleryPage({
   }))
 
   return (
-    <section className="bg-background w-full transition-colors duration-500">
+    <section className="public-portfolio-page w-full transition-colors duration-500">
       <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
       <JsonLd
         type="ImageGallery"
@@ -113,19 +113,19 @@ export default async function CategoryGalleryPage({
             <Link
               href={ROUTES.public.portfolio}
               aria-label="Volver al portfolio"
-              className="group text-primary flex items-center gap-2 transition-colors hover:opacity-70"
+              className="group flex items-center gap-2 transition-colors hover:opacity-80"
             >
-              <div className="border-primary group-hover:bg-primary flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:-translate-x-1 group-hover:text-white">
+              <div className="public-category-back-button flex h-10 w-10 items-center justify-center rounded-full border transition-all group-hover:-translate-x-1">
                 <ArrowLeft size={20} />
               </div>
             </Link>
 
-            <h1 className="text-foreground font-heading text-3xl font-bold sm:text-4xl">
+            <h1 className="public-portfolio-category-title font-heading text-3xl font-bold sm:text-4xl">
               {category.name}
             </h1>
           </div>
 
-          <p className="text-muted-foreground max-w-md text-sm sm:text-right">
+          <p className="public-portfolio-muted max-w-md text-sm sm:text-right">
             {category.description}
           </p>
         </div>
@@ -135,8 +135,8 @@ export default async function CategoryGalleryPage({
           <CategoryGallery images={allImages} showTitles={showTitles} />
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-60">
-            <ImageOff className="text-muted-foreground mb-4 size-12 shrink-0" aria-hidden />
-            <p className="text-muted-foreground text-lg">
+            <ImageOff className="public-portfolio-muted mb-4 size-12 shrink-0" aria-hidden />
+            <p className="public-portfolio-muted text-lg">
               No hay imágenes disponibles en esta categoría.
             </p>
           </div>

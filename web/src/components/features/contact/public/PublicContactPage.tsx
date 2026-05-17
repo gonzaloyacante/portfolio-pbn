@@ -21,7 +21,7 @@ export default function PublicContactPage({
   const primaryContactMethods = contactMethods.filter((method) => method.id !== 'instagram')
 
   return (
-    <section className="bg-background w-full transition-colors duration-500">
+    <section className="public-contact-page w-full transition-colors duration-500">
       <JsonLd
         type="LocalBusiness"
         data={{
@@ -33,7 +33,7 @@ export default function PublicContactPage({
         }}
       />
 
-      <div className="text-foreground mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         <div className="flex flex-col items-start">
           <FadeIn className="mb-8 hidden lg:block">
             {contactSettings?.illustrationUrl ? (
@@ -57,14 +57,18 @@ export default function PublicContactPage({
           </div>
 
           {contactSettings?.showInstagramEmbed && contactSettings?.instagramPostUrl && (
-            <div className="mb-6 w-full max-w-sm">
+            <div className="public-contact-instagram mb-6 w-full max-w-sm overflow-hidden">
               <InstagramEmbed postUrl={contactSettings.instagramPostUrl} />
             </div>
           )}
         </div>
 
         <div className="w-full">
-          <Suspense fallback={<div className="bg-muted rounded-card h-96 w-full animate-pulse" />}>
+          <Suspense
+            fallback={
+              <div className="public-contact-form-panel rounded-card h-96 w-full animate-pulse" />
+            }
+          >
             <ContactForm />
           </Suspense>
         </div>

@@ -1,116 +1,108 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { OptimizedImage } from '@/components/ui'
-import { TestimonialRatingStars } from '@/components/features/testimonials/TestimonialRatingStars'
+import { AnimatePresence, motion } from '@/components/ui'
+import { TestimonialCard } from '@/components/features/testimonials/TestimonialCard'
 import type { Testimonial } from '@/generated/prisma/client'
 
-const CARDS_VISIBLE = 3
+const DEFAULT_AUTO_ADVANCE_MS = 10_000
+
+function getCardsVisible() {
+  if (typeof window === 'undefined') return 1
+  if (window.matchMedia('(min-width: 1024px)').matches) return 3
+  if (window.matchMedia('(min-width: 640px)').matches) return 2
+  return 1
+}
 
 interface TestimonialSliderProps {
   testimonials: Testimonial[]
-  autoAdvanceMs?: number
+  autoAdvanceMs?: number | null
 }
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-  return (
-    <div className="bg-card border-border/50 flex h-full flex-col rounded-2xl border p-6 shadow-md transition-all duration-200 hover:shadow-lg">
-      <TestimonialRatingStars rating={testimonial.rating} className="mb-3" />
-      <p className="text-muted-foreground mb-4 flex-1 text-sm leading-relaxed italic">
-        &ldquo;{testimonial.text}&rdquo;
-      </p>
-      <div className="mt-auto flex items-center gap-3">
-        {testimonial.avatarUrl ? (
-          <OptimizedImage
-            src={testimonial.avatarUrl}
-            alt={testimonial.name}
-            width={40}
-            height={40}
-            variant="thumbnail"
-            placeholder="empty"
-            imgClassName="border-primary/30 h-10 w-10 rounded-full border-2"
-          />
-        ) : (
-          <div className="bg-primary/10 text-primary flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold">
-            {testimonial.name.charAt(0)}
-          </div>
-        )}
-        <div>
-          <div className="flex items-center gap-1">
-            <p className="text-card-foreground text-sm font-semibold">{testimonial.name}</p>
-            {testimonial.verified && (
-              <span
-                className="text-primary"
-                title="Cliente verificado"
-                aria-label="Cliente verificado"
-              >
-                <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
-                </svg>
-              </span>
-            )}
-          </div>
-          {(testimonial.position || testimonial.company) && (
-            <p className="text-muted-foreground text-xs">
-              {[testimonial.position, testimonial.company].filter(Boolean).join(' · ')}
-            </p>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default function TestimonialSlider({
-  testimonials,
-  autoAdvanceMs = 5000,
-}: TestimonialSliderProps) {
+export default function TestimonialSlider({ testimonials, autoAdvanceMs }: TestimonialSliderProps) {
   const total = testimonials.length
-  const maxStart = Math.max(0, total - CARDS_VISIBLE)
+  const [cardsVisible, setCardsVisible] = useState(1)
+  const maxStart = Math.max(0, total - cardsVisible)
   const [start, setStart] = useState(0)
+  const [manualNavigationVersion, setManualNavigationVersion] = useState(0)
+  const intervalMs =
+    typeof autoAdvanceMs === 'number' && Number.isFinite(autoAdvanceMs) && autoAdvanceMs > 0
+      ? autoAdvanceMs
+      : DEFAULT_AUTO_ADVANCE_MS
 
-  const prev = useCallback(() => setStart((s) => Math.max(0, s - 1)), [])
-  const next = useCallback(() => setStart((s) => Math.min(maxStart, s + 1)), [maxStart])
+  const resetAutoAdvance = useCallback(() => {
+    setManualNavigationVersion((version) => version + 1)
+  }, [])
+
+  const prev = useCallback(() => {
+    setStart((s) => Math.max(0, s - 1))
+    resetAutoAdvance()
+  }, [resetAutoAdvance])
+
+  const next = useCallback(() => {
+    setStart((s) => Math.min(maxStart, s + 1))
+    resetAutoAdvance()
+  }, [maxStart, resetAutoAdvance])
+
+  const goTo = useCallback(
+    (index: number) => {
+      setStart(index)
+      resetAutoAdvance()
+    },
+    [resetAutoAdvance]
+  )
 
   useEffect(() => {
-    if (total <= CARDS_VISIBLE) return
+    const update = () => {
+      const nextVisible = getCardsVisible()
+      setCardsVisible(nextVisible)
+      setStart((current) => Math.min(current, Math.max(0, total - nextVisible)))
+    }
+
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [total])
+
+  useEffect(() => {
+    if (total <= cardsVisible) return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     if (mq.matches) return
-    const interval = setInterval(() => setStart((s) => (s >= maxStart ? 0 : s + 1)), autoAdvanceMs)
+    const interval = setInterval(() => setStart((s) => (s >= maxStart ? 0 : s + 1)), intervalMs)
     return () => clearInterval(interval)
-  }, [total, maxStart])
+  }, [total, cardsVisible, maxStart, intervalMs, manualNavigationVersion])
 
-  const visible = testimonials.slice(start, start + CARDS_VISIBLE)
+  const visible = testimonials.slice(start, start + cardsVisible)
 
   return (
     <div className="relative">
       {/* Cards row */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <AnimatePresence mode="popLayout">
-          {visible.map((t, i) => (
-            <motion.div
-              key={t.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.35, delay: i * 0.08, ease: 'easeOut' }}
-            >
-              <TestimonialCard testimonial={t} />
-            </motion.div>
-          ))}
+      <div className="relative min-h-[22rem] overflow-hidden">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={`${start}-${cardsVisible}`}
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -28 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="grid min-h-[22rem] grid-cols-1 items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {visible.map((t) => (
+              <TestimonialCard key={t.id} testimonial={t} showAvatar />
+            ))}
+          </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Navigation — only when more than CARDS_VISIBLE */}
-      {total > CARDS_VISIBLE && (
+      {/* Navigation — only when there are more testimonials than the current viewport shows */}
+      {total > cardsVisible && (
         <div className="mt-8 flex items-center justify-center gap-4">
           <button
             onClick={prev}
             disabled={start === 0}
             aria-label="Anterior"
-            className="border-border text-foreground hover:bg-primary hover:text-primary-foreground disabled:text-muted-foreground flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="public-testimonial-nav-button flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronLeft size={18} />
           </button>
@@ -120,10 +112,12 @@ export default function TestimonialSlider({
             {Array.from({ length: maxStart + 1 }).map((_, i) => (
               <button
                 key={i}
-                onClick={() => setStart(i)}
+                onClick={() => goTo(i)}
                 aria-label={`Ir al grupo ${i + 1}`}
                 className={`h-2 rounded-full transition-all ${
-                  i === start ? 'bg-primary w-6' : 'bg-muted-foreground/30 w-2'
+                  i === start
+                    ? 'public-testimonial-dot-active w-6'
+                    : 'public-testimonial-dot-inactive w-2'
                 }`}
               />
             ))}
@@ -133,7 +127,7 @@ export default function TestimonialSlider({
             onClick={next}
             disabled={start >= maxStart}
             aria-label="Siguiente"
-            className="border-border text-foreground hover:bg-primary hover:text-primary-foreground disabled:text-muted-foreground flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="public-testimonial-nav-button flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronRight size={18} />
           </button>

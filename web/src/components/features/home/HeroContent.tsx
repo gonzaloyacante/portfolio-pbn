@@ -7,9 +7,7 @@ import { FontLoader } from './FontLoader'
 import { HeroContentProps } from './heroTypes'
 import { HeroTitles } from './HeroTitles'
 import { HeroSignature } from './HeroSignature'
-import { HeroMainImage } from './HeroMainImage'
 import { HeroCta } from './HeroCta'
-import { HeroImmersiveBackdrop } from './HeroImmersiveBackdrop'
 import { HomeSettingsData } from '@/actions/settings/home'
 
 export function HeroContent({
@@ -36,48 +34,26 @@ export function HeroContent({
   const fontsToLoad = useMemo(() => fontsHash.split('|'), [fontsHash])
 
   const sectionProps = { s, isEditor, selectedElement, onSelectElement, isMobile }
-  const immersive = !!s.heroImmersiveEnabled
-  const useUnifiedLayout = immersive && !isEditor
 
   return (
-    <div
-      className={cn(
-        'relative isolate w-full overflow-x-clip',
-        immersive && '-mt-[var(--public-nav-offset)] pt-[var(--public-nav-offset)]'
-      )}
-    >
-      {immersive ? <HeroImmersiveBackdrop settings={s} isMobile={isMobile} /> : null}
-
+    <div className="relative isolate w-full overflow-x-clip">
       <section
         className={cn(
-          'relative z-10 flex min-h-[calc(100svh-var(--public-nav-offset))] w-full flex-col justify-center overflow-x-hidden px-4 transition-colors duration-500 sm:px-8 md:min-h-[calc(100dvh-var(--public-nav-offset))] lg:px-16',
-          immersive ? 'bg-transparent' : 'bg-(--background)'
+          'public-home-hero relative z-10 flex min-h-[calc(100svh-var(--public-nav-offset))] w-full flex-col justify-center overflow-x-hidden px-4 transition-colors duration-500 sm:px-8 md:min-h-[calc(100dvh-var(--public-nav-offset))] lg:px-16'
         )}
       >
         <FontLoader fonts={fontsToLoad} />
-
-        {useUnifiedLayout ? (
-          <div className="mx-auto flex w-full max-w-7xl flex-col items-center justify-center gap-8 py-10 sm:py-14 lg:min-h-[80dvh] lg:items-start lg:justify-center lg:py-16">
+        <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80dvh] lg:grid-cols-12 lg:gap-12 lg:py-0">
+          <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
             <HeroTitles {...sectionProps} />
-            <HeroCta {...sectionProps} />
             <HeroSignature {...sectionProps} />
           </div>
-        ) : (
-          <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80dvh] lg:grid-cols-12 lg:gap-12 lg:py-0">
-            <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
-              <HeroTitles {...sectionProps} />
-              <HeroSignature {...sectionProps} />
-            </div>
 
-            <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
-              <HeroMainImage {...sectionProps} />
-              <HeroCta {...sectionProps} />
-              {!immersive ? (
-                <div className="pointer-events-none absolute bottom-0 left-0 z-0 h-32 w-32 rounded-full bg-(--secondary) opacity-20 blur-2xl md:-left-6 lg:-left-10" />
-              ) : null}
-            </div>
+          <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
+            {/* Imagen destacada del hero desactivada temporalmente en pública y preview admin. */}
+            <HeroCta {...sectionProps} />
           </div>
-        )}
+        </div>
       </section>
     </div>
   )

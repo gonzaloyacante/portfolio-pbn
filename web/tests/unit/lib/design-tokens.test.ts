@@ -10,6 +10,7 @@ import {
   EMAIL_BRAND_COLORS,
   EMAIL_NEUTRAL_COLORS,
 } from '@/lib/design-tokens'
+import { buildThemeInlineStylesheet } from '@/lib/theme-ssr-css'
 
 describe('design-tokens', () => {
   describe('BRAND', () => {
@@ -18,7 +19,16 @@ describe('design-tokens', () => {
     })
 
     it('has correct dark mode primary color', () => {
-      expect(BRAND.darkPrimary).toBe('#fb7185')
+      expect(BRAND.darkPrimary).toBe('#ffaadd')
+    })
+
+    it('matches the approved public brand palette', () => {
+      expect(BRAND.secondary).toBe('#ffaadd')
+      expect(BRAND.background).toBe('#fff1f9')
+      expect(BRAND.foreground).toBe('#000000')
+      expect(BRAND.darkSecondary).toBe('#6c0a0a')
+      expect(BRAND.darkBackground).toBe('#000000')
+      expect(BRAND.darkForeground).toBe('#fff1f9')
     })
 
     it('has fallback light and dark objects', () => {
@@ -100,6 +110,14 @@ describe('design-tokens', () => {
     it('uses THEME_DEFAULT_BORDER_RADIUS for layout reset', () => {
       expect(RESET_THEME_DEFAULTS.borderRadius).toBe(THEME_DEFAULT_BORDER_RADIUS)
       expect(THEME_DEFAULT_BORDER_RADIUS).toBe(40)
+    })
+  })
+
+  describe('buildThemeInlineStylesheet', () => {
+    it('uses secondary as text over primary surfaces', () => {
+      const css = buildThemeInlineStylesheet(DEFAULT_CSS_VARIABLES)
+      expect(css).toContain('--primary-foreground:var(--secondary)')
+      expect(css).not.toContain('--primary-foreground:#ffffff')
     })
   })
 

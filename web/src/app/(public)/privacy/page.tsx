@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Mail, MapPin, Target } from 'lucide-react'
 import { getContactSettings } from '@/actions/settings/contact'
 import { PrivacyTableOfContents } from '@/components/legal/PrivacyTableOfContents'
@@ -26,7 +27,6 @@ export default async function PrivacyPage() {
   const email = contactSettings?.email || 'admin@paolabolivar.com'
   const location = contactSettings?.location || 'Granada, España'
   const ownerName = contactSettings?.ownerName || 'Paola Bolívar Nievas'
-  const phone = contactSettings?.phone || ''
 
   const privacyUpdatedDisplay = new Intl.DateTimeFormat('es-ES', {
     dateStyle: 'long',
@@ -34,17 +34,19 @@ export default async function PrivacyPage() {
   }).format(new Date(`${PRIVACY_POLICY_LAST_UPDATED}T12:00:00Z`))
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12">
-      <h1 className="font-primary text-foreground mb-8 text-4xl font-bold">
+    <div className="public-privacy-page mx-auto max-w-4xl px-4 py-12">
+      <h1 className="public-privacy-heading font-primary mb-8 text-4xl font-bold">
         Política de Privacidad
       </h1>
 
       <PrivacyTableOfContents />
 
-      <div className="text-foreground space-y-8">
+      <div className="public-privacy-text space-y-8">
         {/* Introducción */}
-        <section id="priv-1">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">1. Información General</h2>
+        <section id="priv-1" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
+            1. Información General
+          </h2>
           <p className="leading-relaxed">
             En cumplimiento de la normativa vigente en materia de protección de datos personales, el
             Reglamento (UE) 2016/679 del Parlamento Europeo y del Consejo de 27 de abril de 2016
@@ -52,7 +54,7 @@ export default async function PrivacyPage() {
             de diciembre, de Protección de Datos Personales y garantía de los derechos digitales
             (LOPDGDD), le informamos de la presente Política de Privacidad.
           </p>
-          <div className="bg-accent/40 mt-4 rounded-2xl p-4">
+          <div className="public-privacy-panel mt-4 rounded-2xl p-4">
             <p className="text-sm">
               <strong>Responsable del tratamiento:</strong> {ownerName}
               <br />
@@ -64,8 +66,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Datos recopilados */}
-        <section id="priv-2">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-2" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             2. ¿Qué datos recopilamos?
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -103,8 +105,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Finalidad */}
-        <section id="priv-3">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-3" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             3. ¿Para qué utilizamos sus datos?
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -128,8 +130,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Base Legal */}
-        <section id="priv-4">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-4" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             4. Base Legal del Tratamiento
           </h2>
           <p className="leading-relaxed">
@@ -141,8 +143,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Conservación */}
-        <section id="priv-5">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-5" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             5. ¿Cuánto tiempo conservamos sus datos?
           </h2>
           <p className="leading-relaxed">
@@ -154,8 +156,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Destinatarios */}
-        <section id="priv-6">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-6" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             6. ¿Compartimos sus datos con terceros?
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -184,8 +186,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Derechos */}
-        <section id="priv-7">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-7" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             7. Sus Derechos (ARCO + otros)
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -218,10 +220,13 @@ export default async function PrivacyPage() {
               a la licitud del tratamiento basado en el consentimiento previo.
             </li>
           </ul>
-          <div className="bg-accent/40 mt-4 rounded-2xl p-4">
+          <div className="public-privacy-panel mt-4 rounded-2xl p-4">
             <p className="text-sm">
               Para ejercer sus derechos, envíe un email a{' '}
-              <a href={`mailto:${email}`} className="text-primary underline hover:no-underline">
+              <a
+                href={`mailto:${email}`}
+                className="public-privacy-link underline hover:no-underline"
+              >
                 {email}
               </a>{' '}
               indicando claramente el derecho que desea ejercer y adjuntando copia de su DNI u otro
@@ -235,7 +240,7 @@ export default async function PrivacyPage() {
               href="https://www.aepd.es"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary underline hover:no-underline"
+              className="public-privacy-link underline hover:no-underline"
             >
               www.aepd.es
             </a>
@@ -244,8 +249,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Cookies */}
-        <section id="priv-8">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">8. Uso de Cookies</h2>
+        <section id="priv-8" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">8. Uso de Cookies</h2>
           <p className="mb-4 leading-relaxed">
             Este sitio web utiliza cookies propias y de terceros para mejorar la experiencia del
             usuario y analizar el tráfico. Puede consultar nuestra{' '}
@@ -272,8 +277,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Geolocalización */}
-        <section id="priv-9">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-9" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             9. Geolocalización y Datos de Ubicación
           </h2>
           <p className="mb-4 leading-relaxed">
@@ -282,9 +287,9 @@ export default async function PrivacyPage() {
           </p>
 
           <div className="space-y-4">
-            <div className="bg-accent/40 rounded-2xl p-4">
-              <h3 className="text-foreground mb-2 flex items-center gap-2 font-semibold">
-                <MapPin className="text-primary size-5 shrink-0" aria-hidden />
+            <div className="public-privacy-panel rounded-2xl p-4">
+              <h3 className="public-privacy-heading mb-2 flex items-center gap-2 font-semibold">
+                <MapPin className="public-privacy-icon size-5 shrink-0" aria-hidden />
                 Geolocalización por IP (GeoIP) — Automática
               </h3>
               <p className="text-sm leading-relaxed">
@@ -295,15 +300,15 @@ export default async function PrivacyPage() {
                 típicamente a nivel de ciudad grande o región; no es exacta ni rastreable a una
                 persona concreta.
               </p>
-              <p className="text-muted-foreground mt-2 text-xs">
+              <p className="public-privacy-muted mt-2 text-xs">
                 Base legal: <strong>Interés legítimo</strong> (Art. 6.1.f RGPD) para estadísticas
                 agregadas de audiencia.
               </p>
             </div>
 
-            <div className="bg-accent/40 rounded-2xl p-4">
-              <h3 className="text-foreground mb-2 flex items-center gap-2 font-semibold">
-                <Target className="text-primary size-5 shrink-0" aria-hidden />
+            <div className="public-privacy-panel rounded-2xl p-4">
+              <h3 className="public-privacy-heading mb-2 flex items-center gap-2 font-semibold">
+                <Target className="public-privacy-icon size-5 shrink-0" aria-hidden />
                 Geolocalización precisa del navegador — Con consentimiento explícito
               </h3>
               <p className="text-sm leading-relaxed">
@@ -314,18 +319,18 @@ export default async function PrivacyPage() {
                 almacenan con una precisión reducida (redondeada a ~1 km) y nunca se usan para
                 identificar individuos ni para rastreo persistente.
               </p>
-              <p className="text-muted-foreground mt-2 text-xs">
+              <p className="public-privacy-muted mt-2 text-xs">
                 Base legal: <strong>Consentimiento explícito</strong> (Art. 6.1.a RGPD). Puede
                 revocar este permiso en cualquier momento.
               </p>
             </div>
           </div>
 
-          <div className="bg-primary/5 border-primary/20 mt-4 rounded-2xl border p-4">
-            <h3 className="text-foreground mb-2 font-semibold">
+          <div className="public-privacy-accent-panel mt-4 rounded-2xl p-4">
+            <h3 className="public-privacy-heading mb-2 font-semibold">
               ¿Cómo revocar el permiso de geolocalización?
             </h3>
-            <ol className="text-muted-foreground list-decimal space-y-1 pl-4 text-sm">
+            <ol className="public-privacy-muted list-decimal space-y-1 pl-4 text-sm">
               <li>
                 <strong>En el navegador:</strong> Accede a los ajustes de permisos del sitio (icono
                 de candado en la barra de direcciones) → &quot;Ubicación&quot; → Bloquear.
@@ -344,8 +349,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Seguridad */}
-        <section id="priv-10">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-10" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             10. Seguridad de los Datos
           </h2>
           <p className="leading-relaxed">
@@ -363,8 +368,8 @@ export default async function PrivacyPage() {
         </section>
 
         {/* Modificaciones */}
-        <section id="priv-11">
-          <h2 className="text-foreground mb-4 text-2xl font-semibold">
+        <section id="priv-11" className="scroll-mt-32">
+          <h2 className="public-privacy-heading mb-4 text-2xl font-semibold">
             11. Modificaciones de la Política de Privacidad
           </h2>
           <p className="leading-relaxed">
@@ -373,36 +378,45 @@ export default async function PrivacyPage() {
             recomendamos revisar periódicamente esta política para estar informado de cómo
             protegemos sus datos.
           </p>
-          <p className="text-muted-foreground mt-4 text-sm">
+          <p className="public-privacy-muted mt-4 text-sm">
             <strong>Última actualización:</strong> {privacyUpdatedDisplay}
           </p>
         </section>
 
         {/* Contacto */}
-        <section id="priv-12" className="bg-accent/40 rounded-3xl p-6">
-          <h2 className="text-foreground mb-4 flex items-center gap-2 text-2xl font-semibold">
-            <Mail className="text-primary size-7 shrink-0" aria-hidden />
+        <section id="priv-12" className="public-privacy-panel scroll-mt-32 rounded-3xl p-6">
+          <h2 className="public-privacy-heading mb-4 flex items-center gap-2 text-2xl font-semibold">
+            <Mail className="public-privacy-icon size-7 shrink-0" aria-hidden />
             ¿Tienes dudas?
           </h2>
           <p className="leading-relaxed">
             Si tiene alguna pregunta sobre esta Política de Privacidad o sobre el tratamiento de sus
             datos personales, puede contactarnos en:
           </p>
-          <div className="mt-4 space-y-2">
-            <p>
-              <strong>Email:</strong>{' '}
-              <a href={`mailto:${email}`} className="text-primary underline hover:no-underline">
-                {email}
-              </a>
-            </p>
-            <p>
-              <strong>Dirección:</strong> {location}
-            </p>
-            {phone && (
+          <div className="mt-5 grid gap-6 md:grid-cols-2 md:items-start">
+            <div className="space-y-2">
               <p>
-                <strong>Teléfono:</strong> {phone}
+                <strong>Email:</strong>{' '}
+                <a
+                  href={`mailto:${email}`}
+                  className="public-privacy-link underline hover:no-underline"
+                >
+                  {email}
+                </a>
               </p>
-            )}
+              <p>
+                <strong>Dirección:</strong> {location}
+              </p>
+            </div>
+
+            <div className="flex md:justify-end">
+              <Link
+                href={ROUTES.public.contact}
+                className="public-privacy-contact-button inline-flex items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold shadow-sm transition-opacity hover:opacity-90"
+              >
+                Ir a la página de contacto
+              </Link>
+            </div>
           </div>
         </section>
       </div>

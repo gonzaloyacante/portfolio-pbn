@@ -14,11 +14,15 @@ export function HeroSignature({
   onSelectElement,
   isMobile,
 }: HeroSectionProps) {
+  // Public web colors are fixed; CMS color overrides stay disabled here for now.
+  void s.ownerNameColor
+  void s.ownerNameColorDark
+
   const ownerName = s.ownerNameText || 'Paola Bolívar Nievas'
   const illustration = s.illustrationUrl
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const eff = resolveEffectiveValues(s, isMobile)
-  const showOwner = isEditor || ((s.showOwnerName ?? true) && !s.heroImmersiveEnabled)
+  const showOwner = isEditor || (s.showOwnerName ?? true)
 
   return (
     <div className="order-4 mt-6 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-2 lg:justify-start lg:gap-0">
@@ -50,8 +54,8 @@ export function HeroSignature({
                   sizes={IMAGE_SIZES.heroIllustration}
                 />
               ) : (
-                <div className="border-primary/30 bg-primary/10 flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">
-                  <span className="text-primary text-xs">Sin Ilustración</span>
+                <div className="public-hero-placeholder flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">
+                  <span className="text-xs">Sin Ilustración</span>
                 </div>
               )}
             </motion.div>
@@ -74,7 +78,7 @@ export function HeroSignature({
               >
                 <p
                   className={cn(
-                    'font-bold tracking-widest text-(--foreground)',
+                    'public-hero-owner-name font-bold tracking-widest',
                     eff.ownerFontSize ? '' : 'text-sm'
                   )}
                   style={{
@@ -84,15 +88,7 @@ export function HeroSignature({
                     fontSize: eff.ownerFontSize ? `${eff.ownerFontSize}px` : undefined,
                   }}
                 >
-                  <span className="dark:hidden" style={{ color: s.ownerNameColor || 'inherit' }}>
-                    {ownerName}
-                  </span>
-                  <span
-                    className="hidden dark:inline"
-                    style={{ color: s.ownerNameColorDark || s.ownerNameColor || 'inherit' }}
-                  >
-                    {ownerName}
-                  </span>
+                  {ownerName}
                 </p>
               </HeroWrapper>
             </FadeIn>

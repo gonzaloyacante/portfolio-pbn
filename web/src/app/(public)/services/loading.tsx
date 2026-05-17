@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui'
  */
 export default function ServicesLoading() {
   return (
-    <main className="py-8 md:py-12">
+    <main className="public-services-page public-loading-page py-8 md:py-12">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
         <div className="mb-12 flex flex-col items-center gap-4 text-center">
@@ -18,7 +18,10 @@ export default function ServicesLoading() {
         {/* Services Grid */}
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-card flex flex-col overflow-hidden rounded-3xl border">
+            <div
+              key={i}
+              className="public-loading-card flex flex-col overflow-hidden rounded-3xl border"
+            >
               {/* Image placeholder */}
               <Skeleton className="h-48 w-full rounded-none rounded-t-3xl" />
               {/* Card content */}
@@ -30,7 +33,7 @@ export default function ServicesLoading() {
                   <Skeleton className="h-3.5 w-4/6 rounded" />
                 </div>
                 {/* Price + duration */}
-                <div className="border-border flex gap-6 border-t pt-4">
+                <div className="public-services-surface-border flex gap-6 border-t pt-4">
                   <div className="space-y-1">
                     <Skeleton className="h-3 w-12 rounded" />
                     <Skeleton className="h-7 w-16 rounded" />
@@ -51,7 +54,7 @@ export default function ServicesLoading() {
         </div>
 
         {/* Bottom CTA block */}
-        <div className="bg-card border-border mx-auto mt-16 max-w-2xl rounded-3xl border p-8 text-center">
+        <div className="public-loading-card mx-auto mt-16 max-w-2xl rounded-3xl border p-8 text-center">
           <Skeleton className="mx-auto mb-3 h-7 w-64 rounded" />
           <Skeleton className="mx-auto mb-6 h-4 w-80 rounded" />
           <Skeleton className="mx-auto h-11 w-56 rounded-xl" />

@@ -261,7 +261,7 @@ class AppTheme {
       textTheme: textTheme,
       radii: radii,
       snackBarBgLightAsForeground: true,
-      onPrimary: isLight ? const Color(0xFFFFFFFF) : const Color(0xFF1A050A),
+      onPrimary: secondary,
     );
   }
 

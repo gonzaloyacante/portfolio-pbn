@@ -11,8 +11,8 @@ export const homeSettings = {
   heroTitle1Font: null, // Inherits from theme
   heroTitle1FontUrl: null,
   heroTitle1FontSize: 90,
-  heroTitle1Color: null, // Inherits --primary
-  heroTitle1ColorDark: null,
+  heroTitle1Color: '#6c0a0a',
+  heroTitle1ColorDark: '#000000',
   heroTitle1ZIndex: 20,
   heroTitle1OffsetX: 33,
   heroTitle1OffsetY: 40,
@@ -22,8 +22,8 @@ export const homeSettings = {
   heroTitle2Font: null,
   heroTitle2FontUrl: null,
   heroTitle2FontSize: 120,
-  heroTitle2Color: null,
-  heroTitle2ColorDark: null,
+  heroTitle2Color: '#ffaadd',
+  heroTitle2ColorDark: '#ffaadd',
   heroTitle2ZIndex: 10,
   heroTitle2OffsetX: 0,
   heroTitle2OffsetY: 0,
@@ -33,8 +33,8 @@ export const homeSettings = {
   ownerNameFont: 'Great Vibes',
   ownerNameFontUrl: 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap',
   ownerNameFontSize: 50,
-  ownerNameColor: null,
-  ownerNameColorDark: null,
+  ownerNameColor: '#6c0a0a',
+  ownerNameColorDark: '#ffaadd',
   ownerNameZIndex: 15,
   ownerNameOffsetX: 0,
   ownerNameOffsetY: 0,
@@ -231,6 +231,7 @@ export const testimonialSettings = {
   showOnAbout: true,
   title: 'Lo que dicen mis clientes',
   maxDisplay: 6,
+  sliderAutoAdvanceMs: 10000,
   isActive: true,
 }
 

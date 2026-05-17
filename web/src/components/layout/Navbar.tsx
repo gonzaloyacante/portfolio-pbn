@@ -18,12 +18,11 @@ const allNavItems = [
   { href: ROUTES.public.contact, label: 'Contacto', key: 'contact' as const },
 ]
 
-const mobileHomeItem = { href: ROUTES.home, label: 'Inicio', key: 'home' as const }
+const homeNavItem = { href: ROUTES.home, label: 'Inicio', key: 'home' as const }
 
 interface NavbarProps {
   brandName?: string | null
   visibility?: PageVisibility | null
-  immersiveHeroBackdrop?: boolean
   brandLogoUrl?: string | null
   brandLogoAlt?: string | null
 }
@@ -55,31 +54,27 @@ function NavbarBrand({
             src={brandLogoUrl}
             alt={brandLogoAlt || displayBrand}
             fill
-            sizes="56px"
+            sizes="72px"
             className="object-contain"
             priority
           />
         </motion.div>
       ) : (
-        <span className="nb-brand font-script text-foreground text-3xl">{displayBrand}</span>
+        <span className="nb-brand font-script text-3xl text-[var(--public-owner-name)]">
+          {displayBrand}
+        </span>
       )}
     </Link>
   )
 }
 
-export default function Navbar({
-  brandName,
-  visibility,
-  immersiveHeroBackdrop = false,
-  brandLogoUrl,
-  brandLogoAlt,
-}: NavbarProps) {
+export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoAlt }: NavbarProps) {
   const pathname = usePathname()
   const isHome = pathname === ROUTES.home
   const displayBrand = visibility?.navbarBrandText ?? brandName ?? 'PBN'
   const showBrand = visibility?.navbarShowBrand ?? true
 
-  const navItems = useMemo(() => {
+  const visibleSectionItems = useMemo(() => {
     if (!visibility) return allNavItems
     return allNavItems.filter((item) => {
       if (item.key === 'about') return visibility.showAboutPage
@@ -90,7 +85,14 @@ export default function Navbar({
     })
   }, [visibility])
 
-  const mobileNavItems = useMemo(() => [mobileHomeItem, ...navItems], [navItems])
+  const navItems = useMemo(
+    () => (isHome ? visibleSectionItems : [homeNavItem, ...visibleSectionItems]),
+    [isHome, visibleSectionItems]
+  )
+  const mobileNavItems = useMemo(
+    () => (isHome ? [homeNavItem, ...visibleSectionItems] : navItems),
+    [isHome, navItems, visibleSectionItems]
+  )
 
   const isActive = (href: string) => {
     if (href === ROUTES.home) return pathname === ROUTES.home
@@ -100,25 +102,19 @@ export default function Navbar({
   const { scrollY } = useScroll()
   const [visible, setVisible] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [atTop, setAtTop] = useState(true)
   const lastScrollY = useRef(0)
 
   useMotionValueEvent(scrollY, 'change', (current: number) => {
     const prev = lastScrollY.current
     lastScrollY.current = current
 
-    setAtTop(current < 16)
-
     if (current < prev) setVisible(true)
     else if (current > prev && current > 80 && !menuOpen) setVisible(false)
   })
 
-  const transparentAtTop = isHome && immersiveHeroBackdrop && atTop
-  const showBrandInBar = showBrand && !(transparentAtTop && !!brandLogoUrl)
+  const showBrandInBar = showBrand
   const showCollapsedMobileNav = !isHome
-  const navSurfaceClass = transparentAtTop
-    ? 'bg-transparent border-transparent'
-    : 'border-border/60 bg-background shadow-sm'
+  const navSurfaceClass = isHome ? 'public-navbar-home-surface' : 'public-navbar-surface'
 
   return (
     <motion.nav
@@ -127,10 +123,10 @@ export default function Navbar({
       animate={{ y: visible ? 0 : '-100%' }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
-      <div className={cn('border-b transition-all duration-300', navSurfaceClass)}>
+      <div className={cn('transition-all duration-300', navSurfaceClass)}>
         <div
           className={cn(
-            'mx-auto max-w-7xl px-4 py-3 md:px-8 lg:px-16',
+            'mx-auto max-w-7xl px-4 py-0 md:px-8 lg:px-16',
             isHome ? 'flex flex-col items-center' : 'flex items-center justify-between'
           )}
         >
@@ -141,7 +137,7 @@ export default function Navbar({
                 displayBrand={displayBrand}
                 brandLogoUrl={brandLogoUrl}
                 brandLogoAlt={brandLogoAlt}
-                imageClassName="h-12 w-12 md:h-14 md:w-14"
+                imageClassName="h-16 w-16 md:h-[4.5rem] md:w-[4.5rem]"
               />
             ) : null}
           </div>
@@ -155,21 +151,14 @@ export default function Navbar({
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'font-heading focus-visible:bg-accent focus-visible:text-accent-foreground relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-4 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none lg:px-8 lg:py-3 lg:text-base',
-                      active
-                        ? 'text-primary-foreground'
-                        : transparentAtTop
-                          ? 'text-white hover:bg-white/12 hover:text-white'
-                          : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                      'public-navbar-link font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-4 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none lg:px-8 lg:py-3 lg:text-base',
+                      !active && 'hover:opacity-80'
                     )}
                   >
                     {active && (
                       <motion.span
                         layoutId="navbar-active-bg"
-                        className={cn(
-                          'absolute inset-0 rounded-none',
-                          transparentAtTop ? 'bg-black/35' : 'bg-primary'
-                        )}
+                        className="public-navbar-active absolute inset-0 rounded-none"
                         initial={false}
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
@@ -190,7 +179,7 @@ export default function Navbar({
                 setVisible(true)
                 setMenuOpen((open) => !open)
               }}
-              className="text-foreground inline-flex h-11 w-11 items-center justify-center transition-colors md:hidden"
+              className="public-navbar-toggle inline-flex h-11 w-11 items-center justify-center transition-colors md:hidden"
             >
               {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -204,7 +193,7 @@ export default function Navbar({
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.24, ease: 'easeInOut' }}
-              className="border-border bg-background absolute top-full right-0 left-0 z-50 overflow-hidden border-t shadow-md md:hidden"
+              className="public-navbar-menu-surface absolute top-full right-0 left-0 z-50 overflow-hidden border-t shadow-md md:hidden"
             >
               <div className="px-4 pb-4">
                 <div className="grid gap-2 pt-3">
@@ -217,11 +206,7 @@ export default function Navbar({
                         onClick={() => setMenuOpen(false)}
                         className={cn(
                           'font-heading inline-flex min-h-11 items-center rounded-xl px-4 py-3 text-sm font-semibold uppercase transition-colors',
-                          active
-                            ? 'bg-primary text-primary-foreground'
-                            : transparentAtTop
-                              ? 'text-white hover:bg-white/12'
-                              : 'text-foreground hover:bg-accent'
+                          active ? 'public-navbar-active' : 'public-navbar-toggle hover:opacity-80'
                         )}
                       >
                         {item.label}

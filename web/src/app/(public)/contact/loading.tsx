@@ -7,7 +7,7 @@ import { Skeleton } from '@/components/ui'
  */
 export default function ContactLoading() {
   return (
-    <section className="bg-background w-full transition-colors duration-500">
+    <section className="public-loading-page w-full transition-colors duration-500">
       {/* Mobile Header */}
       <div className="flex flex-col items-center px-6 pt-8 pb-0 text-center lg:hidden">
         <Skeleton className="mb-4 h-10 w-48 rounded-xl" />
@@ -40,7 +40,10 @@ export default function ContactLoading() {
           {/* Social Links */}
           <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="border-border flex items-center gap-3 rounded-2xl border p-4">
+              <div
+                key={i}
+                className="public-contact-method flex items-center gap-3 rounded-2xl border p-4"
+              >
                 <Skeleton className="h-8 w-8 rounded-full" variant="circular" />
                 <div className="space-y-1">
                   <Skeleton className="h-3 w-20 rounded" />
@@ -58,7 +61,7 @@ export default function ContactLoading() {
       </div>
 
       {/* Footer CTA */}
-      <div className="border-primary/20 border-t py-8 text-center">
+      <div className="public-loading-card border-t py-8 text-center">
         <div className="mb-4 flex items-center justify-center gap-3">
           <Skeleton className="h-4 w-40 rounded" />
           <Skeleton className="h-4 w-32 rounded" />

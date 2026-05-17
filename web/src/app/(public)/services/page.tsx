@@ -2,7 +2,7 @@ import { getActiveServices } from '@/actions/cms/services'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getServicesPageSettings } from '@/actions/settings/services-page'
 import { Metadata } from 'next'
-import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage, Button } from '@/components/ui'
+import { FadeIn, StaggerChildren, ScaleIn, OptimizedImage } from '@/components/ui'
 import { ServicesPublicHero } from '@/components/features/services/ServicesPublicHero'
 import Link from 'next/link'
 import { MessageCircle, Palette, Star } from 'lucide-react'
@@ -61,7 +61,7 @@ export default async function ServicesPage() {
     : null
 
   return (
-    <main className="py-8 md:py-12">
+    <main className="public-services-page py-8 transition-colors duration-500 md:py-12">
       <JsonLd
         type="ProfessionalService"
         data={{
@@ -80,7 +80,7 @@ export default async function ServicesPage() {
         {/* Services Grid */}
         {services.length === 0 ? (
           <FadeIn className="py-20 text-center">
-            <p className="text-muted-foreground text-lg">
+            <p className="public-services-muted text-lg">
               Próximamente estarán disponibles nuestros servicios.
             </p>
           </FadeIn>
@@ -89,30 +89,31 @@ export default async function ServicesPage() {
             {services.map((service) => {
               return (
                 <ScaleIn key={service.id}>
-                  <article className="border-border bg-card group relative flex h-full flex-col overflow-hidden rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  <article className="public-services-card group relative flex h-full flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                     <Link
                       href={ROUTES.public.serviceDetail(service.slug)}
                       className="relative block"
                       aria-label={`Ver servicio: ${service.name}`}
                     >
                       {/* Image or Icon Header */}
-                      <div className="bg-muted relative flex h-48 items-center justify-center overflow-hidden">
+                      <div className="public-services-surface relative flex h-48 items-center justify-center overflow-hidden">
                         {service.imageUrl ? (
                           <OptimizedImage
                             src={service.imageUrl}
                             alt={service.name}
-                            width={400}
-                            height={300}
-                            className="h-full w-full transition-transform duration-500 group-hover:scale-110"
+                            fill
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            className="relative z-0 h-full w-full"
+                            imgClassName="h-full w-full object-center transition-transform duration-500 group-hover:scale-110"
                           />
                         ) : (
                           <Palette
-                            className="text-muted-foreground size-16 opacity-40"
+                            className="public-services-muted size-16 opacity-40"
                             aria-hidden
                           />
                         )}
                         {service.isFeatured && (
-                          <span className="bg-primary text-primary-foreground absolute top-4 right-4 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-lg">
+                          <span className="public-services-badge absolute top-4 right-4 z-10 inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-bold shadow-lg">
                             <Star className="size-3.5 shrink-0 fill-current" aria-hidden />
                             Destacado
                           </span>
@@ -123,35 +124,35 @@ export default async function ServicesPage() {
                     {/* Content */}
                     <div className="flex flex-1 flex-col p-6">
                       <Link href={ROUTES.public.serviceDetail(service.slug)}>
-                        <h2 className="text-foreground hover:text-primary mb-2 text-xl font-bold transition-colors">
+                        <h2 className="public-services-title mb-2 text-xl font-bold transition-colors">
                           {service.name}
                         </h2>
                       </Link>
                       {(service.shortDesc || service.description) && (
-                        <p className="text-muted-foreground mb-4 line-clamp-3 flex-1 text-sm">
+                        <p className="public-services-muted mb-4 line-clamp-3 flex-1 text-sm">
                           {service.shortDesc || service.description}
                         </p>
                       )}
 
                       {/* Price & Duration */}
-                      <div className="border-border mb-4 flex flex-wrap items-center gap-4 border-t pt-4">
+                      <div className="public-services-surface-border mb-4 flex flex-wrap items-start gap-4 border-t pt-4">
                         {service.price && (
-                          <div className="text-foreground">
-                            <span className="text-muted-foreground text-xs uppercase">
+                          <div className="public-services-text">
+                            <span className="public-services-muted text-xs uppercase">
                               {service.priceLabel === 'desde'
                                 ? 'Desde'
                                 : service.priceLabel === 'consultar'
                                   ? 'A consultar'
                                   : 'Precio'}
                             </span>
-                            <p className="text-2xl font-bold">
+                            <p className="text-2xl leading-none font-bold">
                               {Number(service.price).toFixed(0)}€
                             </p>
                           </div>
                         )}
                         {service.duration && (
-                          <div className="text-muted-foreground">
-                            <span className="text-muted-foreground text-xs uppercase">
+                          <div className="public-services-muted">
+                            <span className="public-services-muted text-xs uppercase">
                               Duración
                             </span>
                             <p className="font-medium">{service.duration}</p>
@@ -159,36 +160,14 @@ export default async function ServicesPage() {
                         )}
                       </div>
 
-                      {/* CTA Buttons */}
+                      {/* CTA */}
                       <div className="mt-auto flex flex-col gap-3">
-                        {whatsappIntro && whatsappNumber && (
-                          <Button
-                            asChild
-                            className="w-full rounded-xl py-3 font-semibold hover:shadow-lg"
-                          >
-                            <Link
-                              href={whatsappHref(
-                                whatsappNumber,
-                                `¡Hola! Me interesa el servicio de ${service.name}. ¿Podrías darme más información?`
-                              )}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <MessageCircle className="h-5 w-5" />
-                              Reservar por WhatsApp
-                            </Link>
-                          </Button>
-                        )}
-
-                        <Button
-                          asChild
-                          variant="outline"
-                          className="w-full rounded-xl py-3 font-semibold"
+                        <Link
+                          href={ROUTES.public.serviceDetail(service.slug)}
+                          className="public-services-secondary-button inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
                         >
-                          <Link href={ROUTES.public.serviceDetail(service.slug)}>
-                            Ver Detalles & Precios
-                          </Link>
-                        </Button>
+                          Ver detalles y precios
+                        </Link>
                       </div>
                     </div>
                   </article>
@@ -201,22 +180,22 @@ export default async function ServicesPage() {
         {/* Bottom CTA */}
         {whatsappIntro && (
           <FadeIn className="mt-16 text-center">
-            <div className="bg-accent border-border mx-auto max-w-2xl rounded-3xl border p-8 backdrop-blur-sm">
-              <h2 className="text-foreground mb-3 text-2xl font-bold">
+            <div className="public-services-card mx-auto max-w-2xl rounded-3xl border p-8">
+              <h2 className="public-services-title mb-3 text-2xl font-bold">
                 ¿No encuentras lo que buscas?
               </h2>
-              <p className="text-muted-foreground mb-6">
+              <p className="public-services-muted mb-6">
                 Contáctame para servicios personalizados o paquetes especiales.
               </p>
-              <Button
-                asChild
-                className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-lg"
+              <Link
+                href={whatsappIntro}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="public-services-primary-button inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold shadow-sm transition-opacity hover:opacity-90"
               >
-                <Link href={whatsappIntro} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="h-5 w-5" />
-                  Escribirme por WhatsApp
-                </Link>
-              </Button>
+                <MessageCircle className="h-5 w-5" />
+                Escribirme por WhatsApp
+              </Link>
             </div>
           </FadeIn>
         )}

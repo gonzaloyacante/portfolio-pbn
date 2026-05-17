@@ -12,38 +12,38 @@
 export const BRAND = {
   // Light mode
   primary: '#6c0a0a', // Wine (brand principal)
-  secondary: '#fce7f3', // Light pink
-  accent: '#fff1f9', // Soft pink accent
-  background: '#fff8fc', // Off-white pink
-  foreground: '#1a050a', // Near-black wine
-  card: '#ffffff', // Pure white
+  secondary: '#ffaadd', // Pink used as text over primary surfaces
+  accent: '#fff1f9', // Soft pink surface
+  background: '#fff1f9', // Pink page canvas
+  foreground: '#000000', // Approved body text
+  card: '#fff1f9', // Same public surface; no extra card tint
 
   // Dark mode
-  darkPrimary: '#fb7185', // Rose-400 (más visible en dark)
-  darkSecondary: '#881337', // Deep rose
-  darkAccent: '#2a1015', // Very dark wine
-  darkBackground: '#0f0505', // Near-black
-  darkForeground: '#fafafa', // Near-white
-  darkCard: '#1c0a0f', // Dark card
+  darkPrimary: '#ffaadd', // Pink primary surfaces
+  darkSecondary: '#6c0a0a', // Wine text over pink primary surfaces
+  darkAccent: '#6c0a0a', // Wine accent
+  darkBackground: '#000000', // Approved dark canvas
+  darkForeground: '#fff1f9', // Approved dark text
+  darkCard: '#000000', // Same public surface; no extra card tint
 
   /** Punto intermedio rampa clusters mapa analytics (MapLibre, basemap oscuro CARTO). */
   mapClusterMid: '#fda4af',
 
   // Fallbacks genéricos (usados cuando no hay tema guardado en DB)
   fallbackLight: {
-    primary: '#000000',
-    secondary: '#ffffff',
-    accent: '#cccccc',
-    background: '#ffffff',
+    primary: '#6c0a0a',
+    secondary: '#ffaadd',
+    accent: '#fff1f9',
+    background: '#fff1f9',
     foreground: '#000000',
-    card: '#ffffff',
+    card: '#fff1f9',
   },
   fallbackDark: {
-    primary: '#ffffff',
-    secondary: '#000000',
-    accent: '#333333',
+    primary: '#ffaadd',
+    secondary: '#6c0a0a',
+    accent: '#6c0a0a',
     background: '#000000',
-    foreground: '#ffffff',
+    foreground: '#fff1f9',
     card: '#000000',
   },
 } as const
@@ -161,7 +161,7 @@ export const NEUTRAL = {
 // Los emails requieren inline styles — los colores deben venir aquí, no hardcodeados.
 export const EMAIL_BRAND_COLORS = {
   primary: BRAND.primary,
-  secondary: NEUTRAL.black, // negro para email (contraste máximo)
+  secondary: BRAND.secondary,
   success: STATUS_COLORS.success,
   warning: STATUS_COLORS.warning,
   danger: STATUS_COLORS.danger,

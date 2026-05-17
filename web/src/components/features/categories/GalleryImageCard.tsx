@@ -36,7 +36,7 @@ export function GalleryImageCard({ image, showTitles, onClick }: GalleryImageCar
         onKeyDown={handleActivate}
         whileTap={{ scale: 0.97 }}
         transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        className="group relative cursor-pointer overflow-hidden rounded-xl shadow-sm transition-all hover:shadow-lg"
+        className="public-gallery-image-card group relative cursor-pointer overflow-hidden rounded-xl shadow-sm transition-all hover:shadow-lg"
       >
         <OptimizedImage
           src={image.url}
@@ -45,11 +45,12 @@ export function GalleryImageCard({ image, showTitles, onClick }: GalleryImageCar
           height={500}
           className="w-full transition-transform duration-500 group-hover:scale-105"
           variant="card"
+          placeholder="empty"
         />
-        <div className="bg-foreground/20 absolute inset-0 opacity-0 transition-opacity group-hover:opacity-100" />
+        <div className="public-gallery-image-overlay absolute inset-0 opacity-0 transition-opacity group-hover:opacity-20" />
         {showTitles && (
           <div className="absolute right-2 bottom-2 left-2 opacity-0 transition-opacity group-hover:opacity-100">
-            <p className="text-background truncate text-xs font-bold drop-shadow-md">
+            <p className="public-gallery-image-title truncate text-xs font-bold drop-shadow-md">
               {image.title}
             </p>
           </div>

@@ -155,6 +155,18 @@ void main() {
     test('defaults primaryColor to "#6c0a0a"', () {
       expect(ThemeSettings.fromJson({}).primaryColor, '#6c0a0a');
     });
+    test('defaults secondaryColor to "#ffaadd"', () {
+      expect(ThemeSettings.fromJson({}).secondaryColor, '#ffaadd');
+    });
+    test('defaults backgroundColor to "#fff1f9"', () {
+      expect(ThemeSettings.fromJson({}).backgroundColor, '#fff1f9');
+    });
+    test('defaults textColor to "#000000"', () {
+      expect(ThemeSettings.fromJson({}).textColor, '#000000');
+    });
+    test('defaults darkPrimaryColor to "#ffaadd"', () {
+      expect(ThemeSettings.fromJson({}).darkPrimaryColor, '#ffaadd');
+    });
     test('defaults headingFont to "Poppins"', () {
       expect(ThemeSettings.fromJson({}).headingFont, 'Poppins');
     });

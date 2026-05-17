@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui'
  */
 export default function PortfolioLoading() {
   return (
-    <section className="w-full bg-(--background) transition-colors duration-500">
+    <section className="public-loading-page w-full transition-colors duration-500">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12 lg:px-16 lg:py-12">
         {/* Header */}
         <div className="mb-6 text-center sm:mb-8 lg:mb-10 lg:text-left">
@@ -22,7 +22,7 @@ export default function PortfolioLoading() {
         </div>
 
         {/* Footer CTA */}
-        <div className="mt-12 flex items-center justify-center gap-3 border-t border-(--border) pt-10">
+        <div className="public-portfolio-divider mt-12 flex items-center justify-center gap-3 border-t pt-10">
           <Skeleton className="h-4 w-36 rounded" />
           <Skeleton className="h-4 w-28 rounded" />
         </div>

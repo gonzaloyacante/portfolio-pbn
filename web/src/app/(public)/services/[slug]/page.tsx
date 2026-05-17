@@ -1,6 +1,6 @@
 import { getActiveServices, getServiceBySlug } from '@/actions/cms/services'
 import JsonLd from '@/components/seo/JsonLd'
-import { Button, OptimizedImage } from '@/components/ui'
+import { OptimizedImage } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
@@ -94,7 +94,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
   }))
 
   return (
-    <main className="pb-20">
+    <main className="public-services-page pb-20">
       <JsonLd
         type="Service"
         data={{
@@ -110,7 +110,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         }}
       />
       {/* Hero Section */}
-      <div className="relative h-[60dvh] min-h-125 w-full overflow-hidden">
+      <div className="public-services-detail-hero relative h-[60dvh] min-h-125 w-full overflow-hidden">
         {service.imageUrl ? (
           <OptimizedImage
             src={service.imageUrl}
@@ -118,30 +118,30 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             fill
             sizes={IMAGE_SIZES.fullWidth}
             priority
+            placeholder="empty"
             transparentBackground={false}
           />
         ) : (
-          <div className="bg-muted h-full w-full" />
+          <div className="public-services-detail-hero-fallback h-full w-full" />
         )}
-        <div className="bg-foreground/40 absolute inset-0 backdrop-blur-sm" />
-
+        <div className="public-services-detail-hero-overlay absolute inset-0" />
         <div className="relative z-10 container mx-auto flex h-full flex-col justify-end px-6 pb-20">
-          <h1 className="text-foreground mb-4 max-w-full text-4xl leading-tight font-bold break-words sm:text-5xl md:text-6xl lg:text-7xl">
+          <h1 className="public-services-detail-hero-title mb-4 max-w-full text-4xl leading-tight font-bold break-words sm:text-5xl md:text-6xl lg:text-7xl">
             {service.name}
           </h1>
-          <p className="text-foreground/80 max-w-2xl text-xl">
+          <p className="public-services-detail-hero-subtext max-w-2xl text-xl">
             {service.shortDesc || service.description?.slice(0, 100) + '...'}
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
             {service.duration && (
-              <div className="bg-background/80 border-border flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-md">
-                <Clock className="text-primary h-5 w-5" />
+              <div className="public-services-chip flex items-center gap-2 rounded-full border px-4 py-2">
+                <Clock className="h-5 w-5" />
                 <span className="font-medium">{service.duration}</span>
               </div>
             )}
             {service.price && (
-              <div className="bg-background/80 border-border flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-md">
+              <div className="public-services-chip flex items-center gap-2 rounded-full border px-4 py-2">
                 <span className="font-medium">
                   {service.priceLabel === 'desde' ? 'Desde' : ''} {service.currency}{' '}
                   {Number(service.price).toFixed(0)}
@@ -152,13 +152,13 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         </div>
       </div>
 
-      <div className="container mx-auto grid grid-cols-1 gap-12 px-6 py-12 lg:grid-cols-3">
+      <div className="relative container mx-auto -mt-px grid grid-cols-1 gap-12 px-6 py-12 lg:grid-cols-3">
         {/* Main Content */}
         <div className="space-y-12 lg:col-span-2">
           {/* Description */}
           <section>
-            <h2 className="mb-4 text-2xl font-bold">Sobre el servicio</h2>
-            <div className="prose prose-neutral dark:prose-invert text-muted-foreground prose-headings:text-foreground prose-strong:text-foreground prose-a:text-primary max-w-none whitespace-pre-line">
+            <h2 className="public-services-title mb-4 text-2xl font-bold">Sobre el servicio</h2>
+            <div className="public-services-muted max-w-none whitespace-pre-line">
               {service.description}
             </div>
           </section>
@@ -166,19 +166,19 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           {/* Pricing Tiers */}
           {tiers.length > 0 && (
             <section>
-              <h2 className="mb-6 text-2xl font-bold">Paquetes y Precios</h2>
+              <h2 className="public-services-title mb-6 text-2xl font-bold">Paquetes y Precios</h2>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {tiers.map((tier, idx) => (
                   <div
                     key={idx}
-                    className="border-border bg-card rounded-2xl border p-6 transition-all hover:shadow-lg"
+                    className="public-services-card rounded-2xl border p-6 transition-all hover:shadow-lg"
                   >
-                    <h3 className="mb-2 text-xl font-bold">{tier.name}</h3>
-                    <p className="text-primary mb-4 text-3xl font-bold">
+                    <h3 className="public-services-title mb-2 text-xl font-bold">{tier.name}</h3>
+                    <p className="public-services-title mb-4 text-3xl font-bold">
                       {service.currency} {tier.price}
                     </p>
                     {tier.description && (
-                      <p className="text-muted-foreground text-sm">{tier.description}</p>
+                      <p className="public-services-muted text-sm">{tier.description}</p>
                     )}
                   </div>
                 ))}
@@ -189,7 +189,7 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           {/* Gallery */}
           {service.galleryUrls && service.galleryUrls.length > 0 && (
             <section>
-              <h2 className="mb-6 text-2xl font-bold">Galería de Trabajos</h2>
+              <h2 className="public-services-title mb-6 text-2xl font-bold">Galería de Trabajos</h2>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 {service.galleryUrls.map((url, idx) => (
                   <div
@@ -210,23 +210,23 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
           )}
 
           {/* Requirements & Policy */}
-          <section className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <section className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-8">
             {service.requirements && (
-              <div className="bg-accent/40 rounded-2xl p-6">
-                <h3 className="mb-3 flex items-center gap-2 font-bold">
-                  <AlertCircle className="text-warning h-5 w-5" aria-hidden /> Requisitos
+              <div className="public-services-card rounded-2xl p-6">
+                <h3 className="public-services-title mb-3 flex items-center gap-2 font-bold">
+                  <AlertCircle className="h-5 w-5" aria-hidden /> Requisitos
                 </h3>
-                <p className="text-muted-foreground text-sm whitespace-pre-line">
+                <p className="public-services-muted text-sm whitespace-pre-line">
                   {service.requirements}
                 </p>
               </div>
             )}
             {service.cancellationPolicy && (
-              <div className="bg-accent/40 rounded-2xl p-6">
-                <h3 className="mb-3 flex items-center gap-2 font-bold">
-                  <Calendar className="text-destructive h-5 w-5" aria-hidden /> Cancelaciones
+              <div className="public-services-card rounded-2xl p-6">
+                <h3 className="public-services-title mb-3 flex items-center gap-2 font-bold">
+                  <Calendar className="h-5 w-5" aria-hidden /> Cancelaciones
                 </h3>
-                <p className="text-muted-foreground text-sm whitespace-pre-line">
+                <p className="public-services-muted text-sm whitespace-pre-line">
                   {service.cancellationPolicy}
                 </p>
               </div>
@@ -236,25 +236,24 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          <div className="border-border bg-card sticky top-28 rounded-2xl border p-6 shadow-sm lg:top-32">
-            <h3 className="mb-4 text-xl font-bold">Reserva tu Cita</h3>
-            <p className="text-muted-foreground mb-6 text-sm">
+          <div className="public-services-card sticky top-28 rounded-2xl border p-6 shadow-sm lg:top-32">
+            <h3 className="public-services-title mb-4 text-xl font-bold">Reserva tu Cita</h3>
+            <p className="public-services-muted mb-6 text-sm">
               Para asegurar tu fecha, contáctame con anticipación.
               {service.advanceNoticeDays &&
                 ` Se recomienda reservar al menos ${service.advanceNoticeDays} días antes.`}
             </p>
 
             <div className="flex flex-col gap-3">
-              <Button asChild size="lg" className="w-full">
-                <Link
-                  href={`${ROUTES.public.contact}?service=${encodeURIComponent(service.slug)}&serviceName=${encodeURIComponent(service.name)}`}
-                >
-                  Agendar Cita
-                </Link>
-              </Button>
+              <Link
+                href={`${ROUTES.public.contact}?service=${encodeURIComponent(service.slug)}&serviceName=${encodeURIComponent(service.name)}`}
+                className="public-services-primary-button inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
+              >
+                Agendar cita
+              </Link>
             </div>
 
-            <div className="border-border text-muted-foreground mt-6 border-t pt-6 text-xs">
+            <div className="public-services-muted public-services-surface-border mt-6 border-t pt-6 text-xs">
               <p>• Pago seguro</p>
               <p className="mt-1">• Confirmación inmediata</p>
             </div>

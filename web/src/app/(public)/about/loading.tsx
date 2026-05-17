@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui'
  */
 export default function AboutLoading() {
   return (
-    <section className="w-full bg-(--background) transition-colors duration-500">
+    <section className="public-about-page public-loading-page w-full transition-colors duration-500">
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-6 py-8 md:px-12 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         {/* Left: Bio Column */}
         <div className="flex flex-col gap-6">
@@ -47,12 +47,11 @@ export default function AboutLoading() {
         </div>
       </div>
 
-      {/* Testimonials Strip */}
-      <div className="border-border border-t px-6 py-12 lg:px-16">
+      <div className="public-about-testimonials-section border-t px-6 py-12 lg:px-16">
         <Skeleton className="mx-auto mb-8 h-8 w-56 rounded-xl" />
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-card rounded-2xl border p-6">
+            <div key={i} className="public-loading-card rounded-2xl border p-6">
               <div className="mb-3 flex items-center gap-3">
                 <Skeleton className="h-10 w-10 rounded-full" variant="circular" />
                 <div className="space-y-1">

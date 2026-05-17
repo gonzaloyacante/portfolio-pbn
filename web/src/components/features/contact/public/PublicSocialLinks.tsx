@@ -36,7 +36,7 @@ export default function PublicSocialLinks({
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.platform}
-              className="bg-secondary text-secondary-foreground hover:bg-primary hover:text-primary-foreground flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110"
+              className="public-contact-social-link flex h-10 w-10 items-center justify-center rounded-full transition-all hover:scale-110"
             >
               {Icon ? <Icon className="h-5 w-5" /> : <span className="text-lg">🔗</span>}
             </a>
@@ -51,7 +51,7 @@ export default function PublicSocialLinks({
       <div className={cn('space-y-4 text-left font-sans text-lg', className)}>
         {links.map((link) => {
           const Icon = socialIconMap[link.platform as keyof typeof socialIconMap]
-          const username = link.username ? `@${link.username.replace(/^@/, '')}` : link.platform
+          const username = link.username || link.platform
 
           return (
             <a
@@ -59,7 +59,7 @@ export default function PublicSocialLinks({
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-primary flex items-center justify-start gap-3 transition-colors"
+              className="public-contact-social-link flex items-center justify-start gap-3 transition-colors"
             >
               {Icon ? (
                 <Icon className="h-6 w-6 shrink-0" />
@@ -80,7 +80,7 @@ export default function PublicSocialLinks({
     <div className={cn('grid w-full grid-cols-1 gap-4 sm:grid-cols-2', className)}>
       {links.map((link) => {
         const Icon = socialIconMap[link.platform as keyof typeof socialIconMap]
-        const username = link.username ? `@${link.username.replace(/^@/, '')}` : link.platform
+        const username = link.username || link.platform
 
         return (
           <a
@@ -88,12 +88,12 @@ export default function PublicSocialLinks({
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="border-primary/20 hover:border-primary/60 flex w-full max-w-xs items-center gap-4 rounded-2xl border px-5 py-4 transition-all hover:scale-[1.02]"
+            className="public-contact-social-link flex w-full max-w-xs items-center gap-4 rounded-2xl border px-5 py-4 transition-all hover:scale-[1.02]"
           >
             {Icon ? <Icon className="h-6 w-6" /> : <span className="text-lg">🔗</span>}
             <div className="min-w-0">
               <p>{link.platform.charAt(0).toUpperCase() + link.platform.slice(1)}</p>
-              <p className="text-foreground truncate font-semibold">{username}</p>
+              <p className="truncate font-semibold">{username}</p>
             </div>
           </a>
         )

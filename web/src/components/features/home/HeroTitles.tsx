@@ -13,6 +13,12 @@ export function HeroTitles({
   onSelectElement,
   isMobile,
 }: HeroSectionProps) {
+  // Public web colors are fixed; CMS color overrides stay disabled here for now.
+  void s.heroTitle1Color
+  void s.heroTitle1ColorDark
+  void s.heroTitle2Color
+  void s.heroTitle2ColorDark
+
   const title1 = s.heroTitle1Text || 'Make-up'
   const title2 = s.heroTitle2Text || 'Portfolio'
   const normalizedTitle2 = title2.trim().toLowerCase()
@@ -37,26 +43,17 @@ export function HeroTitles({
           >
             <h1
               className={cn(
-                'leading-[0.9]',
+                'public-hero-title-primary leading-[0.9]',
                 eff.title1FontSize ? '' : 'text-6xl sm:text-8xl lg:text-[7rem] xl:text-[8rem]'
               )}
               style={{
                 fontFamily: s.heroTitle1FontUrl
                   ? s.heroTitle1Font!
                   : 'var(--font-brand, var(--font-script))',
-                color: s.heroTitle1Color || 'var(--primary)',
                 fontSize: eff.title1FontSize ? `${eff.title1FontSize}px` : undefined,
               }}
             >
-              <span className="dark:hidden" style={{ color: s.heroTitle1Color || 'inherit' }}>
-                {title1}
-              </span>
-              <span
-                className="hidden dark:inline"
-                style={{ color: s.heroTitle1ColorDark || s.heroTitle1Color || 'inherit' }}
-              >
-                {title1}
-              </span>
+              {title1}
             </h1>
           </HeroWrapper>
         </FadeIn>
@@ -76,7 +73,7 @@ export function HeroTitles({
           >
             <h2
               className={cn(
-                'text-shadow leading-[0.9] font-bold tracking-tighter text-(--accent)',
+                'public-hero-title-secondary text-shadow leading-[0.9] font-bold tracking-tighter',
                 eff.title2FontSize ? '' : 'text-5xl sm:text-8xl lg:text-[6rem] xl:text-[7rem]'
               )}
               style={{
@@ -86,15 +83,7 @@ export function HeroTitles({
                 fontSize: eff.title2FontSize ? `${eff.title2FontSize}px` : undefined,
               }}
             >
-              <span className="dark:hidden" style={{ color: s.heroTitle2Color || 'inherit' }}>
-                {title2}
-              </span>
-              <span
-                className="hidden dark:inline"
-                style={{ color: s.heroTitle2ColorDark || s.heroTitle2Color || 'inherit' }}
-              >
-                {title2}
-              </span>
+              {title2}
             </h2>
           </HeroWrapper>
         </SlideIn>

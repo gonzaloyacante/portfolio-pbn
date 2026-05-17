@@ -1,36 +1,8 @@
-import { BRAND, DEFAULT_CSS_VARIABLES } from '@/lib/design-tokens'
+import { DEFAULT_CSS_VARIABLES } from '@/lib/design-tokens'
 
 /** Une BD + defaults (evita huecos si falta clave o falla lectura). */
 function mergeThemeValues(themeValues: Record<string, string>): Record<string, string> {
   return { ...DEFAULT_CSS_VARIABLES, ...themeValues }
-}
-
-/**
- * Calcula la luminancia relativa de un color HEX (#RRGGBB) según WCAG 2.1.
- * Retorna un valor entre 0 (negro) y 1 (blanco).
- */
-function relativeLuminance(hex: string): number {
-  const clean = hex.replace('#', '')
-  if (clean.length !== 6) return 0
-  const [r, g, b] = [
-    parseInt(clean.slice(0, 2), 16) / 255,
-    parseInt(clean.slice(2, 4), 16) / 255,
-    parseInt(clean.slice(4, 6), 16) / 255,
-  ].map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b
-}
-
-/**
- * Elige el color de texto más legible (blanco u oscuro) para colocar sobre `primaryHex`.
- * Garantiza contraste WCAG AA (≥4.5:1) para texto sobre botones/badges primary.
- */
-function pickPrimaryForeground(primaryHex: string): string {
-  const L = relativeLuminance(primaryHex)
-  // Contraste blanco vs color: (1.05) / (L + 0.05)
-  // Contraste oscuro vs color: (L + 0.05) / (0.05)
-  const contrastWhite = 1.05 / (L + 0.05)
-  const contrastDark = (L + 0.05) / 0.05
-  return contrastWhite >= contrastDark ? BRAND.card : BRAND.foreground
 }
 
 /** Evita cortar `</style>` y neutraliza saltos de línea en valores CSS. */
@@ -72,7 +44,7 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--input', 'color-mix(in srgb, var(--foreground) 14%, var(--background))'],
     ['--accent-foreground', 'var(--primary)'],
     ['--secondary-foreground', 'var(--primary)'],
-    ['--primary-foreground', pickPrimaryForeground(t['--primary']!)],
+    ['--primary-foreground', 'var(--secondary)'],
   ]
 
   const darkSemantic: Array<[string, string]> = [
@@ -90,9 +62,9 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--muted-foreground', 'color-mix(in srgb, var(--foreground) 55%, var(--background))'],
     ['--border', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
     ['--input', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
-    ['--accent-foreground', 'var(--foreground)'],
-    ['--secondary-foreground', BRAND.card],
-    ['--primary-foreground', pickPrimaryForeground(t['--dark-primary']!)],
+    ['--accent-foreground', 'var(--primary)'],
+    ['--secondary-foreground', 'var(--primary)'],
+    ['--primary-foreground', 'var(--secondary)'],
   ]
 
   const shared: Array<[string, string]> = [

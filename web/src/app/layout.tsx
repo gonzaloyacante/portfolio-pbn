@@ -6,7 +6,6 @@ import '@/styles/globals.css'
 import AppProviders from '@/components/providers/AppProviders'
 import { NavigationProgress } from '@/components/layout'
 import { ErrorBoundary } from '@/components/ui'
-import CookieConsent from '@/components/legal/CookieConsent'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
 import FontLoader from '@/components/layout/FontLoader'
@@ -111,10 +110,7 @@ export default async function RootLayout({
           <NavigationProgress />
         </Suspense>
         <ErrorBoundary>
-          <AppProviders>
-            {children}
-            <CookieConsent />
-          </AppProviders>
+          <AppProviders>{children}</AppProviders>
         </ErrorBoundary>
         <Suspense fallback={null}>
           <GoogleAnalytics />

@@ -68,7 +68,7 @@ export function CategoryGalleryToolbar({
           <motion.span
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-sm font-medium text-amber-500"
+            className="text-primary text-sm font-medium"
           >
             Sin guardar
           </motion.span>

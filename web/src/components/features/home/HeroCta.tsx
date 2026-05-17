@@ -47,17 +47,16 @@ export function HeroCta({
           </div>
         ) : (
           <MagneticButton>
-            <Button
-              asChild
-              size={mapButtonSize(s.ctaSize)}
-              variant={mapCtaVariant(s.ctaVariant)}
+            <Link
+              href={ctaLink}
+              className="public-hero-cta-button inline-flex items-center justify-center rounded-xl px-6 py-3 font-semibold transition-opacity hover:opacity-90"
               style={{
                 fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
                 fontSize: eff.ctaFontSize ? `${eff.ctaFontSize}px` : undefined,
               }}
             >
-              <Link href={ctaLink}>{ctaText}</Link>
-            </Button>
+              {ctaText}
+            </Link>
           </MagneticButton>
         )}
       </HeroWrapper>
