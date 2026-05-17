@@ -2,7 +2,6 @@ import { cache } from 'react'
 import { prisma } from '@/lib/db'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import AnalyticsTracker from '@/components/analytics/AnalyticsTracker'
 import { ArrowLeft, ImageOff } from 'lucide-react'
 import { Metadata } from 'next'
 import JsonLd from '@/components/seo/JsonLd'
@@ -96,7 +95,6 @@ export default async function CategoryGalleryPage({
 
   return (
     <section className="public-portfolio-page w-full transition-colors duration-500">
-      <AnalyticsTracker eventType="CATEGORY_VIEW" entityId={category.id} entityType="Category" />
       <JsonLd
         type="ImageGallery"
         data={{
