@@ -7,9 +7,28 @@ import { getContactSettings } from '@/actions/settings/contact'
 import { ROUTES } from '@/config/routes'
 import type { Metadata } from 'next'
 import PortfolioCardImage from './PortfolioCardImage'
+import { unstable_cache } from 'next/cache'
+import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
 /** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 60
+export const revalidate = 3600
+
+const getPublicPortfolioCategories = unstable_cache(
+  async () =>
+    prisma.category.findMany({
+      where: { isActive: true, deletedAt: null },
+      include: {
+        images: { orderBy: { order: 'asc' }, select: { url: true } },
+        _count: { select: { images: true } },
+      },
+      orderBy: { sortOrder: 'asc' },
+    }),
+  ['public-portfolio-categories'],
+  {
+    revalidate: CACHE_DURATIONS.VERY_LONG,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.categoryImages],
+  }
+)
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()
@@ -42,18 +61,11 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function PortfolioPage() {
   const [categories, categorySettings] = await Promise.all([
-    prisma.category.findMany({
-      where: { isActive: true, deletedAt: null },
-      include: {
-        images: { orderBy: { order: 'asc' }, select: { url: true } },
-        _count: { select: { images: true } },
-      },
-      orderBy: { sortOrder: 'asc' },
-    }),
+    getPublicPortfolioCategories(),
     getCategorySettings(),
   ])
 
-  const gridCols = categorySettings?.gridColumns ?? 4
+  const gridCols = categorySettings?.gridColumns ?? 3
   const showCount = false
   const showDesc = categorySettings?.showDescription ?? false
 

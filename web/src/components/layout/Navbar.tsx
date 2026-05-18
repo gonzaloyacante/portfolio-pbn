@@ -112,14 +112,15 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
     else if (current > prev && current > 80 && !menuOpen) setVisible(false)
   })
 
-  const showBrandInBar = showBrand
+  const showBrandInBar = showBrand && !isHome
   const showCollapsedMobileNav = !isHome
   const navSurfaceClass = isHome ? 'public-navbar-home-surface' : 'public-navbar-surface'
+  const navPositionClass = isHome ? 'absolute inset-x-0 top-0' : 'sticky top-0'
 
   return (
     <motion.nav
       aria-label="Navegación principal"
-      className="sticky top-0 z-50 w-full"
+      className={cn('z-50 w-full', navPositionClass)}
       animate={{ y: visible ? 0 : '-100%' }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >

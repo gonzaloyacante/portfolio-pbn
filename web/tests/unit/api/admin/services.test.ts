@@ -2,16 +2,32 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
+const serviceMethods = vi.hoisted(() => ({
+  findMany: vi.fn(),
+  count: vi.fn(),
+  findFirst: vi.fn(),
+  findUnique: vi.fn(),
+  create: vi.fn(),
+  aggregate: vi.fn(),
+}))
+
+const servicePricingTierMethods = vi.hoisted(() => ({
+  createMany: vi.fn(),
+}))
+
 vi.mock('@/lib/db', () => ({
   prisma: {
-    service: {
-      findMany: vi.fn(),
-      count: vi.fn(),
-      findFirst: vi.fn(),
-      findUnique: vi.fn(),
-      create: vi.fn(),
-      aggregate: vi.fn(),
-    },
+    service: serviceMethods,
+    servicePricingTier: servicePricingTierMethods,
+    $transaction: vi.fn().mockImplementation(async (fnOrArray: unknown) => {
+      if (typeof fnOrArray === 'function') {
+        return fnOrArray({
+          service: serviceMethods,
+          servicePricingTier: servicePricingTierMethods,
+        })
+      }
+      return Promise.all(fnOrArray as Promise<unknown>[])
+    }),
   },
 }))
 
@@ -254,15 +270,32 @@ describe('POST /api/admin/services', () => {
     expect(json.details).toBeDefined()
   })
 
-  it('returns 400 for missing slug', async () => {
+  it('generates slug server-side when slug is omitted', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.service.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as any)
+    vi.mocked(prisma.service.create).mockResolvedValueOnce({
+      ...mockService,
+      name: 'Sesión Ñandú',
+      slug: 'sesion-nandu',
+    } as any)
+
     const { POST } = await import('@/app/api/admin/services/route')
-    const res = await POST(makeRequest(BASE_URL, { method: 'POST', body: { name: 'Only Name' } }))
+    const res = await POST(
+      makeRequest(BASE_URL, { method: 'POST', body: { name: 'Sesión Ñandú' } })
+    )
     const json = await res.json()
 
-    expect(res.status).toBe(400)
-    expect(json.success).toBe(false)
-    expect(json.error).toBe('Datos inválidos')
-    expect(json.details).toBeDefined()
+    expect(res.status).toBe(201)
+    expect(json.success).toBe(true)
+    expect(prisma.service.findFirst).toHaveBeenCalledWith({
+      where: { slug: 'sesion-nandu' },
+    })
+    expect(prisma.service.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ slug: 'sesion-nandu' }),
+      })
+    )
   })
 
   it('returns 409 for duplicate slug', async () => {
@@ -362,5 +395,53 @@ describe('POST /api/admin/services', () => {
         data: expect.objectContaining({ price: null }),
       })
     )
+  })
+
+  it('defaults omitted currency to EUR', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.service.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as any)
+    vi.mocked(prisma.service.create).mockResolvedValueOnce(mockService as any)
+
+    const { POST } = await import('@/app/api/admin/services/route')
+    await POST(makeRequest(BASE_URL, { method: 'POST', body: validServiceBody }))
+
+    expect(prisma.service.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ currency: 'EUR' }),
+      })
+    )
+  })
+
+  it('creates service and pricing tiers in one transaction', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.service.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as any)
+    vi.mocked(prisma.service.create).mockResolvedValueOnce(mockService as any)
+    vi.mocked(prisma.servicePricingTier.createMany).mockResolvedValueOnce({ count: 1 } as any)
+
+    const { POST } = await import('@/app/api/admin/services/route')
+    await POST(
+      makeRequest(BASE_URL, {
+        method: 'POST',
+        body: {
+          ...validServiceBody,
+          pricingTiers: [{ name: 'Base', price: '150', description: null }],
+        },
+      })
+    )
+
+    expect(prisma.$transaction).toHaveBeenCalled()
+    expect(prisma.servicePricingTier.createMany).toHaveBeenCalledWith({
+      data: [
+        {
+          serviceId: 'svc-1',
+          name: 'Base',
+          price: '150',
+          description: null,
+          sortOrder: 0,
+        },
+      ],
+    })
   })
 })

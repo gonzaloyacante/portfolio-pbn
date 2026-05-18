@@ -22,7 +22,12 @@ vi.mock('@/lib/db', () => ({
     service: mockServiceMethods,
     servicePricingTier: mockPricingTierMethods,
     $transaction: vi.fn().mockImplementation(async (fnOrArray: unknown) => {
-      if (typeof fnOrArray === 'function') return fnOrArray({ service: mockServiceMethods })
+      if (typeof fnOrArray === 'function') {
+        return fnOrArray({
+          service: mockServiceMethods,
+          servicePricingTier: mockPricingTierMethods,
+        })
+      }
       return Promise.all(fnOrArray as Promise<unknown>[])
     }),
   },

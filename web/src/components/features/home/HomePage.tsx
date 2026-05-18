@@ -19,13 +19,13 @@ function toBackgroundUrl(url?: string | null) {
  * Keeps route files thin while composing the public home feature.
  */
 export default async function HomePage() {
-  const [homeSettings, testimonialSettings, testimonials] = await Promise.all([
+  const [homeSettings, testimonialSettings] = await Promise.all([
     getHomeSettings(),
     getTestimonialSettings(),
-    getActiveTestimonials(9),
   ])
 
   const testimonialsInLayout = testimonialSettings?.showOnAll === true
+  const testimonials = testimonialsInLayout ? [] : await getActiveTestimonials(9)
   const showFeatured = homeSettings?.showFeaturedImages === true
   const desktopBackgroundUrl =
     homeSettings?.heroBackdropUrl ||
@@ -45,49 +45,53 @@ export default async function HomePage() {
   return (
     <div
       className={cn(
-        'public-home-page relative z-10 flex w-full flex-1 flex-col items-center justify-between transition-colors duration-500'
+        'public-home-page relative isolate w-full flex-1 transition-colors duration-500'
       )}
       style={homeBackgroundStyle}
     >
-      <HeroSection settings={homeSettings} />
+      <div aria-hidden className="public-home-page-background pointer-events-none fixed inset-0" />
 
-      {showFeatured && (
-        <FeaturedCategories
-          title={homeSettings.featuredTitle}
-          count={homeSettings.featuredCount}
-          titleFont={homeSettings.featuredTitleFont}
-          titleFontUrl={homeSettings.featuredTitleFontUrl}
-          titleFontSize={homeSettings.featuredTitleFontSize}
-          // titleColor={homeSettings.featuredTitleColor}
-          // titleColorDark={homeSettings.featuredTitleColorDark}
-          ambientUnderlay
-        />
-      )}
+      <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-between">
+        <HeroSection settings={homeSettings} />
 
-      {!testimonialsInLayout && testimonials.length > 0 && (
-        <div className="public-testimonial-section w-full border-t py-12 transition-colors duration-500 lg:py-14">
-          <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
-            <h2 className="public-testimonial-title font-heading mb-12 text-center text-3xl font-bold">
-              {testimonialSettings?.title || 'Lo que dicen mis clientes'}
-            </h2>
+        {showFeatured && (
+          <FeaturedCategories
+            title={homeSettings.featuredTitle}
+            count={homeSettings.featuredCount}
+            titleFont={homeSettings.featuredTitleFont}
+            titleFontUrl={homeSettings.featuredTitleFontUrl}
+            titleFontSize={homeSettings.featuredTitleFontSize}
+            // titleColor={homeSettings.featuredTitleColor}
+            // titleColorDark={homeSettings.featuredTitleColorDark}
+            ambientUnderlay
+          />
+        )}
 
-            <TestimonialSlider
-              testimonials={testimonials}
-              autoAdvanceMs={testimonialSettings?.sliderAutoAdvanceMs}
-            />
+        {!testimonialsInLayout && testimonials.length > 0 && (
+          <div className="public-testimonial-section w-full border-t py-12 transition-colors duration-500 lg:py-14">
+            <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
+              <h2 className="public-testimonial-title font-heading mb-12 text-center text-3xl font-bold">
+                {testimonialSettings?.title || 'Lo que dicen mis clientes'}
+              </h2>
 
-            <div className="mt-12 flex justify-center">
-              <Link
-                href={ROUTES.public.testimonialForm}
-                className="public-testimonial-cta inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
-              >
-                <Heart size={16} />
-                ¿Fuiste mi clienta? Deja tu opinión
-              </Link>
+              <TestimonialSlider
+                testimonials={testimonials}
+                autoAdvanceMs={testimonialSettings?.sliderAutoAdvanceMs}
+              />
+
+              <div className="mt-12 flex justify-center">
+                <Link
+                  href={ROUTES.public.testimonialForm}
+                  className="public-testimonial-cta inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors hover:opacity-90"
+                >
+                  <Heart size={16} />
+                  ¿Fuiste mi clienta? Deja tu opinión
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }

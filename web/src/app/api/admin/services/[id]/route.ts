@@ -29,6 +29,8 @@ const SERVICE_FULL_SELECT = {
   duration: true,
   durationMinutes: true,
   imageUrl: true,
+  galleryUrls: true,
+  videoUrl: true,
   isActive: true,
   isFeatured: true,
   isAvailable: true,
@@ -106,6 +108,8 @@ export async function PATCH(req: Request, { params }: Params) {
       duration,
       durationMinutes,
       imageUrl,
+      galleryUrls,
+      videoUrl,
       isActive,
       isFeatured,
       isAvailable,
@@ -133,48 +137,52 @@ export async function PATCH(req: Request, { params }: Params) {
       select: { imageUrl: true },
     })
 
-    await prisma.service.update({
-      where: { id },
-      data: {
-        ...(name !== undefined && { name }),
-        ...(slug !== undefined && { slug }),
-        ...(description !== undefined && { description }),
-        ...(shortDesc !== undefined && { shortDesc }),
-        ...(price !== undefined && { price }),
-        ...(priceLabel !== undefined && { priceLabel }),
-        ...(currency !== undefined && { currency }),
-        ...(duration !== undefined && { duration }),
-        ...(durationMinutes !== undefined && { durationMinutes }),
-        ...(imageUrl !== undefined && { imageUrl }),
-        ...(isActive !== undefined && { isActive }),
-        ...(isFeatured !== undefined && { isFeatured }),
-        ...(isAvailable !== undefined && { isAvailable }),
-        ...(maxBookingsPerDay !== undefined && { maxBookingsPerDay }),
-        ...(advanceNoticeDays !== undefined && { advanceNoticeDays }),
-        ...(sortOrder !== undefined && { sortOrder }),
-        ...(requirements !== undefined && { requirements }),
-        ...(cancellationPolicy !== undefined && { cancellationPolicy }),
-      },
-    })
+    const updatedService = await prisma.$transaction(async (tx) => {
+      await tx.service.update({
+        where: { id },
+        data: {
+          ...(name !== undefined && { name }),
+          ...(slug !== undefined && { slug }),
+          ...(description !== undefined && { description }),
+          ...(shortDesc !== undefined && { shortDesc }),
+          ...(price !== undefined && { price }),
+          ...(priceLabel !== undefined && { priceLabel }),
+          ...(currency !== undefined && { currency }),
+          ...(duration !== undefined && { duration }),
+          ...(durationMinutes !== undefined && { durationMinutes }),
+          ...(imageUrl !== undefined && { imageUrl }),
+          ...(galleryUrls !== undefined && { galleryUrls }),
+          ...(videoUrl !== undefined && { videoUrl }),
+          ...(isActive !== undefined && { isActive }),
+          ...(isFeatured !== undefined && { isFeatured }),
+          ...(isAvailable !== undefined && { isAvailable }),
+          ...(maxBookingsPerDay !== undefined && { maxBookingsPerDay }),
+          ...(advanceNoticeDays !== undefined && { advanceNoticeDays }),
+          ...(sortOrder !== undefined && { sortOrder }),
+          ...(requirements !== undefined && { requirements }),
+          ...(cancellationPolicy !== undefined && { cancellationPolicy }),
+        },
+      })
 
-    if (pricingTiers !== undefined) {
-      await prisma.servicePricingTier.deleteMany({ where: { serviceId: id } })
-      if (pricingTiers.length > 0) {
-        await prisma.servicePricingTier.createMany({
-          data: pricingTiers.map((tier, idx) => ({
-            serviceId: id,
-            name: tier.name,
-            price: tier.price,
-            description: tier.description ?? null,
-            sortOrder: idx,
-          })),
-        })
+      if (pricingTiers !== undefined) {
+        await tx.servicePricingTier.deleteMany({ where: { serviceId: id } })
+        if (pricingTiers.length > 0) {
+          await tx.servicePricingTier.createMany({
+            data: pricingTiers.map((tier, idx) => ({
+              serviceId: id,
+              name: tier.name,
+              price: tier.price,
+              description: tier.description ?? null,
+              sortOrder: idx,
+            })),
+          })
+        }
       }
-    }
 
-    const updatedService = await prisma.service.findUnique({
-      where: { id },
-      select: SERVICE_FULL_SELECT,
+      return tx.service.findUnique({
+        where: { id },
+        select: SERVICE_FULL_SELECT,
+      })
     })
 
     // Cloud Wipe: If the main image changed, delete the old one from Cloudinary

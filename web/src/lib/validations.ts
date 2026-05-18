@@ -196,12 +196,18 @@ export const homeSettingsSchema = z.object({
   heroBackdropMobileObjectPosition: z.string().max(80).optional().nullable(),
   heroForegroundPortraitShow: z.boolean().optional(),
   heroScrimEdge: z.enum(['left', 'right', 'top', 'both', 'none']).optional(),
+  heroScrimShowLeft: z.boolean().optional(),
+  heroScrimShowRight: z.boolean().optional(),
+  heroScrimShowTop: z.boolean().optional(),
   heroScrimExtentPercent: z.number().int().min(5).max(100).optional(),
   heroScrimOpacity: z.number().int().min(0).max(100).optional(),
   heroScrimColor: zHexColorNullable,
   heroScrimColorDark: zHexColorNullable,
   heroScrimFeatherPercent: z.number().int().min(0).max(100).optional(),
   heroBackdropTintOpacity: z.number().int().min(0).max(100).optional(),
+  heroScrimMobileShowLeft: z.boolean().optional(),
+  heroScrimMobileShowRight: z.boolean().optional(),
+  heroScrimMobileShowTop: z.boolean().optional(),
   heroScrimMobileExtentPercent: z.number().int().min(5).max(100).optional().nullable(),
   heroScrimMobileOpacity: z.number().int().min(0).max(100).optional().nullable(),
 
@@ -372,7 +378,7 @@ export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>
 // Category Display Settings
 export const categorySettingsSchema = z.object({
   showDescription: z.boolean().default(true),
-  gridColumns: z.number().min(1).max(5).default(4),
+  gridColumns: z.number().min(1).max(5).default(3),
   isActive: z.boolean().default(true),
 })
 
@@ -431,23 +437,38 @@ export const pricingTierSchema = z.array(
   })
 )
 
+const slugApiSchema = z
+  .string()
+  .trim()
+  .min(1, 'El slug es obligatorio')
+  .max(160)
+  .regex(/^[a-z0-9-]+$/, 'Slug inválido')
+
+const generatedOnServerSlugSchema = z
+  .union([slugApiSchema, z.literal('')])
+  .optional()
+  .nullable()
+
 export const serviceApiSchema = z.object({
   name: z.string().trim().min(1, 'El nombre es obligatorio').max(150),
-  slug: z
-    .string()
-    .trim()
-    .min(1, 'El slug es obligatorio')
-    .max(160)
-    .regex(/^[a-z0-9-]+$/, 'Slug inválido'),
+  slug: generatedOnServerSlugSchema,
   description: z.string().trim().max(2000).optional().nullable(),
   shortDesc: z.string().trim().max(300).optional().nullable(),
   price: z.number().optional().nullable(),
   priceLabel: z.string().trim().max(50).optional().nullable(),
   currency: z.string().trim().max(10).optional().nullable(),
   duration: z.string().trim().max(100).optional().nullable(),
+  durationMinutes: z.number().int().positive().optional().nullable(),
   imageUrl: z.string().trim().optional().nullable(),
+  galleryUrls: z.array(z.string().trim().min(1)).optional(),
+  videoUrl: z.string().trim().optional().nullable(),
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
+  isAvailable: z.boolean().optional(),
+  maxBookingsPerDay: z.number().int().positive().optional().nullable(),
+  advanceNoticeDays: z.number().int().min(0).optional().nullable(),
+  requirements: z.string().trim().max(2000).optional().nullable(),
+  cancellationPolicy: z.string().trim().max(2000).optional().nullable(),
   pricingTiers: z
     .array(
       z.object({
@@ -463,6 +484,7 @@ export const serviceApiSchema = z.object({
 // ── Category (API — extends base categorySchema) ────────────────────────────
 
 export const categoryApiSchema = categorySchema.extend({
+  slug: generatedOnServerSlugSchema,
   isActive: z.boolean().optional(),
 })
 
@@ -489,9 +511,15 @@ export const testimonialApiSchema = z.object({
 
 // ── Bookings ────────────────────────────────────────────────────────────────
 
+const dateTimeStringSchema = z
+  .string()
+  .trim()
+  .min(1, 'La fecha es obligatoria')
+  .refine((value) => !Number.isNaN(new Date(value).getTime()), 'Fecha inválida')
+
 export const bookingApiSchema = z.object({
-  date: z.string().trim().min(1, 'La fecha es obligatoria'),
-  endDate: z.string().trim().optional().nullable(),
+  date: dateTimeStringSchema,
+  endDate: dateTimeStringSchema.optional().nullable(),
   clientName: z.string().trim().min(1, 'El nombre del cliente es obligatorio').max(100),
   clientEmail: z.string().trim().email('Email inválido').max(150),
   clientPhone: z
@@ -602,15 +630,20 @@ export const uploadDeleteSchema = z.object({
 
 // ── Partial schemas for PATCH endpoints ─────────────────────────────────────
 
-export const categoryPatchSchema = categoryApiSchema.partial()
+export const categoryPatchSchema = categorySchema
+  .extend({
+    isActive: z.boolean().optional(),
+  })
+  .partial()
 
 export const servicePatchSchema = serviceApiSchema
   .extend({
+    slug: slugApiSchema.optional(),
     currency: z.string().optional(),
-    durationMinutes: z.number().optional().nullable(),
+    durationMinutes: z.number().int().positive().optional().nullable(),
     isAvailable: z.boolean().optional(),
-    maxBookingsPerDay: z.number().optional().nullable(),
-    advanceNoticeDays: z.number().optional().nullable(),
+    maxBookingsPerDay: z.number().int().positive().optional().nullable(),
+    advanceNoticeDays: z.number().int().min(0).optional().nullable(),
     sortOrder: z.number().optional(),
     requirements: z.string().optional().nullable(),
     cancellationPolicy: z.string().optional().nullable(),

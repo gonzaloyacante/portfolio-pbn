@@ -51,6 +51,7 @@ const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
   site: siteSettingsSchema,
   testimonial: testimonialSettingsSchema,
   category: categorySettingsSchema,
+  servicesPage: servicesPageSettingsSchema,
 }
 
 // Campos que nunca se actualizan desde la app

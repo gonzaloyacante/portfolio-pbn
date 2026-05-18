@@ -97,14 +97,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [contactSettings, visibility, testimonialSettings, homeSettings, testimonials] =
-    await Promise.all([
-      getContactSettings(),
-      getPageVisibility(),
-      getTestimonialSettings(),
-      getHomeSettings(),
-      getActiveTestimonials(9),
-    ])
+  const [contactSettings, visibility, testimonialSettings, homeSettings] = await Promise.all([
+    getContactSettings(),
+    getPageVisibility(),
+    getTestimonialSettings(),
+    getHomeSettings(),
+  ])
+  const testimonials = testimonialSettings?.showOnAll ? await getActiveTestimonials(9) : []
 
   // ── Maintenance mode: show a styled, responsive maintenance card
   if (visibility.maintenanceMode) {

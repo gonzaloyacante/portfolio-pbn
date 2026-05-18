@@ -6,6 +6,8 @@ import { WordReveal } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import { FontLoader } from './FontLoader'
 import FeaturedImagesGallery from './FeaturedImagesGallery'
+import { unstable_cache } from 'next/cache'
+import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
 interface FeaturedCategoriesProps {
   title?: string | null
@@ -18,6 +20,21 @@ interface FeaturedCategoriesProps {
   /** Hero inmersivo: sin tapar el fondo que continúa bajo el bloque */
   ambientUnderlay?: boolean
 }
+
+const getFeaturedCategoryImages = unstable_cache(
+  async (count: number) =>
+    prisma.categoryImage.findMany({
+      where: { isFeatured: true, category: { isActive: true, deletedAt: null } },
+      include: { category: { select: { name: true } } },
+      orderBy: { order: 'asc' },
+      take: count,
+    }),
+  ['home-featured-category-images'],
+  {
+    revalidate: CACHE_DURATIONS.VERY_LONG,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.categoryImages],
+  }
+)
 
 export default async function FeaturedCategories({
   title,
@@ -33,12 +50,7 @@ export default async function FeaturedCategories({
   void titleColor
   void titleColorDark
 
-  const featuredImages = await prisma.categoryImage.findMany({
-    where: { isFeatured: true, category: { isActive: true, deletedAt: null } },
-    include: { category: { select: { name: true } } },
-    orderBy: { order: 'asc' },
-    take: count,
-  })
+  const featuredImages = await getFeaturedCategoryImages(count)
 
   if (featuredImages.length === 0) return null
 

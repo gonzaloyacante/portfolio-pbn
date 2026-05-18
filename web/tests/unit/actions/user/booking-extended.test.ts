@@ -12,6 +12,9 @@ vi.mock('@/lib/db', () => ({
       delete: vi.fn(),
       count: vi.fn(),
     },
+    service: {
+      findFirst: vi.fn(),
+    },
   },
 }))
 
@@ -52,7 +55,11 @@ function makeBookingFormData(fields?: Partial<Record<string, string>>): FormData
 // ── Tests: createBooking ──────────────────────────────────────────────────────
 
 describe('createBooking', () => {
-  beforeEach(() => vi.clearAllMocks())
+  beforeEach(async () => {
+    vi.clearAllMocks()
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValue({ id: 'svc-1' } as never)
+  })
 
   it('should create booking with valid data', async () => {
     const { prisma } = await import('@/lib/db')
@@ -121,6 +128,31 @@ describe('createBooking', () => {
     const { createBooking } = await import('@/actions/user/bookings')
     const result = await createBooking(makeBookingFormData({ serviceId: '' }))
     expect(result.success).toBe(false)
+  })
+
+  it('should return error for unavailable service', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+
+    const { createBooking } = await import('@/actions/user/bookings')
+    const result = await createBooking(makeBookingFormData())
+
+    expect(result.success).toBe(false)
+    expect(prisma.service.findFirst).toHaveBeenCalledWith({
+      where: { id: 'svc-1', deletedAt: null, isActive: true, isAvailable: true },
+      select: { id: true },
+    })
+    expect(prisma.booking.create).not.toHaveBeenCalled()
+  })
+
+  it('should return error for invalid date', async () => {
+    const { prisma } = await import('@/lib/db')
+
+    const { createBooking } = await import('@/actions/user/bookings')
+    const result = await createBooking(makeBookingFormData({ date: 'not-a-date' }))
+
+    expect(result.success).toBe(false)
+    expect(prisma.booking.create).not.toHaveBeenCalled()
   })
 
   it('should handle database error', async () => {

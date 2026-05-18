@@ -29,5 +29,7 @@ model AppRelease {
   createdAt      DateTime @default(now())
   publishedAt    DateTime @default(now())
 
+  @@index([publishedAt])
+  @@index([versionCode])
   @@map("app_releases")
 }

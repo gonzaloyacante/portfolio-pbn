@@ -4,16 +4,34 @@ import type { Service } from '@/generated/prisma/client'
 // ──────────────────────────────────────────
 // Mocks
 // ──────────────────────────────────────────
+const mockServiceMethods = vi.hoisted(() => ({
+  create: vi.fn(),
+  update: vi.fn(),
+  delete: vi.fn(),
+  findMany: vi.fn(),
+  findUnique: vi.fn(),
+  findFirst: vi.fn(),
+  aggregate: vi.fn().mockResolvedValue({ _max: { sortOrder: 0 } }),
+}))
+
+const mockPricingTierMethods = vi.hoisted(() => ({
+  deleteMany: vi.fn(),
+  createMany: vi.fn(),
+}))
+
 vi.mock('@/lib/db', () => ({
   prisma: {
-    service: {
-      create: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-      findMany: vi.fn(),
-      findUnique: vi.fn(),
-      findFirst: vi.fn(),
-    },
+    service: mockServiceMethods,
+    servicePricingTier: mockPricingTierMethods,
+    $transaction: vi.fn().mockImplementation(async (fnOrArray: unknown) => {
+      if (typeof fnOrArray === 'function') {
+        return fnOrArray({
+          service: mockServiceMethods,
+          servicePricingTier: mockPricingTierMethods,
+        })
+      }
+      return Promise.all(fnOrArray as Promise<unknown>[])
+    }),
   },
 }))
 
@@ -124,13 +142,21 @@ describe('Service Actions', () => {
       expect(result.success).toBe(false)
     })
 
-    it('should reject service with missing slug', async () => {
+    it('should generate slug server-side when missing', async () => {
+      const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.service.create).mockResolvedValue(makeService({ slug: 'mi-servicio' }))
+
       const { createService } = await import('@/actions/cms/services')
       const formData = new FormData()
       formData.append('name', 'Mi Servicio')
 
       const result = await createService(formData)
-      expect(result.success).toBe(false)
+      expect(result.success).toBe(true)
+      expect(prisma.service.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ slug: 'mi-servicio' }),
+        })
+      )
     })
 
     it('should reject service with invalid slug characters', async () => {

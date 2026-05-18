@@ -261,6 +261,7 @@ export async function DELETE(req: Request, { params }: Params) {
       select: {
         id: true,
         categoryId: true,
+        publicId: true,
         url: true,
         category: {
           select: {
@@ -278,14 +279,11 @@ export async function DELETE(req: Request, { params }: Params) {
       )
     }
 
-    // Eliminar de Cloudinary
-    await deleteImage(publicId)
-
     // Determinar si la imagen eliminada es la portada de la categoría
     const isCover =
       image.category.coverImageUrl != null &&
       (image.category.coverImageUrl === image.url ||
-        extractPublicIdUrl(image.category.coverImageUrl) === publicId)
+        extractPublicIdUrl(image.category.coverImageUrl) === image.publicId)
 
     // Eliminar de DB y, si corresponde, limpiar coverImageUrl en la misma transacción
     await prisma.$transaction([
@@ -298,9 +296,17 @@ export async function DELETE(req: Request, { params }: Params) {
     // Reordenar las imágenes restantes
     await normalizeCategoryImageOrder(categoryId)
 
+    deleteImage(image.publicId).catch((err: Error) =>
+      logger.warn('DELETE category gallery image: Cloudinary delete failed (non-blocking)', {
+        publicId: image.publicId,
+        requestedPublicId: publicId,
+        error: err.message,
+      })
+    )
+
     revalidateCategoryGallery(categoryId, image.category.slug)
 
-    logger.info(`Category image deleted: ${imageId} (publicId: ${publicId})`)
+    logger.info(`Category image deleted: ${imageId} (publicId: ${image.publicId})`)
     return NextResponse.json({ success: true })
   } catch (err) {
     logger.error('DELETE category gallery image error', err as Record<string, unknown>)

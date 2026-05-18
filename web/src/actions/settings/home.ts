@@ -73,12 +73,18 @@ export interface HomeSettingsData {
   heroBackdropMobileObjectPosition: string | null
   heroForegroundPortraitShow: boolean
   heroScrimEdge: string | null
+  heroScrimShowLeft: boolean
+  heroScrimShowRight: boolean
+  heroScrimShowTop: boolean
   heroScrimExtentPercent: number | null
   heroScrimOpacity: number | null
   heroScrimColor: string | null
   heroScrimColorDark: string | null
   heroScrimFeatherPercent: number | null
   heroBackdropTintOpacity: number | null
+  heroScrimMobileShowLeft: boolean
+  heroScrimMobileShowRight: boolean
+  heroScrimMobileShowTop: boolean
   heroScrimMobileExtentPercent: number | null
   heroScrimMobileOpacity: number | null
 
@@ -261,6 +267,35 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
         heroMainImageZIndex: (cleanData.heroMainImageZIndex as number) ?? undefined,
         heroMainImageOffsetX: (cleanData.heroMainImageOffsetX as number) ?? undefined,
         heroMainImageOffsetY: (cleanData.heroMainImageOffsetY as number) ?? undefined,
+        heroImmersiveEnabled: (cleanData.heroImmersiveEnabled as boolean) ?? true,
+        heroBackdropMediaKind: (cleanData.heroBackdropMediaKind as string) ?? 'auto',
+        heroBackdropUrl: (cleanData.heroBackdropUrl as string) ?? undefined,
+        heroBackdropPosterUrl: (cleanData.heroBackdropPosterUrl as string) ?? undefined,
+        heroBackdropLoop: (cleanData.heroBackdropLoop as boolean) ?? true,
+        heroBackdropMuted: (cleanData.heroBackdropMuted as boolean) ?? true,
+        heroBackdropPlaysInline: (cleanData.heroBackdropPlaysInline as boolean) ?? true,
+        heroBackdropObjectFit: (cleanData.heroBackdropObjectFit as string) ?? 'cover',
+        heroBackdropObjectPosition: (cleanData.heroBackdropObjectPosition as string) ?? 'center',
+        heroBackdropMobileUrl: (cleanData.heroBackdropMobileUrl as string) ?? undefined,
+        heroBackdropMobileObjectPosition:
+          (cleanData.heroBackdropMobileObjectPosition as string) ?? undefined,
+        heroForegroundPortraitShow: (cleanData.heroForegroundPortraitShow as boolean) ?? false,
+        heroScrimEdge: (cleanData.heroScrimEdge as string) ?? 'left',
+        heroScrimShowLeft: (cleanData.heroScrimShowLeft as boolean) ?? true,
+        heroScrimShowRight: (cleanData.heroScrimShowRight as boolean) ?? false,
+        heroScrimShowTop: (cleanData.heroScrimShowTop as boolean) ?? true,
+        heroScrimExtentPercent: (cleanData.heroScrimExtentPercent as number) ?? 45,
+        heroScrimOpacity: (cleanData.heroScrimOpacity as number) ?? 80,
+        heroScrimColor: (cleanData.heroScrimColor as string) ?? undefined,
+        heroScrimColorDark: (cleanData.heroScrimColorDark as string) ?? undefined,
+        heroScrimFeatherPercent: (cleanData.heroScrimFeatherPercent as number) ?? 50,
+        heroBackdropTintOpacity: (cleanData.heroBackdropTintOpacity as number) ?? 0,
+        heroScrimMobileShowLeft: (cleanData.heroScrimMobileShowLeft as boolean) ?? false,
+        heroScrimMobileShowRight: (cleanData.heroScrimMobileShowRight as boolean) ?? false,
+        heroScrimMobileShowTop: (cleanData.heroScrimMobileShowTop as boolean) ?? true,
+        heroScrimMobileExtentPercent:
+          (cleanData.heroScrimMobileExtentPercent as number) ?? undefined,
+        heroScrimMobileOpacity: (cleanData.heroScrimMobileOpacity as number) ?? undefined,
 
         illustrationUrl: (cleanData.illustrationUrl as string) ?? undefined,
         illustrationAlt: (cleanData.illustrationAlt as string) ?? undefined,

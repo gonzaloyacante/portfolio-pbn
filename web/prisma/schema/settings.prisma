@@ -69,8 +69,12 @@ model HomeSettings {
   /// Retrato inline en columna derecha cuando hay fondo inmersivo
   heroForegroundPortraitShow Boolean @default(true)
 
-  /// Borde del degradado lateral: left | right | both | none
+  /// Campo legado. Mantener temporalmente por compatibilidad; el editor nuevo usa switches independientes.
   heroScrimEdge           String @default("left")
+  /// Sombras independientes en escritorio
+  heroScrimShowLeft       Boolean @default(true)
+  heroScrimShowRight      Boolean @default(false)
+  heroScrimShowTop        Boolean @default(true)
   heroScrimExtentPercent  Int    @default(45)
   heroScrimOpacity        Int    @default(80)
   heroScrimColor          String?
@@ -79,6 +83,10 @@ model HomeSettings {
   heroScrimFeatherPercent Int    @default(50)
   /// Oscurecimiento uniforme 0–100 sobre todo el fondo
   heroBackdropTintOpacity Int    @default(0)
+  /// Sombras independientes en móvil
+  heroScrimMobileShowLeft  Boolean @default(false)
+  heroScrimMobileShowRight Boolean @default(false)
+  heroScrimMobileShowTop   Boolean @default(true)
   heroScrimMobileExtentPercent Int?
   heroScrimMobileOpacity        Int?
 

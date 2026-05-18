@@ -1,5 +1,5 @@
-import { cache } from 'react'
 import { prisma } from '@/lib/db'
+import { unstable_cache } from 'next/cache'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, ImageOff } from 'lucide-react'
@@ -10,25 +10,39 @@ import { getPublicSiteUrl } from '@/lib/site-url'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getCategorySettings } from '@/actions/settings/categories'
+import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
 /** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 60
+export const revalidate = 3600
+
+const getPublicCategorySlugs = unstable_cache(
+  async () =>
+    prisma.category.findMany({
+      where: { isActive: true, deletedAt: null },
+      select: { slug: true },
+    }),
+  ['public-category-slugs'],
+  { revalidate: CACHE_DURATIONS.VERY_LONG, tags: [CACHE_TAGS.categories] }
+)
 
 export async function generateStaticParams() {
-  const categories = await prisma.category.findMany({
-    where: { isActive: true, deletedAt: null },
-    select: { slug: true },
-  })
+  const categories = await getPublicCategorySlugs()
   return categories.map((c) => ({ category: c.slug }))
 }
 
-const getCategory = cache((slug: string) =>
-  prisma.category.findFirst({
-    where: { slug, isActive: true, deletedAt: null },
-    include: {
-      images: { orderBy: { order: 'asc' } },
-    },
-  })
+const getCategory = unstable_cache(
+  async (slug: string) =>
+    prisma.category.findFirst({
+      where: { slug, isActive: true, deletedAt: null },
+      include: {
+        images: { orderBy: { order: 'asc' } },
+      },
+    }),
+  ['public-category-detail'],
+  {
+    revalidate: CACHE_DURATIONS.VERY_LONG,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.categoryImages],
+  }
 )
 
 export async function generateMetadata({

@@ -221,6 +221,21 @@ export async function DELETE(
     revalidateForType(type)
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (
+      type === 'service' &&
+      typeof error === 'object' &&
+      error !== null &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2003'
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'No se puede eliminar definitivamente un servicio con reservas asociadas',
+        },
+        { status: 409 }
+      )
+    }
     logger.error(`[trash] DELETE ${type}/${id} error`, { error })
     return NextResponse.json({ success: false, error: 'Error al eliminar' }, { status: 500 })
   }

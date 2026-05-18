@@ -511,7 +511,7 @@ describe('categorySettingsSchema — extended', () => {
     expect(result.success).toBe(true)
     if (result.success) {
       expect(result.data.showDescription).toBe(true)
-      expect(result.data.gridColumns).toBe(4)
+      expect(result.data.gridColumns).toBe(3)
     }
   })
 

@@ -39,7 +39,7 @@ export function HeroContent({
     <div className="relative isolate w-full overflow-x-clip">
       <section
         className={cn(
-          'public-home-hero relative z-10 flex min-h-[calc(100svh-var(--public-nav-offset))] w-full flex-col justify-center overflow-x-hidden px-4 transition-colors duration-500 sm:px-8 md:min-h-[calc(100dvh-var(--public-nav-offset))] lg:px-16'
+          'public-home-hero relative z-10 flex min-h-[100svh] w-full flex-col justify-center overflow-x-hidden px-4 transition-colors duration-500 sm:px-8 md:min-h-[100dvh] lg:px-16'
         )}
       >
         <FontLoader fonts={fontsToLoad} />

@@ -19,7 +19,7 @@ export default function CategorySettingsCard({ settings }: CategorySettingsCardP
     startTransition(async () => {
       const result = await updateCategorySettings({
         showDescription: value,
-        gridColumns: settings?.gridColumns ?? 4,
+        gridColumns: settings?.gridColumns ?? 3,
         isActive: settings?.isActive ?? true,
       })
       if (!result.success) {

@@ -55,7 +55,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
       // Manual mapping for strict Creation
       const createData: Prisma.CategorySettingsCreateInput = {
         showDescription: (cleanData.showDescription as boolean) ?? true,
-        gridColumns: (cleanData.gridColumns as number) ?? 4,
+        gridColumns: (cleanData.gridColumns as number) ?? 3,
         isActive: (cleanData.isActive as boolean) ?? true,
       }
 

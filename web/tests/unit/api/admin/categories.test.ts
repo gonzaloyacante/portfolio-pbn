@@ -231,15 +231,32 @@ describe('POST /api/admin/categories', () => {
     expect(json.details).toBeDefined()
   })
 
-  it('returns 400 for missing slug', async () => {
+  it('generates slug server-side when slug is omitted', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.category.findFirst).mockResolvedValueOnce(null)
+    vi.mocked(prisma.category.aggregate).mockResolvedValueOnce({ _max: { sortOrder: 0 } } as any)
+    vi.mocked(prisma.category.create).mockResolvedValueOnce({
+      ...mockCategory,
+      name: 'Sesión Ñandú',
+      slug: 'sesion-nandu',
+    } as any)
+
     const { POST } = await import('@/app/api/admin/categories/route')
-    const res = await POST(makeRequest(BASE_URL, { method: 'POST', body: { name: 'Only Name' } }))
+    const res = await POST(
+      makeRequest(BASE_URL, { method: 'POST', body: { name: 'Sesión Ñandú' } })
+    )
     const json = await res.json()
 
-    expect(res.status).toBe(400)
-    expect(json.success).toBe(false)
-    expect(json.error).toBe('Datos inválidos')
-    expect(json.details).toBeDefined()
+    expect(res.status).toBe(201)
+    expect(json.success).toBe(true)
+    expect(prisma.category.findFirst).toHaveBeenCalledWith({
+      where: { slug: 'sesion-nandu' },
+    })
+    expect(prisma.category.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ slug: 'sesion-nandu' }),
+      })
+    )
   })
 
   it('returns 409 for duplicate slug (with deletedAt: null)', async () => {
@@ -289,7 +306,7 @@ describe('POST /api/admin/categories', () => {
     expect(json).toEqual({ success: false, error: 'Error interno del servidor' })
   })
 
-  it('validates required fields (name and slug)', async () => {
+  it('validates required name', async () => {
     const { POST } = await import('@/app/api/admin/categories/route')
     const res = await POST(makeRequest(BASE_URL, { method: 'POST', body: {} }))
     const json = await res.json()

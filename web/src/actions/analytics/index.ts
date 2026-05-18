@@ -231,12 +231,12 @@ const _fetchDashboardContentStats = unstable_cache(
       contactsCount,
       pendingTestimonials,
     ] = await Promise.all([
-      prisma.categoryImage.count(),
-      prisma.category.count(),
-      prisma.testimonial.count({ where: { isActive: true } }),
+      prisma.categoryImage.count({ where: { category: { deletedAt: null } } }),
+      prisma.category.count({ where: { deletedAt: null } }),
+      prisma.testimonial.count({ where: { isActive: true, deletedAt: null } }),
       prisma.category.count({ where: { deletedAt: { not: null } } }),
-      prisma.contact.count({ where: { isRead: false } }),
-      prisma.testimonial.count({ where: { isActive: false } }),
+      prisma.contact.count({ where: { isRead: false, deletedAt: null } }),
+      prisma.testimonial.count({ where: { isActive: false, deletedAt: null } }),
     ])
     return {
       imagesCount,

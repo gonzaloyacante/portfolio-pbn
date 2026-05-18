@@ -4,7 +4,7 @@
  * Verifica que migraciones SQL cubren columnas/tablas que antes fallaban en prod
  * cuando `_prisma_migrations` iba atrasado (sin conectar a ninguna base de datos).
  *
- * Usage (desde web/): npx tsx prisma/audit-schema-migrations.ts
+ * Usage (desde web/): pnpm exec tsx prisma/audit-schema-migrations.ts
  */
 
 import { readdirSync, readFileSync } from 'fs'
@@ -17,6 +17,16 @@ const migrationsDir = path.resolve(__dirname, 'migrations')
 type Requirement = {
   id: string
   test: (combinedSql: string) => boolean
+}
+
+type OrderedRequirement = {
+  id: string
+  test: (files: MigrationFile[]) => boolean
+}
+
+type MigrationFile = {
+  name: string
+  sql: string
 }
 
 const REQUIREMENTS: Requirement[] = [
@@ -32,9 +42,41 @@ const REQUIREMENTS: Requirement[] = [
     id: 'services_page_settings (CREATE TABLE)',
     test: (sql) => /CREATE TABLE\s+"services_page_settings"/i.test(sql),
   },
+  {
+    id: 'bookings.serviceId ON DELETE RESTRICT',
+    test: (sql) => /ADD CONSTRAINT\s+"bookings_serviceId_fkey"[\s\S]*ON DELETE RESTRICT/i.test(sql),
+  },
+  {
+    id: 'testimonial_settings.sliderAutoAdvanceMs default 10000',
+    test: (sql) =>
+      /ALTER TABLE\s+"testimonial_settings"[\s\S]*"sliderAutoAdvanceMs"\s+SET DEFAULT 10000/i.test(
+        sql
+      ),
+  },
 ]
 
-function loadCombinedMigrationSql(): string {
+const ORDERED_REQUIREMENTS: OrderedRequirement[] = [
+  {
+    id: 'home_settings.heroImmersiveEnabled exists before default migration',
+    test: (files) => {
+      const firstAddIndex = files.findIndex(
+        ({ sql }) =>
+          /ALTER TABLE\s+"home_settings"\s+ADD COLUMN IF NOT EXISTS\s+"heroImmersiveEnabled"/i.test(
+            sql
+          ) || /CREATE TABLE\s+"home_settings"[\s\S]*"heroImmersiveEnabled"/i.test(sql)
+      )
+      const firstDefaultIndex = files.findIndex(({ sql }) =>
+        /ALTER TABLE\s+"home_settings"\s+ALTER COLUMN\s+"heroImmersiveEnabled"\s+SET DEFAULT/i.test(
+          sql
+        )
+      )
+
+      return firstAddIndex >= 0 && firstDefaultIndex >= 0 && firstAddIndex < firstDefaultIndex
+    },
+  },
+]
+
+function loadMigrationFiles(): MigrationFile[] {
   let entries: string[] = []
   try {
     entries = readdirSync(migrationsDir, { withFileTypes: true })
@@ -46,21 +88,25 @@ function loadCombinedMigrationSql(): string {
     process.exit(1)
   }
 
-  const parts: string[] = []
+  const files: MigrationFile[] = []
   for (const name of entries) {
     const sqlPath = path.join(migrationsDir, name, 'migration.sql')
     try {
-      parts.push(readFileSync(sqlPath, 'utf8'))
+      files.push({ name, sql: readFileSync(sqlPath, 'utf8') })
     } catch {
       // Carpeta sin migration.sql (ej. borrador): ignorar
     }
   }
-  return parts.join('\n')
+  return files
 }
 
 function main(): void {
-  const sql = loadCombinedMigrationSql()
-  const missing = REQUIREMENTS.filter((r) => !r.test(sql)).map((r) => r.id)
+  const files = loadMigrationFiles()
+  const sql = files.map((file) => file.sql).join('\n')
+  const missing = [
+    ...REQUIREMENTS.filter((r) => !r.test(sql)).map((r) => r.id),
+    ...ORDERED_REQUIREMENTS.filter((r) => !r.test(files)).map((r) => r.id),
+  ]
 
   if (missing.length > 0) {
     console.error(
@@ -71,7 +117,7 @@ function main(): void {
   }
 
   console.log(
-    `audit-schema-migrations: OK (${REQUIREMENTS.length} checks de prod-gap en migraciones)`
+    `audit-schema-migrations: OK (${REQUIREMENTS.length + ORDERED_REQUIREMENTS.length} checks de prod-gap en migraciones)`
   )
 }
 
