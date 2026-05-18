@@ -213,6 +213,7 @@ migrate_working_dir/
 # ===================================================
 # AI TOOLS & AGENT CONFIGS (never commit)
 # ===================================================
+.sisyphus/
 # Neon CLI context (contains org ID)
 .neon
 # Kiro/Claude agent skills cache

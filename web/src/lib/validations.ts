@@ -79,23 +79,34 @@ export type TestimonialFormData = z.infer<typeof testimonialFormSchema>
 // ADMIN SETTINGS SCHEMAS
 // ============================================
 
+/** Strict hex color validator: only accepts #RRGGBB (6-digit).
+ *  Color pickers always emit 6-digit hex. 3-char shorthands are NOT
+ *  accepted because several runtime functions (hero-backdrop-styles, shadow builders)
+ *  check for exactly 7 characters and fall back to black if the value differs. */
+export const zHexColor = z
+  .string()
+  .regex(/^#[A-Fa-f0-9]{6}$/, 'Color inválido — se requiere formato #RRGGBB')
+
+/** Nullable/optional hex color — used for fields that can be cleared (inherit from theme) */
+export const zHexColorNullable = zHexColor.nullable().optional()
+
 // Theme Editor
 export const themeEditorSchema = z.object({
   // Light Mode
-  primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  secondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  accentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  backgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  textColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  cardBgColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  primaryColor: zHexColor,
+  secondaryColor: zHexColor,
+  accentColor: zHexColor,
+  backgroundColor: zHexColor,
+  textColor: zHexColor,
+  cardBgColor: zHexColor,
 
   // Dark Mode
-  darkPrimaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  darkSecondaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  darkAccentColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  darkBackgroundColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  darkTextColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
-  darkCardBgColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido'),
+  darkPrimaryColor: zHexColor,
+  darkSecondaryColor: zHexColor,
+  darkAccentColor: zHexColor,
+  darkBackgroundColor: zHexColor,
+  darkTextColor: zHexColor,
+  darkCardBgColor: zHexColor,
 
   // Typography - Base
   headingFont: z.string().min(1, 'Fuente requerida'),
@@ -135,16 +146,8 @@ export const homeSettingsSchema = z.object({
   heroTitle1Font: z.string().optional().nullable(),
   heroTitle1FontUrl: z.string().optional().nullable(),
   heroTitle1FontSize: z.number().min(10).max(300).optional(),
-  heroTitle1Color: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
-  heroTitle1ColorDark: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
+  heroTitle1Color: zHexColorNullable,
+  heroTitle1ColorDark: zHexColorNullable,
   heroTitle1ZIndex: z.number().int().optional(),
   heroTitle1OffsetX: z.number().optional(),
   heroTitle1OffsetY: z.number().optional(),
@@ -154,16 +157,8 @@ export const homeSettingsSchema = z.object({
   heroTitle2Font: z.string().optional().nullable(),
   heroTitle2FontUrl: z.string().optional().nullable(),
   heroTitle2FontSize: z.number().min(10).max(300).optional(),
-  heroTitle2Color: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
-  heroTitle2ColorDark: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
+  heroTitle2Color: zHexColorNullable,
+  heroTitle2ColorDark: zHexColorNullable,
   heroTitle2ZIndex: z.number().int().optional(),
   heroTitle2OffsetX: z.number().optional(),
   heroTitle2OffsetY: z.number().optional(),
@@ -173,16 +168,8 @@ export const homeSettingsSchema = z.object({
   ownerNameFont: z.string().optional().nullable(),
   ownerNameFontUrl: z.string().optional().nullable(),
   ownerNameFontSize: z.number().min(10).max(100).optional(),
-  ownerNameColor: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
-  ownerNameColorDark: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
+  ownerNameColor: zHexColorNullable,
+  ownerNameColorDark: zHexColorNullable,
   ownerNameZIndex: z.number().int().optional(),
   ownerNameOffsetX: z.number().optional(),
   ownerNameOffsetY: z.number().optional(),
@@ -208,21 +195,19 @@ export const homeSettingsSchema = z.object({
   heroBackdropMobileUrl: z.string().optional().nullable(),
   heroBackdropMobileObjectPosition: z.string().max(80).optional().nullable(),
   heroForegroundPortraitShow: z.boolean().optional(),
-  heroScrimEdge: z.enum(['left', 'right', 'both', 'none']).optional(),
+  heroScrimEdge: z.enum(['left', 'right', 'top', 'both', 'none']).optional(),
+  heroScrimShowLeft: z.boolean().optional(),
+  heroScrimShowRight: z.boolean().optional(),
+  heroScrimShowTop: z.boolean().optional(),
   heroScrimExtentPercent: z.number().int().min(5).max(100).optional(),
   heroScrimOpacity: z.number().int().min(0).max(100).optional(),
-  heroScrimColor: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
-  heroScrimColorDark: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
+  heroScrimColor: zHexColorNullable,
+  heroScrimColorDark: zHexColorNullable,
   heroScrimFeatherPercent: z.number().int().min(0).max(100).optional(),
   heroBackdropTintOpacity: z.number().int().min(0).max(100).optional(),
+  heroScrimMobileShowLeft: z.boolean().optional(),
+  heroScrimMobileShowRight: z.boolean().optional(),
+  heroScrimMobileShowTop: z.boolean().optional(),
   heroScrimMobileExtentPercent: z.number().int().min(5).max(100).optional().nullable(),
   heroScrimMobileOpacity: z.number().int().min(0).max(100).optional().nullable(),
 
@@ -272,16 +257,8 @@ export const homeSettingsSchema = z.object({
   featuredTitleFont: z.string().optional().nullable(),
   featuredTitleFontUrl: z.string().optional().nullable(),
   featuredTitleFontSize: z.number().min(10).max(100).optional(),
-  featuredTitleColor: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
-  featuredTitleColorDark: z
-    .string()
-    .regex(/^#[A-Fa-f0-9]{6}$/)
-    .optional()
-    .nullable(),
+  featuredTitleColor: zHexColorNullable,
+  featuredTitleColorDark: zHexColorNullable,
   featuredCount: z.number().min(1).max(20),
 })
 
@@ -298,16 +275,8 @@ export const aboutSettingsSchema = z.object({
   bioTitleFontUrl: z.string().max(2048).optional().nullable(),
   bioTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
   bioTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
-  bioTitleColor: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .optional()
-    .nullable(),
-  bioTitleColorDark: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .optional()
-    .nullable(),
+  bioTitleColor: zHexColorNullable,
+  bioTitleColorDark: zHexColorNullable,
   bioIntro: z.string().optional().nullable(),
   bioDescription: z.string().optional().nullable(),
   profileImageUrl: z.string().optional().nullable(),
@@ -318,11 +287,7 @@ export const aboutSettingsSchema = z.object({
   profileImageShadowSpread: z.number().int().min(-40).max(40).optional().nullable(),
   profileImageShadowOffsetX: z.number().int().min(-80).max(80).optional().nullable(),
   profileImageShadowOffsetY: z.number().int().min(-80).max(80).optional().nullable(),
-  profileImageShadowColor: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .optional()
-    .nullable(),
+  profileImageShadowColor: zHexColorNullable,
   profileImageShadowOpacity: z.number().int().min(0).max(100).optional().nullable(),
   skills: z.array(z.string()).optional(),
   yearsExperience: z.number().optional().nullable(),
@@ -338,16 +303,8 @@ export const servicesPageSettingsSchema = z.object({
   listTitleFontUrl: z.string().max(2048).optional().nullable(),
   listTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
   listTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
-  listTitleColor: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .optional()
-    .nullable(),
-  listTitleColorDark: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)
-    .optional()
-    .nullable(),
+  listTitleColor: zHexColorNullable,
+  listTitleColorDark: zHexColorNullable,
 })
 
 export type ServicesPageSettingsFormData = z.infer<typeof servicesPageSettingsSchema>
@@ -358,6 +315,7 @@ export const testimonialSettingsSchema = z.object({
   showOnAll: z.boolean().optional(),
   title: z.string().optional(),
   maxDisplay: z.number().min(1).max(20).optional(),
+  sliderAutoAdvanceMs: z.number().min(1000).max(30000).optional(),
 })
 
 export type TestimonialSettingsFormData = z.infer<typeof testimonialSettingsSchema>
@@ -410,16 +368,8 @@ export const siteSettingsSchema = z.object({
   navbarBrandFont: z.string().max(100).nullable().optional(),
   navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
   navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
-  navbarBrandColor: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido')
-    .nullable()
-    .optional(),
-  navbarBrandColorDark: z
-    .string()
-    .regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Color inválido')
-    .nullable()
-    .optional(),
+  navbarBrandColor: zHexColorNullable,
+  navbarBrandColorDark: zHexColorNullable,
   navbarShowBrand: z.boolean().optional(),
 })
 
@@ -428,7 +378,7 @@ export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>
 // Category Display Settings
 export const categorySettingsSchema = z.object({
   showDescription: z.boolean().default(true),
-  gridColumns: z.number().min(1).max(5).default(4),
+  gridColumns: z.number().min(1).max(5).default(3),
   isActive: z.boolean().default(true),
 })
 
@@ -487,23 +437,38 @@ export const pricingTierSchema = z.array(
   })
 )
 
+const slugApiSchema = z
+  .string()
+  .trim()
+  .min(1, 'El slug es obligatorio')
+  .max(160)
+  .regex(/^[a-z0-9-]+$/, 'Slug inválido')
+
+const generatedOnServerSlugSchema = z
+  .union([slugApiSchema, z.literal('')])
+  .optional()
+  .nullable()
+
 export const serviceApiSchema = z.object({
   name: z.string().trim().min(1, 'El nombre es obligatorio').max(150),
-  slug: z
-    .string()
-    .trim()
-    .min(1, 'El slug es obligatorio')
-    .max(160)
-    .regex(/^[a-z0-9-]+$/, 'Slug inválido'),
+  slug: generatedOnServerSlugSchema,
   description: z.string().trim().max(2000).optional().nullable(),
   shortDesc: z.string().trim().max(300).optional().nullable(),
   price: z.number().optional().nullable(),
   priceLabel: z.string().trim().max(50).optional().nullable(),
   currency: z.string().trim().max(10).optional().nullable(),
   duration: z.string().trim().max(100).optional().nullable(),
+  durationMinutes: z.number().int().positive().optional().nullable(),
   imageUrl: z.string().trim().optional().nullable(),
+  galleryUrls: z.array(z.string().trim().min(1)).optional(),
+  videoUrl: z.string().trim().optional().nullable(),
   isActive: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
+  isAvailable: z.boolean().optional(),
+  maxBookingsPerDay: z.number().int().positive().optional().nullable(),
+  advanceNoticeDays: z.number().int().min(0).optional().nullable(),
+  requirements: z.string().trim().max(2000).optional().nullable(),
+  cancellationPolicy: z.string().trim().max(2000).optional().nullable(),
   pricingTiers: z
     .array(
       z.object({
@@ -519,6 +484,7 @@ export const serviceApiSchema = z.object({
 // ── Category (API — extends base categorySchema) ────────────────────────────
 
 export const categoryApiSchema = categorySchema.extend({
+  slug: generatedOnServerSlugSchema,
   isActive: z.boolean().optional(),
 })
 
@@ -545,9 +511,15 @@ export const testimonialApiSchema = z.object({
 
 // ── Bookings ────────────────────────────────────────────────────────────────
 
+const dateTimeStringSchema = z
+  .string()
+  .trim()
+  .min(1, 'La fecha es obligatoria')
+  .refine((value) => !Number.isNaN(new Date(value).getTime()), 'Fecha inválida')
+
 export const bookingApiSchema = z.object({
-  date: z.string().trim().min(1, 'La fecha es obligatoria'),
-  endDate: z.string().trim().optional().nullable(),
+  date: dateTimeStringSchema,
+  endDate: dateTimeStringSchema.optional().nullable(),
   clientName: z.string().trim().min(1, 'El nombre del cliente es obligatorio').max(100),
   clientEmail: z.string().trim().email('Email inválido').max(150),
   clientPhone: z
@@ -658,15 +630,20 @@ export const uploadDeleteSchema = z.object({
 
 // ── Partial schemas for PATCH endpoints ─────────────────────────────────────
 
-export const categoryPatchSchema = categoryApiSchema.partial()
+export const categoryPatchSchema = categorySchema
+  .extend({
+    isActive: z.boolean().optional(),
+  })
+  .partial()
 
 export const servicePatchSchema = serviceApiSchema
   .extend({
+    slug: slugApiSchema.optional(),
     currency: z.string().optional(),
-    durationMinutes: z.number().optional().nullable(),
+    durationMinutes: z.number().int().positive().optional().nullable(),
     isAvailable: z.boolean().optional(),
-    maxBookingsPerDay: z.number().optional().nullable(),
-    advanceNoticeDays: z.number().optional().nullable(),
+    maxBookingsPerDay: z.number().int().positive().optional().nullable(),
+    advanceNoticeDays: z.number().int().min(0).optional().nullable(),
     sortOrder: z.number().optional(),
     requirements: z.string().optional().nullable(),
     cancellationPolicy: z.string().optional().nullable(),

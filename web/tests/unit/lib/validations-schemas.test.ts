@@ -247,7 +247,7 @@ describe('categorySettingsSchema — exhaustive', () => {
     expect(r.success).toBe(true)
     if (r.success) {
       expect(r.data.showDescription).toBe(true)
-      expect(r.data.gridColumns).toBe(4)
+      expect(r.data.gridColumns).toBe(3)
     }
   })
 

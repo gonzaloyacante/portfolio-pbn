@@ -7,6 +7,9 @@ vi.mock('@/lib/db', () => ({
       findMany: vi.fn().mockResolvedValue([]),
       update: vi.fn().mockResolvedValue({}),
     },
+    service: {
+      findFirst: vi.fn().mockResolvedValue({ id: 'svc-1' }),
+    },
   },
 }))
 
@@ -53,8 +56,10 @@ const validBookingData = {
 }
 
 describe('Bookings Actions', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValue({ id: 'svc-1' } as never)
   })
 
   // ─── createBooking ────────────────────────────────

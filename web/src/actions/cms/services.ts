@@ -10,6 +10,7 @@ import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
+import { generateSlug } from '@/lib/string-utils'
 
 // ============================================
 // VALIDATION SCHEMA
@@ -20,11 +21,18 @@ const ServiceSchema = z.object({
   slug: z
     .string()
     .trim()
-    .min(1, 'El slug es obligatorio')
-    .max(160, 'Slug muy largo')
-    .regex(/^[a-z0-9-]+$/, 'Solo letras minúsculas, números y guiones'),
-  description: z.string().trim().max(2000, 'Descripción muy larga').optional(),
-  shortDesc: z.string().trim().max(300, 'Resumen muy largo').optional(),
+    .optional()
+    .nullable()
+    .default('')
+    .transform((value) => value ?? '')
+    .pipe(
+      z
+        .string()
+        .max(160, 'Slug muy largo')
+        .regex(/^[a-z0-9-]*$/, 'Solo letras minúsculas, números y guiones')
+    ),
+  description: z.string().trim().max(2000, 'Descripción muy larga').optional().nullable(),
+  shortDesc: z.string().trim().max(300, 'Resumen muy largo').optional().nullable(),
 
   // Pricing
   price: z.coerce.number().optional().nullable(),
@@ -32,16 +40,16 @@ const ServiceSchema = z.object({
   currency: z.string().default('EUR'),
 
   // Time & Availability
-  duration: z.string().optional(),
+  duration: z.string().optional().nullable(),
   durationMinutes: z.coerce.number().optional().nullable(),
   isAvailable: z.boolean().default(true),
   maxBookingsPerDay: z.coerce.number().int().default(3),
   advanceNoticeDays: z.coerce.number().int().default(2),
 
   // Media
-  imageUrl: z.string().url().optional().or(z.literal('')),
-  galleryUrls: z.string().optional(), // Comma separated URLs
-  videoUrl: z.string().url().optional().or(z.literal('')),
+  imageUrl: z.string().url().optional().or(z.literal('')).nullable(),
+  galleryUrls: z.string().optional().nullable(), // Comma separated URLs
+  videoUrl: z.string().url().optional().or(z.literal('')).nullable(),
 
   // Display
   isActive: z.boolean().default(true),
@@ -49,8 +57,8 @@ const ServiceSchema = z.object({
   sortOrder: z.coerce.number().int().default(0),
 
   // Experience
-  requirements: z.string().optional(),
-  cancellationPolicy: z.string().optional(),
+  requirements: z.string().optional().nullable(),
+  cancellationPolicy: z.string().optional().nullable(),
 })
 
 // ============================================
@@ -74,7 +82,7 @@ export const getActiveServices = unstable_cache(
     }
   },
   [CACHE_TAGS.services],
-  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
+  { revalidate: CACHE_DURATIONS.VERY_LONG, tags: [CACHE_TAGS.services] }
 )
 
 /**
@@ -96,7 +104,7 @@ export const getServiceBySlug = unstable_cache(
     }
   },
   [CACHE_TAGS.services],
-  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.services] }
+  { revalidate: CACHE_DURATIONS.VERY_LONG, tags: [CACHE_TAGS.services] }
 )
 
 /**
@@ -138,30 +146,35 @@ export async function createService(formData: FormData) {
 
   const rawData = {
     name: formData.get('name'),
-    slug: formData.get('slug'),
-    description: formData.get('description'),
-    shortDesc: formData.get('shortDesc'),
+    slug: (() => {
+      const slug = formData.get('slug')
+      if (typeof slug === 'string' && slug.trim() !== '') return slug.trim()
+      const name = formData.get('name')
+      return typeof name === 'string' ? generateSlug(name) : ''
+    })(),
+    description: formData.get('description') || undefined,
+    shortDesc: formData.get('shortDesc') || undefined,
     // Pricing
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
     currency: formData.get('currency') || 'EUR',
     // Time
-    duration: formData.get('duration'),
+    duration: formData.get('duration') || undefined,
     durationMinutes: formData.get('durationMinutes') || null,
     isAvailable: formData.get('isAvailable') === 'true' || formData.get('isAvailable') === 'on',
-    maxBookingsPerDay: formData.get('maxBookingsPerDay'),
-    advanceNoticeDays: formData.get('advanceNoticeDays'),
+    maxBookingsPerDay: formData.get('maxBookingsPerDay') || undefined,
+    advanceNoticeDays: formData.get('advanceNoticeDays') || undefined,
     // Media
-    imageUrl: formData.get('imageUrl'),
-    galleryUrls: formData.get('galleryUrls'),
-    videoUrl: formData.get('videoUrl'),
+    imageUrl: formData.get('imageUrl') || undefined,
+    galleryUrls: formData.get('galleryUrls') || undefined,
+    videoUrl: formData.get('videoUrl') || undefined,
     // Display
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
     sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
     // Experience
-    requirements: formData.get('requirements'),
-    cancellationPolicy: formData.get('cancellationPolicy'),
+    requirements: formData.get('requirements') || undefined,
+    cancellationPolicy: formData.get('cancellationPolicy') || undefined,
   }
 
   const validation = ServiceSchema.safeParse(rawData)
@@ -195,7 +208,7 @@ export async function createService(formData: FormData) {
             .filter(Boolean)
         : []
 
-    const service = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       // Compute next sortOrder atomically if none provided
       let finalSortOrder = data.sortOrder
       if (finalSortOrder === 0) {
@@ -206,13 +219,13 @@ export async function createService(formData: FormData) {
         finalSortOrder = (maxResult._max.sortOrder ?? 0) + 1
       }
 
-      return tx.service.create({
+      const service = await tx.service.create({
         data: {
           name: data.name,
           slug: data.slug,
           description: data.description || null,
           shortDesc: data.shortDesc,
-          price: data.price ? data.price : null,
+          price: data.price ?? null,
           priceLabel: data.priceLabel,
           currency: data.currency,
           duration: data.duration || null,
@@ -231,19 +244,19 @@ export async function createService(formData: FormData) {
         },
         select: { id: true },
       })
-    })
 
-    if (tiersData.length > 0) {
-      await prisma.servicePricingTier.createMany({
-        data: tiersData.map((t, idx) => ({
-          serviceId: service.id,
-          name: t.name,
-          price: t.price,
-          description: t.description ?? null,
-          sortOrder: idx,
-        })),
-      })
-    }
+      if (tiersData.length > 0) {
+        await tx.servicePricingTier.createMany({
+          data: tiersData.map((t, idx) => ({
+            serviceId: service.id,
+            name: t.name,
+            price: t.price,
+            description: t.description ?? null,
+            sortOrder: idx,
+          })),
+        })
+      }
+    })
 
     revalidatePath(ROUTES.admin.services)
     revalidatePath(ROUTES.public.services, 'layout')
@@ -275,30 +288,35 @@ export async function updateService(id: string, formData: FormData) {
 
   const rawData = {
     name: formData.get('name'),
-    slug: formData.get('slug'),
-    description: formData.get('description'),
-    shortDesc: formData.get('shortDesc'),
+    slug: (() => {
+      const slug = formData.get('slug')
+      if (typeof slug === 'string' && slug.trim() !== '') return slug.trim()
+      const name = formData.get('name')
+      return typeof name === 'string' ? generateSlug(name) : ''
+    })(),
+    description: formData.get('description') || undefined,
+    shortDesc: formData.get('shortDesc') || undefined,
     // Pricing
     price: formData.get('price') || null,
     priceLabel: formData.get('priceLabel') || 'desde',
     currency: formData.get('currency') || 'EUR',
     // Time
-    duration: formData.get('duration'),
+    duration: formData.get('duration') || undefined,
     durationMinutes: formData.get('durationMinutes') || null,
     isAvailable: formData.get('isAvailable') === 'true' || formData.get('isAvailable') === 'on',
-    maxBookingsPerDay: formData.get('maxBookingsPerDay'),
-    advanceNoticeDays: formData.get('advanceNoticeDays'),
+    maxBookingsPerDay: formData.get('maxBookingsPerDay') || undefined,
+    advanceNoticeDays: formData.get('advanceNoticeDays') || undefined,
     // Media
-    imageUrl: formData.get('imageUrl'),
-    galleryUrls: formData.get('galleryUrls'),
-    videoUrl: formData.get('videoUrl'),
+    imageUrl: formData.get('imageUrl') || undefined,
+    galleryUrls: formData.get('galleryUrls') || undefined,
+    videoUrl: formData.get('videoUrl') || undefined,
     // Display
     isActive: formData.get('isActive') === 'true' || formData.get('isActive') === 'on',
     isFeatured: formData.get('isFeatured') === 'true' || formData.get('isFeatured') === 'on',
     sortOrder: parseInt(formData.get('sortOrder') as string) || 0,
     // Experience
-    requirements: formData.get('requirements'),
-    cancellationPolicy: formData.get('cancellationPolicy'),
+    requirements: formData.get('requirements') || undefined,
+    cancellationPolicy: formData.get('cancellationPolicy') || undefined,
   }
 
   const validation = ServiceSchema.safeParse(rawData)
@@ -338,45 +356,47 @@ export async function updateService(id: string, formData: FormData) {
       select: { imageUrl: true, galleryUrls: true },
     })
 
-    await prisma.service.update({
-      where: { id },
-      data: {
-        name: data.name,
-        slug: data.slug,
-        description: data.description || null,
-        shortDesc: data.shortDesc,
-        price: data.price ? data.price : null,
-        priceLabel: data.priceLabel,
-        currency: data.currency,
-        duration: data.duration || null,
-        durationMinutes: data.durationMinutes || null,
-        isAvailable: data.isAvailable,
-        maxBookingsPerDay: data.maxBookingsPerDay,
-        advanceNoticeDays: data.advanceNoticeDays,
-        imageUrl: newImageUrl,
-        galleryUrls: galleryList,
-        videoUrl: data.videoUrl || null,
-        isActive: data.isActive,
-        isFeatured: data.isFeatured,
-        sortOrder: data.sortOrder,
-        requirements: data.requirements,
-        cancellationPolicy: data.cancellationPolicy,
-      },
-    })
-
-    // Always sync tiers to match the submitted form state
-    await prisma.servicePricingTier.deleteMany({ where: { serviceId: id } })
-    if (tiersData.length > 0) {
-      await prisma.servicePricingTier.createMany({
-        data: tiersData.map((t, idx) => ({
-          serviceId: id,
-          name: t.name,
-          price: t.price,
-          description: t.description ?? null,
-          sortOrder: idx,
-        })),
+    await prisma.$transaction(async (tx) => {
+      await tx.service.update({
+        where: { id },
+        data: {
+          name: data.name,
+          slug: data.slug,
+          description: data.description || null,
+          shortDesc: data.shortDesc,
+          price: data.price ?? null,
+          priceLabel: data.priceLabel,
+          currency: data.currency,
+          duration: data.duration || null,
+          durationMinutes: data.durationMinutes || null,
+          isAvailable: data.isAvailable,
+          maxBookingsPerDay: data.maxBookingsPerDay,
+          advanceNoticeDays: data.advanceNoticeDays,
+          imageUrl: newImageUrl,
+          galleryUrls: galleryList,
+          videoUrl: data.videoUrl || null,
+          isActive: data.isActive,
+          isFeatured: data.isFeatured,
+          sortOrder: data.sortOrder,
+          requirements: data.requirements,
+          cancellationPolicy: data.cancellationPolicy,
+        },
       })
-    }
+
+      // Always sync tiers to match the submitted form state
+      await tx.servicePricingTier.deleteMany({ where: { serviceId: id } })
+      if (tiersData.length > 0) {
+        await tx.servicePricingTier.createMany({
+          data: tiersData.map((t, idx) => ({
+            serviceId: id,
+            name: t.name,
+            price: t.price,
+            description: t.description ?? null,
+            sortOrder: idx,
+          })),
+        })
+      }
+    })
 
     // Cloud Wipe and permanently delete them from Cloudinary
     if (previousService) {

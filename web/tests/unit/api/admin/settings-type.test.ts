@@ -18,6 +18,7 @@ vi.mock('@/lib/db', () => ({
     siteSettings: { ...mockModel },
     testimonialSettings: { ...mockModel },
     categorySettings: { ...mockModel },
+    servicesPageSettings: { ...mockModel },
   },
 }))
 
@@ -263,6 +264,24 @@ describe('PATCH /api/admin/settings/[type]', () => {
         data: expect.objectContaining({ heroTitle1Text: 'Valid Field' }),
       })
     )
+  })
+
+  it('validates servicesPage settings with its schema', async () => {
+    const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
+    const params = Promise.resolve({ type: 'servicesPage' })
+    const res = await PATCH(
+      makeRequest(`${BASE_URL}/servicesPage`, {
+        method: 'PATCH',
+        body: { listTitleFontSize: 999 },
+      }),
+      { params }
+    )
+    const json = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(json.success).toBe(false)
+    expect(json.error).toBe('Datos inválidos')
+    expect(json.details.listTitleFontSize).toBeDefined()
   })
 
   it('returns 500 on DB error', async () => {

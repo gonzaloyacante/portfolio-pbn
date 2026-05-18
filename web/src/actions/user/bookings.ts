@@ -11,7 +11,10 @@ import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 
 const BookingSchema = z.object({
-  date: z.string().transform((str) => new Date(str)), // Input as ISO string
+  date: z
+    .string()
+    .refine((str) => !Number.isNaN(new Date(str).getTime()), 'Fecha inválida')
+    .transform((str) => new Date(str)), // Input as ISO string
   clientName: z.string().min(1, 'Nombre requerido'),
   clientEmail: z.string().email('Email inválido'),
   clientPhone: z.string().optional(),
@@ -41,6 +44,14 @@ export async function createBooking(formData: FormData) {
   const data = validation.data
 
   try {
+    const service = await prisma.service.findFirst({
+      where: { id: data.serviceId, deletedAt: null, isActive: true, isAvailable: true },
+      select: { id: true },
+    })
+    if (!service) {
+      return { success: false, error: 'Servicio no encontrado o no disponible' }
+    }
+
     const booking = await prisma.booking.create({
       data: {
         date: data.date,

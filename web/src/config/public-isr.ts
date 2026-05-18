@@ -7,7 +7,7 @@
  *   salvo invalidación explícita.
  *
  * Valor único aquí para documentación y referencia. En `page.tsx` públicos usar literal
- * `export const revalidate = 60` (Next 16 exige valor estático analizable; importar esta
+ * `export const revalidate = 3600` (Next 16 exige valor estático analizable; importar esta
  * constante rompe el build con error de segment config).
  */
-export const PUBLIC_SEGMENT_REVALIDATE_SECONDS = 60
+export const PUBLIC_SEGMENT_REVALIDATE_SECONDS = 3600

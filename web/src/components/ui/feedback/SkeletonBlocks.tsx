@@ -31,7 +31,7 @@ export function SkeletonStatCards({ count = 4 }: { count?: number }) {
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="bg-card rounded-[2.5rem] border p-6 shadow-sm">
+        <div key={i} className="bg-card rounded-card border p-6 shadow-sm">
           <Skeleton className="mb-3 h-8 w-8 rounded-lg" />
           <Skeleton className="mb-2 h-7 w-16 rounded" />
           <Skeleton className="h-4 w-24 rounded" />
@@ -43,7 +43,7 @@ export function SkeletonStatCards({ count = 4 }: { count?: number }) {
 
 export function SkeletonAnalyticsChart() {
   return (
-    <div className="bg-card rounded-[2.5rem] border p-6 shadow-sm">
+    <div className="bg-card rounded-card border p-6 shadow-sm">
       <Skeleton className="mb-4 h-5 w-32 rounded" />
       <Skeleton className="h-56 w-full rounded-xl" />
       <div className="mt-4 flex gap-3">
@@ -57,7 +57,7 @@ export function SkeletonAnalyticsChart() {
 
 export function SkeletonSmallCard() {
   return (
-    <div className="bg-card rounded-[2.5rem] border p-6 shadow-sm">
+    <div className="bg-card rounded-card border p-6 shadow-sm">
       <Skeleton className="mb-3 h-5 w-28 rounded" />
       <div className="space-y-2">
         {[100, 85, 70, 55, 40].map((w, i) => (
@@ -73,7 +73,7 @@ export function SkeletonSmallCard() {
 
 export function SkeletonTable({ rows = 6, cols = 4 }: { rows?: number; cols?: number }) {
   return (
-    <div className="bg-card rounded-[2.5rem] border shadow-sm">
+    <div className="bg-card rounded-card border shadow-sm">
       <div className="flex items-center gap-4 border-b px-4 py-3">
         {Array.from({ length: cols }).map((_, i) => (
           <Skeleton

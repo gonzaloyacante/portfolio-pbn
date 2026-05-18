@@ -49,6 +49,18 @@ export async function GET(req: Request) {
     const dateTo = searchParams.get('dateTo')
     const serviceId = searchParams.get('serviceId') ?? undefined
 
+    const parsedDateFrom = dateFrom ? new Date(dateFrom) : null
+    const parsedDateTo = dateTo ? new Date(dateTo) : null
+    if (
+      (parsedDateFrom && Number.isNaN(parsedDateFrom.getTime())) ||
+      (parsedDateTo && Number.isNaN(parsedDateTo.getTime()))
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Rango de fechas inválido' },
+        { status: 400 }
+      )
+    }
+
     const where = {
       deletedAt: null,
       ...(search && {
@@ -61,8 +73,8 @@ export async function GET(req: Request) {
       ...(serviceId && { serviceId }),
       ...((dateFrom || dateTo) && {
         date: {
-          ...(dateFrom && { gte: new Date(dateFrom) }),
-          ...(dateTo && { lte: new Date(dateTo) }),
+          ...(dateFrom && parsedDateFrom && { gte: parsedDateFrom }),
+          ...(dateTo && parsedDateTo && { lte: parsedDateTo }),
         },
       }),
     }
@@ -127,10 +139,31 @@ export async function POST(req: Request) {
       status = 'PENDING',
     } = parsed.data
 
+    const bookingDate = new Date(date)
+    const bookingEndDate = endDate ? new Date(endDate) : null
+
+    if (bookingEndDate && bookingEndDate <= bookingDate) {
+      return NextResponse.json(
+        { success: false, error: 'La fecha de fin debe ser posterior a la fecha de inicio' },
+        { status: 400 }
+      )
+    }
+
+    const service = await prisma.service.findFirst({
+      where: { id: serviceId, deletedAt: null, isActive: true, isAvailable: true },
+      select: { id: true },
+    })
+    if (!service) {
+      return NextResponse.json(
+        { success: false, error: 'Servicio no encontrado o no disponible' },
+        { status: 400 }
+      )
+    }
+
     const booking = await prisma.booking.create({
       data: {
-        date: new Date(date),
-        endDate: endDate ? new Date(endDate) : null,
+        date: bookingDate,
+        endDate: bookingEndDate,
         clientName,
         clientEmail,
         clientPhone,

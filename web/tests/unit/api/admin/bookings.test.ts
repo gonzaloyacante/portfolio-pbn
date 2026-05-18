@@ -9,6 +9,9 @@ vi.mock('@/lib/db', () => ({
       count: vi.fn(),
       create: vi.fn(),
     },
+    service: {
+      findFirst: vi.fn(),
+    },
   },
 }))
 
@@ -219,8 +222,10 @@ describe('GET /api/admin/bookings', () => {
 // ── Tests: POST ───────────────────────────────────────────────────────────────
 
 describe('POST /api/admin/bookings', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValue({ id: 'svc-1' } as any)
   })
 
   it('returns 401 without auth', async () => {
@@ -262,6 +267,40 @@ describe('POST /api/admin/bookings', () => {
     expect(json.success).toBe(false)
     expect(json.error).toBe('Datos inválidos')
     expect(json.details).toBeDefined()
+  })
+
+  it('returns 400 for invalid date before hitting the database', async () => {
+    const { prisma } = await import('@/lib/db')
+
+    const { POST } = await import('@/app/api/admin/bookings/route')
+    const res = await POST(
+      makeRequest(BASE_URL, {
+        method: 'POST',
+        body: { ...validBookingBody, date: 'not-a-date' },
+      })
+    )
+    const json = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(json.success).toBe(false)
+    expect(prisma.booking.create).not.toHaveBeenCalled()
+  })
+
+  it('returns 400 when service is missing or unavailable', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findFirst).mockResolvedValueOnce(null)
+
+    const { POST } = await import('@/app/api/admin/bookings/route')
+    const res = await POST(makeRequest(BASE_URL, { method: 'POST', body: validBookingBody }))
+    const json = await res.json()
+
+    expect(res.status).toBe(400)
+    expect(json.success).toBe(false)
+    expect(prisma.service.findFirst).toHaveBeenCalledWith({
+      where: { id: 'svc-1', deletedAt: null, isActive: true, isAvailable: true },
+      select: { id: true },
+    })
+    expect(prisma.booking.create).not.toHaveBeenCalled()
   })
 
   it('parses totalAmount to float', async () => {

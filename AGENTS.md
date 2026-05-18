@@ -486,6 +486,12 @@ bash app/scripts/distribute-prod.sh
 - URL de descarga desde la API de GitHub Releases
 - `DEPLOY_SECRET_TOKEN` auto-leído de `web/.env`
 
+**Versión en `pubspec.yaml` (`X.Y.Z+N`) — obligatorio entender el tag:**
+
+- El **tag de GitHub** usa solo **`X.Y.Z`** (ej. `app/v1.8.4`), **no** el `+N`. Si solo subís el `versionCode` (`+N`) y dejáis `X.Y.Z` igual que un release ya publicado, el script de prod **falla** (tag duplicado) y la cadena de distribución / detección de updates se rompe.
+- **PROHIBIDO** para la AI y el flujo de release: bump **únicamente** la parte `+N` cuando el cambio en `app/` va encaminado a build/distribución o a que el backend considere un release nuevo. Hay que subir como mínimo el **patch** `Z` de `X.Y.Z` (ej. `1.8.3` → `1.8.4`) **y** incrementar `+N` de forma monótona (versionCode Android).
+- El helper `bump_pubspec_patch` en `app/scripts/lib.sh` incrementa **patch `Z` y `+N`** juntos; no confundir con “solo build number”.
+
 #### Primera configuración (solo una vez)
 
 ```bash
@@ -607,6 +613,7 @@ Al terminar cada fase de implementación:
   - `feat(app): implement Phase 0 - project structure and dependencies`
   - `feat(app): add Google Calendar integration to bookings`
 - **Requisito OBLIGATORIO:** Cada commit que afecte `app/` debe incluir un aumento de versión en `app/pubspec.yaml` (ej.: `version: X.Y.Z+N`). Esto es indispensable para que los scripts de distribución detecten builds nuevas y las notificaciones in-app funcionen. Sin bump de versión, la app no detecta actualizaciones.
+- **PROHIBIDO:** subir **solo** `+N` dejando `X.Y.Z` idéntico a un release ya etiquetado en GitHub (`app/vX.Y.Z`). Los scripts y la API de latest-release pivotan en la versión semántica publicada; el `+N` solo no genera un tag nuevo.
 
 ---
 

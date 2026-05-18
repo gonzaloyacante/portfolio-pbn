@@ -137,6 +137,44 @@ class SettingsRepository {
     return CategoryDisplaySettings.fromJson(_dataMap(resp));
   }
 
+  // ── Services Page Settings ────────────────────────────────────────────────
+
+  Future<ServicesPageSettings> getServicesPageSettings() async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.settingsSection('servicesPage'),
+    );
+    return ServicesPageSettings.fromJson(_dataMap(resp));
+  }
+
+  Future<ServicesPageSettings> updateServicesPageSettings(
+    Map<String, Object?> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.settingsSection('servicesPage'),
+      data: data,
+    );
+    return ServicesPageSettings.fromJson(_dataMap(resp));
+  }
+
+  // ── Testimonial Settings ──────────────────────────────────────────────────
+
+  Future<TestimonialSettings> getTestimonialSettings() async {
+    final resp = await _client.get<Map<String, dynamic>>(
+      Endpoints.settingsSection('testimonial'),
+    );
+    return TestimonialSettings.fromJson(_dataMap(resp));
+  }
+
+  Future<TestimonialSettings> updateTestimonialSettings(
+    Map<String, Object?> data,
+  ) async {
+    final resp = await _client.patch<Map<String, dynamic>>(
+      Endpoints.settingsSection('testimonial'),
+      data: data,
+    );
+    return TestimonialSettings.fromJson(_dataMap(resp));
+  }
+
   // ── Social Links ──────────────────────────────────────────────────────────
 
   Future<List<SocialLink>> getSocialLinks() async {
@@ -153,5 +191,21 @@ class SettingsRepository {
       data: data,
     );
     return SocialLink.fromJson(_dataMap(resp));
+  }
+
+  Future<void> deleteSocialLink({String? id, String? platform}) async {
+    final resp = await _client.delete<Map<String, dynamic>>(
+      Endpoints.socialLinks,
+      data: {
+        if (id != null) 'id': id,
+        if (platform != null) 'platform': platform,
+      },
+    );
+    final success = resp['success'] as bool? ?? false;
+    if (!success) {
+      throw Exception(
+        resp['error']?.toString() ?? 'Error al eliminar red social',
+      );
+    }
   }
 }

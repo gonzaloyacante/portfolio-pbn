@@ -25,14 +25,14 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
         <div className="border-b pb-2">
           <h3 className="text-lg font-semibold">Fuentes Base</h3>
           <p className="text-muted-foreground text-sm">
-            Configuración global de tipografía del sitio
+            Roles globales visibles en toda la web: títulos, cuerpo y detalles decorativos.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           <FontField
             label="Títulos (Heading)"
-            description="Utilizada en encabezados H1-H6. Debe ser legible y con carácter."
+            description="Encabezados H1-H6. Afecta jerarquía, no el texto de párrafo."
             fontKey="headingFont"
             urlKey="headingFontUrl"
             sizeKey="headingFontSize"
@@ -43,7 +43,7 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
           />
           <FontField
             label="Cuerpo (Body)"
-            description="Texto principal. Prioriza la legibilidad (ej. Open Sans, Inter)."
+            description="Párrafos, formularios y lectura larga. Priorizar legibilidad."
             fontKey="bodyFont"
             urlKey="bodyFontUrl"
             sizeKey="bodyFontSize"
@@ -54,7 +54,7 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
           />
           <FontField
             label="Script / Detalles"
-            description="Para acentos decorativos y frases especiales."
+            description="Firma, frases especiales y acentos. No debe usarse para párrafos."
             fontKey="scriptFont"
             urlKey="scriptFontUrl"
             sizeKey="scriptFontSize"
@@ -71,14 +71,14 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
         <div className="border-b pb-2">
           <h3 className="text-lg font-semibold">Identidad de Marca</h3>
           <p className="text-muted-foreground text-sm">
-            Tipografías específicas para logotipos y heros
+            Tipografías específicas para hero y marca. No cambian toda la web.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           <FontField
             label="Marca Principal"
-            description="Para el texto grande 'MAKE-UP' o similar."
+            description="Texto grande de marca, por ejemplo 'MAKE-UP'."
             fontKey="brandFont"
             urlKey="brandFontUrl"
             sizeKey="brandFontSize"
@@ -89,7 +89,7 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
           />
           <FontField
             label="Subtítulo Portfolio"
-            description="Para la palabra 'PORTFOLIO' bajo la marca."
+            description="Subtítulo visual del hero, por ejemplo 'PORTFOLIO'."
             fontKey="portfolioFont"
             urlKey="portfolioFontUrl"
             sizeKey="portfolioFontSize"
@@ -100,7 +100,7 @@ export const ThemeTypographySection: React.FC<ThemeTypographySectionProps> = ({
           />
           <FontField
             label="Firma Personal"
-            description="Tu nombre o firma en secciones 'Sobre Mí'."
+            description="Nombre o firma decorativa en secciones de marca personal."
             fontKey="signatureFont"
             urlKey="signatureFontUrl"
             sizeKey="signatureFontSize"

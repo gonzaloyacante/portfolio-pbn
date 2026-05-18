@@ -10,7 +10,10 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../shared/widgets/widgets.dart';
 import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
+import 'widgets/collapsible_preview.dart';
+import 'widgets/live_navbar_preview.dart';
 import 'widgets/settings_form_card.dart';
+import 'widgets/sticky_preview_column.dart';
 
 part 'settings_site_page_builders.dart';
 
@@ -46,6 +49,7 @@ class _SettingsSitePageState extends ConsumerState<SettingsSitePage> {
   final _navbarBrandColorCtrl = TextEditingController();
   final _navbarBrandColorDarkCtrl = TextEditingController();
   bool _navbarShowBrand = true;
+  bool _isDarkPreview = false;
 
   List<TextEditingController> get _textControllers => [
     _siteNameCtrl,

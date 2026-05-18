@@ -11,6 +11,9 @@ import '../data/settings_model.dart';
 import '../providers/settings_provider.dart';
 import 'widgets/settings_form_card.dart';
 import 'widgets/dynamic_item_list.dart';
+import 'widgets/live_about_preview.dart';
+import 'widgets/collapsible_preview.dart';
+import 'widgets/sticky_preview_column.dart';
 
 part 'settings_about_page_builders.dart';
 
@@ -33,6 +36,8 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   final _bioDescCtrl = TextEditingController();
   final _profileImageCtrl = TextEditingController();
   final _shadowColorCtrl = TextEditingController();
+  final _bioTitleColorCtrl = TextEditingController();
+  final _bioTitleColorDarkCtrl = TextEditingController();
 
   bool _shadowEnabled = true;
   int _shadowBlur = 24;
@@ -40,6 +45,8 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
   int _shadowOx = 0;
   int _shadowOy = 8;
   int _shadowOpacity = 35;
+  String _profileImageShape = 'ellipse';
+  bool _isDarkPreview = false;
 
   final List<TextEditingController> _skillsCtrls = [];
   final List<FocusNode> _skillsFocus = [];
@@ -55,6 +62,8 @@ class _SettingsAboutPageState extends ConsumerState<SettingsAboutPage> {
     _bioDescCtrl,
     _profileImageCtrl,
     _shadowColorCtrl,
+    _bioTitleColorCtrl,
+    _bioTitleColorDarkCtrl,
   ];
 
   @override

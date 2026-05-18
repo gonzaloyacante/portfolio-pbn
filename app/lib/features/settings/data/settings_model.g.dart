@@ -11,6 +11,12 @@ _AboutSettings _$AboutSettingsFromJson(
 ) => _AboutSettings(
   id: json['id'] as String?,
   bioTitle: json['bioTitle'] as String?,
+  bioTitleFont: json['bioTitleFont'] as String?,
+  bioTitleFontUrl: json['bioTitleFontUrl'] as String?,
+  bioTitleFontSize: (json['bioTitleFontSize'] as num?)?.toInt(),
+  bioTitleMobileFontSize: (json['bioTitleMobileFontSize'] as num?)?.toInt(),
+  bioTitleColor: json['bioTitleColor'] as String?,
+  bioTitleColorDark: json['bioTitleColorDark'] as String?,
   bioIntro: json['bioIntro'] as String?,
   bioDescription: json['bioDescription'] as String?,
   profileImageUrl: json['profileImageUrl'] as String?,
@@ -28,6 +34,8 @@ _AboutSettings _$AboutSettingsFromJson(
       ?.toInt(),
   illustrationUrl: json['illustrationUrl'] as String?,
   illustrationAlt: json['illustrationAlt'] as String?,
+  illustrationMaxPx: (json['illustrationMaxPx'] as num?)?.toInt(),
+  illustrationMobileMaxPx: (json['illustrationMobileMaxPx'] as num?)?.toInt(),
   skills:
       (json['skills'] as List<dynamic>?)?.map((e) => e as String).toList() ??
       const [],
@@ -44,6 +52,12 @@ Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
     <String, dynamic>{
       'id': instance.id,
       'bioTitle': instance.bioTitle,
+      'bioTitleFont': instance.bioTitleFont,
+      'bioTitleFontUrl': instance.bioTitleFontUrl,
+      'bioTitleFontSize': instance.bioTitleFontSize,
+      'bioTitleMobileFontSize': instance.bioTitleMobileFontSize,
+      'bioTitleColor': instance.bioTitleColor,
+      'bioTitleColorDark': instance.bioTitleColorDark,
       'bioIntro': instance.bioIntro,
       'bioDescription': instance.bioDescription,
       'profileImageUrl': instance.profileImageUrl,
@@ -58,6 +72,8 @@ Map<String, dynamic> _$AboutSettingsToJson(_AboutSettings instance) =>
       'profileImageShadowOpacity': instance.profileImageShadowOpacity,
       'illustrationUrl': instance.illustrationUrl,
       'illustrationAlt': instance.illustrationAlt,
+      'illustrationMaxPx': instance.illustrationMaxPx,
+      'illustrationMobileMaxPx': instance.illustrationMobileMaxPx,
       'skills': instance.skills,
       'certifications': instance.certifications,
       'yearsExperience': instance.yearsExperience,
@@ -108,17 +124,17 @@ _ThemeSettings _$ThemeSettingsFromJson(Map<String, dynamic> json) =>
     _ThemeSettings(
       id: json['id'] as String?,
       primaryColor: json['primaryColor'] as String? ?? '#6c0a0a',
-      secondaryColor: json['secondaryColor'] as String? ?? '#fce7f3',
+      secondaryColor: json['secondaryColor'] as String? ?? '#ffaadd',
       accentColor: json['accentColor'] as String? ?? '#fff1f9',
-      backgroundColor: json['backgroundColor'] as String? ?? '#fff8fc',
-      textColor: json['textColor'] as String? ?? '#1a050a',
-      cardBgColor: json['cardBgColor'] as String? ?? '#ffffff',
-      darkPrimaryColor: json['darkPrimaryColor'] as String? ?? '#fb7185',
-      darkSecondaryColor: json['darkSecondaryColor'] as String? ?? '#881337',
-      darkAccentColor: json['darkAccentColor'] as String? ?? '#2a1015',
-      darkBackgroundColor: json['darkBackgroundColor'] as String? ?? '#0f0505',
-      darkTextColor: json['darkTextColor'] as String? ?? '#fafafa',
-      darkCardBgColor: json['darkCardBgColor'] as String? ?? '#1c0a0f',
+      backgroundColor: json['backgroundColor'] as String? ?? '#fff1f9',
+      textColor: json['textColor'] as String? ?? '#000000',
+      cardBgColor: json['cardBgColor'] as String? ?? '#fff1f9',
+      darkPrimaryColor: json['darkPrimaryColor'] as String? ?? '#ffaadd',
+      darkSecondaryColor: json['darkSecondaryColor'] as String? ?? '#6c0a0a',
+      darkAccentColor: json['darkAccentColor'] as String? ?? '#6c0a0a',
+      darkBackgroundColor: json['darkBackgroundColor'] as String? ?? '#000000',
+      darkTextColor: json['darkTextColor'] as String? ?? '#fff1f9',
+      darkCardBgColor: json['darkCardBgColor'] as String? ?? '#000000',
       headingFont: json['headingFont'] as String? ?? 'Poppins',
       headingFontUrl: json['headingFontUrl'] as String?,
       headingFontSize: (json['headingFontSize'] as num?)?.toInt() ?? 32,
@@ -279,7 +295,7 @@ _HomeSettings _$HomeSettingsFromJson(
   heroMainImageZIndex: (json['heroMainImageZIndex'] as num?)?.toInt(),
   heroMainImageOffsetX: (json['heroMainImageOffsetX'] as num?)?.toInt(),
   heroMainImageOffsetY: (json['heroMainImageOffsetY'] as num?)?.toInt(),
-  heroImmersiveEnabled: json['heroImmersiveEnabled'] as bool? ?? false,
+  heroImmersiveEnabled: json['heroImmersiveEnabled'] as bool? ?? true,
   heroBackdropMediaKind: json['heroBackdropMediaKind'] as String? ?? 'auto',
   heroBackdropUrl: json['heroBackdropUrl'] as String?,
   heroBackdropPosterUrl: json['heroBackdropPosterUrl'] as String?,
@@ -481,6 +497,60 @@ Map<String, dynamic> _$CategoryDisplaySettingsToJson(
   'id': instance.id,
   'showDescription': instance.showDescription,
   'gridColumns': instance.gridColumns,
+  'isActive': instance.isActive,
+};
+
+_ServicesPageSettings _$ServicesPageSettingsFromJson(
+  Map<String, dynamic> json,
+) => _ServicesPageSettings(
+  id: json['id'] as String?,
+  listTitle: json['listTitle'] as String?,
+  listIntro: json['listIntro'] as String?,
+  listTitleFont: json['listTitleFont'] as String?,
+  listTitleFontUrl: json['listTitleFontUrl'] as String?,
+  listTitleFontSize: (json['listTitleFontSize'] as num?)?.toInt(),
+  listTitleMobileFontSize: (json['listTitleMobileFontSize'] as num?)?.toInt(),
+  listTitleColor: json['listTitleColor'] as String?,
+  listTitleColorDark: json['listTitleColorDark'] as String?,
+  isActive: json['isActive'] as bool? ?? true,
+);
+
+Map<String, dynamic> _$ServicesPageSettingsToJson(
+  _ServicesPageSettings instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'listTitle': instance.listTitle,
+  'listIntro': instance.listIntro,
+  'listTitleFont': instance.listTitleFont,
+  'listTitleFontUrl': instance.listTitleFontUrl,
+  'listTitleFontSize': instance.listTitleFontSize,
+  'listTitleMobileFontSize': instance.listTitleMobileFontSize,
+  'listTitleColor': instance.listTitleColor,
+  'listTitleColorDark': instance.listTitleColorDark,
+  'isActive': instance.isActive,
+};
+
+_TestimonialSettings _$TestimonialSettingsFromJson(Map<String, dynamic> json) =>
+    _TestimonialSettings(
+      id: json['id'] as String?,
+      showOnAbout: json['showOnAbout'] as bool? ?? true,
+      showOnAll: json['showOnAll'] as bool? ?? false,
+      title: json['title'] as String?,
+      maxDisplay: (json['maxDisplay'] as num?)?.toInt() ?? 6,
+      sliderAutoAdvanceMs:
+          (json['sliderAutoAdvanceMs'] as num?)?.toInt() ?? 5000,
+      isActive: json['isActive'] as bool? ?? true,
+    );
+
+Map<String, dynamic> _$TestimonialSettingsToJson(
+  _TestimonialSettings instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'showOnAbout': instance.showOnAbout,
+  'showOnAll': instance.showOnAll,
+  'title': instance.title,
+  'maxDisplay': instance.maxDisplay,
+  'sliderAutoAdvanceMs': instance.sliderAutoAdvanceMs,
   'isActive': instance.isActive,
 };
 

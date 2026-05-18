@@ -63,7 +63,7 @@ export default function CategoryCoverSelector({
             variant="card"
             placeholder="empty"
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
+          <div className="bg-primary/40 absolute inset-0 flex items-center justify-center opacity-0 transition-opacity hover:opacity-100">
             <Button
               variant="destructive"
               size="sm"
@@ -73,7 +73,7 @@ export default function CategoryCoverSelector({
               Quitar Portada
             </Button>
           </div>
-          <div className="bg-primary absolute right-2 bottom-2 rounded-full px-3 py-1 text-xs font-bold text-white shadow-md">
+          <div className="bg-primary text-primary-foreground absolute right-2 bottom-2 rounded-full px-3 py-1 text-xs font-bold shadow-md">
             Portada Actual
           </div>
         </div>

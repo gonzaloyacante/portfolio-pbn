@@ -18,6 +18,7 @@ import {
   normalizePagination,
   normalizeSearchTerm,
 } from '@/lib/search-utils'
+import { generateSlug } from '@/lib/string-utils'
 import { serviceApiSchema } from '@/lib/validations'
 
 const SERVICE_SELECT = {
@@ -115,19 +116,27 @@ export async function POST(req: Request) {
 
     const {
       name,
-      slug,
       description,
       shortDesc,
       price,
       priceLabel = 'desde',
-      currency = 'ARS',
+      currency,
       duration,
+      durationMinutes,
       imageUrl,
+      galleryUrls,
+      videoUrl,
       isActive = true,
       isFeatured = false,
+      isAvailable = true,
+      maxBookingsPerDay,
+      advanceNoticeDays,
+      requirements,
+      cancellationPolicy,
       pricingTiers,
     } = parsed.data as typeof parsed.data & { priceLabel?: string; currency?: string }
 
+    const slug = parsed.data.slug?.trim() || generateSlug(name)
     const resolvedCurrency = currency || 'EUR'
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)
@@ -140,60 +149,75 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: msg }, { status: 409 })
     }
 
-    const agg = await prisma.service.aggregate({ _max: { sortOrder: true } })
-    const nextOrder = (agg._max.sortOrder ?? 0) + 1
-
-    const service = await prisma.service.create({
-      data: {
-        name,
-        slug,
-        description,
-        shortDesc,
-        price: price ?? null,
-        priceLabel,
-        currency: resolvedCurrency,
-        duration,
-        imageUrl,
-        isActive,
-        isFeatured,
-        sortOrder: nextOrder,
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        description: true,
-        shortDesc: true,
-        price: true,
-        priceLabel: true,
-        currency: true,
-        duration: true,
-        durationMinutes: true,
-        imageUrl: true,
-        isActive: true,
-        isFeatured: true,
-        isAvailable: true,
-        maxBookingsPerDay: true,
-        advanceNoticeDays: true,
-        sortOrder: true,
-        requirements: true,
-        cancellationPolicy: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    })
-
-    if (pricingTiers && pricingTiers.length > 0) {
-      await prisma.servicePricingTier.createMany({
-        data: pricingTiers.map((tier, idx) => ({
-          serviceId: service.id,
-          name: tier.name,
-          price: tier.price,
-          description: tier.description ?? null,
-          sortOrder: idx,
-        })),
+    const service = await prisma.$transaction(async (tx) => {
+      const agg = await tx.service.aggregate({
+        _max: { sortOrder: true },
+        where: { deletedAt: null },
       })
-    }
+      const nextOrder = (agg._max.sortOrder ?? 0) + 1
+
+      const created = await tx.service.create({
+        data: {
+          name,
+          slug,
+          description,
+          shortDesc,
+          price: price ?? null,
+          priceLabel,
+          currency: resolvedCurrency,
+          duration,
+          durationMinutes: durationMinutes ?? null,
+          imageUrl,
+          galleryUrls: galleryUrls ?? [],
+          videoUrl,
+          isActive,
+          isFeatured,
+          isAvailable,
+          maxBookingsPerDay: maxBookingsPerDay ?? undefined,
+          advanceNoticeDays: advanceNoticeDays ?? undefined,
+          sortOrder: nextOrder,
+          requirements,
+          cancellationPolicy,
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          description: true,
+          shortDesc: true,
+          price: true,
+          priceLabel: true,
+          currency: true,
+          duration: true,
+          durationMinutes: true,
+          imageUrl: true,
+          isActive: true,
+          isFeatured: true,
+          isAvailable: true,
+          maxBookingsPerDay: true,
+          advanceNoticeDays: true,
+          sortOrder: true,
+          requirements: true,
+          cancellationPolicy: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      })
+
+      if (pricingTiers && pricingTiers.length > 0) {
+        await tx.servicePricingTier.createMany({
+          data: pricingTiers.map((tier, idx) => ({
+            serviceId: created.id,
+            name: tier.name,
+            price: tier.price,
+            description: tier.description ?? null,
+            sortOrder: idx,
+          })),
+        })
+      }
+
+      return created
+    })
 
     try {
       revalidatePath(ROUTES.admin.services)

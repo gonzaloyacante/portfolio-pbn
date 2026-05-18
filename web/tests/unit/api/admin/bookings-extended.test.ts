@@ -12,6 +12,9 @@ vi.mock('@/lib/db', () => ({
       update: vi.fn(),
       updateMany: vi.fn(),
     },
+    service: {
+      findFirst: vi.fn(),
+    },
   },
 }))
 
@@ -56,8 +59,10 @@ const mockBooking = {
   deletedAt: null,
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.clearAllMocks()
+  const { prisma } = await import('@/lib/db')
+  ;(prisma.service.findFirst as ReturnType<typeof vi.fn>).mockResolvedValue({ id: 'svc-1' })
 })
 
 // ============================================

@@ -10,27 +10,42 @@ import { MobileOverridableSlider } from './components/MobileOverridableSlider'
 import type { ViewportMode } from './types'
 
 const MEDIA_KIND = [
-  { value: 'auto', label: 'Auto (detectar)' },
-  { value: 'image', label: 'Imagen / GIF' },
+  { value: 'auto', label: 'Automático (recomendado)' },
+  { value: 'image', label: 'Imagen o GIF' },
   { value: 'video', label: 'Vídeo' },
 ] as const
 
-const SCRIM_EDGE = [
-  { value: 'left', label: 'Izquierda → derecha' },
-  { value: 'right', label: 'Derecha → izquierda' },
-  { value: 'both', label: 'Ambos lados' },
-  { value: 'none', label: 'Sin degradado lateral' },
-] as const
-
 const OBJECT_FIT = [
-  { value: 'cover', label: 'Cubrir (cover)' },
-  { value: 'contain', label: 'Contener (contain)' },
+  { value: 'cover', label: 'Llenar el espacio' },
+  { value: 'contain', label: 'Mostrar completo' },
 ] as const
 
 interface HeroBackdropPropertyEditorProps {
   settings: HomeSettingsData
   onUpdate: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
   viewportMode: ViewportMode
+}
+
+function ShadowSwitchRow({
+  title,
+  description,
+  checked,
+  onCheckedChange,
+}: {
+  title: string
+  description: string
+  checked: boolean
+  onCheckedChange: (value: boolean) => void
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
+      <div className="pr-4">
+        <p className="text-sm font-medium">{title}</p>
+        <p className="text-muted-foreground text-xs">{description}</p>
+      </div>
+      <Switch checked={checked} onCheckedChange={onCheckedChange} />
+    </div>
+  )
 }
 
 export function HeroBackdropPropertyEditor({
@@ -43,62 +58,63 @@ export function HeroBackdropPropertyEditor({
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-(--border) bg-(--muted)/30 p-3 text-xs leading-relaxed text-(--muted-foreground)">
-        El fondo animado viene del archivo (vídeo en loop o GIF desde Cloudinary). No hay efecto al
-        mover el ratón: así funciona igual en móvil y escritorio.
+        El fondo sale del archivo que subas. Puede ser una imagen, un GIF o un vídeo. No responde al
+        ratón para que se vea igual en ordenador y en móvil.
       </div>
 
       <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
         <div>
           <p className="text-sm font-medium">Hero inmersivo</p>
           <p className="text-muted-foreground text-xs">
-            Imagen o vídeo a pantalla detrás del contenido y bajo la barra de navegación
+            Mostrar un fondo a pantalla completa detrás del contenido y por debajo de la barra de
+            navegación
           </p>
         </div>
         <Switch
-          checked={settings.heroImmersiveEnabled ?? false}
+          checked={settings.heroImmersiveEnabled ?? true}
           onCheckedChange={(val: boolean) => onUpdate('heroImmersiveEnabled', val)}
         />
       </div>
 
       <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
         <div>
-          <p className="text-sm font-medium">Mostrar retrato en columna</p>
+          <p className="text-sm font-medium">Mostrar el retrato en la vista previa del editor</p>
           <p className="text-muted-foreground text-xs">
-            Desactivar si el retrato ya va solo en el fondo (vídeo/GIF)
+            En la web pública, cuando el fondo está activo, no se duplica el retrato. Aquí lo sigues
+            viendo para poder editarlo con comodidad.
           </p>
         </div>
         <Switch
-          checked={settings.heroForegroundPortraitShow ?? true}
+          checked={settings.heroForegroundPortraitShow ?? false}
           onCheckedChange={(val: boolean) => onUpdate('heroForegroundPortraitShow', val)}
         />
       </div>
 
       <EditorSelectControl
-        label="Tipo de medio"
+        label="Tipo de fondo"
         value={(settings.heroBackdropMediaKind as string) ?? 'auto'}
         options={MEDIA_KIND.map((o) => ({ value: o.value, label: o.label }))}
         onChange={(val: string) => onUpdate('heroBackdropMediaKind', val)}
       />
 
       <EditorImageUpload
-        label="Archivo de fondo (Cloudinary)"
+        label="Archivo de fondo"
         value={(settings.heroBackdropUrl as string) ?? null}
         onChange={(val: string | null) => onUpdate('heroBackdropUrl', val)}
       />
       <p className="text-muted-foreground -mt-2 text-xs">
-        Sube imagen o GIF, o pega después una URL de vídeo (.mp4 / Cloudinary{' '}
-        <code className="text-[11px]">video/upload</code>) desde tu biblioteca.
+        Puedes subir una imagen o un GIF, o pegar luego el enlace de un vídeo desde tu biblioteca.
       </p>
 
       <Input
-        label="O pegar URL del medio directamente"
+        label="O pegar el enlace del fondo"
         value={(settings.heroBackdropUrl as string) ?? ''}
         onChange={(e) => onUpdate('heroBackdropUrl', e.target.value.trim() || null)}
         placeholder="https://res.cloudinary.com/…"
       />
 
       <Input
-        label="Poster del vídeo (URL imagen, opcional)"
+        label="Imagen de portada del vídeo (opcional)"
         value={(settings.heroBackdropPosterUrl as string) ?? ''}
         onChange={(e) => onUpdate('heroBackdropPosterUrl', e.target.value || null)}
       />
@@ -109,68 +125,105 @@ export function HeroBackdropPropertyEditor({
             checked={settings.heroBackdropLoop ?? true}
             onCheckedChange={(v) => onUpdate('heroBackdropLoop', v)}
           />
-          <span className="text-sm">Loop</span>
+          <span className="text-sm">Repetir automáticamente</span>
         </div>
         <div className="flex items-center gap-2">
           <Switch
             checked={settings.heroBackdropMuted ?? true}
             onCheckedChange={(v) => onUpdate('heroBackdropMuted', v)}
           />
-          <span className="text-sm">Silenciado (recomendado autoplay)</span>
+          <span className="text-sm">Sin sonido</span>
         </div>
         <div className="flex items-center gap-2">
           <Switch
             checked={settings.heroBackdropPlaysInline ?? true}
             onCheckedChange={(v) => onUpdate('heroBackdropPlaysInline', v)}
           />
-          <span className="text-sm">Reproducir inline (iOS)</span>
+          <span className="text-sm">Reproducir dentro de la página</span>
         </div>
       </div>
 
       <EditorSelectControl
-        label="Ajuste del medio"
+        label="Cómo encaja el fondo"
         value={(settings.heroBackdropObjectFit as string) ?? 'cover'}
         options={OBJECT_FIT.map((o) => ({ value: o.value, label: o.label }))}
         onChange={(val: string) => onUpdate('heroBackdropObjectFit', val)}
       />
 
       <Input
-        label="Posición del medio (CSS object-position)"
+        label="Ubicación del fondo"
         value={(settings.heroBackdropObjectPosition as string) ?? ''}
         onChange={(e) => onUpdate('heroBackdropObjectPosition', e.target.value.trim() || 'center')}
-        placeholder="center / 50% 20% / left top"
+        placeholder="Por ejemplo: centro, izquierda arriba, 50% 20%"
       />
 
       <div className="space-y-4 border-t border-(--border) pt-4">
-        <h4 className="text-sm font-semibold">Overrides móvil (opcional)</h4>
+        <h4 className="text-sm font-semibold">Configuración para móvil</h4>
         <EditorImageUpload
-          label="Fondo distinto en móvil"
+          label="Usar otro fondo en móvil"
           value={(settings.heroBackdropMobileUrl as string) ?? null}
           onChange={(val: string | null) => onUpdate('heroBackdropMobileUrl', val)}
         />
         <Input
-          label="Posición en móvil (object-position)"
+          label="Ubicación del fondo en móvil"
           value={(settings.heroBackdropMobileObjectPosition as string) ?? ''}
           onChange={(e) => {
             const t = e.target.value.trim()
             onUpdate('heroBackdropMobileObjectPosition', t === '' ? null : t)
           }}
-          placeholder="Vacío = mismo que escritorio"
+          placeholder="Si lo dejas vacío, usa la misma ubicación que en ordenador"
         />
       </div>
 
       <div className="space-y-4 border-t border-(--border) pt-4">
-        <h4 className="text-sm font-semibold">Degradado lateral (legibilidad textos)</h4>
+        <h4 className="text-sm font-semibold">Sombra para mejorar la lectura</h4>
 
-        <EditorSelectControl
-          label="Dirección / forma"
-          value={(settings.heroScrimEdge as string) ?? 'left'}
-          options={SCRIM_EDGE.map((o) => ({ value: o.value, label: o.label }))}
-          onChange={(val: string) => onUpdate('heroScrimEdge', val)}
-        />
+        <div className="space-y-3">
+          <p className="text-sm font-medium">En ordenador</p>
+          <ShadowSwitchRow
+            title="Mostrar sombra a la izquierda"
+            description="Ayuda a que el texto destaque mejor sobre el lado izquierdo."
+            checked={(settings.heroScrimShowLeft as boolean) ?? true}
+            onCheckedChange={(val) => onUpdate('heroScrimShowLeft', val)}
+          />
+          <ShadowSwitchRow
+            title="Mostrar sombra a la derecha"
+            description="Útil si quieres oscurecer el lado derecho de la imagen."
+            checked={(settings.heroScrimShowRight as boolean) ?? false}
+            onCheckedChange={(val) => onUpdate('heroScrimShowRight', val)}
+          />
+          <ShadowSwitchRow
+            title="Mostrar sombra arriba"
+            description="Sirve para oscurecer la parte superior y mejorar el contraste."
+            checked={(settings.heroScrimShowTop as boolean) ?? true}
+            onCheckedChange={(val) => onUpdate('heroScrimShowTop', val)}
+          />
+        </div>
+
+        <div className="space-y-3 border-t border-(--border) pt-4">
+          <p className="text-sm font-medium">En móvil</p>
+          <ShadowSwitchRow
+            title="Mostrar sombra a la izquierda en móvil"
+            description="Controla la sombra del lado izquierdo cuando la pantalla es pequeña."
+            checked={(settings.heroScrimMobileShowLeft as boolean) ?? false}
+            onCheckedChange={(val) => onUpdate('heroScrimMobileShowLeft', val)}
+          />
+          <ShadowSwitchRow
+            title="Mostrar sombra a la derecha en móvil"
+            description="Controla la sombra del lado derecho cuando la pantalla es pequeña."
+            checked={(settings.heroScrimMobileShowRight as boolean) ?? false}
+            onCheckedChange={(val) => onUpdate('heroScrimMobileShowRight', val)}
+          />
+          <ShadowSwitchRow
+            title="Mostrar sombra arriba en móvil"
+            description="Controla la sombra de la parte superior en móvil."
+            checked={(settings.heroScrimMobileShowTop as boolean) ?? true}
+            onCheckedChange={(val) => onUpdate('heroScrimMobileShowTop', val)}
+          />
+        </div>
 
         <MobileOverridableSlider
-          label="Alcance (% del ancho)"
+          label="Cuánto espacio ocupa"
           desktopKey="heroScrimExtentPercent"
           mobileKey={mobileActive ? 'heroScrimMobileExtentPercent' : undefined}
           settings={settings}
@@ -181,7 +234,7 @@ export function HeroBackdropPropertyEditor({
         />
 
         <MobileOverridableSlider
-          label="Opacidad máxima en el borde"
+          label="Qué tan fuerte se ve"
           desktopKey="heroScrimOpacity"
           mobileKey={mobileActive ? 'heroScrimMobileOpacity' : undefined}
           settings={settings}
@@ -192,7 +245,7 @@ export function HeroBackdropPropertyEditor({
         />
 
         <EditorSliderControl
-          label="Suavidad del degradado"
+          label="Qué tan suave se desvanece"
           value={(settings.heroScrimFeatherPercent as number) ?? 50}
           onChange={(val: number) => onUpdate('heroScrimFeatherPercent', val)}
           min={0}
@@ -201,7 +254,7 @@ export function HeroBackdropPropertyEditor({
         />
 
         <EditorSliderControl
-          label="Tinte uniforme oscuro (toda la escena)"
+          label="Oscurecer toda la imagen"
           value={(settings.heroBackdropTintOpacity as number) ?? 0}
           onChange={(val: number) => onUpdate('heroBackdropTintOpacity', val)}
           min={0}
@@ -210,13 +263,13 @@ export function HeroBackdropPropertyEditor({
         />
 
         <EditorColorControl
-          label="Color del degradado (claro)"
+          label="Color de la sombra"
           value={(settings.heroScrimColor as string) ?? ''}
           onChange={(val: string) => onUpdate('heroScrimColor', val ? val : null)}
         />
 
         <EditorColorControl
-          label="Color del degradado (oscuro)"
+          label="Color de la sombra en modo oscuro"
           value={(settings.heroScrimColorDark as string) ?? ''}
           onChange={(val: string) => onUpdate('heroScrimColorDark', val ? val : null)}
         />

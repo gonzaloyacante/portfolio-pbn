@@ -17,6 +17,7 @@ export interface TestimonialSettingsData {
   showOnAll: boolean
   title: string | null
   maxDisplay: number
+  sliderAutoAdvanceMs: number
 }
 
 /**
@@ -24,8 +25,13 @@ export interface TestimonialSettingsData {
  */
 export const getTestimonialSettings = unstable_cache(
   async (): Promise<TestimonialSettingsData | null> => {
-    const settings = await prisma.testimonialSettings.findFirst()
-    return settings
+    try {
+      const settings = await prisma.testimonialSettings.findFirst()
+      return settings
+    } catch (error) {
+      logger.error('Error getting testimonial settings:', { error })
+      return null
+    }
   },
   [CACHE_TAGS.testimonialSettings],
   { revalidate: CACHE_DURATIONS.LONG, tags: [CACHE_TAGS.testimonialSettings] }
@@ -66,6 +72,7 @@ export async function updateTestimonialSettings(data: TestimonialSettingsFormDat
         showOnAll: (cleanData.showOnAll as boolean) ?? false,
         title: (cleanData.title as string) ?? undefined,
         maxDisplay: (cleanData.maxDisplay as number) ?? 6,
+        sliderAutoAdvanceMs: (cleanData.sliderAutoAdvanceMs as number) ?? 10000,
       }
 
       await prisma.testimonialSettings.create({

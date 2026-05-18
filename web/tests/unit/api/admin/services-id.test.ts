@@ -2,13 +2,29 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
+const serviceMethods = vi.hoisted(() => ({
+  findUnique: vi.fn(),
+  update: vi.fn(),
+}))
+
+const servicePricingTierMethods = vi.hoisted(() => ({
+  deleteMany: vi.fn(),
+  createMany: vi.fn(),
+}))
+
 vi.mock('@/lib/db', () => ({
   prisma: {
-    service: {
-      findUnique: vi.fn(),
-      update: vi.fn(),
-    },
-    servicePricingTier: { deleteMany: vi.fn(), createMany: vi.fn() },
+    service: serviceMethods,
+    servicePricingTier: servicePricingTierMethods,
+    $transaction: vi.fn().mockImplementation(async (fnOrArray: unknown) => {
+      if (typeof fnOrArray === 'function') {
+        return fnOrArray({
+          service: serviceMethods,
+          servicePricingTier: servicePricingTierMethods,
+        })
+      }
+      return Promise.all(fnOrArray as Promise<unknown>[])
+    }),
   },
 }))
 
@@ -249,6 +265,45 @@ describe('PATCH /api/admin/services/[id]', () => {
         data: expect.objectContaining({ price: 25000.99 }),
       })
     )
+  })
+
+  it('updates service and pricing tiers in one transaction', async () => {
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.service.findUnique)
+      .mockResolvedValueOnce(null as any)
+      .mockResolvedValueOnce({ imageUrl: null } as any)
+      .mockResolvedValueOnce(mockServiceFull as any)
+    vi.mocked(prisma.service.update).mockResolvedValueOnce(mockServiceFull as any)
+    vi.mocked(prisma.servicePricingTier.deleteMany).mockResolvedValueOnce({ count: 2 } as any)
+    vi.mocked(prisma.servicePricingTier.createMany).mockResolvedValueOnce({ count: 1 } as any)
+
+    const { PATCH } = await import('@/app/api/admin/services/[id]/route')
+    const params = Promise.resolve({ id: 'svc-1' })
+    await PATCH(
+      makeRequest(BASE_URL, {
+        method: 'PATCH',
+        body: {
+          pricingTiers: [{ name: 'Base', price: '150', description: null }],
+        },
+      }),
+      { params }
+    )
+
+    expect(prisma.$transaction).toHaveBeenCalled()
+    expect(prisma.servicePricingTier.deleteMany).toHaveBeenCalledWith({
+      where: { serviceId: 'svc-1' },
+    })
+    expect(prisma.servicePricingTier.createMany).toHaveBeenCalledWith({
+      data: [
+        {
+          serviceId: 'svc-1',
+          name: 'Base',
+          price: '150',
+          description: null,
+          sortOrder: 0,
+        },
+      ],
+    })
   })
 
   it('returns 500 on DB error', async () => {

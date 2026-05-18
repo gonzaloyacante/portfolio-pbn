@@ -1,10 +1,13 @@
 import { prisma } from '@/lib/db'
+import { cn } from '@/lib/utils'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { WordReveal } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import { FontLoader } from './FontLoader'
 import FeaturedImagesGallery from './FeaturedImagesGallery'
+import { unstable_cache } from 'next/cache'
+import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
 interface FeaturedCategoriesProps {
   title?: string | null
@@ -14,7 +17,24 @@ interface FeaturedCategoriesProps {
   titleFontSize?: number | null
   titleColor?: string | null
   titleColorDark?: string | null
+  /** Hero inmersivo: sin tapar el fondo que continúa bajo el bloque */
+  ambientUnderlay?: boolean
 }
+
+const getFeaturedCategoryImages = unstable_cache(
+  async (count: number) =>
+    prisma.categoryImage.findMany({
+      where: { isFeatured: true, category: { isActive: true, deletedAt: null } },
+      include: { category: { select: { name: true } } },
+      orderBy: { order: 'asc' },
+      take: count,
+    }),
+  ['home-featured-category-images'],
+  {
+    revalidate: CACHE_DURATIONS.VERY_LONG,
+    tags: [CACHE_TAGS.categories, CACHE_TAGS.categoryImages],
+  }
+)
 
 export default async function FeaturedCategories({
   title,
@@ -24,13 +44,13 @@ export default async function FeaturedCategories({
   titleFontSize,
   titleColor,
   titleColorDark,
+  ambientUnderlay = false,
 }: FeaturedCategoriesProps) {
-  const featuredImages = await prisma.categoryImage.findMany({
-    where: { isFeatured: true, category: { isActive: true, deletedAt: null } },
-    include: { category: { select: { name: true } } },
-    orderBy: { order: 'asc' },
-    take: count,
-  })
+  // Public web colors are fixed; CMS title colors stay disabled here for now.
+  void titleColor
+  void titleColorDark
+
+  const featuredImages = await getFeaturedCategoryImages(count)
 
   if (featuredImages.length === 0) return null
 
@@ -45,36 +65,30 @@ export default async function FeaturedCategories({
   const fontsToLoad = titleFont ? [titleFont] : []
 
   return (
-    <section className="bg-(--background) py-12 transition-colors duration-500 lg:py-20">
+    <section
+      className={cn(
+        'relative z-10 py-12 transition-colors duration-500 lg:py-20',
+        ambientUnderlay ? 'public-home-featured-section' : 'public-portfolio-page'
+      )}
+    >
       {fontsToLoad.length > 0 && <FontLoader fonts={fontsToLoad} />}
       <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
         {/* Header */}
         <div className="mb-12 flex flex-col items-end justify-between gap-6 sm:flex-row sm:items-end">
           <div className="w-full sm:max-w-xl">
             <h2
-              className="font-heading text-3xl font-bold text-(--foreground) sm:text-4xl lg:text-5xl"
+              className="public-home-featured-title font-heading text-3xl font-bold sm:text-4xl lg:text-5xl"
               style={{
                 fontFamily: titleFontUrl ? titleFont! : undefined,
                 fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
               }}
             >
-              <WordReveal
-                text={title || 'Imágenes Destacadas'}
-                as="span"
-                className="dark:hidden"
-                style={{ color: titleColor || 'inherit' }}
-              />
-              <WordReveal
-                text={title || 'Imágenes Destacadas'}
-                as="span"
-                className="hidden dark:inline"
-                style={{ color: titleColorDark || titleColor || 'inherit' }}
-              />
+              <WordReveal text={title || 'Imágenes Destacadas'} as="span" />
             </h2>
           </div>
           <Link
             href={ROUTES.public.portfolio}
-            className="group flex items-center gap-2 text-(--primary) underline-offset-4 transition-colors hover:text-(--primary)/80 hover:underline"
+            className="public-home-featured-link group flex items-center gap-2 underline-offset-4 transition-opacity hover:underline hover:opacity-80"
           >
             <span className="font-medium">Ver todo el portfolio</span>
             <ArrowRight size={20} className="transition-transform group-hover:translate-x-1" />

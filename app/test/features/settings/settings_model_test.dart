@@ -101,8 +101,21 @@ void main() {
     test('borderRadius defaults to 40', () => expect(s.borderRadius, 40));
     test('isActive defaults to true', () => expect(s.isActive, true));
     test(
-      'darkPrimaryColor defaults to #fb7185',
-      () => expect(s.darkPrimaryColor, '#fb7185'),
+      'secondaryColor defaults to #ffaadd',
+      () => expect(s.secondaryColor, '#ffaadd'),
+    );
+    test(
+      'backgroundColor defaults to #fff1f9',
+      () => expect(s.backgroundColor, '#fff1f9'),
+    );
+    test('textColor defaults to #000000', () => expect(s.textColor, '#000000'));
+    test(
+      'darkPrimaryColor defaults to #ffaadd',
+      () => expect(s.darkPrimaryColor, '#ffaadd'),
+    );
+    test(
+      'darkSecondaryColor defaults to #6c0a0a',
+      () => expect(s.darkSecondaryColor, '#6c0a0a'),
     );
   });
 
@@ -162,6 +175,40 @@ void main() {
     test(
       'maintenanceMessage stored',
       () => expect(s.maintenanceMessage, 'Volvemos pronto.'),
+    );
+  });
+
+  // ── ServicesPageSettings ───────────────────────────────────────────────
+
+  group('ServicesPageSettings — defaults', () {
+    const s = ServicesPageSettings();
+
+    test('listTitle defaults to null', () => expect(s.listTitle, isNull));
+    test('listIntro defaults to null', () => expect(s.listIntro, isNull));
+    test('isActive defaults to true', () => expect(s.isActive, true));
+    test(
+      'listTitleFontSize defaults to null',
+      () => expect(s.listTitleFontSize, isNull),
+    );
+  });
+
+  group('ServicesPageSettings — with values', () {
+    const s = ServicesPageSettings(
+      listTitle: 'Mis Servicios',
+      listIntro: 'Servicios para novias y editorial.',
+      listTitleColor: '#6C0A0A',
+      listTitleMobileFontSize: 28,
+    );
+
+    test('stores listTitle', () => expect(s.listTitle, 'Mis Servicios'));
+    test(
+      'stores listIntro',
+      () => expect(s.listIntro, 'Servicios para novias y editorial.'),
+    );
+    test('stores listTitleColor', () => expect(s.listTitleColor, '#6C0A0A'));
+    test(
+      'stores listTitleMobileFontSize',
+      () => expect(s.listTitleMobileFontSize, 28),
     );
   });
 

@@ -12,6 +12,12 @@ abstract class AboutSettings with _$AboutSettings {
   const factory AboutSettings({
     String? id,
     String? bioTitle,
+    String? bioTitleFont,
+    String? bioTitleFontUrl,
+    int? bioTitleFontSize,
+    int? bioTitleMobileFontSize,
+    String? bioTitleColor,
+    String? bioTitleColorDark,
     String? bioIntro,
     String? bioDescription,
     String? profileImageUrl,
@@ -26,6 +32,8 @@ abstract class AboutSettings with _$AboutSettings {
     int? profileImageShadowOpacity,
     String? illustrationUrl,
     String? illustrationAlt,
+    int? illustrationMaxPx,
+    int? illustrationMobileMaxPx,
     @Default([]) List<String> skills,
     @Default([]) List<String> certifications,
     int? yearsExperience,
@@ -71,18 +79,18 @@ abstract class ThemeSettings with _$ThemeSettings {
     String? id,
     // Light mode — matches AppColors & design-tokens.ts BRAND values
     @Default('#6c0a0a') String primaryColor,
-    @Default('#fce7f3') String secondaryColor,
+    @Default('#ffaadd') String secondaryColor,
     @Default('#fff1f9') String accentColor,
-    @Default('#fff8fc') String backgroundColor,
-    @Default('#1a050a') String textColor,
-    @Default('#ffffff') String cardBgColor,
+    @Default('#fff1f9') String backgroundColor,
+    @Default('#000000') String textColor,
+    @Default('#fff1f9') String cardBgColor,
     // Dark mode — matches AppColors darkXxx values
-    @Default('#fb7185') String darkPrimaryColor,
-    @Default('#881337') String darkSecondaryColor,
-    @Default('#2a1015') String darkAccentColor,
-    @Default('#0f0505') String darkBackgroundColor,
-    @Default('#fafafa') String darkTextColor,
-    @Default('#1c0a0f') String darkCardBgColor,
+    @Default('#ffaadd') String darkPrimaryColor,
+    @Default('#6c0a0a') String darkSecondaryColor,
+    @Default('#6c0a0a') String darkAccentColor,
+    @Default('#000000') String darkBackgroundColor,
+    @Default('#fff1f9') String darkTextColor,
+    @Default('#000000') String darkCardBgColor,
     // Typography — Base
     @Default('Poppins') String headingFont,
     String? headingFontUrl,
@@ -202,7 +210,7 @@ abstract class HomeSettings with _$HomeSettings {
     int? heroMainImageOffsetX,
     int? heroMainImageOffsetY,
 
-    @Default(false) bool heroImmersiveEnabled,
+    @Default(true) bool heroImmersiveEnabled,
     @Default('auto') String heroBackdropMediaKind,
     String? heroBackdropUrl,
     String? heroBackdropPosterUrl,
@@ -296,6 +304,45 @@ abstract class CategoryDisplaySettings with _$CategoryDisplaySettings {
 
   factory CategoryDisplaySettings.fromJson(Map<String, dynamic> json) =>
       _$CategoryDisplaySettingsFromJson(json);
+}
+
+// ── Services Page Settings ──────────────────────────────────────────────────
+
+@freezed
+abstract class ServicesPageSettings with _$ServicesPageSettings {
+  const factory ServicesPageSettings({
+    String? id,
+    String? listTitle,
+    String? listIntro,
+    String? listTitleFont,
+    String? listTitleFontUrl,
+    int? listTitleFontSize,
+    int? listTitleMobileFontSize,
+    String? listTitleColor,
+    String? listTitleColorDark,
+    @Default(true) bool isActive,
+  }) = _ServicesPageSettings;
+
+  factory ServicesPageSettings.fromJson(Map<String, dynamic> json) =>
+      _$ServicesPageSettingsFromJson(json);
+}
+
+// ── Testimonial Settings ─────────────────────────────────────────────────────
+
+@freezed
+abstract class TestimonialSettings with _$TestimonialSettings {
+  const factory TestimonialSettings({
+    String? id,
+    @Default(true) bool showOnAbout,
+    @Default(false) bool showOnAll,
+    String? title,
+    @Default(6) int maxDisplay,
+    @Default(5000) int sliderAutoAdvanceMs,
+    @Default(true) bool isActive,
+  }) = _TestimonialSettings;
+
+  factory TestimonialSettings.fromJson(Map<String, dynamic> json) =>
+      _$TestimonialSettingsFromJson(json);
 }
 
 // ── Social Link ───────────────────────────────────────────────────────────────

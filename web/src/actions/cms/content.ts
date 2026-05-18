@@ -180,6 +180,14 @@ export async function addCategoryImages(
   await checkApiRateLimit()
 
   try {
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, deletedAt: null },
+      select: { id: true },
+    })
+    if (!category) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
+
     const currentCount = await prisma.categoryImage.count({ where: { categoryId } })
     const uploaded = await Promise.all(
       files.map(async (file, i) => {
@@ -294,10 +302,27 @@ export async function reorderCategoryImages(
   await checkApiRateLimit()
 
   try {
+    const category = await prisma.category.findFirst({
+      where: { id: categoryId, deletedAt: null },
+      select: { id: true },
+    })
+    if (!category) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
+
+    const targetIds = Array.from(new Set(items.map((item) => item.id)))
+    const existingImages = await prisma.categoryImage.findMany({
+      where: { categoryId, id: { in: targetIds } },
+      select: { id: true },
+    })
+    if (existingImages.length !== targetIds.length) {
+      return { success: false, error: 'Una o más imágenes no pertenecen a la categoría' }
+    }
+
     await prisma.$transaction(
       items.map((item) =>
-        prisma.categoryImage.update({
-          where: { id: item.id },
+        prisma.categoryImage.updateMany({
+          where: { id: item.id, categoryId },
           data: { order: item.order },
         })
       )

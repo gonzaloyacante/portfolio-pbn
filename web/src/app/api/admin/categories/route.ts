@@ -11,6 +11,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { generateSlug } from '@/lib/string-utils'
 import {
   buildPaginationMeta,
   normalizeBooleanParam,
@@ -107,7 +108,8 @@ export async function POST(req: Request) {
       )
     }
 
-    const { name, slug, description, isActive = true } = parsed.data
+    const { name, description, isActive = true } = parsed.data
+    const slug = parsed.data.slug?.trim() || generateSlug(name)
     const coverImageUrl = parsed.data.coverImageUrl ?? undefined
 
     // Slug único — verificar en TODOS los registros (incluyendo soft-deleted)

@@ -155,6 +155,18 @@ void main() {
     test('defaults primaryColor to "#6c0a0a"', () {
       expect(ThemeSettings.fromJson({}).primaryColor, '#6c0a0a');
     });
+    test('defaults secondaryColor to "#ffaadd"', () {
+      expect(ThemeSettings.fromJson({}).secondaryColor, '#ffaadd');
+    });
+    test('defaults backgroundColor to "#fff1f9"', () {
+      expect(ThemeSettings.fromJson({}).backgroundColor, '#fff1f9');
+    });
+    test('defaults textColor to "#000000"', () {
+      expect(ThemeSettings.fromJson({}).textColor, '#000000');
+    });
+    test('defaults darkPrimaryColor to "#ffaadd"', () {
+      expect(ThemeSettings.fromJson({}).darkPrimaryColor, '#ffaadd');
+    });
     test('defaults headingFont to "Poppins"', () {
       expect(ThemeSettings.fromJson({}).headingFont, 'Poppins');
     });
@@ -261,6 +273,48 @@ void main() {
     });
     test('default instances are equal', () {
       expect(const SiteSettings(), const SiteSettings());
+    });
+  });
+
+  // ── ServicesPageSettings ───────────────────────────────────────────────
+
+  group('ServicesPageSettings.fromJson', () {
+    test('empty JSON keeps nullable content fields', () {
+      final s = ServicesPageSettings.fromJson({});
+      expect(s.id, isNull);
+      expect(s.listTitle, isNull);
+      expect(s.listIntro, isNull);
+      expect(s.listTitleColor, isNull);
+    });
+
+    test('defaults isActive to true', () {
+      expect(ServicesPageSettings.fromJson({}).isActive, isTrue);
+    });
+
+    test('parses title and intro fields', () {
+      final s = ServicesPageSettings.fromJson({
+        'listTitle': 'Servicios',
+        'listIntro': 'Producción, novias y editorial.',
+      });
+      expect(s.listTitle, 'Servicios');
+      expect(s.listIntro, 'Producción, novias y editorial.');
+    });
+
+    test('parses typography and color fields', () {
+      final s = ServicesPageSettings.fromJson({
+        'listTitleFont': 'Poppins',
+        'listTitleFontUrl': 'https://fonts.example/poppins',
+        'listTitleFontSize': 36,
+        'listTitleMobileFontSize': 28,
+        'listTitleColor': '#6C0A0A',
+        'listTitleColorDark': '#FB7185',
+      });
+      expect(s.listTitleFont, 'Poppins');
+      expect(s.listTitleFontUrl, 'https://fonts.example/poppins');
+      expect(s.listTitleFontSize, 36);
+      expect(s.listTitleMobileFontSize, 28);
+      expect(s.listTitleColor, '#6C0A0A');
+      expect(s.listTitleColorDark, '#FB7185');
     });
   });
 }

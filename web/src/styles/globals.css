@@ -28,6 +28,10 @@
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
 
+  /* Radius */
+  --radius-card: 2.5rem;
+  --radius-jumbo: 3rem;
+
   /* Fonts */
   --font-heading: 'Poppins', sans-serif;
   --font-script: 'Great Vibes', cursive;
@@ -162,6 +166,12 @@
   h5,
   h6 {
     @apply font-heading;
+  }
+  .maplibregl-popup-content {
+    @apply bg-transparent! shadow-none! p-0! rounded-none!;
+  }
+  .maplibregl-popup-tip {
+    @apply hidden!;
   }
 }
 

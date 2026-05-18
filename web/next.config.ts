@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next'
-import withPWA from '@ducanh2912/next-pwa'
 import { withSentryConfig } from '@sentry/nextjs'
 
 // @next/bundle-analyzer is a devDependency — not available in production Vercel builds.
@@ -110,16 +109,16 @@ function buildSecurityHeaders(): { key: string; value: string }[] {
         // Styles: inline (Next.js/Tailwind) + Google Fonts
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
         // Images: Cloudinary, Unsplash, placehold.co, data URIs, blobs, GA pixel, Instagram
-        "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://cdnjs.cloudflare.com https://*.cdninstagram.com https://www.instagram.com/",
+        "img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://placehold.co https://www.googletagmanager.com https://www.google-analytics.com https://region1.google-analytics.com https://cdnjs.cloudflare.com https://*.cdninstagram.com https://www.instagram.com/ https://*.basemaps.cartocdn.com https://basemaps.cartocdn.com",
         // Fonts: self, data URIs, Google Fonts CDN
-        "font-src 'self' data: https://fonts.gstatic.com",
+        "font-src 'self' data: https://fonts.gstatic.com https://*.basemaps.cartocdn.com",
         // Connect: API calls, Cloudinary uploads, Sentry, Google Fonts, Analytics, Vercel Live, IP Geolocation, reCAPTCHA, Instagram oEmbed
-        "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/ https://www.instagram.com/ https://graph.instagram.com/",
+        "connect-src 'self' https://res.cloudinary.com https://api.cloudinary.com https://sentry.io https://o4504953756499968.ingest.sentry.io https://fonts.googleapis.com https://fonts.gstatic.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://stats.g.doubleclick.net https://vercel.live wss://*.vercel.live https://get.geojs.io https://www.google.com/recaptcha/ https://www.gstatic.com/ https://www.instagram.com/ https://graph.instagram.com/ https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com",
         // Media: Cloudinary (videos)
         "media-src 'self' https://res.cloudinary.com",
         // Objects: none (no Flash/plugins)
         "object-src 'none'",
-        // Workers: Next.js + PWA service worker
+        // Workers: Next.js inline workers
         "worker-src 'self' blob:",
         // Frames: Vercel Live (preview comments toolbar), reCAPTCHA, Instagram embed
         'frame-src https://vercel.live https://www.google.com/recaptcha/ https://recaptcha.google.com/ https://www.instagram.com/',
@@ -257,55 +256,8 @@ const nextConfig: NextConfig = {
   },
 }
 
-// Wrap with PWA plugin
-const pwaConfig = withPWA({
-  dest: 'public',
-  register: true,
-  disable: process.env.NODE_ENV === 'development',
-  fallbacks: {
-    document: '/offline',
-  },
-  workboxOptions: {
-    runtimeCaching: [
-      {
-        urlPattern: /^https:\/\/res\.cloudinary\.com\/.*/i,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'cloudinary-images',
-          expiration: {
-            maxEntries: 100,
-            maxAgeSeconds: 60 * 60 * 24, // 1 day
-          },
-        },
-      },
-      {
-        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-        handler: 'CacheFirst',
-        options: {
-          cacheName: 'google-fonts-stylesheets',
-          expiration: {
-            maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-          },
-        },
-      },
-      {
-        urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|avif)$/i,
-        handler: 'StaleWhileRevalidate',
-        options: {
-          cacheName: 'static-images',
-          expiration: {
-            maxEntries: 64,
-            maxAgeSeconds: 60 * 60 * 24, // 1 day
-          },
-        },
-      },
-    ],
-  },
-})(withBundleAnalyzer(nextConfig))
-
 // Wrap with Sentry
-export default withSentryConfig(pwaConfig, {
+export default withSentryConfig(withBundleAnalyzer(nextConfig), {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 

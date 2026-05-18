@@ -287,8 +287,8 @@ extension _SettingsHomeSections on _SettingsHomePageState {
       leadingIcon: Icons.wallpaper_outlined,
       children: [
         Text(
-          'Imagen, GIF o vídeo detrás del contenido (sin parallax). '
-          'URL vídeo Cloudinary o .mp4 pegado; poster opcional.',
+          'Imagen, GIF o vídeo detrás del contenido. En la web, con inmersivo y '
+          'destacados, el fondo puede continuar bajo el bloque con un leve efecto al scroll.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             color: cs.onSurface.withValues(alpha: 0.65),
           ),
@@ -300,7 +300,7 @@ extension _SettingsHomeSections on _SettingsHomePageState {
           subtitle: const Text(
             'Medio a pantalla detrás del hero y bajo la barra (como la web)',
           ),
-          value: (_vals['heroImmersiveEnabled'] as bool?) ?? false,
+          value: (_vals['heroImmersiveEnabled'] as bool?) ?? true,
           onChanged: (v) => _rebuild(() {
             _vals['heroImmersiveEnabled'] = v;
             _isDirty = true;
@@ -310,9 +310,10 @@ extension _SettingsHomeSections on _SettingsHomePageState {
           contentPadding: EdgeInsets.zero,
           title: const Text('Mostrar retrato en columna'),
           subtitle: const Text(
-            'Desactivar si el retrato va solo en el vídeo/GIF de fondo',
+            'En la web pública con hero inmersivo no se duplica el retrato. '
+            'Valor guardado por compatibilidad con otros clientes.',
           ),
-          value: (_vals['heroForegroundPortraitShow'] as bool?) ?? true,
+          value: (_vals['heroForegroundPortraitShow'] as bool?) ?? false,
           onChanged: (v) => _rebuild(() {
             _vals['heroForegroundPortraitShow'] = v;
             _isDirty = true;

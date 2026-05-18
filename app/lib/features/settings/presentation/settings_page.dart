@@ -33,7 +33,7 @@ class SettingsPage extends ConsumerWidget {
     SettingsItem(
       icon: Icons.palette_outlined,
       title: 'Tema',
-      subtitle: 'Colores y tipografías del sitio',
+      subtitle: 'Capas visuales, tipografías y preview del sitio',
       routeName: RouteNames.settingsTheme,
     ),
     SettingsItem(
@@ -47,6 +47,24 @@ class SettingsPage extends ConsumerWidget {
       title: 'Redes Sociales',
       subtitle: 'Instagram, TikTok, YouTube, WhatsApp…',
       routeName: RouteNames.settingsSocial,
+    ),
+    SettingsItem(
+      icon: Icons.format_quote_outlined,
+      title: 'Testimonios',
+      subtitle: 'Visibilidad, máximo, velocidad del slider',
+      routeName: RouteNames.settingsTestimonial,
+    ),
+    SettingsItem(
+      icon: Icons.miscellaneous_services_outlined,
+      title: 'Página de Servicios',
+      subtitle: 'Título, intro y tipografía de /servicios',
+      routeName: RouteNames.settingsServicesPage,
+    ),
+    SettingsItem(
+      icon: Icons.category_outlined,
+      title: 'Categorías',
+      subtitle: 'Columnas del grid y visibilidad',
+      routeName: RouteNames.settingsCategory,
     ),
   ];
 

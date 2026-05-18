@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AboutSettings {
 
- String? get id; String? get bioTitle; String? get bioIntro; String? get bioDescription; String? get profileImageUrl; String? get profileImageAlt; String? get profileImageShape; bool get profileImageShadowEnabled; int? get profileImageShadowBlur; int? get profileImageShadowSpread; int? get profileImageShadowOffsetX; int? get profileImageShadowOffsetY; String? get profileImageShadowColor; int? get profileImageShadowOpacity; String? get illustrationUrl; String? get illustrationAlt; List<String> get skills; List<String> get certifications; int? get yearsExperience; bool get isActive;
+ String? get id; String? get bioTitle; String? get bioTitleFont; String? get bioTitleFontUrl; int? get bioTitleFontSize; int? get bioTitleMobileFontSize; String? get bioTitleColor; String? get bioTitleColorDark; String? get bioIntro; String? get bioDescription; String? get profileImageUrl; String? get profileImageAlt; String? get profileImageShape; bool get profileImageShadowEnabled; int? get profileImageShadowBlur; int? get profileImageShadowSpread; int? get profileImageShadowOffsetX; int? get profileImageShadowOffsetY; String? get profileImageShadowColor; int? get profileImageShadowOpacity; String? get illustrationUrl; String? get illustrationAlt; int? get illustrationMaxPx; int? get illustrationMobileMaxPx; List<String> get skills; List<String> get certifications; int? get yearsExperience; bool get isActive;
 /// Create a copy of AboutSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AboutSettingsCopyWith<AboutSettings> get copyWith => _$AboutSettingsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AboutSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.bioTitle, bioTitle) || other.bioTitle == bioTitle)&&(identical(other.bioIntro, bioIntro) || other.bioIntro == bioIntro)&&(identical(other.bioDescription, bioDescription) || other.bioDescription == bioDescription)&&(identical(other.profileImageUrl, profileImageUrl) || other.profileImageUrl == profileImageUrl)&&(identical(other.profileImageAlt, profileImageAlt) || other.profileImageAlt == profileImageAlt)&&(identical(other.profileImageShape, profileImageShape) || other.profileImageShape == profileImageShape)&&(identical(other.profileImageShadowEnabled, profileImageShadowEnabled) || other.profileImageShadowEnabled == profileImageShadowEnabled)&&(identical(other.profileImageShadowBlur, profileImageShadowBlur) || other.profileImageShadowBlur == profileImageShadowBlur)&&(identical(other.profileImageShadowSpread, profileImageShadowSpread) || other.profileImageShadowSpread == profileImageShadowSpread)&&(identical(other.profileImageShadowOffsetX, profileImageShadowOffsetX) || other.profileImageShadowOffsetX == profileImageShadowOffsetX)&&(identical(other.profileImageShadowOffsetY, profileImageShadowOffsetY) || other.profileImageShadowOffsetY == profileImageShadowOffsetY)&&(identical(other.profileImageShadowColor, profileImageShadowColor) || other.profileImageShadowColor == profileImageShadowColor)&&(identical(other.profileImageShadowOpacity, profileImageShadowOpacity) || other.profileImageShadowOpacity == profileImageShadowOpacity)&&(identical(other.illustrationUrl, illustrationUrl) || other.illustrationUrl == illustrationUrl)&&(identical(other.illustrationAlt, illustrationAlt) || other.illustrationAlt == illustrationAlt)&&const DeepCollectionEquality().equals(other.skills, skills)&&const DeepCollectionEquality().equals(other.certifications, certifications)&&(identical(other.yearsExperience, yearsExperience) || other.yearsExperience == yearsExperience)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AboutSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.bioTitle, bioTitle) || other.bioTitle == bioTitle)&&(identical(other.bioTitleFont, bioTitleFont) || other.bioTitleFont == bioTitleFont)&&(identical(other.bioTitleFontUrl, bioTitleFontUrl) || other.bioTitleFontUrl == bioTitleFontUrl)&&(identical(other.bioTitleFontSize, bioTitleFontSize) || other.bioTitleFontSize == bioTitleFontSize)&&(identical(other.bioTitleMobileFontSize, bioTitleMobileFontSize) || other.bioTitleMobileFontSize == bioTitleMobileFontSize)&&(identical(other.bioTitleColor, bioTitleColor) || other.bioTitleColor == bioTitleColor)&&(identical(other.bioTitleColorDark, bioTitleColorDark) || other.bioTitleColorDark == bioTitleColorDark)&&(identical(other.bioIntro, bioIntro) || other.bioIntro == bioIntro)&&(identical(other.bioDescription, bioDescription) || other.bioDescription == bioDescription)&&(identical(other.profileImageUrl, profileImageUrl) || other.profileImageUrl == profileImageUrl)&&(identical(other.profileImageAlt, profileImageAlt) || other.profileImageAlt == profileImageAlt)&&(identical(other.profileImageShape, profileImageShape) || other.profileImageShape == profileImageShape)&&(identical(other.profileImageShadowEnabled, profileImageShadowEnabled) || other.profileImageShadowEnabled == profileImageShadowEnabled)&&(identical(other.profileImageShadowBlur, profileImageShadowBlur) || other.profileImageShadowBlur == profileImageShadowBlur)&&(identical(other.profileImageShadowSpread, profileImageShadowSpread) || other.profileImageShadowSpread == profileImageShadowSpread)&&(identical(other.profileImageShadowOffsetX, profileImageShadowOffsetX) || other.profileImageShadowOffsetX == profileImageShadowOffsetX)&&(identical(other.profileImageShadowOffsetY, profileImageShadowOffsetY) || other.profileImageShadowOffsetY == profileImageShadowOffsetY)&&(identical(other.profileImageShadowColor, profileImageShadowColor) || other.profileImageShadowColor == profileImageShadowColor)&&(identical(other.profileImageShadowOpacity, profileImageShadowOpacity) || other.profileImageShadowOpacity == profileImageShadowOpacity)&&(identical(other.illustrationUrl, illustrationUrl) || other.illustrationUrl == illustrationUrl)&&(identical(other.illustrationAlt, illustrationAlt) || other.illustrationAlt == illustrationAlt)&&(identical(other.illustrationMaxPx, illustrationMaxPx) || other.illustrationMaxPx == illustrationMaxPx)&&(identical(other.illustrationMobileMaxPx, illustrationMobileMaxPx) || other.illustrationMobileMaxPx == illustrationMobileMaxPx)&&const DeepCollectionEquality().equals(other.skills, skills)&&const DeepCollectionEquality().equals(other.certifications, certifications)&&(identical(other.yearsExperience, yearsExperience) || other.yearsExperience == yearsExperience)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,bioTitle,bioIntro,bioDescription,profileImageUrl,profileImageAlt,profileImageShape,profileImageShadowEnabled,profileImageShadowBlur,profileImageShadowSpread,profileImageShadowOffsetX,profileImageShadowOffsetY,profileImageShadowColor,profileImageShadowOpacity,illustrationUrl,illustrationAlt,const DeepCollectionEquality().hash(skills),const DeepCollectionEquality().hash(certifications),yearsExperience,isActive]);
+int get hashCode => Object.hashAll([runtimeType,id,bioTitle,bioTitleFont,bioTitleFontUrl,bioTitleFontSize,bioTitleMobileFontSize,bioTitleColor,bioTitleColorDark,bioIntro,bioDescription,profileImageUrl,profileImageAlt,profileImageShape,profileImageShadowEnabled,profileImageShadowBlur,profileImageShadowSpread,profileImageShadowOffsetX,profileImageShadowOffsetY,profileImageShadowColor,profileImageShadowOpacity,illustrationUrl,illustrationAlt,illustrationMaxPx,illustrationMobileMaxPx,const DeepCollectionEquality().hash(skills),const DeepCollectionEquality().hash(certifications),yearsExperience,isActive]);
 
 @override
 String toString() {
-  return 'AboutSettings(id: $id, bioTitle: $bioTitle, bioIntro: $bioIntro, bioDescription: $bioDescription, profileImageUrl: $profileImageUrl, profileImageAlt: $profileImageAlt, profileImageShape: $profileImageShape, profileImageShadowEnabled: $profileImageShadowEnabled, profileImageShadowBlur: $profileImageShadowBlur, profileImageShadowSpread: $profileImageShadowSpread, profileImageShadowOffsetX: $profileImageShadowOffsetX, profileImageShadowOffsetY: $profileImageShadowOffsetY, profileImageShadowColor: $profileImageShadowColor, profileImageShadowOpacity: $profileImageShadowOpacity, illustrationUrl: $illustrationUrl, illustrationAlt: $illustrationAlt, skills: $skills, certifications: $certifications, yearsExperience: $yearsExperience, isActive: $isActive)';
+  return 'AboutSettings(id: $id, bioTitle: $bioTitle, bioTitleFont: $bioTitleFont, bioTitleFontUrl: $bioTitleFontUrl, bioTitleFontSize: $bioTitleFontSize, bioTitleMobileFontSize: $bioTitleMobileFontSize, bioTitleColor: $bioTitleColor, bioTitleColorDark: $bioTitleColorDark, bioIntro: $bioIntro, bioDescription: $bioDescription, profileImageUrl: $profileImageUrl, profileImageAlt: $profileImageAlt, profileImageShape: $profileImageShape, profileImageShadowEnabled: $profileImageShadowEnabled, profileImageShadowBlur: $profileImageShadowBlur, profileImageShadowSpread: $profileImageShadowSpread, profileImageShadowOffsetX: $profileImageShadowOffsetX, profileImageShadowOffsetY: $profileImageShadowOffsetY, profileImageShadowColor: $profileImageShadowColor, profileImageShadowOpacity: $profileImageShadowOpacity, illustrationUrl: $illustrationUrl, illustrationAlt: $illustrationAlt, illustrationMaxPx: $illustrationMaxPx, illustrationMobileMaxPx: $illustrationMobileMaxPx, skills: $skills, certifications: $certifications, yearsExperience: $yearsExperience, isActive: $isActive)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AboutSettingsCopyWith<$Res>  {
   factory $AboutSettingsCopyWith(AboutSettings value, $Res Function(AboutSettings) _then) = _$AboutSettingsCopyWithImpl;
 @useResult
 $Res call({
- String? id, String? bioTitle, String? bioIntro, String? bioDescription, String? profileImageUrl, String? profileImageAlt, String? profileImageShape, bool profileImageShadowEnabled, int? profileImageShadowBlur, int? profileImageShadowSpread, int? profileImageShadowOffsetX, int? profileImageShadowOffsetY, String? profileImageShadowColor, int? profileImageShadowOpacity, String? illustrationUrl, String? illustrationAlt, List<String> skills, List<String> certifications, int? yearsExperience, bool isActive
+ String? id, String? bioTitle, String? bioTitleFont, String? bioTitleFontUrl, int? bioTitleFontSize, int? bioTitleMobileFontSize, String? bioTitleColor, String? bioTitleColorDark, String? bioIntro, String? bioDescription, String? profileImageUrl, String? profileImageAlt, String? profileImageShape, bool profileImageShadowEnabled, int? profileImageShadowBlur, int? profileImageShadowSpread, int? profileImageShadowOffsetX, int? profileImageShadowOffsetY, String? profileImageShadowColor, int? profileImageShadowOpacity, String? illustrationUrl, String? illustrationAlt, int? illustrationMaxPx, int? illustrationMobileMaxPx, List<String> skills, List<String> certifications, int? yearsExperience, bool isActive
 });
 
 
@@ -65,10 +65,16 @@ class _$AboutSettingsCopyWithImpl<$Res>
 
 /// Create a copy of AboutSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? bioTitle = freezed,Object? bioIntro = freezed,Object? bioDescription = freezed,Object? profileImageUrl = freezed,Object? profileImageAlt = freezed,Object? profileImageShape = freezed,Object? profileImageShadowEnabled = null,Object? profileImageShadowBlur = freezed,Object? profileImageShadowSpread = freezed,Object? profileImageShadowOffsetX = freezed,Object? profileImageShadowOffsetY = freezed,Object? profileImageShadowColor = freezed,Object? profileImageShadowOpacity = freezed,Object? illustrationUrl = freezed,Object? illustrationAlt = freezed,Object? skills = null,Object? certifications = null,Object? yearsExperience = freezed,Object? isActive = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? bioTitle = freezed,Object? bioTitleFont = freezed,Object? bioTitleFontUrl = freezed,Object? bioTitleFontSize = freezed,Object? bioTitleMobileFontSize = freezed,Object? bioTitleColor = freezed,Object? bioTitleColorDark = freezed,Object? bioIntro = freezed,Object? bioDescription = freezed,Object? profileImageUrl = freezed,Object? profileImageAlt = freezed,Object? profileImageShape = freezed,Object? profileImageShadowEnabled = null,Object? profileImageShadowBlur = freezed,Object? profileImageShadowSpread = freezed,Object? profileImageShadowOffsetX = freezed,Object? profileImageShadowOffsetY = freezed,Object? profileImageShadowColor = freezed,Object? profileImageShadowOpacity = freezed,Object? illustrationUrl = freezed,Object? illustrationAlt = freezed,Object? illustrationMaxPx = freezed,Object? illustrationMobileMaxPx = freezed,Object? skills = null,Object? certifications = null,Object? yearsExperience = freezed,Object? isActive = null,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,bioTitle: freezed == bioTitle ? _self.bioTitle : bioTitle // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleFont: freezed == bioTitleFont ? _self.bioTitleFont : bioTitleFont // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleFontUrl: freezed == bioTitleFontUrl ? _self.bioTitleFontUrl : bioTitleFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleFontSize: freezed == bioTitleFontSize ? _self.bioTitleFontSize : bioTitleFontSize // ignore: cast_nullable_to_non_nullable
+as int?,bioTitleMobileFontSize: freezed == bioTitleMobileFontSize ? _self.bioTitleMobileFontSize : bioTitleMobileFontSize // ignore: cast_nullable_to_non_nullable
+as int?,bioTitleColor: freezed == bioTitleColor ? _self.bioTitleColor : bioTitleColor // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleColorDark: freezed == bioTitleColorDark ? _self.bioTitleColorDark : bioTitleColorDark // ignore: cast_nullable_to_non_nullable
 as String?,bioIntro: freezed == bioIntro ? _self.bioIntro : bioIntro // ignore: cast_nullable_to_non_nullable
 as String?,bioDescription: freezed == bioDescription ? _self.bioDescription : bioDescription // ignore: cast_nullable_to_non_nullable
 as String?,profileImageUrl: freezed == profileImageUrl ? _self.profileImageUrl : profileImageUrl // ignore: cast_nullable_to_non_nullable
@@ -83,7 +89,9 @@ as int?,profileImageShadowColor: freezed == profileImageShadowColor ? _self.prof
 as String?,profileImageShadowOpacity: freezed == profileImageShadowOpacity ? _self.profileImageShadowOpacity : profileImageShadowOpacity // ignore: cast_nullable_to_non_nullable
 as int?,illustrationUrl: freezed == illustrationUrl ? _self.illustrationUrl : illustrationUrl // ignore: cast_nullable_to_non_nullable
 as String?,illustrationAlt: freezed == illustrationAlt ? _self.illustrationAlt : illustrationAlt // ignore: cast_nullable_to_non_nullable
-as String?,skills: null == skills ? _self.skills : skills // ignore: cast_nullable_to_non_nullable
+as String?,illustrationMaxPx: freezed == illustrationMaxPx ? _self.illustrationMaxPx : illustrationMaxPx // ignore: cast_nullable_to_non_nullable
+as int?,illustrationMobileMaxPx: freezed == illustrationMobileMaxPx ? _self.illustrationMobileMaxPx : illustrationMobileMaxPx // ignore: cast_nullable_to_non_nullable
+as int?,skills: null == skills ? _self.skills : skills // ignore: cast_nullable_to_non_nullable
 as List<String>,certifications: null == certifications ? _self.certifications : certifications // ignore: cast_nullable_to_non_nullable
 as List<String>,yearsExperience: freezed == yearsExperience ? _self.yearsExperience : yearsExperience // ignore: cast_nullable_to_non_nullable
 as int?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
@@ -172,10 +180,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? bioTitle,  String? bioIntro,  String? bioDescription,  String? profileImageUrl,  String? profileImageAlt,  String? profileImageShape,  bool profileImageShadowEnabled,  int? profileImageShadowBlur,  int? profileImageShadowSpread,  int? profileImageShadowOffsetX,  int? profileImageShadowOffsetY,  String? profileImageShadowColor,  int? profileImageShadowOpacity,  String? illustrationUrl,  String? illustrationAlt,  List<String> skills,  List<String> certifications,  int? yearsExperience,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? bioTitle,  String? bioTitleFont,  String? bioTitleFontUrl,  int? bioTitleFontSize,  int? bioTitleMobileFontSize,  String? bioTitleColor,  String? bioTitleColorDark,  String? bioIntro,  String? bioDescription,  String? profileImageUrl,  String? profileImageAlt,  String? profileImageShape,  bool profileImageShadowEnabled,  int? profileImageShadowBlur,  int? profileImageShadowSpread,  int? profileImageShadowOffsetX,  int? profileImageShadowOffsetY,  String? profileImageShadowColor,  int? profileImageShadowOpacity,  String? illustrationUrl,  String? illustrationAlt,  int? illustrationMaxPx,  int? illustrationMobileMaxPx,  List<String> skills,  List<String> certifications,  int? yearsExperience,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AboutSettings() when $default != null:
-return $default(_that.id,_that.bioTitle,_that.bioIntro,_that.bioDescription,_that.profileImageUrl,_that.profileImageAlt,_that.profileImageShape,_that.profileImageShadowEnabled,_that.profileImageShadowBlur,_that.profileImageShadowSpread,_that.profileImageShadowOffsetX,_that.profileImageShadowOffsetY,_that.profileImageShadowColor,_that.profileImageShadowOpacity,_that.illustrationUrl,_that.illustrationAlt,_that.skills,_that.certifications,_that.yearsExperience,_that.isActive);case _:
+return $default(_that.id,_that.bioTitle,_that.bioTitleFont,_that.bioTitleFontUrl,_that.bioTitleFontSize,_that.bioTitleMobileFontSize,_that.bioTitleColor,_that.bioTitleColorDark,_that.bioIntro,_that.bioDescription,_that.profileImageUrl,_that.profileImageAlt,_that.profileImageShape,_that.profileImageShadowEnabled,_that.profileImageShadowBlur,_that.profileImageShadowSpread,_that.profileImageShadowOffsetX,_that.profileImageShadowOffsetY,_that.profileImageShadowColor,_that.profileImageShadowOpacity,_that.illustrationUrl,_that.illustrationAlt,_that.illustrationMaxPx,_that.illustrationMobileMaxPx,_that.skills,_that.certifications,_that.yearsExperience,_that.isActive);case _:
   return orElse();
 
 }
@@ -193,10 +201,10 @@ return $default(_that.id,_that.bioTitle,_that.bioIntro,_that.bioDescription,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? bioTitle,  String? bioIntro,  String? bioDescription,  String? profileImageUrl,  String? profileImageAlt,  String? profileImageShape,  bool profileImageShadowEnabled,  int? profileImageShadowBlur,  int? profileImageShadowSpread,  int? profileImageShadowOffsetX,  int? profileImageShadowOffsetY,  String? profileImageShadowColor,  int? profileImageShadowOpacity,  String? illustrationUrl,  String? illustrationAlt,  List<String> skills,  List<String> certifications,  int? yearsExperience,  bool isActive)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? bioTitle,  String? bioTitleFont,  String? bioTitleFontUrl,  int? bioTitleFontSize,  int? bioTitleMobileFontSize,  String? bioTitleColor,  String? bioTitleColorDark,  String? bioIntro,  String? bioDescription,  String? profileImageUrl,  String? profileImageAlt,  String? profileImageShape,  bool profileImageShadowEnabled,  int? profileImageShadowBlur,  int? profileImageShadowSpread,  int? profileImageShadowOffsetX,  int? profileImageShadowOffsetY,  String? profileImageShadowColor,  int? profileImageShadowOpacity,  String? illustrationUrl,  String? illustrationAlt,  int? illustrationMaxPx,  int? illustrationMobileMaxPx,  List<String> skills,  List<String> certifications,  int? yearsExperience,  bool isActive)  $default,) {final _that = this;
 switch (_that) {
 case _AboutSettings():
-return $default(_that.id,_that.bioTitle,_that.bioIntro,_that.bioDescription,_that.profileImageUrl,_that.profileImageAlt,_that.profileImageShape,_that.profileImageShadowEnabled,_that.profileImageShadowBlur,_that.profileImageShadowSpread,_that.profileImageShadowOffsetX,_that.profileImageShadowOffsetY,_that.profileImageShadowColor,_that.profileImageShadowOpacity,_that.illustrationUrl,_that.illustrationAlt,_that.skills,_that.certifications,_that.yearsExperience,_that.isActive);case _:
+return $default(_that.id,_that.bioTitle,_that.bioTitleFont,_that.bioTitleFontUrl,_that.bioTitleFontSize,_that.bioTitleMobileFontSize,_that.bioTitleColor,_that.bioTitleColorDark,_that.bioIntro,_that.bioDescription,_that.profileImageUrl,_that.profileImageAlt,_that.profileImageShape,_that.profileImageShadowEnabled,_that.profileImageShadowBlur,_that.profileImageShadowSpread,_that.profileImageShadowOffsetX,_that.profileImageShadowOffsetY,_that.profileImageShadowColor,_that.profileImageShadowOpacity,_that.illustrationUrl,_that.illustrationAlt,_that.illustrationMaxPx,_that.illustrationMobileMaxPx,_that.skills,_that.certifications,_that.yearsExperience,_that.isActive);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -213,10 +221,10 @@ return $default(_that.id,_that.bioTitle,_that.bioIntro,_that.bioDescription,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? bioTitle,  String? bioIntro,  String? bioDescription,  String? profileImageUrl,  String? profileImageAlt,  String? profileImageShape,  bool profileImageShadowEnabled,  int? profileImageShadowBlur,  int? profileImageShadowSpread,  int? profileImageShadowOffsetX,  int? profileImageShadowOffsetY,  String? profileImageShadowColor,  int? profileImageShadowOpacity,  String? illustrationUrl,  String? illustrationAlt,  List<String> skills,  List<String> certifications,  int? yearsExperience,  bool isActive)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? bioTitle,  String? bioTitleFont,  String? bioTitleFontUrl,  int? bioTitleFontSize,  int? bioTitleMobileFontSize,  String? bioTitleColor,  String? bioTitleColorDark,  String? bioIntro,  String? bioDescription,  String? profileImageUrl,  String? profileImageAlt,  String? profileImageShape,  bool profileImageShadowEnabled,  int? profileImageShadowBlur,  int? profileImageShadowSpread,  int? profileImageShadowOffsetX,  int? profileImageShadowOffsetY,  String? profileImageShadowColor,  int? profileImageShadowOpacity,  String? illustrationUrl,  String? illustrationAlt,  int? illustrationMaxPx,  int? illustrationMobileMaxPx,  List<String> skills,  List<String> certifications,  int? yearsExperience,  bool isActive)?  $default,) {final _that = this;
 switch (_that) {
 case _AboutSettings() when $default != null:
-return $default(_that.id,_that.bioTitle,_that.bioIntro,_that.bioDescription,_that.profileImageUrl,_that.profileImageAlt,_that.profileImageShape,_that.profileImageShadowEnabled,_that.profileImageShadowBlur,_that.profileImageShadowSpread,_that.profileImageShadowOffsetX,_that.profileImageShadowOffsetY,_that.profileImageShadowColor,_that.profileImageShadowOpacity,_that.illustrationUrl,_that.illustrationAlt,_that.skills,_that.certifications,_that.yearsExperience,_that.isActive);case _:
+return $default(_that.id,_that.bioTitle,_that.bioTitleFont,_that.bioTitleFontUrl,_that.bioTitleFontSize,_that.bioTitleMobileFontSize,_that.bioTitleColor,_that.bioTitleColorDark,_that.bioIntro,_that.bioDescription,_that.profileImageUrl,_that.profileImageAlt,_that.profileImageShape,_that.profileImageShadowEnabled,_that.profileImageShadowBlur,_that.profileImageShadowSpread,_that.profileImageShadowOffsetX,_that.profileImageShadowOffsetY,_that.profileImageShadowColor,_that.profileImageShadowOpacity,_that.illustrationUrl,_that.illustrationAlt,_that.illustrationMaxPx,_that.illustrationMobileMaxPx,_that.skills,_that.certifications,_that.yearsExperience,_that.isActive);case _:
   return null;
 
 }
@@ -228,11 +236,17 @@ return $default(_that.id,_that.bioTitle,_that.bioIntro,_that.bioDescription,_tha
 @JsonSerializable()
 
 class _AboutSettings implements AboutSettings {
-  const _AboutSettings({this.id, this.bioTitle, this.bioIntro, this.bioDescription, this.profileImageUrl, this.profileImageAlt, this.profileImageShape, this.profileImageShadowEnabled = true, this.profileImageShadowBlur, this.profileImageShadowSpread, this.profileImageShadowOffsetX, this.profileImageShadowOffsetY, this.profileImageShadowColor, this.profileImageShadowOpacity, this.illustrationUrl, this.illustrationAlt, final  List<String> skills = const [], final  List<String> certifications = const [], this.yearsExperience, this.isActive = true}): _skills = skills,_certifications = certifications;
+  const _AboutSettings({this.id, this.bioTitle, this.bioTitleFont, this.bioTitleFontUrl, this.bioTitleFontSize, this.bioTitleMobileFontSize, this.bioTitleColor, this.bioTitleColorDark, this.bioIntro, this.bioDescription, this.profileImageUrl, this.profileImageAlt, this.profileImageShape, this.profileImageShadowEnabled = true, this.profileImageShadowBlur, this.profileImageShadowSpread, this.profileImageShadowOffsetX, this.profileImageShadowOffsetY, this.profileImageShadowColor, this.profileImageShadowOpacity, this.illustrationUrl, this.illustrationAlt, this.illustrationMaxPx, this.illustrationMobileMaxPx, final  List<String> skills = const [], final  List<String> certifications = const [], this.yearsExperience, this.isActive = true}): _skills = skills,_certifications = certifications;
   factory _AboutSettings.fromJson(Map<String, dynamic> json) => _$AboutSettingsFromJson(json);
 
 @override final  String? id;
 @override final  String? bioTitle;
+@override final  String? bioTitleFont;
+@override final  String? bioTitleFontUrl;
+@override final  int? bioTitleFontSize;
+@override final  int? bioTitleMobileFontSize;
+@override final  String? bioTitleColor;
+@override final  String? bioTitleColorDark;
 @override final  String? bioIntro;
 @override final  String? bioDescription;
 @override final  String? profileImageUrl;
@@ -247,6 +261,8 @@ class _AboutSettings implements AboutSettings {
 @override final  int? profileImageShadowOpacity;
 @override final  String? illustrationUrl;
 @override final  String? illustrationAlt;
+@override final  int? illustrationMaxPx;
+@override final  int? illustrationMobileMaxPx;
  final  List<String> _skills;
 @override@JsonKey() List<String> get skills {
   if (_skills is EqualUnmodifiableListView) return _skills;
@@ -277,16 +293,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AboutSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.bioTitle, bioTitle) || other.bioTitle == bioTitle)&&(identical(other.bioIntro, bioIntro) || other.bioIntro == bioIntro)&&(identical(other.bioDescription, bioDescription) || other.bioDescription == bioDescription)&&(identical(other.profileImageUrl, profileImageUrl) || other.profileImageUrl == profileImageUrl)&&(identical(other.profileImageAlt, profileImageAlt) || other.profileImageAlt == profileImageAlt)&&(identical(other.profileImageShape, profileImageShape) || other.profileImageShape == profileImageShape)&&(identical(other.profileImageShadowEnabled, profileImageShadowEnabled) || other.profileImageShadowEnabled == profileImageShadowEnabled)&&(identical(other.profileImageShadowBlur, profileImageShadowBlur) || other.profileImageShadowBlur == profileImageShadowBlur)&&(identical(other.profileImageShadowSpread, profileImageShadowSpread) || other.profileImageShadowSpread == profileImageShadowSpread)&&(identical(other.profileImageShadowOffsetX, profileImageShadowOffsetX) || other.profileImageShadowOffsetX == profileImageShadowOffsetX)&&(identical(other.profileImageShadowOffsetY, profileImageShadowOffsetY) || other.profileImageShadowOffsetY == profileImageShadowOffsetY)&&(identical(other.profileImageShadowColor, profileImageShadowColor) || other.profileImageShadowColor == profileImageShadowColor)&&(identical(other.profileImageShadowOpacity, profileImageShadowOpacity) || other.profileImageShadowOpacity == profileImageShadowOpacity)&&(identical(other.illustrationUrl, illustrationUrl) || other.illustrationUrl == illustrationUrl)&&(identical(other.illustrationAlt, illustrationAlt) || other.illustrationAlt == illustrationAlt)&&const DeepCollectionEquality().equals(other._skills, _skills)&&const DeepCollectionEquality().equals(other._certifications, _certifications)&&(identical(other.yearsExperience, yearsExperience) || other.yearsExperience == yearsExperience)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AboutSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.bioTitle, bioTitle) || other.bioTitle == bioTitle)&&(identical(other.bioTitleFont, bioTitleFont) || other.bioTitleFont == bioTitleFont)&&(identical(other.bioTitleFontUrl, bioTitleFontUrl) || other.bioTitleFontUrl == bioTitleFontUrl)&&(identical(other.bioTitleFontSize, bioTitleFontSize) || other.bioTitleFontSize == bioTitleFontSize)&&(identical(other.bioTitleMobileFontSize, bioTitleMobileFontSize) || other.bioTitleMobileFontSize == bioTitleMobileFontSize)&&(identical(other.bioTitleColor, bioTitleColor) || other.bioTitleColor == bioTitleColor)&&(identical(other.bioTitleColorDark, bioTitleColorDark) || other.bioTitleColorDark == bioTitleColorDark)&&(identical(other.bioIntro, bioIntro) || other.bioIntro == bioIntro)&&(identical(other.bioDescription, bioDescription) || other.bioDescription == bioDescription)&&(identical(other.profileImageUrl, profileImageUrl) || other.profileImageUrl == profileImageUrl)&&(identical(other.profileImageAlt, profileImageAlt) || other.profileImageAlt == profileImageAlt)&&(identical(other.profileImageShape, profileImageShape) || other.profileImageShape == profileImageShape)&&(identical(other.profileImageShadowEnabled, profileImageShadowEnabled) || other.profileImageShadowEnabled == profileImageShadowEnabled)&&(identical(other.profileImageShadowBlur, profileImageShadowBlur) || other.profileImageShadowBlur == profileImageShadowBlur)&&(identical(other.profileImageShadowSpread, profileImageShadowSpread) || other.profileImageShadowSpread == profileImageShadowSpread)&&(identical(other.profileImageShadowOffsetX, profileImageShadowOffsetX) || other.profileImageShadowOffsetX == profileImageShadowOffsetX)&&(identical(other.profileImageShadowOffsetY, profileImageShadowOffsetY) || other.profileImageShadowOffsetY == profileImageShadowOffsetY)&&(identical(other.profileImageShadowColor, profileImageShadowColor) || other.profileImageShadowColor == profileImageShadowColor)&&(identical(other.profileImageShadowOpacity, profileImageShadowOpacity) || other.profileImageShadowOpacity == profileImageShadowOpacity)&&(identical(other.illustrationUrl, illustrationUrl) || other.illustrationUrl == illustrationUrl)&&(identical(other.illustrationAlt, illustrationAlt) || other.illustrationAlt == illustrationAlt)&&(identical(other.illustrationMaxPx, illustrationMaxPx) || other.illustrationMaxPx == illustrationMaxPx)&&(identical(other.illustrationMobileMaxPx, illustrationMobileMaxPx) || other.illustrationMobileMaxPx == illustrationMobileMaxPx)&&const DeepCollectionEquality().equals(other._skills, _skills)&&const DeepCollectionEquality().equals(other._certifications, _certifications)&&(identical(other.yearsExperience, yearsExperience) || other.yearsExperience == yearsExperience)&&(identical(other.isActive, isActive) || other.isActive == isActive));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,id,bioTitle,bioIntro,bioDescription,profileImageUrl,profileImageAlt,profileImageShape,profileImageShadowEnabled,profileImageShadowBlur,profileImageShadowSpread,profileImageShadowOffsetX,profileImageShadowOffsetY,profileImageShadowColor,profileImageShadowOpacity,illustrationUrl,illustrationAlt,const DeepCollectionEquality().hash(_skills),const DeepCollectionEquality().hash(_certifications),yearsExperience,isActive]);
+int get hashCode => Object.hashAll([runtimeType,id,bioTitle,bioTitleFont,bioTitleFontUrl,bioTitleFontSize,bioTitleMobileFontSize,bioTitleColor,bioTitleColorDark,bioIntro,bioDescription,profileImageUrl,profileImageAlt,profileImageShape,profileImageShadowEnabled,profileImageShadowBlur,profileImageShadowSpread,profileImageShadowOffsetX,profileImageShadowOffsetY,profileImageShadowColor,profileImageShadowOpacity,illustrationUrl,illustrationAlt,illustrationMaxPx,illustrationMobileMaxPx,const DeepCollectionEquality().hash(_skills),const DeepCollectionEquality().hash(_certifications),yearsExperience,isActive]);
 
 @override
 String toString() {
-  return 'AboutSettings(id: $id, bioTitle: $bioTitle, bioIntro: $bioIntro, bioDescription: $bioDescription, profileImageUrl: $profileImageUrl, profileImageAlt: $profileImageAlt, profileImageShape: $profileImageShape, profileImageShadowEnabled: $profileImageShadowEnabled, profileImageShadowBlur: $profileImageShadowBlur, profileImageShadowSpread: $profileImageShadowSpread, profileImageShadowOffsetX: $profileImageShadowOffsetX, profileImageShadowOffsetY: $profileImageShadowOffsetY, profileImageShadowColor: $profileImageShadowColor, profileImageShadowOpacity: $profileImageShadowOpacity, illustrationUrl: $illustrationUrl, illustrationAlt: $illustrationAlt, skills: $skills, certifications: $certifications, yearsExperience: $yearsExperience, isActive: $isActive)';
+  return 'AboutSettings(id: $id, bioTitle: $bioTitle, bioTitleFont: $bioTitleFont, bioTitleFontUrl: $bioTitleFontUrl, bioTitleFontSize: $bioTitleFontSize, bioTitleMobileFontSize: $bioTitleMobileFontSize, bioTitleColor: $bioTitleColor, bioTitleColorDark: $bioTitleColorDark, bioIntro: $bioIntro, bioDescription: $bioDescription, profileImageUrl: $profileImageUrl, profileImageAlt: $profileImageAlt, profileImageShape: $profileImageShape, profileImageShadowEnabled: $profileImageShadowEnabled, profileImageShadowBlur: $profileImageShadowBlur, profileImageShadowSpread: $profileImageShadowSpread, profileImageShadowOffsetX: $profileImageShadowOffsetX, profileImageShadowOffsetY: $profileImageShadowOffsetY, profileImageShadowColor: $profileImageShadowColor, profileImageShadowOpacity: $profileImageShadowOpacity, illustrationUrl: $illustrationUrl, illustrationAlt: $illustrationAlt, illustrationMaxPx: $illustrationMaxPx, illustrationMobileMaxPx: $illustrationMobileMaxPx, skills: $skills, certifications: $certifications, yearsExperience: $yearsExperience, isActive: $isActive)';
 }
 
 
@@ -297,7 +313,7 @@ abstract mixin class _$AboutSettingsCopyWith<$Res> implements $AboutSettingsCopy
   factory _$AboutSettingsCopyWith(_AboutSettings value, $Res Function(_AboutSettings) _then) = __$AboutSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String? bioTitle, String? bioIntro, String? bioDescription, String? profileImageUrl, String? profileImageAlt, String? profileImageShape, bool profileImageShadowEnabled, int? profileImageShadowBlur, int? profileImageShadowSpread, int? profileImageShadowOffsetX, int? profileImageShadowOffsetY, String? profileImageShadowColor, int? profileImageShadowOpacity, String? illustrationUrl, String? illustrationAlt, List<String> skills, List<String> certifications, int? yearsExperience, bool isActive
+ String? id, String? bioTitle, String? bioTitleFont, String? bioTitleFontUrl, int? bioTitleFontSize, int? bioTitleMobileFontSize, String? bioTitleColor, String? bioTitleColorDark, String? bioIntro, String? bioDescription, String? profileImageUrl, String? profileImageAlt, String? profileImageShape, bool profileImageShadowEnabled, int? profileImageShadowBlur, int? profileImageShadowSpread, int? profileImageShadowOffsetX, int? profileImageShadowOffsetY, String? profileImageShadowColor, int? profileImageShadowOpacity, String? illustrationUrl, String? illustrationAlt, int? illustrationMaxPx, int? illustrationMobileMaxPx, List<String> skills, List<String> certifications, int? yearsExperience, bool isActive
 });
 
 
@@ -314,10 +330,16 @@ class __$AboutSettingsCopyWithImpl<$Res>
 
 /// Create a copy of AboutSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? bioTitle = freezed,Object? bioIntro = freezed,Object? bioDescription = freezed,Object? profileImageUrl = freezed,Object? profileImageAlt = freezed,Object? profileImageShape = freezed,Object? profileImageShadowEnabled = null,Object? profileImageShadowBlur = freezed,Object? profileImageShadowSpread = freezed,Object? profileImageShadowOffsetX = freezed,Object? profileImageShadowOffsetY = freezed,Object? profileImageShadowColor = freezed,Object? profileImageShadowOpacity = freezed,Object? illustrationUrl = freezed,Object? illustrationAlt = freezed,Object? skills = null,Object? certifications = null,Object? yearsExperience = freezed,Object? isActive = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? bioTitle = freezed,Object? bioTitleFont = freezed,Object? bioTitleFontUrl = freezed,Object? bioTitleFontSize = freezed,Object? bioTitleMobileFontSize = freezed,Object? bioTitleColor = freezed,Object? bioTitleColorDark = freezed,Object? bioIntro = freezed,Object? bioDescription = freezed,Object? profileImageUrl = freezed,Object? profileImageAlt = freezed,Object? profileImageShape = freezed,Object? profileImageShadowEnabled = null,Object? profileImageShadowBlur = freezed,Object? profileImageShadowSpread = freezed,Object? profileImageShadowOffsetX = freezed,Object? profileImageShadowOffsetY = freezed,Object? profileImageShadowColor = freezed,Object? profileImageShadowOpacity = freezed,Object? illustrationUrl = freezed,Object? illustrationAlt = freezed,Object? illustrationMaxPx = freezed,Object? illustrationMobileMaxPx = freezed,Object? skills = null,Object? certifications = null,Object? yearsExperience = freezed,Object? isActive = null,}) {
   return _then(_AboutSettings(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,bioTitle: freezed == bioTitle ? _self.bioTitle : bioTitle // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleFont: freezed == bioTitleFont ? _self.bioTitleFont : bioTitleFont // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleFontUrl: freezed == bioTitleFontUrl ? _self.bioTitleFontUrl : bioTitleFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleFontSize: freezed == bioTitleFontSize ? _self.bioTitleFontSize : bioTitleFontSize // ignore: cast_nullable_to_non_nullable
+as int?,bioTitleMobileFontSize: freezed == bioTitleMobileFontSize ? _self.bioTitleMobileFontSize : bioTitleMobileFontSize // ignore: cast_nullable_to_non_nullable
+as int?,bioTitleColor: freezed == bioTitleColor ? _self.bioTitleColor : bioTitleColor // ignore: cast_nullable_to_non_nullable
+as String?,bioTitleColorDark: freezed == bioTitleColorDark ? _self.bioTitleColorDark : bioTitleColorDark // ignore: cast_nullable_to_non_nullable
 as String?,bioIntro: freezed == bioIntro ? _self.bioIntro : bioIntro // ignore: cast_nullable_to_non_nullable
 as String?,bioDescription: freezed == bioDescription ? _self.bioDescription : bioDescription // ignore: cast_nullable_to_non_nullable
 as String?,profileImageUrl: freezed == profileImageUrl ? _self.profileImageUrl : profileImageUrl // ignore: cast_nullable_to_non_nullable
@@ -332,7 +354,9 @@ as int?,profileImageShadowColor: freezed == profileImageShadowColor ? _self.prof
 as String?,profileImageShadowOpacity: freezed == profileImageShadowOpacity ? _self.profileImageShadowOpacity : profileImageShadowOpacity // ignore: cast_nullable_to_non_nullable
 as int?,illustrationUrl: freezed == illustrationUrl ? _self.illustrationUrl : illustrationUrl // ignore: cast_nullable_to_non_nullable
 as String?,illustrationAlt: freezed == illustrationAlt ? _self.illustrationAlt : illustrationAlt // ignore: cast_nullable_to_non_nullable
-as String?,skills: null == skills ? _self._skills : skills // ignore: cast_nullable_to_non_nullable
+as String?,illustrationMaxPx: freezed == illustrationMaxPx ? _self.illustrationMaxPx : illustrationMaxPx // ignore: cast_nullable_to_non_nullable
+as int?,illustrationMobileMaxPx: freezed == illustrationMobileMaxPx ? _self.illustrationMobileMaxPx : illustrationMobileMaxPx // ignore: cast_nullable_to_non_nullable
+as int?,skills: null == skills ? _self._skills : skills // ignore: cast_nullable_to_non_nullable
 as List<String>,certifications: null == certifications ? _self._certifications : certifications // ignore: cast_nullable_to_non_nullable
 as List<String>,yearsExperience: freezed == yearsExperience ? _self.yearsExperience : yearsExperience // ignore: cast_nullable_to_non_nullable
 as int?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
@@ -886,7 +910,7 @@ return $default(_that.id,_that.primaryColor,_that.secondaryColor,_that.accentCol
 @JsonSerializable()
 
 class _ThemeSettings implements ThemeSettings {
-  const _ThemeSettings({this.id, this.primaryColor = '#6c0a0a', this.secondaryColor = '#fce7f3', this.accentColor = '#fff1f9', this.backgroundColor = '#fff8fc', this.textColor = '#1a050a', this.cardBgColor = '#ffffff', this.darkPrimaryColor = '#fb7185', this.darkSecondaryColor = '#881337', this.darkAccentColor = '#2a1015', this.darkBackgroundColor = '#0f0505', this.darkTextColor = '#fafafa', this.darkCardBgColor = '#1c0a0f', this.headingFont = 'Poppins', this.headingFontUrl, this.headingFontSize = 32, this.bodyFont = 'Open Sans', this.bodyFontUrl, this.bodyFontSize = 16, this.scriptFont = 'Great Vibes', this.scriptFontUrl, this.scriptFontSize = 24, this.brandFont, this.brandFontUrl, this.brandFontSize, this.portfolioFont, this.portfolioFontUrl, this.portfolioFontSize, this.signatureFont, this.signatureFontUrl, this.signatureFontSize, this.borderRadius = 40, this.isActive = true});
+  const _ThemeSettings({this.id, this.primaryColor = '#6c0a0a', this.secondaryColor = '#ffaadd', this.accentColor = '#fff1f9', this.backgroundColor = '#fff1f9', this.textColor = '#000000', this.cardBgColor = '#fff1f9', this.darkPrimaryColor = '#ffaadd', this.darkSecondaryColor = '#6c0a0a', this.darkAccentColor = '#6c0a0a', this.darkBackgroundColor = '#000000', this.darkTextColor = '#fff1f9', this.darkCardBgColor = '#000000', this.headingFont = 'Poppins', this.headingFontUrl, this.headingFontSize = 32, this.bodyFont = 'Open Sans', this.bodyFontUrl, this.bodyFontSize = 16, this.scriptFont = 'Great Vibes', this.scriptFontUrl, this.scriptFontSize = 24, this.brandFont, this.brandFontUrl, this.brandFontSize, this.portfolioFont, this.portfolioFontUrl, this.portfolioFontSize, this.signatureFont, this.signatureFontUrl, this.signatureFontSize, this.borderRadius = 40, this.isActive = true});
   factory _ThemeSettings.fromJson(Map<String, dynamic> json) => _$ThemeSettingsFromJson(json);
 
 @override final  String? id;
@@ -1666,7 +1690,7 @@ return $default(_that.id,_that.showHeroTitle1,_that.showHeroTitle2,_that.showOwn
 @JsonSerializable()
 
 class _HomeSettings implements HomeSettings {
-  const _HomeSettings({this.id, this.showHeroTitle1 = true, this.showHeroTitle2 = true, this.showOwnerName = true, this.heroTitle1Text, this.heroTitle1Font, this.heroTitle1FontUrl, this.heroTitle1FontSize, this.heroTitle1Color, this.heroTitle1ColorDark, this.heroTitle1ZIndex, this.heroTitle1OffsetX, this.heroTitle1OffsetY, this.heroTitle2Text, this.heroTitle2Font, this.heroTitle2FontUrl, this.heroTitle2FontSize, this.heroTitle2Color, this.heroTitle2ColorDark, this.heroTitle2ZIndex, this.heroTitle2OffsetX, this.heroTitle2OffsetY, this.ownerNameText, this.ownerNameFont, this.ownerNameFontUrl, this.ownerNameFontSize, this.ownerNameColor, this.ownerNameColorDark, this.ownerNameZIndex, this.ownerNameOffsetX, this.ownerNameOffsetY, this.heroMainImageUrl, this.heroMainImageAlt, this.heroMainImageCaption, this.heroImageStyle, this.heroMainImageZIndex, this.heroMainImageOffsetX, this.heroMainImageOffsetY, this.heroImmersiveEnabled = false, this.heroBackdropMediaKind = 'auto', this.heroBackdropUrl, this.heroBackdropPosterUrl, this.heroBackdropLoop = true, this.heroBackdropMuted = true, this.heroBackdropPlaysInline = true, this.heroBackdropObjectFit = 'cover', this.heroBackdropObjectPosition = 'center', this.heroBackdropMobileUrl, this.heroBackdropMobileObjectPosition, this.heroForegroundPortraitShow = true, this.heroScrimEdge = 'left', this.heroScrimExtentPercent = 45, this.heroScrimOpacity = 80, this.heroScrimColor, this.heroScrimColorDark, this.heroScrimFeatherPercent = 50, this.heroBackdropTintOpacity = 0, this.heroScrimMobileExtentPercent, this.heroScrimMobileOpacity, this.illustrationUrl, this.illustrationAlt, this.illustrationZIndex, this.illustrationOpacity, this.illustrationSize, this.illustrationOffsetX, this.illustrationOffsetY, this.illustrationRotation, this.ctaText, this.ctaLink, this.ctaFont, this.ctaFontUrl, this.ctaFontSize, this.ctaVariant, this.ctaSize, this.ctaOffsetX, this.ctaOffsetY, this.heroTitle1MobileOffsetX, this.heroTitle1MobileOffsetY, this.heroTitle1MobileFontSize, this.heroTitle2MobileOffsetX, this.heroTitle2MobileOffsetY, this.heroTitle2MobileFontSize, this.ownerNameMobileOffsetX, this.ownerNameMobileOffsetY, this.ownerNameMobileFontSize, this.heroMainImageMobileOffsetX, this.heroMainImageMobileOffsetY, this.illustrationMobileOffsetX, this.illustrationMobileOffsetY, this.illustrationMobileSize, this.illustrationMobileRotation, this.ctaMobileOffsetX, this.ctaMobileOffsetY, this.ctaMobileFontSize, this.showFeaturedImages = true, this.featuredTitle, this.featuredTitleFont, this.featuredTitleFontUrl, this.featuredTitleFontSize, this.featuredTitleColor, this.featuredTitleColorDark, this.featuredCount = 6, this.isActive = true});
+  const _HomeSettings({this.id, this.showHeroTitle1 = true, this.showHeroTitle2 = true, this.showOwnerName = true, this.heroTitle1Text, this.heroTitle1Font, this.heroTitle1FontUrl, this.heroTitle1FontSize, this.heroTitle1Color, this.heroTitle1ColorDark, this.heroTitle1ZIndex, this.heroTitle1OffsetX, this.heroTitle1OffsetY, this.heroTitle2Text, this.heroTitle2Font, this.heroTitle2FontUrl, this.heroTitle2FontSize, this.heroTitle2Color, this.heroTitle2ColorDark, this.heroTitle2ZIndex, this.heroTitle2OffsetX, this.heroTitle2OffsetY, this.ownerNameText, this.ownerNameFont, this.ownerNameFontUrl, this.ownerNameFontSize, this.ownerNameColor, this.ownerNameColorDark, this.ownerNameZIndex, this.ownerNameOffsetX, this.ownerNameOffsetY, this.heroMainImageUrl, this.heroMainImageAlt, this.heroMainImageCaption, this.heroImageStyle, this.heroMainImageZIndex, this.heroMainImageOffsetX, this.heroMainImageOffsetY, this.heroImmersiveEnabled = true, this.heroBackdropMediaKind = 'auto', this.heroBackdropUrl, this.heroBackdropPosterUrl, this.heroBackdropLoop = true, this.heroBackdropMuted = true, this.heroBackdropPlaysInline = true, this.heroBackdropObjectFit = 'cover', this.heroBackdropObjectPosition = 'center', this.heroBackdropMobileUrl, this.heroBackdropMobileObjectPosition, this.heroForegroundPortraitShow = true, this.heroScrimEdge = 'left', this.heroScrimExtentPercent = 45, this.heroScrimOpacity = 80, this.heroScrimColor, this.heroScrimColorDark, this.heroScrimFeatherPercent = 50, this.heroBackdropTintOpacity = 0, this.heroScrimMobileExtentPercent, this.heroScrimMobileOpacity, this.illustrationUrl, this.illustrationAlt, this.illustrationZIndex, this.illustrationOpacity, this.illustrationSize, this.illustrationOffsetX, this.illustrationOffsetY, this.illustrationRotation, this.ctaText, this.ctaLink, this.ctaFont, this.ctaFontUrl, this.ctaFontSize, this.ctaVariant, this.ctaSize, this.ctaOffsetX, this.ctaOffsetY, this.heroTitle1MobileOffsetX, this.heroTitle1MobileOffsetY, this.heroTitle1MobileFontSize, this.heroTitle2MobileOffsetX, this.heroTitle2MobileOffsetY, this.heroTitle2MobileFontSize, this.ownerNameMobileOffsetX, this.ownerNameMobileOffsetY, this.ownerNameMobileFontSize, this.heroMainImageMobileOffsetX, this.heroMainImageMobileOffsetY, this.illustrationMobileOffsetX, this.illustrationMobileOffsetY, this.illustrationMobileSize, this.illustrationMobileRotation, this.ctaMobileOffsetX, this.ctaMobileOffsetY, this.ctaMobileFontSize, this.showFeaturedImages = true, this.featuredTitle, this.featuredTitleFont, this.featuredTitleFontUrl, this.featuredTitleFontSize, this.featuredTitleColor, this.featuredTitleColorDark, this.featuredCount = 6, this.isActive = true});
   factory _HomeSettings.fromJson(Map<String, dynamic> json) => _$HomeSettingsFromJson(json);
 
 @override final  String? id;
@@ -2208,6 +2232,577 @@ class __$CategoryDisplaySettingsCopyWithImpl<$Res>
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,showDescription: null == showDescription ? _self.showDescription : showDescription // ignore: cast_nullable_to_non_nullable
 as bool,gridColumns: null == gridColumns ? _self.gridColumns : gridColumns // ignore: cast_nullable_to_non_nullable
+as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$ServicesPageSettings {
+
+ String? get id; String? get listTitle; String? get listIntro; String? get listTitleFont; String? get listTitleFontUrl; int? get listTitleFontSize; int? get listTitleMobileFontSize; String? get listTitleColor; String? get listTitleColorDark; bool get isActive;
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ServicesPageSettingsCopyWith<ServicesPageSettings> get copyWith => _$ServicesPageSettingsCopyWithImpl<ServicesPageSettings>(this as ServicesPageSettings, _$identity);
+
+  /// Serializes this ServicesPageSettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ServicesPageSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.listTitle, listTitle) || other.listTitle == listTitle)&&(identical(other.listIntro, listIntro) || other.listIntro == listIntro)&&(identical(other.listTitleFont, listTitleFont) || other.listTitleFont == listTitleFont)&&(identical(other.listTitleFontUrl, listTitleFontUrl) || other.listTitleFontUrl == listTitleFontUrl)&&(identical(other.listTitleFontSize, listTitleFontSize) || other.listTitleFontSize == listTitleFontSize)&&(identical(other.listTitleMobileFontSize, listTitleMobileFontSize) || other.listTitleMobileFontSize == listTitleMobileFontSize)&&(identical(other.listTitleColor, listTitleColor) || other.listTitleColor == listTitleColor)&&(identical(other.listTitleColorDark, listTitleColorDark) || other.listTitleColorDark == listTitleColorDark)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,listTitle,listIntro,listTitleFont,listTitleFontUrl,listTitleFontSize,listTitleMobileFontSize,listTitleColor,listTitleColorDark,isActive);
+
+@override
+String toString() {
+  return 'ServicesPageSettings(id: $id, listTitle: $listTitle, listIntro: $listIntro, listTitleFont: $listTitleFont, listTitleFontUrl: $listTitleFontUrl, listTitleFontSize: $listTitleFontSize, listTitleMobileFontSize: $listTitleMobileFontSize, listTitleColor: $listTitleColor, listTitleColorDark: $listTitleColorDark, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ServicesPageSettingsCopyWith<$Res>  {
+  factory $ServicesPageSettingsCopyWith(ServicesPageSettings value, $Res Function(ServicesPageSettings) _then) = _$ServicesPageSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String? id, String? listTitle, String? listIntro, String? listTitleFont, String? listTitleFontUrl, int? listTitleFontSize, int? listTitleMobileFontSize, String? listTitleColor, String? listTitleColorDark, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class _$ServicesPageSettingsCopyWithImpl<$Res>
+    implements $ServicesPageSettingsCopyWith<$Res> {
+  _$ServicesPageSettingsCopyWithImpl(this._self, this._then);
+
+  final ServicesPageSettings _self;
+  final $Res Function(ServicesPageSettings) _then;
+
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? listTitle = freezed,Object? listIntro = freezed,Object? listTitleFont = freezed,Object? listTitleFontUrl = freezed,Object? listTitleFontSize = freezed,Object? listTitleMobileFontSize = freezed,Object? listTitleColor = freezed,Object? listTitleColorDark = freezed,Object? isActive = null,}) {
+  return _then(_self.copyWith(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,listTitle: freezed == listTitle ? _self.listTitle : listTitle // ignore: cast_nullable_to_non_nullable
+as String?,listIntro: freezed == listIntro ? _self.listIntro : listIntro // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFont: freezed == listTitleFont ? _self.listTitleFont : listTitleFont // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontUrl: freezed == listTitleFontUrl ? _self.listTitleFontUrl : listTitleFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontSize: freezed == listTitleFontSize ? _self.listTitleFontSize : listTitleFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleMobileFontSize: freezed == listTitleMobileFontSize ? _self.listTitleMobileFontSize : listTitleMobileFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleColor: freezed == listTitleColor ? _self.listTitleColor : listTitleColor // ignore: cast_nullable_to_non_nullable
+as String?,listTitleColorDark: freezed == listTitleColorDark ? _self.listTitleColorDark : listTitleColorDark // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ServicesPageSettings].
+extension ServicesPageSettingsPatterns on ServicesPageSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ServicesPageSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ServicesPageSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _ServicesPageSettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ServicesPageSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? listTitle,  String? listIntro,  String? listTitleFont,  String? listTitleFontUrl,  int? listTitleFontSize,  int? listTitleMobileFontSize,  String? listTitleColor,  String? listTitleColorDark,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that.id,_that.listTitle,_that.listIntro,_that.listTitleFont,_that.listTitleFontUrl,_that.listTitleFontSize,_that.listTitleMobileFontSize,_that.listTitleColor,_that.listTitleColorDark,_that.isActive);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? listTitle,  String? listIntro,  String? listTitleFont,  String? listTitleFontUrl,  int? listTitleFontSize,  int? listTitleMobileFontSize,  String? listTitleColor,  String? listTitleColorDark,  bool isActive)  $default,) {final _that = this;
+switch (_that) {
+case _ServicesPageSettings():
+return $default(_that.id,_that.listTitle,_that.listIntro,_that.listTitleFont,_that.listTitleFontUrl,_that.listTitleFontSize,_that.listTitleMobileFontSize,_that.listTitleColor,_that.listTitleColorDark,_that.isActive);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? listTitle,  String? listIntro,  String? listTitleFont,  String? listTitleFontUrl,  int? listTitleFontSize,  int? listTitleMobileFontSize,  String? listTitleColor,  String? listTitleColorDark,  bool isActive)?  $default,) {final _that = this;
+switch (_that) {
+case _ServicesPageSettings() when $default != null:
+return $default(_that.id,_that.listTitle,_that.listIntro,_that.listTitleFont,_that.listTitleFontUrl,_that.listTitleFontSize,_that.listTitleMobileFontSize,_that.listTitleColor,_that.listTitleColorDark,_that.isActive);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _ServicesPageSettings implements ServicesPageSettings {
+  const _ServicesPageSettings({this.id, this.listTitle, this.listIntro, this.listTitleFont, this.listTitleFontUrl, this.listTitleFontSize, this.listTitleMobileFontSize, this.listTitleColor, this.listTitleColorDark, this.isActive = true});
+  factory _ServicesPageSettings.fromJson(Map<String, dynamic> json) => _$ServicesPageSettingsFromJson(json);
+
+@override final  String? id;
+@override final  String? listTitle;
+@override final  String? listIntro;
+@override final  String? listTitleFont;
+@override final  String? listTitleFontUrl;
+@override final  int? listTitleFontSize;
+@override final  int? listTitleMobileFontSize;
+@override final  String? listTitleColor;
+@override final  String? listTitleColorDark;
+@override@JsonKey() final  bool isActive;
+
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ServicesPageSettingsCopyWith<_ServicesPageSettings> get copyWith => __$ServicesPageSettingsCopyWithImpl<_ServicesPageSettings>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$ServicesPageSettingsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ServicesPageSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.listTitle, listTitle) || other.listTitle == listTitle)&&(identical(other.listIntro, listIntro) || other.listIntro == listIntro)&&(identical(other.listTitleFont, listTitleFont) || other.listTitleFont == listTitleFont)&&(identical(other.listTitleFontUrl, listTitleFontUrl) || other.listTitleFontUrl == listTitleFontUrl)&&(identical(other.listTitleFontSize, listTitleFontSize) || other.listTitleFontSize == listTitleFontSize)&&(identical(other.listTitleMobileFontSize, listTitleMobileFontSize) || other.listTitleMobileFontSize == listTitleMobileFontSize)&&(identical(other.listTitleColor, listTitleColor) || other.listTitleColor == listTitleColor)&&(identical(other.listTitleColorDark, listTitleColorDark) || other.listTitleColorDark == listTitleColorDark)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,listTitle,listIntro,listTitleFont,listTitleFontUrl,listTitleFontSize,listTitleMobileFontSize,listTitleColor,listTitleColorDark,isActive);
+
+@override
+String toString() {
+  return 'ServicesPageSettings(id: $id, listTitle: $listTitle, listIntro: $listIntro, listTitleFont: $listTitleFont, listTitleFontUrl: $listTitleFontUrl, listTitleFontSize: $listTitleFontSize, listTitleMobileFontSize: $listTitleMobileFontSize, listTitleColor: $listTitleColor, listTitleColorDark: $listTitleColorDark, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ServicesPageSettingsCopyWith<$Res> implements $ServicesPageSettingsCopyWith<$Res> {
+  factory _$ServicesPageSettingsCopyWith(_ServicesPageSettings value, $Res Function(_ServicesPageSettings) _then) = __$ServicesPageSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? id, String? listTitle, String? listIntro, String? listTitleFont, String? listTitleFontUrl, int? listTitleFontSize, int? listTitleMobileFontSize, String? listTitleColor, String? listTitleColorDark, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class __$ServicesPageSettingsCopyWithImpl<$Res>
+    implements _$ServicesPageSettingsCopyWith<$Res> {
+  __$ServicesPageSettingsCopyWithImpl(this._self, this._then);
+
+  final _ServicesPageSettings _self;
+  final $Res Function(_ServicesPageSettings) _then;
+
+/// Create a copy of ServicesPageSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? listTitle = freezed,Object? listIntro = freezed,Object? listTitleFont = freezed,Object? listTitleFontUrl = freezed,Object? listTitleFontSize = freezed,Object? listTitleMobileFontSize = freezed,Object? listTitleColor = freezed,Object? listTitleColorDark = freezed,Object? isActive = null,}) {
+  return _then(_ServicesPageSettings(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,listTitle: freezed == listTitle ? _self.listTitle : listTitle // ignore: cast_nullable_to_non_nullable
+as String?,listIntro: freezed == listIntro ? _self.listIntro : listIntro // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFont: freezed == listTitleFont ? _self.listTitleFont : listTitleFont // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontUrl: freezed == listTitleFontUrl ? _self.listTitleFontUrl : listTitleFontUrl // ignore: cast_nullable_to_non_nullable
+as String?,listTitleFontSize: freezed == listTitleFontSize ? _self.listTitleFontSize : listTitleFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleMobileFontSize: freezed == listTitleMobileFontSize ? _self.listTitleMobileFontSize : listTitleMobileFontSize // ignore: cast_nullable_to_non_nullable
+as int?,listTitleColor: freezed == listTitleColor ? _self.listTitleColor : listTitleColor // ignore: cast_nullable_to_non_nullable
+as String?,listTitleColorDark: freezed == listTitleColorDark ? _self.listTitleColorDark : listTitleColorDark // ignore: cast_nullable_to_non_nullable
+as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+
+}
+
+
+/// @nodoc
+mixin _$TestimonialSettings {
+
+ String? get id; bool get showOnAbout; bool get showOnAll; String? get title; int get maxDisplay; int get sliderAutoAdvanceMs; bool get isActive;
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$TestimonialSettingsCopyWith<TestimonialSettings> get copyWith => _$TestimonialSettingsCopyWithImpl<TestimonialSettings>(this as TestimonialSettings, _$identity);
+
+  /// Serializes this TestimonialSettings to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TestimonialSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.showOnAbout, showOnAbout) || other.showOnAbout == showOnAbout)&&(identical(other.showOnAll, showOnAll) || other.showOnAll == showOnAll)&&(identical(other.title, title) || other.title == title)&&(identical(other.maxDisplay, maxDisplay) || other.maxDisplay == maxDisplay)&&(identical(other.sliderAutoAdvanceMs, sliderAutoAdvanceMs) || other.sliderAutoAdvanceMs == sliderAutoAdvanceMs)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,showOnAbout,showOnAll,title,maxDisplay,sliderAutoAdvanceMs,isActive);
+
+@override
+String toString() {
+  return 'TestimonialSettings(id: $id, showOnAbout: $showOnAbout, showOnAll: $showOnAll, title: $title, maxDisplay: $maxDisplay, sliderAutoAdvanceMs: $sliderAutoAdvanceMs, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $TestimonialSettingsCopyWith<$Res>  {
+  factory $TestimonialSettingsCopyWith(TestimonialSettings value, $Res Function(TestimonialSettings) _then) = _$TestimonialSettingsCopyWithImpl;
+@useResult
+$Res call({
+ String? id, bool showOnAbout, bool showOnAll, String? title, int maxDisplay, int sliderAutoAdvanceMs, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class _$TestimonialSettingsCopyWithImpl<$Res>
+    implements $TestimonialSettingsCopyWith<$Res> {
+  _$TestimonialSettingsCopyWithImpl(this._self, this._then);
+
+  final TestimonialSettings _self;
+  final $Res Function(TestimonialSettings) _then;
+
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? showOnAbout = null,Object? showOnAll = null,Object? title = freezed,Object? maxDisplay = null,Object? sliderAutoAdvanceMs = null,Object? isActive = null,}) {
+  return _then(_self.copyWith(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,showOnAbout: null == showOnAbout ? _self.showOnAbout : showOnAbout // ignore: cast_nullable_to_non_nullable
+as bool,showOnAll: null == showOnAll ? _self.showOnAll : showOnAll // ignore: cast_nullable_to_non_nullable
+as bool,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,maxDisplay: null == maxDisplay ? _self.maxDisplay : maxDisplay // ignore: cast_nullable_to_non_nullable
+as int,sliderAutoAdvanceMs: null == sliderAutoAdvanceMs ? _self.sliderAutoAdvanceMs : sliderAutoAdvanceMs // ignore: cast_nullable_to_non_nullable
+as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [TestimonialSettings].
+extension TestimonialSettingsPatterns on TestimonialSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _TestimonialSettings value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _TestimonialSettings value)  $default,){
+final _that = this;
+switch (_that) {
+case _TestimonialSettings():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _TestimonialSettings value)?  $default,){
+final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  bool showOnAbout,  bool showOnAll,  String? title,  int maxDisplay,  int sliderAutoAdvanceMs,  bool isActive)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that.id,_that.showOnAbout,_that.showOnAll,_that.title,_that.maxDisplay,_that.sliderAutoAdvanceMs,_that.isActive);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  bool showOnAbout,  bool showOnAll,  String? title,  int maxDisplay,  int sliderAutoAdvanceMs,  bool isActive)  $default,) {final _that = this;
+switch (_that) {
+case _TestimonialSettings():
+return $default(_that.id,_that.showOnAbout,_that.showOnAll,_that.title,_that.maxDisplay,_that.sliderAutoAdvanceMs,_that.isActive);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  bool showOnAbout,  bool showOnAll,  String? title,  int maxDisplay,  int sliderAutoAdvanceMs,  bool isActive)?  $default,) {final _that = this;
+switch (_that) {
+case _TestimonialSettings() when $default != null:
+return $default(_that.id,_that.showOnAbout,_that.showOnAll,_that.title,_that.maxDisplay,_that.sliderAutoAdvanceMs,_that.isActive);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _TestimonialSettings implements TestimonialSettings {
+  const _TestimonialSettings({this.id, this.showOnAbout = true, this.showOnAll = false, this.title, this.maxDisplay = 6, this.sliderAutoAdvanceMs = 5000, this.isActive = true});
+  factory _TestimonialSettings.fromJson(Map<String, dynamic> json) => _$TestimonialSettingsFromJson(json);
+
+@override final  String? id;
+@override@JsonKey() final  bool showOnAbout;
+@override@JsonKey() final  bool showOnAll;
+@override final  String? title;
+@override@JsonKey() final  int maxDisplay;
+@override@JsonKey() final  int sliderAutoAdvanceMs;
+@override@JsonKey() final  bool isActive;
+
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$TestimonialSettingsCopyWith<_TestimonialSettings> get copyWith => __$TestimonialSettingsCopyWithImpl<_TestimonialSettings>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$TestimonialSettingsToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TestimonialSettings&&(identical(other.id, id) || other.id == id)&&(identical(other.showOnAbout, showOnAbout) || other.showOnAbout == showOnAbout)&&(identical(other.showOnAll, showOnAll) || other.showOnAll == showOnAll)&&(identical(other.title, title) || other.title == title)&&(identical(other.maxDisplay, maxDisplay) || other.maxDisplay == maxDisplay)&&(identical(other.sliderAutoAdvanceMs, sliderAutoAdvanceMs) || other.sliderAutoAdvanceMs == sliderAutoAdvanceMs)&&(identical(other.isActive, isActive) || other.isActive == isActive));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,showOnAbout,showOnAll,title,maxDisplay,sliderAutoAdvanceMs,isActive);
+
+@override
+String toString() {
+  return 'TestimonialSettings(id: $id, showOnAbout: $showOnAbout, showOnAll: $showOnAll, title: $title, maxDisplay: $maxDisplay, sliderAutoAdvanceMs: $sliderAutoAdvanceMs, isActive: $isActive)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$TestimonialSettingsCopyWith<$Res> implements $TestimonialSettingsCopyWith<$Res> {
+  factory _$TestimonialSettingsCopyWith(_TestimonialSettings value, $Res Function(_TestimonialSettings) _then) = __$TestimonialSettingsCopyWithImpl;
+@override @useResult
+$Res call({
+ String? id, bool showOnAbout, bool showOnAll, String? title, int maxDisplay, int sliderAutoAdvanceMs, bool isActive
+});
+
+
+
+
+}
+/// @nodoc
+class __$TestimonialSettingsCopyWithImpl<$Res>
+    implements _$TestimonialSettingsCopyWith<$Res> {
+  __$TestimonialSettingsCopyWithImpl(this._self, this._then);
+
+  final _TestimonialSettings _self;
+  final $Res Function(_TestimonialSettings) _then;
+
+/// Create a copy of TestimonialSettings
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? showOnAbout = null,Object? showOnAll = null,Object? title = freezed,Object? maxDisplay = null,Object? sliderAutoAdvanceMs = null,Object? isActive = null,}) {
+  return _then(_TestimonialSettings(
+id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String?,showOnAbout: null == showOnAbout ? _self.showOnAbout : showOnAbout // ignore: cast_nullable_to_non_nullable
+as bool,showOnAll: null == showOnAll ? _self.showOnAll : showOnAll // ignore: cast_nullable_to_non_nullable
+as bool,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as String?,maxDisplay: null == maxDisplay ? _self.maxDisplay : maxDisplay // ignore: cast_nullable_to_non_nullable
+as int,sliderAutoAdvanceMs: null == sliderAutoAdvanceMs ? _self.sliderAutoAdvanceMs : sliderAutoAdvanceMs // ignore: cast_nullable_to_non_nullable
 as int,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,
   ));

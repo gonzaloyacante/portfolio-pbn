@@ -13,7 +13,7 @@ interface PreviewCardProps {
 
 /**
  * Preview Card
- * Mimics the EXACT style of public cards (rounded-[2.5rem], etc.)
+ * Mimics the EXACT style of public cards (rounded-card, etc.)
  */
 export default function PreviewCard({
   variant,
@@ -28,17 +28,17 @@ export default function PreviewCard({
   const isCategory = variant === 'category'
   const hasImage = variant === 'image'
 
-  // Category Card Style: rounded-[2.5rem], aspect-[4/5]
+  // Category Card Style: rounded-card, aspect-[4/5]
   // Gallery Image Style: rounded-xl, varies but mostly aspect-square or masonry
   const containerClasses = clsx(
-    'relative overflow-hidden shadow-lg transition-transform group hover:scale-[1.02] bg-card',
-    isCategory ? 'rounded-[2.5rem] aspect-[4/5]' : 'rounded-2xl aspect-square'
+    'relative overflow-hidden shadow-lg transition-transform group hover:scale-[1.02] bg-secondary',
+    isCategory ? 'rounded-card aspect-[4/5]' : 'rounded-2xl aspect-square'
   )
 
   return (
     <div className={containerClasses}>
       {/* Background (Mock Image) */}
-      <div className="bg-muted absolute inset-0 flex items-center justify-center">
+      <div className="bg-secondary absolute inset-0 flex items-center justify-center">
         <span className="text-4xl opacity-10">📷</span>
         {/* Placeholder Gradient */}
         <div className="from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br" />
@@ -46,7 +46,7 @@ export default function PreviewCard({
 
       {/* Overlay Gradient (Same as public) */}
       {hasImage && (showTitle || showSubtitle) && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60" />
+        <div className="from-primary/80 via-primary/20 absolute inset-0 bg-gradient-to-t to-transparent opacity-60" />
       )}
 
       {/* Content */}
@@ -80,7 +80,7 @@ export default function PreviewCard({
             className={clsx(
               'font-bold',
               isCategory ? 'font-heading translate-y-2 text-2xl' : 'text-lg leading-tight',
-              hasImage ? 'text-white' : 'text-foreground'
+              hasImage ? 'text-primary-foreground' : 'text-foreground'
             )}
           >
             {title}
@@ -92,7 +92,7 @@ export default function PreviewCard({
           <div
             className={clsx(
               'mt-2 h-1 w-12 rounded-full',
-              hasImage ? 'bg-white/50' : 'bg-primary/30'
+              hasImage ? 'bg-secondary/50' : 'bg-primary/30'
             )}
           />
         )}

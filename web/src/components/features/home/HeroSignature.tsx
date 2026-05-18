@@ -1,6 +1,6 @@
 'use client'
 
-import { FadeIn, OptimizedImage } from '@/components/ui'
+import { FadeIn, OptimizedImage, motion } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
@@ -14,6 +14,10 @@ export function HeroSignature({
   onSelectElement,
   isMobile,
 }: HeroSectionProps) {
+  // Public web colors are fixed; CMS color overrides stay disabled here for now.
+  void s.ownerNameColor
+  void s.ownerNameColorDark
+
   const ownerName = s.ownerNameText || 'Paola Bolívar Nievas'
   const illustration = s.illustrationUrl
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
@@ -21,23 +25,26 @@ export function HeroSignature({
   const showOwner = isEditor || (s.showOwnerName ?? true)
 
   return (
-    <div className="order-4 mt-8 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-0 lg:justify-start lg:gap-0">
-      <div className="flex flex-row items-center justify-center lg:flex-col lg:items-end lg:justify-start">
+    <div className="order-4 mt-6 flex w-full items-center justify-center gap-4 lg:relative lg:order-0 lg:mt-2 lg:justify-start lg:gap-0">
+      <div className="flex flex-row items-center justify-center lg:flex-col lg:items-start lg:justify-start">
         {/* Illustration */}
-        <div className="relative z-0 lg:-mr-20 lg:mb-0 lg:-ml-10">
+        <div className="relative z-0 lg:mb-0">
           <HeroWrapper
             id="illustration"
             isEditor={isEditor}
             selectedElement={selectedElement}
             onSelectElement={onSelectElement}
-            className={cn('relative h-24 w-24 lg:h-80 lg:w-80', !isEditor && 'opacity-80')}
+            className={cn('relative h-28 w-28 lg:h-72 lg:w-72', !isEditor && 'opacity-90')}
             style={{
               zIndex: s.illustrationZIndex ?? 0,
               opacity: (s.illustrationOpacity ?? 80) / 100,
               transform: `translate(${eff.illOffsetX}px, ${eff.illOffsetY}px) rotate(${eff.illRotation}deg) scale(${eff.illSize / 100})`,
             }}
           >
-            <div className="relative h-full w-full">
+            <motion.div
+              layoutId={!isEditor && illustration ? 'public-brand-mark' : undefined}
+              className="relative h-full w-full"
+            >
               {illustration ? (
                 <OptimizedImage
                   src={illustration}
@@ -47,17 +54,17 @@ export function HeroSignature({
                   sizes={IMAGE_SIZES.heroIllustration}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center rounded-full border-2 border-dashed border-pink-500/30 bg-pink-500/10">
-                  <span className="text-xs text-pink-500">Sin Ilustración</span>
+                <div className="public-hero-placeholder flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">
+                  <span className="text-xs">Sin Ilustración</span>
                 </div>
               )}
-            </div>
+            </motion.div>
           </HeroWrapper>
         </div>
 
         {/* Owner name / signature */}
         {showOwner && (
-          <div className="relative z-10">
+          <div className="relative z-10 lg:mt-3">
             <FadeIn delay={0.6} disabled={isEditor}>
               <HeroWrapper
                 id="ownerName"
@@ -71,7 +78,7 @@ export function HeroSignature({
               >
                 <p
                   className={cn(
-                    'font-bold tracking-widest text-(--foreground)',
+                    'public-hero-owner-name font-bold tracking-widest',
                     eff.ownerFontSize ? '' : 'text-sm'
                   )}
                   style={{
@@ -81,15 +88,7 @@ export function HeroSignature({
                     fontSize: eff.ownerFontSize ? `${eff.ownerFontSize}px` : undefined,
                   }}
                 >
-                  <span className="dark:hidden" style={{ color: s.ownerNameColor || 'inherit' }}>
-                    {ownerName}
-                  </span>
-                  <span
-                    className="hidden dark:inline"
-                    style={{ color: s.ownerNameColorDark || s.ownerNameColor || 'inherit' }}
-                  >
-                    {ownerName}
-                  </span>
+                  {ownerName}
                 </p>
               </HeroWrapper>
             </FadeIn>

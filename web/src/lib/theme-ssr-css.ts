@@ -44,7 +44,7 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--input', 'color-mix(in srgb, var(--foreground) 14%, var(--background))'],
     ['--accent-foreground', 'var(--primary)'],
     ['--secondary-foreground', 'var(--primary)'],
-    ['--primary-foreground', '#ffffff'],
+    ['--primary-foreground', 'var(--secondary)'],
   ]
 
   const darkSemantic: Array<[string, string]> = [
@@ -62,9 +62,9 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
     ['--muted-foreground', 'color-mix(in srgb, var(--foreground) 55%, var(--background))'],
     ['--border', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
     ['--input', 'color-mix(in srgb, var(--foreground) 18%, var(--background))'],
-    ['--accent-foreground', 'var(--foreground)'],
-    ['--secondary-foreground', '#ffffff'],
-    ['--primary-foreground', '#1a050a'],
+    ['--accent-foreground', 'var(--primary)'],
+    ['--secondary-foreground', 'var(--primary)'],
+    ['--primary-foreground', 'var(--secondary)'],
   ]
 
   const shared: Array<[string, string]> = [

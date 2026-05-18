@@ -27,7 +27,7 @@ export function ContactDetail({
   formatDate,
 }: ContactDetailProps) {
   return (
-    <div className="border-border bg-card rounded-3xl border p-8 shadow-sm backdrop-blur-sm">
+    <div className="border-border bg-secondary rounded-3xl border p-8 shadow-sm backdrop-blur-sm">
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
         <div>
           <h2 className="text-foreground text-2xl font-bold">{contact.name}</h2>
@@ -73,12 +73,12 @@ export function ContactDetail({
           )}
           {contact.instagramUser && (
             <div className="mt-1 flex items-center gap-2">
-              <Instagram className="h-4 w-4 text-pink-500" />
+              <Instagram className="text-primary h-4 w-4" />
               <a
                 href={`https://instagram.com/${contact.instagramUser}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-pink-600 hover:underline dark:text-pink-400"
+                className="text-primary text-sm hover:underline"
               >
                 @{contact.instagramUser}
               </a>
@@ -105,7 +105,7 @@ export function ContactDetail({
             className={`rounded-xl border px-3 py-2 text-sm font-bold transition-colors ${
               isImportant
                 ? 'border-warning bg-warning/10 text-warning'
-                : 'border-border bg-muted text-muted-foreground hover:border-warning hover:text-warning'
+                : 'border-border bg-secondary text-muted-foreground hover:border-warning hover:text-warning'
             }`}
           >
             <Star className={`h-4 w-4 ${isImportant ? 'fill-warning' : ''}`} />
@@ -131,7 +131,7 @@ export function ContactDetail({
 
       <div className="mb-6">
         <h3 className="text-foreground mb-3 font-bold">Mensaje:</h3>
-        <div className="bg-muted rounded-2xl p-6">
+        <div className="bg-secondary rounded-2xl p-6">
           <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {contact.message}
           </p>
@@ -141,7 +141,7 @@ export function ContactDetail({
       {contact.adminNote && (
         <div className="mb-6">
           <h3 className="text-foreground mb-3 font-bold">Nota del administrador:</h3>
-          <div className="border-warning bg-warning/10 dark:bg-warning/5 rounded-2xl border-l-4 p-6">
+          <div className="border-warning bg-warning/10 rounded-2xl border p-6">
             <p className="text-foreground whitespace-pre-wrap italic">{contact.adminNote}</p>
           </div>
         </div>
@@ -152,7 +152,7 @@ export function ContactDetail({
 
 export function ContactDetailEmpty() {
   return (
-    <div className="border-border bg-muted/20 flex h-96 items-center justify-center rounded-3xl border-2 border-dashed">
+    <div className="border-border bg-secondary/20 flex h-96 items-center justify-center rounded-3xl border-2 border-dashed">
       <div className="text-center">
         <Mail className="text-muted-foreground mx-auto mb-4 h-10 w-10" />
         <p className="text-muted-foreground font-medium">

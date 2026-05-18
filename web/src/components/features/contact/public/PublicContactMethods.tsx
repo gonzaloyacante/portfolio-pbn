@@ -22,13 +22,13 @@ export default function PublicContactMethods({
 
   const containerClassName =
     orientation === 'row'
-      ? 'text-muted-foreground flex flex-wrap items-center justify-center gap-4 text-sm'
+      ? 'public-contact-form-muted flex flex-wrap items-center justify-center gap-4 text-sm'
       : 'space-y-4 text-left font-sans text-lg'
 
   const itemClassName =
     orientation === 'row'
-      ? 'hover:text-primary flex items-center gap-2 transition-colors'
-      : 'hover:text-primary flex items-center justify-start gap-3 transition-colors'
+      ? 'public-contact-method flex items-center gap-2 transition-colors'
+      : 'public-contact-method flex items-center justify-start gap-3 transition-colors'
 
   const iconClassName = orientation === 'row' ? 'h-4 w-4' : 'h-6 w-6'
 

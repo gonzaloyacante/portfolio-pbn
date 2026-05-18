@@ -20,7 +20,8 @@ export default defineConfig({
     seed: 'tsx prisma/seed.ts',
   },
   datasource: {
-    // process.env directo (sin env()) para que funcione en CI sin DATABASE_URL
-    url: process.env.DATABASE_URL ?? '',
+    // Prisma CLI debe usar conexión directa para migraciones; runtime usa DATABASE_URL pooled.
+    // process.env directo (sin env()) para que funcione en CI sin DIRECT_URL/DATABASE_URL.
+    url: process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? '',
   },
 })

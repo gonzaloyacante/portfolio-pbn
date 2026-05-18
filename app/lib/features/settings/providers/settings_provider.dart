@@ -56,6 +56,20 @@ Future<CategoryDisplaySettings> categoryDisplaySettings(Ref ref) async {
   return ref.watch(settingsRepositoryProvider).getCategorySettings();
 }
 
+// ── Services Page Settings ──────────────────────────────────────────────────
+
+@Riverpod(keepAlive: true)
+Future<ServicesPageSettings> servicesPageSettings(Ref ref) async {
+  return ref.watch(settingsRepositoryProvider).getServicesPageSettings();
+}
+
+// ── Testimonial Settings ────────────────────────────────────────────────────
+
+@Riverpod(keepAlive: true)
+Future<TestimonialSettings> testimonialSettings(Ref ref) async {
+  return ref.watch(settingsRepositoryProvider).getTestimonialSettings();
+}
+
 // ── Social Links ──────────────────────────────────────────────────────────────
 
 @Riverpod(keepAlive: true)

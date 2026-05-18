@@ -44,6 +44,9 @@ class RouteNames {
   static const String settingsTheme = 'settings-theme';
   static const String settingsSite = 'settings-site';
   static const String settingsSocial = 'settings-social';
+  static const String settingsTestimonial = 'settings-testimonial';
+  static const String settingsServicesPage = 'settings-services-page';
+  static const String settingsCategory = 'settings-category';
 
   // ── Papelera ──────────────────────────────────────────────────────────────
   static const String trash = 'trash';
@@ -92,6 +95,9 @@ class RoutePaths {
   static const String settingsTheme = '/settings/theme';
   static const String settingsSite = '/settings/site';
   static const String settingsSocial = '/settings/social';
+  static const String settingsTestimonial = '/settings/testimonial';
+  static const String settingsServicesPage = '/settings/services-page';
+  static const String settingsCategory = '/settings/category';
   static const String trash = '/trash';
   static const String trashDetail = '/trash/detail';
   static const String account = '/account';

@@ -24,7 +24,11 @@ export function TestimonialRatingStars({
       aria-label={`Valoración: ${n} de 5 estrellas`}
     >
       {Array.from({ length: n }, (_, i) => (
-        <Star key={i} className={cn(sizeCls, 'text-warning fill-warning shrink-0')} aria-hidden />
+        <Star
+          key={i}
+          className={cn(sizeCls, 'public-testimonial-rating-star-active shrink-0')}
+          aria-hidden
+        />
       ))}
     </div>
   )

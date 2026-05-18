@@ -330,5 +330,5 @@ export const getActiveTestimonials = unstable_cache(
     }
   },
   [CACHE_TAGS.testimonials],
-  { revalidate: CACHE_DURATIONS.MEDIUM, tags: [CACHE_TAGS.testimonials] }
+  { revalidate: CACHE_DURATIONS.VERY_LONG, tags: [CACHE_TAGS.testimonials] }
 )

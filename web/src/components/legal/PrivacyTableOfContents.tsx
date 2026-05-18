@@ -15,17 +15,16 @@ const LINKS = [
 
 export function PrivacyTableOfContents() {
   return (
-    <nav
-      aria-label="Índice del contenido"
-      className="border-border bg-muted/30 mb-10 rounded-2xl border p-4 md:sticky md:top-24"
-    >
-      <p className="text-foreground mb-3 text-sm font-semibold">En esta página</p>
-      <ol className="columns-1 gap-x-8 gap-y-1.5 text-sm sm:columns-2">
+    <nav aria-label="Índice del contenido" className="public-privacy-toc mb-10 rounded-2xl p-6">
+      <p className="public-privacy-toc-title mb-4 text-sm font-semibold tracking-wide uppercase">
+        En esta página
+      </p>
+      <ol className="columns-1 gap-x-10 gap-y-2 text-base sm:columns-2">
         {LINKS.map((item) => (
-          <li key={item.id} className="mb-1.5 break-inside-avoid">
+          <li key={item.id} className="mb-2 break-inside-avoid">
             <a
               href={`#${item.id}`}
-              className="text-primary underline-offset-2 transition-colors hover:underline"
+              className="public-privacy-toc-link underline-offset-2 transition-colors hover:underline"
             >
               {item.label}
             </a>

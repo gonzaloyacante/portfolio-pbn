@@ -14,8 +14,16 @@ interface ServicesPublicHeroProps {
 }
 
 export function ServicesPublicHero({ settings }: ServicesPublicHeroProps) {
+  // Public web colors are fixed; CMS title colors stay disabled here for now.
+  void settings?.listTitleColor
+  void settings?.listTitleColorDark
+
   const isMobile = useIsMobile()
-  const title = settings?.listTitle?.trim() || 'Mis Servicios'
+  const rawTitle = settings?.listTitle?.trim() || 'Maquillaje profesional para cada ocasión'
+  const title =
+    rawTitle.toLowerCase() === 'mis servicios'
+      ? 'Maquillaje profesional para cada ocasión'
+      : rawTitle
   const intro =
     settings?.listIntro?.trim() && settings.listIntro.trim().length > 0
       ? settings.listIntro.trim()
@@ -46,29 +54,20 @@ export function ServicesPublicHero({ settings }: ServicesPublicHeroProps) {
       ? `"${fontName}", var(--font-heading), sans-serif`
       : 'var(--font-heading), sans-serif'
 
-  const lightColor = settings?.listTitleColor?.trim() || undefined
-  const darkColor =
-    settings?.listTitleColorDark?.trim() || settings?.listTitleColor?.trim() || undefined
-
   return (
     <>
       {!fontUrl && fontName ? <FontLoader fonts={[fontName]} /> : null}
       <FadeIn className="mb-12 text-center">
         <h1
-          className="text-foreground mb-4 leading-tight font-semibold"
+          className="public-services-title mb-4 leading-tight font-semibold"
           style={{
             fontFamily,
             fontSize: titlePx != null ? `${titlePx}px` : 'var(--font-heading-size, 2rem)',
           }}
         >
-          <span className="dark:hidden" style={{ color: lightColor ?? 'inherit' }}>
-            {title}
-          </span>
-          <span className="hidden dark:inline" style={{ color: darkColor ?? 'inherit' }}>
-            {title}
-          </span>
+          {title}
         </h1>
-        <p className="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed">{intro}</p>
+        <p className="public-services-muted mx-auto max-w-2xl text-lg leading-relaxed">{intro}</p>
       </FadeIn>
     </>
   )

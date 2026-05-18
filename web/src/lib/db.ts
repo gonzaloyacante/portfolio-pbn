@@ -2,7 +2,15 @@ import { PrismaClient } from '@/generated/prisma/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-const connectionString = process.env.DATABASE_URL
+const connectionString =
+  process.env.DATABASE_URL ??
+  (process.env.NODE_ENV === 'test'
+    ? 'postgresql://test:test@localhost:5432/portfolio_pbn_test'
+    : undefined)
+
+if (!connectionString) {
+  throw new Error('DATABASE_URL is required to initialize Prisma')
+}
 
 /**
  * Pool configuration tuned for Neon serverless (free tier).
@@ -21,14 +29,22 @@ const connectionString = process.env.DATABASE_URL
  *
  * DO NOT raise `max` without a paid plan — it will exhaust compute hours.
  */
-const pool = new Pool({
-  connectionString,
-  ssl: { rejectUnauthorized: true },
-  max: 3,
-  idleTimeoutMillis: 10_000,
-  connectionTimeoutMillis: 10_000,
-})
-const adapter = new PrismaPg(pool)
+const globalForPrisma = globalThis as unknown as {
+  prisma: ReturnType<typeof prismaClientSingleton> | undefined
+  prismaPool: Pool | undefined
+  prismaAdapter: PrismaPg | undefined
+}
+
+const pool =
+  globalForPrisma.prismaPool ??
+  new Pool({
+    connectionString,
+    ssl: { rejectUnauthorized: true },
+    max: 3,
+    idleTimeoutMillis: 10_000,
+    connectionTimeoutMillis: 10_000,
+  })
+const adapter = globalForPrisma.prismaAdapter ?? new PrismaPg(pool)
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
@@ -37,12 +53,10 @@ const prismaClientSingleton = () => {
   })
 }
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: ReturnType<typeof prismaClientSingleton> | undefined
-}
-
 export const prisma = globalForPrisma.prisma ?? prismaClientSingleton()
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma
+  globalForPrisma.prismaPool = pool
+  globalForPrisma.prismaAdapter = adapter
 }

@@ -1,0 +1,1005 @@
+.public-fixed-theme {
+  background-color: var(--background);
+  color: var(--foreground);
+
+  --background: #fff1f9;
+  --foreground: #000000;
+  --card: #fff1f9;
+  --card-foreground: #000000;
+  --popover: #fff1f9;
+  --popover-foreground: #000000;
+  --primary: #6c0a0a;
+  --primary-foreground: #ffaadd;
+  --secondary: #fff1f9;
+  --secondary-foreground: #6c0a0a;
+  --accent: #fff1f9;
+  --accent-foreground: #6c0a0a;
+  --muted: #fff1f9;
+  --muted-foreground: #6c0a0a;
+  --border: #6c0a0a;
+  --input: #6c0a0a;
+  --ring: #6c0a0a;
+
+  --public-makeup: #6c0a0a;
+  --public-portfolio: #ffaadd;
+  --public-nav-text: #ffaadd;
+  --public-nav-bg: #6c0a0a;
+  --public-owner-name: #6c0a0a;
+  --public-about-text: #000000;
+  --public-about-title: #6c0a0a;
+  --public-about-heading: #6c0a0a;
+  --public-category-title: #6c0a0a;
+  --public-category-back-bg: #6c0a0a;
+  --public-category-back-text: #ffaadd;
+
+  --public-about-page-bg: #fff1f9;
+  --public-about-skill-chip-bg: #fff1f9;
+  --public-about-skill-chip-border: #6c0a0a;
+  --public-about-skill-chip-text: #6c0a0a;
+  --public-about-portrait-shadow-rgb: 108 10 10;
+  --public-about-portrait-fallback-start: #6c0a0a;
+  --public-about-portrait-fallback-end: #fff1f9;
+  --public-about-portrait-fallback-icon: #ffaadd;
+  --public-about-testimonials-section-bg: #fff1f9;
+  --public-about-testimonial-card-bg: #fff1f9;
+  --public-about-testimonial-card-border: #6c0a0a;
+  --public-about-testimonial-title: #6c0a0a;
+  --public-about-testimonial-text: #000000;
+  --public-about-testimonial-meta: #000000;
+  --public-about-testimonial-cta-bg: #6c0a0a;
+  --public-about-testimonial-cta-text: #ffaadd;
+
+  --public-testimonial-page-bg: #fff1f9;
+  --public-testimonial-section-bg: #fff1f9;
+  --public-testimonial-form-surface: #fff1f9;
+  --public-testimonial-card-bg: #fff1f9;
+  --public-testimonial-card-border: #6c0a0a;
+  --public-testimonial-title: #6c0a0a;
+  --public-testimonial-text: #000000;
+  --public-testimonial-meta: #000000;
+  --public-testimonial-cta-bg: #6c0a0a;
+  --public-testimonial-cta-text: #ffaadd;
+  --public-testimonial-avatar-bg: #fff1f9;
+  --public-testimonial-avatar-text: #6c0a0a;
+  --public-testimonial-avatar-border: #6c0a0a;
+  --public-testimonial-verified: #6c0a0a;
+  --public-testimonial-star: #6c0a0a;
+  --public-testimonial-star-inactive: #6c0a0a;
+  --public-testimonial-nav-bg: #fff1f9;
+  --public-testimonial-nav-text: #6c0a0a;
+  --public-testimonial-nav-border: #6c0a0a;
+  --public-testimonial-dot-active: #6c0a0a;
+  --public-testimonial-dot-inactive: #6c0a0a;
+  --public-testimonial-success-surface: #fff1f9;
+  --public-testimonial-success-border: #6c0a0a;
+  --public-testimonial-success-title: #6c0a0a;
+  --public-testimonial-success-text: #000000;
+  --public-testimonial-success-icon: #6c0a0a;
+  --public-testimonial-success-link: #6c0a0a;
+  --public-testimonial-field-bg: #fff1f9;
+  --public-testimonial-field-border: #6c0a0a;
+  --public-testimonial-field-text: #000000;
+  --public-testimonial-field-placeholder: #000000;
+  --public-testimonial-field-focus-border: #6c0a0a;
+  --public-testimonial-field-focus-ring: #6c0a0a;
+
+  --public-services-page-bg: #fff1f9;
+  --public-services-title: #6c0a0a;
+  --public-services-text: #000000;
+  --public-services-muted: #000000;
+  --public-services-surface: #fff1f9;
+  --public-services-surface-border: #6c0a0a;
+  --public-services-accent-bg: #6c0a0a;
+  --public-services-accent-text: #ffaadd;
+  --public-services-hero-overlay: #6c0a0a;
+  --public-services-hero-text: #fff1f9;
+  --public-services-hero-subtext: #fff1f9;
+  --public-services-chip-bg: #fff1f9;
+  --public-services-chip-border: #6c0a0a;
+  --public-services-chip-text: #6c0a0a;
+
+  --public-cookie-surface: #fff1f9;
+  --public-cookie-surface-border: #6c0a0a;
+  --public-cookie-title: #6c0a0a;
+  --public-cookie-text: #000000;
+  --public-cookie-muted: #000000;
+  --public-cookie-link: #6c0a0a;
+  --public-cookie-detail-bg: #fff1f9;
+  --public-cookie-detail-border: #6c0a0a;
+  --public-cookie-primary-bg: #6c0a0a;
+  --public-cookie-primary-text: #ffaadd;
+  --public-cookie-secondary-bg: #fff1f9;
+  --public-cookie-secondary-text: #6c0a0a;
+  --public-cookie-secondary-border: #6c0a0a;
+  --public-cookie-toggle-on: #6c0a0a;
+  --public-cookie-toggle-off: #6c0a0a;
+  --public-cookie-toggle-knob: #fff1f9;
+
+  --public-contact-form-surface: #fffdfd;
+  --public-contact-form-border: #dcc3cd;
+  --public-contact-form-title: #6c0a0a;
+  --public-contact-form-text: #1a050a;
+  --public-contact-form-muted: #1a050a;
+  --public-contact-form-link: #6c0a0a;
+  --public-contact-field-bg: #ffffff;
+  --public-contact-field-border: #dcc3cd;
+  --public-contact-field-text: #1a050a;
+  --public-contact-field-placeholder: #1a050a;
+  --public-contact-option-bg: #ffffff;
+  --public-contact-option-border: #dcc3cd;
+  --public-contact-option-text: #1a050a;
+  --public-contact-option-active-bg: #fff1f9;
+  --public-contact-option-active-text: #6c0a0a;
+  --public-contact-submit-bg: #6c0a0a;
+  --public-contact-submit-text: #fff8fc;
+  --public-contact-info-text: #000000;
+  --public-contact-info-border: #6c0a0a;
+  --public-contact-link: #6c0a0a;
+  --public-contact-error: #6c0a0a;
+  --public-contact-privacy-bg: #fff8fc;
+  --public-contact-privacy-text: #1a050a;
+  --public-contact-privacy-border: #dcc3cd;
+  --public-contact-privacy-link: #6c0a0a;
+  --public-contact-instagram-bg: #fff1f9;
+  --public-contact-instagram-border: #6c0a0a;
+}
+
+.public-fixed-theme strong:not(:last-child)::after {
+  content: ' ';
+}
+
+.dark .public-fixed-theme {
+  --background: #000000;
+  --foreground: #fff1f9;
+  --card: #000000;
+  --card-foreground: #fff1f9;
+  --popover: #000000;
+  --popover-foreground: #fff1f9;
+  --primary: #ffaadd;
+  --primary-foreground: #6c0a0a;
+  --secondary: #000000;
+  --secondary-foreground: #fff1f9;
+  --accent: #000000;
+  --accent-foreground: #fff1f9;
+  --muted: #000000;
+  --muted-foreground: #fff1f9;
+  --border: #ffaadd;
+  --input: #ffaadd;
+  --ring: #ffaadd;
+
+  --public-makeup: #000000;
+  --public-portfolio: #ffaadd;
+  --public-nav-text: #6c0a0a;
+  --public-nav-bg: #ffaadd;
+  --public-owner-name: #ffaadd;
+  --public-about-text: #fff1f9;
+  --public-about-title: #ffaadd;
+  --public-about-heading: #ffaadd;
+  --public-category-title: #ffaadd;
+  --public-category-back-bg: #ffaadd;
+  --public-category-back-text: #6c0a0a;
+
+  --public-about-page-bg: #000000;
+  --public-about-skill-chip-bg: #000000;
+  --public-about-skill-chip-border: #ffaadd;
+  --public-about-skill-chip-text: #ffaadd;
+  --public-about-portrait-shadow-rgb: 255 170 221;
+  --public-about-portrait-fallback-start: #000000;
+  --public-about-portrait-fallback-end: #ffaadd;
+  --public-about-portrait-fallback-icon: #fff1f9;
+  --public-about-testimonials-section-bg: #000000;
+  --public-about-testimonial-card-bg: #000000;
+  --public-about-testimonial-card-border: #ffaadd;
+  --public-about-testimonial-title: #ffaadd;
+  --public-about-testimonial-text: #fff1f9;
+  --public-about-testimonial-meta: #fff1f9;
+  --public-about-testimonial-cta-bg: #ffaadd;
+  --public-about-testimonial-cta-text: #6c0a0a;
+
+  --public-testimonial-page-bg: #000000;
+  --public-testimonial-section-bg: #000000;
+  --public-testimonial-form-surface: #000000;
+  --public-testimonial-card-bg: #000000;
+  --public-testimonial-card-border: #ffaadd;
+  --public-testimonial-title: #ffaadd;
+  --public-testimonial-text: #fff1f9;
+  --public-testimonial-meta: #fff1f9;
+  --public-testimonial-cta-bg: #ffaadd;
+  --public-testimonial-cta-text: #6c0a0a;
+  --public-testimonial-avatar-bg: #000000;
+  --public-testimonial-avatar-text: #ffaadd;
+  --public-testimonial-avatar-border: #ffaadd;
+  --public-testimonial-verified: #ffaadd;
+  --public-testimonial-star: #ffaadd;
+  --public-testimonial-star-inactive: #ffaadd;
+  --public-testimonial-nav-bg: #000000;
+  --public-testimonial-nav-text: #ffaadd;
+  --public-testimonial-nav-border: #ffaadd;
+  --public-testimonial-dot-active: #ffaadd;
+  --public-testimonial-dot-inactive: #ffaadd;
+  --public-testimonial-success-surface: #000000;
+  --public-testimonial-success-border: #ffaadd;
+  --public-testimonial-success-title: #ffaadd;
+  --public-testimonial-success-text: #fff1f9;
+  --public-testimonial-success-icon: #ffaadd;
+  --public-testimonial-success-link: #ffaadd;
+  --public-testimonial-field-bg: #000000;
+  --public-testimonial-field-border: #ffaadd;
+  --public-testimonial-field-text: #fff1f9;
+  --public-testimonial-field-placeholder: #fff1f9;
+  --public-testimonial-field-focus-border: #ffaadd;
+  --public-testimonial-field-focus-ring: #ffaadd;
+
+  --public-services-page-bg: #000000;
+  --public-services-title: #ffaadd;
+  --public-services-text: #fff1f9;
+  --public-services-muted: #fff1f9;
+  --public-services-surface: #000000;
+  --public-services-surface-border: #ffaadd;
+  --public-services-accent-bg: #ffaadd;
+  --public-services-accent-text: #6c0a0a;
+  --public-services-hero-overlay: #000000;
+  --public-services-hero-text: #fff1f9;
+  --public-services-hero-subtext: #fff1f9;
+  --public-services-chip-bg: #000000;
+  --public-services-chip-border: #ffaadd;
+  --public-services-chip-text: #fff1f9;
+
+  --public-cookie-surface: #000000;
+  --public-cookie-surface-border: #ffaadd;
+  --public-cookie-title: #ffaadd;
+  --public-cookie-text: #fff1f9;
+  --public-cookie-muted: #fff1f9;
+  --public-cookie-link: #ffaadd;
+  --public-cookie-detail-bg: #000000;
+  --public-cookie-detail-border: #ffaadd;
+  --public-cookie-primary-bg: #ffaadd;
+  --public-cookie-primary-text: #6c0a0a;
+  --public-cookie-secondary-bg: #000000;
+  --public-cookie-secondary-text: #ffaadd;
+  --public-cookie-secondary-border: #ffaadd;
+  --public-cookie-toggle-on: #ffaadd;
+  --public-cookie-toggle-off: #6c0a0a;
+  --public-cookie-toggle-knob: #000000;
+
+  --public-contact-form-surface: #000000;
+  --public-contact-form-border: #ffaadd;
+  --public-contact-form-title: #ffaadd;
+  --public-contact-form-text: #fff1f9;
+  --public-contact-form-muted: #fff1f9;
+  --public-contact-form-link: #ffaadd;
+  --public-contact-field-bg: #000000;
+  --public-contact-field-border: #ffaadd;
+  --public-contact-field-text: #fff1f9;
+  --public-contact-field-placeholder: #fff1f9;
+  --public-contact-option-bg: #000000;
+  --public-contact-option-border: #ffaadd;
+  --public-contact-option-text: #fff1f9;
+  --public-contact-option-active-bg: #ffaadd;
+  --public-contact-option-active-text: #6c0a0a;
+  --public-contact-submit-bg: #ffaadd;
+  --public-contact-submit-text: #6c0a0a;
+  --public-contact-info-text: #fff1f9;
+  --public-contact-info-border: #ffaadd;
+  --public-contact-link: #ffaadd;
+  --public-contact-error: #ffaadd;
+  --public-contact-privacy-bg: #000000;
+  --public-contact-privacy-text: #fff1f9;
+  --public-contact-privacy-border: #ffaadd;
+  --public-contact-privacy-link: #ffaadd;
+  --public-contact-instagram-bg: #000000;
+  --public-contact-instagram-border: #ffaadd;
+}
+
+.public-navbar-surface {
+  background-color: var(--background);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.public-navbar-home-surface {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.public-navbar-menu-surface {
+  background-color: var(--background);
+  border-color: var(--public-nav-bg);
+}
+
+.public-navbar-link {
+  color: var(--public-nav-text);
+}
+
+.public-navbar-active {
+  background-color: var(--public-nav-bg);
+  color: var(--public-nav-text);
+}
+
+.public-navbar-toggle {
+  color: var(--public-nav-bg);
+}
+
+.public-footer {
+  background-color: var(--background);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.public-footer-muted {
+  color: var(--foreground);
+  opacity: 0.65;
+}
+
+.public-loading-page,
+.public-error-page {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.public-loading-card,
+.public-error-card {
+  background-color: var(--card);
+  border-color: var(--border);
+}
+
+.public-loading-page .ui-skeleton {
+  background-color: color-mix(in srgb, var(--primary) 10%, var(--secondary) 90%);
+}
+
+.dark .public-loading-page .ui-skeleton {
+  background-color: color-mix(in srgb, var(--primary) 18%, var(--card) 82%);
+}
+
+.public-error-muted {
+  color: var(--foreground);
+  opacity: 0.72;
+}
+
+.public-error-primary-button {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.public-error-link {
+  color: var(--foreground);
+  opacity: 0.72;
+}
+
+.public-skip-link {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.public-home-page {
+  background-color: var(--background);
+}
+
+.public-home-page-background {
+  background-image: var(--public-home-background-image, none);
+  background-position: var(--public-home-background-position, center);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 767px) {
+  .public-home-page-background {
+    background-image: var(
+      --public-home-mobile-background-image,
+      var(--public-home-background-image, none)
+    );
+    background-position: var(
+      --public-home-mobile-background-position,
+      var(--public-home-background-position, center)
+    );
+  }
+}
+
+.public-home-hero {
+  background-color: transparent;
+  background-image: none;
+}
+
+.public-home-featured-section {
+  background-color: transparent;
+}
+
+.public-home-featured-link {
+  color: var(--primary);
+}
+
+.public-home-featured-title,
+.public-hero-title-primary {
+  color: var(--public-makeup);
+}
+
+.public-hero-title-secondary {
+  color: var(--public-portfolio);
+}
+
+.public-hero-owner-name {
+  color: var(--public-owner-name);
+}
+
+.public-hero-cta-button {
+  background-color: var(--public-nav-bg);
+  color: var(--public-nav-text);
+  border: 1px solid var(--public-nav-bg);
+}
+
+.public-home-featured-card {
+  background-color: var(--card);
+}
+
+.public-home-featured-card-overlay {
+  background-color: var(--primary);
+}
+
+.public-hero-placeholder {
+  background-color: var(--secondary);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.public-portfolio-page {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.public-portfolio-title,
+.public-portfolio-category-title {
+  color: var(--public-category-title);
+}
+
+.public-portfolio-text {
+  color: var(--foreground);
+}
+
+.public-portfolio-muted {
+  color: var(--muted-foreground);
+}
+
+.public-portfolio-card {
+  background-color: var(--card);
+}
+
+.public-portfolio-image-fallback {
+  background-color: var(--card);
+  color: var(--muted-foreground);
+}
+
+.public-portfolio-card-overlay {
+  background: linear-gradient(to top, rgb(0 0 0 / 0.72), transparent);
+}
+
+.public-portfolio-card-title-on-image {
+  color: #fff8fc;
+}
+
+.public-portfolio-card-rule {
+  background-color: var(--secondary);
+}
+
+.public-portfolio-link {
+  color: var(--primary);
+}
+
+.public-portfolio-divider {
+  border-color: var(--border);
+}
+
+.public-category-back-button {
+  background-color: var(--public-category-back-bg);
+  border-color: var(--public-category-back-bg);
+  color: var(--public-category-back-text);
+}
+
+.public-gallery-image-card {
+  background-color: var(--card);
+}
+
+.public-gallery-image-overlay {
+  background-color: var(--primary);
+}
+
+.public-gallery-image-title {
+  color: var(--primary-foreground);
+}
+
+.public-about-page {
+  background-color: var(--public-about-page-bg);
+}
+
+.public-about-heading {
+  color: var(--public-about-heading);
+}
+
+.public-about-text {
+  color: var(--public-about-text);
+}
+
+.public-about-skill-chip {
+  background-color: var(--public-about-skill-chip-bg);
+  border-color: var(--public-about-skill-chip-border);
+  color: var(--public-about-skill-chip-text);
+}
+
+.public-about-portrait {
+  box-shadow: var(--public-about-portrait-shadow, none);
+}
+
+.public-about-portrait-fallback {
+  background-image: linear-gradient(
+    to bottom right,
+    var(--public-about-portrait-fallback-start),
+    var(--public-about-portrait-fallback-end)
+  );
+}
+
+.public-about-portrait-fallback-icon {
+  color: var(--public-about-portrait-fallback-icon);
+}
+
+.public-about-testimonials-section {
+  background-color: var(--public-about-testimonials-section-bg);
+  border-color: var(--public-about-testimonial-card-border);
+}
+
+.public-about-testimonial-title {
+  color: var(--public-about-testimonial-title);
+}
+
+.public-about-testimonial-cta {
+  background-color: var(--public-about-testimonial-cta-bg);
+  color: var(--public-about-testimonial-cta-text);
+}
+
+.public-testimonial-section {
+  background-color: var(--public-testimonial-section-bg);
+  border-color: var(--public-testimonial-card-border);
+}
+
+.public-testimonial-title {
+  color: var(--public-testimonial-title);
+}
+
+.public-testimonial-card {
+  background-color: var(--public-testimonial-card-bg);
+  border-color: var(--public-testimonial-card-border);
+}
+
+.public-testimonial-text {
+  color: var(--public-testimonial-text);
+}
+
+.public-testimonial-meta {
+  color: var(--public-testimonial-meta);
+}
+
+.public-testimonial-avatar {
+  background-color: var(--public-testimonial-avatar-bg);
+  color: var(--public-testimonial-avatar-text);
+  border-color: var(--public-testimonial-avatar-border);
+}
+
+.public-testimonial-verified {
+  color: var(--public-testimonial-verified);
+}
+
+.public-testimonial-nav-button {
+  background-color: var(--public-testimonial-nav-bg);
+  border-color: var(--public-testimonial-nav-border);
+  color: var(--public-testimonial-nav-text);
+}
+
+.public-testimonial-dot-active {
+  background-color: var(--public-testimonial-dot-active);
+}
+
+.public-testimonial-dot-inactive {
+  background-color: var(--public-testimonial-dot-inactive);
+}
+
+.public-testimonial-cta {
+  background-color: var(--public-testimonial-cta-bg);
+  color: var(--public-testimonial-cta-text);
+}
+
+.public-testimonial-page {
+  background-color: var(--public-testimonial-page-bg);
+  color: var(--public-testimonial-text);
+}
+
+.public-testimonial-form-panel {
+  background-color: var(--public-testimonial-form-surface);
+  border-color: var(--public-testimonial-card-border);
+}
+
+.public-testimonial-field {
+  background-color: var(--public-testimonial-field-bg) !important;
+  border-color: var(--public-testimonial-field-border) !important;
+  color: var(--public-testimonial-field-text) !important;
+  caret-color: var(--public-testimonial-field-text);
+}
+
+.public-testimonial-field::placeholder {
+  color: var(--public-testimonial-field-placeholder) !important;
+  opacity: 0.65;
+}
+
+.public-testimonial-field:focus {
+  border-color: var(--public-testimonial-field-focus-border) !important;
+  box-shadow: 0 0 0 2px var(--public-testimonial-field-focus-ring);
+}
+
+.public-testimonial-star-button {
+  --tw-ring-color: var(--public-testimonial-field-focus-border);
+}
+
+.public-testimonial-labels label,
+.public-testimonial-labels legend {
+  color: var(--public-testimonial-text) !important;
+}
+
+.public-testimonial-labels p {
+  color: var(--public-testimonial-meta) !important;
+}
+
+.public-testimonial-success-panel {
+  background-color: var(--public-testimonial-success-surface);
+  border-color: var(--public-testimonial-success-border);
+}
+
+.public-testimonial-success-icon {
+  color: var(--public-testimonial-success-icon);
+}
+
+.public-testimonial-success-title {
+  color: var(--public-testimonial-success-title);
+}
+
+.public-testimonial-success-text {
+  color: var(--public-testimonial-success-text);
+}
+
+.public-testimonial-success-link {
+  color: var(--public-testimonial-success-link);
+}
+
+.public-testimonial-rating-star {
+  color: var(--public-testimonial-star-inactive);
+}
+
+.public-testimonial-rating-star-active {
+  color: var(--public-testimonial-star);
+  fill: var(--public-testimonial-star);
+}
+
+.public-testimonial-submit {
+  background-color: var(--public-testimonial-cta-bg);
+  color: var(--public-testimonial-cta-text);
+  border: 1px solid var(--public-testimonial-cta-bg);
+}
+
+.public-services-page {
+  background-color: var(--public-services-page-bg);
+}
+
+.public-services-title {
+  color: var(--public-services-title);
+}
+
+.public-services-text {
+  color: var(--public-services-text);
+}
+
+.public-services-muted {
+  color: var(--public-services-muted);
+}
+
+.public-services-surface {
+  background-color: var(--public-services-surface);
+}
+
+.public-services-surface-border {
+  border-color: var(--public-services-surface-border);
+}
+
+.public-services-card {
+  background-color: var(--public-services-surface);
+  border-color: var(--public-services-surface-border);
+}
+
+.public-services-primary-button {
+  background-color: var(--public-services-accent-bg);
+  color: var(--public-services-accent-text);
+  border: 1px solid var(--public-services-accent-bg);
+}
+
+.public-services-secondary-button {
+  background-color: var(--public-services-surface);
+  color: var(--public-services-accent-bg);
+  border: 1px solid var(--public-services-surface-border);
+}
+
+.public-services-badge {
+  background-color: var(--public-services-accent-bg);
+  color: var(--public-services-accent-text);
+}
+
+.public-services-detail-hero {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 94.75%,
+    rgb(0 0 0 / 0.96) 95.3%,
+    rgb(0 0 0 / 0.9) 95.9%,
+    rgb(0 0 0 / 0.82) 96.5%,
+    rgb(0 0 0 / 0.72) 97.1%,
+    rgb(0 0 0 / 0.6) 97.7%,
+    rgb(0 0 0 / 0.45) 98.3%,
+    rgb(0 0 0 / 0.28) 98.9%,
+    rgb(0 0 0 / 0.12) 99.45%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    #000 0%,
+    #000 94.75%,
+    rgb(0 0 0 / 0.96) 95.3%,
+    rgb(0 0 0 / 0.9) 95.9%,
+    rgb(0 0 0 / 0.82) 96.5%,
+    rgb(0 0 0 / 0.72) 97.1%,
+    rgb(0 0 0 / 0.6) 97.7%,
+    rgb(0 0 0 / 0.45) 98.3%,
+    rgb(0 0 0 / 0.28) 98.9%,
+    rgb(0 0 0 / 0.12) 99.45%,
+    transparent 100%
+  );
+}
+
+.public-services-detail-hero-fallback {
+  background-color: var(--public-services-surface);
+}
+
+.public-services-detail-hero-overlay {
+  background-color: var(--public-services-hero-overlay);
+}
+
+.public-services-detail-hero-title {
+  color: var(--public-services-hero-text);
+}
+
+.public-services-detail-hero-subtext {
+  color: var(--public-services-hero-subtext);
+}
+
+.public-services-chip {
+  background-color: var(--public-services-chip-bg);
+  border-color: var(--public-services-chip-border);
+  color: var(--public-services-chip-text);
+}
+
+.public-cookie-banner {
+  background-color: var(--public-cookie-surface);
+  border: 1px solid var(--public-cookie-surface-border);
+}
+
+.public-cookie-title {
+  color: var(--public-cookie-title);
+}
+
+.public-cookie-text,
+.public-cookie-muted {
+  color: var(--public-cookie-text);
+}
+
+.public-cookie-link {
+  color: var(--public-cookie-link);
+}
+
+.public-cookie-detail {
+  background-color: var(--public-cookie-detail-bg);
+  border: 1px solid var(--public-cookie-detail-border);
+}
+
+.public-cookie-primary-btn {
+  background-color: var(--public-cookie-primary-bg) !important;
+  color: var(--public-cookie-primary-text) !important;
+  border: 1px solid var(--public-cookie-primary-bg);
+}
+
+.public-cookie-secondary-btn {
+  background-color: var(--public-cookie-secondary-bg) !important;
+  color: var(--public-cookie-secondary-text) !important;
+  border: 1px solid var(--public-cookie-secondary-border);
+}
+
+.public-cookie-toggle-on {
+  background-color: var(--public-cookie-toggle-on);
+}
+
+.public-cookie-toggle-off {
+  background-color: var(--public-cookie-toggle-off);
+}
+
+.public-cookie-toggle-knob {
+  background-color: var(--public-cookie-toggle-knob);
+}
+
+.public-privacy-page {
+  background-color: var(--background);
+}
+
+.public-privacy-text,
+.public-privacy-heading {
+  color: var(--foreground);
+}
+
+.public-privacy-toc {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+}
+
+.public-privacy-toc-title {
+  color: var(--foreground);
+}
+
+.public-privacy-toc-link {
+  color: var(--foreground);
+}
+
+.public-privacy-toc-link:hover {
+  color: var(--primary);
+}
+
+.public-privacy-panel {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+}
+
+.public-privacy-accent-panel {
+  background-color: var(--accent);
+  border: 1px solid var(--border);
+}
+
+.public-privacy-contact-button {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border: 1px solid var(--primary);
+}
+
+.public-privacy-link,
+.public-privacy-icon {
+  color: var(--primary);
+}
+
+.public-privacy-muted {
+  color: var(--foreground);
+  opacity: 0.72;
+}
+
+.public-contact-page {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.public-contact-method,
+.public-contact-social-link {
+  color: var(--public-contact-info-text);
+  border-color: var(--public-contact-info-border);
+}
+
+.public-contact-method:hover,
+.public-contact-social-link:hover {
+  color: var(--public-contact-link);
+}
+
+.public-contact-form-panel {
+  background-color: var(--public-contact-form-surface);
+  border: 1px solid var(--public-contact-form-border);
+  color: var(--public-contact-form-text);
+}
+
+.public-contact-form-title {
+  color: var(--public-contact-form-title);
+}
+
+.public-contact-form-label,
+.public-contact-form-text {
+  color: var(--public-contact-form-text);
+}
+
+.public-contact-form-muted {
+  color: var(--public-contact-form-muted);
+}
+
+.public-contact-form-link {
+  color: var(--public-contact-form-link);
+}
+
+.public-contact-info-text {
+  color: var(--public-contact-info-text);
+}
+
+.public-contact-error {
+  color: var(--public-contact-error);
+}
+
+.public-contact-privacy-box {
+  background-color: transparent;
+  border: 1px solid var(--public-contact-field-border);
+  color: var(--public-contact-privacy-text);
+}
+
+.public-contact-privacy-link {
+  color: var(--public-contact-privacy-link);
+}
+
+.public-contact-field {
+  background-color: var(--public-contact-field-bg);
+  border: 1px solid var(--public-contact-field-border);
+  color: var(--public-contact-field-text);
+}
+
+.public-contact-field::placeholder {
+  color: var(--public-contact-field-placeholder);
+  opacity: 0.65;
+}
+
+.public-contact-field:focus {
+  outline: 2px solid var(--public-contact-field-border);
+  outline-offset: 2px;
+}
+
+.public-contact-option {
+  background-color: var(--public-contact-option-bg);
+  border: 1px solid var(--public-contact-option-border);
+  color: var(--public-contact-option-text);
+}
+
+.public-contact-option-active {
+  background-color: var(--public-contact-option-active-bg);
+  border: 2px solid var(--primary);
+  color: var(--public-contact-option-active-text);
+}
+
+.public-contact-option-active-pill {
+  background-color: transparent;
+  border: 2px solid var(--primary);
+  border-radius: 0.75rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .public-contact-option:hover {
+    background-color: var(--public-contact-option-active-bg);
+    border-color: var(--primary);
+    color: var(--public-contact-option-text);
+  }
+}
+
+.public-contact-submit {
+  background-color: var(--public-contact-submit-bg);
+  color: var(--public-contact-submit-text);
+  border: 1px solid var(--public-contact-submit-bg);
+}
+
+.public-contact-instagram {
+  min-height: 520px;
+  background-color: var(--public-contact-instagram-bg);
+}
+
+.public-contact-instagram blockquote {
+  margin: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.public-contact-instagram-embed {
+  display: block;
+  min-height: 520px;
+  background-color: var(--public-contact-instagram-bg);
+  border: 0;
+  padding: 0;
+}

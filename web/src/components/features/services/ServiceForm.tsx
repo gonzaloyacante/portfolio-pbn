@@ -7,7 +7,6 @@ import { createService, updateService } from '@/actions/cms/services'
 import { Button, ImageUpload, DurationField } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
-import { generateSlug } from '@/lib/string-utils'
 import { Service, ServicePricingTier } from '@/generated/prisma/client'
 import ServicePricingTiersEditor from './ServicePricingTiersEditor'
 
@@ -31,10 +30,6 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
     try {
       const form = e.currentTarget as HTMLFormElement
       const fd = new FormData(form)
-      if (!fd.get('slug')) {
-        const name = (fd.get('name') || '') as string
-        fd.set('slug', generateSlug(name))
-      }
       await handleSubmit(fd)
     } finally {
       setIsLoading(false)

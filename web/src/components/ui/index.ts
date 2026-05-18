@@ -113,3 +113,20 @@ export { default as ImageUpload } from './media/ImageUpload'
 export { default as SortableImage } from './media/SortableImage'
 export { default as SortableImageGrid } from './media/SortableImageGrid'
 export { default as ThumbnailSelector } from './media/ThumbnailSelector'
+
+// Map (MapLibre / mapcn registry)
+export {
+  Map,
+  useMap,
+  MapMarker,
+  MarkerContent,
+  MarkerPopup,
+  MarkerTooltip,
+  MarkerLabel,
+  MapPopup,
+  MapControls,
+  MapRoute,
+  MapArc,
+  MapClusterLayer,
+} from './map'
+export type { MapRef, MapViewport, MapArcDatum, MapArcEvent } from './map'

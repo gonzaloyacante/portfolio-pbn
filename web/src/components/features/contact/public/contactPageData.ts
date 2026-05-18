@@ -8,8 +8,6 @@ export interface PublicContactPageData {
   contactMethods: ContactMethodItem[]
   ownerName: string
   locationSuffix: string
-  instagramProfileUrl: string | null
-  instagramProfileLabel: string | null
 }
 
 export async function getPublicContactPageData(): Promise<PublicContactPageData> {
@@ -19,7 +17,6 @@ export async function getPublicContactPageData(): Promise<PublicContactPageData>
   const location = contactSettings?.location?.trim()
   const locationSuffix = location ? ` en ${location}` : ''
   const contactMethods = getVisibleContactMethods(contactSettings)
-  const instagramMethod = contactMethods.find((method) => method.id === 'instagram')
 
   return {
     contactSettings,
@@ -27,7 +24,5 @@ export async function getPublicContactPageData(): Promise<PublicContactPageData>
     contactMethods,
     ownerName,
     locationSuffix,
-    instagramProfileUrl: instagramMethod?.href ?? null,
-    instagramProfileLabel: instagramMethod?.value ?? null,
   }
 }

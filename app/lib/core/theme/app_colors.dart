@@ -7,22 +7,22 @@ class AppColors {
 
   // ── Light Mode ────────────────────────────────────────────────────────────
   static const Color lightPrimary = Color(0xFF6C0A0A);
-  static const Color lightBackground = Color(0xFFFFF8FC);
-  static const Color lightForeground = Color(0xFF1A050A);
-  static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightSecondary = Color(0xFFFCE7F3);
+  static const Color lightBackground = Color(0xFFFFF1F9);
+  static const Color lightForeground = Color(0xFF000000);
+  static const Color lightCard = Color(0xFFFFF1F9);
+  static const Color lightSecondary = Color(0xFFFFAADD);
   static const Color lightMuted = Color(0xFFF5F5F5);
   static const Color lightAccent = Color(0xFFFFF1F9);
   static const Color lightBorder = Color(0xFFE5E5E5);
 
   // ── Dark Mode ─────────────────────────────────────────────────────────────
-  static const Color darkPrimary = Color(0xFFFB7185);
-  static const Color darkBackground = Color(0xFF0F0505);
-  static const Color darkForeground = Color(0xFFFAFAFA);
-  static const Color darkCard = Color(0xFF1C0A0F);
-  static const Color darkSecondary = Color(0xFF881337);
+  static const Color darkPrimary = Color(0xFFFFAADD);
+  static const Color darkBackground = Color(0xFF000000);
+  static const Color darkForeground = Color(0xFFFFF1F9);
+  static const Color darkCard = Color(0xFF000000);
+  static const Color darkSecondary = Color(0xFF6C0A0A);
   static const Color darkMuted = Color(0xFF2A1015);
-  static const Color darkAccent = Color(0xFF2A1015);
+  static const Color darkAccent = Color(0xFF6C0A0A);
   static const Color darkBorder = Color(0xFF2A1015);
   static const Color darkShimmerHighlight = Color(0xFF3A2020);
 

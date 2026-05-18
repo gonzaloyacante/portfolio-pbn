@@ -1,28 +1,25 @@
 'use client'
 
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { type ContactFormData } from '@/lib/validations'
-import { PhoneInput } from '@/components/ui'
 
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP' | 'INSTAGRAM'
 
 interface ContactFieldProps {
   preference: ResponsePreference
   register: ReturnType<typeof useForm<ContactFormData>>['register']
-  control: ReturnType<typeof useForm<ContactFormData>>['control']
   errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors']
 }
 
-const inputClass =
-  'w-full rounded-xl border-2 border-(--primary)/20 bg-(--background) px-4 py-3 text-(--foreground) transition-all placeholder:text-(--foreground)/50 focus:border-(--primary) focus:ring-2 focus:ring-(--primary)/20 focus:outline-none'
+const inputClass = 'public-contact-field w-full rounded-xl px-4 py-3 transition-all'
 
-export function ContactField({ preference, register, control, errors }: ContactFieldProps) {
+export function ContactField({ preference, register, errors }: ContactFieldProps) {
   if (preference === 'INSTAGRAM') {
     return (
       <div>
         <label
           htmlFor="instagramUser"
-          className="mb-2 block text-sm font-semibold text-(--foreground)"
+          className="public-contact-form-label mb-2 block text-sm font-semibold"
         >
           Tu usuario de Instagram *
         </label>
@@ -34,7 +31,7 @@ export function ContactField({ preference, register, control, errors }: ContactF
           autoComplete="off"
         />
         {errors.instagramUser && (
-          <p className="mt-1 text-sm text-red-500">{errors.instagramUser.message}</p>
+          <p className="public-contact-error mt-1 text-sm">{errors.instagramUser.message}</p>
         )}
       </div>
     )
@@ -42,25 +39,33 @@ export function ContactField({ preference, register, control, errors }: ContactF
 
   if (preference === 'WHATSAPP' || preference === 'PHONE') {
     return (
-      <Controller
-        name="phone"
-        control={control}
-        render={({ field }) => (
-          <PhoneInput
-            label="Tu teléfono *"
-            value={field.value || ''}
-            onChange={field.onChange}
-            error={errors.phone?.message}
-          />
+      <div>
+        <label
+          htmlFor="phone"
+          className="public-contact-form-label mb-2 block text-sm font-semibold"
+        >
+          Tu teléfono *
+        </label>
+        <input
+          {...register('phone')}
+          type="tel"
+          inputMode="tel"
+          id="phone"
+          className={inputClass}
+          placeholder="+34 612 345 678"
+          autoComplete="tel"
+        />
+        {errors.phone && (
+          <p className="public-contact-error mt-1 text-sm">{errors.phone.message}</p>
         )}
-      />
+      </div>
     )
   }
 
   // EMAIL
   return (
     <div>
-      <label htmlFor="email" className="mb-2 block text-sm font-semibold text-(--foreground)">
+      <label htmlFor="email" className="public-contact-form-label mb-2 block text-sm font-semibold">
         Tu email *
       </label>
       <input
@@ -72,7 +77,7 @@ export function ContactField({ preference, register, control, errors }: ContactF
         placeholder="tu@email.com"
         autoComplete="email"
       />
-      {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+      {errors.email && <p className="public-contact-error mt-1 text-sm">{errors.email.message}</p>}
     </div>
   )
 }

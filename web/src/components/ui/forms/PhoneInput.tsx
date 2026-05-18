@@ -66,7 +66,7 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
         {label && (
           <label className="mb-2 block text-sm font-semibold text-(--foreground)">
             {label}
-            {required && <span className="ml-1 text-red-500">*</span>}
+            {required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <ReactInternationalPhone
@@ -112,7 +112,9 @@ export const PhoneInput = forwardRef<HTMLInputElement, PhoneInputProps>(
           }}
           className={cn('flex w-full', className)}
         />
-        {error && typeof error === 'string' && <p className="mt-1 text-sm text-red-500">{error}</p>}
+        {error && typeof error === 'string' && (
+          <p className="text-destructive mt-1 text-sm">{error}</p>
+        )}
       </div>
     )
   }

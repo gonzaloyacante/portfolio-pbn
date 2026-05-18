@@ -143,6 +143,18 @@ describe('Settings: Testimonials Actions', () => {
       expect(result!.title).toBe('Lo que dicen de mí')
       expect(result!.maxDisplay).toBe(3)
     })
+
+    it('returns null when the schema is ahead of the database', async () => {
+      const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.testimonialSettings.findFirst).mockRejectedValue(
+        new Error('The column `testimonial_settings.sliderAutoAdvanceMs` does not exist')
+      )
+
+      const { getTestimonialSettings } = await import('@/actions/settings/testimonials')
+      const result = await getTestimonialSettings()
+
+      expect(result).toBeNull()
+    })
   })
 
   // ─── updateTestimonialSettings ─────────────────────

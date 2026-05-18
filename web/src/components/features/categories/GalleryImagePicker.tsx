@@ -61,12 +61,12 @@ export function GalleryImagePicker({
           />
           {selectedUrl === img.url && (
             <div className="bg-primary/20 absolute inset-0 flex items-center justify-center">
-              <div className="bg-primary rounded-full p-1 text-white shadow-sm">
+              <div className="bg-primary text-primary-foreground rounded-full p-1 shadow-sm">
                 <Check size={16} />
               </div>
             </div>
           )}
-          <div className="absolute right-0 bottom-0 left-0 truncate bg-black/60 p-1 text-center text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="bg-primary/60 text-primary-foreground absolute right-0 bottom-0 left-0 truncate p-1 text-center text-[10px] opacity-0 transition-opacity group-hover:opacity-100">
             {img.url.split('/').pop()?.split('.')[0] ?? 'imagen'}
           </div>
         </button>
