@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
     const url = `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}&sort=popularity`
 
     const response = await fetch(url, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      next: { revalidate: 86400 }, // Cache for 24 hours
     })
 
     if (!response.ok) {

@@ -39,14 +39,14 @@ export const CACHE_TAGS = {
  */
 export const CACHE_DURATIONS = {
   // Short-lived (items that change frequently)
-  SHORT: 60, // 1 minute
+  SHORT: 300, // 5 minutes
 
   // Medium (most content)
-  MEDIUM: 300, // 5 minutes
+  MEDIUM: 900, // 15 minutes
 
-  // Long (settings, rarely changing)
-  LONG: 1800, // 30 minutes
+  // Long (settings, rarely changing; CMS mutations explicitly revalidate tags)
+  LONG: 86400, // 24 hours
 
   // Very long (almost static)
-  VERY_LONG: 3600, // 1 hour
+  VERY_LONG: 86400, // 24 hours
 } as const

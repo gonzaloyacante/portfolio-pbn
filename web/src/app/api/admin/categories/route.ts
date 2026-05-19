@@ -152,7 +152,8 @@ export async function POST(req: Request) {
     })
 
     try {
-      revalidatePath(ROUTES.public.portfolio, 'layout')
+      revalidatePath(ROUTES.public.portfolio)
+      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
       revalidatePath(ROUTES.admin.categories)
       revalidateTag(CACHE_TAGS.categories, 'max')
     } catch (revalErr) {

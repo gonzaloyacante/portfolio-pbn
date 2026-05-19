@@ -4,16 +4,23 @@ import { prisma } from '@/lib/db'
 import { ROUTES } from '@/config/routes'
 import { PageHeader } from '@/components/layout'
 import ContentStats from '@/components/features/dashboard/ContentStats'
-import AlertsSection from '@/components/features/dashboard/AlertsSection'
 import RecentBookingsWidget from '@/components/features/dashboard/RecentBookingsWidget'
+import DashboardPrioritySection from './DashboardPrioritySection'
+import DashboardQuickActions from './DashboardQuickActions'
+import DashboardSiteHealth from './DashboardSiteHealth'
+import DashboardTrafficSection from './DashboardTrafficSection'
 
 export default async function DashboardContentSection() {
   const [session, stats, recentBookings] = await Promise.all([
     auth(),
     getDashboardContentStats(),
     prisma.booking.findMany({
-      where: { deletedAt: null, status: { in: ['PENDING', 'CONFIRMED'] } },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        deletedAt: null,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        date: { gte: new Date() },
+      },
+      orderBy: { date: 'asc' },
       take: 5,
       select: {
         id: true,
@@ -28,24 +35,46 @@ export default async function DashboardContentSection() {
   const {
     imagesCount,
     categoriesCount,
+    servicesCount,
     testimonialsCount,
     deletedCount,
     contactsCount,
     pendingTestimonials,
+    pendingBookings,
+    categoriesWithoutImages,
+    servicesWithoutImage,
   } = stats
 
   const userName = session?.user?.name || 'Administrador'
 
   const contentStats = [
-    { label: 'Imágenes', value: imagesCount, icon: '🎨', href: ROUTES.admin.categories },
-    { label: 'Categorías', value: categoriesCount, icon: '📁', href: ROUTES.admin.categories },
-    { label: 'Testimonios', value: testimonialsCount, icon: '💬', href: ROUTES.admin.testimonials },
     {
-      label: 'Mensajes',
-      value: contactsCount,
-      icon: '📬',
-      href: ROUTES.admin.contacts,
-      highlight: contactsCount > 0,
+      label: 'Imágenes',
+      value: imagesCount,
+      icon: '🎨',
+      href: ROUTES.admin.categories,
+      subtitle: 'En galerías del portfolio',
+    },
+    {
+      label: 'Categorías',
+      value: categoriesCount,
+      icon: '📁',
+      href: ROUTES.admin.categories,
+      subtitle: 'Secciones del portfolio',
+    },
+    {
+      label: 'Servicios',
+      value: servicesCount,
+      icon: '💄',
+      href: ROUTES.admin.services,
+      subtitle: 'Ofertas publicadas',
+    },
+    {
+      label: 'Testimonios',
+      value: testimonialsCount,
+      icon: '💬',
+      href: ROUTES.admin.testimonials,
+      subtitle: 'Opiniones visibles',
     },
   ]
 
@@ -53,15 +82,32 @@ export default async function DashboardContentSection() {
     <>
       <PageHeader
         title={`¡Hola, ${userName}! 👋`}
-        description="Resumen de tu portfolio y estadísticas"
+        description="Qué revisar ahora y accesos rápidos para gestionar la web."
       />
-      <ContentStats stats={contentStats} />
-      <AlertsSection
+      <DashboardPrioritySection
         contactsCount={contactsCount}
+        pendingBookings={pendingBookings}
         pendingTestimonials={pendingTestimonials}
         deletedCount={deletedCount}
       />
-      <RecentBookingsWidget bookings={recentBookings} />
+      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+        <RecentBookingsWidget bookings={recentBookings} />
+        <DashboardQuickActions />
+      </div>
+      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <DashboardSiteHealth
+          imagesCount={imagesCount}
+          categoriesCount={categoriesCount}
+          servicesCount={servicesCount}
+          categoriesWithoutImages={categoriesWithoutImages}
+          servicesWithoutImage={servicesWithoutImage}
+        />
+        <DashboardTrafficSection />
+      </div>
+      <section className="space-y-3">
+        <h2 className="text-foreground text-xl font-bold">Contenido publicado</h2>
+        <ContentStats stats={contentStats} />
+      </section>
     </>
   )
 }

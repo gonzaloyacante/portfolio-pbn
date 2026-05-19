@@ -149,13 +149,13 @@ function revalidateForType(type: TrashType) {
       revalidateTag(CACHE_TAGS.categoryImages, 'max')
       break
     case 'service':
-      revalidatePath(ROUTES.public.services, 'layout')
+      revalidatePath(ROUTES.public.services)
       revalidatePath(ROUTES.admin.services)
       revalidateTag(CACHE_TAGS.services, 'max')
       break
     case 'testimonial':
       revalidatePath(ROUTES.home)
-      revalidatePath(ROUTES.public.about, 'layout')
+      revalidatePath(ROUTES.public.about)
       revalidatePath(ROUTES.admin.testimonials)
       revalidateTag(CACHE_TAGS.testimonials, 'max')
       break

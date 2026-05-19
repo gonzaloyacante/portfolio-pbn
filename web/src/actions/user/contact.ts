@@ -2,7 +2,6 @@
 
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
-import { recordAnalyticEvent } from '@/actions/analytics'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { contactFormSchema } from '@/lib/validations'
@@ -81,7 +80,6 @@ export async function sendContactEmail(formData: FormData) {
     }
 
     const newContact = await persistContact(sanitized, meta)
-    await trackContactAnalytics(newContact.id, sanitized, meta.referrer)
     await notifyAdminOfContact(sanitized)
     void notifyPushNewContact(newContact.id, sanitized)
 
@@ -138,16 +136,6 @@ async function persistContact(
       ipAddress: meta.ipAddress,
       referrer: meta.referrer,
     },
-  })
-}
-
-async function trackContactAnalytics(
-  contactId: string,
-  sanitized: SanitizedData,
-  referrer: string | null
-) {
-  await recordAnalyticEvent('CONTACT_SUBMIT', contactId, 'Contact', {
-    metadata: { email: sanitized.email, referrer },
   })
 }
 

@@ -10,7 +10,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 /** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 3600
+export const revalidate = 86400
 
 export async function generateStaticParams() {
   const services = await getActiveServices()

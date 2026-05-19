@@ -13,7 +13,7 @@ import { getCategorySettings } from '@/actions/settings/categories'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
 /** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 3600
+export const revalidate = 86400
 
 const getPublicCategorySlugs = unstable_cache(
   async () =>

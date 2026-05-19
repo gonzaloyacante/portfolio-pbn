@@ -20,9 +20,13 @@ import { generateSlug } from '@/lib/string-utils'
  * Invalida toda la caché pública relacionada con categorías e imágenes.
  * Debe llamarse después de cualquier mutación que afecte contenido público.
  */
-function _revalidatePublicContent() {
-  revalidatePath(ROUTES.public.portfolio, 'layout')
+function _revalidatePublicContent(categorySlugs: Array<string | null | undefined> = []) {
+  revalidatePath(ROUTES.public.portfolio)
   revalidatePath(ROUTES.home)
+  const uniqueSlugs = new Set(categorySlugs.filter((slug): slug is string => Boolean(slug)))
+  for (const slug of uniqueSlugs) {
+    revalidatePath(`${ROUTES.public.portfolio}/${slug}`)
+  }
   revalidateTag(CACHE_TAGS.categories, 'max')
   revalidateTag(CACHE_TAGS.categoryImages, 'max')
 }
@@ -65,7 +69,7 @@ export async function createCategory(formData: FormData) {
       },
     })
 
-    _revalidatePublicContent()
+    _revalidatePublicContent([data.slug])
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category created: ${data.name}`)
     return { success: true }
@@ -107,7 +111,7 @@ export async function updateCategory(id: string, formData: FormData) {
   try {
     const previousCategory = await prisma.category.findUnique({
       where: { id },
-      select: { coverImageUrl: true },
+      select: { coverImageUrl: true, slug: true },
     })
 
     await prisma.category.update({
@@ -131,7 +135,7 @@ export async function updateCategory(id: string, formData: FormData) {
       }
     }
 
-    _revalidatePublicContent()
+    _revalidatePublicContent([previousCategory?.slug, slug])
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category updated: ${id}`)
     return { success: true }
@@ -160,7 +164,7 @@ export async function deleteCategory(id: string) {
       where: { id },
       data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
     })
-    _revalidatePublicContent()
+    _revalidatePublicContent([cat?.slug])
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category soft deleted: ${id}`)
     return { success: true }
@@ -182,7 +186,7 @@ export async function addCategoryImages(
   try {
     const category = await prisma.category.findFirst({
       where: { id: categoryId, deletedAt: null },
-      select: { id: true },
+      select: { id: true, slug: true },
     })
     if (!category) {
       return { success: false, error: 'Categoría no encontrada' }
@@ -197,7 +201,7 @@ export async function addCategoryImages(
     )
     await prisma.categoryImage.createMany({ data: uploaded })
 
-    _revalidatePublicContent()
+    _revalidatePublicContent([category.slug])
     revalidatePath(ROUTES.admin.categories)
     logger.info(`${files.length} image(s) added to category: ${categoryId}`)
     return { success: true }
@@ -246,12 +250,9 @@ export async function saveGalleryImages(
 
     await prisma.categoryImage.createMany({ data: toCreate })
 
-    _revalidatePublicContent()
+    _revalidatePublicContent([category.slug])
     revalidatePath(ROUTES.admin.categories)
     revalidatePath(ROUTES.admin.categoryGallery(categoryId))
-    if (category.slug) {
-      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
-    }
     revalidateTag(CACHE_TAGS.categoryImages, 'max')
 
     logger.info(`${images.length} image(s) saved to category gallery: ${categoryId}`)
@@ -271,7 +272,11 @@ export async function deleteCategoryImage(
   try {
     const image = await prisma.categoryImage.findUnique({
       where: { id: imageId },
-      select: { publicId: true, categoryId: true },
+      select: {
+        publicId: true,
+        categoryId: true,
+        category: { select: { slug: true } },
+      },
     })
     if (!image) throw new Error('Image not found')
 
@@ -284,7 +289,7 @@ export async function deleteCategoryImage(
       })
     })
 
-    _revalidatePublicContent()
+    _revalidatePublicContent([image.category.slug])
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Category image deleted: ${imageId}`)
     return { success: true }
@@ -304,7 +309,7 @@ export async function reorderCategoryImages(
   try {
     const category = await prisma.category.findFirst({
       where: { id: categoryId, deletedAt: null },
-      select: { id: true },
+      select: { id: true, slug: true },
     })
     if (!category) {
       return { success: false, error: 'Categoría no encontrada' }
@@ -328,7 +333,7 @@ export async function reorderCategoryImages(
       )
     )
 
-    _revalidatePublicContent()
+    _revalidatePublicContent([category.slug])
     revalidatePath(ROUTES.admin.categories)
     logger.info(`Images reordered for category: ${categoryId}`)
     return { success: true }

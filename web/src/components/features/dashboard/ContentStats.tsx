@@ -6,6 +6,7 @@ interface ContentStat {
   icon: string
   href: string
   highlight?: boolean
+  subtitle?: string
 }
 
 interface ContentStatsProps {

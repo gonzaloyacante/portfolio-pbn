@@ -11,6 +11,9 @@ import { Heart } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
 
+/** ISR — alineado con `web/src/config/public-isr.ts` */
+export const revalidate = 86400
+
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'

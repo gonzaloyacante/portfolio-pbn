@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 import { getThemeSettings } from '@/actions/settings/theme'
 import { BRAND } from '@/lib/design-tokens'
 
-export const revalidate = 3600 // 1 hour
+export const revalidate = 86400 // 24 hours
 
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const theme = await getThemeSettings()

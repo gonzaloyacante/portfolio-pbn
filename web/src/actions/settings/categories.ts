@@ -64,7 +64,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
       })
     }
 
-    revalidatePath(ROUTES.public.portfolio, 'layout')
+    revalidatePath(ROUTES.public.portfolio)
     revalidatePath(ROUTES.admin.categories)
     revalidateTag(CACHE_TAGS.categorySettings, 'max')
     return { success: true }

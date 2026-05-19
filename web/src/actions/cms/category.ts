@@ -40,7 +40,7 @@ export async function reorderCategories(categoryIds: string[]): Promise<void> {
     )
   )
   revalidatePath(ROUTES.admin.categories)
-  revalidatePath(ROUTES.public.portfolio, 'layout')
+  revalidatePath(ROUTES.public.portfolio)
   revalidateTag(CACHE_TAGS.categories, 'max')
   revalidateTag(CACHE_TAGS.categoryImages, 'max')
 }

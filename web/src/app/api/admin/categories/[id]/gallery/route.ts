@@ -21,7 +21,7 @@ type Params = { params: Promise<{ id: string }> }
 function revalidateCategoryGallery(categoryId: string, categorySlug?: string) {
   revalidatePath(ROUTES.admin.categories)
   revalidatePath(ROUTES.admin.categoryGallery(categoryId))
-  revalidatePath(ROUTES.public.portfolio, 'layout')
+  revalidatePath(ROUTES.public.portfolio)
   if (categorySlug) {
     revalidatePath(`${ROUTES.public.portfolio}/${categorySlug}`)
   }

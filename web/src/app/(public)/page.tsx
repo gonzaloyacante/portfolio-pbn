@@ -5,7 +5,7 @@ import { Metadata } from 'next'
 import { ROUTES } from '@/config/routes'
 
 /** ISR segmento público (seg) — mantener alineado con `web/src/config/public-isr.ts`. */
-export const revalidate = 3600
+export const revalidate = 86400
 
 export async function generateMetadata(): Promise<Metadata> {
   const [contact, site] = await Promise.all([getContactSettings(), getSiteSettings()])

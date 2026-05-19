@@ -6,13 +6,7 @@ import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/dashboard_repository.dart';
 
-String formatDashboardNumber(int n) {
-  if (n >= 1000000) return '${(n / 1000000).toStringAsFixed(1)}M';
-  if (n >= 1000) return '${(n / 1000).toStringAsFixed(1)}k';
-  return n.toString();
-}
-
-/// Grid de 8 StatCards del dashboard — extraído de DashboardContent.
+/// Grid de contenido publicado. No muestra analítica de visitas.
 class DashboardStatsGrid extends StatelessWidget {
   const DashboardStatsGrid({super.key, required this.stats});
 
@@ -51,48 +45,8 @@ class DashboardStatsGrid extends StatelessWidget {
           icon: Icons.format_quote_outlined,
           label: 'Testimonios',
           value: stats.totalTestimonials.toString(),
-          valueSuffix: stats.pendingTestimonials > 0
-              ? stats.pendingTestimonials.toString()
-              : null,
-          valueSuffixIcon: stats.pendingTestimonials > 0
-              ? Icons.schedule
-              : null,
           color: AppColors.success,
           onTap: () => context.goNamed(RouteNames.testimonials),
-        ),
-        StatCard(
-          icon: Icons.mail_outline_rounded,
-          label: 'Contactos nuevos',
-          value: stats.newContacts.toString(),
-          trend: stats.newContacts > 0 ? '+${stats.newContacts}' : null,
-          trendPositive: true,
-          color: AppColors.darkPrimary,
-          onTap: () => context.goNamed(RouteNames.contacts),
-        ),
-        StatCard(
-          icon: Icons.calendar_month_outlined,
-          label: 'Reservas pendientes',
-          value: stats.pendingBookings.toString(),
-          trend: stats.pendingBookings > 0
-              ? '${stats.pendingBookings} pendientes'
-              : null,
-          trendPositive: stats.pendingBookings == 0,
-          color: AppColors.warning,
-          onTap: () => context.goNamed(RouteNames.calendar),
-        ),
-        StatCard(
-          icon: Icons.people_outline_rounded,
-          label: 'Visitantes (30d)',
-          value: formatDashboardNumber(stats.uniqueVisitors30d),
-          trendPositive: true,
-          color: AppColors.success,
-        ),
-        StatCard(
-          icon: Icons.delete_outline_rounded,
-          label: 'Papelera',
-          value: stats.trashCount.toString(),
-          color: AppColors.destructive,
-          onTap: () => context.goNamed(RouteNames.trash),
         ),
       ],
     );
