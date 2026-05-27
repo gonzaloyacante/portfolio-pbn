@@ -5,8 +5,8 @@ import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import { ROUTES } from '@/config/routes'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export const metadata: Metadata = {
   title: 'Deja tu testimonio | Paola Bolívar Nievas',

@@ -11,8 +11,8 @@ import { Heart } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   const contact = await getContactSettings()

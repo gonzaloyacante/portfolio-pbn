@@ -9,8 +9,8 @@ import { Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export async function generateStaticParams() {
   const services = await getActiveServices()

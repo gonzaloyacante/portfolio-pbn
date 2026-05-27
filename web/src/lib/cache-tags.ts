@@ -35,7 +35,7 @@ export const CACHE_TAGS = {
 } as const
 
 /**
- * Cache durations in seconds
+ * Cache durations for `unstable_cache`.
  */
 export const CACHE_DURATIONS = {
   // Short-lived (items that change frequently)
@@ -44,9 +44,9 @@ export const CACHE_DURATIONS = {
   // Medium (most content)
   MEDIUM: 900, // 15 minutes
 
-  // Long (settings, rarely changing; CMS mutations explicitly revalidate tags)
-  LONG: 86400, // 24 hours
+  // Long-lived public/CMS data: no time-based regeneration, only explicit tag/path invalidation.
+  LONG: false,
 
-  // Very long (almost static)
-  VERY_LONG: 86400, // 24 hours
+  // Almost static public data: CMS mutations explicitly revalidate tags/paths.
+  VERY_LONG: false,
 } as const

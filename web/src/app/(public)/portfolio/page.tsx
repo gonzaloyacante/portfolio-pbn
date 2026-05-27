@@ -10,8 +10,8 @@ import PortfolioCardImage from './PortfolioCardImage'
 import { unstable_cache } from 'next/cache'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 const getPublicPortfolioCategories = unstable_cache(
   async () =>

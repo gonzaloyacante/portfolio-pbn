@@ -10,8 +10,8 @@ import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 function whatsappHref(phoneDigits: string, message: string): string {
   return `https://wa.me/${phoneDigits}?text=${encodeURIComponent(message)}`

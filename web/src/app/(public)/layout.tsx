@@ -18,8 +18,8 @@ import { ROUTES } from '@/config/routes'
 
 const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
 
-/** ISR layout público — alineado con `web/src/config/public-isr.ts`. */
-export const revalidate = 86400
+/** Cache layout público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])

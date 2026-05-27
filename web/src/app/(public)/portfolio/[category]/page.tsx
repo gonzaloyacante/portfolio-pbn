@@ -12,8 +12,8 @@ import { getContactSettings } from '@/actions/settings/contact'
 import { getCategorySettings } from '@/actions/settings/categories'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 const getPublicCategorySlugs = unstable_cache(
   async () =>

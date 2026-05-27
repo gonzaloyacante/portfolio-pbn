@@ -6,8 +6,8 @@ import { PrivacyTableOfContents } from '@/components/legal/PrivacyTableOfContent
 import { PRIVACY_POLICY_LAST_UPDATED } from '@/config/legal'
 import { ROUTES } from '@/config/routes'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 86400
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export const metadata: Metadata = {
   title: 'Política de Privacidad - Portfolio Paola Bolívar',

@@ -203,6 +203,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
                 alt=""
                 fill
                 sizes={sizes}
+                unoptimized={isCloudinary}
                 className={cn(
                   'transition-opacity duration-500',
                   isLoaded ? 'opacity-0' : 'opacity-100'
@@ -223,6 +224,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
             quality={quality}
             sizes={sizes}
             priority={priority}
+            unoptimized={isCloudinary}
             className={mainImageClassName}
             style={{ objectFit }}
             onLoad={handleLoad}

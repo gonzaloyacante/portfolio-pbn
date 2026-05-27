@@ -4,7 +4,7 @@ import { ROUTES } from '@/config/routes'
 import { unstable_cache } from 'next/cache'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
-export const revalidate = 86400
+export const revalidate = false
 
 const DEFAULT_LAST_MODIFIED = new Date('2024-01-01T00:00:00.000Z')
 
