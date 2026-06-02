@@ -71,8 +71,8 @@ export function NavbarBrandPreview({
   const bg = isDark ? BRAND.darkBackground : BRAND.background
   const fg = isDark ? BRAND.darkForeground : BRAND.foreground
   const primary = isDark ? BRAND.darkPrimary : BRAND.primary
-  const borderColor = isDark ? '#2a1015' : '#e5e5e5'
-  const accentBg = isDark ? '#2a1015' : '#fff1f9'
+  const borderColor = isDark ? BRAND.darkAccent : BRAND.primary
+  const accentBg = isDark ? BRAND.darkAccent : BRAND.accent
 
   const brandColor = isDark
     ? navbarBrandColorDark || BRAND.darkPrimary

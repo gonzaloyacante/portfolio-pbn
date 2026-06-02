@@ -47,8 +47,8 @@ export function ServicesListTitlePreview({
 
   const bg = isDark ? BRAND.darkBackground : BRAND.background
   const fg = isDark ? BRAND.darkForeground : BRAND.foreground
-  const muted = isDark ? '#9ca3af' : '#6b7280'
-  const borderColor = isDark ? '#2a1015' : '#e5e5e5'
+  const muted = `color-mix(in srgb, ${isDark ? BRAND.darkForeground : BRAND.foreground} 70%, transparent)`
+  const borderColor = isDark ? BRAND.darkAccent : BRAND.primary
 
   const lightColor = listTitleColor?.trim() || undefined
   const darkColor = listTitleColorDark?.trim() || listTitleColor?.trim() || undefined
@@ -134,8 +134,8 @@ export function ServicesListTitlePreview({
               key={s}
               className="rounded-lg px-3 py-2.5 text-center text-xs font-medium"
               style={{
-                background: isDark ? '#1c0a0f' : '#fff',
-                color: isDark ? '#fafafa' : '#1a050a',
+                background: isDark ? BRAND.darkCard : BRAND.card,
+                color: isDark ? BRAND.darkForeground : BRAND.foreground,
                 border: `1px solid ${borderColor}`,
               }}
             >

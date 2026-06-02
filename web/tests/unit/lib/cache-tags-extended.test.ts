@@ -89,12 +89,12 @@ describe('CACHE_TAGS — extended', () => {
       expect(CACHE_DURATIONS.MEDIUM).toBe(900)
     })
 
-    it('LONG is 86400 seconds', () => {
-      expect(CACHE_DURATIONS.LONG).toBe(86400)
+    it('LONG disables time-based regeneration', () => {
+      expect(CACHE_DURATIONS.LONG).toBe(false)
     })
 
-    it('VERY_LONG is 86400 seconds', () => {
-      expect(CACHE_DURATIONS.VERY_LONG).toBe(86400)
+    it('VERY_LONG disables time-based regeneration', () => {
+      expect(CACHE_DURATIONS.VERY_LONG).toBe(false)
     })
   })
 })

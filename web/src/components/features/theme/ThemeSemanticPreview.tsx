@@ -1,6 +1,7 @@
 'use client'
 
 import type { ThemeEditorData } from '@/lib/validations'
+import { STATUS_COLORS } from '@/lib/design-tokens'
 
 interface ThemeSemanticPreviewProps {
   values: ThemeEditorData
@@ -296,16 +297,16 @@ function ContrastBadge({ fg, bg, label }: { fg: string; bg: string; label: strin
   const ratio = contrastRatio(fg, bg)
   const level = wcagLevel(ratio)
   const colorMap: Record<WcagLevel, string> = {
-    AAA: '#15803d',
-    AA: '#2563eb',
-    'AA Large': '#d97706',
-    Fail: '#dc2626',
+    AAA: STATUS_COLORS.success,
+    AA: STATUS_COLORS.info,
+    'AA Large': STATUS_COLORS.warning,
+    Fail: STATUS_COLORS.danger,
   }
   const bgMap: Record<WcagLevel, string> = {
-    AAA: '#dcfce7',
-    AA: '#dbeafe',
-    'AA Large': '#fef3c7',
-    Fail: '#fee2e2',
+    AAA: `color-mix(in srgb, ${STATUS_COLORS.success} 14%, transparent)`,
+    AA: `color-mix(in srgb, ${STATUS_COLORS.info} 14%, transparent)`,
+    'AA Large': `color-mix(in srgb, ${STATUS_COLORS.warning} 16%, transparent)`,
+    Fail: `color-mix(in srgb, ${STATUS_COLORS.danger} 14%, transparent)`,
   }
   return (
     <span

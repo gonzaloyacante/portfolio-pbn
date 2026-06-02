@@ -28,7 +28,7 @@ export const categories = [
     slug: 'teatro',
     description: 'Maquillaje y caracterización para obras teatrales y espectáculos en vivo',
     coverImageUrl:
-      'https://res.cloudinary.com/djlknirsd/image/upload/v1750201758/Screenshot_20250618-004339',
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1750201758/Screenshot_20250618-004339_ripuyf.png',
     sortOrder: 3,
   },
   {
@@ -36,7 +36,8 @@ export const categories = [
     name: 'Posticería',
     slug: 'posticeria',
     description: 'Pelucas, bigotes, barbas y postizos capilares hechos a mano',
-    coverImageUrl: 'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_102147',
+    coverImageUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_102147_cjxiqs.jpg',
     sortOrder: 4,
   },
 ]
@@ -53,7 +54,8 @@ export const services = [
     priceLabel: 'desde',
     duration: '3-5 horas',
     durationMinutes: 240,
-    imageUrl: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0058',
+    imageUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737828564/IMG-20250124-WA0058_vfhafw.jpg',
     requirements:
       'Llegar con la piel limpia, sin maquillaje previo ni cremas grasas. Traer referencias visuales del personaje si se tienen.',
     cancellationPolicy:
@@ -76,7 +78,8 @@ export const services = [
     priceLabel: 'desde',
     duration: '2-4 horas',
     durationMinutes: 180,
-    imageUrl: 'https://res.cloudinary.com/djlknirsd/image/upload/v1737405434/IMG-20241029-WA0036',
+    imageUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1737405434/IMG-20241029-WA0036_djns8n.jpg',
     requirements:
       'Informar de alergias a látex, silicona o adhesivos antes de la sesión. Ropa que permita acceso a la zona a maquillar.',
     cancellationPolicy:

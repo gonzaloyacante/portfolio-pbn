@@ -1,4 +1,3 @@
-import { logger } from '@/lib/logger'
 /**
  * Generic Rate Limiter
  * In-memory rate limiting for various use cases.

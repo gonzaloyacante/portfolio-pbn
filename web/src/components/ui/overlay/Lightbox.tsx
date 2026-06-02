@@ -143,6 +143,7 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
                   }}
                 />
               )}
+              {/* eslint-disable-next-line @next/next/no-img-element -- Lightbox muestra la imagen original fullscreen sin pasar por Vercel Image Optimization. */}
               <img
                 src={slide.src ?? ''}
                 alt={slide.alt ?? ''}

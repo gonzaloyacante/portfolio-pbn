@@ -89,7 +89,7 @@ export default async function ServicesPage() {
           </FadeIn>
         ) : (
           <StaggerChildren className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {services.map((service) => {
+            {services.map((service, index) => {
               return (
                 <ScaleIn key={service.id}>
                   <article className="public-services-card group relative flex h-full flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -106,6 +106,7 @@ export default async function ServicesPage() {
                             alt={service.name}
                             fill
                             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                            priority={index < 3}
                             className="relative z-0 h-full w-full"
                             imgClassName="h-full w-full object-center transition-transform duration-500 group-hover:scale-110"
                           />

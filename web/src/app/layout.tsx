@@ -11,6 +11,7 @@ import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
 import FontLoader from '@/components/layout/FontLoader'
 import { BRAND } from '@/lib/design-tokens'
 import { buildThemeInlineStylesheet } from '@/lib/theme-ssr-css'
+import { getPublicSiteUrl } from '@/lib/site-url'
 
 // Script font para "Make-up", firmas y detalles elegantes
 // Alternativa a Amsterdam Four (Canva)
@@ -44,6 +45,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getPublicSiteUrl()),
   icons: {
     icon: [
       { url: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
@@ -79,14 +81,6 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Preload Great Vibes — script font, mayor impacto visual */}
-        <link
-          rel="preload"
-          as="font"
-          type="font/woff2"
-          href="https://fonts.gstatic.com/s/greatvibes/v19/RWmMoKWR9v4ksMfaWd_JN-XCg6UKDXlCbA.woff2"
-          crossOrigin="anonymous"
-        />
         <link rel="preconnect" href="https://res.cloudinary.com" />
         {/* theme-color único: valores desde BD o BRAND (design-tokens) */}
         <meta
