@@ -210,6 +210,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
                 )}
                 style={{ objectFit }}
                 priority={true}
+                loading="eager"
                 aria-hidden={true}
               />
             </div>
@@ -224,6 +225,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
             quality={quality}
             sizes={sizes}
             priority={priority}
+            loading={priority ? 'eager' : undefined}
             unoptimized={isCloudinary}
             className={mainImageClassName}
             style={{ objectFit }}
