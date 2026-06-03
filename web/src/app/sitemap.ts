@@ -3,6 +3,7 @@ import { MetadataRoute } from 'next'
 import { ROUTES } from '@/config/routes'
 import { unstable_cache } from 'next/cache'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
+import { getPublicSiteUrl } from '@/lib/site-url'
 
 export const revalidate = false
 
@@ -40,7 +41,7 @@ const getSitemapData = unstable_cache(
 )
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
+  const baseUrl = getPublicSiteUrl()
   const { siteSettings, categories, services } = await getSitemapData()
   const staticLastModified = siteSettings?.updatedAt ?? DEFAULT_LAST_MODIFIED
 

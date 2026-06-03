@@ -1,14 +1,14 @@
 import { Metadata } from 'next'
+import { getPublicSiteUrl } from '@/lib/site-url'
 
 // SEO configuration
 export const seoConfig = {
   siteName: 'Portfolio Paola Bolívar Nievas',
-  siteUrl: process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es',
+  siteUrl: getPublicSiteUrl(),
   defaultTitle: 'Paola Bolívar Nievas | Maquilladora Profesional',
   defaultDescription:
     'Portfolio de Paola Bolívar Nievas - Maquilladora profesional especializada en audiovisuales, caracterización, efectos especiales y maquillaje social.',
-  defaultImage: '/og-image.jpg',
-  twitterHandle: '@paolabolivar', // Placeholder
+  defaultImage: '/opengraph-image',
   locale: 'es_ES',
 }
 

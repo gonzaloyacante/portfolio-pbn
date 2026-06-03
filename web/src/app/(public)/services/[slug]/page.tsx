@@ -8,6 +8,9 @@ import Link from 'next/link'
 import { Clock, Calendar, AlertCircle } from 'lucide-react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { getSiteSettings } from '@/actions/settings/site'
+import { getContactSettings } from '@/actions/settings/contact'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
 
 /** Cache público — invalidación explícita desde CMS. */
 export const revalidate = false
@@ -38,44 +41,42 @@ type ServiceForMetadata = {
   imageUrl?: string | null
 }
 
-function _resolveServiceMeta(service: ServiceForMetadata, slug: string) {
-  const title = `${service.name} - Servicios`
+function _resolveServiceMeta(service: ServiceForMetadata, slug: string, ownerName: string) {
+  const title = `${service.name} | ${ownerName}`
   const description = service.shortDesc || service.description?.slice(0, 160) || ''
-  const images = service.imageUrl
-    ? [{ url: service.imageUrl, width: 1200, height: 630, alt: service.name }]
-    : ([] as { url: string; width: number; height: number; alt: string }[])
-  return { title, description, images, canonicalUrl: `/servicios/${slug}` }
+  return { title, description, canonicalUrl: ROUTES.public.serviceDetail(slug) }
 }
 
-function buildServiceMetadata(service: ServiceForMetadata, slug: string): Metadata {
-  const meta = _resolveServiceMeta(service, slug)
-  return {
+function buildServiceMetadata(
+  service: ServiceForMetadata,
+  slug: string,
+  ownerName: string,
+  site: Awaited<ReturnType<typeof getSiteSettings>>
+): Metadata {
+  const meta = _resolveServiceMeta(service, slug, ownerName)
+  return buildSeoMetadata({
     title: meta.title,
     description: meta.description,
-    alternates: { canonical: meta.canonicalUrl },
-    openGraph: {
-      title: service.name,
-      description: meta.description,
-      type: 'website',
-      locale: 'es_ES',
-      images: meta.images,
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: service.name,
-      description: meta.description,
-      images: service.imageUrl ? [service.imageUrl] : [],
-    },
-  }
+    path: meta.canonicalUrl,
+    site,
+    ownerName,
+    image: service.imageUrl || site?.defaultOgImage,
+    imageAlt: `${service.name} - ${ownerName}`,
+    keywords: [service.name, 'servicio de maquillaje', 'maquillaje profesional'],
+  })
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
   const { slug } = await params
-  const service = await getServiceBySlug(slug)
+  const [service, site, contact] = await Promise.all([
+    getServiceBySlug(slug),
+    getSiteSettings(),
+    getContactSettings(),
+  ])
 
   if (!service) return { title: 'Servicio no encontrado' }
 
-  return buildServiceMetadata(service, slug)
+  return buildServiceMetadata(service, slug, contact?.ownerName || 'Paola Bolívar Nievas', site)
 }
 
 export default async function ServiceDetailPage({ params }: ServicePageProps) {
@@ -107,6 +108,19 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             const n = Number.parseFloat(normalized)
             return { name: t.name, price: Number.isFinite(n) ? n : 0 }
           }),
+        }}
+      />
+      <JsonLd
+        type="BreadcrumbList"
+        data={{
+          breadcrumbs: [
+            { name: 'Inicio', url: getPublicSiteUrl() },
+            { name: 'Servicios', url: `${getPublicSiteUrl()}${ROUTES.public.services}` },
+            {
+              name: service.name,
+              url: `${getPublicSiteUrl()}${ROUTES.public.serviceDetail(slug)}`,
+            },
+          ],
         }}
       />
       {/* Hero Section */}

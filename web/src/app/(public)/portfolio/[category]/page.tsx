@@ -10,7 +10,9 @@ import { getPublicSiteUrl } from '@/lib/site-url'
 import CategoryGallery from '@/components/features/categories/CategoryGallery'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getCategorySettings } from '@/actions/settings/categories'
+import { getSiteSettings } from '@/actions/settings/site'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
 
 /** Cache público — invalidación explícita desde CMS. */
 export const revalidate = false
@@ -51,32 +53,34 @@ export async function generateMetadata({
   params: Promise<{ category: string }>
 }): Promise<Metadata> {
   const { category: categorySlug } = await params
-  const [category, contact] = await Promise.all([getCategory(categorySlug), getContactSettings()])
+  const [category, contact, site] = await Promise.all([
+    getCategory(categorySlug),
+    getContactSettings(),
+    getSiteSettings(),
+  ])
 
   if (!category) {
     return { title: 'Categoría no encontrada' }
   }
 
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+  const location = contact?.location ? ` en ${contact.location}` : ''
+  const title = `${category.name} | Portfolio de ${ownerName}`
+  const description =
+    category.description ||
+    `Galería de ${category.name.toLowerCase()} profesional${location} por ${ownerName}.`
+  const image = category.coverImageUrl || category.images[0]?.url || site?.defaultOgImage
 
-  return {
-    title: `${category.name} | ${ownerName}`,
-    description: category.description || `Galería de ${category.name}`,
-    alternates: {
-      canonical: `${ROUTES.public.portfolio}/${categorySlug}`,
-    },
-    openGraph: {
-      title: `${category.name} | ${ownerName}`,
-      description: category.description || `Galería de ${category.name}`,
-      url: `${ROUTES.public.portfolio}/${categorySlug}`,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${category.name} | ${ownerName}`,
-      description: category.description || `Galería de ${category.name}`,
-    },
-  }
+  return buildSeoMetadata({
+    title,
+    description,
+    path: `${ROUTES.public.portfolio}/${categorySlug}`,
+    site,
+    ownerName,
+    image,
+    imageAlt: `${category.name} - ${ownerName}`,
+    keywords: [category.name, 'portfolio maquillaje', 'maquillaje profesional'],
+  })
 }
 
 export default async function CategoryGalleryPage({
@@ -115,6 +119,19 @@ export default async function CategoryGalleryPage({
           name: category.name,
           description: category.description || `Galería de ${category.name}`,
           url: `${getPublicSiteUrl()}${ROUTES.public.portfolio}/${category.slug}`,
+        }}
+      />
+      <JsonLd
+        type="BreadcrumbList"
+        data={{
+          breadcrumbs: [
+            { name: 'Inicio', url: getPublicSiteUrl() },
+            { name: 'Portfolio', url: `${getPublicSiteUrl()}${ROUTES.public.portfolio}` },
+            {
+              name: category.name,
+              url: `${getPublicSiteUrl()}${ROUTES.public.portfolio}/${category.slug}`,
+            },
+          ],
         }}
       />
 

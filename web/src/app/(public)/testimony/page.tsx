@@ -4,17 +4,27 @@ import TestimonialSlider from '@/components/features/testimonials/TestimonialSli
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import { ROUTES } from '@/config/routes'
+import { getContactSettings } from '@/actions/settings/contact'
+import { getSiteSettings } from '@/actions/settings/site'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
 
 /** Cache público — invalidación explícita desde CMS. */
 export const revalidate = false
 
-export const metadata: Metadata = {
-  title: 'Deja tu testimonio | Paola Bolívar Nievas',
-  description: '¿Fuiste mi clienta? Me encantaría conocer tu experiencia.',
-  alternates: {
-    canonical: ROUTES.public.testimonialForm,
-  },
-  robots: { index: false },
+export async function generateMetadata(): Promise<Metadata> {
+  const [contact, site] = await Promise.all([getContactSettings(), getSiteSettings()])
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+
+  return buildSeoMetadata({
+    title: `Deja tu testimonio | ${ownerName}`,
+    description: '¿Fuiste mi clienta? Me encantaría conocer tu experiencia.',
+    path: ROUTES.public.testimonialForm,
+    site,
+    ownerName,
+    image: site?.defaultOgImage,
+    imageAlt: `Testimonios de ${ownerName}`,
+    robots: { index: false, follow: false },
+  })
 }
 
 export default async function TestimonyPage() {

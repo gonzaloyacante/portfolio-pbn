@@ -9,6 +9,8 @@ import { MessageCircle, Palette, Star } from 'lucide-react'
 import JsonLd from '@/components/seo/JsonLd'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
+import { getSiteSettings } from '@/actions/settings/site'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
 
 /** Cache público — invalidación explícita desde CMS. */
 export const revalidate = false
@@ -18,29 +20,34 @@ function whatsappHref(phoneDigits: string, message: string): string {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const contact = await getContactSettings()
+  const [contact, site, services] = await Promise.all([
+    getContactSettings(),
+    getSiteSettings(),
+    getActiveServices(),
+  ])
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
   const location = contact?.location || ''
   const locationSuffix = location ? ` en ${location}` : ''
+  const title = `Servicios de maquillaje profesional | ${ownerName}`
+  const description = `Servicios de maquillaje profesional${locationSuffix}: novias, editoriales, caracterización artística, FX, teatro y eventos.`
+  const image = services.find((service) => service.imageUrl)?.imageUrl || site?.defaultOgImage
 
-  return {
-    title: 'Servicios',
-    description: `Descubre todos los servicios de maquillaje profesional de ${ownerName}${locationSuffix}: novias, editoriales, caracterización y más.`,
-    alternates: {
-      canonical: ROUTES.public.services,
-    },
-    openGraph: {
-      title: `Servicios de Maquillaje | ${ownerName}`,
-      description: `Maquillaje profesional${locationSuffix}: novias, editoriales, caracterización artística y eventos. Reserva tu cita.`,
-      type: 'website',
-      locale: 'es_ES',
-    },
-    twitter: {
-      card: 'summary',
-      title: `Servicios | ${ownerName}`,
-      description: `Maquillaje profesional${locationSuffix}: novias, editoriales, caracterización y eventos.`,
-    },
-  }
+  return buildSeoMetadata({
+    title,
+    description,
+    path: ROUTES.public.services,
+    site,
+    ownerName,
+    image,
+    imageAlt: `Servicios de maquillaje de ${ownerName}`,
+    keywords: [
+      `servicios de maquillaje${locationSuffix}`,
+      'maquillaje profesional',
+      'maquillaje de novias',
+      'maquillaje editorial',
+      'efectos especiales maquillaje',
+    ],
+  })
 }
 
 export default async function ServicesPage() {
@@ -75,6 +82,19 @@ export default async function ServicesPage() {
             addressLocality: location,
             addressCountry: 'ES',
           },
+        }}
+      />
+      <JsonLd
+        type="CollectionPage"
+        data={{
+          name: 'Servicios de maquillaje',
+          description: `Servicios profesionales de maquillaje${locationSuffix}.`,
+          url: `${getPublicSiteUrl()}${ROUTES.public.services}`,
+          mainEntity: services.map((service) => ({
+            name: service.name,
+            url: `${getPublicSiteUrl()}${ROUTES.public.serviceDetail(service.slug)}`,
+            image: service.imageUrl || '',
+          })),
         }}
       />
       <div className="container mx-auto max-w-6xl px-4">
