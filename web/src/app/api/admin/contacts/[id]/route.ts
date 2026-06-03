@@ -4,7 +4,7 @@
  * DELETE /api/admin/contacts/[id]  — Soft delete
  */
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
@@ -12,6 +12,7 @@ import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { contactUpdateApiSchema } from '@/lib/validations'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -66,6 +67,8 @@ export async function GET(req: Request, { params }: Params) {
         where: { id },
         data: { isRead: true, readAt: new Date() },
       })
+      revalidatePath(ROUTES.admin.contacts)
+      revalidateTag(CACHE_TAGS.contacts, 'max')
     }
 
     return NextResponse.json({ success: true, data: { ...contactData, isRead: true } })
@@ -119,6 +122,7 @@ export async function PATCH(req: Request, { params }: Params) {
     })
 
     revalidatePath(ROUTES.admin.contacts)
+    revalidateTag(CACHE_TAGS.contacts, 'max')
 
     return NextResponse.json({ success: true, data: updated })
   } catch (err) {
@@ -149,6 +153,7 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     revalidatePath(ROUTES.admin.contacts)
+    revalidateTag(CACHE_TAGS.contacts, 'max')
 
     return NextResponse.json({ success: true, message: 'Contacto eliminado' })
   } catch (err) {

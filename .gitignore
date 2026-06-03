@@ -137,6 +137,7 @@ Thumbs.db
 *.bak
 *.tmp
 *.temp
+*.code-search
 /tmp
 /temp
 

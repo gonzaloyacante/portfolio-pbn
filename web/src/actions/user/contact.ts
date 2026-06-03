@@ -2,7 +2,7 @@
 
 import { logger } from '@/lib/logger'
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { headers } from 'next/headers'
 import { contactFormSchema } from '@/lib/validations'
 import { emailService } from '@/lib/email-service'
@@ -14,6 +14,7 @@ import { RATE_LIMITS } from '@/lib/rate-limit-config'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { verifyRecaptchaToken } from '@/lib/recaptcha'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
 /**
  * Acciones de contacto con validación robusta y rate limiting
@@ -80,6 +81,7 @@ export async function sendContactEmail(formData: FormData) {
     }
 
     const newContact = await persistContact(sanitized, meta)
+    revalidateTag(CACHE_TAGS.contacts, 'max')
     await notifyAdminOfContact(sanitized)
     void notifyPushNewContact(newContact.id, sanitized)
 
@@ -198,6 +200,7 @@ export async function markContactAsRead(id: string) {
     data: { isRead: true, readAt: new Date() },
   })
   revalidatePath(ROUTES.admin.contacts)
+  revalidateTag(CACHE_TAGS.contacts, 'max')
 }
 
 export async function deleteContact(id: string) {
@@ -210,6 +213,7 @@ export async function deleteContact(id: string) {
     data: { deletedAt: new Date() },
   })
   revalidatePath(ROUTES.admin.contacts)
+  revalidateTag(CACHE_TAGS.contacts, 'max')
 }
 
 export async function toggleContactImportant(id: string) {
@@ -229,6 +233,7 @@ export async function toggleContactImportant(id: string) {
     select: { id: true, isImportant: true },
   })
   revalidatePath(ROUTES.admin.contacts)
+  revalidateTag(CACHE_TAGS.contacts, 'max')
   return updated
 }
 

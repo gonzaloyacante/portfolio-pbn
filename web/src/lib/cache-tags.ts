@@ -29,6 +29,7 @@ export const CACHE_TAGS = {
 
   // Contacts
   contacts: 'contacts',
+  bookings: 'bookings',
 
   // Analytics
   analytics: 'analytics',

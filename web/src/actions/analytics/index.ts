@@ -68,7 +68,13 @@ const _fetchDashboardContentStats = unstable_cache(
       prisma.category.count({ where: { deletedAt: null } }),
       prisma.service.count({ where: { deletedAt: null } }),
       prisma.testimonial.count({ where: { isActive: true, deletedAt: null } }),
-      prisma.category.count({ where: { deletedAt: { not: null } } }),
+      Promise.all([
+        prisma.category.count({ where: { deletedAt: { not: null } } }),
+        prisma.service.count({ where: { deletedAt: { not: null } } }),
+        prisma.testimonial.count({ where: { deletedAt: { not: null } } }),
+        prisma.contact.count({ where: { deletedAt: { not: null } } }),
+        prisma.booking.count({ where: { deletedAt: { not: null } } }),
+      ]).then((counts) => counts.reduce((total, count) => total + count, 0)),
       prisma.contact.count({ where: { isRead: false, deletedAt: null } }),
       prisma.testimonial.count({ where: { isActive: false, deletedAt: null } }),
       prisma.booking.count({ where: { status: 'PENDING', deletedAt: null } }),
@@ -102,13 +108,50 @@ const _fetchDashboardContentStats = unstable_cache(
   ['dashboard-content-stats'],
   {
     revalidate: CACHE_DURATIONS.MEDIUM,
-    tags: [CACHE_TAGS.categories, CACHE_TAGS.testimonials, CACHE_TAGS.contacts],
+    tags: [
+      CACHE_TAGS.categories,
+      CACHE_TAGS.categoryImages,
+      CACHE_TAGS.services,
+      CACHE_TAGS.testimonials,
+      CACHE_TAGS.contacts,
+      CACHE_TAGS.bookings,
+    ],
   }
 )
 
 export async function getDashboardContentStats() {
   await requireAdmin()
   return _fetchDashboardContentStats()
+}
+
+const _fetchDashboardRecentBookings = unstable_cache(
+  async () =>
+    prisma.booking.findMany({
+      where: {
+        deletedAt: null,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        date: { gte: new Date() },
+      },
+      orderBy: { date: 'asc' },
+      take: 5,
+      select: {
+        id: true,
+        clientName: true,
+        date: true,
+        status: true,
+        service: { select: { name: true } },
+      },
+    }),
+  ['dashboard-recent-bookings'],
+  {
+    revalidate: CACHE_DURATIONS.MEDIUM,
+    tags: [CACHE_TAGS.bookings],
+  }
+)
+
+export async function getDashboardRecentBookings() {
+  await requireAdmin()
+  return _fetchDashboardRecentBookings()
 }
 
 export async function getAnalyticsDashboardData() {

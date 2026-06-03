@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { notFound } from 'next/navigation'
 
 import { prisma } from '@/lib/db'
@@ -9,6 +9,7 @@ import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
 import { ROUTES } from '@/config/routes'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
 // ── Validation ────────────────────────────────────────────────────────────────
 
@@ -174,6 +175,7 @@ export async function updateBookingAdmin(
     })
 
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
 
     logger.info(`Booking updated by admin: ${id}`)
     return { success: true }
@@ -209,6 +211,7 @@ export async function bulkUpdateBookingStatus(ids: string[], status: string) {
     })
 
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
     logger.info(`Bulk booking status update: ${result.count} bookings → ${status}`)
     return { success: true, count: result.count }
   } catch (err) {

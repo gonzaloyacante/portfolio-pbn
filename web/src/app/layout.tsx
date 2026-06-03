@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     apple: [{ url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' }],
     shortcut: '/icons/icon-96x96.png',
   },
-  manifest: '/manifest.json',
+  manifest: '/manifest.webmanifest',
 }
 
 export default async function RootLayout({

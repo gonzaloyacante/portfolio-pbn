@@ -67,6 +67,7 @@ const getDashboardOverviewData = unstable_cache(
       CACHE_TAGS.services,
       CACHE_TAGS.testimonials,
       CACHE_TAGS.contacts,
+      CACHE_TAGS.bookings,
     ],
   }
 )
