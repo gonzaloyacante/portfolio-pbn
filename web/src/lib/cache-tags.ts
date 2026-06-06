@@ -29,24 +29,26 @@ export const CACHE_TAGS = {
 
   // Contacts
   contacts: 'contacts',
+  bookings: 'bookings',
+  appReleases: 'app-releases',
 
   // Analytics
   analytics: 'analytics',
 } as const
 
 /**
- * Cache durations in seconds
+ * Cache durations for `unstable_cache`.
  */
 export const CACHE_DURATIONS = {
   // Short-lived (items that change frequently)
-  SHORT: 60, // 1 minute
+  SHORT: 300, // 5 minutes
 
   // Medium (most content)
-  MEDIUM: 300, // 5 minutes
+  MEDIUM: 900, // 15 minutes
 
-  // Long (settings, rarely changing)
-  LONG: 1800, // 30 minutes
+  // Long-lived public/CMS data: no time-based regeneration, only explicit tag/path invalidation.
+  LONG: false,
 
-  // Very long (almost static)
-  VERY_LONG: 3600, // 1 hour
+  // Almost static public data: CMS mutations explicitly revalidate tags/paths.
+  VERY_LONG: false,
 } as const

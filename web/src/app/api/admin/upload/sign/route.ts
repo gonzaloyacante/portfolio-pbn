@@ -16,6 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { getCloudinaryUploadRootFolder, normalizeCloudinaryUploadFolder } from '@/lib/cloudinary'
 import { v2 as cloudinary } from 'cloudinary'
 
 cloudinary.config({
@@ -33,25 +34,32 @@ export async function POST(req: NextRequest) {
   if (rl) return NextResponse.json({ success: false, error: rl.error }, { status: 429 })
 
   try {
-    const body = (await req.json().catch(() => ({}))) as { folder?: string }
-    const folder = body?.folder ?? 'portfolio'
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME
+    const apiKey = process.env.CLOUDINARY_API_KEY
+    const apiSecret = process.env.CLOUDINARY_API_SECRET
 
-    const isProduction = process.env.NODE_ENV === 'production'
-    const rootFolder = isProduction ? 'pbn-prod' : 'pbn-dev'
+    if (!cloudName || !apiKey || !apiSecret) {
+      return NextResponse.json(
+        { success: false, error: 'Cloudinary no está configurado' },
+        { status: 500 }
+      )
+    }
+
+    const body = (await req.json().catch(() => ({}))) as { folder?: string }
+    const folder = normalizeCloudinaryUploadFolder(body.folder)
+
+    const rootFolder = getCloudinaryUploadRootFolder()
     const fullFolder = `${rootFolder}/${folder}`
 
     const timestamp = Math.round(Date.now() / 1000)
     const paramsToSign = { timestamp, folder: fullFolder }
 
-    const signature = cloudinary.utils.api_sign_request(
-      paramsToSign,
-      process.env.CLOUDINARY_API_SECRET!
-    )
+    const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret)
 
     return NextResponse.json({
       success: true,
-      apiKey: process.env.CLOUDINARY_API_KEY,
-      cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+      apiKey,
+      cloudName,
       timestamp,
       signature,
       folder: fullFolder,

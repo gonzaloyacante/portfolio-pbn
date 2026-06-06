@@ -3,7 +3,7 @@
  * En prod/previsualización debe existir **NEXT_PUBLIC_BASE_URL** apuntando al dominio real;
  * el fallback solo cubre dev/tests y debe coincidir con `(public)/layout.tsx`.
  */
-const FALLBACK_SITE_URL = 'https://dev.paolabolivar.es'
+const FALLBACK_SITE_URL = 'https://paolabolivar.es'
 
 export function getPublicSiteUrl(): string {
   const raw = process.env.NEXT_PUBLIC_BASE_URL?.trim()

@@ -1,11 +1,10 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useMemo, useRef, useState } from 'react'
 import { useScroll, useMotionValueEvent } from 'framer-motion'
-import { motion, AnimatePresence } from '@/components/ui'
+import { motion, AnimatePresence, OptimizedImage } from '@/components/ui'
 import { Menu, X } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 import { cn } from '@/lib/utils'
@@ -50,12 +49,13 @@ function NavbarBrand({
           layoutId="public-brand-mark"
           className={cn('relative h-14 w-14 shrink-0', imageClassName)}
         >
-          <Image
+          <OptimizedImage
             src={brandLogoUrl}
             alt={brandLogoAlt || displayBrand}
             fill
             sizes="72px"
-            className="object-contain"
+            objectFit="contain"
+            placeholder="empty"
             priority
           />
         </motion.div>

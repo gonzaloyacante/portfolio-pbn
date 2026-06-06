@@ -38,5 +38,7 @@ export const ROUTES = {
     contact: '/contacto',
     privacy: '/privacidad',
     testimonialForm: '/testimonio',
+    robots: '/robots.txt',
+    sitemap: '/sitemap.xml',
   },
 } as const

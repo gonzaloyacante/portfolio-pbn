@@ -168,7 +168,7 @@ export async function POST(req: Request) {
     })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.about, 'layout')
+    revalidatePath(ROUTES.public.about)
     revalidateTag(CACHE_TAGS.testimonials, 'max')
 
     return NextResponse.json({ success: true, data: testimonial }, { status: 201 })

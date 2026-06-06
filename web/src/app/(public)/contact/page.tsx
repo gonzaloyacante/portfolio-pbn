@@ -2,6 +2,9 @@ import PublicContactPage from '@/components/features/contact/public/PublicContac
 import { getPublicContactPageData } from '@/components/features/contact/public/contactPageData'
 import { generateContactPageMetadata } from '@/components/features/contact/public/contactPageMetadata'
 
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
+
 export async function generateMetadata() {
   return generateContactPageMetadata()
 }

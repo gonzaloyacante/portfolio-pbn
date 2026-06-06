@@ -30,6 +30,14 @@ export default function PublicContactPage({
           url: `${getPublicSiteUrl()}${ROUTES.public.contact}`,
           telephone: contactSettings?.phone ?? undefined,
           email: contactSettings?.email ?? undefined,
+          image: contactSettings?.illustrationUrl ?? undefined,
+          sameAs: socialLinks.map((link) => link.url),
+          address: contactSettings?.location
+            ? {
+                addressLocality: contactSettings.location,
+                addressCountry: 'ES',
+              }
+            : undefined,
         }}
       />
 

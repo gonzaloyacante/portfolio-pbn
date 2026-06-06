@@ -1,15 +1,10 @@
 'use server'
 
-import { logger } from '@/lib/logger'
-import { prisma } from '@/lib/db'
-import { headers } from 'next/headers'
-import { requireAdmin } from '@/lib/security-server'
 import { unstable_cache } from 'next/cache'
+import { prisma } from '@/lib/db'
+import { requireAdmin } from '@/lib/security-server'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 
-// -----------------------------------------------
-// Types
-// -----------------------------------------------
 export interface RecordEventOptions {
   sessionId?: string
   scrollDepth?: number
@@ -35,222 +30,92 @@ export interface RecordEventOptions {
   metadata?: Record<string, unknown>
 }
 
-// -----------------------------------------------
-// Helpers
-// -----------------------------------------------
-function anonymizeIp(ip: string): string {
-  // Zero last octet for GDPR compliance
-  if (ip.includes('.')) {
-    // IPv4
-    const parts = ip.split('.')
-    parts[3] = '0'
-    return parts.join('.')
-  }
-  if (ip.includes(':')) {
-    // IPv6: zero last group
-    const parts = ip.split(':')
-    parts[parts.length - 1] = '0'
-    return parts.join(':')
-  }
-  return ip
-}
-
-function detectDevice(ua: string): string {
-  const lower = ua.toLowerCase()
-  if (/ipad|tablet|playbook|silk|(android(?!.*mobile))/i.test(lower)) return 'tablet'
-  if (/mobile|android|iphone|ipod|blackberry|opera mini|iemobile/i.test(lower)) return 'mobile'
-  return 'desktop'
-}
-
-const BOT_RE =
-  /bot|crawl|spider|slurp|scan|headless|phantom|selenium|puppeteer|playwright|wget|curl|python-requests/i
-
-// -----------------------------------------------
-// Record Event
-// -----------------------------------------------
-
-/** Ventana de sesión: si la misma IP aparece en menos de 30 minutos,
- *  se considera la misma sesión (isDuplicate = true). */
-const SESSION_WINDOW_MS = 30 * 60 * 1000
-
-/**
- * How long to retain analytic logs (90 days).
- * Rows older than this are deleted lazily during writes to avoid
- * unbounded table growth that slows queries and burns Neon compute.
- */
-const LOG_RETENTION_DAYS = 90
-
-/** Probabilistic TTL cleanup: run on ~1% of write requests to avoid
- *  adding a DELETE to every single event (too expensive). */
-async function maybeCleanupOldLogs(): Promise<void> {
-  if (Math.random() > 0.01) return // 99% of calls skip this
-  try {
-    const cutoff = new Date(Date.now() - LOG_RETENTION_DAYS * 24 * 60 * 60 * 1000)
-    await prisma.analyticLog.deleteMany({ where: { timestamp: { lt: cutoff } } })
-  } catch {
-    // Non-critical — ignore errors silently
-  }
-}
-
 export async function recordAnalyticEvent(
   eventType: string,
   entityId?: string,
   entityType?: string,
   options?: RecordEventOptions
 ) {
-  try {
-    const headersList = await headers()
-    const rawIp = headersList.get('x-forwarded-for') || headersList.get('x-real-ip') || 'unknown'
-    const userAgent = headersList.get('user-agent') || 'unknown'
-    const referer = headersList.get('referer') || null
+  void eventType
+  void entityId
+  void entityType
+  void options
 
-    // Vercel edge geo headers (GeoIP — probabilístico, nivel ciudad)
-    const vercelCountry = headersList.get('x-vercel-ip-country') || undefined
-    const vercelCity = headersList.get('x-vercel-ip-city') || undefined
-    const vercelRegion = headersList.get('x-vercel-ip-country-region') || undefined
-    const latRaw = headersList.get('x-vercel-ip-latitude')
-    const lonRaw = headersList.get('x-vercel-ip-longitude')
-
-    // Coordenadas del cliente (precisas, con consentimiento explícito)
-    const clientGeo = options?.metadata?.geo as
-      | { latitude?: number; longitude?: number; accuracy?: number }
-      | undefined
-    const consentLevel = (options?.metadata?.consentLevel as string | undefined) ?? 'geoip'
-
-    // Preferir coordenadas del cliente sobre GeoIP cuando el consentimiento es preciso
-    const usePrecise = consentLevel === 'precise' && clientGeo?.latitude !== undefined
-    const country = vercelCountry
-    const city = vercelCity
-    const region = vercelRegion
-    const latitude = usePrecise ? clientGeo!.latitude : latRaw ? parseFloat(latRaw) : undefined
-    const longitude = usePrecise ? clientGeo!.longitude : lonRaw ? parseFloat(lonRaw) : undefined
-
-    const distinctIp = rawIp.split(',')[0].trim()
-    const ipAddress = anonymizeIp(distinctIp)
-    const isBot = BOT_RE.test(userAgent)
-    const device = options?.device ?? detectDevice(userAgent)
-
-    // ── Deduplicación de sesión ───────────────────────────────────────────────
-    // Si la misma IP ya registró un evento en los últimos 30 min →
-    //   isDuplicate = true (misma sesión navegando entre páginas).
-    // Esto permite contar visitantes únicos filtrando isDuplicate:false.
-    let isDuplicate = options?.isDuplicate ?? false
-    let sessionIdToUse = options?.sessionId
-
-    // Solo deduplicar eventos de página (no acciones como CONTACT_SUBMIT)
-    if (!isDuplicate && !isBot && eventType.endsWith('_VIEW')) {
-      const windowStart = new Date(Date.now() - SESSION_WINDOW_MS)
-      // Prefer sessionId lookup (index sessionId) — avoids ipAddress scan on repeat views.
-      let recentEvent: { sessionId: string | null } | null = null
-      if (sessionIdToUse) {
-        recentEvent = await prisma.analyticLog.findFirst({
-          where: {
-            sessionId: sessionIdToUse,
-            timestamp: { gte: windowStart },
-            isBot: false,
-          },
-          select: { sessionId: true },
-          orderBy: { timestamp: 'desc' },
-        })
-      }
-      if (recentEvent === null) {
-        recentEvent = await prisma.analyticLog.findFirst({
-          where: {
-            ipAddress,
-            timestamp: { gte: windowStart },
-            isBot: false,
-          },
-          select: { sessionId: true },
-          orderBy: { timestamp: 'desc' },
-        })
-      }
-      if (recentEvent !== null) {
-        isDuplicate = true
-        // Heredar sessionId del primer evento de la sesión
-        if (!sessionIdToUse && recentEvent.sessionId) {
-          sessionIdToUse = recentEvent.sessionId
-        }
-      }
-    }
-    // ─────────────────────────────────────────────────────────────────────────
-
-    await prisma.analyticLog.create({
-      data: {
-        eventType,
-        entityId,
-        entityType,
-        ipAddress,
-        userAgent,
-        referrer: referer,
-        country,
-        city,
-        region,
-        latitude,
-        longitude,
-        device,
-        isBot,
-        isDuplicate,
-        sessionId: sessionIdToUse,
-        scrollDepth: options?.scrollDepth,
-        timeOnPage: options?.timeOnPage,
-        sessionDuration: options?.sessionDuration,
-        clickTarget: options?.clickTarget,
-        vitalsLCP: options?.vitalsLCP,
-        vitalsFCP: options?.vitalsFCP,
-        vitalsINP: options?.vitalsINP,
-        vitalsCLS: options?.vitalsCLS,
-        utmSource: options?.stm?.source,
-        utmMedium: options?.stm?.medium,
-        utmCampaign: options?.stm?.campaign,
-        utmTerm: options?.stm?.term,
-        utmContent: options?.stm?.content,
-        loadTime: options?.performance?.loadTime,
-        pageUrl: options?.metadata?.url as string | undefined,
-        consentLevel: consentLevel,
-      },
-    })
-
-    // Lazy TTL cleanup — runs on ~1% of writes, non-blocking
-    void maybeCleanupOldLogs()
-
-    return { success: true }
-  } catch (error) {
-    logger.error('Error recording analytic event:', { error })
-    return { success: false }
-  }
+  /*
+   * Custom DB analytics are intentionally disabled.
+   * GA4 owns public traffic metrics, and duplicating events in Neon burns
+   * free-tier compute for a small portfolio/admin used by one or two people.
+   */
+  return { success: true, disabled: true }
 }
 
-/** Cached content counts for Dashboard header section — TTL 2 min */
+/** Cached operational counts for the admin dashboard. No visitor analytics. */
 const _fetchDashboardContentStats = unstable_cache(
   async () => {
     const [
       imagesCount,
       categoriesCount,
+      servicesCount,
       testimonialsCount,
       deletedCount,
       contactsCount,
       pendingTestimonials,
+      pendingBookings,
+      categoriesWithoutImages,
+      servicesWithoutImage,
     ] = await Promise.all([
       prisma.categoryImage.count({ where: { category: { deletedAt: null } } }),
       prisma.category.count({ where: { deletedAt: null } }),
+      prisma.service.count({ where: { deletedAt: null } }),
       prisma.testimonial.count({ where: { isActive: true, deletedAt: null } }),
-      prisma.category.count({ where: { deletedAt: { not: null } } }),
+      Promise.all([
+        prisma.category.count({ where: { deletedAt: { not: null } } }),
+        prisma.service.count({ where: { deletedAt: { not: null } } }),
+        prisma.testimonial.count({ where: { deletedAt: { not: null } } }),
+        prisma.contact.count({ where: { deletedAt: { not: null } } }),
+        prisma.booking.count({ where: { deletedAt: { not: null } } }),
+      ]).then((counts) => counts.reduce((total, count) => total + count, 0)),
       prisma.contact.count({ where: { isRead: false, deletedAt: null } }),
       prisma.testimonial.count({ where: { isActive: false, deletedAt: null } }),
+      prisma.booking.count({ where: { status: 'PENDING', deletedAt: null } }),
+      prisma.category.count({
+        where: {
+          deletedAt: null,
+          OR: [{ coverImageUrl: null }, { coverImageUrl: '' }],
+          images: { none: {} },
+        },
+      }),
+      prisma.service.count({
+        where: {
+          deletedAt: null,
+          OR: [{ imageUrl: null }, { imageUrl: '' }],
+        },
+      }),
     ])
     return {
       imagesCount,
       categoriesCount,
+      servicesCount,
       testimonialsCount,
       deletedCount,
       contactsCount,
       pendingTestimonials,
+      pendingBookings,
+      categoriesWithoutImages,
+      servicesWithoutImage,
     }
   },
   ['dashboard-content-stats'],
   {
-    revalidate: CACHE_DURATIONS.SHORT * 2,
-    tags: [CACHE_TAGS.categories, CACHE_TAGS.testimonials, CACHE_TAGS.contacts],
+    revalidate: CACHE_DURATIONS.MEDIUM,
+    tags: [
+      CACHE_TAGS.categories,
+      CACHE_TAGS.categoryImages,
+      CACHE_TAGS.services,
+      CACHE_TAGS.testimonials,
+      CACHE_TAGS.contacts,
+      CACHE_TAGS.bookings,
+    ],
   }
 )
 
@@ -259,251 +124,42 @@ export async function getDashboardContentStats() {
   return _fetchDashboardContentStats()
 }
 
-// -----------------------------------------------
-// Dashboard Data (7-day summary) — all queries in parallel
-// -----------------------------------------------
-/** Cached DB queries for the 7-day summary — auth check excluded from cache */
-const _fetchAnalyticsDashboardData = unstable_cache(
-  async () => {
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-    const where7d = { timestamp: { gte: sevenDaysAgo } }
-
-    const [
-      totalVisits,
-      detailVisits,
-      contactLeads,
-      trendRaw,
-      topViewsRaw,
-      deviceGroups,
-      topLocationsRaw,
-    ] = await Promise.all([
-      // 1. Total page views (last 7 days)
-      prisma.analyticLog.count({
-        where: { ...where7d, eventType: { endsWith: '_VIEW' }, isBot: false },
-      }),
-      // 2. Category gallery views
-      prisma.analyticLog.count({
-        where: { ...where7d, eventType: 'CATEGORY_VIEW', isBot: false },
-      }),
-      // 3. Contact form leads
-      prisma.analyticLog.count({
-        where: { ...where7d, eventType: 'CONTACT_SUBMIT', isBot: false },
-      }),
-      // 4. Trend data: aggregate by day in DB — avoids fetching all timestamps
-      prisma.$queryRaw<{ date: Date; count: bigint }[]>`
-        SELECT DATE_TRUNC('day', timestamp) AS date, COUNT(*)::bigint AS count
-        FROM "analytic_logs"
-        WHERE timestamp >= ${sevenDaysAgo}
-          AND "eventType" IN (
-            'HOME_VIEW',
-            'GALLERY_VIEW',
-            'GALLERY_DETAIL_VIEW',
-            'ABOUT_VIEW',
-            'CONTACT_VIEW',
-            'PAGE_VIEW',
-            'CATEGORY_VIEW',
-            'PROJECT_DETAIL_VIEW'
-          )
-          AND "isBot" = false
-        GROUP BY DATE_TRUNC('day', timestamp)
-        ORDER BY date ASC
-      `,
-      // 5. Top categories by view count
-      prisma.analyticLog.groupBy({
-        by: ['entityId'],
-        where: {
-          ...where7d,
-          eventType: 'CATEGORY_VIEW',
-          entityType: 'Category',
-          entityId: { not: null },
-          isBot: false,
-        },
-        _count: { entityId: true },
-        orderBy: { _count: { entityId: 'desc' } },
-        take: 5,
-      }),
-      // 6. Device groups (unique visitors: isDuplicate=false)
-      prisma.analyticLog.groupBy({
-        by: ['device'],
-        where: { ...where7d, isBot: false, isDuplicate: false },
-        _count: { device: true },
-      }),
-      // 7. Top locations by city+country (no raw IPs)
-      prisma.analyticLog.groupBy({
-        by: ['city', 'country'],
-        where: { ...where7d, city: { not: null }, isBot: false, isDuplicate: false },
-        _count: { city: true },
-        orderBy: { _count: { city: 'desc' } },
-        take: 8,
-      }),
-    ])
-
-    // --- Build trend map from DB aggregation ---
-    const trendData = buildTrendData(trendRaw)
-
-    // --- Process top categories ---
-    const categoryIds = topViewsRaw.map((r) => r.entityId).filter(Boolean) as string[]
-    const categoriesMap = new Map(
-      (
-        await prisma.category.findMany({
-          where: { id: { in: categoryIds } },
-          select: { id: true, name: true },
-        })
-      ).map((p) => [p.id, p.name])
-    )
-    const topCategories = topViewsRaw
-      .map((item) => {
-        if (!item.entityId) return null
-        return {
-          title: categoriesMap.get(item.entityId) ?? 'Categoría desconocida',
-          count: item._count.entityId,
-        }
-      })
-      .filter(Boolean) as { title: string; count: number }[]
-
-    // --- Process device usage ---
-    const deviceUsage = { mobile: 0, tablet: 0, desktop: 0 }
-    for (const row of deviceGroups) {
-      const dev = (row.device ?? 'desktop') as 'mobile' | 'tablet' | 'desktop'
-      if (dev in deviceUsage) deviceUsage[dev] = row._count.device
-    }
-
-    // --- Process top locations (city/country, no IPs) ---
-    const topLocations = topLocationsRaw.map((row) => ({
-      location: [row.city, row.country].filter(Boolean).join(', ') || 'Desconocido',
-      count: row._count.city,
-    }))
-
-    return {
-      totalVisits,
-      detailVisits,
-      contactLeads,
-      trendData,
-      topCategories,
-      deviceUsage,
-      topLocations,
-    }
-  },
-  ['analytics-dashboard-7d'],
-  { revalidate: CACHE_DURATIONS.SHORT * 2, tags: [CACHE_TAGS.analytics] }
+const _fetchDashboardRecentBookings = unstable_cache(
+  async () =>
+    prisma.booking.findMany({
+      where: {
+        deletedAt: null,
+        status: { in: ['PENDING', 'CONFIRMED'] },
+        date: { gte: new Date() },
+      },
+      orderBy: { date: 'asc' },
+      take: 5,
+      select: {
+        id: true,
+        clientName: true,
+        date: true,
+        status: true,
+        service: { select: { name: true } },
+      },
+    }),
+  ['dashboard-recent-bookings'],
+  {
+    revalidate: CACHE_DURATIONS.MEDIUM,
+    tags: [CACHE_TAGS.bookings],
+  }
 )
+
+export async function getDashboardRecentBookings() {
+  await requireAdmin()
+  return _fetchDashboardRecentBookings()
+}
 
 export async function getAnalyticsDashboardData() {
   await requireAdmin()
-  try {
-    return await _fetchAnalyticsDashboardData()
-  } catch (error) {
-    logger.error('Error fetching analytics data:', { error })
-    return null
-  }
+  return null
 }
 
-// -----------------------------------------------
-// Extended Analytics (for world map + vitals)
-// -----------------------------------------------
-const _fetchExtendedAnalyticsData = unstable_cache(
-  async (days: number) => {
-    const since = new Date()
-    since.setDate(since.getDate() - days)
-    const where = { timestamp: { gte: since }, isBot: false }
-
-    const [vitalsRows, geoRows, countryRows] = await Promise.all([
-      prisma.analyticLog.aggregate({
-        where: { ...where, vitalsLCP: { not: null } },
-        _avg: {
-          vitalsLCP: true,
-          vitalsFCP: true,
-          vitalsINP: true,
-          vitalsCLS: true,
-          scrollDepth: true,
-          timeOnPage: true,
-        },
-      }),
-      prisma.analyticLog.findMany({
-        where: { ...where, latitude: { not: null }, longitude: { not: null } },
-        select: { latitude: true, longitude: true, city: true, country: true },
-        distinct: ['city', 'country'],
-        take: 200,
-      }),
-      prisma.analyticLog.groupBy({
-        by: ['country'],
-        where: { ...where, country: { not: null } },
-        _count: { country: true },
-        orderBy: { _count: { country: 'desc' } },
-        take: 60,
-      }),
-    ])
-
-    return {
-      avgVitalsLCP: vitalsRows._avg.vitalsLCP,
-      avgVitalsFCP: vitalsRows._avg.vitalsFCP,
-      avgVitalsINP: vitalsRows._avg.vitalsINP,
-      avgVitalsCLS: vitalsRows._avg.vitalsCLS,
-      avgScrollDepth: vitalsRows._avg.scrollDepth,
-      avgTimeOnPage: vitalsRows._avg.timeOnPage,
-      geoPoints: buildGeoPoints(geoRows),
-      countryCounts: buildCountryCounts(countryRows),
-    }
-  },
-  ['analytics-extended'],
-  { revalidate: CACHE_DURATIONS.SHORT * 2, tags: [CACHE_TAGS.analytics] }
-)
-
-export async function getExtendedAnalyticsData(days = 30) {
+export async function getExtendedAnalyticsData() {
   await requireAdmin()
-  try {
-    return await _fetchExtendedAnalyticsData(days)
-  } catch (error) {
-    logger.error('Error fetching extended analytics:', { error })
-    return null
-  }
-}
-
-// -----------------------------------------------
-// Helpers
-// -----------------------------------------------
-
-/**
- * Builds a 7-day trend array from DB-aggregated rows (DATE_TRUNC query).
- * Days with no data get count = 0.
- */
-function buildTrendData(rows: { date: Date; count: bigint }[]) {
-  const days: Record<string, number> = {}
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date()
-    d.setDate(d.getDate() - i)
-    days[d.toISOString().split('T')[0]] = 0
-  }
-  for (const row of rows) {
-    const key = new Date(row.date).toISOString().split('T')[0]
-    if (key in days) days[key] = Number(row.count)
-  }
-  return Object.entries(days).map(([date, count]) => ({ date, count }))
-}
-
-function buildGeoPoints(
-  rows: {
-    latitude: number | null
-    longitude: number | null
-    city: string | null
-    country: string | null
-  }[]
-) {
-  return rows
-    .filter((r) => r.latitude !== null && r.longitude !== null)
-    .map((r) => ({
-      lat: r.latitude!,
-      lon: r.longitude!,
-      city: r.city ?? '',
-      country: r.country ?? '',
-    }))
-}
-
-function buildCountryCounts(rows: { country: string | null; _count: { country: number } }[]) {
-  const counts: Record<string, number> = {}
-  for (const row of rows) {
-    if (row.country) counts[row.country] = row._count.country
-  }
-  return counts
+  return null
 }

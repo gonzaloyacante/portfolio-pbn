@@ -10,31 +10,39 @@ import Link from 'next/link'
 import { Heart } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
 import { getPublicSiteUrl } from '@/lib/site-url'
+import { getSiteSettings } from '@/actions/settings/site'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
+
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
-  const contact = await getContactSettings()
+  const [aboutSettings, contact, site] = await Promise.all([
+    getAboutSettings(),
+    getContactSettings(),
+    getSiteSettings(),
+  ])
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
   const location = contact?.location || ''
   const locationSuffix = location ? ` en ${location}` : ''
 
-  return {
-    title: 'Sobre Mí',
+  return buildSeoMetadata({
+    title: `Sobre mí | ${ownerName}`,
     description: `Conoce a ${ownerName}, maquilladora profesional y caracterizadora${locationSuffix}. Más de 10 años de experiencia en bodas, editoriales y caracterización artística.`,
-    alternates: {
-      canonical: ROUTES.public.about,
-    },
-    openGraph: {
-      title: `Sobre Mí | ${ownerName}`,
-      description: `Conoce a ${ownerName}, maquilladora profesional y caracterizadora${locationSuffix}. Bodas, editoriales, cine y teatro.`,
-      type: 'profile',
-      locale: 'es_ES',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `Sobre Mí | ${ownerName}`,
-      description: `Maquilladora profesional y caracterizadora${locationSuffix}. Bodas, editoriales, cine y teatro.`,
-    },
-  }
+    path: ROUTES.public.about,
+    site,
+    ownerName,
+    image: aboutSettings?.profileImageUrl || aboutSettings?.illustrationUrl || site?.defaultOgImage,
+    imageAlt: `${ownerName} - maquilladora profesional`,
+    type: 'profile',
+    keywords: [
+      ownerName,
+      'maquilladora profesional',
+      'maquilladora Granada',
+      'caracterización artística',
+      'efectos especiales',
+    ],
+  })
 }
 
 function buildJsonLdData(

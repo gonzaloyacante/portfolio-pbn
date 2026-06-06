@@ -5,21 +5,25 @@ import { getContactSettings } from '@/actions/settings/contact'
 import { PrivacyTableOfContents } from '@/components/legal/PrivacyTableOfContents'
 import { PRIVACY_POLICY_LAST_UPDATED } from '@/config/legal'
 import { ROUTES } from '@/config/routes'
+import { getSiteSettings } from '@/actions/settings/site'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
 
-export const metadata: Metadata = {
-  title: 'Política de Privacidad - Portfolio Paola Bolívar',
-  description:
-    'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
-  alternates: {
-    canonical: ROUTES.public.privacy,
-  },
-  openGraph: {
-    title: 'Política de Privacidad - Portfolio Paola Bolívar',
-    description:
-      'Política de privacidad y protección de datos personales del portfolio de Paola Bolívar Nievas',
-    url: ROUTES.public.privacy,
-    type: 'website',
-  },
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])
+  const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
+
+  return buildSeoMetadata({
+    title: `Política de privacidad | ${ownerName}`,
+    description: `Política de privacidad y protección de datos personales del portfolio de ${ownerName}.`,
+    path: ROUTES.public.privacy,
+    site,
+    ownerName,
+    image: site?.defaultOgImage,
+    imageAlt: `Política de privacidad de ${ownerName}`,
+  })
 }
 
 export default async function PrivacyPage() {

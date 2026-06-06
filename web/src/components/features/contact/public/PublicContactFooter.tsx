@@ -6,7 +6,7 @@ interface PublicContactFooterProps {
   ownerName: string
 }
 
-export default function PublicContactFooter({ ownerName }: PublicContactFooterProps) {
+export default function PublicContactFooter({ ownerName: _ownerName }: PublicContactFooterProps) {
   return (
     <div className="public-contact-page border-t py-8 text-center font-sans transition-colors duration-300">
       <div className="flex flex-wrap items-center justify-center gap-3 px-4">

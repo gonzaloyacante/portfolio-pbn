@@ -57,13 +57,13 @@ vi.mock('@/lib/rate-limit-guards', () => ({
 
 vi.mock('@/lib/cache-tags', () => ({
   CACHE_TAGS: { services: 'services' },
-  CACHE_DURATIONS: { MEDIUM: 300 },
+  CACHE_DURATIONS: { MEDIUM: 300, VERY_LONG: false },
 }))
 
 vi.mock('@/config/routes', () => ({
   ROUTES: {
     admin: { services: '/admin/services' },
-    public: { services: '/services' },
+    public: { services: '/services', serviceDetail: (slug: string) => `/services/${slug}` },
     home: '/',
   },
 }))

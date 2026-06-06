@@ -43,9 +43,7 @@ const BASE_URL = 'http://localhost/api/admin/analytics/overview'
  *   categoryImage.count(active), category.count(active), service.count(active),
  *   testimonial.count(active), contact.count(unread), booking.count(pending),
  *   testimonial.count(pendingTestimonials),
- *   [trash: category.count, service.count, testimonial.count, contact.count, booking.count],
- *   analyticLog.count(pageViews), analyticLog.count(uniqueVisitors),
- *   analyticLog.groupBy(device), analyticLog.groupBy(countries), analyticLog.groupBy(images)
+ *   [trash: category.count, service.count, testimonial.count, contact.count, booking.count]
  */
 async function setupDefaultMocks(overrides: Record<string, number> = {}) {
   const { prisma } = await import('@/lib/db')
@@ -57,8 +55,6 @@ async function setupDefaultMocks(overrides: Record<string, number> = {}) {
     newContacts: 0,
     pendingBookings: 0,
     pendingTestimonials: 0,
-    pageViews30d: 0,
-    uniqueVisitors30d: 0,
     ...overrides,
   }
   // Active counts
@@ -76,18 +72,6 @@ async function setupDefaultMocks(overrides: Record<string, number> = {}) {
   vi.mocked(prisma.testimonial.count).mockResolvedValueOnce(0)
   vi.mocked(prisma.contact.count).mockResolvedValueOnce(0)
   vi.mocked(prisma.booking.count).mockResolvedValueOnce(0)
-  // analyticLog counts
-  vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(v.pageViews30d)
-  vi.mocked(prisma.analyticLog.count).mockResolvedValueOnce(v.uniqueVisitors30d)
-  // groupBy: device, countries, images — all empty
-  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
-  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
-  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
-  // Post-Promise.all batch queries:
-  // Country coords findMany (countryKeys = [] from empty topCountriesRaw)
-  vi.mocked(prisma.analyticLog.findMany).mockResolvedValueOnce([] as never)
-  // Cities groupBy (4th groupBy call)
-  vi.mocked(prisma.analyticLog.groupBy).mockResolvedValueOnce([] as never)
   return prisma
 }
 
@@ -114,15 +98,13 @@ describe('GET /api/admin/analytics/overview', () => {
   })
 
   it('returns all counters on success', async () => {
-    await setupDefaultMocks({
+    const prisma = await setupDefaultMocks({
       totalImages: 10,
       totalCategories: 5,
       totalServices: 8,
       totalTestimonials: 12,
       newContacts: 3,
       pendingBookings: 2,
-      pageViews30d: 500,
-      uniqueVisitors30d: 100,
     })
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
@@ -137,11 +119,15 @@ describe('GET /api/admin/analytics/overview', () => {
     expect(json.data.totalTestimonials).toBe(12)
     expect(json.data.newContacts).toBe(3)
     expect(json.data.pendingBookings).toBe(2)
-    expect(json.data.pageViews30d).toBe(500)
-    expect(json.data.uniqueVisitors30d).toBe(100)
+    expect(json.data.pageViews30d).toBe(0)
+    expect(json.data.uniqueVisitors30d).toBe(0)
     expect(json.data.deviceUsage).toEqual({})
     expect(json.data.topLocations).toEqual([])
     expect(json.data.topCategories).toEqual([])
+    expect(json.data.analyticsDisabled).toBe(true)
+    expect(prisma.analyticLog.count).not.toHaveBeenCalled()
+    expect(prisma.analyticLog.groupBy).not.toHaveBeenCalled()
+    expect(prisma.analyticLog.findMany).not.toHaveBeenCalled()
   })
 
   it('returns zero for empty DB', async () => {
@@ -183,23 +169,19 @@ describe('GET /api/admin/analytics/overview', () => {
     )
   })
 
-  it('includes pageViews30d count with correct date range', async () => {
-    const prisma = await setupDefaultMocks({ pageViews30d: 1234 })
+  it('does not query visitor analytics', async () => {
+    const prisma = await setupDefaultMocks()
 
     const { GET } = await import('@/app/api/admin/analytics/overview/route')
     const res = await GET(makeRequest(BASE_URL))
     const json = await res.json()
 
-    expect(json.data.pageViews30d).toBe(1234)
-    expect(prisma.analyticLog.count).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          timestamp: { gte: expect.any(Date) },
-          eventType: { endsWith: '_VIEW' },
-          isBot: false,
-        }),
-      })
-    )
+    expect(json.data.pageViews30d).toBe(0)
+    expect(json.data.uniqueVisitors30d).toBe(0)
+    expect(json.data.analyticsDisabled).toBe(true)
+    expect(prisma.analyticLog.count).not.toHaveBeenCalled()
+    expect(prisma.analyticLog.groupBy).not.toHaveBeenCalled()
+    expect(prisma.analyticLog.findMany).not.toHaveBeenCalled()
   })
 
   it('returns 500 on DB error', async () => {

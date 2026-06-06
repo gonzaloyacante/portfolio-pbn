@@ -7,11 +7,7 @@ import Captions from 'yet-another-react-lightbox/plugins/captions'
 import type { SlideImage } from 'yet-another-react-lightbox'
 import 'yet-another-react-lightbox/styles.css'
 import 'yet-another-react-lightbox/plugins/captions.css'
-import {
-  getVariantUrl,
-  getBlurPlaceholderUrl,
-  isCloudinaryUploadUrl,
-} from '@/lib/cloudinary-helper'
+import { getVariantUrl, isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
 
 // ---------- Types ----------
 
@@ -116,8 +112,6 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
       render={{
         slide: ({ slide }) => {
           if (!slide) return null
-          const src = slide.src ?? ''
-          const blurSrc = isCloudinaryUploadUrl(src) ? getBlurPlaceholderUrl(src) : null
           return (
             <div
               style={{
@@ -129,20 +123,7 @@ export function Lightbox({ images, selectedIndex, onClose, onIndexChange }: Ligh
                 position: 'relative',
               }}
             >
-              {blurSrc && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    backgroundImage: `url(${blurSrc})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    filter: 'blur(20px)',
-                    transform: 'scale(1.1)',
-                    opacity: 0.6,
-                  }}
-                />
-              )}
+              {/* eslint-disable-next-line @next/next/no-img-element -- Lightbox muestra la imagen original fullscreen sin pasar por Vercel Image Optimization. */}
               <img
                 src={slide.src ?? ''}
                 alt={slide.alt ?? ''}

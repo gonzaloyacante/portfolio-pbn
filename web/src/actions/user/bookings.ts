@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { z } from 'zod'
 import { logger } from '@/lib/logger'
 import { emailService } from '@/lib/email-service'
@@ -9,6 +9,7 @@ import { sendPushToAdmins } from '@/lib/push-service'
 import { ROUTES } from '@/config/routes'
 import { requireAdmin } from '@/lib/security-server'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
 const BookingSchema = z.object({
   date: z
@@ -24,6 +25,8 @@ const BookingSchema = z.object({
 })
 
 export async function createBooking(formData: FormData) {
+  await requireAdmin()
+
   const rl = await checkApiRateLimit()
   if (rl) return { success: false, error: rl.error }
 
@@ -100,6 +103,7 @@ export async function createBooking(formData: FormData) {
     })
 
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
     return { success: true }
   } catch (error) {
     logger.error('Error creating booking:', { error })
@@ -146,6 +150,7 @@ export async function updateBookingStatus(
       data: { status },
     })
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
     return { success: true }
   } catch (error) {
     logger.error('Error updates booking status:', { error })

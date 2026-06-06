@@ -10,6 +10,7 @@ import { updateSiteSettings } from '@/actions/settings/site'
 import { SiteMaintenanceSection } from './SiteMaintenanceSection'
 import { SiteIdentitySection } from './SiteIdentitySection'
 import { SiteNavbarSection } from './SiteNavbarSection'
+import { SiteSeoSection } from './SiteSeoSection'
 
 interface SiteEditorProps {
   settings: SiteSettingsData | null
@@ -23,6 +24,11 @@ export function SiteEditor({ settings }: SiteEditorProps) {
     settings?.siteName ?? 'Paola Bolívar Nievas - Make-up Artist'
   )
   const [siteTagline, setSiteTagline] = useState(settings?.siteTagline ?? '')
+  const [defaultMetaTitle, setDefaultMetaTitle] = useState(settings?.defaultMetaTitle ?? '')
+  const [defaultMetaDescription, setDefaultMetaDescription] = useState(
+    settings?.defaultMetaDescription ?? ''
+  )
+  const [defaultOgImage, setDefaultOgImage] = useState(settings?.defaultOgImage ?? '')
   const [maintenanceMode, setMaintenanceMode] = useState(settings?.maintenanceMode ?? false)
   const [maintenanceMessage, setMaintenanceMessage] = useState(settings?.maintenanceMessage ?? '')
   const [navbarShowBrand, setNavbarShowBrand] = useState(settings?.navbarShowBrand ?? true)
@@ -40,7 +46,7 @@ export function SiteEditor({ settings }: SiteEditorProps) {
   const [showGalleryPage, setShowGalleryPage] = useState(settings?.showGalleryPage ?? true)
   const [showServicesPage, setShowServicesPage] = useState(settings?.showServicesPage ?? false)
   const [showContactPage, setShowContactPage] = useState(settings?.showContactPage ?? true)
-  const [allowIndexing] = useState(settings?.allowIndexing ?? true)
+  const [allowIndexing, setAllowIndexing] = useState(settings?.allowIndexing ?? true)
 
   const pageSetters = {
     showAboutPage: setShowAboutPage,
@@ -55,6 +61,9 @@ export function SiteEditor({ settings }: SiteEditorProps) {
       const result = await updateSiteSettings({
         siteName: siteName.trim() || undefined,
         siteTagline: siteTagline.trim() || null,
+        defaultMetaTitle: defaultMetaTitle.trim() || null,
+        defaultMetaDescription: defaultMetaDescription.trim() || null,
+        defaultOgImage: defaultOgImage.trim() || null,
         maintenanceMode,
         maintenanceMessage: maintenanceMessage.trim() || null,
         navbarShowBrand,
@@ -97,6 +106,17 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         onSiteNameChange={setSiteName}
         siteTagline={siteTagline}
         onSiteTaglineChange={setSiteTagline}
+      />
+
+      <SiteSeoSection
+        defaultMetaTitle={defaultMetaTitle}
+        onDefaultMetaTitleChange={setDefaultMetaTitle}
+        defaultMetaDescription={defaultMetaDescription}
+        onDefaultMetaDescriptionChange={setDefaultMetaDescription}
+        defaultOgImage={defaultOgImage}
+        onDefaultOgImageChange={setDefaultOgImage}
+        allowIndexing={allowIndexing}
+        onAllowIndexingChange={setAllowIndexing}
       />
 
       <SiteNavbarSection

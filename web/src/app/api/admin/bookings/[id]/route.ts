@@ -4,7 +4,7 @@
  * DELETE /api/admin/bookings/[id]  — Soft delete
  */
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
@@ -12,6 +12,7 @@ import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { bookingPatchSchema } from '@/lib/validations'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -153,6 +154,7 @@ export async function PATCH(req: Request, { params }: Params) {
     })
 
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
 
     return NextResponse.json({
       success: true,
@@ -190,6 +192,7 @@ export async function DELETE(req: Request, { params }: Params) {
     }
 
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
 
     return NextResponse.json({ success: true, message: 'Reserva eliminada' })
   } catch (err) {

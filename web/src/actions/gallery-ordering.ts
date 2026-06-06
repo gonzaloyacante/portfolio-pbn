@@ -49,8 +49,8 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
       )
     )
 
-    revalidatePath(ROUTES.public.portfolio, 'layout')
-    revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`, 'layout')
+    revalidatePath(ROUTES.public.portfolio)
+    revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
     revalidatePath(ROUTES.admin.categories)
     revalidatePath(ROUTES.admin.categoryGallery(categoryId))
     revalidateTag(CACHE_TAGS.categoryImages, 'max')
@@ -101,8 +101,8 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
     })
 
     if (category) {
-      revalidatePath(ROUTES.public.portfolio, 'layout')
-      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`, 'layout')
+      revalidatePath(ROUTES.public.portfolio)
+      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
     }
     revalidatePath(ROUTES.admin.categories)
     revalidatePath(ROUTES.admin.categoryGallery(categoryId))
@@ -134,7 +134,7 @@ export async function toggleCategoryImageFeatured(imageId: string, isFeatured: b
     })
 
     revalidatePath(ROUTES.home)
-    revalidatePath(ROUTES.public.portfolio, 'layout')
+    revalidatePath(ROUTES.public.portfolio)
     revalidatePath(`${ROUTES.public.portfolio}/${image.category.slug}`)
     revalidatePath(ROUTES.admin.categoryGallery(image.category.id))
     revalidateTag(CACHE_TAGS.categoryImages, 'max')

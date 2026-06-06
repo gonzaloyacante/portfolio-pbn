@@ -20,13 +20,17 @@ async function isRequestAuthenticated(req: NextRequest): Promise<boolean> {
 }
 
 /**
- * POST /api/upload - Subir imagen a Cloudinary
+ * POST /api/upload - Subida legacy vía servidor.
+ * El panel web usa /api/upload/sign + Cloudinary directo para no pasar archivos por Vercel.
  */
 export async function POST(req: NextRequest) {
   try {
     // 0. 🚦 Rate Limiting (IP based)
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
-    await checkApiRateLimit(ip)
+    const rateLimit = await checkApiRateLimit(ip)
+    if (rateLimit) {
+      return NextResponse.json({ error: rateLimit.error }, { status: 429 })
+    }
 
     // 1. Verificar autenticación
     if (!(await isRequestAuthenticated(req))) {

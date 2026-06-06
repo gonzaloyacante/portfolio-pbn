@@ -6,6 +6,30 @@ import { showToast } from '@/lib/toast'
 import { logger } from '@/lib/logger'
 import type { UploadedImage, UseImageUploadOptions } from './ImageUploadTypes'
 
+type UploadSignatureResponse =
+  | {
+      success: true
+      apiKey: string
+      cloudName: string
+      timestamp: number
+      signature: string
+      folder: string
+    }
+  | {
+      success: false
+      error?: string
+    }
+
+type CloudinaryUploadResponse = {
+  secure_url?: string
+  public_id?: string
+  width?: number
+  height?: number
+  error?: {
+    message?: string
+  }
+}
+
 function getValidFiles(
   fileArray: File[],
   maxSizeMB: number,
@@ -54,23 +78,43 @@ export function useImageUpload(options: UseImageUploadOptions) {
 
   const uploadFile = useCallback(
     async (file: File): Promise<UploadedImage> => {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('folder', folder)
       try {
-        const res = await fetch('/api/upload', {
+        const signRes = await fetch('/api/upload/sign', {
           method: 'POST',
-          body: formData,
+          headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
+          body: JSON.stringify({ folder }),
         })
-        if (!res.ok) {
-          const data = await res.json()
-          throw new Error(data.error || 'Error al subir')
+        const signData = (await signRes.json()) as UploadSignatureResponse
+        if (!signRes.ok) {
+          throw new Error(signData.success ? 'Error preparando la subida' : signData.error)
         }
-        const data = await res.json()
+        if (!signData.success) {
+          throw new Error(signData.error || 'Error preparando la subida')
+        }
+
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('api_key', signData.apiKey)
+        formData.append('timestamp', String(signData.timestamp))
+        formData.append('signature', signData.signature)
+        formData.append('folder', signData.folder)
+
+        const uploadRes = await fetch(
+          `https://api.cloudinary.com/v1_1/${encodeURIComponent(signData.cloudName)}/image/upload`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        )
+        const data = (await uploadRes.json()) as CloudinaryUploadResponse
+        if (!uploadRes.ok || !data.secure_url || !data.public_id) {
+          throw new Error(data.error?.message || 'Error al subir')
+        }
+
         return {
-          url: data.url,
-          publicId: data.publicId,
+          url: data.secure_url,
+          publicId: data.public_id,
           width: data.width,
           height: data.height,
         }

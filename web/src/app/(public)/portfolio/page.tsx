@@ -4,14 +4,18 @@ import { Heart, ImageOff, Palette } from 'lucide-react'
 import { FadeIn, StaggerChildren } from '@/components/ui'
 import { getCategorySettings } from '@/actions/settings/categories'
 import { getContactSettings } from '@/actions/settings/contact'
+import { getSiteSettings } from '@/actions/settings/site'
 import { ROUTES } from '@/config/routes'
 import type { Metadata } from 'next'
 import PortfolioCardImage from './PortfolioCardImage'
 import { unstable_cache } from 'next/cache'
 import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
+import { buildSeoMetadata } from '@/lib/seo-metadata'
+import JsonLd from '@/components/seo/JsonLd'
+import { getPublicSiteUrl } from '@/lib/site-url'
 
-/** ISR — alineado con `web/src/config/public-isr.ts` */
-export const revalidate = 3600
+/** Cache público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 const getPublicPortfolioCategories = unstable_cache(
   async () =>
@@ -31,28 +35,29 @@ const getPublicPortfolioCategories = unstable_cache(
 )
 
 export async function generateMetadata(): Promise<Metadata> {
-  const contact = await getContactSettings()
+  const [contact, site, categories] = await Promise.all([
+    getContactSettings(),
+    getSiteSettings(),
+    getPublicPortfolioCategories(),
+  ])
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
-  const title = `Portfolio | ${ownerName}`
-  const description = 'Explora trabajos de maquillaje social, caracterización, FX y más.'
-  return {
+  const location = contact?.location ? ` en ${contact.location}` : ''
+  const title = `Portfolio de maquillaje profesional | ${ownerName}`
+  const description = `Galería de trabajos de maquillaje profesional${location}: maquillaje social, caracterización, FX, teatro y posticería.`
+  const firstCategory = categories[0]
+  const image =
+    firstCategory?.coverImageUrl || firstCategory?.images[0]?.url || site?.defaultOgImage
+
+  return buildSeoMetadata({
     title,
     description,
-    alternates: {
-      canonical: ROUTES.public.portfolio,
-    },
-    openGraph: {
-      title,
-      description,
-      url: ROUTES.public.portfolio,
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-    },
-  }
+    path: ROUTES.public.portfolio,
+    site,
+    ownerName,
+    image,
+    imageAlt: `Portfolio de maquillaje de ${ownerName}`,
+    keywords: ['portfolio maquillaje', 'maquillaje profesional', 'caracterización', 'FX makeup'],
+  })
 }
 
 /**
@@ -71,6 +76,19 @@ export default async function PortfolioPage() {
 
   return (
     <section className="public-portfolio-page w-full transition-colors duration-500">
+      <JsonLd
+        type="CollectionPage"
+        data={{
+          name: 'Portfolio',
+          description: 'Galería de trabajos de maquillaje profesional organizada por categoría.',
+          url: `${getPublicSiteUrl()}${ROUTES.public.portfolio}`,
+          mainEntity: categories.map((category) => ({
+            name: category.name,
+            url: `${getPublicSiteUrl()}${ROUTES.public.portfolio}/${category.slug}`,
+            image: category.coverImageUrl || category.images[0]?.url || '',
+          })),
+        }}
+      />
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-12 lg:px-16 lg:py-12">
         {/* Header */}
         <div className="mb-6 text-center sm:mb-8 lg:mb-10 lg:text-left">

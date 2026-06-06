@@ -12,6 +12,16 @@ import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { extractPublicIdUrl, deleteMultipleImages } from '@/lib/cloudinary'
 import { generateSlug } from '@/lib/string-utils'
 
+function revalidatePublicServices(slugs: Array<string | null | undefined> = []) {
+  revalidatePath(ROUTES.public.services)
+  revalidatePath(ROUTES.public.sitemap)
+  const uniqueSlugs = new Set(slugs.filter((slug): slug is string => Boolean(slug)))
+  for (const slug of uniqueSlugs) {
+    revalidatePath(ROUTES.public.serviceDetail(slug))
+  }
+  revalidateTag(CACHE_TAGS.services, 'max')
+}
+
 // ============================================
 // VALIDATION SCHEMA
 // ============================================
@@ -259,8 +269,7 @@ export async function createService(formData: FormData) {
     })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services, 'layout')
-    revalidateTag(CACHE_TAGS.services, 'max')
+    revalidatePublicServices([data.slug])
     logger.info(`Service created: ${data.name}`)
     return { success: true }
   } catch (error: unknown) {
@@ -353,7 +362,7 @@ export async function updateService(id: string, formData: FormData) {
 
     const previousService = await prisma.service.findUnique({
       where: { id },
-      select: { imageUrl: true, galleryUrls: true },
+      select: { imageUrl: true, galleryUrls: true, slug: true },
     })
 
     await prisma.$transaction(async (tx) => {
@@ -429,8 +438,7 @@ export async function updateService(id: string, formData: FormData) {
     }
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services, 'layout')
-    revalidateTag(CACHE_TAGS.services, 'max')
+    revalidatePublicServices([previousService?.slug, data.slug])
     logger.info(`Service updated: ${id}`)
     return { success: true }
   } catch (error: unknown) {
@@ -465,8 +473,7 @@ export async function deleteService(id: string) {
     })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services, 'layout')
-    revalidateTag(CACHE_TAGS.services, 'max')
+    revalidatePublicServices([svc?.slug])
     logger.info(`Service soft deleted: ${id}`)
     return { success: true }
   } catch (error) {
@@ -495,8 +502,7 @@ export async function toggleService(id: string) {
     })
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services, 'layout')
-    revalidateTag(CACHE_TAGS.services, 'max')
+    revalidatePublicServices([service.slug])
     logger.info(`Service toggled: ${id} -> ${!service.isActive}`)
     return { success: true, isActive: !service.isActive }
   } catch (error) {
@@ -524,8 +530,7 @@ export async function reorderServices(orderedIds: string[]) {
     )
 
     revalidatePath(ROUTES.admin.services)
-    revalidatePath(ROUTES.public.services, 'layout')
-    revalidateTag(CACHE_TAGS.services, 'max')
+    revalidatePublicServices()
     logger.info('Services reordered')
     return { success: true }
   } catch (error) {

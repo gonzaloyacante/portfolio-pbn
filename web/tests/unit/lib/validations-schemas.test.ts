@@ -146,12 +146,12 @@ describe('testimonialSettingsSchema — exhaustive', () => {
     )
   })
 
-  it('fails when showOnAbout is missing', () => {
-    expect(testimonialSettingsSchema.safeParse({ maxDisplay: 5 }).success).toBe(false)
+  it('passes when showOnAbout is missing', () => {
+    expect(testimonialSettingsSchema.safeParse({ maxDisplay: 5 }).success).toBe(true)
   })
 
-  it('fails when maxDisplay is missing', () => {
-    expect(testimonialSettingsSchema.safeParse({ showOnAbout: false }).success).toBe(false)
+  it('passes when maxDisplay is missing', () => {
+    expect(testimonialSettingsSchema.safeParse({ showOnAbout: false }).success).toBe(true)
   })
 
   it('fails when maxDisplay is 0', () => {

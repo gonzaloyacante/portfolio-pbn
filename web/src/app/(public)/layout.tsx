@@ -11,12 +11,16 @@ import { Heart } from 'lucide-react'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getHomeSettings } from '@/actions/settings/home'
+import { getSocialLinks } from '@/actions/settings/social'
 import { getSiteSettings, getPageVisibility } from '@/actions/settings/site'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import { ROUTES } from '@/config/routes'
+import { getPublicSiteUrl } from '@/lib/site-url'
+import { pickSocialImage, SOCIAL_IMAGE } from '@/lib/seo-metadata'
 
-const SITE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://dev.paolabolivar.es'
+/** Cache layout público — invalidación explícita desde CMS. */
+export const revalidate = false
 
 export async function generateMetadata(): Promise<Metadata> {
   const [site, contact] = await Promise.all([getSiteSettings(), getContactSettings()])
@@ -24,6 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const ownerName = contact?.ownerName || 'Paola Bolívar Nievas'
   const location = contact?.location || ''
   const siteName = site?.siteName || ownerName
+  const siteUrl = getPublicSiteUrl()
 
   const defaultTitle = site?.defaultMetaTitle || `${ownerName} | Maquilladora Profesional`
   const defaultDescription =
@@ -34,10 +39,10 @@ export async function generateMetadata(): Promise<Metadata> {
     ? `maquilladora ${location.toLowerCase()}`
     : 'maquilladora profesional'
   const favicon = site?.faviconUrl || '/favicon.ico'
-  const ogImage = site?.defaultOgImage || undefined
+  const ogImage = pickSocialImage(site?.defaultOgImage, site)
 
   return {
-    metadataBase: new URL(SITE_URL),
+    metadataBase: new URL(siteUrl),
     title: {
       default: defaultTitle,
       template: `%s | ${ownerName}`,
@@ -64,17 +69,24 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: 'website',
       locale: 'es_ES',
-      url: SITE_URL,
+      url: siteUrl,
       siteName,
       title: defaultTitle,
       description: defaultDescription,
-      ...(ogImage && { images: [{ url: ogImage, width: 1200, height: 630, alt: ownerName }] }),
+      images: [
+        {
+          url: ogImage,
+          width: SOCIAL_IMAGE.width,
+          height: SOCIAL_IMAGE.height,
+          alt: `${ownerName} - portfolio de maquillaje profesional`,
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: defaultTitle,
       description: defaultDescription,
-      ...(ogImage && { images: [ogImage] }),
+      images: [ogImage],
     },
     robots: {
       index: site?.allowIndexing ?? true,
@@ -92,17 +104,19 @@ export async function generateMetadata(): Promise<Metadata> {
       shortcut: favicon,
       apple: '/icons/icon-192x192.png',
     },
-    manifest: '/manifest.json',
+    manifest: '/manifest.webmanifest',
   }
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [contactSettings, visibility, testimonialSettings, homeSettings] = await Promise.all([
-    getContactSettings(),
-    getPageVisibility(),
-    getTestimonialSettings(),
-    getHomeSettings(),
-  ])
+  const [contactSettings, visibility, testimonialSettings, homeSettings, socialLinks] =
+    await Promise.all([
+      getContactSettings(),
+      getPageVisibility(),
+      getTestimonialSettings(),
+      getHomeSettings(),
+      getSocialLinks(),
+    ])
   const testimonials = testimonialSettings?.showOnAll ? await getActiveTestimonials(9) : []
 
   // ── Maintenance mode: show a styled, responsive maintenance card
@@ -122,6 +136,9 @@ export default async function PublicLayout({ children }: { children: React.React
           email: contactSettings?.email || 'contacto@paolamakeup.com',
           telephone: contactSettings?.phone || undefined,
           address: contactSettings?.location ? { addressLocality: contactSettings.location } : {},
+          image: pickSocialImage(homeSettings?.heroBackdropUrl || homeSettings?.heroMainImageUrl),
+          url: getPublicSiteUrl(),
+          sameAs: socialLinks.map((link) => link.url),
         }}
       />
       {/* Navbar brand: custom font stays; CMS colors stay disabled for public web. */}

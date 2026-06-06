@@ -134,7 +134,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const previousService = await prisma.service.findUnique({
       where: { id },
-      select: { imageUrl: true },
+      select: { imageUrl: true, slug: true },
     })
 
     const updatedService = await prisma.$transaction(async (tx) => {
@@ -203,7 +203,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
     try {
       revalidatePath(ROUTES.admin.services)
-      revalidatePath(ROUTES.public.services, 'layout')
+      revalidatePath(ROUTES.public.services)
+      if (previousService?.slug) {
+        revalidatePath(ROUTES.public.serviceDetail(previousService.slug))
+      }
+      if (updatedService?.slug) {
+        revalidatePath(ROUTES.public.serviceDetail(updatedService.slug))
+      }
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.services, 'max')
     } catch (revalErr) {
       logger.warn('[admin-service-patch] Revalidation failed (data saved)', {
@@ -249,7 +256,9 @@ export async function DELETE(req: Request, { params }: Params) {
 
     try {
       revalidatePath(ROUTES.admin.services)
-      revalidatePath(ROUTES.public.services, 'layout')
+      revalidatePath(ROUTES.public.services)
+      revalidatePath(ROUTES.public.serviceDetail(svc.slug))
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.services, 'max')
     } catch (revalErr) {
       logger.warn('[admin-service-delete] Revalidation failed (data saved)', {

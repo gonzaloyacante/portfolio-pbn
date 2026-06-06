@@ -3,13 +3,14 @@
  * POST /api/admin/bookings  — Crear reserva manual
  */
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { NextResponse } from 'next/server'
 
 import { ROUTES } from '@/config/routes'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { CACHE_TAGS } from '@/lib/cache-tags'
 import { buildPaginationMeta, normalizePagination, normalizeSearchTerm } from '@/lib/search-utils'
 import { bookingApiSchema } from '@/lib/validations'
 
@@ -180,6 +181,7 @@ export async function POST(req: Request) {
     })
 
     revalidatePath(ROUTES.admin.calendar)
+    revalidateTag(CACHE_TAGS.bookings, 'max')
 
     return NextResponse.json(
       {

@@ -11,6 +11,7 @@ vi.mock('next/image', () => ({
     className,
     onError,
     onLoad,
+    unoptimized,
     ...rest
   }: {
     src: string
@@ -25,6 +26,7 @@ vi.mock('next/image', () => ({
     width?: number
     height?: number
     quality?: number
+    unoptimized?: boolean
     'aria-hidden'?: boolean
   }) => (
     <img
@@ -33,6 +35,7 @@ vi.mock('next/image', () => ({
       alt={alt}
       className={className}
       style={style}
+      data-unoptimized={unoptimized ? 'true' : 'false'}
       onError={onError}
       onLoad={onLoad}
       {...rest}
@@ -100,5 +103,20 @@ describe('OptimizedImage', () => {
     expect(screen.getByRole('alert')).toBeInTheDocument()
     expect(screen.getByText('No se pudo cargar la imagen.')).toBeInTheDocument()
     expect(screen.getByText('No se pudo cargar la imagen.')).toHaveClass('sr-only')
+  })
+
+  it('bypasses Next optimization for Cloudinary images', () => {
+    render(
+      <OptimizedImage
+        src="https://res.cloudinary.com/demo/image/upload/v123/folder/photo.jpg"
+        alt="Cloudinary"
+        width={400}
+        height={300}
+        priority
+        placeholder="empty"
+      />
+    )
+
+    expect(screen.getByAltText('Cloudinary')).toHaveAttribute('data-unoptimized', 'true')
   })
 })

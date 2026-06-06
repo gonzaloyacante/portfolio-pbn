@@ -9,6 +9,7 @@ interface JsonLdProps {
     | 'CreativeWork'
     | 'Service'
     | 'ImageGallery'
+    | 'BreadcrumbList'
   data?: {
     name?: string
     url?: string
@@ -34,6 +35,10 @@ interface JsonLdProps {
       name: string
       url: string
       image: string
+    }[]
+    breadcrumbs?: {
+      name: string
+      url: string
     }[]
   }
 }
@@ -73,6 +78,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           name: mergedData.name,
           url: mergedData.url,
           image: mergedData.image,
+          description: mergedData.description,
           jobTitle: mergedData.jobTitle,
           sameAs: mergedData.sameAs,
           address: {
@@ -85,9 +91,11 @@ export default function JsonLd({ type, data }: JsonLdProps) {
         return {
           '@context': 'https://schema.org',
           '@type': 'ProfessionalService',
-          name: `${mergedData.name} - Makeup Artist`,
+          '@id': `${mergedData.url}#professional-service`,
+          name: mergedData.name,
           url: mergedData.url,
           image: mergedData.image,
+          description: mergedData.description,
           priceRange: mergedData.priceRange,
           address: {
             '@type': 'PostalAddress',
@@ -95,6 +103,7 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           },
           telephone: mergedData.telephone,
           email: mergedData.email,
+          sameAs: mergedData.sameAs,
           areaServed: {
             '@type': 'City',
             name: mergedData.address?.addressLocality || 'España',
@@ -201,6 +210,18 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           name: mergedData.name,
           description: mergedData.description,
           url: mergedData.url,
+        }
+
+      case 'BreadcrumbList':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: data?.breadcrumbs?.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: item.name,
+            item: item.url,
+          })),
         }
 
       default:

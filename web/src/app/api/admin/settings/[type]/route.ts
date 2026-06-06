@@ -175,7 +175,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
         revalidateTag(CACHE_TAGS.homeSettings, 'max')
         break
       case 'about':
-        revalidatePath(ROUTES.public.about, 'layout')
+        revalidatePath(ROUTES.public.about)
         revalidateTag(CACHE_TAGS.aboutSettings, 'max')
         break
       case 'contact':
@@ -191,20 +191,22 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
       case 'site':
         // page visibility is read in (public)/layout.tsx → all public pages affected
         revalidatePath('/', 'layout')
+        revalidatePath(ROUTES.public.sitemap)
+        revalidatePath(ROUTES.public.robots)
         revalidateTag(CACHE_TAGS.siteSettings, 'max')
         break
       case 'testimonial':
         revalidatePath(ROUTES.home)
-        revalidatePath(ROUTES.public.about, 'layout')
+        revalidatePath(ROUTES.public.about)
         revalidateTag(CACHE_TAGS.testimonialSettings, 'max')
         break
       case 'category':
-        revalidatePath(ROUTES.public.portfolio, 'layout')
+        revalidatePath(ROUTES.public.portfolio)
         revalidatePath(ROUTES.admin.categories)
         revalidateTag(CACHE_TAGS.categorySettings, 'max')
         break
       case 'servicesPage':
-        revalidatePath(ROUTES.public.services, 'layout')
+        revalidatePath(ROUTES.public.services)
         revalidateTag(CACHE_TAGS.servicesPageSettings, 'max')
         revalidatePath(ROUTES.admin.services)
         break

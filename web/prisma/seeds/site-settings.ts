@@ -6,13 +6,13 @@ export const siteSettings = {
   id: 'default-site',
 
   // Branding
-  siteName: 'Paola Bolívar Nievas - Make-up Artist',
+  siteName: 'Paola Bolívar Nievas - Maquilladora Profesional',
   siteTagline: 'Especialista en maquillaje profesional',
   logoUrl: null,
   faviconUrl: null,
 
   // SEO
-  defaultMetaTitle: 'Paola Bolívar Nievas | Make-up Artist Portfolio',
+  defaultMetaTitle: 'Paola Bolívar Nievas | Maquilladora profesional',
   defaultMetaDescription:
     'Paola Bolívar Nievas es una maquilladora profesional especializada en caracterización, efectos especiales, posticería y maquillaje editorial. Con sede en Granada, España.',
   defaultOgImage: null,

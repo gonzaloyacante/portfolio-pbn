@@ -114,6 +114,20 @@ export function extractPublicIdUrl(url: string | null | undefined): string | nul
 
 // ── Subida ────────────────────────────────────────────────────────────────────
 
+export function getCloudinaryUploadRootFolder(): 'pbn-prod' | 'pbn-dev' {
+  if (process.env.VERCEL_ENV) {
+    return process.env.VERCEL_ENV === 'production' ? 'pbn-prod' : 'pbn-dev'
+  }
+  return process.env.NODE_ENV === 'production' ? 'pbn-prod' : 'pbn-dev'
+}
+
+export function normalizeCloudinaryUploadFolder(folder: unknown): string {
+  if (typeof folder !== 'string') return 'portfolio'
+  const cleanFolder = folder.trim().replace(/^\/+|\/+$/g, '')
+  if (!cleanFolder || cleanFolder.includes('..')) return 'portfolio'
+  return cleanFolder
+}
+
 /**
  * Subir imagen a Cloudinary conservando la calidad original.
  *
@@ -149,13 +163,13 @@ export const uploadImage = async (
 
   return new Promise((resolve, reject) => {
     // Determine root folder based on environment
-    const isProduction = process.env.NODE_ENV === 'production'
-    const rootFolder = isProduction ? 'pbn-prod' : 'pbn-dev'
+    const rootFolder = getCloudinaryUploadRootFolder()
+    const uploadFolder = normalizeCloudinaryUploadFolder(folder)
 
     cloudinary.uploader
       .upload_stream(
         {
-          folder: `${rootFolder}/${folder}`,
+          folder: `${rootFolder}/${uploadFolder}`,
           resource_type: 'image',
           // Sin transformation: se preserva el archivo original (4K, FullHD, etc.)
           // Las variantes se generan dinámicamente vía URL de Cloudinary.

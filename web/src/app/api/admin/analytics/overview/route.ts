@@ -1,7 +1,9 @@
 /**
  * GET /api/admin/analytics/overview
- * Resumen de métricas del panel de administración.
- * Devuelve contadores de entidades y actividad reciente.
+ *
+ * Custom visitor analytics are disabled to avoid Neon compute burn.
+ * This endpoint is kept for the Flutter admin dashboard contract and returns
+ * only operational counters plus empty analytics fields.
  */
 
 import { NextResponse } from 'next/server'
@@ -10,15 +12,10 @@ import { unstable_cache } from 'next/cache'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { CACHE_TAGS } from '@/lib/cache-tags'
+import { CACHE_DURATIONS, CACHE_TAGS } from '@/lib/cache-tags'
 
-// ── Handler ───────────────────────────────────────────────────────────────────
-
-const getAnalyticsOverviewData = unstable_cache(
+const getDashboardOverviewData = unstable_cache(
   async () => {
-    const now = new Date()
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-
     const [
       totalImages,
       totalCategories,
@@ -28,231 +25,22 @@ const getAnalyticsOverviewData = unstable_cache(
       pendingBookings,
       pendingTestimonials,
       trashCount,
-      pageViews30d,
-      uniqueVisitors30d,
-      deviceUsageRaw,
-      topCountriesRaw,
-      topViewsRaw,
     ] = await Promise.all([
-      prisma.categoryImage.count(),
+      prisma.categoryImage.count({ where: { category: { deletedAt: null } } }),
       prisma.category.count({ where: { deletedAt: null } }),
       prisma.service.count({ where: { deletedAt: null } }),
       prisma.testimonial.count({ where: { deletedAt: null } }),
       prisma.contact.count({ where: { isRead: false, deletedAt: null } }),
-      prisma.booking.count({
-        where: { status: 'PENDING', deletedAt: null },
-      }),
-      prisma.testimonial.count({
-        where: { status: 'PENDING', deletedAt: null },
-      }),
-      // Total de elementos en la papelera (soft-deleted)
+      prisma.booking.count({ where: { status: 'PENDING', deletedAt: null } }),
+      prisma.testimonial.count({ where: { status: 'PENDING', deletedAt: null } }),
       Promise.all([
         prisma.category.count({ where: { deletedAt: { not: null } } }),
         prisma.service.count({ where: { deletedAt: { not: null } } }),
         prisma.testimonial.count({ where: { deletedAt: { not: null } } }),
         prisma.contact.count({ where: { deletedAt: { not: null } } }),
         prisma.booking.count({ where: { deletedAt: { not: null } } }),
-      ]).then((counts) => counts.reduce((a, b) => a + b, 0)),
-      // Total de páginas vistas (sin bots, últimos 30 días)
-      prisma.analyticLog.count({
-        where: {
-          timestamp: { gte: thirtyDaysAgo },
-          eventType: { endsWith: '_VIEW' },
-          isBot: false,
-        },
-      }),
-      // Visitantes únicos = sesiones únicas (isDuplicate:false = primer evento de cada sesión)
-      prisma.analyticLog.count({
-        where: {
-          timestamp: { gte: thirtyDaysAgo },
-          eventType: { endsWith: '_VIEW' },
-          isBot: false,
-          isDuplicate: false,
-        },
-      }),
-      // Contamos visitantes únicos por dispositivo (primer evento de sesión)
-      prisma.analyticLog.groupBy({
-        by: ['device'],
-        where: {
-          timestamp: { gte: thirtyDaysAgo },
-          eventType: { endsWith: '_VIEW' },
-          isBot: false,
-          isDuplicate: false,
-        },
-        _count: { _all: true },
-      }),
-      // Top países por visitas (últimos 30 días)
-      // Incluimos country NULL para contabilizar como 'unknown' y mostrar
-      // por qué la suma de países puede ser menor que el total de visitas.
-      prisma.analyticLog.groupBy({
-        by: ['country'],
-        where: {
-          timestamp: { gte: thirtyDaysAgo },
-          eventType: { endsWith: '_VIEW' },
-          isBot: false,
-          // Mostrar países según visitantes únicos (primer evento de sesión)
-          isDuplicate: false,
-        },
-        _count: { _all: true },
-        orderBy: { _count: { id: 'desc' } },
-        take: 12,
-      }),
-      // Top categorias vistos (últimos 30 días)
-      prisma.analyticLog.groupBy({
-        by: ['entityId'],
-        where: {
-          timestamp: { gte: thirtyDaysAgo },
-          entityType: 'Category',
-          isBot: false,
-          entityId: { not: null },
-        },
-        _count: { _all: true },
-        orderBy: { _count: { id: 'desc' } },
-        take: 5,
-      }),
+      ]).then((counts) => counts.reduce((total, count) => total + count, 0)),
     ])
-
-    // Reducir deviceUsage: null device se contabiliza como 'unknown'
-    const deviceUsage = deviceUsageRaw.reduce<Record<string, number>>((acc, row) => {
-      const key = row.device ?? 'unknown'
-      acc[key] = (acc[key] ?? 0) + row._count._all
-      return acc
-    }, {})
-
-    // ── Batch: Resolver coordenadas representativas por país ────────────────
-    const countryKeys = topCountriesRaw.map((r) => r.country)
-    const countryCoords = await prisma.analyticLog.findMany({
-      where: {
-        country: { in: countryKeys.filter((c): c is string => c !== null) },
-        latitude: { not: null },
-        longitude: { not: null },
-      },
-      select: { country: true, latitude: true, longitude: true },
-      distinct: ['country'],
-    })
-    const coordsByCountry = new Map(
-      countryCoords.map((c) => [c.country, { lat: c.latitude, lng: c.longitude }])
-    )
-
-    // ── Batch: Top ciudades por país ────────────────────────────────────────
-    const citiesRaw = await prisma.analyticLog.groupBy({
-      by: ['country', 'city'],
-      where: {
-        timestamp: { gte: thirtyDaysAgo },
-        eventType: { endsWith: '_VIEW' },
-        isBot: false,
-        isDuplicate: false,
-        country: { in: countryKeys.filter((c): c is string => c !== null) },
-      },
-      _count: { _all: true },
-      orderBy: { _count: { id: 'desc' } },
-      take: 200,
-    })
-
-    // ── Batch: Coordenadas representativas por ciudad ─────────────────────
-    const cityPairs = citiesRaw
-      .filter((c) => c.city !== null)
-      .map((c) => ({ country: c.country!, city: c.city! }))
-    const cityCoords =
-      cityPairs.length > 0
-        ? await prisma.analyticLog.findMany({
-            where: {
-              OR: cityPairs.map((p) => ({
-                country: p.country,
-                city: p.city,
-                latitude: { not: null },
-                longitude: { not: null },
-              })),
-            },
-            select: { country: true, city: true, latitude: true, longitude: true },
-            distinct: ['country', 'city'],
-          })
-        : []
-    const coordsByCity = new Map(
-      cityCoords.map((c) => [`${c.country}|${c.city}`, { lat: c.latitude, lng: c.longitude }])
-    )
-
-    // ── Agrupar ciudades por país (máx 8 por país) ───────────────────────
-    const citiesByCountry = new Map<string, Array<{ city: string | null; count: number }>>()
-    for (const row of citiesRaw) {
-      const key = row.country ?? 'unknown'
-      const arr = citiesByCountry.get(key) ?? []
-      if (arr.length < 8) {
-        arr.push({ city: row.city, count: row._count._all })
-      }
-      citiesByCountry.set(key, arr)
-    }
-
-    // ── DisplayNames ─────────────────────────────────────────────────────
-    type DisplayNamesConstructor = new (
-      locales: string | string[],
-      options?: { type: 'region' }
-    ) => { of(code: string): string | undefined }
-
-    const DisplayNamesCtor = (
-      typeof Intl !== 'undefined'
-        ? (Intl as unknown as { DisplayNames?: DisplayNamesConstructor }).DisplayNames
-        : undefined
-    ) as DisplayNamesConstructor | undefined
-
-    const displayNames = DisplayNamesCtor ? new DisplayNamesCtor(['es'], { type: 'region' }) : null
-
-    // ── Construir topLocations sin queries adicionales ────────────────────
-    const topLocations = topCountriesRaw.map(({ country, _count }) => {
-      const countryKey = country ?? 'unknown'
-      const countryTotal = _count._all
-      const rep = country ? coordsByCountry.get(country) : undefined
-
-      const rawCities = citiesByCountry.get(countryKey) ?? []
-      const cities = rawCities.map(({ city, count }) => {
-        let cityName = city ?? 'unknown'
-        try {
-          cityName = decodeURIComponent(cityName)
-        } catch {
-          // Keep original if decoding fails
-        }
-        const cityCoord = city && country ? coordsByCity.get(`${country}|${city}`) : undefined
-        return {
-          label: cityName,
-          count,
-          percent: countryTotal > 0 ? Math.round((count / countryTotal) * 100) : 0,
-          latitude: cityCoord?.lat ?? null,
-          longitude: cityCoord?.lng ?? null,
-        }
-      })
-
-      let displayName: string
-      if (country) {
-        displayName = displayNames?.of(country) || country
-      } else {
-        displayName = 'unknown'
-      }
-
-      return {
-        code: countryKey,
-        label: displayName,
-        count: countryTotal,
-        latitude: rep?.lat ?? null,
-        longitude: rep?.lng ?? null,
-        cities,
-      }
-    })
-
-    // ── Batch: Resolver nombres de categorías ────────────────────────────
-    const categoryIds = topViewsRaw.map((r) => r.entityId).filter((id): id is string => id !== null)
-    const categoryRecords =
-      categoryIds.length > 0
-        ? await prisma.category.findMany({
-            where: { id: { in: categoryIds } },
-            select: { id: true, name: true },
-          })
-        : []
-    const categoryNameMap = new Map(categoryRecords.map((c) => [c.id, c.name]))
-
-    const topCategories = topViewsRaw.map(({ entityId, _count }) => ({
-      label: (entityId ? categoryNameMap.get(entityId) : null) ?? entityId ?? 'Desconocido',
-      count: _count._all,
-    }))
 
     return {
       totalImages,
@@ -263,15 +51,25 @@ const getAnalyticsOverviewData = unstable_cache(
       pendingBookings,
       pendingTestimonials,
       trashCount,
-      pageViews30d,
-      uniqueVisitors30d,
-      deviceUsage,
-      topLocations,
-      topCategories,
+      pageViews30d: 0,
+      uniqueVisitors30d: 0,
+      deviceUsage: {},
+      topLocations: [],
+      topCategories: [],
+      analyticsDisabled: true,
     }
   },
-  ['admin-analytics-overview-v1'],
-  { revalidate: 45, tags: [CACHE_TAGS.analytics, CACHE_TAGS.categories, CACHE_TAGS.contacts] }
+  ['admin-dashboard-overview-v1'],
+  {
+    revalidate: CACHE_DURATIONS.MEDIUM,
+    tags: [
+      CACHE_TAGS.categories,
+      CACHE_TAGS.services,
+      CACHE_TAGS.testimonials,
+      CACHE_TAGS.contacts,
+      CACHE_TAGS.bookings,
+    ],
+  }
 )
 
 export async function GET(req: Request) {
@@ -279,11 +77,9 @@ export async function GET(req: Request) {
   if (!auth.ok) return auth.response
 
   try {
-    const data = await getAnalyticsOverviewData()
-
     return NextResponse.json({
       success: true,
-      data,
+      data: await getDashboardOverviewData(),
     })
   } catch (err) {
     logger.error('[analytics-overview] Error', {

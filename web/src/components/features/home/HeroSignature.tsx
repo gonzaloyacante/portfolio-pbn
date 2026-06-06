@@ -52,6 +52,7 @@ export function HeroSignature({
                   fill
                   objectFit="contain"
                   sizes={IMAGE_SIZES.heroIllustration}
+                  priority={!isEditor}
                 />
               ) : (
                 <div className="public-hero-placeholder flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">

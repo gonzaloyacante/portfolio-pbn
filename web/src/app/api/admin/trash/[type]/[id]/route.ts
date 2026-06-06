@@ -145,25 +145,30 @@ function revalidateForType(type: TrashType) {
   switch (type) {
     case 'category':
       revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.public.portfolio)
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.categories, 'max')
       revalidateTag(CACHE_TAGS.categoryImages, 'max')
       break
     case 'service':
-      revalidatePath(ROUTES.public.services, 'layout')
+      revalidatePath(ROUTES.public.services)
       revalidatePath(ROUTES.admin.services)
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.services, 'max')
       break
     case 'testimonial':
       revalidatePath(ROUTES.home)
-      revalidatePath(ROUTES.public.about, 'layout')
+      revalidatePath(ROUTES.public.about)
       revalidatePath(ROUTES.admin.testimonials)
       revalidateTag(CACHE_TAGS.testimonials, 'max')
       break
     case 'contact':
       revalidatePath(ROUTES.admin.contacts)
+      revalidateTag(CACHE_TAGS.contacts, 'max')
       break
     case 'booking':
       revalidatePath(ROUTES.admin.calendar)
+      revalidateTag(CACHE_TAGS.bookings, 'max')
       break
   }
 }

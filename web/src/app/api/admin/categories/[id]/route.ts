@@ -92,7 +92,7 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const previousCategory = await prisma.category.findUnique({
       where: { id },
-      select: { coverImageUrl: true },
+      select: { coverImageUrl: true, slug: true },
     })
 
     // Neon HTTP adapter no soporta transacciones implícitas al usar _count en mutations.
@@ -141,8 +141,13 @@ export async function PATCH(req: Request, { params }: Params) {
     }
 
     try {
-      revalidatePath(ROUTES.public.portfolio, 'layout')
+      revalidatePath(ROUTES.public.portfolio)
+      if (previousCategory?.slug) {
+        revalidatePath(`${ROUTES.public.portfolio}/${previousCategory.slug}`)
+      }
+      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
       revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.categories, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-patch] Revalidation failed (data saved)', {
@@ -190,8 +195,10 @@ export async function DELETE(req: Request, { params }: Params) {
     })
 
     try {
-      revalidatePath(ROUTES.public.portfolio, 'layout')
+      revalidatePath(ROUTES.public.portfolio)
+      revalidatePath(`${ROUTES.public.portfolio}/${cat.slug}`)
       revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.categories, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-delete] Revalidation failed (data saved)', {

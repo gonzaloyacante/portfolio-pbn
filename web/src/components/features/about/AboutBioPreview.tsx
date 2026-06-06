@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { ExternalLink, Moon, Sun } from 'lucide-react'
-import { BRAND } from '@/lib/design-tokens'
+import { BRAND, STATUS_COLORS } from '@/lib/design-tokens'
 import { ROUTES } from '@/config/routes'
 
 // ── WCAG contrast helpers ───────────────────────────────────────────────────
@@ -303,8 +303,8 @@ export function AboutBioPreview({
           <span
             className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
             style={{
-              backgroundColor: wcagOk ? '#10b98122' : '#ef444422',
-              color: wcagOk ? '#10b981' : '#ef4444',
+              backgroundColor: `${wcagOk ? STATUS_COLORS.success : STATUS_COLORS.danger}22`,
+              color: wcagOk ? STATUS_COLORS.success : STATUS_COLORS.danger,
             }}
           >
             {wcagText}

@@ -78,7 +78,7 @@ export async function updateServicesPageSettings(
       })
     }
 
-    revalidatePath(ROUTES.public.services, 'layout')
+    revalidatePath(ROUTES.public.services)
     revalidateTag(CACHE_TAGS.servicesPageSettings, 'max')
     revalidatePath(ROUTES.admin.services)
 
