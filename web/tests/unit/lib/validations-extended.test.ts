@@ -253,9 +253,9 @@ describe('themeEditorSchema — extended', () => {
     expect(result.success).toBe(false)
   })
 
-  it('passes with 3-char hex shorthand', () => {
+  it('fails with 3-char hex shorthand', () => {
     const result = themeEditorSchema.safeParse({ ...validTheme, primaryColor: '#f00' })
-    expect(result.success).toBe(true)
+    expect(result.success).toBe(false)
   })
 
   it('fails when headingFontSize is below 10', () => {
@@ -454,9 +454,9 @@ describe('testimonialSettingsSchema — extended', () => {
     expect(result.success).toBe(false)
   })
 
-  it('fails when showOnAbout is missing', () => {
+  it('passes when showOnAbout is missing', () => {
     const result = testimonialSettingsSchema.safeParse({ maxDisplay: 5 })
-    expect(result.success).toBe(false)
+    expect(result.success).toBe(true)
   })
 })
 

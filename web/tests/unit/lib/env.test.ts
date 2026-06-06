@@ -17,11 +17,13 @@ describe('env', () => {
 
   beforeEach(() => {
     originalEnv = { ...process.env }
+    vi.spyOn(process.stderr, 'write').mockImplementation(() => true)
     // Reset module cache so env.ts re-runs validation
     vi.resetModules()
   })
 
   afterEach(() => {
+    vi.restoreAllMocks()
     process.env = originalEnv
   })
 

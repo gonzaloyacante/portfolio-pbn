@@ -38,6 +38,8 @@ const bodyFont = Open_Sans({
   display: 'swap',
 })
 
+const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim()
+
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -46,6 +48,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(getPublicSiteUrl()),
+  ...(googleSiteVerification ? { verification: { google: googleSiteVerification } } : {}),
   icons: {
     icon: [
       { url: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },

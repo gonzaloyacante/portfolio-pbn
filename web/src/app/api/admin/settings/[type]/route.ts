@@ -191,6 +191,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
       case 'site':
         // page visibility is read in (public)/layout.tsx → all public pages affected
         revalidatePath('/', 'layout')
+        revalidatePath(ROUTES.public.sitemap)
+        revalidatePath(ROUTES.public.robots)
         revalidateTag(CACHE_TAGS.siteSettings, 'max')
         break
       case 'testimonial':

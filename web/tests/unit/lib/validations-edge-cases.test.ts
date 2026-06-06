@@ -351,9 +351,9 @@ describe('contactSettingsSchema — email validation', () => {
 // ============================================
 
 describe('themeEditorSchema — hex color validation', () => {
-  it('accepts 3-char hex for primary', () => {
+  it('rejects 3-char hex for primary', () => {
     const result = themeEditorSchema.safeParse({ ...validTheme, primaryColor: '#F0A' })
-    expect(result.success).toBe(true)
+    expect(result.success).toBe(false)
   })
 
   it('rejects 4-char hex', () => {

@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
+import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { prisma } from '@/lib/db'
+import { logger } from '@/lib/logger'
+import { appReleaseDeleteSchema } from '@/lib/validations'
+import { CACHE_TAGS } from '@/lib/cache-tags'
+
 // Inferir de forma segura el tipo `where` desde la firma de prisma.deleteMany
 type AppReleaseDeleteManyArgs = Parameters<typeof prisma.appRelease.deleteMany>[0]
 type WhereType = AppReleaseDeleteManyArgs extends { where?: infer W } ? W : never
-import { logger } from '@/lib/logger'
-import { appReleaseDeleteSchema } from '@/lib/validations'
 
 function validateDeployToken(req: Request): boolean {
   const secret = process.env.DEPLOY_SECRET_TOKEN
@@ -51,6 +54,8 @@ export async function POST(req: Request) {
 
   try {
     const result = await prisma.appRelease.deleteMany({ where })
+    revalidatePath('/api/admin/app/latest-release')
+    revalidateTag(CACHE_TAGS.appReleases, 'max')
     logger.info('AppRelease(s) eliminadas via API delete', { where, deleted: result.count })
     return NextResponse.json({ success: true, deleted: result.count }, { status: 200 })
   } catch (err) {

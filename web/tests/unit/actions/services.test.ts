@@ -61,7 +61,7 @@ vi.mock('@/lib/cache-tags', () => ({
 vi.mock('@/config/routes', () => ({
   ROUTES: {
     admin: { services: '/admin/servicios' },
-    public: { services: '/servicios' },
+    public: { services: '/servicios', serviceDetail: (slug: string) => `/servicios/${slug}` },
   },
 }))
 

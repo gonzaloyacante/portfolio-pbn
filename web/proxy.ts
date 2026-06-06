@@ -87,7 +87,7 @@ function isValidCsrf(req: NextRequest): boolean {
 // ─── Middleware ──────────────────────────────────────────────────────────────
 
 export default withAuth(
-  function middleware(req: NextRequest) {
+  function proxy(req: NextRequest) {
     const ip = getClientIp(req)
     const { pathname } = req.nextUrl
     const { method } = req

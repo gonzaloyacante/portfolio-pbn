@@ -30,7 +30,7 @@ if [ -f "web/package.json" ]; then
     # Type check
     if [ -f "web/tsconfig.json" ]; then
       echo "🔸 TypeScript check (web)"
-      if ! (cd web && $NPX_CMD tsc --noEmit); then
+      if ! (cd web && pnpm type-check); then
         echo "❌ TypeScript errors in web/"
         exit 1
       fi

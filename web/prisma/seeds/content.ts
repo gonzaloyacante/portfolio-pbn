@@ -123,7 +123,8 @@ export const services = [
     price: 80,
     priceLabel: 'desde',
     duration: 'Variable según trabajo',
-    imageUrl: 'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_081630',
+    imageUrl:
+      'https://res.cloudinary.com/djlknirsd/image/upload/v1738275261/20240216_081630_cupj71.jpg',
     requirements:
       'Se necesita una prueba previa para toma de medidas y selección de material. Traer foto del personaje o estilo deseado.',
     cancellationPolicy:

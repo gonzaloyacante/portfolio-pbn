@@ -1,6 +1,15 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
+process.env.DATABASE_URL ??= 'postgresql://test:test@localhost:5432/test'
+process.env.NEXTAUTH_SECRET ??= 'test-nextauth-secret-at-least-32-chars'
+process.env.RESEND_API_KEY ??= 're_test_api_key'
+process.env.RESEND_FROM_EMAIL ??= 'test@example.com'
+process.env.NEXT_PUBLIC_BASE_URL ??= 'http://localhost:3000'
+process.env.CLOUDINARY_CLOUD_NAME ??= 'test-cloud'
+process.env.CLOUDINARY_API_KEY ??= 'test-api-key'
+process.env.CLOUDINARY_API_SECRET ??= 'test-api-secret'
+
 /** jsdom no define IntersectionObserver; OptimizedImage lazy necesita observe → montar imágenes en tests. */
 globalThis.IntersectionObserver = class IntersectionObserver {
   readonly root: Element | null = null

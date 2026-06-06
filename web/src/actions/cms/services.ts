@@ -14,6 +14,7 @@ import { generateSlug } from '@/lib/string-utils'
 
 function revalidatePublicServices(slugs: Array<string | null | undefined> = []) {
   revalidatePath(ROUTES.public.services)
+  revalidatePath(ROUTES.public.sitemap)
   const uniqueSlugs = new Set(slugs.filter((slug): slug is string => Boolean(slug)))
   for (const slug of uniqueSlugs) {
     revalidatePath(ROUTES.public.serviceDetail(slug))

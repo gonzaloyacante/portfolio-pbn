@@ -147,6 +147,7 @@ export async function PATCH(req: Request, { params }: Params) {
       }
       revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
       revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.categories, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-patch] Revalidation failed (data saved)', {
@@ -197,6 +198,7 @@ export async function DELETE(req: Request, { params }: Params) {
       revalidatePath(ROUTES.public.portfolio)
       revalidatePath(`${ROUTES.public.portfolio}/${cat.slug}`)
       revalidatePath(ROUTES.admin.categories)
+      revalidatePath(ROUTES.public.sitemap)
       revalidateTag(CACHE_TAGS.categories, 'max')
     } catch (revalErr) {
       logger.warn('[admin-category-delete] Revalidation failed (data saved)', {

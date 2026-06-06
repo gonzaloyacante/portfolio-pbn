@@ -8,6 +8,7 @@ import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
 import { siteSettingsSchema } from '@/lib/validations'
+import { ROUTES } from '@/config/routes'
 
 // ─── Types ──────────────────────────────────────────
 
@@ -200,6 +201,8 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
 
     // site settings (page visibility) affect Navbar on ALL public pages via (public)/layout.tsx
     revalidatePath('/', 'layout')
+    revalidatePath(ROUTES.public.sitemap)
+    revalidatePath(ROUTES.public.robots)
     revalidateTag(CACHE_TAGS.siteSettings, 'max')
 
     return { success: true, settings, message: 'Configuración del sitio actualizada' }

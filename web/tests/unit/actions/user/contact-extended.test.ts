@@ -48,6 +48,7 @@ vi.mock('@/lib/security-server', () => ({
 
 vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
 }))
 
 vi.mock('next/headers', () => ({
@@ -65,6 +66,10 @@ vi.mock('next/headers', () => ({
 
 vi.mock('@/actions/analytics', () => ({
   recordAnalyticEvent: vi.fn().mockResolvedValue({ success: true }),
+}))
+
+vi.mock('@/lib/push-service', () => ({
+  sendPushToAdmins: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('@/lib/recaptcha', () => ({
@@ -129,19 +134,14 @@ describe('sendContactEmail', () => {
     expect(emailService.notifyNewContact).toHaveBeenCalled()
   })
 
-  it('should record analytics event', async () => {
+  it('should not record custom analytics event', async () => {
     const { prisma } = await import('@/lib/db')
     const { recordAnalyticEvent } = await import('@/actions/analytics')
     vi.mocked(prisma.contact.create).mockResolvedValue({ id: 'contact-1' } as never)
 
     const { sendContactEmail } = await import('@/actions/user/contact')
     await sendContactEmail(makeContactFormData())
-    expect(recordAnalyticEvent).toHaveBeenCalledWith(
-      'CONTACT_SUBMIT',
-      'contact-1',
-      'Contact',
-      expect.any(Object)
-    )
+    expect(recordAnalyticEvent).not.toHaveBeenCalled()
   })
 
   it('should return error on database failure', async () => {

@@ -22,6 +22,7 @@ import { generateSlug } from '@/lib/string-utils'
  */
 function _revalidatePublicContent(categorySlugs: Array<string | null | undefined> = []) {
   revalidatePath(ROUTES.public.portfolio)
+  revalidatePath(ROUTES.public.sitemap)
   revalidatePath(ROUTES.home)
   const uniqueSlugs = new Set(categorySlugs.filter((slug): slug is string => Boolean(slug)))
   for (const slug of uniqueSlugs) {
@@ -176,6 +177,10 @@ export async function deleteCategory(id: string) {
 
 // --- Category Images ---
 
+function buildCategoryImageAlt(categoryName: string, index: number): string {
+  return `${categoryName} - imagen ${index + 1} del portfolio`
+}
+
 export async function addCategoryImages(
   categoryId: string,
   files: File[]
@@ -186,7 +191,7 @@ export async function addCategoryImages(
   try {
     const category = await prisma.category.findFirst({
       where: { id: categoryId, deletedAt: null },
-      select: { id: true, slug: true },
+      select: { id: true, slug: true, name: true },
     })
     if (!category) {
       return { success: false, error: 'Categoría no encontrada' }
@@ -196,7 +201,13 @@ export async function addCategoryImages(
     const uploaded = await Promise.all(
       files.map(async (file, i) => {
         const { url, publicId } = await uploadImage(file)
-        return { url, publicId, order: currentCount + i, categoryId }
+        return {
+          url,
+          publicId,
+          alt: buildCategoryImageAlt(category.name, currentCount + i),
+          order: currentCount + i,
+          categoryId,
+        }
       })
     )
     await prisma.categoryImage.createMany({ data: uploaded })
@@ -214,7 +225,7 @@ export async function addCategoryImages(
 /**
  * Guarda imágenes ya subidas a Cloudinary en la galería de una categoría.
  * Diseñado para el flujo del panel admin web donde la subida a Cloudinary
- * ocurre primero (via /api/upload) y luego se persisten los metadatos en DB.
+ * ocurre primero (firma + Cloudinary directo) y luego se persisten los metadatos en DB.
  */
 export async function saveGalleryImages(
   categoryId: string,
@@ -231,7 +242,7 @@ export async function saveGalleryImages(
     // Verificar que la categoría existe y no está eliminada
     const category = await prisma.category.findFirst({
       where: { id: categoryId, deletedAt: null },
-      select: { id: true, slug: true },
+      select: { id: true, slug: true, name: true },
     })
     if (!category) {
       return { success: false, error: 'Categoría no encontrada' }
@@ -244,6 +255,7 @@ export async function saveGalleryImages(
       publicId: img.publicId,
       width: img.width ?? null,
       height: img.height ?? null,
+      alt: buildCategoryImageAlt(category.name, currentCount + i),
       categoryId,
       order: currentCount + i,
     }))

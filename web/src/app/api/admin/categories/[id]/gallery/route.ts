@@ -22,6 +22,7 @@ function revalidateCategoryGallery(categoryId: string, categorySlug?: string) {
   revalidatePath(ROUTES.admin.categories)
   revalidatePath(ROUTES.admin.categoryGallery(categoryId))
   revalidatePath(ROUTES.public.portfolio)
+  revalidatePath(ROUTES.public.sitemap)
   if (categorySlug) {
     revalidatePath(`${ROUTES.public.portfolio}/${categorySlug}`)
   }

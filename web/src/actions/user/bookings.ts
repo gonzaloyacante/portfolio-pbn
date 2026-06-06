@@ -25,6 +25,8 @@ const BookingSchema = z.object({
 })
 
 export async function createBooking(formData: FormData) {
+  await requireAdmin()
+
   const rl = await checkApiRateLimit()
   if (rl) return { success: false, error: rl.error }
 

@@ -54,7 +54,7 @@ echo ""
 
 echo "🔍 [2/7] TypeScript: Verificando tipos en 'web' si existe..."
 if [ -f "web/tsconfig.json" ]; then
-  if ! (cd web && $NPX_CMD tsc --noEmit); then
+  if ! (cd web && pnpm type-check); then
     echo "❌ Error en type checking dentro de web. Revisa errores de TypeScript en web/."
     exit 1
   fi

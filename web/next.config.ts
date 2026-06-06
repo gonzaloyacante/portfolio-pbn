@@ -33,6 +33,7 @@ function getReportingOrigin(): string {
 
 const CSP_REPORT_GROUP = 'csp-endpoint'
 const NEL_REPORT_GROUP = 'network-errors'
+const isVercelBuild = process.env.VERCEL === '1' || process.env.VERCEL === 'true'
 
 /**
  * Security Headers
@@ -163,6 +164,9 @@ const nextConfig: NextConfig = {
 
   // Optimizaciones de imagen, seguridad, etc.
   images: {
+    // Cloudinary ya hace transformaciones, formato y calidad por URL.
+    // Evita que cualquier uso futuro de next/image pase por la cuota de Image Optimization de Vercel.
+    unoptimized: true,
     formats: ['image/webp', 'image/avif'],
     // Dominios permitidos para imágenes externas (si aplica)
     remotePatterns: [
@@ -272,6 +276,11 @@ export default withSentryConfig(withBundleAnalyzer(nextConfig), {
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
+
+  // Local builds must not depend on Sentry network upload. Vercel builds still upload.
+  sourcemaps: {
+    disable: !isVercelBuild,
+  },
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.

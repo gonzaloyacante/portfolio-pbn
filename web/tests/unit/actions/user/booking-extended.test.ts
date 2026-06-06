@@ -31,6 +31,15 @@ vi.mock('@/lib/logger', () => ({
 
 vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
+}))
+
+vi.mock('@/lib/rate-limit-guards', () => ({
+  checkApiRateLimit: vi.fn().mockResolvedValue(undefined),
+}))
+
+vi.mock('@/lib/push-service', () => ({
+  sendPushToAdmins: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('@/config/routes', () => ({

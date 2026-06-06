@@ -28,7 +28,7 @@ export default async function CategoryGalleryPage({ params }: { params: Promise<
   const allImages = category.images.map((img) => ({
     id: img.id,
     url: img.url,
-    alt: category.name,
+    alt: img.alt ?? category.name,
     title: category.name,
     width: img.width,
     height: img.height,

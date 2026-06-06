@@ -7,11 +7,7 @@
 
 import Image from 'next/image'
 import { useState, useRef, useEffect, type CSSProperties } from 'react'
-import {
-  getVariantUrl,
-  getBlurPlaceholderUrl,
-  isCloudinaryUploadUrl,
-} from '@/lib/cloudinary-helper'
+import { getVariantUrl, isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
 import { NEUTRAL } from '@/lib/design-tokens'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
@@ -102,11 +98,8 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const isCloudinary = isCloudinaryUploadUrl(src)
   const optimizedSrc = isCloudinary && variant ? getVariantUrl(src, variant) : src
 
-  // Generate blur placeholder automatically for Cloudinary images
-  const computedBlurDataURL =
-    isCloudinary && placeholder === 'blur' && !blurDataURL
-      ? getBlurPlaceholderUrl(src)
-      : blurDataURL
+  // No external blur request: avoids hitting Cloudinary twice for broken/missing assets.
+  const computedBlurDataURL = blurDataURL
 
   // Intersection Observer for lazy loading (only when lazy=true and not priority)
   useEffect(() => {

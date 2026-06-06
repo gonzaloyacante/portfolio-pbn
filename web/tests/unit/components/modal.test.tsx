@@ -181,6 +181,6 @@ describe('Modal component', () => {
 
   it('dialog content has max-height constraint', () => {
     const { container } = renderModal()
-    expect(container.innerHTML).toContain('max-h-[90vh]')
+    expect(container.innerHTML).toContain('max-h-[90dvh]')
   })
 })

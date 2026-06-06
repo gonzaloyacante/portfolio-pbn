@@ -41,6 +41,7 @@ export async function reorderCategories(categoryIds: string[]): Promise<void> {
   )
   revalidatePath(ROUTES.admin.categories)
   revalidatePath(ROUTES.public.portfolio)
+  revalidatePath(ROUTES.public.sitemap)
   revalidateTag(CACHE_TAGS.categories, 'max')
   revalidateTag(CACHE_TAGS.categoryImages, 'max')
 }
@@ -55,6 +56,7 @@ export async function getCategoryImages(categoryId: string) {
         id: true,
         url: true,
         publicId: true,
+        alt: true,
         order: true,
         width: true,
         height: true,

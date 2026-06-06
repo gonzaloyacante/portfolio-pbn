@@ -39,6 +39,7 @@ vi.mock('next/headers', () => ({
 // Mock Next.js cache
 vi.mock('next/cache', () => ({
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
 }))
 
 // Mock rate limiter
@@ -52,6 +53,10 @@ vi.mock('@/lib/rate-limit', () => ({
 // Mock analytics
 vi.mock('@/actions/analytics', () => ({
   recordAnalyticEvent: vi.fn(() => Promise.resolve()),
+}))
+
+vi.mock('@/lib/push-service', () => ({
+  sendPushToAdmins: vi.fn(() => Promise.resolve()),
 }))
 
 // Mock routes config

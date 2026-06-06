@@ -146,6 +146,9 @@ describe('reorderCategories', () => {
 
     const { reorderCategories } = await import('@/actions/cms/category')
     await reorderCategories(['cat-1'])
-    expect(revalidatePath).toHaveBeenCalledTimes(2)
+    expect(revalidatePath).toHaveBeenCalledTimes(3)
+    expect(revalidatePath).toHaveBeenCalledWith('/admin/categorias')
+    expect(revalidatePath).toHaveBeenCalledWith('/portfolio')
+    expect(revalidatePath).toHaveBeenCalledWith('/sitemap.xml')
   })
 })
