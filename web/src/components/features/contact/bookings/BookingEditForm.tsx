@@ -11,6 +11,7 @@ import { format } from 'date-fns'
 const STATUS_OPTIONS = [
   { value: 'PENDING', label: 'Pendiente' },
   { value: 'CONFIRMED', label: 'Confirmada' },
+  { value: 'IN_PROGRESS', label: 'En curso' },
   { value: 'COMPLETED', label: 'Completada' },
   { value: 'CANCELLED', label: 'Cancelada' },
   { value: 'NO_SHOW', label: 'No apareció' },

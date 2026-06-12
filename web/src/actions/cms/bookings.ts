@@ -16,7 +16,9 @@ import { CACHE_TAGS } from '@/lib/cache-tags'
 const BookingUpdateSchema = z.object({
   date: z.string().trim().min(1, 'La fecha es obligatoria'),
   endDate: z.string().trim().optional().nullable(),
-  status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW']).optional(),
+  status: z
+    .enum(['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'CANCELLED', 'COMPLETED', 'NO_SHOW'])
+    .optional(),
   clientName: z.string().trim().min(1, 'El nombre del cliente es obligatorio').max(100),
   clientEmail: z.string().trim().email('Email inválido').max(150),
   clientPhone: z

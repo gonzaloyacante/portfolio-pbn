@@ -454,7 +454,7 @@ export const serviceApiSchema = z.object({
   slug: generatedOnServerSlugSchema,
   description: z.string().trim().max(2000).optional().nullable(),
   shortDesc: z.string().trim().max(300).optional().nullable(),
-  price: z.number().optional().nullable(),
+  price: z.coerce.number().optional().nullable(),
   priceLabel: z.string().trim().max(50).optional().nullable(),
   currency: z.string().trim().max(10).optional().nullable(),
   duration: z.string().trim().max(100).optional().nullable(),
@@ -530,13 +530,15 @@ export const bookingApiSchema = z.object({
     .optional()
     .nullable(),
   clientNotes: z.string().trim().max(1000).optional().nullable(),
-  guestCount: z.number().optional().nullable(),
+  guestCount: z.coerce.number().int().positive().optional().nullable(),
   serviceId: z.string().trim().min(1, 'El servicio es obligatorio'),
   adminNotes: z.string().trim().max(1000).optional().nullable(),
-  totalAmount: z.number().optional().nullable(),
+  totalAmount: z.coerce.number().optional().nullable(),
   paymentStatus: z.string().trim().max(50).optional().nullable(),
   paymentMethod: z.string().trim().max(50).optional().nullable(),
-  status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW']).optional(),
+  status: z
+    .enum(['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'CANCELLED', 'COMPLETED', 'NO_SHOW'])
+    .optional(),
 })
 
 // ── Contacts update ─────────────────────────────────────────────────────────
@@ -659,7 +661,7 @@ export const testimonialPatchSchema = testimonialApiSchema
 export const bookingPatchSchema = bookingApiSchema
   .extend({
     cancellationReason: z.string().optional().nullable(),
-    paidAmount: z.number().optional().nullable(),
+    paidAmount: z.coerce.number().optional().nullable(),
     paymentRef: z.string().optional().nullable(),
   })
   .partial()
