@@ -30,9 +30,10 @@ class AuthInterceptor extends Interceptor {
   /// Dio limpio solo para el refresh (sin AuthInterceptor → sin bucle).
   late final Dio _refreshDio = _buildRefreshDio();
 
-  /// Completer activo mientras hay un refresh en curso.
-  /// Los requests que llegan durante el refresh esperan a este completer.
-  Completer<void>? _refreshCompleter;
+  /// true mientras hay un refresh en curso (evita refrescos concurrentes).
+  /// Los requests que llegan durante el refresh se encolan en
+  /// [_pendingQueue]; el líder los reintenta por ellos al terminar.
+  bool _isRefreshing = false;
   final List<_PendingRequest> _pendingQueue = [];
 
   // ── onRequest ──────────────────────────────────────────────────────────────
@@ -78,58 +79,58 @@ class AuthInterceptor extends Interceptor {
 
     AppLogger.info('AuthInterceptor: 401 on $path → attempting token refresh');
 
-    if (_refreshCompleter != null) {
-      // Otro request ya está haciendo refresh — encolar y esperar.
-      final completer = _PendingRequest(response.requestOptions);
-      _pendingQueue.add(completer);
+    if (_isRefreshing) {
+      // Otro request ya está haciendo refresh — encolar y esperar a que el
+      // líder reintente esta petición por nosotros (ver loop más abajo).
+      final pending = _PendingRequest(response.requestOptions);
+      _pendingQueue.add(pending);
       try {
-        await _refreshCompleter!.future;
-        final resolved = await _retry(completer.options);
-        completer.complete(resolved);
+        final resolved = await pending.future;
         return handler.next(resolved);
       } catch (_) {
         return handler.reject(_make401Error(response));
       }
     }
 
-    _refreshCompleter = Completer<void>();
+    _isRefreshing = true;
 
     try {
       await _doRefresh();
-      _refreshCompleter!.complete();
 
       // Reintentar la petición original con el nuevo token.
       final retried = await _retry(response.requestOptions);
 
-      // Resolver las peticiones encoladas.
-      for (final pending in _pendingQueue) {
-        try {
-          final r = await _retry(pending.options);
-          pending.complete(r);
-        } catch (e) {
-          pending.completeError(e);
+      // Resolver las peticiones encoladas. Se repite hasta vaciar la cola
+      // por completo: si llega un nuevo seguidor durante los `_retry` de
+      // abajo, queda en _pendingQueue y se procesa en la próxima vuelta
+      // (en vez de quedar esperando indefinidamente).
+      while (_pendingQueue.isNotEmpty) {
+        final queued = List<_PendingRequest>.of(_pendingQueue);
+        _pendingQueue.clear();
+        for (final pending in queued) {
+          try {
+            final r = await _retry(pending.options);
+            pending.complete(r);
+          } catch (e) {
+            pending.completeError(e);
+          }
         }
       }
-      _pendingQueue.clear();
 
       return handler.next(retried);
-    } on UnauthorizedException catch (ex) {
+    } on UnauthorizedException catch (_) {
       AppLogger.warn('AuthInterceptor: refresh failed → clearing session');
-      _refreshCompleter!.completeError(ex);
       await _clearSessionAndRedirect();
       final err = _make401Error(response);
       _rejectPendingWithError(err);
       return handler.reject(err);
     } catch (e) {
       AppLogger.error('AuthInterceptor: unexpected refresh error', e);
-      if (!_refreshCompleter!.isCompleted) {
-        _refreshCompleter!.completeError(e);
-      }
       final err = _make401Error(response);
       _rejectPendingWithError(err);
       return handler.reject(err);
     } finally {
-      _refreshCompleter = null;
+      _isRefreshing = false;
     }
   }
 
@@ -165,10 +166,17 @@ class AuthInterceptor extends Interceptor {
       );
       body = response.data;
     } on DioException catch (e) {
-      // El endpoint de refresh devolvió 4xx/5xx o hubo un error de red.
-      throw UnauthorizedException(
-        message: 'Refresh failed: ${e.response?.statusCode ?? e.message}',
-      );
+      if (e.response?.statusCode == 401) {
+        // El refresh token es inválido, expiró o fue revocado: la sesión
+        // realmente terminó.
+        throw const UnauthorizedException(
+          message: 'Refresh token rejected (401)',
+        );
+      }
+      // Error de red, timeout, 429 o 5xx del propio endpoint de refresh: el
+      // refresh token puede seguir siendo válido. Propagar sin limpiar la
+      // sesión para no forzar un logout por un problema transitorio.
+      rethrow;
     }
     if (body == null) {
       throw const UnauthorizedException(message: 'Empty refresh response');
