@@ -2,17 +2,32 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
-vi.mock('@/lib/db', () => ({
-  prisma: {
+vi.mock('@/lib/db', () => {
+  const refreshTokenFindUnique = vi.fn()
+  const refreshTokenCreate = vi.fn()
+  const refreshTokenUpdate = vi.fn()
+  const refreshTokenUpdateMany = vi.fn()
+  const userFindFirst = vi.fn()
+
+  const tx = {
     refreshToken: {
-      findUnique: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-      updateMany: vi.fn(),
+      findUnique: refreshTokenFindUnique,
+      create: refreshTokenCreate,
+      update: refreshTokenUpdate,
+      updateMany: refreshTokenUpdateMany,
     },
-    user: { findFirst: vi.fn() },
-  },
-}))
+    user: { findFirst: userFindFirst },
+  }
+
+  return {
+    prisma: {
+      ...tx,
+      $transaction: vi
+        .fn()
+        .mockImplementation(async (fn: (tx: typeof tx) => Promise<unknown>) => fn(tx)),
+    },
+  }
+})
 
 vi.mock('@/lib/jwt-admin', () => ({
   signAccessToken: vi.fn().mockResolvedValue('new-access-token'),
@@ -63,11 +78,28 @@ const mockUser = {
   email: 'admin@test.com',
 }
 
+const mockCreatedToken = {
+  id: 'new-rt-id',
+  token: 'new-refresh-token',
+  userId: 'user-1',
+  expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  createdAt: new Date(),
+  revokedAt: null,
+  replacedBy: null,
+  ipAddress: null,
+  userAgent: null,
+  device: 'android',
+  lastUsedAt: null,
+}
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('POST /api/admin/auth/refresh', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks()
+    // Por defecto, "ganamos" el lock optimista de rotación (count: 1).
+    const { prisma } = await import('@/lib/db')
+    vi.mocked(prisma.refreshToken.updateMany).mockResolvedValue({ count: 1 } as never)
   })
 
   it('returns 400 for missing body', async () => {
@@ -115,8 +147,10 @@ describe('POST /api/admin/auth/refresh', () => {
     expect(data.code).toBe('TOKEN_INVALID')
   })
 
-  it('returns 401 for revoked token (TOKEN_REVOKED)', async () => {
+  it('returns 401 for revoked token without replacement (TOKEN_REVOKED)', async () => {
     const { prisma } = await import('@/lib/db')
+    // revokedAt set, replacedBy: null (mockExistingToken) → sin reemplazo válido,
+    // no aplica grace period → reuso real.
     vi.mocked(prisma.refreshToken.findUnique).mockResolvedValue({
       ...mockExistingToken,
       revokedAt: new Date(),
@@ -132,7 +166,7 @@ describe('POST /api/admin/auth/refresh', () => {
     expect(data.code).toBe('TOKEN_REVOKED')
   })
 
-  it('revokes entire token chain on revoked detection', async () => {
+  it('revokes entire token chain on revoked detection without replacement', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.refreshToken.findUnique).mockResolvedValue({
       ...mockExistingToken,
@@ -212,23 +246,11 @@ describe('POST /api/admin/auth/refresh', () => {
     expect(res.status).toBe(401)
   })
 
-  it('rotates tokens successfully (new refresh, old revoked)', async () => {
+  it('rotates tokens successfully (new refresh, old revoked via optimistic lock)', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.refreshToken.findUnique).mockResolvedValue(mockExistingToken as never)
     vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
-    vi.mocked(prisma.refreshToken.create).mockResolvedValue({
-      id: 'new-rt-id',
-      token: 'new-refresh-token',
-      userId: 'user-1',
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      createdAt: new Date(),
-      revokedAt: null,
-      replacedBy: null,
-      ipAddress: null,
-      userAgent: null,
-      device: 'android',
-      lastUsedAt: null,
-    } as never)
+    vi.mocked(prisma.refreshToken.create).mockResolvedValue(mockCreatedToken as never)
     vi.mocked(prisma.refreshToken.update).mockResolvedValue({} as never)
 
     const req = makeRefreshRequest({ refreshToken: 'valid-refresh-token' })
@@ -236,35 +258,23 @@ describe('POST /api/admin/auth/refresh', () => {
     const res = await POST(req)
     expect(res.status).toBe(200)
 
-    // Old token should be revoked
-    expect(prisma.refreshToken.update).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: 'rt-id-1' },
-        data: expect.objectContaining({
-          revokedAt: expect.any(Date),
-          replacedBy: 'new-rt-id',
-        }),
-      })
-    )
+    // Rotación atómica con lock optimista: solo revoca si revokedAt sigue null.
+    expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith({
+      where: { id: 'rt-id-1', revokedAt: null },
+      data: { revokedAt: expect.any(Date) },
+    })
+    // El token viejo apunta al nuevo.
+    expect(prisma.refreshToken.update).toHaveBeenCalledWith({
+      where: { id: 'rt-id-1' },
+      data: { replacedBy: 'new-rt-id' },
+    })
   })
 
   it('returns new access and refresh tokens', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.refreshToken.findUnique).mockResolvedValue(mockExistingToken as never)
     vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
-    vi.mocked(prisma.refreshToken.create).mockResolvedValue({
-      id: 'new-rt-id',
-      token: 'new-refresh-token',
-      userId: 'user-1',
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      createdAt: new Date(),
-      revokedAt: null,
-      replacedBy: null,
-      ipAddress: null,
-      userAgent: null,
-      device: 'android',
-      lastUsedAt: null,
-    } as never)
+    vi.mocked(prisma.refreshToken.create).mockResolvedValue(mockCreatedToken as never)
     vi.mocked(prisma.refreshToken.update).mockResolvedValue({} as never)
 
     const req = makeRefreshRequest({ refreshToken: 'valid-refresh-token' })
@@ -281,26 +291,13 @@ describe('POST /api/admin/auth/refresh', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.refreshToken.findUnique).mockResolvedValue(mockExistingToken as never)
     vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
-    vi.mocked(prisma.refreshToken.create).mockResolvedValue({
-      id: 'new-rt-id',
-      token: 'new-refresh-token',
-      userId: 'user-1',
-      expiresAt: new Date(),
-      createdAt: new Date(),
-      revokedAt: null,
-      replacedBy: null,
-      ipAddress: null,
-      userAgent: null,
-      device: null,
-      lastUsedAt: null,
-    } as never)
+    vi.mocked(prisma.refreshToken.create).mockResolvedValue(mockCreatedToken as never)
     vi.mocked(prisma.refreshToken.update).mockResolvedValue({} as never)
 
     const req = makeRefreshRequest({ refreshToken: 'valid-refresh-token' })
     const { POST } = await import('@/app/api/admin/auth/refresh/route')
     await POST(req)
 
-    // Find the update call that sets replacedBy (not the lastUsedAt one)
     const updateCalls = vi.mocked(prisma.refreshToken.update).mock.calls
     const revokeCall = updateCalls.find(
       (call) => (call[0] as { data: { replacedBy?: string } }).data.replacedBy !== undefined
@@ -313,19 +310,7 @@ describe('POST /api/admin/auth/refresh', () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.refreshToken.findUnique).mockResolvedValue(mockExistingToken as never)
     vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
-    vi.mocked(prisma.refreshToken.create).mockResolvedValue({
-      id: 'new-rt-id',
-      token: 'new-refresh-token',
-      userId: 'user-1',
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      createdAt: new Date(),
-      revokedAt: null,
-      replacedBy: null,
-      ipAddress: null,
-      userAgent: null,
-      device: null,
-      lastUsedAt: null,
-    } as never)
+    vi.mocked(prisma.refreshToken.create).mockResolvedValue(mockCreatedToken as never)
     vi.mocked(prisma.refreshToken.update).mockResolvedValue({} as never)
 
     const now = Date.now()
@@ -339,6 +324,80 @@ describe('POST /api/admin/auth/refresh', () => {
     // Allow 5 seconds tolerance
     expect(expiresAt).toBeGreaterThan(now + thirtyDaysMs - 5000)
     expect(expiresAt).toBeLessThan(now + thirtyDaysMs + 5000)
+  })
+
+  // ── C6: rotación concurrente (lock optimista + grace period) ─────────────────
+
+  it('lost rotation race within grace period returns winner tokens without revoking chain', async () => {
+    const { prisma } = await import('@/lib/db')
+
+    vi.mocked(prisma.refreshToken.findUnique)
+      .mockResolvedValueOnce(mockExistingToken as never) // 1: existing (revokedAt: null para nosotros)
+      .mockResolvedValueOnce({
+        ...mockExistingToken,
+        revokedAt: new Date(), // otra request lo rotó justo antes
+        replacedBy: 'winner-rt-id',
+      } as never) // helper: re-fetch del estado actual
+      .mockResolvedValueOnce({
+        id: 'winner-rt-id',
+        token: 'winner-refresh-token',
+        userId: 'user-1',
+        revokedAt: null,
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      } as never) // helper: token ganador (reemplazo)
+
+    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
+    // Perdemos el lock optimista: alguien más ya rotó este token.
+    vi.mocked(prisma.refreshToken.updateMany).mockResolvedValue({ count: 0 } as never)
+
+    const req = makeRefreshRequest({ refreshToken: 'valid-refresh-token' })
+    const { POST } = await import('@/app/api/admin/auth/refresh/route')
+    const res = await POST(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data.success).toBe(true)
+    expect(data.data.refreshToken).toBe('winner-refresh-token')
+    expect(data.data.accessToken).toBe('new-access-token')
+
+    // Un solo updateMany: el lock perdido (count: 0). No se nukea la cadena.
+    expect(prisma.refreshToken.updateMany).toHaveBeenCalledTimes(1)
+    expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith({
+      where: { id: 'rt-id-1', revokedAt: null },
+      data: { revokedAt: expect.any(Date) },
+    })
+    // No creamos un token propio: reusamos el del ganador.
+    expect(prisma.refreshToken.create).not.toHaveBeenCalled()
+  })
+
+  it('lost rotation race outside grace period revokes entire chain', async () => {
+    const { prisma } = await import('@/lib/db')
+
+    vi.mocked(prisma.refreshToken.findUnique)
+      .mockResolvedValueOnce(mockExistingToken as never) // 1: existing
+      .mockResolvedValueOnce({
+        ...mockExistingToken,
+        revokedAt: new Date(Date.now() - 120_000), // rotado hace 2 min (fuera de gracia)
+        replacedBy: 'winner-rt-id',
+      } as never) // helper: re-fetch del estado actual
+
+    vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
+    vi.mocked(prisma.refreshToken.updateMany)
+      .mockResolvedValueOnce({ count: 0 } as never) // perdimos el lock
+      .mockResolvedValueOnce({ count: 2 } as never) // nuke de cadena
+
+    const req = makeRefreshRequest({ refreshToken: 'valid-refresh-token' })
+    const { POST } = await import('@/app/api/admin/auth/refresh/route')
+    const res = await POST(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(401)
+    expect(data.code).toBe('TOKEN_REVOKED')
+    expect(prisma.refreshToken.updateMany).toHaveBeenCalledTimes(2)
+    expect(prisma.refreshToken.updateMany).toHaveBeenLastCalledWith({
+      where: { userId: 'user-1', revokedAt: null },
+      data: { revokedAt: expect.any(Date) },
+    })
   })
 
   it('returns 500 on DB error', async () => {
