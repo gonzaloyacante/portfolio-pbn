@@ -13,6 +13,7 @@ import { logger } from '@/lib/logger'
 import { createRateLimiter } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/lib/rate-limit-config'
 import { hashToken } from '@/lib/token-hash'
+import { GRACE_PERIOD_MS, pruneRefreshTokens } from '@/lib/refresh-token'
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -27,11 +28,6 @@ const refreshLimiter = createRateLimiter({
   limit: 10,
   errorMessage: 'Demasiadas solicitudes de refresh. Intenta de nuevo más tarde.',
 })
-
-// Ventana de gracia: si dos refresh concurrentes usan el mismo token, el que
-// "pierde" la rotación recibe el token ganador en vez de disparar la
-// detección de reuso (que revocaría toda la cadena).
-const GRACE_PERIOD_MS = 60_000
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -80,6 +76,10 @@ async function reissueOrRevokeChain(
             role: user.role,
             email: user.email,
           })
+
+          // Limpieza perezosa de refresh tokens viejos del usuario (M20)
+          await pruneRefreshTokens(user.id)
+
           return NextResponse.json({
             success: true,
             data: { accessToken, refreshToken: ownToken },
@@ -227,6 +227,9 @@ export async function POST(req: Request) {
       role: user.role,
       email: user.email,
     })
+
+    // Limpieza perezosa de refresh tokens viejos del usuario (M20)
+    await pruneRefreshTokens(user.id)
 
     return NextResponse.json({
       success: true,

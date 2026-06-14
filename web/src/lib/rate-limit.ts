@@ -21,6 +21,17 @@ const rateLimitStore = new Map<string, RateLimitAttempt[]>()
 const MAX_RATE_LIMIT_ENTRIES = 10_000
 
 /**
+ * Set a key and move it to the end (most-recently-used) of the Map's
+ * iteration order. Map.set on an existing key does NOT reorder it, so
+ * without this, eviction below could drop an active key just because it
+ * was the first one ever inserted (M15).
+ */
+function touch(key: string, attempts: RateLimitAttempt[]): void {
+  rateLimitStore.delete(key)
+  rateLimitStore.set(key, attempts)
+}
+
+/**
  * Create a rate limiter with custom configuration
  */
 export function createRateLimiter(config: RateLimitConfig) {
@@ -41,7 +52,7 @@ export function createRateLimiter(config: RateLimitConfig) {
 
     // Filter old attempts
     attempts = attempts.filter((attempt) => attempt.timestamp > windowStart)
-    rateLimitStore.set(key, attempts)
+    touch(key, attempts)
 
     // Check if limited
     if (attempts.length >= config.limit) {
@@ -74,12 +85,12 @@ export function createRateLimiter(config: RateLimitConfig) {
       timestamp: new Date(),
     })
 
-    rateLimitStore.set(key, attempts)
+    touch(key, attempts)
 
-    // Evict oldest entries if store exceeds max size
+    // Evict the least-recently-used entry if store exceeds max size
     if (rateLimitStore.size > MAX_RATE_LIMIT_ENTRIES) {
-      const firstKey = rateLimitStore.keys().next().value
-      if (firstKey) rateLimitStore.delete(firstKey)
+      const lruKey = rateLimitStore.keys().next().value
+      if (lruKey) rateLimitStore.delete(lruKey)
     }
   }
 

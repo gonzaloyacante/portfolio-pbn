@@ -22,25 +22,41 @@ const rateLimitStore = new Map<string, RateLimitEntry>()
 const RATE_LIMIT_REQUESTS = 120 // peticiones permitidas
 const RATE_LIMIT_WINDOW_MS = 60_000 // por minuto
 
+// Cap del store para evitar crecimiento sin límite en instancias longevas
+// (M14). setInterval no es fiable en entornos serverless/Edge (Vercel), así
+// que la limpieza es perezosa: solo se dispara al alcanzar el cap.
+const MAX_RATE_LIMIT_ENTRIES = 10_000
+
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const entry = rateLimitStore.get(ip)
 
-  // Ventana expirada o primera vez: reiniciar contador
-  if (!entry || entry.resetAt < now) {
-    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
+  if (entry && entry.resetAt >= now) {
+    // Límite alcanzado
+    if (entry.count >= RATE_LIMIT_REQUESTS) return false
+
+    entry.count++
+    // Mover al final (más reciente) para que la eviction por cap no la elija (M15)
+    rateLimitStore.delete(ip)
+    rateLimitStore.set(ip, entry)
     return true
   }
 
-  // Límite alcanzado
-  if (entry.count >= RATE_LIMIT_REQUESTS) return false
+  // Ventana expirada o primera vez: si llegamos al cap, limpiar entradas
+  // vencidas y, si no alcanza, la menos recientemente usada (M14).
+  if (rateLimitStore.size >= MAX_RATE_LIMIT_ENTRIES) {
+    for (const [key, value] of rateLimitStore) {
+      if (value.resetAt < now) rateLimitStore.delete(key)
+    }
+    if (rateLimitStore.size >= MAX_RATE_LIMIT_ENTRIES) {
+      const lruKey = rateLimitStore.keys().next().value
+      if (lruKey) rateLimitStore.delete(lruKey)
+    }
+  }
 
-  entry.count++
+  rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS })
   return true
 }
-
-// Nota: la limpieza del rateLimitStore (memory leak en long-running instances) debe realizarse
-// vía cron externo. setInterval es poco fiable en entornos serverless/Edge (Vercel).
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

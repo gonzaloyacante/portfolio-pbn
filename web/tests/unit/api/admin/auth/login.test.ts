@@ -7,12 +7,13 @@ vi.mock('@/lib/db', () => {
   const userFindUnique = vi.fn()
   const userUpdate = vi.fn()
   const refreshTokenCreate = vi.fn()
+  const refreshTokenDeleteMany = vi.fn().mockResolvedValue({ count: 0 })
   const pushTokenUpsert = vi.fn()
   const analyticLogCreate = vi.fn()
 
   const tx = {
     user: { findUnique: userFindUnique, update: userUpdate },
-    refreshToken: { create: refreshTokenCreate },
+    refreshToken: { create: refreshTokenCreate, deleteMany: refreshTokenDeleteMany },
     pushToken: { upsert: pushTokenUpsert },
     analyticLog: { create: analyticLogCreate },
   }
@@ -240,6 +241,11 @@ describe('POST /api/admin/auth/login', () => {
     expect(createCall.data.token).toBe(hashToken(data.data.refreshToken))
     expect(data.data.user.id).toBe('user-1')
     expect(data.data.user.email).toBe('admin@test.com')
+
+    // M20: limpieza perezosa de refresh tokens viejos del usuario
+    expect(prisma.refreshToken.deleteMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ userId: 'user-1' }) })
+    )
   })
 
   it('resets failed login count on success', async () => {

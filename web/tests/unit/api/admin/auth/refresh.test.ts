@@ -8,6 +8,7 @@ vi.mock('@/lib/db', () => {
   const refreshTokenCreate = vi.fn()
   const refreshTokenUpdate = vi.fn()
   const refreshTokenUpdateMany = vi.fn()
+  const refreshTokenDeleteMany = vi.fn().mockResolvedValue({ count: 0 })
   const userFindFirst = vi.fn()
 
   const tx = {
@@ -16,6 +17,7 @@ vi.mock('@/lib/db', () => {
       create: refreshTokenCreate,
       update: refreshTokenUpdate,
       updateMany: refreshTokenUpdateMany,
+      deleteMany: refreshTokenDeleteMany,
     },
     user: { findFirst: userFindFirst },
   }
@@ -293,6 +295,11 @@ describe('POST /api/admin/auth/refresh', () => {
       data: { token: string }
     }
     expect(createCall.data.token).toBe(hashToken(data.data.refreshToken))
+
+    // M20: limpieza perezosa de refresh tokens viejos del usuario
+    expect(prisma.refreshToken.deleteMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ userId: 'user-1' }) })
+    )
   })
 
   it('sets replacedBy on old token', async () => {
@@ -388,6 +395,11 @@ describe('POST /api/admin/auth/refresh', () => {
           device: mockExistingToken.device,
         }),
       })
+    )
+
+    // M20: limpieza perezosa de refresh tokens viejos del usuario
+    expect(prisma.refreshToken.deleteMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: expect.objectContaining({ userId: 'user-1' }) })
     )
   })
 

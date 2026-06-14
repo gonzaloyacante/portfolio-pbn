@@ -13,6 +13,7 @@ import { signAccessToken } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { checkAuthRateLimit, recordFailedLoginAttempt } from '@/lib/auth-rate-limit'
 import { hashToken } from '@/lib/token-hash'
+import { pruneRefreshTokens } from '@/lib/refresh-token'
 
 // ── Schema de validación ──────────────────────────────────────────────────────
 
@@ -158,6 +159,9 @@ export async function POST(req: Request) {
     })
 
     logger.info(`[admin-login] Usuario ${user.email} autenticado desde ${ipAddress}`)
+
+    // Limpieza perezosa de refresh tokens viejos del usuario (M20)
+    await pruneRefreshTokens(user.id)
 
     return NextResponse.json({
       success: true,
