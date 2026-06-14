@@ -49,22 +49,26 @@ function validateDeployToken(req: Request): boolean {
 
 /**
  * Compara dos versiones semver (ej. "1.2.0" vs "1.1.0").
+ * Soporta sufijos de prerelease/build ("1.2.0-beta.1", "1.2.0+45"): se compara
+ * primero la parte numérica "X.Y.Z"; si es igual, una versión CON sufijo es
+ * MENOR que la misma versión sin sufijo (semver: prerelease < release).
  * Retorna:  1 si a > b
  *          -1 si a < b
  *           0 si iguales
  */
 function compareSemver(a: string, b: string): number {
-  const parse = (v: string) =>
-    v
-      .replace(/[^0-9.]/g, '')
-      .split('.')
-      .map(Number)
-  const [pa, pb] = [parse(a), parse(b)]
-  const len = Math.max(pa.length, pb.length)
+  const parse = (v: string) => {
+    const core = v.split(/[-+]/, 1)[0]
+    return { parts: core.split('.').map((n) => Number(n) || 0), hasSuffix: core.length < v.length }
+  }
+  const pa = parse(a)
+  const pb = parse(b)
+  const len = Math.max(pa.parts.length, pb.parts.length)
   for (let i = 0; i < len; i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0)
+    const diff = (pa.parts[i] ?? 0) - (pb.parts[i] ?? 0)
     if (diff !== 0) return diff > 0 ? 1 : -1
   }
+  if (pa.hasSuffix !== pb.hasSuffix) return pa.hasSuffix ? -1 : 1
   return 0
 }
 
@@ -144,11 +148,12 @@ export async function GET(req: Request) {
 
     if (currentVersion && currentVersionCode > 0) {
       updateAvailable = release.versionCode > currentVersionCode
+      // mandatory sin minVersion fuerza para todos los que tienen update
+      // disponible; con minVersion, solo fuerza por debajo de ese umbral (M17).
       forceUpdate =
         updateAvailable &&
         release.mandatory === true &&
-        !!release.minVersion &&
-        compareSemver(currentVersion, release.minVersion) < 0
+        (!release.minVersion || compareSemver(currentVersion, release.minVersion) < 0)
     }
 
     return NextResponse.json(
