@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { hashToken } from '@/lib/token-hash'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -229,7 +230,14 @@ describe('POST /api/admin/auth/login', () => {
     const data = await res.json()
     expect(data.success).toBe(true)
     expect(data.data.accessToken).toBe('mock-access-token')
-    expect(data.data.refreshToken).toBe('mock-refresh-token')
+    // El cliente recibe el valor crudo; en BD solo se guarda su hash (A10).
+    expect(data.data.refreshToken).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    )
+    const createCall = vi.mocked(prisma.refreshToken.create).mock.calls[0][0] as {
+      data: { token: string }
+    }
+    expect(createCall.data.token).toBe(hashToken(data.data.refreshToken))
     expect(data.data.user.id).toBe('user-1')
     expect(data.data.user.email).toBe('admin@test.com')
   })

@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { hashToken } from '@/lib/token-hash'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -119,7 +120,7 @@ describe('POST /api/admin/auth/logout', () => {
     expect(prisma.refreshToken.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
-          token: 'rt-123',
+          token: hashToken('rt-123'),
           userId: 'admin-1',
           revokedAt: null,
         }),

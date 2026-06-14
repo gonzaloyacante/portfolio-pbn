@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { hashToken } from '@/lib/token-hash'
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -284,7 +285,14 @@ describe('POST /api/admin/auth/refresh', () => {
     const data = await res.json()
     expect(data.success).toBe(true)
     expect(data.data.accessToken).toBe('new-access-token')
-    expect(data.data.refreshToken).toBe('new-refresh-token')
+    // El cliente recibe el valor crudo; en BD solo se guarda su hash (A10).
+    expect(data.data.refreshToken).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    )
+    const createCall = vi.mocked(prisma.refreshToken.create).mock.calls[0][0] as {
+      data: { token: string }
+    }
+    expect(createCall.data.token).toBe(hashToken(data.data.refreshToken))
   })
 
   it('sets replacedBy on old token', async () => {
@@ -328,7 +336,7 @@ describe('POST /api/admin/auth/refresh', () => {
 
   // ── C6: rotación concurrente (lock optimista + grace period) ─────────────────
 
-  it('lost rotation race within grace period returns winner tokens without revoking chain', async () => {
+  it('lost rotation race within grace period: loser performs its own rotation', async () => {
     const { prisma } = await import('@/lib/db')
 
     vi.mocked(prisma.refreshToken.findUnique)
@@ -340,15 +348,15 @@ describe('POST /api/admin/auth/refresh', () => {
       } as never) // helper: re-fetch del estado actual
       .mockResolvedValueOnce({
         id: 'winner-rt-id',
-        token: 'winner-refresh-token',
         userId: 'user-1',
         revokedAt: null,
         expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-      } as never) // helper: token ganador (reemplazo)
+      } as never) // helper: reemplazo del ganador (válido → habilita grace period)
 
     vi.mocked(prisma.user.findFirst).mockResolvedValue(mockUser as never)
     // Perdemos el lock optimista: alguien más ya rotó este token.
     vi.mocked(prisma.refreshToken.updateMany).mockResolvedValue({ count: 0 } as never)
+    vi.mocked(prisma.refreshToken.create).mockResolvedValue({} as never)
 
     const req = makeRefreshRequest({ refreshToken: 'valid-refresh-token' })
     const { POST } = await import('@/app/api/admin/auth/refresh/route')
@@ -357,8 +365,12 @@ describe('POST /api/admin/auth/refresh', () => {
 
     expect(res.status).toBe(200)
     expect(data.success).toBe(true)
-    expect(data.data.refreshToken).toBe('winner-refresh-token')
     expect(data.data.accessToken).toBe('new-access-token')
+    // El perdedor no puede reutilizar el token del ganador (hasheado en BD,
+    // A10): recibe su propio token de una rotación independiente.
+    expect(data.data.refreshToken).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    )
 
     // Un solo updateMany: el lock perdido (count: 0). No se nukea la cadena.
     expect(prisma.refreshToken.updateMany).toHaveBeenCalledTimes(1)
@@ -366,8 +378,17 @@ describe('POST /api/admin/auth/refresh', () => {
       where: { id: 'rt-id-1', revokedAt: null },
       data: { revokedAt: expect.any(Date) },
     })
-    // No creamos un token propio: reusamos el del ganador.
-    expect(prisma.refreshToken.create).not.toHaveBeenCalled()
+    // Creamos un token propio para el perdedor (no el del ganador).
+    expect(prisma.refreshToken.create).toHaveBeenCalledTimes(1)
+    expect(prisma.refreshToken.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          token: hashToken(data.data.refreshToken),
+          userId: 'user-1',
+          device: mockExistingToken.device,
+        }),
+      })
+    )
   })
 
   it('lost rotation race outside grace period revokes entire chain', async () => {

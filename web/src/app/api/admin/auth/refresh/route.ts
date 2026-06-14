@@ -12,6 +12,7 @@ import { signAccessToken } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { createRateLimiter } from '@/lib/rate-limit'
 import { RATE_LIMITS } from '@/lib/rate-limit-config'
+import { hashToken } from '@/lib/token-hash'
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -36,10 +37,17 @@ const GRACE_PERIOD_MS = 60_000
 
 /**
  * Token ya revocado (al leerlo, o porque perdimos la carrera de rotación).
- * Si la revocación es reciente y tiene reemplazo válido, devuelve ESE
- * reemplazo (grace period). Si no, asume reuso real y revoca toda la cadena.
+ * Si la revocación es reciente y el ganador ya tiene un reemplazo válido
+ * (grace period), el perdedor hace su propia rotación independiente — no
+ * puede reutilizar el token del ganador porque en BD solo se guarda su hash
+ * (A10). Si no hay reemplazo válido o la ventana venció, asume reuso real y
+ * revoca toda la cadena.
  */
-async function reissueOrRevokeChain(existing: { id: string; userId: string }) {
+async function reissueOrRevokeChain(
+  existing: { id: string; userId: string },
+  ipAddress?: string,
+  userAgent?: string
+) {
   const current = await prisma.refreshToken.findUnique({ where: { id: existing.id } })
 
   if (current?.revokedAt && current.replacedBy) {
@@ -54,6 +62,19 @@ async function reissueOrRevokeChain(existing: { id: string; userId: string }) {
           select: { id: true, role: true, email: true },
         })
         if (user) {
+          const ownToken = crypto.randomUUID()
+          await prisma.refreshToken.create({
+            data: {
+              token: hashToken(ownToken),
+              userId: user.id,
+              expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días
+              ipAddress,
+              userAgent,
+              device: current.device,
+              lastUsedAt: new Date(),
+            },
+          })
+
           const accessToken = await signAccessToken({
             userId: user.id,
             role: user.role,
@@ -61,7 +82,7 @@ async function reissueOrRevokeChain(existing: { id: string; userId: string }) {
           })
           return NextResponse.json({
             success: true,
-            data: { accessToken, refreshToken: replacement.token },
+            data: { accessToken, refreshToken: ownToken },
           })
         }
       }
@@ -117,9 +138,9 @@ export async function POST(req: Request) {
       req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip') ?? undefined
     const userAgent = req.headers.get('user-agent') ?? undefined
 
-    // 1. Buscar el refresh token en BD
+    // 1. Buscar el refresh token en BD (se guarda hasheado, A10)
     const existing = await prisma.refreshToken.findUnique({
-      where: { token: refreshToken },
+      where: { token: hashToken(refreshToken) },
     })
 
     if (!existing) {
@@ -141,7 +162,7 @@ export async function POST(req: Request) {
     // 3. Si ya estaba revocado al leerlo, otra request ya lo rotó antes
     // (carrera ganada por otra petición concurrente, o reuso real).
     if (existing.revokedAt) {
-      return reissueOrRevokeChain(existing)
+      return reissueOrRevokeChain(existing, ipAddress, userAgent)
     }
 
     // 4. Verificar que el usuario sigue activo
@@ -176,7 +197,8 @@ export async function POST(req: Request) {
 
       const created = await tx.refreshToken.create({
         data: {
-          token: newTokenValue,
+          // Guardamos el hash; el valor crudo solo se devuelve al cliente (A10)
+          token: hashToken(newTokenValue),
           userId: user.id,
           expiresAt: new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000), // 30 días
           ipAddress,
@@ -196,7 +218,7 @@ export async function POST(req: Request) {
 
     // 6. Perdimos la carrera de rotación → grace period / reuso real.
     if (!result.won) {
-      return reissueOrRevokeChain(existing)
+      return reissueOrRevokeChain(existing, ipAddress, userAgent)
     }
 
     // 7. Generar nuevo access token y devolver el nuevo par de tokens.
@@ -210,7 +232,7 @@ export async function POST(req: Request) {
       success: true,
       data: {
         accessToken,
-        refreshToken: result.created.token,
+        refreshToken: newTokenValue,
       },
     })
   } catch (err) {

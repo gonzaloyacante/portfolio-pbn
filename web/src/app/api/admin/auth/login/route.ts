@@ -12,6 +12,7 @@ import { prisma } from '@/lib/db'
 import { signAccessToken } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { checkAuthRateLimit, recordFailedLoginAttempt } from '@/lib/auth-rate-limit'
+import { hashToken } from '@/lib/token-hash'
 
 // ── Schema de validación ──────────────────────────────────────────────────────
 
@@ -123,10 +124,12 @@ export async function POST(req: Request) {
     })
 
     // 5-6. Crear refresh token, push token y actualizar usuario en una transacción atómica
-    const refreshToken = await prisma.$transaction(async (tx) => {
-      const rt = await tx.refreshToken.create({
+    const rawRefreshToken = crypto.randomUUID()
+    await prisma.$transaction(async (tx) => {
+      await tx.refreshToken.create({
         data: {
-          token: crypto.randomUUID(),
+          // Guardamos el hash; el valor crudo solo se devuelve al cliente (A10)
+          token: hashToken(rawRefreshToken),
           userId: user.id,
           expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 días (spec AGENTS.md)
           ipAddress,
@@ -152,8 +155,6 @@ export async function POST(req: Request) {
           lockedUntil: null,
         },
       })
-
-      return rt
     })
 
     logger.info(`[admin-login] Usuario ${user.email} autenticado desde ${ipAddress}`)
@@ -162,7 +163,7 @@ export async function POST(req: Request) {
       success: true,
       data: {
         accessToken,
-        refreshToken: refreshToken.token,
+        refreshToken: rawRefreshToken,
         user: {
           id: user.id,
           email: user.email,

@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/db'
 import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
+import { hashToken } from '@/lib/token-hash'
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -52,9 +53,9 @@ export async function POST(req: Request) {
 
       logger.info(`[admin-logout] Usuario ${userId} cerró sesión en todos los dispositivos`)
     } else {
-      // Revocar solo el refresh token de este dispositivo
+      // Revocar solo el refresh token de este dispositivo (se guarda hasheado, A10)
       await prisma.refreshToken.updateMany({
-        where: { token: refreshToken, userId, revokedAt: null },
+        where: { token: hashToken(refreshToken), userId, revokedAt: null },
         data: { revokedAt: new Date() },
       })
 

@@ -7,6 +7,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { emailService } from '@/lib/email-service'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { hashToken } from '@/lib/token-hash'
 import { z } from 'zod'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
@@ -56,8 +57,9 @@ export async function requestPasswordReset(email: string) {
     // Delete any existing tokens for this email to prevent race condition
     await prisma.passwordResetToken.deleteMany({ where: { email } })
 
+    // Guardamos el hash; el valor crudo solo va por email (A10)
     await prisma.passwordResetToken.create({
-      data: { email, token, expiresAt },
+      data: { email, token: hashToken(token), expiresAt },
     })
 
     try {
@@ -84,7 +86,9 @@ export async function resetPassword(token: string, password: string) {
   }
 
   try {
-    const storedToken = await prisma.passwordResetToken.findUnique({ where: { token } })
+    const storedToken = await prisma.passwordResetToken.findUnique({
+      where: { token: hashToken(token) },
+    })
 
     if (!storedToken || new Date() > storedToken.expiresAt) {
       return { success: false, message: 'Token inválido o expirado.' }
