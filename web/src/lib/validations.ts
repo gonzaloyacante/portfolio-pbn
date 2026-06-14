@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
+
 /**
  * Validaciones con Zod para seguridad y consistencia
  */
@@ -404,6 +406,24 @@ export const categorySchema = z.object({
   description: z.string().trim().max(500, 'La descripción es muy larga').optional().nullable(),
   coverImageUrl: z.string().optional().nullable(),
   sortOrder: z.number().optional(),
+})
+
+// Category gallery: POST /api/admin/categories/[id]/gallery
+export const categoryGalleryImagesSchema = z.object({
+  images: z
+    .array(
+      z.object({
+        url: z
+          .string()
+          .url('no se subió correctamente')
+          .refine(isCloudinaryUploadUrl, 'no se subió correctamente'),
+        publicId: z.string().trim().min(1, 'no se subió correctamente'),
+        width: z.number().int().positive().optional(),
+        height: z.number().int().positive().optional(),
+      })
+    )
+    .min(1, 'Debés seleccionar al menos una imagen')
+    .max(50, 'No se pueden agregar más de 50 imágenes a la vez'),
 })
 
 // Auth schemas

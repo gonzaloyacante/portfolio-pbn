@@ -15,6 +15,7 @@ import { deleteImage, extractPublicIdUrl } from '@/lib/cloudinary'
 import { revalidatePath, revalidateTag } from 'next/cache'
 import { CACHE_TAGS } from '@/lib/cache-tags'
 import { ROUTES } from '@/config/routes'
+import { categoryGalleryImagesSchema } from '@/lib/validations'
 
 type Params = { params: Promise<{ id: string }> }
 
@@ -101,16 +102,21 @@ export async function POST(req: Request, { params }: Params) {
   try {
     const { id: categoryId } = await params
 
-    const body = await req.json()
-    const images: { url: string; publicId: string; width?: number; height?: number }[] =
-      body?.images
-
-    if (!Array.isArray(images) || images.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'El campo "images" es requerido y debe ser un array' },
-        { status: 400 }
-      )
+    const body = await req.json().catch(() => null)
+    const parsed = categoryGalleryImagesSchema.safeParse(body)
+    if (!parsed.success) {
+      // Si el error es sobre una imagen puntual del array, indicar cuál
+      // (path = ['images', <índice>, ...]) para que se pueda identificar
+      // qué subida falló.
+      const issue = parsed.error.issues[0]
+      const imageIndex = issue?.path[0] === 'images' ? issue.path[1] : undefined
+      const message =
+        typeof imageIndex === 'number'
+          ? `La imagen #${imageIndex + 1} ${issue.message}`
+          : (issue?.message ?? 'No se pudieron agregar las imágenes')
+      return NextResponse.json({ success: false, error: message }, { status: 400 })
     }
+    const { images } = parsed.data
 
     // Verificar que la categoría existe
     const category = await prisma.category.findUnique({
