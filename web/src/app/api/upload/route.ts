@@ -1,6 +1,6 @@
 import { logger } from '@/lib/logger'
 import { NextRequest, NextResponse } from 'next/server'
-import { uploadImage, deleteImage } from '@/lib/cloudinary'
+import { deleteImage } from '@/lib/cloudinary'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -8,22 +8,20 @@ import { uploadDeleteSchema } from '@/lib/validations'
 import { getToken } from 'next-auth/jwt'
 
 /**
- * Verifica autenticación via session o JWT token.
- * Unifica la lógica de auth para POST y DELETE.
+ * Devuelve el rol del usuario autenticado (vía session o JWT), o null si no hay sesión.
  */
-async function isRequestAuthenticated(req: NextRequest): Promise<boolean> {
+async function getRequestRole(req: NextRequest): Promise<string | null> {
   const session = await getServerSession(authOptions)
-  if (session) return true
+  if (session) return session.user.role
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-  return !!token
+  return token?.role ?? null
 }
 
 /**
- * POST /api/upload - Subida legacy vía servidor.
- * El panel web usa /api/upload/sign + Cloudinary directo para no pasar archivos por Vercel.
+ * DELETE /api/upload - Eliminar imagen de Cloudinary (solo ADMIN)
  */
-export async function POST(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   try {
     // 0. 🚦 Rate Limiting (IP based)
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] || 'unknown'
@@ -32,67 +30,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: rateLimit.error }, { status: 429 })
     }
 
-    // 1. Verificar autenticación
-    if (!(await isRequestAuthenticated(req))) {
-      logger.error('API Upload - 401 Unauthorized - No session or token found')
+    // 1. Verificar autenticación y rol
+    const role = await getRequestRole(req)
+    if (role === null) {
+      logger.error('API Delete - 401 Unauthorized - No session or token found')
       return NextResponse.json({ error: 'No autorizado - Sesión no encontrada' }, { status: 401 })
     }
-
-    const formData = await req.formData()
-    const file = formData.get('file') as File | null
-    const folder = formData.get('folder') as string | null
-
-    if (!file) {
-      return NextResponse.json({ error: 'No se proporcionó archivo' }, { status: 400 })
-    }
-
-    // Validar tipo de archivo
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'El archivo debe ser una imagen' }, { status: 400 })
-    }
-
-    // Validar tamaño (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      return NextResponse.json({ error: 'La imagen no debe superar 10MB' }, { status: 400 })
-    }
-
-    // Subir a Cloudinary
-    const result = await uploadImage(file, folder || 'portfolio')
-
-    return NextResponse.json({
-      success: true,
-      url: result.url,
-      thumbnailUrl: result.thumbnailUrl,
-      lqipUrl: result.lqipUrl,
-      publicId: result.publicId,
-      width: result.width,
-      height: result.height,
-      format: result.format,
-    })
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('solicitudes')) {
-      return NextResponse.json({ error: error.message }, { status: 429 })
-    }
-    logger.error('Error uploading image:', { error: error })
-    return NextResponse.json(
-      {
-        error: 'Error al subir la imagen',
-        ...(process.env.NODE_ENV !== 'production' && { details: String(error) }),
-      },
-      { status: 500 }
-    )
-  }
-}
-
-/**
- * DELETE /api/upload - Eliminar imagen de Cloudinary
- */
-export async function DELETE(req: NextRequest) {
-  try {
-    // Verificar autenticación
-    if (!(await isRequestAuthenticated(req))) {
-      logger.error('API Delete - 401 Unauthorized - No session found')
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+    if (role !== 'ADMIN') {
+      logger.error('API Delete - 403 Forbidden - Requiere rol ADMIN')
+      return NextResponse.json(
+        { error: 'No autorizado - Requiere rol de administrador' },
+        { status: 403 }
+      )
     }
 
     const body = await req.json().catch(() => null)
@@ -110,6 +59,9 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (error instanceof Error && error.message.includes('solicitudes')) {
+      return NextResponse.json({ error: error.message }, { status: 429 })
+    }
     logger.error('Error deleting image:', { error: error })
     return NextResponse.json({ error: 'Error al eliminar la imagen' }, { status: 500 })
   }

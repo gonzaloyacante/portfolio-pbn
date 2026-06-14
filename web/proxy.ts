@@ -4,10 +4,9 @@ import type { NextRequest } from 'next/server'
 import { logger, getRequestId } from '@/lib/logger'
 
 /**
- * Middleware con autenticación, rate limiting, CSRF y request logging.
+ * Middleware con autenticación, rate limiting y request logging.
  *
  * Rate limiting: in-memory por IP (para escalar usar Upstash Redis)
- * CSRF: validación de cookie vs header para mutaciones no-GET en /admin
  * Logger: compatible con Edge runtime (usa console.* internamente, sin imports Node.js)
  */
 
@@ -66,24 +65,6 @@ function rateLimitedResponse(ip: string, pathname: string): NextResponse {
   )
 }
 
-function csrfErrorResponse(ip: string, pathname: string): NextResponse {
-  logger.warn('[middleware] csrf_invalid', { ip, pathname })
-  return new NextResponse(JSON.stringify({ error: 'Token CSRF inválido o ausente.' }), {
-    status: 403,
-    headers: { 'Content-Type': 'application/json' },
-  })
-}
-
-function isSafeMethod(method: string): boolean {
-  return ['GET', 'HEAD', 'OPTIONS'].includes(method)
-}
-
-function isValidCsrf(req: NextRequest): boolean {
-  const csrfCookie = req.cookies.get('csrf-token')?.value
-  const csrfHeader = req.headers.get('x-csrf-token')
-  return Boolean(csrfCookie && csrfHeader && csrfCookie === csrfHeader)
-}
-
 // ─── Middleware ──────────────────────────────────────────────────────────────
 
 export default withAuth(
@@ -97,20 +78,7 @@ export default withAuth(
     // ── 1. Rate limiting ──────────────────────────────────────────────────
     if (!checkRateLimit(ip)) return rateLimitedResponse(ip, pathname)
 
-    // ── 2. CSRF protection para mutaciones en rutas admin ─────────────────
-    // Los Server Actions de Next.js usan POST con header 'next-action' — se excluyen del CSRF
-    // ya que Next.js gestiona su propia protección de origen para Server Actions
-    const isServerAction = req.headers.get('next-action') !== null
-    if (
-      pathname.startsWith('/admin') &&
-      !isSafeMethod(req.method) &&
-      !isServerAction &&
-      !isValidCsrf(req)
-    ) {
-      return csrfErrorResponse(ip, pathname)
-    }
-
-    // ── 3. Request logging ────────────────────────────────────────────────
+    // ── 2. Request logging ────────────────────────────────────────────────
     const isAsset =
       pathname.startsWith('/_next') ||
       pathname.startsWith('/favicon') ||
