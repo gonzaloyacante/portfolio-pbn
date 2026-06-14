@@ -18,7 +18,10 @@ async function _resolveUserEmail(req: NextRequest): Promise<string | null> {
 export async function POST(req: NextRequest) {
   try {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
-    await checkApiRateLimit(ip)
+    const rateLimit = await checkApiRateLimit(ip)
+    if (rateLimit) {
+      return NextResponse.json({ error: rateLimit.error }, { status: 429 })
+    }
 
     const userEmail = await _resolveUserEmail(req)
     if (!userEmail) {
@@ -52,6 +55,12 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(newPassword, 12)
     await prisma.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
+
+    // Cambiar la contraseña invalida todas las sesiones existentes (A15)
+    await prisma.refreshToken.updateMany({
+      where: { userId: user.id, revokedAt: null },
+      data: { revokedAt: new Date() },
+    })
 
     return NextResponse.json({ success: true })
   } catch (error) {

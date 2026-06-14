@@ -32,29 +32,6 @@ export default function LoginPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      // 1. Verify existence first (Optimized: only checks DB existence, no bcrypt)
-      const verifyRes = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      })
-
-      const verifyData = await verifyRes.json()
-
-      if (!verifyRes.ok) {
-        if (verifyData.code === 'USER_NOT_FOUND') {
-          setError('email', {
-            type: 'manual',
-            message: 'No existe una cuenta con este correo',
-          })
-          return
-        }
-
-        showToast.error(verifyData.error || 'Error de servidores')
-        return
-      }
-
-      // 2. Sign in with NextAuth
       const result = await signIn('credentials', {
         email: data.email,
         password: data.password,
@@ -62,9 +39,11 @@ export default function LoginPage() {
       })
 
       if (result?.error) {
+        // Mensaje genérico: no distinguir "usuario inexistente" de
+        // "contraseña incorrecta" para evitar enumeración (A14)
         setError('password', {
           type: 'manual',
-          message: 'La contraseña es incorrecta',
+          message: 'Credenciales inválidas',
         })
       } else {
         showToast.success('¡Bienvenida de nuevo!')

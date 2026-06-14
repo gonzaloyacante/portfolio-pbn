@@ -22,6 +22,17 @@ const loginSchema = z.object({
   pushToken: z.string().optional(),
 })
 
+// Hash bcrypt calculado en runtime (una sola vez, perezoso). Mismo costo (12)
+// que un hash real → bcrypt.compare tarda lo mismo, evitando enumeración por
+// timing (A12).
+let _dummyPasswordHash: string | null = null
+function getDummyPasswordHash(): string {
+  if (!_dummyPasswordHash) {
+    _dummyPasswordHash = bcrypt.hashSync('dummy-password-for-timing-equalization', 12)
+  }
+  return _dummyPasswordHash
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function POST(req: Request) {
@@ -72,17 +83,16 @@ export async function POST(req: Request) {
     })
 
     if (!user || !user.isActive || user.deletedAt !== null) {
-      // Evitar enumeración de usuarios: siempre el mismo tiempo de respuesta
-      await bcrypt.compare(password, '$2b$12$invalidhashtopreventtimingattack')
+      // Evitar enumeración de usuarios: siempre el mismo tiempo de respuesta (A12)
+      await bcrypt.compare(password, getDummyPasswordHash())
       return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 })
     }
 
-    // 2. Verificar bloqueo de cuenta
+    // 2. Verificar bloqueo de cuenta — mismo status/mensaje que credenciales
+    // inválidas, para no revelar el estado de la cuenta (A13)
     if (user.lockedUntil && user.lockedUntil > new Date()) {
-      return NextResponse.json(
-        { success: false, error: 'Cuenta bloqueada temporalmente. Inténtalo más tarde.' },
-        { status: 403 }
-      )
+      await bcrypt.compare(password, getDummyPasswordHash())
+      return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 })
     }
 
     // 3. Verificar contraseña

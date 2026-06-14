@@ -40,7 +40,7 @@ vi.mock('@/lib/auth-rate-limit', () => ({
 }))
 
 vi.mock('bcryptjs', () => ({
-  default: { compare: vi.fn() },
+  default: { compare: vi.fn(), hashSync: vi.fn().mockReturnValue('$2b$12$mockedDummyHash') },
 }))
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -187,19 +187,21 @@ describe('POST /api/admin/auth/login — extended edge cases', () => {
     expect(res.status).toBe(401)
   })
 
-  it('returns 403 for locked account', async () => {
+  it('returns 401 for locked account (same as invalid credentials, no enumeration)', async () => {
+    const bcrypt = await import('bcryptjs')
     const { prisma } = await import('@/lib/db')
     const lockedUser = {
       ...mockUser,
       lockedUntil: new Date(Date.now() + 60 * 60 * 1000), // 1h in future
     }
     vi.mocked(prisma.user.findUnique).mockResolvedValueOnce(lockedUser as never)
+    vi.mocked(bcrypt.default.compare).mockResolvedValueOnce(false as never)
 
     const { POST } = await import('@/app/api/admin/auth/login/route')
     const res = await POST(makeLoginRequest(validLogin))
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(401)
     const json = await res.json()
-    expect(json.error).toContain('bloqueada')
+    expect(json.error).toBe('Credenciales inválidas')
   })
 
   it('allows login when lockedUntil is in the past', async () => {

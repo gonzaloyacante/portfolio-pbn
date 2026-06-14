@@ -12,6 +12,18 @@ import {
 } from '@/lib/auth-rate-limit'
 import { ROUTES } from '@/config/routes'
 
+// Hash bcrypt calculado en runtime (una sola vez, perezoso) para comparar
+// cuando no corresponde verificar contra el hash real (usuario inexistente,
+// inactivo o bloqueado). Mismo costo (12) que un hash real → bcrypt.compare
+// tarda lo mismo, evitando enumeración por timing (A12).
+let _dummyPasswordHash: string | null = null
+function getDummyPasswordHash(): string {
+  if (!_dummyPasswordHash) {
+    _dummyPasswordHash = bcrypt.hashSync('dummy-password-for-timing-equalization', 12)
+  }
+  return _dummyPasswordHash
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -40,17 +52,22 @@ export const authOptions: NextAuthOptions = {
         })
 
         if (!user) {
+          // Comparación dummy para igualar el tiempo de respuesta y evitar
+          // enumeración de usuarios por timing (A12)
+          await bcrypt.compare(credentials.password, getDummyPasswordHash())
           await recordFailedLoginAttempt(credentials.email, ip)
           return null
         }
 
         // Verificar estado de la cuenta
         if (!user.isActive || user.deletedAt !== null) {
+          await bcrypt.compare(credentials.password, getDummyPasswordHash())
           return null
         }
 
         // Verificar bloqueo temporal por intentos fallidos
         if (user.lockedUntil && user.lockedUntil > new Date()) {
+          await bcrypt.compare(credentials.password, getDummyPasswordHash())
           throw new Error('Cuenta bloqueada temporalmente. Inténtalo más tarde.')
         }
 
@@ -58,11 +75,26 @@ export const authOptions: NextAuthOptions = {
 
         if (!isValid) {
           await recordFailedLoginAttempt(credentials.email, ip)
+
+          // Bloqueo tras 5 intentos fallidos, igual que el login móvil (A7)
+          const newFailedCount = user.failedLoginCount + 1
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              failedLoginCount: newFailedCount,
+              lockedUntil: newFailedCount >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null,
+            },
+          })
+
           return null
         }
 
-        // Login exitoso: limpiar intentos fallidos
+        // Login exitoso: limpiar intentos fallidos y resetear bloqueo (A7)
         await clearLoginAttempts(credentials.email, ip)
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { failedLoginCount: 0, lockedUntil: null },
+        })
 
         return { id: user.id, email: user.email, name: user.name, role: user.role }
       },

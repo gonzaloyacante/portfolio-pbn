@@ -40,7 +40,7 @@ vi.mock('@/lib/auth-rate-limit', () => ({
 }))
 
 vi.mock('bcryptjs', () => ({
-  default: { compare: vi.fn() },
+  default: { compare: vi.fn(), hashSync: vi.fn().mockReturnValue('$2b$12$mockedDummyHash') },
 }))
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -142,19 +142,22 @@ describe('POST /api/admin/auth/login', () => {
     expect(data.error).toContain('Credenciales inválidas')
   })
 
-  it('returns 403 for locked account', async () => {
+  it('returns 401 for locked account (same as invalid credentials, no enumeration)', async () => {
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.user.findUnique).mockResolvedValue({
       ...mockUser,
       lockedUntil: new Date(Date.now() + 10 * 60 * 1000), // 10 min from now
     } as never)
 
+    const bcrypt = (await import('bcryptjs')).default
+    vi.mocked(bcrypt.compare).mockResolvedValue(false as never)
+
     const req = makeLoginRequest(validLogin)
     const { POST } = await import('@/app/api/admin/auth/login/route')
     const res = await POST(req)
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(401)
     const data = await res.json()
-    expect(data.error).toContain('bloqueada')
+    expect(data.error).toBe('Credenciales inválidas')
   })
 
   it('returns 401 and records failed attempt for wrong password', async () => {
