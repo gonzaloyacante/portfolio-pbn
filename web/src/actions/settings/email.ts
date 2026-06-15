@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { logger } from '@/lib/logger'
+import { findSingleton } from '@/lib/settings-service'
 
 export interface EmailSettingsData {
   id: string
@@ -17,9 +18,7 @@ export interface EmailSettingsData {
  */
 export async function getEmailSettings(): Promise<EmailSettingsData | null> {
   try {
-    const settings = await prisma.emailSettings.findFirst({
-      where: { key: 'singleton' },
-    })
+    const settings = await findSingleton(prisma.emailSettings)
     return settings
   } catch (error) {
     logger.error('getEmailSettings error:', { error })

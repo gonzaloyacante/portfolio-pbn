@@ -3,9 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
 const mockModel = {
-  findFirst: vi.fn(),
-  create: vi.fn(),
-  update: vi.fn(),
+  findUnique: vi.fn(),
   upsert: vi.fn(),
 }
 
@@ -90,7 +88,7 @@ describe('GET /api/admin/settings/[type]', () => {
 
   it('returns existing settings', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockResolvedValueOnce(mockSettings as any)
+    vi.mocked(prisma.homeSettings.findUnique).mockResolvedValueOnce(mockSettings as any)
 
     const { GET } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
@@ -104,8 +102,8 @@ describe('GET /api/admin/settings/[type]', () => {
 
   it('auto-creates settings if not found', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockResolvedValueOnce(null)
-    vi.mocked(prisma.homeSettings.create).mockResolvedValueOnce(mockSettings as any)
+    vi.mocked(prisma.homeSettings.findUnique).mockResolvedValueOnce(null)
+    vi.mocked(prisma.homeSettings.upsert).mockResolvedValueOnce(mockSettings as any)
 
     const { GET } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
@@ -114,12 +112,14 @@ describe('GET /api/admin/settings/[type]', () => {
 
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
-    expect(prisma.homeSettings.create).toHaveBeenCalledWith({ data: {} })
+    expect(prisma.homeSettings.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { key: 'singleton' } })
+    )
   })
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.homeSettings.findUnique).mockRejectedValueOnce(new Error('DB error'))
 
     const { GET } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
@@ -132,7 +132,7 @@ describe('GET /api/admin/settings/[type]', () => {
 
   it('works for about type', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValueOnce(mockSettings as any)
+    vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValueOnce(mockSettings as any)
 
     const { GET } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'about' })
@@ -185,8 +185,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
 
   it('upserts settings on PATCH (update existing)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockResolvedValueOnce(mockSettings as any)
-    vi.mocked(prisma.homeSettings.update).mockResolvedValueOnce({
+    vi.mocked(prisma.homeSettings.upsert).mockResolvedValueOnce({
       ...mockSettings,
       heroTitle: 'Updated Title',
     } as any)
@@ -208,8 +207,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
 
   it('creates settings on PATCH when none exist', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockResolvedValueOnce(null)
-    vi.mocked(prisma.homeSettings.create).mockResolvedValueOnce(mockSettings as any)
+    vi.mocked(prisma.homeSettings.upsert).mockResolvedValueOnce(mockSettings as any)
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
@@ -224,13 +222,12 @@ describe('PATCH /api/admin/settings/[type]', () => {
 
     expect(res.status).toBe(200)
     expect(json.success).toBe(true)
-    expect(prisma.homeSettings.create).toHaveBeenCalled()
+    expect(prisma.homeSettings.upsert).toHaveBeenCalled()
   })
 
   it('filters forbidden fields (id, createdAt, updatedAt, isActive)', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockResolvedValueOnce(mockSettings as any)
-    vi.mocked(prisma.homeSettings.update).mockResolvedValueOnce(mockSettings as any)
+    vi.mocked(prisma.homeSettings.upsert).mockResolvedValueOnce(mockSettings as any)
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })
@@ -250,18 +247,18 @@ describe('PATCH /api/admin/settings/[type]', () => {
       { params }
     )
 
-    expect(prisma.homeSettings.update).toHaveBeenCalledWith(
+    expect(prisma.homeSettings.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.not.objectContaining({
+        update: expect.not.objectContaining({
           id: 'hacked-id',
           createdAt: expect.anything(),
           isActive: false,
         }),
       })
     )
-    expect(prisma.homeSettings.update).toHaveBeenCalledWith(
+    expect(prisma.homeSettings.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ heroTitle1Text: 'Valid Field' }),
+        update: expect.objectContaining({ heroTitle1Text: 'Valid Field' }),
       })
     )
   })
@@ -286,7 +283,7 @@ describe('PATCH /api/admin/settings/[type]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
-    vi.mocked(prisma.homeSettings.findFirst).mockRejectedValueOnce(new Error('DB error'))
+    vi.mocked(prisma.homeSettings.upsert).mockRejectedValueOnce(new Error('DB error'))
 
     const { PATCH } = await import('@/app/api/admin/settings/[type]/route')
     const params = Promise.resolve({ type: 'home' })

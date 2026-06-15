@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     categorySettings: {
-      findFirst: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
     },
   },
 }))
@@ -96,7 +95,7 @@ describe('Settings: Categories Actions', () => {
   describe('getCategorySettings', () => {
     it('returns settings when found', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
 
       const { getCategorySettings } = await import('@/actions/settings/categories')
       const result = await getCategorySettings()
@@ -106,7 +105,7 @@ describe('Settings: Categories Actions', () => {
 
     it('returns null when no settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(null as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(null as never)
 
       const { getCategorySettings } = await import('@/actions/settings/categories')
       const result = await getCategorySettings()
@@ -116,7 +115,7 @@ describe('Settings: Categories Actions', () => {
 
     it('returns null on DB error', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.categorySettings.findUnique).mockRejectedValue(new Error('DB error'))
 
       const { getCategorySettings } = await import('@/actions/settings/categories')
       const result = await getCategorySettings()
@@ -124,19 +123,19 @@ describe('Settings: Categories Actions', () => {
       expect(result).toBeNull()
     })
 
-    it('calls prisma.categorySettings.findFirst', async () => {
+    it('calls prisma.categorySettings.findUnique', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
 
       const { getCategorySettings } = await import('@/actions/settings/categories')
       await getCategorySettings()
 
-      expect(prisma.categorySettings.findFirst).toHaveBeenCalled()
+      expect(prisma.categorySettings.findUnique).toHaveBeenCalled()
     })
 
     it('returns category-specific fields', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
 
       const { getCategorySettings } = await import('@/actions/settings/categories')
       const result = await getCategorySettings()
@@ -151,8 +150,8 @@ describe('Settings: Categories Actions', () => {
   describe('updateCategorySettings', () => {
     it('updates existing settings successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
-      vi.mocked(prisma.categorySettings.update).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.upsert).mockResolvedValue(mockCategorySettings as never)
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
@@ -165,8 +164,8 @@ describe('Settings: Categories Actions', () => {
 
     it('creates settings when none exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(null as never)
-      vi.mocked(prisma.categorySettings.create).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(null as never)
+      vi.mocked(prisma.categorySettings.upsert).mockResolvedValue(mockCategorySettings as never)
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({
@@ -175,14 +174,14 @@ describe('Settings: Categories Actions', () => {
       })
 
       expect(result.success).toBe(true)
-      expect(prisma.categorySettings.create).toHaveBeenCalled()
+      expect(prisma.categorySettings.upsert).toHaveBeenCalled()
     })
 
     it('requires admin authentication', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
-      vi.mocked(prisma.categorySettings.update).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.upsert).mockResolvedValue(mockCategorySettings as never)
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
@@ -196,8 +195,8 @@ describe('Settings: Categories Actions', () => {
     it('checks rate limiting', async () => {
       const { checkSettingsRateLimit } = await import('@/lib/rate-limit-guards')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
-      vi.mocked(prisma.categorySettings.update).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.upsert).mockResolvedValue(mockCategorySettings as never)
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
@@ -211,8 +210,8 @@ describe('Settings: Categories Actions', () => {
     it('validates data via validateAndSanitize', async () => {
       const { validateAndSanitize } = await import('@/lib/security-client')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
-      vi.mocked(prisma.categorySettings.update).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.upsert).mockResolvedValue(mockCategorySettings as never)
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
@@ -226,8 +225,8 @@ describe('Settings: Categories Actions', () => {
     it('revalidates cache after update', async () => {
       const { revalidatePath, revalidateTag } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockResolvedValue(mockCategorySettings as never)
-      vi.mocked(prisma.categorySettings.update).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.findUnique).mockResolvedValue(mockCategorySettings as never)
+      vi.mocked(prisma.categorySettings.upsert).mockResolvedValue(mockCategorySettings as never)
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       await updateCategorySettings({
@@ -258,7 +257,7 @@ describe('Settings: Categories Actions', () => {
 
     it('returns error on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.categorySettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.categorySettings.upsert).mockRejectedValue(new Error('DB error'))
 
       const { updateCategorySettings } = await import('@/actions/settings/categories')
       const result = await updateCategorySettings({

@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     siteSettings: {
-      findFirst: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
     },
   },
 }))
@@ -117,7 +116,7 @@ describe('Settings: Site Actions', () => {
   describe('getSiteSettings', () => {
     it('returns settings when found', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
 
       const { getSiteSettings } = await import('@/actions/settings/site')
       const result = await getSiteSettings()
@@ -127,7 +126,7 @@ describe('Settings: Site Actions', () => {
 
     it('returns null when no settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(null as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(null as never)
 
       const { getSiteSettings } = await import('@/actions/settings/site')
       const result = await getSiteSettings()
@@ -137,7 +136,7 @@ describe('Settings: Site Actions', () => {
 
     it('returns null on DB error', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.siteSettings.findUnique).mockRejectedValue(new Error('DB error'))
 
       const { getSiteSettings } = await import('@/actions/settings/site')
       const result = await getSiteSettings()
@@ -145,16 +144,16 @@ describe('Settings: Site Actions', () => {
       expect(result).toBeNull()
     })
 
-    it('calls prisma with isActive filter and select clause', async () => {
+    it('calls prisma with singleton key and select clause', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
 
       const { getSiteSettings } = await import('@/actions/settings/site')
       await getSiteSettings()
 
-      expect(prisma.siteSettings.findFirst).toHaveBeenCalledWith(
+      expect(prisma.siteSettings.findUnique).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { isActive: true },
+          where: { key: 'singleton' },
           select: expect.objectContaining({
             id: true,
             siteName: true,
@@ -166,7 +165,7 @@ describe('Settings: Site Actions', () => {
 
     it('returns site-specific fields', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
 
       const { getSiteSettings } = await import('@/actions/settings/site')
       const result = await getSiteSettings()
@@ -182,7 +181,7 @@ describe('Settings: Site Actions', () => {
   describe('getPageVisibility', () => {
     it('returns page visibility fields when settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockVisibility as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockVisibility as never)
 
       const { getPageVisibility } = await import('@/actions/settings/site')
       const result = await getPageVisibility()
@@ -196,7 +195,7 @@ describe('Settings: Site Actions', () => {
 
     it('returns defaults when no settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(null as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(null as never)
 
       const { getPageVisibility } = await import('@/actions/settings/site')
       const result = await getPageVisibility()
@@ -210,7 +209,7 @@ describe('Settings: Site Actions', () => {
 
     it('returns defaults on DB error', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.siteSettings.findUnique).mockRejectedValue(new Error('DB error'))
 
       const { getPageVisibility } = await import('@/actions/settings/site')
       const result = await getPageVisibility()
@@ -225,8 +224,8 @@ describe('Settings: Site Actions', () => {
   describe('updateSiteSettings', () => {
     it('updates existing settings successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
-      vi.mocked(prisma.siteSettings.update).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.upsert).mockResolvedValue(mockSiteSettings as never)
 
       const { updateSiteSettings } = await import('@/actions/settings/site')
       const result = await updateSiteSettings({ siteName: 'Nuevo nombre' })
@@ -237,21 +236,21 @@ describe('Settings: Site Actions', () => {
 
     it('creates settings when none exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(null as never)
-      vi.mocked(prisma.siteSettings.create).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(null as never)
+      vi.mocked(prisma.siteSettings.upsert).mockResolvedValue(mockSiteSettings as never)
 
       const { updateSiteSettings } = await import('@/actions/settings/site')
       const result = await updateSiteSettings({ siteName: 'Nuevo' })
 
       expect(result.success).toBe(true)
-      expect(prisma.siteSettings.create).toHaveBeenCalled()
+      expect(prisma.siteSettings.upsert).toHaveBeenCalled()
     })
 
     it('requires admin authentication', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
-      vi.mocked(prisma.siteSettings.update).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.upsert).mockResolvedValue(mockSiteSettings as never)
 
       const { updateSiteSettings } = await import('@/actions/settings/site')
       await updateSiteSettings({ siteName: 'Test' })
@@ -262,8 +261,8 @@ describe('Settings: Site Actions', () => {
     it('checks rate limiting', async () => {
       const { checkSettingsRateLimit } = await import('@/lib/rate-limit-guards')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
-      vi.mocked(prisma.siteSettings.update).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.upsert).mockResolvedValue(mockSiteSettings as never)
 
       const { updateSiteSettings } = await import('@/actions/settings/site')
       await updateSiteSettings({ siteName: 'Test' })
@@ -274,8 +273,8 @@ describe('Settings: Site Actions', () => {
     it('revalidates cache after update', async () => {
       const { revalidatePath, revalidateTag } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockResolvedValue(mockSiteSettings as never)
-      vi.mocked(prisma.siteSettings.update).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.findUnique).mockResolvedValue(mockSiteSettings as never)
+      vi.mocked(prisma.siteSettings.upsert).mockResolvedValue(mockSiteSettings as never)
 
       const { updateSiteSettings } = await import('@/actions/settings/site')
       await updateSiteSettings({ siteName: 'Test' })
@@ -286,7 +285,7 @@ describe('Settings: Site Actions', () => {
 
     it('returns error on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.siteSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.siteSettings.upsert).mockRejectedValue(new Error('DB error'))
 
       const { updateSiteSettings } = await import('@/actions/settings/site')
       const result = await updateSiteSettings({ siteName: 'Test' })

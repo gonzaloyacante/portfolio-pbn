@@ -4,6 +4,11 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
+import {
+  findSingleton,
+  upsertSingleton,
+  SERVICES_PAGE_SETTINGS_DEFAULTS,
+} from '@/lib/settings-service'
 
 import { ROUTES } from '@/config/routes'
 import { servicesPageSettingsSchema } from '@/lib/validations'
@@ -11,17 +16,12 @@ import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize, validateColor } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import { logger } from '@/lib/logger'
-import {
-  DEFAULT_SERVICES_PAGE_LIST_INTRO,
-  type ServicesPageSettingsData,
-} from '@/lib/services-page-settings'
+import { type ServicesPageSettingsData } from '@/lib/services-page-settings'
 
 export const getServicesPageSettings = unstable_cache(
   async (): Promise<ServicesPageSettingsData | null> => {
     try {
-      const settings = await prisma.servicesPageSettings.findFirst({
-        where: { isActive: true },
-      })
+      const settings = await findSingleton(prisma.servicesPageSettings)
       return settings
     } catch (error) {
       logger.error('Error getting services page settings:', { error })
@@ -56,27 +56,11 @@ export async function updateServicesPageSettings(
       return { success: false, error: `Color título (oscuro) inválido: ${cDark}` }
     }
 
-    let settings = await prisma.servicesPageSettings.findFirst({ where: { isActive: true } })
-
-    if (!settings) {
-      const createData: Prisma.ServicesPageSettingsCreateInput = {
-        listTitle: (cleanData.listTitle as string) || 'Mis Servicios',
-        listIntro: (cleanData.listIntro as string) ?? DEFAULT_SERVICES_PAGE_LIST_INTRO,
-        listTitleFont: (cleanData.listTitleFont as string) ?? undefined,
-        listTitleFontUrl: (cleanData.listTitleFontUrl as string) ?? undefined,
-        listTitleFontSize: (cleanData.listTitleFontSize as number) ?? undefined,
-        listTitleMobileFontSize: (cleanData.listTitleMobileFontSize as number) ?? undefined,
-        listTitleColor: (cleanData.listTitleColor as string) ?? undefined,
-        listTitleColorDark: (cleanData.listTitleColorDark as string) ?? undefined,
-        isActive: true,
-      }
-      settings = await prisma.servicesPageSettings.create({ data: createData })
-    } else {
-      settings = await prisma.servicesPageSettings.update({
-        where: { id: settings.id },
-        data: cleanData,
-      })
-    }
+    const settings = await upsertSingleton(
+      prisma.servicesPageSettings,
+      SERVICES_PAGE_SETTINGS_DEFAULTS,
+      cleanData
+    )
 
     revalidatePath(ROUTES.public.services)
     revalidateTag(CACHE_TAGS.servicesPageSettings, 'max')

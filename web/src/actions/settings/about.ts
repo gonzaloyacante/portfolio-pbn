@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
+import { findSingleton, upsertSingleton } from '@/lib/settings-service'
 
 import { ROUTES } from '@/config/routes'
 import { aboutSettingsSchema } from '@/lib/validations'
@@ -49,9 +50,7 @@ export interface AboutSettingsData {
 export const getAboutSettings = unstable_cache(
   async (): Promise<AboutSettingsData | null> => {
     try {
-      const settings = await prisma.aboutSettings.findFirst({
-        where: { isActive: true },
-      })
+      const settings = await findSingleton(prisma.aboutSettings)
       return settings
     } catch (error) {
       logger.error('Error getting about settings:', { error: error })
@@ -107,50 +106,7 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
 
     logger.debug('Updating about settings', { userId: user.id })
 
-    let settings = await prisma.aboutSettings.findFirst({ where: { isActive: true } })
-
-    if (!settings) {
-      // Manual mapping for strict Type Safety during Creation
-      const createData: Prisma.AboutSettingsCreateInput = {
-        illustrationUrl: (cleanData.illustrationUrl as string) ?? undefined,
-        illustrationAlt: (cleanData.illustrationAlt as string) || 'Ilustración sobre mí',
-        illustrationMaxPx: (cleanData.illustrationMaxPx as number) ?? 112,
-        illustrationMobileMaxPx: (cleanData.illustrationMobileMaxPx as number) ?? 96,
-        bioTitle: (cleanData.bioTitle as string) || 'Hola, soy Paola.',
-        bioTitleFont: (cleanData.bioTitleFont as string) ?? undefined,
-        bioTitleFontUrl: (cleanData.bioTitleFontUrl as string) ?? undefined,
-        bioTitleFontSize: (cleanData.bioTitleFontSize as number) ?? undefined,
-        bioTitleMobileFontSize: (cleanData.bioTitleMobileFontSize as number) ?? undefined,
-        bioTitleColor: (cleanData.bioTitleColor as string) ?? undefined,
-        bioTitleColorDark: (cleanData.bioTitleColorDark as string) ?? undefined,
-        bioIntro: (cleanData.bioIntro as string) ?? undefined,
-        bioDescription: (cleanData.bioDescription as string) ?? undefined,
-        profileImageUrl: (cleanData.profileImageUrl as string) ?? undefined,
-        profileImageAlt: (cleanData.profileImageAlt as string) || 'Paola Bolívar Nievas',
-        profileImageShape: (cleanData.profileImageShape as string) ?? undefined,
-        profileImageShadowEnabled: (cleanData.profileImageShadowEnabled as boolean) ?? true,
-        profileImageShadowBlur: (cleanData.profileImageShadowBlur as number) ?? undefined,
-        profileImageShadowSpread: (cleanData.profileImageShadowSpread as number) ?? undefined,
-        profileImageShadowOffsetX: (cleanData.profileImageShadowOffsetX as number) ?? undefined,
-        profileImageShadowOffsetY: (cleanData.profileImageShadowOffsetY as number) ?? undefined,
-        profileImageShadowColor: (cleanData.profileImageShadowColor as string) ?? undefined,
-        profileImageShadowOpacity: (cleanData.profileImageShadowOpacity as number) ?? undefined,
-        skills: (cleanData.skills as string[]) || [],
-        yearsExperience: (cleanData.yearsExperience as number) ?? undefined,
-        certifications: (cleanData.certifications as string[]) || [],
-        isActive: true,
-      }
-
-      settings = await prisma.aboutSettings.create({
-        data: createData,
-      })
-    } else {
-      // cleanData is already strictly typed as UpdateInput
-      settings = await prisma.aboutSettings.update({
-        where: { id: settings.id },
-        data: cleanData,
-      })
-    }
+    const settings = await upsertSingleton(prisma.aboutSettings, {}, cleanData)
 
     // Revalidate Public Pages (both rewritten and canonical)
     revalidatePath(ROUTES.public.about) // /sobre-mi

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
+import { findSingleton, upsertSingleton } from '@/lib/settings-service'
 
 import { testimonialSettingsSchema, type TestimonialSettingsFormData } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
@@ -26,7 +27,7 @@ export interface TestimonialSettingsData {
 export const getTestimonialSettings = unstable_cache(
   async (): Promise<TestimonialSettingsData | null> => {
     try {
-      const settings = await prisma.testimonialSettings.findFirst()
+      const settings = await findSingleton(prisma.testimonialSettings)
       return settings
     } catch (error) {
       logger.error('Error getting testimonial settings:', { error })
@@ -58,27 +59,7 @@ export async function updateTestimonialSettings(data: TestimonialSettingsFormDat
     const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.TestimonialSettingsUpdateInput
 
-    const existingSettings = await prisma.testimonialSettings.findFirst()
-
-    if (existingSettings) {
-      await prisma.testimonialSettings.update({
-        where: { id: existingSettings.id },
-        data: cleanData,
-      })
-    } else {
-      // Manual mapping for strict Creation
-      const createData: Prisma.TestimonialSettingsCreateInput = {
-        showOnAbout: (cleanData.showOnAbout as boolean) ?? true,
-        showOnAll: (cleanData.showOnAll as boolean) ?? false,
-        title: (cleanData.title as string) ?? undefined,
-        maxDisplay: (cleanData.maxDisplay as number) ?? 6,
-        sliderAutoAdvanceMs: (cleanData.sliderAutoAdvanceMs as number) ?? 10000,
-      }
-
-      await prisma.testimonialSettings.create({
-        data: createData,
-      })
-    }
+    await upsertSingleton(prisma.testimonialSettings, {}, cleanData)
 
     revalidatePath('/')
     revalidatePath(ROUTES.public.about) // /sobre-mi (rewrite source)

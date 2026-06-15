@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     testimonialSettings: {
-      findFirst: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
     },
   },
 }))
@@ -98,7 +97,7 @@ describe('Settings: Testimonials Actions', () => {
   describe('getTestimonialSettings', () => {
     it('returns settings when found', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -110,7 +109,7 @@ describe('Settings: Testimonials Actions', () => {
 
     it('returns null when no settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(null as never)
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(null as never)
 
       const { getTestimonialSettings } = await import('@/actions/settings/testimonials')
       const result = await getTestimonialSettings()
@@ -118,21 +117,21 @@ describe('Settings: Testimonials Actions', () => {
       expect(result).toBeNull()
     })
 
-    it('calls prisma.testimonialSettings.findFirst', async () => {
+    it('calls prisma.testimonialSettings.findUnique', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
       const { getTestimonialSettings } = await import('@/actions/settings/testimonials')
       await getTestimonialSettings()
 
-      expect(prisma.testimonialSettings.findFirst).toHaveBeenCalled()
+      expect(prisma.testimonialSettings.findUnique).toHaveBeenCalled()
     })
 
     it('returns testimonial-specific fields', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -146,7 +145,7 @@ describe('Settings: Testimonials Actions', () => {
 
     it('returns null when the schema is ahead of the database', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockRejectedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockRejectedValue(
         new Error('The column `testimonial_settings.sliderAutoAdvanceMs` does not exist')
       )
 
@@ -162,10 +161,10 @@ describe('Settings: Testimonials Actions', () => {
   describe('updateTestimonialSettings', () => {
     it('updates existing settings successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
-      vi.mocked(prisma.testimonialSettings.update).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.upsert).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -181,8 +180,8 @@ describe('Settings: Testimonials Actions', () => {
 
     it('creates settings when none exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(null as never)
-      vi.mocked(prisma.testimonialSettings.create).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(null as never)
+      vi.mocked(prisma.testimonialSettings.upsert).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -194,16 +193,16 @@ describe('Settings: Testimonials Actions', () => {
       })
 
       expect(result.success).toBe(true)
-      expect(prisma.testimonialSettings.create).toHaveBeenCalled()
+      expect(prisma.testimonialSettings.upsert).toHaveBeenCalled()
     })
 
     it('requires admin authentication', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
-      vi.mocked(prisma.testimonialSettings.update).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.upsert).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -216,10 +215,10 @@ describe('Settings: Testimonials Actions', () => {
     it('checks rate limiting', async () => {
       const { checkSettingsRateLimit } = await import('@/lib/rate-limit-guards')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
-      vi.mocked(prisma.testimonialSettings.update).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.upsert).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -232,10 +231,10 @@ describe('Settings: Testimonials Actions', () => {
     it('validates data via validateAndSanitize', async () => {
       const { validateAndSanitize } = await import('@/lib/security-client')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
-      vi.mocked(prisma.testimonialSettings.update).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.upsert).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -248,10 +247,10 @@ describe('Settings: Testimonials Actions', () => {
     it('revalidates cache after update', async () => {
       const { revalidatePath, revalidateTag } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.findUnique).mockResolvedValue(
         mockTestimonialSettings as never
       )
-      vi.mocked(prisma.testimonialSettings.update).mockResolvedValue(
+      vi.mocked(prisma.testimonialSettings.upsert).mockResolvedValue(
         mockTestimonialSettings as never
       )
 
@@ -282,7 +281,7 @@ describe('Settings: Testimonials Actions', () => {
 
     it('returns error on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.testimonialSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.testimonialSettings.upsert).mockRejectedValue(new Error('DB error'))
 
       const { updateTestimonialSettings } = await import('@/actions/settings/testimonials')
       const result = await updateTestimonialSettings({

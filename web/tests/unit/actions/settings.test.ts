@@ -5,11 +5,8 @@ import { getThemeValues, updateThemeSettings, resetThemeToDefaults } from '@/act
 vi.mock('@/lib/db', () => ({
   prisma: {
     themeSettings: {
-      findFirst: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
-      updateMany: vi.fn(),
-      deleteMany: vi.fn(),
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
     },
   },
 }))
@@ -41,11 +38,8 @@ import { prisma } from '@/lib/db'
 
 const mockPrisma = prisma as {
   themeSettings: {
-    findFirst: ReturnType<typeof vi.fn>
-    create: ReturnType<typeof vi.fn>
-    update: ReturnType<typeof vi.fn>
-    updateMany: ReturnType<typeof vi.fn>
-    deleteMany: ReturnType<typeof vi.fn>
+    findUnique: ReturnType<typeof vi.fn>
+    upsert: ReturnType<typeof vi.fn>
   }
 }
 
@@ -91,7 +85,7 @@ describe('getThemeValues', () => {
   })
 
   it('returns CSS variables from stored settings', async () => {
-    mockPrisma.themeSettings.findFirst.mockResolvedValue(mockThemeSettings)
+    mockPrisma.themeSettings.findUnique.mockResolvedValue(mockThemeSettings)
 
     const values = await getThemeValues()
 
@@ -101,7 +95,7 @@ describe('getThemeValues', () => {
   })
 
   it('wraps font names in quotes with fallback', async () => {
-    mockPrisma.themeSettings.findFirst.mockResolvedValue(mockThemeSettings)
+    mockPrisma.themeSettings.findUnique.mockResolvedValue(mockThemeSettings)
 
     const values = await getThemeValues()
 
@@ -111,7 +105,7 @@ describe('getThemeValues', () => {
   })
 
   it('returns font size as px string', async () => {
-    mockPrisma.themeSettings.findFirst.mockResolvedValue(mockThemeSettings)
+    mockPrisma.themeSettings.findUnique.mockResolvedValue(mockThemeSettings)
 
     const values = await getThemeValues()
 
@@ -121,7 +115,7 @@ describe('getThemeValues', () => {
   })
 
   it('returns DEFAULT_CSS_VARIABLES when no settings in DB', async () => {
-    mockPrisma.themeSettings.findFirst.mockResolvedValue(null)
+    mockPrisma.themeSettings.findUnique.mockResolvedValue(null)
 
     const values = await getThemeValues()
 
@@ -130,7 +124,7 @@ describe('getThemeValues', () => {
   })
 
   it('falls back to "inherit" for null optional fonts', async () => {
-    mockPrisma.themeSettings.findFirst.mockResolvedValue({
+    mockPrisma.themeSettings.findUnique.mockResolvedValue({
       ...mockThemeSettings,
       brandFont: null,
       signatureFont: null,
@@ -146,10 +140,8 @@ describe('getThemeValues', () => {
 describe('updateThemeSettings', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    // findFirst returns existing settings so we go through the `update` path
-    mockPrisma.themeSettings.findFirst.mockResolvedValue(mockThemeSettings)
-    mockPrisma.themeSettings.update.mockResolvedValue(mockThemeSettings)
-    mockPrisma.themeSettings.create.mockResolvedValue(mockThemeSettings)
+    mockPrisma.themeSettings.findUnique.mockResolvedValue(mockThemeSettings)
+    mockPrisma.themeSettings.upsert.mockResolvedValue(mockThemeSettings)
   })
 
   it('returns success with valid color data', async () => {
@@ -178,26 +170,24 @@ describe('updateThemeSettings', () => {
     expect(result.success).toBe(true)
   })
 
-  it('creates settings when none exist in DB', async () => {
-    mockPrisma.themeSettings.findFirst.mockResolvedValue(null)
+  it('upserts settings when none exist in DB', async () => {
+    mockPrisma.themeSettings.findUnique.mockResolvedValue(null)
     const result = await updateThemeSettings({ primaryColor: '#6c0a0a' })
     expect(result.success).toBe(true)
-    expect(mockPrisma.themeSettings.create).toHaveBeenCalledOnce()
+    expect(mockPrisma.themeSettings.upsert).toHaveBeenCalledOnce()
   })
 })
 
 describe('resetThemeToDefaults', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockPrisma.themeSettings.deleteMany.mockResolvedValue({ count: 1 })
-    mockPrisma.themeSettings.create.mockResolvedValue(mockThemeSettings)
+    mockPrisma.themeSettings.upsert.mockResolvedValue(mockThemeSettings)
   })
 
-  it('deletes current settings and creates new defaults', async () => {
+  it('upserts theme settings with reset defaults', async () => {
     const result = await resetThemeToDefaults()
     expect(result.success).toBe(true)
-    expect(mockPrisma.themeSettings.deleteMany).toHaveBeenCalledOnce()
-    expect(mockPrisma.themeSettings.create).toHaveBeenCalledOnce()
+    expect(mockPrisma.themeSettings.upsert).toHaveBeenCalledOnce()
   })
 
   it('returns success message', async () => {

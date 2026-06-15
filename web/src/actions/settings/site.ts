@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
+import { Prisma } from '@/generated/prisma/client'
+import { upsertSingleton, SINGLETON_WHERE } from '@/lib/settings-service'
 import { requireAdmin } from '@/lib/security-server'
 import { validateAndSanitize } from '@/lib/security-client'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
@@ -66,8 +68,8 @@ export interface PageVisibility {
 export const getSiteSettings = unstable_cache(
   async (): Promise<SiteSettingsData | null> => {
     try {
-      const settings = await prisma.siteSettings.findFirst({
-        where: { isActive: true },
+      const settings = await prisma.siteSettings.findUnique({
+        where: SINGLETON_WHERE,
         select: {
           id: true,
           siteName: true,
@@ -113,8 +115,8 @@ export const getSiteSettings = unstable_cache(
 export const getPageVisibility = unstable_cache(
   async (): Promise<PageVisibility> => {
     try {
-      const settings = await prisma.siteSettings.findFirst({
-        where: { isActive: true },
+      const settings = await prisma.siteSettings.findUnique({
+        where: SINGLETON_WHERE,
         select: {
           showAboutPage: true,
           showGalleryPage: true,
@@ -175,14 +177,6 @@ export const getPageVisibility = unstable_cache(
 /**
  * Update site settings
  */
-async function _upsertSiteSettings(cleanData: Record<string, unknown>) {
-  const existing = await prisma.siteSettings.findFirst({ where: { isActive: true } })
-  if (existing) {
-    return prisma.siteSettings.update({ where: { id: existing.id }, data: cleanData })
-  }
-  return prisma.siteSettings.create({ data: { ...cleanData, isActive: true } })
-}
-
 export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'id'>>) {
   try {
     const user = await requireAdmin()
@@ -193,11 +187,10 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
       return { success: false, error: validated.error }
     }
 
-    const cleanData = Object.fromEntries(
-      Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
-    ) as Record<string, unknown>
+    const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
+    const cleanData = Object.fromEntries(cleanEntries) as Prisma.SiteSettingsUpdateInput
 
-    const settings = await _upsertSiteSettings(cleanData)
+    const settings = await upsertSingleton(prisma.siteSettings, {}, cleanData)
 
     // site settings (page visibility) affect Navbar on ALL public pages via (public)/layout.tsx
     revalidatePath('/', 'layout')

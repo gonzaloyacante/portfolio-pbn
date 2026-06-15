@@ -8,6 +8,13 @@ import { withAdminJwt } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 import {
+  findSingleton,
+  upsertSingleton,
+  HOME_SETTINGS_DEFAULTS,
+  CONTACT_SETTINGS_DEFAULTS,
+  SERVICES_PAGE_SETTINGS_DEFAULTS,
+} from '@/lib/settings-service'
+import {
   homeSettingsSchema,
   aboutSettingsSchema,
   contactSettingsSchema,
@@ -21,11 +28,11 @@ import type { ZodSchema, ZodObject, ZodRawShape } from 'zod'
 
 // ── Mapa de tipo → modelo Prisma ──────────────────────────────────────────────
 type SettingsModel = {
-  findFirst(): Promise<Record<string, unknown> | null>
-  create(args: { data: Record<string, unknown> }): Promise<Record<string, unknown>>
-  update(args: {
-    where: Record<string, unknown>
-    data: Record<string, unknown>
+  findUnique(args: { where: { key: string } }): Promise<Record<string, unknown> | null>
+  upsert(args: {
+    where: { key: string }
+    create: Record<string, unknown>
+    update: Record<string, unknown>
   }): Promise<Record<string, unknown>>
 }
 
@@ -41,6 +48,20 @@ const SETTINGS_MODELS = {
 } satisfies Record<string, SettingsModel>
 
 type SettingsType = keyof typeof SETTINGS_MODELS
+
+// Valores para la fila inicial de cada tipo (cuando todavía no existe ninguna).
+// Mismos defaults que usan las server actions del panel web (settings-service.ts),
+// para que la fila se cree igual sin importar qué lado (web o app) la crea primero.
+const SETTINGS_DEFAULTS: Record<SettingsType, Record<string, unknown>> = {
+  home: HOME_SETTINGS_DEFAULTS,
+  about: {},
+  contact: CONTACT_SETTINGS_DEFAULTS,
+  theme: {},
+  site: {},
+  testimonial: {},
+  category: {},
+  servicesPage: SERVICES_PAGE_SETTINGS_DEFAULTS,
+}
 
 // Mapa de tipo → Zod schema
 const SETTINGS_SCHEMA_MAP: Partial<Record<SettingsType, ZodSchema>> = {
@@ -90,8 +111,8 @@ function getPrismaModel(type: SettingsType): SettingsModel {
 
 async function fetchOrCreateSettings(type: SettingsType) {
   const model = getPrismaModel(type)
-  const existing = await model.findFirst()
-  return existing ?? (await model.create({ data: {} }))
+  const existing = await findSingleton(model)
+  return existing ?? (await upsertSingleton(model, SETTINGS_DEFAULTS[type], {}))
 }
 
 async function upsertSettings(type: SettingsType, body: Record<string, unknown>) {
@@ -99,9 +120,7 @@ async function upsertSettings(type: SettingsType, body: Record<string, unknown>)
   const data = Object.fromEntries(
     Object.entries(body).filter(([k]) => !FORBIDDEN_FIELDS.includes(k))
   )
-  const existing = await model.findFirst()
-  if (!existing) return model.create({ data })
-  return model.update({ where: { id: existing.id }, data })
+  return upsertSingleton(model, SETTINGS_DEFAULTS[type], data)
 }
 
 // ── GET /api/admin/settings/[type] ────────────────────────────────────────────

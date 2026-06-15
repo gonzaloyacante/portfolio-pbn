@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     aboutSettings: {
-      findFirst: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
     },
   },
 }))
@@ -107,7 +106,7 @@ describe('Settings: About Actions', () => {
   describe('getAboutSettings', () => {
     it('returns settings when found', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
 
       const { getAboutSettings } = await import('@/actions/settings/about')
       const result = await getAboutSettings()
@@ -117,7 +116,7 @@ describe('Settings: About Actions', () => {
 
     it('returns null when no settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(null as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(null as never)
 
       const { getAboutSettings } = await import('@/actions/settings/about')
       const result = await getAboutSettings()
@@ -127,7 +126,7 @@ describe('Settings: About Actions', () => {
 
     it('returns null on DB error', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.aboutSettings.findUnique).mockRejectedValue(new Error('DB error'))
 
       const { getAboutSettings } = await import('@/actions/settings/about')
       const result = await getAboutSettings()
@@ -135,21 +134,21 @@ describe('Settings: About Actions', () => {
       expect(result).toBeNull()
     })
 
-    it('calls prisma.aboutSettings.findFirst with isActive filter', async () => {
+    it('calls prisma.aboutSettings.findUnique with singleton key', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
 
       const { getAboutSettings } = await import('@/actions/settings/about')
       await getAboutSettings()
 
-      expect(prisma.aboutSettings.findFirst).toHaveBeenCalledWith({
-        where: { isActive: true },
+      expect(prisma.aboutSettings.findUnique).toHaveBeenCalledWith({
+        where: { key: 'singleton' },
       })
     })
 
     it('returns about-specific fields like skills and certifications', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
 
       const { getAboutSettings } = await import('@/actions/settings/about')
       const result = await getAboutSettings()
@@ -166,8 +165,8 @@ describe('Settings: About Actions', () => {
   describe('updateAboutSettings', () => {
     it('updates existing settings successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
-      vi.mocked(prisma.aboutSettings.update).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.upsert).mockResolvedValue(mockAboutSettings as never)
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       const result = await updateAboutSettings({ bioTitle: 'Nuevo título' })
@@ -178,21 +177,21 @@ describe('Settings: About Actions', () => {
 
     it('creates settings when none exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(null as never)
-      vi.mocked(prisma.aboutSettings.create).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(null as never)
+      vi.mocked(prisma.aboutSettings.upsert).mockResolvedValue(mockAboutSettings as never)
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       const result = await updateAboutSettings({ bioTitle: 'Nuevo' })
 
       expect(result.success).toBe(true)
-      expect(prisma.aboutSettings.create).toHaveBeenCalled()
+      expect(prisma.aboutSettings.upsert).toHaveBeenCalled()
     })
 
     it('requires admin authentication', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
-      vi.mocked(prisma.aboutSettings.update).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.upsert).mockResolvedValue(mockAboutSettings as never)
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       await updateAboutSettings({ bioTitle: 'Test' })
@@ -203,8 +202,8 @@ describe('Settings: About Actions', () => {
     it('checks rate limiting', async () => {
       const { checkSettingsRateLimit } = await import('@/lib/rate-limit-guards')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
-      vi.mocked(prisma.aboutSettings.update).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.upsert).mockResolvedValue(mockAboutSettings as never)
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       await updateAboutSettings({ bioTitle: 'Test' })
@@ -215,8 +214,8 @@ describe('Settings: About Actions', () => {
     it('validates data via validateAndSanitize', async () => {
       const { validateAndSanitize } = await import('@/lib/security-client')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
-      vi.mocked(prisma.aboutSettings.update).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.upsert).mockResolvedValue(mockAboutSettings as never)
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       await updateAboutSettings({ bioTitle: 'Test' })
@@ -227,8 +226,8 @@ describe('Settings: About Actions', () => {
     it('revalidates cache after update', async () => {
       const { revalidatePath, revalidateTag } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockResolvedValue(mockAboutSettings as never)
-      vi.mocked(prisma.aboutSettings.update).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.findUnique).mockResolvedValue(mockAboutSettings as never)
+      vi.mocked(prisma.aboutSettings.upsert).mockResolvedValue(mockAboutSettings as never)
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       await updateAboutSettings({ bioTitle: 'Test' })
@@ -253,7 +252,7 @@ describe('Settings: About Actions', () => {
 
     it('returns error on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.aboutSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.aboutSettings.upsert).mockRejectedValue(new Error('DB error'))
 
       const { updateAboutSettings } = await import('@/actions/settings/about')
       const result = await updateAboutSettings({ bioTitle: 'Test' })

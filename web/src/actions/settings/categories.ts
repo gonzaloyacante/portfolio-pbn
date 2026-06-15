@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
+import { findSingleton, upsertSingleton } from '@/lib/settings-service'
 
 import { categorySettingsSchema, type CategorySettingsFormData } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
@@ -15,7 +16,7 @@ import { ROUTES } from '@/config/routes'
 export const getCategorySettings = unstable_cache(
   async () => {
     try {
-      const settings = await prisma.categorySettings.findFirst()
+      const settings = await findSingleton(prisma.categorySettings)
       return settings
     } catch (error) {
       logger.error('Error fetching category settings:', { error: error })
@@ -44,25 +45,7 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
     const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.CategorySettingsUpdateInput
 
-    const existing = await prisma.categorySettings.findFirst()
-
-    if (existing) {
-      await prisma.categorySettings.update({
-        where: { id: existing.id },
-        data: cleanData,
-      })
-    } else {
-      // Manual mapping for strict Creation
-      const createData: Prisma.CategorySettingsCreateInput = {
-        showDescription: (cleanData.showDescription as boolean) ?? true,
-        gridColumns: (cleanData.gridColumns as number) ?? 3,
-        isActive: (cleanData.isActive as boolean) ?? true,
-      }
-
-      await prisma.categorySettings.create({
-        data: createData,
-      })
-    }
+    await upsertSingleton(prisma.categorySettings, {}, cleanData)
 
     revalidatePath(ROUTES.public.portfolio)
     revalidatePath(ROUTES.admin.categories)

@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
+import { findSingleton, upsertSingleton, CONTACT_SETTINGS_DEFAULTS } from '@/lib/settings-service'
 
 import { contactSettingsSchema } from '@/lib/validations'
 import { requireAdmin } from '@/lib/security-server'
@@ -40,9 +41,7 @@ export interface ContactSettingsData {
 export const getContactSettings = unstable_cache(
   async (): Promise<ContactSettingsData | null> => {
     try {
-      const settings = await prisma.contactSettings.findFirst({
-        where: { isActive: true },
-      })
+      const settings = await findSingleton(prisma.contactSettings)
       return settings
     } catch (error) {
       logger.error('Error getting contact settings:', { error: error })
@@ -74,44 +73,11 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
     const cleanEntries = Object.entries(validated.data || {}).filter(([, v]) => v !== undefined)
     const cleanData = Object.fromEntries(cleanEntries) as Prisma.ContactSettingsUpdateInput
 
-    let settings = await prisma.contactSettings.findFirst({ where: { isActive: true } })
-
-    if (!settings) {
-      const createData: Prisma.ContactSettingsCreateInput = {
-        pageTitle: (cleanData.pageTitle as string) || 'Contacto',
-        illustrationUrl: (cleanData.illustrationUrl as string) ?? undefined,
-        illustrationAlt: (cleanData.illustrationAlt as string) || 'Ilustración contacto',
-        ownerName: (cleanData.ownerName as string) || 'Paola Bolívar Nievas',
-
-        // Required / Safe Optional fields
-        email: (cleanData.email as string) || '', // Email is required in schema usually, assuming user provides strictly valid partial or defaults logic applies
-        phone: (cleanData.phone as string) ?? undefined,
-        whatsapp: (cleanData.whatsapp as string) ?? undefined,
-        instagram: (cleanData.instagram as string) ?? undefined,
-        instagramUsername: (cleanData.instagramUsername as string) ?? '',
-        location: (cleanData.location as string) ?? undefined,
-
-        showSocialLinks: (cleanData.showSocialLinks as boolean) ?? true,
-        showPhone: (cleanData.showPhone as boolean) ?? true,
-        showWhatsapp: (cleanData.showWhatsapp as boolean) ?? true,
-        showEmail: (cleanData.showEmail as boolean) ?? true,
-        showLocation: (cleanData.showLocation as boolean) ?? true,
-        showInstagram: (cleanData.showInstagram as boolean) ?? true,
-        instagramPostUrl: (cleanData.instagramPostUrl as string) ?? undefined,
-        showInstagramEmbed: (cleanData.showInstagramEmbed as boolean) ?? false,
-
-        isActive: true,
-      }
-
-      settings = await prisma.contactSettings.create({
-        data: createData,
-      })
-    } else {
-      settings = await prisma.contactSettings.update({
-        where: { id: settings.id },
-        data: cleanData,
-      })
-    }
+    const settings = await upsertSingleton(
+      prisma.contactSettings,
+      CONTACT_SETTINGS_DEFAULTS,
+      cleanData
+    )
 
     // contact settings affect Navbar (ownerName) on ALL public pages via (public)/layout.tsx
     revalidatePath('/', 'layout')

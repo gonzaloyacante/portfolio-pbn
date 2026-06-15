@@ -3,9 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 vi.mock('@/lib/db', () => ({
   prisma: {
     homeSettings: {
-      findFirst: vi.fn(),
-      create: vi.fn(),
-      update: vi.fn(),
+      findUnique: vi.fn(),
+      upsert: vi.fn(),
     },
   },
 }))
@@ -172,7 +171,7 @@ describe('Settings: Home Actions', () => {
   describe('getHomeSettings', () => {
     it('returns settings when found', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
 
       const { getHomeSettings } = await import('@/actions/settings/home')
       const result = await getHomeSettings()
@@ -182,7 +181,7 @@ describe('Settings: Home Actions', () => {
 
     it('returns null when no settings exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(null as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(null as never)
 
       const { getHomeSettings } = await import('@/actions/settings/home')
       const result = await getHomeSettings()
@@ -192,7 +191,7 @@ describe('Settings: Home Actions', () => {
 
     it('returns null on DB error', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockRejectedValue(new Error('DB connection failed'))
+      vi.mocked(prisma.homeSettings.findUnique).mockRejectedValue(new Error('DB connection failed'))
 
       const { getHomeSettings } = await import('@/actions/settings/home')
       const result = await getHomeSettings()
@@ -200,21 +199,21 @@ describe('Settings: Home Actions', () => {
       expect(result).toBeNull()
     })
 
-    it('calls prisma.homeSettings.findFirst with isActive filter', async () => {
+    it('calls prisma.homeSettings.findUnique with singleton key', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
 
       const { getHomeSettings } = await import('@/actions/settings/home')
       await getHomeSettings()
 
-      expect(prisma.homeSettings.findFirst).toHaveBeenCalledWith({
-        where: { isActive: true },
+      expect(prisma.homeSettings.findUnique).toHaveBeenCalledWith({
+        where: { key: 'singleton' },
       })
     })
 
     it('returns data with many fields (100+ fields)', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
 
       const { getHomeSettings } = await import('@/actions/settings/home')
       const result = await getHomeSettings()
@@ -232,8 +231,8 @@ describe('Settings: Home Actions', () => {
   describe('updateHomeSettings', () => {
     it('updates existing settings successfully', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       const result = await updateHomeSettings({ heroTitle1Text: 'Nuevo título' })
@@ -244,21 +243,21 @@ describe('Settings: Home Actions', () => {
 
     it('creates settings when none exist', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(null as never)
-      vi.mocked(prisma.homeSettings.create).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(null as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       const result = await updateHomeSettings({ heroTitle1Text: 'Nuevo' })
 
       expect(result.success).toBe(true)
-      expect(prisma.homeSettings.create).toHaveBeenCalled()
+      expect(prisma.homeSettings.upsert).toHaveBeenCalled()
     })
 
     it('requires admin authentication', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       await updateHomeSettings({ heroTitle1Text: 'Test' })
@@ -269,8 +268,8 @@ describe('Settings: Home Actions', () => {
     it('checks rate limiting', async () => {
       const { checkSettingsRateLimit } = await import('@/lib/rate-limit-guards')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       await updateHomeSettings({ heroTitle1Text: 'Test' })
@@ -281,8 +280,8 @@ describe('Settings: Home Actions', () => {
     it('validates data via validateAndSanitize', async () => {
       const { validateAndSanitize } = await import('@/lib/security-client')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       const data = { heroTitle1Text: 'Hola' }
@@ -294,8 +293,8 @@ describe('Settings: Home Actions', () => {
     it('revalidates cache after update', async () => {
       const { revalidatePath, revalidateTag } = await import('next/cache')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       await updateHomeSettings({ heroTitle1Text: 'Test' })
@@ -320,7 +319,7 @@ describe('Settings: Home Actions', () => {
 
     it('returns error on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.homeSettings.upsert).mockRejectedValue(new Error('DB error'))
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       const result = await updateHomeSettings({ heroTitle1Text: 'Test' })
@@ -331,8 +330,8 @@ describe('Settings: Home Actions', () => {
     it('validates font URLs', async () => {
       const { validateFontUrl } = await import('@/lib/security-client')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       await updateHomeSettings({
@@ -345,8 +344,8 @@ describe('Settings: Home Actions', () => {
     it('validates colors', async () => {
       const { validateColor } = await import('@/lib/security-client')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.homeSettings.findFirst).mockResolvedValue(mockHomeSettings as never)
-      vi.mocked(prisma.homeSettings.update).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.findUnique).mockResolvedValue(mockHomeSettings as never)
+      vi.mocked(prisma.homeSettings.upsert).mockResolvedValue(mockHomeSettings as never)
 
       const { updateHomeSettings } = await import('@/actions/settings/home')
       await updateHomeSettings({ heroTitle1Color: '#FF0000' })

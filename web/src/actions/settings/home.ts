@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/db'
 import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { Prisma } from '@/generated/prisma/client'
+import { findSingleton, upsertSingleton, HOME_SETTINGS_DEFAULTS } from '@/lib/settings-service'
 
 import { ROUTES } from '@/config/routes'
 import { logger } from '@/lib/logger'
@@ -143,9 +144,7 @@ export interface HomeSettingsData {
 export const getHomeSettings = unstable_cache(
   async (): Promise<HomeSettingsData | null> => {
     try {
-      const settings = await prisma.homeSettings.findFirst({
-        where: { isActive: true },
-      })
+      const settings = await findSingleton(prisma.homeSettings)
       return settings
     } catch (error) {
       logger.error('Error getting home settings:', { error: error })
@@ -218,148 +217,7 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
       }
     }
 
-    let settings = await prisma.homeSettings.findFirst({ where: { isActive: true } })
-
-    if (!settings) {
-      // 4. Manual mapping for strict Type Safety during Creation
-      const createData: Prisma.HomeSettingsCreateInput = {
-        showHeroTitle1: (cleanData.showHeroTitle1 as boolean) ?? true,
-        showHeroTitle2: (cleanData.showHeroTitle2 as boolean) ?? true,
-        showOwnerName: (cleanData.showOwnerName as boolean) ?? true,
-        // Título 1
-        heroTitle1Text: (cleanData.heroTitle1Text as string) ?? undefined,
-        heroTitle1Font: (cleanData.heroTitle1Font as string) ?? undefined,
-        heroTitle1FontUrl: (cleanData.heroTitle1FontUrl as string) ?? undefined,
-        heroTitle1FontSize: (cleanData.heroTitle1FontSize as number) ?? undefined,
-        heroTitle1Color: (cleanData.heroTitle1Color as string) ?? undefined,
-        heroTitle1ColorDark: (cleanData.heroTitle1ColorDark as string) ?? undefined,
-        heroTitle1ZIndex: (cleanData.heroTitle1ZIndex as number) ?? undefined,
-        heroTitle1OffsetX: (cleanData.heroTitle1OffsetX as number) ?? undefined,
-        heroTitle1OffsetY: (cleanData.heroTitle1OffsetY as number) ?? undefined,
-
-        // Título 2
-        heroTitle2Text: (cleanData.heroTitle2Text as string) ?? undefined,
-        heroTitle2Font: (cleanData.heroTitle2Font as string) ?? undefined,
-        heroTitle2FontUrl: (cleanData.heroTitle2FontUrl as string) ?? undefined,
-        heroTitle2FontSize: (cleanData.heroTitle2FontSize as number) ?? undefined,
-        heroTitle2Color: (cleanData.heroTitle2Color as string) ?? undefined,
-        heroTitle2ColorDark: (cleanData.heroTitle2ColorDark as string) ?? undefined,
-        heroTitle2ZIndex: (cleanData.heroTitle2ZIndex as number) ?? undefined,
-        heroTitle2OffsetX: (cleanData.heroTitle2OffsetX as number) ?? undefined,
-        heroTitle2OffsetY: (cleanData.heroTitle2OffsetY as number) ?? undefined,
-
-        // Nombre propietario
-        ownerNameText: (cleanData.ownerNameText as string) ?? undefined,
-        ownerNameFont: (cleanData.ownerNameFont as string) ?? undefined,
-        ownerNameFontUrl: (cleanData.ownerNameFontUrl as string) ?? undefined,
-        ownerNameFontSize: (cleanData.ownerNameFontSize as number) ?? undefined,
-        ownerNameColor: (cleanData.ownerNameColor as string) ?? undefined,
-        ownerNameColorDark: (cleanData.ownerNameColorDark as string) ?? undefined,
-        ownerNameZIndex: (cleanData.ownerNameZIndex as number) ?? undefined,
-        ownerNameOffsetX: (cleanData.ownerNameOffsetX as number) ?? undefined,
-        ownerNameOffsetY: (cleanData.ownerNameOffsetY as number) ?? undefined,
-
-        // Imágenes
-        heroMainImageUrl: (cleanData.heroMainImageUrl as string) ?? undefined,
-        heroMainImageAlt: (cleanData.heroMainImageAlt as string) ?? undefined,
-        heroMainImageCaption: (cleanData.heroMainImageCaption as string) ?? undefined,
-        heroImageStyle: (cleanData.heroImageStyle as string) ?? undefined,
-        heroMainImageZIndex: (cleanData.heroMainImageZIndex as number) ?? undefined,
-        heroMainImageOffsetX: (cleanData.heroMainImageOffsetX as number) ?? undefined,
-        heroMainImageOffsetY: (cleanData.heroMainImageOffsetY as number) ?? undefined,
-        heroImmersiveEnabled: (cleanData.heroImmersiveEnabled as boolean) ?? true,
-        heroBackdropMediaKind: (cleanData.heroBackdropMediaKind as string) ?? 'auto',
-        heroBackdropUrl: (cleanData.heroBackdropUrl as string) ?? undefined,
-        heroBackdropPosterUrl: (cleanData.heroBackdropPosterUrl as string) ?? undefined,
-        heroBackdropLoop: (cleanData.heroBackdropLoop as boolean) ?? true,
-        heroBackdropMuted: (cleanData.heroBackdropMuted as boolean) ?? true,
-        heroBackdropPlaysInline: (cleanData.heroBackdropPlaysInline as boolean) ?? true,
-        heroBackdropObjectFit: (cleanData.heroBackdropObjectFit as string) ?? 'cover',
-        heroBackdropObjectPosition: (cleanData.heroBackdropObjectPosition as string) ?? 'center',
-        heroBackdropMobileUrl: (cleanData.heroBackdropMobileUrl as string) ?? undefined,
-        heroBackdropMobileObjectPosition:
-          (cleanData.heroBackdropMobileObjectPosition as string) ?? undefined,
-        heroForegroundPortraitShow: (cleanData.heroForegroundPortraitShow as boolean) ?? false,
-        heroScrimEdge: (cleanData.heroScrimEdge as string) ?? 'left',
-        heroScrimShowLeft: (cleanData.heroScrimShowLeft as boolean) ?? true,
-        heroScrimShowRight: (cleanData.heroScrimShowRight as boolean) ?? false,
-        heroScrimShowTop: (cleanData.heroScrimShowTop as boolean) ?? true,
-        heroScrimExtentPercent: (cleanData.heroScrimExtentPercent as number) ?? 45,
-        heroScrimOpacity: (cleanData.heroScrimOpacity as number) ?? 80,
-        heroScrimColor: (cleanData.heroScrimColor as string) ?? undefined,
-        heroScrimColorDark: (cleanData.heroScrimColorDark as string) ?? undefined,
-        heroScrimFeatherPercent: (cleanData.heroScrimFeatherPercent as number) ?? 50,
-        heroBackdropTintOpacity: (cleanData.heroBackdropTintOpacity as number) ?? 0,
-        heroScrimMobileShowLeft: (cleanData.heroScrimMobileShowLeft as boolean) ?? false,
-        heroScrimMobileShowRight: (cleanData.heroScrimMobileShowRight as boolean) ?? false,
-        heroScrimMobileShowTop: (cleanData.heroScrimMobileShowTop as boolean) ?? true,
-        heroScrimMobileExtentPercent:
-          (cleanData.heroScrimMobileExtentPercent as number) ?? undefined,
-        heroScrimMobileOpacity: (cleanData.heroScrimMobileOpacity as number) ?? undefined,
-
-        illustrationUrl: (cleanData.illustrationUrl as string) ?? undefined,
-        illustrationAlt: (cleanData.illustrationAlt as string) ?? undefined,
-        illustrationZIndex: (cleanData.illustrationZIndex as number) ?? undefined,
-        illustrationOpacity: (cleanData.illustrationOpacity as number) ?? undefined,
-        illustrationSize: (cleanData.illustrationSize as number) ?? undefined,
-        illustrationOffsetX: (cleanData.illustrationOffsetX as number) ?? undefined,
-        illustrationOffsetY: (cleanData.illustrationOffsetY as number) ?? undefined,
-        illustrationRotation: (cleanData.illustrationRotation as number) ?? undefined,
-
-        // Botón CTA
-        ctaText: (cleanData.ctaText as string) ?? undefined,
-        ctaLink: (cleanData.ctaLink as string) ?? undefined,
-        ctaFont: (cleanData.ctaFont as string) ?? undefined,
-        ctaFontUrl: (cleanData.ctaFontUrl as string) ?? undefined,
-        ctaFontSize: (cleanData.ctaFontSize as number) ?? undefined,
-        ctaVariant: (cleanData.ctaVariant as string) ?? undefined,
-        ctaSize: (cleanData.ctaSize as string) ?? undefined,
-        ctaOffsetX: (cleanData.ctaOffsetX as number) ?? undefined,
-        ctaOffsetY: (cleanData.ctaOffsetY as number) ?? undefined,
-
-        // Mobile Overrides
-        heroTitle1MobileOffsetX: (cleanData.heroTitle1MobileOffsetX as number) ?? 0,
-        heroTitle1MobileOffsetY: (cleanData.heroTitle1MobileOffsetY as number) ?? 0,
-        heroTitle1MobileFontSize: (cleanData.heroTitle1MobileFontSize as number) ?? 56,
-        heroTitle2MobileOffsetX: (cleanData.heroTitle2MobileOffsetX as number) ?? 0,
-        heroTitle2MobileOffsetY: (cleanData.heroTitle2MobileOffsetY as number) ?? 0,
-        heroTitle2MobileFontSize: (cleanData.heroTitle2MobileFontSize as number) ?? 72,
-        ownerNameMobileOffsetX: (cleanData.ownerNameMobileOffsetX as number) ?? 0,
-        ownerNameMobileOffsetY: (cleanData.ownerNameMobileOffsetY as number) ?? 0,
-        ownerNameMobileFontSize: (cleanData.ownerNameMobileFontSize as number) ?? 28,
-        heroMainImageMobileOffsetX: (cleanData.heroMainImageMobileOffsetX as number) ?? 0,
-        heroMainImageMobileOffsetY: (cleanData.heroMainImageMobileOffsetY as number) ?? 0,
-        illustrationMobileOffsetX: (cleanData.illustrationMobileOffsetX as number) ?? 0,
-        illustrationMobileOffsetY: (cleanData.illustrationMobileOffsetY as number) ?? 0,
-        illustrationMobileSize: (cleanData.illustrationMobileSize as number) ?? 60,
-        illustrationMobileRotation: (cleanData.illustrationMobileRotation as number) ?? 0,
-        ctaMobileOffsetX: (cleanData.ctaMobileOffsetX as number) ?? 0,
-        ctaMobileOffsetY: (cleanData.ctaMobileOffsetY as number) ?? 0,
-        ctaMobileFontSize: (cleanData.ctaMobileFontSize as number) ?? 16,
-
-        // Sección destacados
-        showFeaturedImages: (cleanData.showFeaturedImages as boolean) ?? false,
-        featuredTitle: (cleanData.featuredTitle as string) ?? undefined,
-        featuredTitleFont: (cleanData.featuredTitleFont as string) ?? undefined,
-        featuredTitleFontUrl: (cleanData.featuredTitleFontUrl as string) ?? undefined,
-        featuredTitleFontSize: (cleanData.featuredTitleFontSize as number) ?? undefined,
-        featuredTitleColor: (cleanData.featuredTitleColor as string) ?? undefined,
-        featuredTitleColorDark: (cleanData.featuredTitleColorDark as string) ?? undefined,
-        featuredCount: (cleanData.featuredCount as number) ?? 3,
-
-        isActive: true,
-      }
-
-      settings = await prisma.homeSettings.create({
-        data: createData,
-      })
-    } else {
-      // 4. Data is strictly typed as UpdateInput
-      settings = await prisma.homeSettings.update({
-        where: { id: settings.id },
-        data: cleanData,
-      })
-    }
+    const settings = await upsertSingleton(prisma.homeSettings, HOME_SETTINGS_DEFAULTS, cleanData)
 
     revalidatePath(ROUTES.home)
     revalidateTag(CACHE_TAGS.homeSettings, 'max')
