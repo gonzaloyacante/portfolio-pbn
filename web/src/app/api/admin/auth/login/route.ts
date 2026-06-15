@@ -4,14 +4,13 @@
  * Genera access token (15 min JWT) + refresh token (30 días, opaco en BD).
  */
 
-import bcrypt from 'bcryptjs'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 import { prisma } from '@/lib/db'
 import { signAccessToken } from '@/lib/jwt-admin'
 import { logger } from '@/lib/logger'
-import { checkAuthRateLimit, recordFailedLoginAttempt } from '@/lib/auth-rate-limit'
+import { verifyCredentials } from '@/lib/verify-credentials'
 import { hashToken } from '@/lib/token-hash'
 import { pruneRefreshTokens } from '@/lib/refresh-token'
 
@@ -23,17 +22,6 @@ const loginSchema = z.object({
   device: z.enum(['android', 'ios']).optional(),
   pushToken: z.string().optional(),
 })
-
-// Hash bcrypt calculado en runtime (una sola vez, perezoso). Mismo costo (12)
-// que un hash real → bcrypt.compare tarda lo mismo, evitando enumeración por
-// timing (A12).
-let _dummyPasswordHash: string | null = null
-function getDummyPasswordHash(): string {
-  if (!_dummyPasswordHash) {
-    _dummyPasswordHash = bcrypt.hashSync('dummy-password-for-timing-equalization', 12)
-  }
-  return _dummyPasswordHash
-}
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 
@@ -54,68 +42,28 @@ export async function POST(req: Request) {
       req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip') ?? undefined
     const userAgent = req.headers.get('user-agent') ?? undefined
 
-    // Rate limiting por email + IP
-    const rateCheck = await checkAuthRateLimit(email.toLowerCase(), ipAddress ?? 'unknown')
-    if (!rateCheck.allowed) {
-      logger.warn(`[admin-login] Rate limit exceeded for ${email} from ${ipAddress}`)
-      return NextResponse.json(
-        {
-          success: false,
-          error: `Demasiados intentos. Espera ${rateCheck.lockoutMinutes} minutos.`,
-        },
-        { status: 429, headers: { 'Retry-After': String((rateCheck.lockoutMinutes ?? 15) * 60) } }
-      )
-    }
+    // 1-3. Rate limit, cuenta activa/bloqueada y contraseña — núcleo
+    // compartido con el login web (A12/A13/A7, ver verify-credentials.ts)
+    const result = await verifyCredentials(email, password, ipAddress ?? 'unknown')
 
-    // 1. Buscar usuario activo
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        role: true,
-        password: true,
-        avatarUrl: true,
-        failedLoginCount: true,
-        lockedUntil: true,
-        isActive: true,
-        deletedAt: true,
-      },
-    })
+    if (!result.ok) {
+      if (result.reason === 'rate_limited') {
+        logger.warn(`[admin-login] Rate limit exceeded for ${email} from ${ipAddress}`)
+        return NextResponse.json(
+          {
+            success: false,
+            error: `Demasiados intentos. Espera ${result.lockoutMinutes} minutos.`,
+          },
+          { status: 429, headers: { 'Retry-After': String((result.lockoutMinutes ?? 15) * 60) } }
+        )
+      }
 
-    if (!user || !user.isActive || user.deletedAt !== null) {
-      // Evitar enumeración de usuarios: siempre el mismo tiempo de respuesta (A12)
-      await bcrypt.compare(password, getDummyPasswordHash())
+      // 'locked' o 'invalid' → misma respuesta, para no revelar el estado de
+      // la cuenta (A13)
       return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 })
     }
 
-    // 2. Verificar bloqueo de cuenta — mismo status/mensaje que credenciales
-    // inválidas, para no revelar el estado de la cuenta (A13)
-    if (user.lockedUntil && user.lockedUntil > new Date()) {
-      await bcrypt.compare(password, getDummyPasswordHash())
-      return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 })
-    }
-
-    // 3. Verificar contraseña
-    const isValid = await bcrypt.compare(password, user.password)
-
-    if (!isValid) {
-      // Registrar intento fallido para rate limiting
-      await recordFailedLoginAttempt(email.toLowerCase(), ipAddress ?? 'unknown')
-
-      // Incrementar contador de fallos (bloqueo tras 5 intentos)
-      const newCount = user.failedLoginCount + 1
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          failedLoginCount: newCount,
-          lockedUntil: newCount >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null,
-        },
-      })
-
-      return NextResponse.json({ success: false, error: 'Credenciales inválidas' }, { status: 401 })
-    }
+    const { user } = result
 
     // 4. Generar tokens
     const accessToken = await signAccessToken({
@@ -152,8 +100,6 @@ export async function POST(req: Request) {
         data: {
           lastLoginAt: new Date(),
           lastLoginIp: ipAddress,
-          failedLoginCount: 0,
-          lockedUntil: null,
         },
       })
     })

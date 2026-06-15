@@ -39,6 +39,7 @@ vi.mock('@/lib/logger', () => ({
 vi.mock('@/lib/auth-rate-limit', () => ({
   checkAuthRateLimit: vi.fn().mockResolvedValue({ allowed: true, remainingAttempts: 5 }),
   recordFailedLoginAttempt: vi.fn().mockResolvedValue(undefined),
+  clearLoginAttempts: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('bcryptjs', () => ({
@@ -275,13 +276,13 @@ describe('POST /api/admin/auth/login', () => {
     const { POST } = await import('@/app/api/admin/auth/login/route')
     await POST(req)
 
-    // The last update call should reset failedLoginCount
+    // Alguna de las llamadas a update (la de verifyCredentials) debe resetear failedLoginCount
     const updateCalls = vi.mocked(prisma.user.update).mock.calls
-    const lastCall = updateCalls[updateCalls.length - 1]
-    expect(lastCall[0].data).toMatchObject({
-      failedLoginCount: 0,
-      lockedUntil: null,
-    })
+    expect(
+      updateCalls.some(
+        (call) => call[0].data.failedLoginCount === 0 && call[0].data.lockedUntil === null
+      )
+    ).toBe(true)
   })
 
   it('registers push token when provided', async () => {

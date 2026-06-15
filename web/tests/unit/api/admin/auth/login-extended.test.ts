@@ -37,6 +37,7 @@ vi.mock('@/lib/logger', () => ({
 vi.mock('@/lib/auth-rate-limit', () => ({
   checkAuthRateLimit: vi.fn().mockResolvedValue({ allowed: true, remainingAttempts: 5 }),
   recordFailedLoginAttempt: vi.fn().mockResolvedValue(undefined),
+  clearLoginAttempts: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('bcryptjs', () => ({
