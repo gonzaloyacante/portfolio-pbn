@@ -3,6 +3,7 @@
 import { ContactSettingsData, updateContactSettings } from '@/actions/settings/contact'
 import { SocialLinkData } from '@/actions/settings/social'
 import { useRouter } from 'next/navigation'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { Button, Input, Switch, ImageUpload } from '@/components/ui'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,7 +25,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<ContactSettingsFormData>({
     resolver: zodResolver(contactSettingsSchema),
     defaultValues: {
@@ -48,6 +49,8 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       showInstagramEmbed: settings?.showInstagramEmbed ?? false,
     },
   })
+
+  useUnsavedChanges(isDirty)
 
   const toggleFieldValues = useWatch({
     control,

@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { AboutSettingsData, updateAboutSettings } from '@/actions/settings/about'
 import { useRouter } from 'next/navigation'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { EditorSliderControl } from '@/components/features/visual-editor/components/EditorSliderControl'
 import { BRAND } from '@/lib/design-tokens'
 import { Button, ColorPicker, Input, ImageUpload, Switch } from '@/components/ui'
@@ -35,7 +36,7 @@ export function AboutEditor({ settings }: AboutEditorProps) {
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<AboutSettingsFormData>({
     resolver: zodResolver(aboutSettingsSchema),
     defaultValues: {
@@ -71,6 +72,8 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       profileImageShadowOpacity: settings?.profileImageShadowOpacity ?? 35,
     },
   })
+
+  useUnsavedChanges(isDirty)
 
   // Watch image fields for real-time updates and persistence
   const profileImageUrl = useWatch({ control, name: 'profileImageUrl' })

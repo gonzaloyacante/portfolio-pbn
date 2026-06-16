@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui'
 import { showToast } from '@/lib/toast'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { VisualEditorLayout } from '../visual-editor/VisualEditorLayout'
 import { HeroPreview } from './HeroPreview'
 import { PropertyPanel } from '../visual-editor/PropertyPanel'
@@ -20,10 +21,14 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const [selectedElement, setSelectedElement] = useState<EditableElement>(null)
   const [settings, setSettings] = useState<HomeSettingsData | null>(initialSettings)
   const [isSaving, setIsSaving] = useState(false)
+  const [isDirty, setIsDirty] = useState(false)
   const [viewportMode, setViewportMode] = useState<ViewportMode>('desktop')
+
+  useUnsavedChanges(isDirty)
 
   // ✅ TYPE-SAFE UPDATE con generics
   const handleUpdate = <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => {
+    setIsDirty(true)
     setSettings((prev) => {
       if (!prev) return null
       return { ...prev, [field]: value }
@@ -37,6 +42,7 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
     try {
       const result = await updateHomeSettings(settings)
       if (result.success) {
+        setIsDirty(false)
         showToast.success('Cambios guardados correctamente')
         router.refresh()
       } else {
