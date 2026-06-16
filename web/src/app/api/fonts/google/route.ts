@@ -81,13 +81,31 @@ export async function GET(req: NextRequest) {
     const data: GoogleFontsResponse = await response.json()
 
     // Transform to our format
-    const fonts = data.items.map((font) => ({
-      name: font.family,
-      category: font.category,
-      // Generate Google Fonts URL
-      url: `https://fonts.googleapis.com/css2?family=${font.family.replace(/ /g, '+')}:wght@400;500;600;700&display=swap`,
-      variants: font.variants,
-    }))
+    const fonts = data.items.map((font) => {
+      // Build :wght@ param from the real variants the font supports.
+      // "regular"/"italic" map to 400; "700"/"700italic" map to 700; etc.
+      // Using hardcoded weights causes 400 Bad Request for fonts like Great Vibes (400 only).
+      const numericWeights = [
+        ...new Set(
+          font.variants
+            .map((v) => {
+              if (v === 'regular' || v === 'italic') return '400'
+              const m = v.match(/^(\d+)/)
+              return m ? m[1] : null
+            })
+            .filter((w): w is string => w !== null)
+        ),
+      ].sort((a, b) => Number(a) - Number(b))
+
+      const weightsParam = numericWeights.length > 0 ? numericWeights.join(';') : '400'
+
+      return {
+        name: font.family,
+        category: font.category,
+        url: `https://fonts.googleapis.com/css2?family=${font.family.replace(/ /g, '+')}:wght@${weightsParam}&display=swap`,
+        variants: font.variants,
+      }
+    })
 
     return NextResponse.json({ fonts, count: fonts.length })
   } catch (error) {
