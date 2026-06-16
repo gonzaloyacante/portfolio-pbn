@@ -4,6 +4,25 @@ const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN
 
 const sentryEnvironment = process.env.VERCEL_ENV || process.env.NODE_ENV || 'development'
 
+const EMAIL_RE = /([A-Z0-9._%+-]+)@([A-Z0-9.-]+\.[A-Z]{2,})/gi
+
+function scrubPii(s: string): string {
+  return s.replace(EMAIL_RE, (_m, user: string, host: string) => `${user.slice(0, 2)}***@${host}`)
+}
+
+function scrubEvent(event: Sentry.ErrorEvent): Sentry.ErrorEvent {
+  if (event.message) {
+    event.message = scrubPii(event.message)
+  }
+  event.exception?.values?.forEach((ex) => {
+    if (ex.value) ex.value = scrubPii(ex.value)
+  })
+  if (event.request?.data && typeof event.request.data === 'string') {
+    event.request.data = scrubPii(event.request.data)
+  }
+  return event
+}
+
 Sentry.init({
   dsn: SENTRY_DSN,
 
@@ -21,11 +40,10 @@ Sentry.init({
     'unknown',
 
   beforeSend(event) {
-    // No reenviar errores si el entorno es local
     if (sentryEnvironment === 'development') {
       return null
     }
-    return event
+    return scrubEvent(event)
   },
 
   beforeSendTransaction(event) {

@@ -2,9 +2,13 @@ type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 export type LogContext = Record<string, unknown> | undefined
 
+function redactMsg(msg: string): string {
+  return redactPhone(redactEmail(msg))
+}
+
 function format(level: LogLevel, msg: string, ctx?: LogContext) {
   const ts = new Date().toISOString()
-  const base = { ts, level, msg } as Record<string, unknown>
+  const base = { ts, level, msg: redactMsg(msg) } as Record<string, unknown>
   const merged = ctx ? { ...base, ...ctx } : base
   return JSON.stringify(merged)
 }
