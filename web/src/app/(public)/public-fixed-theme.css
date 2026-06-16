@@ -622,20 +622,20 @@
   border-color: var(--public-testimonial-card-border);
 }
 
-.public-testimonial-field {
-  background-color: var(--public-testimonial-field-bg) !important;
-  border-color: var(--public-testimonial-field-border) !important;
-  color: var(--public-testimonial-field-text) !important;
+.public-fixed-theme .public-testimonial-field {
+  background-color: var(--public-testimonial-field-bg);
+  border-color: var(--public-testimonial-field-border);
+  color: var(--public-testimonial-field-text);
   caret-color: var(--public-testimonial-field-text);
 }
 
-.public-testimonial-field::placeholder {
-  color: var(--public-testimonial-field-placeholder) !important;
+.public-fixed-theme .public-testimonial-field::placeholder {
+  color: var(--public-testimonial-field-placeholder);
   opacity: 0.65;
 }
 
-.public-testimonial-field:focus {
-  border-color: var(--public-testimonial-field-focus-border) !important;
+.public-fixed-theme .public-testimonial-field:focus {
+  border-color: var(--public-testimonial-field-focus-border);
   box-shadow: 0 0 0 2px var(--public-testimonial-field-focus-ring);
 }
 
@@ -643,13 +643,13 @@
   --tw-ring-color: var(--public-testimonial-field-focus-border);
 }
 
-.public-testimonial-labels label,
-.public-testimonial-labels legend {
-  color: var(--public-testimonial-text) !important;
+.public-fixed-theme .public-testimonial-labels label,
+.public-fixed-theme .public-testimonial-labels legend {
+  color: var(--public-testimonial-text);
 }
 
-.public-testimonial-labels p {
-  color: var(--public-testimonial-meta) !important;
+.public-fixed-theme .public-testimonial-labels p {
+  color: var(--public-testimonial-meta);
 }
 
 .public-testimonial-success-panel {
@@ -810,15 +810,15 @@
   border: 1px solid var(--public-cookie-detail-border);
 }
 
-.public-cookie-primary-btn {
-  background-color: var(--public-cookie-primary-bg) !important;
-  color: var(--public-cookie-primary-text) !important;
+.public-fixed-theme .public-cookie-primary-btn {
+  background-color: var(--public-cookie-primary-bg);
+  color: var(--public-cookie-primary-text);
   border: 1px solid var(--public-cookie-primary-bg);
 }
 
-.public-cookie-secondary-btn {
-  background-color: var(--public-cookie-secondary-bg) !important;
-  color: var(--public-cookie-secondary-text) !important;
+.public-fixed-theme .public-cookie-secondary-btn {
+  background-color: var(--public-cookie-secondary-bg);
+  color: var(--public-cookie-secondary-text);
   border: 1px solid var(--public-cookie-secondary-border);
 }
 
