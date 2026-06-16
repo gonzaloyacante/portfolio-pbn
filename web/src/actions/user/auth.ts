@@ -7,10 +7,15 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { emailService } from '@/lib/email-service'
 import { checkApiRateLimit } from '@/lib/rate-limit-guards'
+import { createRateLimiter } from '@/lib/rate-limit'
+import { RATE_LIMITS } from '@/lib/rate-limit-config'
+import { verifyRecaptchaToken } from '@/lib/recaptcha'
 import { hashToken } from '@/lib/token-hash'
 import { z } from 'zod'
 import crypto from 'crypto'
 import bcrypt from 'bcryptjs'
+
+const passwordResetLimiter = createRateLimiter(RATE_LIMITS.PASSWORD_RESET)
 
 // Schemas
 const RequestResetSchema = z.object({
@@ -33,7 +38,12 @@ const ResetPasswordSchema = z.object({
     }),
 })
 
-export async function requestPasswordReset(email: string) {
+export async function requestPasswordReset(email: string, recaptchaToken: string) {
+  const isHuman = await verifyRecaptchaToken(recaptchaToken)
+  if (!isHuman) {
+    return { success: false, message: 'Verificación de seguridad fallida. Inténtalo de nuevo.' }
+  }
+
   const result = RequestResetSchema.safeParse({ email })
   if (!result.success) {
     return { success: false, message: result.error.issues[0].message }
@@ -41,6 +51,13 @@ export async function requestPasswordReset(email: string) {
 
   const rl = await checkApiRateLimit()
   if (rl) return { success: false, message: rl.error }
+
+  const emailRl = await passwordResetLimiter.check(email)
+  if (!emailRl.allowed) {
+    logger.warn('Password reset rate limit exceeded', { email })
+    return { success: false, message: RATE_LIMITS.PASSWORD_RESET.errorMessage }
+  }
+  void passwordResetLimiter.record(email)
 
   try {
     const user = await prisma.user.findUnique({ where: { email } })

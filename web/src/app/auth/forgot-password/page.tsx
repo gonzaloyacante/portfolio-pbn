@@ -11,12 +11,14 @@ import { requestPasswordReset } from '@/actions/user/auth'
 import { FadeIn, Button, Input } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
+  const { executeRecaptcha } = useGoogleReCaptcha()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -24,7 +26,8 @@ export default function ForgotPasswordPage() {
     setStatus('idle')
 
     try {
-      const result = await requestPasswordReset(email)
+      const token = executeRecaptcha ? await executeRecaptcha('password_reset') : ''
+      const result = await requestPasswordReset(email, token)
       if (result.success) {
         setStatus('success')
         setMessage(result.message)
