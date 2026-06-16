@@ -150,7 +150,7 @@ export default async function PublicLayout({ children }: { children: React.React
           {[
             '.nb-brand{',
             visibility.navbarBrandFont
-              ? `font-family:'${visibility.navbarBrandFont.replace(/'/g, '')},sans-serif !important;`
+              ? `font-family:'${visibility.navbarBrandFont.replace(/'/g, '')}',sans-serif !important;`
               : '',
             visibility.navbarBrandFontSize
               ? `font-size:${Number(visibility.navbarBrandFontSize)}px !important;`
