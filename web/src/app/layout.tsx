@@ -51,12 +51,13 @@ export const metadata: Metadata = {
   ...(googleSiteVerification ? { verification: { google: googleSiteVerification } } : {}),
   icons: {
     icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
       { url: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
       { url: '/icons/icon-128x128.png', sizes: '128x128', type: 'image/png' },
       { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
     ],
-    apple: [{ url: '/icons/icon-152x152.png', sizes: '152x152', type: 'image/png' }],
-    shortcut: '/icons/icon-96x96.png',
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
+    shortcut: '/favicon.ico',
   },
   manifest: '/manifest.webmanifest',
 }
