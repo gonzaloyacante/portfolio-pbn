@@ -151,7 +151,13 @@ class RetryInterceptor extends Interceptor {
     return Duration(seconds: 1 << attempt); // 1s, 2s, 4s
   }
 
+  // POST and PATCH are non-idempotent: retrying risks duplicate mutations.
+  // PUT and DELETE are idempotent per RFC 7231 and safe to retry.
+  static const _idempotentMethods = {'GET', 'HEAD', 'OPTIONS', 'PUT', 'DELETE'};
+
   static bool _shouldRetry(DioException err) {
+    final method = err.requestOptions.method.toUpperCase();
+    if (!_idempotentMethods.contains(method)) return false;
     if (err.error is NetworkException) return true;
     final status = err.response?.statusCode;
     return status == 429 || status == 502 || status == 503 || status == 504;
