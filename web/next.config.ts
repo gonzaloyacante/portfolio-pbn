@@ -139,8 +139,6 @@ function buildSecurityHeaders(): { key: string; value: string }[] {
 }
 
 const nextConfig: NextConfig = {
-  // Enable source maps in production for better Sentry stack traces and Lighthouse audits
-  productionBrowserSourceMaps: true,
   // Extend client-side Router Cache so navigating back to visited pages
   // doesn't trigger a server re-fetch and show the loading skeleton.
   // 300s (5min) means: navigating back to a page visited within 5 minutes
@@ -167,22 +165,6 @@ const nextConfig: NextConfig = {
     // Cloudinary ya hace transformaciones, formato y calidad por URL.
     // Evita que cualquier uso futuro de next/image pase por la cuota de Image Optimization de Vercel.
     unoptimized: true,
-    formats: ['image/webp', 'image/avif'],
-    // Dominios permitidos para imágenes externas (si aplica)
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-      },
-    ],
   },
 
   // Rewrites: Mapeo de URLs en Español -> Carpetas en Inglés

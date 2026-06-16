@@ -3,6 +3,8 @@
  * Minimum passing score: 0.5 (range 0.0–1.0).
  */
 
+import { logger } from '@/lib/logger'
+
 interface RecaptchaResponse {
   success: boolean
   score: number
@@ -15,8 +17,10 @@ interface RecaptchaResponse {
 export async function verifyRecaptchaToken(token: string): Promise<boolean> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY
   if (!secretKey) {
-    // In development without keys configured, skip verification
     if (process.env.NODE_ENV === 'development') return true
+    logger.error(
+      'RECAPTCHA_SECRET_KEY not set in production — verification skipped, rejecting request'
+    )
     return false
   }
 
@@ -29,11 +33,17 @@ export async function verifyRecaptchaToken(token: string): Promise<boolean> {
       body: new URLSearchParams({ secret: secretKey, response: token }).toString(),
     })
 
-    if (!res.ok) return false
+    if (!res.ok) {
+      logger.warn('reCAPTCHA siteverify HTTP error', { status: res.status })
+      return false
+    }
 
     const data = (await res.json()) as RecaptchaResponse
     return data.success && data.score >= 0.5
-  } catch {
+  } catch (err) {
+    logger.error('reCAPTCHA siteverify network failure', {
+      error: err instanceof Error ? err.message : String(err),
+    })
     return false
   }
 }
