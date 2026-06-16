@@ -14,12 +14,3 @@ Future<DashboardStats> dashboardStats(Ref ref) {
   ref.keepAlive();
   return ref.watch(dashboardRepositoryProvider).getOverview();
 }
-
-// ── dashboardChartsProvider ───────────────────────────────────────────────────
-
-/// Provee los datos de tendencias para los gráficos del dashboard.
-@riverpod
-Future<DashboardCharts> dashboardCharts(Ref ref) {
-  ref.keepAlive();
-  return ref.watch(dashboardRepositoryProvider).getCharts();
-}

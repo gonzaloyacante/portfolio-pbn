@@ -100,54 +100,6 @@ class SkeletonDeviceUsageSection extends StatelessWidget {
   }
 }
 
-/// Skeleton del widget `VisitorsMapWidget`:
-/// caja de mapa + lista de países.
-class SkeletonVisitorsMap extends StatelessWidget {
-  const SkeletonVisitorsMap({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ShimmerLoader(
-      child: Column(
-        children: [
-          AppCard(
-            elevation: 0,
-            borderRadius: BorderRadius.circular(16),
-            padding: EdgeInsets.zero,
-            child: const ShimmerBox(
-              width: double.infinity,
-              height: 220,
-              borderRadius: 16,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          ...List.generate(
-            4,
-            (_) => const Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  ShimmerBox(width: 24, height: 16, borderRadius: 3),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: ShimmerBox(
-                      width: double.infinity,
-                      height: 11,
-                      borderRadius: 4,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  ShimmerBox(width: 36, height: 11, borderRadius: 4),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // ── Social Links ──────────────────────────────────────────────────────────────
 
 /// Réplica de un tile de red social:

@@ -92,10 +92,6 @@ void main() {
     test('analyticsOverview is correct', () {
       expect(Endpoints.analyticsOverview, '/api/admin/analytics/overview');
     });
-
-    test('analyticsCharts is correct', () {
-      expect(Endpoints.analyticsCharts, '/api/admin/analytics/charts');
-    });
   });
 
   group('Endpoints — trash', () {
@@ -150,7 +146,6 @@ void main() {
         Endpoints.settings,
         Endpoints.analytics,
         Endpoints.analyticsOverview,
-        Endpoints.analyticsCharts,
         Endpoints.socialLinks,
         Endpoints.trash,
         Endpoints.pushRegister,

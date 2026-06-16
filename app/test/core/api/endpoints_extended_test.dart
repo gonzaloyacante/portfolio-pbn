@@ -149,9 +149,6 @@ void main() {
     test('analyticsOverview contains overview', () {
       expect(Endpoints.analyticsOverview, contains('overview'));
     });
-    test('analyticsCharts contains charts', () {
-      expect(Endpoints.analyticsCharts, contains('charts'));
-    });
   });
 
   // ── Social Links endpoints ────────────────────────────────────────────────

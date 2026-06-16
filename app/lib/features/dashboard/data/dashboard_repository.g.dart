@@ -101,26 +101,6 @@ _ChartDataPoint _$ChartDataPointFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ChartDataPointToJson(_ChartDataPoint instance) =>
     <String, dynamic>{'label': instance.label, 'count': instance.count};
 
-_DashboardCharts _$DashboardChartsFromJson(Map<String, dynamic> json) =>
-    _DashboardCharts(
-      dailyPageViews:
-          (json['dailyPageViews'] as List<dynamic>?)
-              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-      monthlyBookings:
-          (json['monthlyBookings'] as List<dynamic>?)
-              ?.map((e) => ChartDataPoint.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
-    );
-
-Map<String, dynamic> _$DashboardChartsToJson(_DashboardCharts instance) =>
-    <String, dynamic>{
-      'dailyPageViews': instance.dailyPageViews,
-      'monthlyBookings': instance.monthlyBookings,
-    };
-
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************

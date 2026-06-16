@@ -87,20 +87,6 @@ abstract class ChartDataPoint with _$ChartDataPoint {
       _$ChartDataPointFromJson(json);
 }
 
-// ── DashboardCharts ────────────────────────────────────────────────────────────
-
-/// Datos de tendencias para los gráficos del dashboard.
-@freezed
-abstract class DashboardCharts with _$DashboardCharts {
-  const factory DashboardCharts({
-    @Default([]) List<ChartDataPoint> dailyPageViews,
-    @Default([]) List<ChartDataPoint> monthlyBookings,
-  }) = _DashboardCharts;
-
-  factory DashboardCharts.fromJson(Map<String, dynamic> json) =>
-      _$DashboardChartsFromJson(json);
-}
-
 // ── DashboardRepository ────────────────────────────────────────────────────────
 
 /// Accede a los endpoints de analytics del panel de administración.
@@ -120,21 +106,6 @@ class DashboardRepository {
     );
     if (!apiResponse.success || apiResponse.data == null) {
       throw Exception(apiResponse.error ?? 'Error al obtener métricas');
-    }
-    return apiResponse.data!;
-  }
-
-  /// Obtiene los datos de tendencias para los gráficos del dashboard.
-  Future<DashboardCharts> getCharts() async {
-    final resp = await _client.get<Map<String, dynamic>>(
-      Endpoints.analyticsCharts,
-    );
-    final apiResponse = ApiResponse<DashboardCharts>.fromJson(
-      resp,
-      (json) => DashboardCharts.fromJson(json as Map<String, dynamic>),
-    );
-    if (!apiResponse.success || apiResponse.data == null) {
-      throw Exception(apiResponse.error ?? 'Error al obtener gráficos');
     }
     return apiResponse.data!;
   }
