@@ -45,7 +45,7 @@ declare global {
 // ── MyMemory fallback API (completamente gratuita, sin API key) ───────────────
 async function translateWithMyMemory(text: string, from: Language, to: Language): Promise<string> {
   // MyMemory: 5000 chars/día gratuito sin registro. Sin API key.
-  const url = new URL('https://api.mymemory.translated.world/get')
+  const url = new URL('https://api.mymemory.translated.net/get')
   url.searchParams.set('q', text)
   url.searchParams.set('langpair', `${from}|${to}`)
 
