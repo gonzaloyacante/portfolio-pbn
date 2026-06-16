@@ -67,9 +67,16 @@ export async function DELETE(req: Request) {
       )
     }
 
-    await prisma.socialLink.delete({
+    const deleted = await prisma.socialLink.deleteMany({
       where: id ? { id } : { platform: platform! },
     })
+
+    if (deleted.count === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Red social no encontrada' },
+        { status: 404 }
+      )
+    }
 
     revalidatePath(ROUTES.public.contact)
     revalidateTag(CACHE_TAGS.socialLinks, 'max')

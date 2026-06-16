@@ -140,7 +140,10 @@ export async function deleteSocialLink(id: string) {
     // 2. 🚦 Rate Limiting
     await checkSettingsRateLimit(user.id as string)
 
-    await prisma.socialLink.delete({ where: { id } })
+    const result = await prisma.socialLink.deleteMany({ where: { id } })
+    if (result.count === 0) {
+      return { success: false, error: 'Enlace social no encontrado' }
+    }
     // social links only appear on /contacto page (not in any shared layout)
     revalidatePath(ROUTES.public.contact)
     revalidateTag(CACHE_TAGS.socialLinks, 'max')
