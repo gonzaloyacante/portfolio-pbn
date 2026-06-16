@@ -77,7 +77,6 @@ class AppUpdatePageNotifier extends _$AppUpdatePageNotifier {
 
     try {
       final repo = ref.read(appUpdateRepositoryProvider);
-      await repo.cleanOldApks();
 
       final file = await repo.downloadApk(
         release,
@@ -87,6 +86,8 @@ class AppUpdatePageNotifier extends _$AppUpdatePageNotifier {
           }
         },
       );
+      // Clean old APKs after successful download, preserving the new one.
+      await repo.cleanOldApks(keepPath: file.path);
 
       state = state.copyWith(phase: UpdatePhase.verifying);
       await Future<void>.delayed(const Duration(milliseconds: 500));

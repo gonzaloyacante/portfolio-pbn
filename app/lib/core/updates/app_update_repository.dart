@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
@@ -247,9 +248,19 @@ class AppUpdateRepository {
   Future<void> _verifySha256(File file, String expected) async {
     AppLogger.debug('AppUpdateRepository: verificando SHA-256…');
     try {
-      final bytes = await file.readAsBytes();
-      final digest = sha256.convert(bytes);
-      final actual = digest.toString().toLowerCase();
+      // Stream the file in chunks to avoid loading the entire APK into RAM.
+      Digest? digest;
+      final input = sha256.startChunkedConversion(
+        ChunkedConversionSink.withCallback((List<Digest> list) {
+          digest = list.first;
+        }),
+      );
+      await for (final chunk in file.openRead()) {
+        input.add(chunk);
+      }
+      input.close();
+
+      final actual = digest!.toString().toLowerCase();
       final normalizedExpected = expected.toLowerCase().trim();
 
       if (actual != normalizedExpected) {
@@ -305,8 +316,8 @@ class AppUpdateRepository {
   // ── cleanOldApks ──────────────────────────────────────────────────────────
 
   /// Elimina APKs cacheados de versiones anteriores para liberar espacio.
-  /// Se llama tras una instalación exitosa o al inicio de una nueva descarga.
-  Future<void> cleanOldApks() async {
+  /// Se llama tras una descarga exitosa; [keepPath] evita borrar el APK recién descargado.
+  Future<void> cleanOldApks({String? keepPath}) async {
     try {
       final dir = Platform.isAndroid
           ? await getExternalStorageDirectory()
@@ -318,6 +329,7 @@ class AppUpdateRepository {
 
       for (final entity in updatesDir.listSync()) {
         if (entity is File && entity.path.endsWith('.apk')) {
+          if (keepPath != null && entity.path == keepPath) continue;
           try {
             entity.deleteSync();
             AppLogger.debug(

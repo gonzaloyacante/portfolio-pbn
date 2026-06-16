@@ -707,7 +707,7 @@ int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,user);
 
 @override
 String toString() {
-  return 'AuthLoginResponse(accessToken: $accessToken, refreshToken: $refreshToken, user: $user)';
+  return 'AuthLoginResponse(accessToken: [redacted], refreshToken: [redacted], user: $user)';
 }
 
 
@@ -919,7 +919,7 @@ int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,user);
 
 @override
 String toString() {
-  return 'AuthLoginResponse(accessToken: $accessToken, refreshToken: $refreshToken, user: $user)';
+  return 'AuthLoginResponse(accessToken: [redacted], refreshToken: [redacted], user: $user)';
 }
 
 
@@ -994,7 +994,7 @@ int get hashCode => Object.hash(runtimeType,accessToken,refreshToken);
 
 @override
 String toString() {
-  return 'AuthRefreshResponse(accessToken: $accessToken, refreshToken: $refreshToken)';
+  return 'AuthRefreshResponse(accessToken: [redacted], refreshToken: [redacted])';
 }
 
 
@@ -1195,7 +1195,7 @@ int get hashCode => Object.hash(runtimeType,accessToken,refreshToken);
 
 @override
 String toString() {
-  return 'AuthRefreshResponse(accessToken: $accessToken, refreshToken: $refreshToken)';
+  return 'AuthRefreshResponse(accessToken: [redacted], refreshToken: [redacted])';
 }
 
 

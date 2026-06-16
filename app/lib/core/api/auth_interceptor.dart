@@ -215,6 +215,13 @@ class AuthInterceptor extends Interceptor {
         ...options.headers,
         if (token != null) 'Authorization': 'Bearer $token',
       },
+      responseType: options.responseType,
+      contentType: options.contentType,
+      receiveTimeout: options.receiveTimeout,
+      sendTimeout: options.sendTimeout,
+      followRedirects: options.followRedirects,
+      receiveDataWhenStatusError: options.receiveDataWhenStatusError,
+      validateStatus: options.validateStatus,
     );
 
     return dio.request<dynamic>(
