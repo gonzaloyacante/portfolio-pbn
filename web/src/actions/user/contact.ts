@@ -51,9 +51,17 @@ function sanitizeText(text: string): string {
 
 export async function sendContactEmail(formData: FormData) {
   const recaptchaToken = formData.get('recaptchaToken') as string
-  const isHuman = await verifyRecaptchaToken(recaptchaToken)
-  if (!isHuman) {
-    return { success: false, message: 'Verificación de seguridad fallida. Inténtalo de nuevo.' }
+
+  if (recaptchaToken) {
+    // reCAPTCHA token present — verify it strictly.
+    const isHuman = await verifyRecaptchaToken(recaptchaToken)
+    if (!isHuman) {
+      return { success: false, message: 'Verificación de seguridad fallida. Inténtalo de nuevo.' }
+    }
+  } else {
+    // reCAPTCHA unavailable (adblock, network block, etc.) — allow through.
+    // The IP-based rate limit (3 req/10 min) still applies below.
+    logger.warn('Contact form submitted without reCAPTCHA token')
   }
 
   const rawData = {
