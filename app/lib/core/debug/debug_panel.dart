@@ -18,7 +18,10 @@ import 'debug_provider.dart';
 import 'server_url_provider.dart';
 import '../theme/app_radius.dart';
 
-part 'debug_panel_cards.dart';
+part 'debug_panel_widgets.dart';
+part 'debug_panel_server_card.dart';
+part 'debug_panel_info_cards.dart';
+part 'debug_panel_action_cards.dart';
 
 // ── DebugPanel ────────────────────────────────────────────────────────────────
 
