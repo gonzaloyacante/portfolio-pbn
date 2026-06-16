@@ -24,6 +24,9 @@
   --public-portfolio: #ffaadd;
   --public-nav-text: #ffaadd;
   --public-nav-bg: #6c0a0a;
+  --public-hero-cta-bg: #6c0a0a;
+  --public-hero-cta-text: #ffaadd;
+  --public-hero-cta-border: #6c0a0a;
   --public-owner-name: #6c0a0a;
   --public-about-text: #000000;
   --public-about-title: #6c0a0a;
@@ -171,6 +174,9 @@
   --public-portfolio: #ffaadd;
   --public-nav-text: #6c0a0a;
   --public-nav-bg: #ffaadd;
+  --public-hero-cta-bg: #ffaadd;
+  --public-hero-cta-text: #6c0a0a;
+  --public-hero-cta-border: #ffaadd;
   --public-owner-name: #ffaadd;
   --public-about-text: #fff1f9;
   --public-about-title: #ffaadd;
@@ -423,9 +429,9 @@
 }
 
 .public-hero-cta-button {
-  background-color: var(--public-nav-bg);
-  color: var(--public-nav-text);
-  border: 1px solid var(--public-nav-bg);
+  background-color: var(--public-hero-cta-bg);
+  color: var(--public-hero-cta-text);
+  border: 1px solid var(--public-hero-cta-border);
 }
 
 .public-home-featured-card {
