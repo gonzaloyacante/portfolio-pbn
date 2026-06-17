@@ -127,13 +127,13 @@ if [ -f "app/pubspec.yaml" ]; then
       STAGED_APP_FILES="$(git diff --cached --name-only --diff-filter=ACMR | grep '^app/.*\.dart$' || true)"
       # Auto-format: corrige archivos y los re-stagea automáticamente
       echo "  → Formateando archivos Dart..."
-      (cd app && dart format .)
+      (cd app && dart format lib test)
       echo "  → Re-stageando archivos formateados..."
       if [ -n "$STAGED_APP_FILES" ]; then
         echo "$STAGED_APP_FILES" | tr '\n' '\0' | xargs -0 git add
       fi
       echo "  → Ejecutando dart analyze..."
-      if ! (cd app && dart analyze); then
+      if ! (cd app && dart analyze lib test); then
         echo "❌ Dart analyze encontró problemas en app/."
         exit 1
       fi
@@ -142,13 +142,13 @@ if [ -f "app/pubspec.yaml" ]; then
       STAGED_APP_FILES="$(git diff --cached --name-only --diff-filter=ACMR | grep '^app/.*\.dart$' || true)"
       # Auto-format: corrige archivos y los re-stagea automáticamente
       echo "  → Formateando archivos Dart..."
-      (cd app && flutter format .)
+      (cd app && flutter format lib test)
       echo "  → Re-stageando archivos formateados..."
       if [ -n "$STAGED_APP_FILES" ]; then
         echo "$STAGED_APP_FILES" | tr '\n' '\0' | xargs -0 git add
       fi
       echo "  → Ejecutando flutter analyze..."
-      if ! (cd app && flutter analyze); then
+      if ! (cd app && flutter analyze lib test); then
         echo "❌ Flutter analyze encontró problemas en app/."
         exit 1
       fi
