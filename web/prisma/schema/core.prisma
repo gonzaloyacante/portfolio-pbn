@@ -2,13 +2,18 @@
 // CORE MODELS - Enhanced with Professional Fields
 // ============================================
 
+enum UserRole {
+  ADMIN
+  GUEST
+}
+
 /// User management with comprehensive audit trail
 model User {
   id               String    @id @default(cuid())
   email            String    @unique
   password         String // Hashed with bcrypt
   name             String?
-  role             String    @default("ADMIN") // ADMIN, EDITOR, VIEWER
+  role             UserRole  @default(ADMIN)
   avatarUrl        String?
   // Security
   emailVerified    DateTime?
