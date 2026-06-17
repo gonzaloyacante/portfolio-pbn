@@ -31,7 +31,7 @@ class GalleryImageViewer extends StatelessWidget {
             child: InteractiveViewer(
               minScale: 0.5,
               maxScale: 5.0,
-              child: AppNetworkImage(
+              child: CloudinaryNetworkImage(
                 imageUrl: imageUrl,
                 fit: BoxFit.contain,
                 placeholder: const Center(

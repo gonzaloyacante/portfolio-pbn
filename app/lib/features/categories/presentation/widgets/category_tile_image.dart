@@ -17,7 +17,7 @@ class CategoryTileImage extends StatelessWidget {
     return SizedBox(
       width: 80,
       child: coverImageUrl != null && coverImageUrl!.isNotEmpty
-          ? AppNetworkImage(
+          ? CloudinaryNetworkImage(
               imageUrl: coverImageUrl!,
               fit: BoxFit.cover,
               placeholder: ColoredBox(

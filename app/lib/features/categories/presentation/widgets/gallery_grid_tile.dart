@@ -33,7 +33,7 @@ class GalleryGridTile extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: onTap,
-            child: AppNetworkImage(
+            child: CloudinaryNetworkImage(
               imageUrl: item.url,
               fit: BoxFit.cover,
               placeholder: ColoredBox(

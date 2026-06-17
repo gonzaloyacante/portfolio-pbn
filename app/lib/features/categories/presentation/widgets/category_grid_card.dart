@@ -37,7 +37,7 @@ class CategoryGridCard extends StatelessWidget {
                   child:
                       item.coverImageUrl != null &&
                           item.coverImageUrl!.isNotEmpty
-                      ? AppNetworkImage(
+                      ? CloudinaryNetworkImage(
                           imageUrl: item.coverImageUrl!,
                           width: double.infinity,
                           height: double.infinity,

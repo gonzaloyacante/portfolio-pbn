@@ -51,7 +51,7 @@ class GalleryTile extends StatelessWidget {
                 child: SizedBox(
                   width: 72,
                   height: 72,
-                  child: AppNetworkImage(
+                  child: CloudinaryNetworkImage(
                     imageUrl: item.url,
                     fit: BoxFit.cover,
                     placeholder: ColoredBox(
