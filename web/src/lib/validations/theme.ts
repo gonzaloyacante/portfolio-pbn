@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { zHexColor } from './shared'
+import { zHexColor, zGoogleFontsUrlNullable } from './shared'
 
 // Theme Editor
 export const themeEditorSchema = z.object({
@@ -22,24 +22,24 @@ export const themeEditorSchema = z.object({
 
   // Typography - Base
   headingFont: z.string().min(1, 'Fuente requerida'),
-  headingFontUrl: z.string().optional().nullable(),
+  headingFontUrl: zGoogleFontsUrlNullable,
   headingFontSize: z.number().min(10).max(200),
   scriptFont: z.string().min(1, 'Fuente requerida'),
-  scriptFontUrl: z.string().optional().nullable(),
+  scriptFontUrl: zGoogleFontsUrlNullable,
   scriptFontSize: z.number().min(10).max(200),
   bodyFont: z.string().min(1, 'Fuente requerida'),
-  bodyFontUrl: z.string().optional().nullable(),
+  bodyFontUrl: zGoogleFontsUrlNullable,
   bodyFontSize: z.number().min(10).max(200),
 
   // Typography - Brand
   brandFont: z.string().optional().nullable(),
-  brandFontUrl: z.string().optional().nullable(),
+  brandFontUrl: zGoogleFontsUrlNullable,
   brandFontSize: z.number().min(10).max(300).optional().nullable(),
   portfolioFont: z.string().optional().nullable(),
-  portfolioFontUrl: z.string().optional().nullable(),
+  portfolioFontUrl: zGoogleFontsUrlNullable,
   portfolioFontSize: z.number().min(10).max(300).optional().nullable(),
   signatureFont: z.string().optional().nullable(),
-  signatureFontUrl: z.string().optional().nullable(),
+  signatureFontUrl: zGoogleFontsUrlNullable,
   signatureFontSize: z.number().min(10).max(200).optional().nullable(),
 
   borderRadius: z.number().min(0).max(100),

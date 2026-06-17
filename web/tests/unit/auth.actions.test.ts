@@ -25,6 +25,9 @@ vi.mock('bcryptjs', () => ({
 vi.mock('next/navigation', () => ({ redirect: vi.fn() }))
 vi.mock('@/lib/auth', () => ({ authOptions: {} }))
 vi.mock('next-auth', () => ({ getServerSession: vi.fn(() => Promise.resolve(null)) }))
+vi.mock('@/lib/recaptcha', () => ({
+  verifyRecaptchaToken: vi.fn(() => Promise.resolve(true)),
+}))
 
 describe('Auth Actions', () => {
   beforeEach(() => {
@@ -37,7 +40,7 @@ describe('Auth Actions', () => {
       const { prisma } = await import('@/lib/db')
       vi.mocked(prisma.user.findUnique).mockResolvedValue(null)
 
-      const result = await requestPasswordReset('nonexistent@example.com')
+      const result = await requestPasswordReset('nonexistent@example.com', 'test-token')
 
       expect(result.success).toBe(true)
       expect(result.message).toContain('enlace de recuperación')
@@ -45,7 +48,7 @@ describe('Auth Actions', () => {
     })
 
     it('should reject invalid email format', async () => {
-      const result = await requestPasswordReset('not-an-email')
+      const result = await requestPasswordReset('not-an-email', 'test-token')
       expect(result.success).toBe(false)
     })
   })

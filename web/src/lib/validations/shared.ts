@@ -10,3 +10,18 @@ export const zHexColor = z
 
 /** Nullable/optional hex color — used for fields that can be cleared (inherit from theme) */
 export const zHexColorNullable = zHexColor.nullable().optional()
+
+/** Google Fonts URL validator — only allows fonts.googleapis.com to prevent arbitrary font injection. */
+export const zGoogleFontsUrl = z
+  .string()
+  .url('URL de fuente inválida')
+  .refine((url) => {
+    try {
+      return new URL(url).hostname === 'fonts.googleapis.com'
+    } catch {
+      return false
+    }
+  }, 'URL de fuente inválida — solo se permiten fuentes de Google Fonts (fonts.googleapis.com)')
+
+/** Nullable/optional Google Fonts URL — used for CMS font URL fields. */
+export const zGoogleFontsUrlNullable = zGoogleFontsUrl.nullable().optional()

@@ -5,7 +5,7 @@ vi.mock('@/lib/db', () => ({
     socialLink: {
       findMany: vi.fn().mockResolvedValue([]),
       upsert: vi.fn().mockResolvedValue({}),
-      delete: vi.fn().mockResolvedValue({}),
+      deleteMany: vi.fn().mockResolvedValue({ count: 1 }),
     },
   },
 }))
@@ -238,19 +238,19 @@ describe('Social Actions (settings/social)', () => {
   describe('deleteSocialLink', () => {
     it('deletes social link', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.socialLink.delete).mockResolvedValue(mockSocialLink as never)
+      vi.mocked(prisma.socialLink.deleteMany).mockResolvedValue({ count: 1 })
 
       const { deleteSocialLink } = await import('@/actions/settings/social')
       const result = await deleteSocialLink('sl-1')
 
       expect(result.success).toBe(true)
-      expect(prisma.socialLink.delete).toHaveBeenCalledWith({ where: { id: 'sl-1' } })
+      expect(prisma.socialLink.deleteMany).toHaveBeenCalledWith({ where: { id: 'sl-1' } })
     })
 
     it('requires admin', async () => {
       const { requireAdmin } = await import('@/lib/security-server')
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.socialLink.delete).mockResolvedValue(mockSocialLink as never)
+      vi.mocked(prisma.socialLink.deleteMany).mockResolvedValue({ count: 1 })
 
       const { deleteSocialLink } = await import('@/actions/settings/social')
       await deleteSocialLink('sl-1')
@@ -260,7 +260,7 @@ describe('Social Actions (settings/social)', () => {
 
     it('returns error on DB failure', async () => {
       const { prisma } = await import('@/lib/db')
-      vi.mocked(prisma.socialLink.delete).mockRejectedValue(new Error('DB error'))
+      vi.mocked(prisma.socialLink.deleteMany).mockRejectedValue(new Error('DB error'))
 
       const { deleteSocialLink } = await import('@/actions/settings/social')
       const result = await deleteSocialLink('non-existent')

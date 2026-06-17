@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { zHexColorNullable } from './shared'
+import { zHexColorNullable, zGoogleFontsUrlNullable } from './shared'
 
 // ============================================
 // ADMIN SETTINGS SCHEMAS
@@ -15,7 +15,7 @@ export const homeSettingsSchema = z.object({
   // Título 1
   heroTitle1Text: z.string().optional(),
   heroTitle1Font: z.string().optional().nullable(),
-  heroTitle1FontUrl: z.string().optional().nullable(),
+  heroTitle1FontUrl: zGoogleFontsUrlNullable,
   heroTitle1FontSize: z.number().min(10).max(300).optional(),
   heroTitle1Color: zHexColorNullable,
   heroTitle1ColorDark: zHexColorNullable,
@@ -26,7 +26,7 @@ export const homeSettingsSchema = z.object({
   // Título 2
   heroTitle2Text: z.string().optional(),
   heroTitle2Font: z.string().optional().nullable(),
-  heroTitle2FontUrl: z.string().optional().nullable(),
+  heroTitle2FontUrl: zGoogleFontsUrlNullable,
   heroTitle2FontSize: z.number().min(10).max(300).optional(),
   heroTitle2Color: zHexColorNullable,
   heroTitle2ColorDark: zHexColorNullable,
@@ -37,7 +37,7 @@ export const homeSettingsSchema = z.object({
   // Nombre propietario
   ownerNameText: z.string().optional(),
   ownerNameFont: z.string().optional().nullable(),
-  ownerNameFontUrl: z.string().optional().nullable(),
+  ownerNameFontUrl: zGoogleFontsUrlNullable,
   ownerNameFontSize: z.number().min(10).max(100).optional(),
   ownerNameColor: zHexColorNullable,
   ownerNameColorDark: zHexColorNullable,
@@ -95,7 +95,7 @@ export const homeSettingsSchema = z.object({
   ctaText: z.string().optional().nullable(),
   ctaLink: z.string().optional().nullable(),
   ctaFont: z.string().optional().nullable(),
-  ctaFontUrl: z.string().optional().nullable(),
+  ctaFontUrl: zGoogleFontsUrlNullable,
   ctaFontSize: z.number().min(10).max(32).optional(),
   ctaVariant: z.string().optional().nullable(),
   ctaSize: z.string().optional().nullable(),
@@ -126,7 +126,7 @@ export const homeSettingsSchema = z.object({
   showFeaturedImages: z.boolean(),
   featuredTitle: z.string().optional().nullable(),
   featuredTitleFont: z.string().optional().nullable(),
-  featuredTitleFontUrl: z.string().optional().nullable(),
+  featuredTitleFontUrl: zGoogleFontsUrlNullable,
   featuredTitleFontSize: z.number().min(10).max(100).optional(),
   featuredTitleColor: zHexColorNullable,
   featuredTitleColorDark: zHexColorNullable,
@@ -143,7 +143,7 @@ export const aboutSettingsSchema = z.object({
   illustrationMobileMaxPx: z.number().int().min(32).max(480).optional().nullable(),
   bioTitle: z.string().optional().nullable(),
   bioTitleFont: z.string().optional().nullable(),
-  bioTitleFontUrl: z.string().max(2048).optional().nullable(),
+  bioTitleFontUrl: zGoogleFontsUrlNullable,
   bioTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
   bioTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
   bioTitleColor: zHexColorNullable,
@@ -171,7 +171,7 @@ export const servicesPageSettingsSchema = z.object({
   listTitle: z.string().optional().nullable(),
   listIntro: z.string().optional().nullable(),
   listTitleFont: z.string().optional().nullable(),
-  listTitleFontUrl: z.string().max(2048).optional().nullable(),
+  listTitleFontUrl: zGoogleFontsUrlNullable,
   listTitleFontSize: z.number().int().min(12).max(160).optional().nullable(),
   listTitleMobileFontSize: z.number().int().min(12).max(160).optional().nullable(),
   listTitleColor: zHexColorNullable,
@@ -237,7 +237,7 @@ export const siteSettingsSchema = z.object({
   allowIndexing: z.boolean().optional(),
   navbarBrandText: z.string().max(100).nullable().optional(),
   navbarBrandFont: z.string().max(100).nullable().optional(),
-  navbarBrandFontUrl: z.string().url().max(500).nullable().optional(),
+  navbarBrandFontUrl: zGoogleFontsUrlNullable,
   navbarBrandFontSize: z.number().int().min(8).max(120).nullable().optional(),
   navbarBrandColor: zHexColorNullable,
   navbarBrandColorDark: zHexColorNullable,
