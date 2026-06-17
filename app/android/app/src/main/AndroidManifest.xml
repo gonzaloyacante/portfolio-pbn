@@ -18,9 +18,6 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <!-- FCM background / scheduled work -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <!-- Lanzar actividad desde el background (tap en notificación) -->
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-
     <!-- ═══════════════════════════════════════════════════════════════════════
          PERMISOS DE ACTUALIZACIONES IN-APP
          ═══════════════════════════════════════════════════════════════════ -->
