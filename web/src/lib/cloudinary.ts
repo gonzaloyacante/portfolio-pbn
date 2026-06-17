@@ -1,11 +1,12 @@
+import { env } from '@/lib/env'
 import { logger } from '@/lib/logger'
 import { v2 as cloudinary } from 'cloudinary'
 import { CLOUDINARY_PRESETS, getOptimizedUrl, isCloudinaryUploadUrl } from '@/lib/cloudinary-helper'
 
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, // Server-side only (not exposed to client)
-  api_key: process.env.CLOUDINARY_API_KEY, // Server-side only
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET,
   secure: true,
 })
 
@@ -115,10 +116,10 @@ export function extractPublicIdUrl(url: string | null | undefined): string | nul
 // ── Subida ────────────────────────────────────────────────────────────────────
 
 export function getCloudinaryUploadRootFolder(): 'pbn-prod' | 'pbn-dev' {
-  if (process.env.VERCEL_ENV) {
-    return process.env.VERCEL_ENV === 'production' ? 'pbn-prod' : 'pbn-dev'
+  if (env.VERCEL_ENV) {
+    return env.VERCEL_ENV === 'production' ? 'pbn-prod' : 'pbn-dev'
   }
-  return process.env.NODE_ENV === 'production' ? 'pbn-prod' : 'pbn-dev'
+  return env.NODE_ENV === 'production' ? 'pbn-prod' : 'pbn-dev'
 }
 
 export function normalizeCloudinaryUploadFolder(folder: unknown): string {

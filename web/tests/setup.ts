@@ -9,6 +9,7 @@ process.env.NEXT_PUBLIC_BASE_URL ??= 'http://localhost:3000'
 process.env.CLOUDINARY_CLOUD_NAME ??= 'test-cloud'
 process.env.CLOUDINARY_API_KEY ??= 'test-api-key'
 process.env.CLOUDINARY_API_SECRET ??= 'test-api-secret'
+process.env.ADMIN_JWT_SECRET ??= 'test-admin-jwt-secret-at-least-32-chars-long'
 
 /** jsdom no define IntersectionObserver; OptimizedImage lazy necesita observe → montar imágenes en tests. */
 globalThis.IntersectionObserver = class IntersectionObserver {

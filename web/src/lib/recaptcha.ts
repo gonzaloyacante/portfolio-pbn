@@ -3,6 +3,7 @@
  * Minimum passing score: 0.5 (range 0.0–1.0).
  */
 
+import { env } from '@/lib/env'
 import { logger } from '@/lib/logger'
 
 interface RecaptchaResponse {
@@ -15,9 +16,9 @@ interface RecaptchaResponse {
 }
 
 export async function verifyRecaptchaToken(token: string): Promise<boolean> {
-  const secretKey = process.env.RECAPTCHA_SECRET_KEY
+  const secretKey = env.RECAPTCHA_SECRET_KEY
   if (!secretKey) {
-    if (process.env.NODE_ENV === 'development') return true
+    if (env.NODE_ENV === 'development') return true
     logger.error(
       'RECAPTCHA_SECRET_KEY not set in production — verification skipped, rejecting request'
     )

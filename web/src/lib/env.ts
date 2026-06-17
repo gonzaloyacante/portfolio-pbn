@@ -28,11 +28,24 @@ const envSchema = z.object({
 
   // Sentry (Optional in dev)
   SENTRY_DSN: z.string().url('SENTRY_DSN must be a valid URL').optional(),
+  NEXT_PUBLIC_SENTRY_DSN: z.string().url().optional(),
+
+  // reCAPTCHA
+  RECAPTCHA_SECRET_KEY: z.string().min(1).optional(),
+  NEXT_PUBLIC_RECAPTCHA_SITE_KEY: z.string().min(1).optional(),
 
   // Analytics (Optional)
-  NEXT_PUBLIC_GA_MEASUREMENT_ID: z.string().optional(),
+  NEXT_PUBLIC_GA_ID: z.string().optional(),
 
-  // Vercel (Auto-populated)
+  // Google Search Console
+  NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: z.string().optional(),
+
+  // App version (injected at build by distribute.sh or CI)
+  NEXT_PUBLIC_APP_VERSION: z.string().optional(),
+
+  // Vercel (Auto-populated by platform)
+  VERCEL_ENV: z.enum(['production', 'preview', 'development']).optional(),
+  VERCEL_GIT_COMMIT_SHA: z.string().optional(),
   NEXT_PUBLIC_VERCEL_URL: z.string().optional(),
   NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA: z.string().optional(),
 
@@ -79,7 +92,9 @@ function validateEnv() {
       // Use process.stderr directly — logger is not available yet at this point
       // (env.ts is imported before any logger initialization)
       process.stderr.write('❌ Invalid environment variables:\n' + issues.join('\n') + '\n')
-      process.stderr.write('\n💡 Check your .env file and make sure all required variables are set.\n\n')
+      process.stderr.write(
+        '\n💡 Check your .env file and make sure all required variables are set.\n\n'
+      )
 
       throw new Error('Environment validation failed')
     }
