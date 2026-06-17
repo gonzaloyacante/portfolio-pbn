@@ -108,6 +108,15 @@ final class StorageException extends AppException {
   const StorageException({super.message = 'Error al acceder a datos locales'});
 }
 
+/// La mutación fue encolada en el outbox offline.
+/// El cambio se sincronizará cuando el dispositivo recupere conectividad.
+final class OfflineMutationException extends AppException {
+  const OfflineMutationException({
+    super.message =
+        'Sin conexión. El cambio se guardó y se enviará cuando vuelva la conexión.',
+  });
+}
+
 /// Error de parseo o deserialización.
 final class ParseException extends AppException {
   const ParseException({super.message = 'Error al procesar la respuesta'});

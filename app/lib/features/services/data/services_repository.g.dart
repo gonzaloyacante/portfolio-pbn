@@ -55,4 +55,4 @@ final class ServicesRepositoryProvider
 }
 
 String _$servicesRepositoryHash() =>
-    r'4679e59af6bb942bd2991ad446edc46ea049a9b5';
+    r'2db54c4f64888cd0b8d4cb607adc7854e5e0f32b';

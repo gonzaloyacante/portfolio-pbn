@@ -55,4 +55,4 @@ final class TestimonialsRepositoryProvider
 }
 
 String _$testimonialsRepositoryHash() =>
-    r'3c5427ac0c616d978640fc0c9f479b7ceca572bb';
+    r'76e811110757ab9fee77c236f6a44f0cf2d07c16';

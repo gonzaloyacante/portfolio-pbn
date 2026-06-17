@@ -55,4 +55,4 @@ final class ContactsRepositoryProvider
 }
 
 String _$contactsRepositoryHash() =>
-    r'ac1a561921bbb0c544a4119af63e3f2c74083f31';
+    r'2842d2b1a3defad36f72a4442efca78360403c7a';
