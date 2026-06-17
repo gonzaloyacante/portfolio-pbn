@@ -31,50 +31,25 @@ Future<void> bootstrap() async {
   // descarga en runtime para evitar fallos si la fuente no está bundleada.
   GoogleFonts.config.allowRuntimeFetching = true;
 
-  // Inicializar datos de locale para español (table_calendar, intl, etc.)
-  await initializeDateFormatting('es_ES');
-  await initializeDateFormatting('es');
+  // 1–3. Inicializaciones independientes en paralelo ─────────────────────────
+  // preloadThemeMode se lanza ya aquí para que corra en paralelo con el resto.
+  // Su resultado se recoge más abajo, después de que todos los futures terminen.
+  final themeFuture = preloadThemeMode();
 
-  // 1. Variables de entorno ─────────────────────────────────────────────────
-  // Carga .env desde la raíz de la app Flutter (asset bundleado).
-  // En producción, el script distribute-prod.sh copia .env.production sobre .env
-  // antes de compilar, garantizando los valores correctos en el APK.
-  try {
-    await dotenv.load(fileName: '.env', mergeWith: const {});
-    AppLogger.info('✓ dotenv cargado (entorno: ${EnvConfig.environment})');
-  } catch (e) {
-    // Esto solo ocurre si el asset .env está ausente (error de build).
-    // La app continuará con los valores fallback definidos en EnvConfig.
-    AppLogger.warn(
-      'dotenv no disponible: $e — usando valores fallback de EnvConfig',
-    );
-  }
+  await Future.wait([
+    // Datos de locale para español (table_calendar, intl, etc.)
+    initializeDateFormatting('es_ES'),
+    initializeDateFormatting('es'),
+    // Variables de entorno (asset bundleado; en prod distribute-prod.sh
+    // copia .env.production sobre .env antes de compilar).
+    _loadDotenv(),
+    // Firebase (usa DefaultFirebaseOptions — no depende de dotenv).
+    _initFirebase(),
+  ]);
 
-  // 2. Firebase ─────────────────────────────────────────────────────────────
-  // Inicializar Firebase antes de registrar handlers o usar servicios.
-  // Las opciones de Firebase se leen de google-services.json / GoogleService-Info.plist
-  // o de DefaultFirebaseOptions si se generaron. Ver:
-  // https://firebase.google.com/docs/flutter/setup
-  try {
-    // Inicialización explícita usando opciones generadas a partir de los
-    // ficheros `google-services.json` / `GoogleService-Info.plist`.
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    AppLogger.info('✓ Firebase inicializado (con DefaultFirebaseOptions)');
-
-    if (Platform.isAndroid) {
-      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    }
-  } catch (e, st) {
-    AppLogger.warn('Firebase no disponible, omitiendo inicialización FCM: $e');
-    AppLogger.debug('Firebase init stack: $st');
-  }
-
-  // 3. Pre-cargar tema ────────────────────────────────────────────────────────
-  // Leer la preferencia de tema ANTES de runApp para evitar el flash de tema
-  // incorrecto al arrancar. El valor se inyecta en ProviderScope.overrides.
-  final initialTheme = await preloadThemeMode();
+  // Recoger el tema inicial (seguro: preloadThemeMode ya terminó o está por
+  // terminar junto con los demás futures del wait anterior).
+  final initialTheme = await themeFuture;
 
   // 4. Sentry + runApp ───────────────────────────────────────────────────────
   // SentryFlutter.init envuelve internamente runApp con captura de errores de
@@ -104,4 +79,35 @@ void _runApp(ThemeMode initialTheme) {
       child: const App(),
     ),
   );
+}
+
+Future<void> _loadDotenv() async {
+  try {
+    await dotenv.load(fileName: '.env', mergeWith: const {});
+    AppLogger.info('✓ dotenv cargado (entorno: ${EnvConfig.environment})');
+  } catch (e) {
+    // Esto solo ocurre si el asset .env está ausente (error de build).
+    // La app continuará con los valores fallback definidos en EnvConfig.
+    AppLogger.warn(
+      'dotenv no disponible: $e — usando valores fallback de EnvConfig',
+    );
+  }
+}
+
+Future<void> _initFirebase() async {
+  try {
+    // Inicialización explícita usando opciones generadas a partir de los
+    // ficheros `google-services.json` / `GoogleService-Info.plist`.
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    AppLogger.info('✓ Firebase inicializado (con DefaultFirebaseOptions)');
+
+    if (Platform.isAndroid) {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    }
+  } catch (e, st) {
+    AppLogger.warn('Firebase no disponible, omitiendo inicialización FCM: $e');
+    AppLogger.debug('Firebase init stack: $st');
+  }
 }
