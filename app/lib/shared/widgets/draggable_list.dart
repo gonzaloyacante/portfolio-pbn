@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 /// Duración alineada con huecos de drop en rejilla (galería admin).
@@ -41,11 +42,10 @@ class DragReorderGhostPreview extends StatelessWidget {
           children: [
             Opacity(
               opacity: opacity,
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                gaplessPlayback: true,
-                errorBuilder: (_, _, _) =>
+                errorWidget: (_, _, _) =>
                     ColoredBox(color: surface.withValues(alpha: 0.5)),
               ),
             ),
