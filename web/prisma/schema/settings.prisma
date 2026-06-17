@@ -435,3 +435,19 @@ model EmailSettings {
 
   @@map("email_settings")
 }
+
+/// Per-element public color overrides for the 139 --public-* CSS variables.
+/// key = CSS var name without "--public-" prefix (e.g. "nav-bg", "hero-cta-text").
+/// light/dark = CSS color value (hex, hsl(), or CSS var reference).
+/// Rows are upserted by key; absent rows fall back to the default in public-fixed-theme.css.
+model ThemeColorOverride {
+  id    String @id @default(cuid())
+  key   String @unique
+  light String
+  dark  String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("theme_color_overrides")
+}
