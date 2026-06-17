@@ -1,65 +1,6 @@
 // ============================================
-// ANALYTICS & SECURITY - Enhanced
+// SECURITY - Enhanced
 // ============================================
-
-/// Analytics event tracking with aggregation support
-model AnalyticLog {
-  id              String   @id @default(uuid())
-  eventType       String // page_view, gallery_view, contact_submit, download, etc
-  entityId        String? // ID of related entity (category, service, etc)
-  entityType      String? // category, contact, booking
-  // Event data — explicit typed columns (no JSON)
-  pageUrl         String? // Full page URL where event occurred
-  consentLevel    String? // 'precise' | 'denied' | 'geoip'
-  // Session tracking
-  sessionId       String?
-  // User tracking
-  userId          String? // If authenticated
-  // Request metadata
-  timestamp       DateTime @default(now())
-  ipAddress       String? // Anonymized (last octet zeroed, GDPR)
-  userAgent       String?
-  referrer        String?
-  // UTM tracking
-  utmSource       String?
-  utmMedium       String?
-  utmCampaign     String?
-  utmTerm         String?
-  utmContent      String?
-  // Geographic (from Vercel edge headers)
-  country         String?
-  city            String?
-  region          String?
-  latitude        Float?
-  longitude       Float?
-  // Device
-  device          String? // mobile, tablet, desktop
-  // Performance
-  loadTime        Int? // Page load time in ms
-  // Extended engagement tracking
-  scrollDepth     Int? // Max scroll depth percentage (0-100)
-  timeOnPage      Int? // Time on page in seconds
-  sessionDuration Int? // Total session duration in seconds
-  clickTarget     String? // CSS selector or label of clicked element
-  // Web Vitals
-  vitalsLCP       Float? // Largest Contentful Paint (ms)
-  vitalsFCP       Float? // First Contentful Paint (ms)
-  vitalsINP       Float? // Interaction to Next Paint (ms)
-  vitalsCLS       Float? // Cumulative Layout Shift (score)
-  // Quality flags
-  isDuplicate     Boolean  @default(false)
-  isBot           Boolean  @default(false)
-
-  @@index([eventType, timestamp])
-  @@index([entityType, entityId])
-  @@index([sessionId])
-  @@index([userId])
-  @@index([ipAddress])
-  @@index([country, city])
-  @@index([isDuplicate, eventType, timestamp])
-  @@index([timestamp])
-  @@map("analytic_logs")
-}
 
 /// Password reset tokens with enhanced security
 model PasswordResetToken {
