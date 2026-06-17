@@ -2,7 +2,7 @@
 
 import { HomeSettingsData, updateHomeSettings } from '@/actions/settings/home'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Button } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
@@ -23,6 +23,7 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const [viewportMode, setViewportMode] = useState<ViewportMode>('desktop')
+  const savedBaselineRef = useRef<HomeSettingsData | null>(initialSettings)
 
   useUnsavedChanges(isDirty)
 
@@ -38,10 +39,23 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const handleSave = async () => {
     if (!settings) return
 
+    const baseline = savedBaselineRef.current ?? {}
+    const diff = Object.fromEntries(
+      Object.entries(settings).filter(
+        ([key, val]) => key !== 'id' && val !== (baseline as Record<string, unknown>)[key]
+      )
+    ) as Partial<HomeSettingsData>
+
+    if (Object.keys(diff).length === 0) {
+      setIsDirty(false)
+      return
+    }
+
     setIsSaving(true)
     try {
-      const result = await updateHomeSettings(settings)
+      const result = await updateHomeSettings(diff)
       if (result.success) {
+        savedBaselineRef.current = settings
         setIsDirty(false)
         showToast.success('Cambios guardados correctamente')
         router.refresh()

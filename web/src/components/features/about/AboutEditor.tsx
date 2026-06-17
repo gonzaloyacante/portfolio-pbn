@@ -36,7 +36,8 @@ export function AboutEditor({ settings }: AboutEditorProps) {
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isSubmitting, isDirty },
+    reset,
+    formState: { errors, isSubmitting, isDirty, dirtyFields },
   } = useForm<AboutSettingsFormData>({
     resolver: zodResolver(aboutSettingsSchema),
     defaultValues: {
@@ -103,17 +104,26 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   const certificationsString = certificationsRaw?.join('\n') || ''
 
   const onSubmit = async (data: AboutSettingsFormData) => {
+    const trimmedColor = data.profileImageShadowColor?.trim()
+    const cleaned = {
+      ...data,
+      profileImageShadowColor: trimmedColor && trimmedColor.length > 0 ? trimmedColor : null,
+      bioTitleFont: data.bioTitleFont?.trim() || null,
+      bioTitleFontUrl: data.bioTitleFontUrl?.trim() || null,
+      bioTitleColor: data.bioTitleColor?.trim() ? data.bioTitleColor.trim() : null,
+      bioTitleColorDark: data.bioTitleColorDark?.trim() ? data.bioTitleColorDark.trim() : null,
+    }
+
+    const diff = Object.fromEntries(
+      Object.entries(cleaned).filter(([key]) => key in dirtyFields)
+    ) as Partial<AboutSettingsFormData>
+
+    if (Object.keys(diff).length === 0) return
+
     try {
-      const trimmedColor = data.profileImageShadowColor?.trim()
-      const result = await updateAboutSettings({
-        ...data,
-        profileImageShadowColor: trimmedColor && trimmedColor.length > 0 ? trimmedColor : null,
-        bioTitleFont: data.bioTitleFont?.trim() || null,
-        bioTitleFontUrl: data.bioTitleFontUrl?.trim() || null,
-        bioTitleColor: data.bioTitleColor?.trim() ? data.bioTitleColor.trim() : null,
-        bioTitleColorDark: data.bioTitleColorDark?.trim() ? data.bioTitleColorDark.trim() : null,
-      })
+      const result = await updateAboutSettings(diff)
       if (result.success) {
+        reset(data)
         showToast.success('Página Sobre Mí actualizada')
         router.refresh()
       } else {

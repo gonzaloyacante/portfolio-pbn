@@ -25,7 +25,8 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     handleSubmit,
     setValue,
     control,
-    formState: { errors, isSubmitting, isDirty },
+    reset,
+    formState: { errors, isSubmitting, isDirty, dirtyFields },
   } = useForm<ContactSettingsFormData>({
     resolver: zodResolver(contactSettingsSchema),
     defaultValues: {
@@ -74,12 +75,16 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
   }
 
   const onSettingsSubmit = async (data: ContactSettingsFormData) => {
+    const diff = Object.fromEntries(
+      Object.entries(data).filter(([key]) => key in dirtyFields)
+    ) as Partial<ContactSettingsFormData>
+
+    if (Object.keys(diff).length === 0) return
+
     try {
-      const result = await updateContactSettings({
-        ...data,
-        showSocialLinks: true,
-      })
+      const result = await updateContactSettings({ ...diff, showSocialLinks: true })
       if (result.success) {
+        reset(data)
         showToast.success('Configuración guardada')
         router.refresh()
       } else {
