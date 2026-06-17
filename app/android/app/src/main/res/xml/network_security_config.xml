@@ -4,11 +4,16 @@
 
   En PRODUCCIÓN (release):
     - Solo se permite HTTPS. HTTP está bloqueado.
-    - Certificados CA estándar del sistema.
+    - SPKI pinning contra el backend paolabolivar.es.
+    - Solo se aceptan certificados de la cadena Let's Encrypt.
 
   En DEBUG:
     - Se permite HTTP a cualquier host (útil con proxies como Charles/mitmproxy).
+    - Pinning deshabilitado (debug-overrides anula domain-config).
     - El bloque <debug-overrides> se ignora en builds release.
+
+  Actualizar pins cuando caduque YR2 (2028-09-01).
+  Calcular: openssl s_client -connect host:443 -showcerts | openssl x509 -noout -pubkey | openssl pkey -pubin -outform DER | openssl dgst -sha256 -binary | openssl enc -base64
 
   Referencia: https://developer.android.com/training/articles/security-config
 -->
@@ -20,6 +25,24 @@
             <certificates src="system" />
         </trust-anchors>
     </base-config>
+
+    <!-- SPKI pinning para el backend de producción -->
+    <domain-config>
+        <domain includeSubdomains="false">paolabolivar.es</domain>
+        <!--
+          expiration: cuando caduque, Android deja de imponer los pins (degradación
+          controlada). Actualizar antes de que YR2 expire en sep-2028.
+          SPKI extraídos el 2026-06-17 de la cadena en producción.
+        -->
+        <pin-set expiration="2028-09-01">
+            <!-- Let's Encrypt YR2 (intermediate, caduca sep-2028) -->
+            <pin digest="SHA-256">nWN7PSep5XDQdge5zK24CnCRXHr3KvzhKEGxsdqCX9E=</pin>
+            <!-- ISRG Root YR (cross-sign, backup) -->
+            <pin digest="SHA-256">fk6IOKit1ild5647BH06ujSIq5XbCgqlbYl6ANhhi88=</pin>
+            <!-- ISRG Root X1 (pin de emergencia — muy estable, vigencia ~30 años) -->
+            <pin digest="SHA-256">C5+nipAiYPi5Z0Qpat8eX0GYcBFd2shlmVuJwSwFbFk=</pin>
+        </pin-set>
+    </domain-config>
 
     <!-- Desarrollo: permitir HTTP y CAs de usuario (para mitmproxy) -->
     <debug-overrides>

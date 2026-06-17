@@ -137,10 +137,41 @@
 	<!-- Solo HTTPS en producción. Para desarrollo local con HTTP,
 	     crear un archivo Info.debug.plist o usar build configurations.
 	     (Por defecto iOS ya bloquea cleartext excepto localhost) -->
+	<!--
+	  NSPinnedDomains: SPKI pinning para paolabolivar.es.
+	  Pins extraídos el 2026-06-17. Actualizar cuando caduque YR2 (sep-2028).
+	  NSPinnedCAIdentities valida que la cadena incluye al menos uno de estos SPKIs.
+	-->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
+		<key>NSPinnedDomains</key>
+		<dict>
+			<key>paolabolivar.es</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<false/>
+				<key>NSPinnedCAIdentities</key>
+				<array>
+					<!-- Let's Encrypt YR2 intermediate (caduca sep-2028) -->
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>nWN7PSep5XDQdge5zK24CnCRXHr3KvzhKEGxsdqCX9E=</string>
+					</dict>
+					<!-- ISRG Root YR cross-sign (backup) -->
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>fk6IOKit1ild5647BH06ujSIq5XbCgqlbYl6ANhhi88=</string>
+					</dict>
+					<!-- ISRG Root X1 (pin de emergencia, vigencia ~30 años) -->
+					<dict>
+						<key>SPKI-SHA256-BASE64</key>
+						<string>C5+nipAiYPi5Z0Qpat8eX0GYcBFd2shlmVuJwSwFbFk=</string>
+					</dict>
+				</array>
+			</dict>
+		</dict>
 	</dict>
 
 </dict>

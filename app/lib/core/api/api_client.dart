@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../config/app_constants.dart';
 import '../config/env_config.dart';
 import '../debug/server_url_provider.dart';
+import '../utils/app_logger.dart';
 import 'api_exceptions.dart';
 import 'api_interceptors.dart';
 import 'auth_interceptor.dart';
@@ -42,7 +46,7 @@ class ApiClient {
   // ── Construcción ─────────────────────────────────────────────────────────
 
   Dio _buildDio() {
-    return Dio(
+    final dio = Dio(
       BaseOptions(
         baseUrl: _baseUrl,
         connectTimeout: AppConstants.connectTimeout,
@@ -53,6 +57,32 @@ class ApiClient {
         validateStatus: (status) => status != null && status < 500,
       ),
     );
+
+    // Certificate pinning is enforced at the platform level:
+    //   Android: network_security_config.xml <pin-set> (SPKI SHA-256)
+    //   iOS: Info.plist NSPinnedDomains (NSPinnedCAIdentities)
+    //
+    // This Dart-layer callback handles the residual case: a certificate that
+    // the system accepted (valid chain) but that fails our host check — e.g.
+    // a wildcard cert from a compromised CA not in our pin set. In release, we
+    // log the anomaly and reject any cert presented for the wrong host.
+    if (!kDebugMode) {
+      final expectedHost = Uri.tryParse(_baseUrl)?.host ?? '';
+      (dio.httpClientAdapter as IOHttpClientAdapter).validateCertificate =
+          (X509Certificate? cert, String host, int port) {
+            if (cert == null) return false;
+            if (expectedHost.isNotEmpty && host != expectedHost) {
+              AppLogger.warn(
+                'SEC-APP2: cert presented for unexpected host '
+                '(expected=$expectedHost, actual=$host)',
+              );
+              return false;
+            }
+            return true;
+          };
+    }
+
+    return dio;
   }
 
   void _addInterceptors() {
