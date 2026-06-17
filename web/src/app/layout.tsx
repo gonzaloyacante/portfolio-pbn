@@ -8,9 +8,10 @@ import { NavigationProgress } from '@/components/layout'
 import { ErrorBoundary } from '@/components/ui'
 import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics'
 import { getThemeValues, getThemeSettings } from '@/actions/settings/theme'
+import { getPublicColorOverrides } from '@/actions/settings/public-colors'
 import FontLoader from '@/components/layout/FontLoader'
 import { BRAND } from '@/lib/design-tokens'
-import { buildThemeInlineStylesheet } from '@/lib/theme-ssr-css'
+import { buildThemeInlineStylesheet, buildPublicColorInlineStylesheet } from '@/lib/theme-ssr-css'
 import { getPublicSiteUrl } from '@/lib/site-url'
 
 // Script font para "Make-up", firmas y detalles elegantes
@@ -67,8 +68,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const [themeValues, settings] = await Promise.all([getThemeValues(), getThemeSettings()])
+  const [themeValues, settings, publicColorOverrides] = await Promise.all([
+    getThemeValues(),
+    getThemeSettings(),
+    getPublicColorOverrides(),
+  ])
   const themeInlineCss = buildThemeInlineStylesheet(themeValues)
+  const publicColorsCss = buildPublicColorInlineStylesheet(publicColorOverrides)
 
   // Extract font URLs from settings
   const fonts = {
@@ -99,6 +105,9 @@ export default async function RootLayout({
         />
         {/* Sin @layer: el bundle globals está en @layer base; este bloque gana en cascada. */}
         <style id="pbn-db-theme" dangerouslySetInnerHTML={{ __html: themeInlineCss }} />
+        {publicColorsCss && (
+          <style id="pbn-public-colors" dangerouslySetInnerHTML={{ __html: publicColorsCss }} />
+        )}
       </head>
       <body
         className={`${headingFont.variable} ${scriptFont.variable} ${bodyFont.variable} antialiased`}

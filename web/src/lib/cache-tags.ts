@@ -34,6 +34,9 @@ export const CACHE_TAGS = {
 
   // Analytics
   analytics: 'analytics',
+
+  // Public per-element color overrides
+  publicColorOverrides: 'public-color-overrides',
 } as const
 
 /**

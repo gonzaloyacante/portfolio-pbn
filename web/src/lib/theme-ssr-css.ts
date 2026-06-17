@@ -93,3 +93,27 @@ export function buildThemeInlineStylesheet(themeValues: Record<string, string>):
 
   return `:root{${declBlock([...lightSemantic, ...shared])}}.dark{${declBlock(darkSemantic)}}`
 }
+
+/**
+ * Hoja inline para overrides de --public-* leídos de `theme_color_overrides`.
+ * Sólo emite las keys con valor non-empty; el resto hereda del public-fixed-theme.css.
+ */
+export function buildPublicColorInlineStylesheet(
+  overrides: Record<string, { light: string; dark: string }>
+): string {
+  const lightEntries = Object.entries(overrides).filter(([, v]) => v.light)
+  const darkEntries = Object.entries(overrides).filter(([, v]) => v.dark)
+  if (lightEntries.length === 0 && darkEntries.length === 0) return ''
+
+  const lightDecls = lightEntries
+    .map(([k, v]) => `--public-${k}:${escapeCssCustomPropertyValue(v.light)}`)
+    .join('')
+  const darkDecls = darkEntries
+    .map(([k, v]) => `--public-${k}:${escapeCssCustomPropertyValue(v.dark)}`)
+    .join('')
+
+  let css = ''
+  if (lightDecls) css += `.public-fixed-theme{${lightDecls}}`
+  if (darkDecls) css += `.dark .public-fixed-theme{${darkDecls}}`
+  return css
+}

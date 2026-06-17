@@ -15,17 +15,19 @@ import { themeEditorDataToCssVars } from '@/lib/theme-css-vars-from-editor'
 import { showToast } from '@/lib/toast'
 import { logger } from '@/lib/logger'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { Save, RotateCcw, Palette, Type, LayoutTemplate } from 'lucide-react'
+import { Save, RotateCcw, Palette, Type, LayoutTemplate, Layers } from 'lucide-react'
 import ThemeColorSection from './ThemeColorSection'
 import ThemeTypographySection from './ThemeTypographySection'
 import ThemeLayoutSection from './ThemeLayoutSection'
 import { ThemeSemanticPreview } from './ThemeSemanticPreview'
-
+import { PublicColorOverridesSection } from './PublicColorOverridesSection'
+import type { PublicColorOverrides } from '@/actions/settings/public-colors'
 interface ThemeEditorProps {
   initialData: ThemeSettingsData | null
+  initialColorOverrides?: PublicColorOverrides
 }
 
-export function ThemeEditor({ initialData }: ThemeEditorProps) {
+export function ThemeEditor({ initialData, initialColorOverrides = {} }: ThemeEditorProps) {
   const router = useRouter()
   const [isResetting, setIsResetting] = useState(false)
 
@@ -201,6 +203,9 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
               <TabsTrigger value="layout" className="flex-1 gap-2 md:flex-none">
                 <LayoutTemplate size={16} /> Diseño
               </TabsTrigger>
+              <TabsTrigger value="elements" className="flex-1 gap-2 md:flex-none">
+                <Layers size={16} /> Elementos
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="colors" className="animate-in fade-in-50 space-y-6">
@@ -221,6 +226,10 @@ export function ThemeEditor({ initialData }: ThemeEditorProps) {
 
             <TabsContent value="layout">
               <ThemeLayoutSection register={register} errors={errors} />
+            </TabsContent>
+
+            <TabsContent value="elements" className="animate-in fade-in-50">
+              <PublicColorOverridesSection initialOverrides={initialColorOverrides} />
             </TabsContent>
           </Tabs>
         </div>
