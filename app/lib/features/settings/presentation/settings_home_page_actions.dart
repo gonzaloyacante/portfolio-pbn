@@ -183,7 +183,11 @@ extension _HomePageActions on _SettingsHomePageState {
     try {
       final picker = ImagePicker();
       final primaryColor = Theme.of(context).colorScheme.primary;
-      final picked = await picker.pickImage(source: ImageSource.gallery);
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 2000,
+        imageQuality: 85,
+      );
       if (picked == null) return;
 
       final cropped = await ImageCropper().cropImage(
@@ -227,7 +231,11 @@ extension _HomePageActions on _SettingsHomePageState {
   Future<void> _pickIllustration() async {
     try {
       final picker = ImagePicker();
-      final picked = await picker.pickImage(source: ImageSource.gallery);
+      final picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 2000,
+        imageQuality: 85,
+      );
       if (picked == null) return;
       setState(() {
         _pendingIllustration = File(picked.path);
