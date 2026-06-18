@@ -77,6 +77,17 @@ class AuthInterceptor extends Interceptor {
       return handler.next(response);
     }
 
+    // Si es un reintento post-refresh y sigue fallando con 401, la sesión
+    // expiró definitivamente (token revocado en medio). Limpiar en lugar de
+    // encolar: encolar deadlockearía porque _pendingQueue solo se drena
+    // después de que _retry() retorne, pero _retry() está bloqueado esperando
+    // el future de la petición encolada.
+    if (response.requestOptions.extra['_isRetry'] == true) {
+      AppLogger.warn('AuthInterceptor: retry still got 401 → clearing session');
+      await _clearSessionAndRedirect();
+      return handler.reject(_make401Error(response));
+    }
+
     AppLogger.info('AuthInterceptor: 401 on $path → attempting token refresh');
 
     if (_isRefreshing) {
@@ -215,6 +226,7 @@ class AuthInterceptor extends Interceptor {
         ...options.headers,
         if (token != null) 'Authorization': 'Bearer $token',
       },
+      extra: {...options.extra, '_isRetry': true},
       responseType: options.responseType,
       contentType: options.contentType,
       receiveTimeout: options.receiveTimeout,
