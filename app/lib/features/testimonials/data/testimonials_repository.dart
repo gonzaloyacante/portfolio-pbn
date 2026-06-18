@@ -72,6 +72,7 @@ class TestimonialsRepository {
       return result;
     } on NetworkException {
       return _fromCache(
+        search: search,
         isActive: isActive,
         status: status,
         isFeatured: isFeatured,
@@ -80,6 +81,7 @@ class TestimonialsRepository {
   }
 
   Future<PaginatedResponse<TestimonialItem>> _fromCache({
+    String? search,
     bool? isActive,
     String? status,
     bool? isFeatured,
@@ -87,6 +89,7 @@ class TestimonialsRepository {
     final rows = await _db.testimonialsDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
 
+    final q = search?.toLowerCase();
     final items = rows
         .where((r) => isActive == null || r.isActive == isActive)
         .map(
@@ -96,6 +99,13 @@ class TestimonialsRepository {
         )
         .where((item) => status == null || item.status == status)
         .where((item) => isFeatured == null || item.featured == isFeatured)
+        .where(
+          (item) =>
+              q == null ||
+              item.name.toLowerCase().contains(q) ||
+              (item.excerpt?.toLowerCase().contains(q) ?? false) ||
+              (item.company?.toLowerCase().contains(q) ?? false),
+        )
         .toList();
 
     AppLogger.info('[Testimonials] serving ${items.length} items from cache');
