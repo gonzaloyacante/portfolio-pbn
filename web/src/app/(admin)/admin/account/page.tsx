@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { signOut } from 'next-auth/react'
 import { Button, SmartField as FormField } from '@/components/ui'
 import { Section, PageHeader } from '@/components/layout'
 import { showToast } from '@/lib/toast'
 import { calculatePasswordStrength } from '@/lib/password'
+import { ROUTES } from '@/config/routes'
 
 export default function MiCuentaPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -51,10 +53,8 @@ export default function MiCuentaPage() {
         throw new Error(data.error || 'Error al cambiar contraseña')
       }
 
-      showToast.success('Contraseña actualizada correctamente')
-      // Reset form
-      const form = document.getElementById('password-form') as HTMLFormElement
-      form?.reset()
+      showToast.success('Contraseña actualizada. Iniciá sesión de nuevo.')
+      await signOut({ callbackUrl: ROUTES.auth.login })
     } catch (error) {
       showToast.error(error instanceof Error ? error.message : 'Error al cambiar contraseña')
     } finally {
