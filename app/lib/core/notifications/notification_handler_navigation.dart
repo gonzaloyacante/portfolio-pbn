@@ -85,6 +85,10 @@ extension _NotificationHandlerNavigation on NotificationHandler {
         } else {
           _router.goNamed(RouteNames.calendar);
         }
+      case 'update':
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _router.pushNamed(RouteNames.appUpdate);
+        });
       case 'categories':
         _router.goNamed(RouteNames.categories);
       case 'services':
