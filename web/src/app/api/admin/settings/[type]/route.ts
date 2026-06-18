@@ -233,6 +233,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ type: 
 
     return NextResponse.json({ success: true, data: settings })
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Demasiadas')) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 429 })
+    }
     logger.error(`[settings/${type}] PATCH error`, { error })
     return NextResponse.json(
       { success: false, error: 'Error al guardar configuración' },

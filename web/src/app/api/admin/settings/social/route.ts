@@ -83,6 +83,9 @@ export async function DELETE(req: Request) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Demasiadas')) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 429 })
+    }
     logger.error('[settings/social] DELETE error', { error })
     return NextResponse.json(
       { success: false, error: 'Error al eliminar red social' },
@@ -115,6 +118,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data: link }, { status: 201 })
   } catch (error) {
+    if (error instanceof Error && error.message.includes('Demasiadas')) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 429 })
+    }
     logger.error('[settings/social] POST error', { error })
     return NextResponse.json(
       { success: false, error: 'Error al guardar red social' },
