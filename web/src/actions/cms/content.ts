@@ -114,8 +114,11 @@ export async function updateCategory(id: string, formData: FormData) {
   try {
     const previousCategory = await prisma.category.findUnique({
       where: { id },
-      select: { coverImageUrl: true, slug: true },
+      select: { coverImageUrl: true, slug: true, deletedAt: true },
     })
+    if (!previousCategory || previousCategory.deletedAt !== null) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
 
     await prisma.category.update({
       where: { id },
