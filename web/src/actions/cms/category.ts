@@ -16,7 +16,8 @@ export async function deleteCategoryAction(categoryId: string): Promise<void> {
   await requireAdmin()
   const rl = await checkApiRateLimit()
   if (rl) throw new Error(rl.error)
-  await deleteCategory(categoryId)
+  const result = await deleteCategory(categoryId)
+  if (!result.success) throw new Error(result.error ?? 'Error al eliminar la categoría')
   revalidatePath(ROUTES.admin.categories)
   // _revalidatePublicContent ya fue llamado dentro de deleteCategory
 }
