@@ -25,6 +25,13 @@ class SyncController {
 SyncController syncController(Ref ref) {
   final ctrl = SyncController(outbox: ref.watch(outboxServiceProvider));
 
+  // Flush on startup if already online — pending items from a previous
+  // session would otherwise wait for an offline→online transition.
+  if (ref.read(isOnlineProvider)) {
+    AppLogger.info('[SyncController] online at startup — flushing outbox');
+    unawaited(ctrl.syncNow());
+  }
+
   // Flush outbox whenever the device comes back online.
   ref.listen<bool>(isOnlineProvider, (prev, next) {
     if (prev == false && next == true) {
