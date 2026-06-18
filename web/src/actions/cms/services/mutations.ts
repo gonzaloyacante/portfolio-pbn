@@ -20,11 +20,17 @@ export async function deleteService(id: string) {
 
   try {
     // Soft delete: marcar como eliminado y liberar slug único para reutilización
-    const svc = await prisma.service.findUnique({ where: { id }, select: { slug: true } })
-    const mangledSlug = svc ? `${svc.slug}_deleted_${Date.now()}` : undefined
+    const svc = await prisma.service.findUnique({
+      where: { id },
+      select: { slug: true, deletedAt: true },
+    })
+    if (!svc || svc.deletedAt !== null) {
+      return { success: false, error: 'Servicio no encontrado' }
+    }
+    const mangledSlug = `${svc.slug}_deleted_${Date.now()}`
     await prisma.service.update({
       where: { id },
-      data: { deletedAt: new Date(), isActive: false, ...(mangledSlug && { slug: mangledSlug }) },
+      data: { deletedAt: new Date(), isActive: false, slug: mangledSlug },
     })
 
     revalidatePath(ROUTES.admin.services)
@@ -46,8 +52,11 @@ export async function toggleService(id: string) {
   if (rl) return { success: false, error: rl.error }
 
   try {
-    const service = await prisma.service.findUnique({ where: { id } })
-    if (!service) {
+    const service = await prisma.service.findUnique({
+      where: { id },
+      select: { isActive: true, slug: true, deletedAt: true },
+    })
+    if (!service || service.deletedAt !== null) {
       return { success: false, error: 'Servicio no encontrado' }
     }
 
