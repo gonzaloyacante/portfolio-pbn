@@ -161,12 +161,11 @@ class TestimonialsRepository {
       }
       return TestimonialDetail.fromJson(apiResp.data!);
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'POST',
         endpoint: Endpoints.testimonials,
         body: data.toJson(),
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -190,12 +189,11 @@ class TestimonialsRepository {
       }
       return TestimonialDetail.fromJson(apiResp.data!);
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'PATCH',
         endpoint: Endpoints.testimonial(id),
         body: updates,
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -211,11 +209,10 @@ class TestimonialsRepository {
         throw Exception(apiResp.error ?? 'Error al eliminar testimonio');
       }
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'DELETE',
         endpoint: Endpoints.testimonial(id),
       );
-      throw const OfflineMutationException();
     }
   }
 }

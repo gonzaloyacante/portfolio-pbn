@@ -167,12 +167,11 @@ class ContactsRepository {
       }
       return ContactDetail.fromJson(apiResp.data!);
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'PATCH',
         endpoint: Endpoints.contact(id),
         body: updates,
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -188,8 +187,10 @@ class ContactsRepository {
         throw Exception(apiResp.error ?? 'Error al eliminar contacto');
       }
     } on NetworkException {
-      await _outbox.enqueue(method: 'DELETE', endpoint: Endpoints.contact(id));
-      throw const OfflineMutationException();
+      await _outbox.enqueueOrThrow(
+        method: 'DELETE',
+        endpoint: Endpoints.contact(id),
+      );
     }
   }
 }

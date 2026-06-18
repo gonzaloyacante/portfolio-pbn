@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portfolio_pbn/core/router/route_names.dart';
 
 import 'core/auth/auth_provider.dart';
+import 'core/sync/sync_controller.dart';
 import 'features/app_settings/providers/app_preferences_provider.dart';
 import 'features/settings/providers/settings_provider.dart';
 import 'core/auth/auth_state.dart';
@@ -54,6 +55,11 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
       final router = ref.read(routerProvider);
       _notifHandler = NotificationHandler(router: router);
       _notifHandler!.init();
+
+      // Warm up the sync controller so its connectivity listener is active
+      // from app start. Without this read, the keepAlive provider is never
+      // instantiated and the outbox is never flushed when coming back online.
+      ref.read(syncControllerProvider);
 
       // Aplicar preferencias de rendimiento al arrancar.
       _syncTimeDilation();

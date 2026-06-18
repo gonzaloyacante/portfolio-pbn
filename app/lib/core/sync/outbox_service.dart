@@ -5,6 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 import '../api/api_client.dart';
+import '../api/api_exceptions.dart';
 import '../database/app_database.dart';
 import '../utils/app_logger.dart';
 
@@ -38,6 +39,20 @@ class OutboxService {
       ),
     );
     AppLogger.info('[Outbox] queued $method $endpoint');
+  }
+
+  // ── Enqueue and throw ────────────────────────────────────────────────────
+
+  /// Enqueues a mutation for later replay and throws [OfflineMutationException].
+  /// Use this in every `on NetworkException` mutation handler so callers get
+  /// the standard offline toast while the operation is safely queued.
+  Future<Never> enqueueOrThrow({
+    required String method,
+    required String endpoint,
+    Map<String, dynamic>? body,
+  }) async {
+    await enqueue(method: method, endpoint: endpoint, body: body);
+    throw const OfflineMutationException();
   }
 
   // ── Flush ─────────────────────────────────────────────────────────────────
@@ -79,7 +94,15 @@ class OutboxService {
     } catch (e) {
       final error = e.toString();
       AppLogger.warn('[Outbox] replay failed for ${op.endpoint}: $error');
-      await _db.outboxDao.incrementRetryOrFail(op.id, error);
+      // Only transient network/timeout failures warrant retries.
+      // 4xx responses (validation, auth, not-found) will never succeed on
+      // retry — mark them permanently failed immediately.
+      final isTransient = e is NetworkException || e is TimeoutException;
+      if (isTransient) {
+        await _db.outboxDao.incrementRetryOrFail(op.id, error);
+      } else {
+        await _db.outboxDao.markFailed(op.id, error);
+      }
     }
   }
 }

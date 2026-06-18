@@ -282,6 +282,15 @@ class OutboxDao extends DatabaseAccessor<AppDatabase> with _$OutboxDaoMixin {
       ),
     );
   }
+
+  Future<void> markFailed(int id, String error) =>
+      (update(outboxQueue)..where((t) => t.id.equals(id))).write(
+        OutboxQueueCompanion(
+          status: const Value('failed'),
+          lastError: Value(error),
+          lastAttemptAt: Value(DateTime.now()),
+        ),
+      );
 }
 
 @DriftAccessor(tables: [SyncMetadata])

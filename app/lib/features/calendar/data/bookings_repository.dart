@@ -163,12 +163,11 @@ class BookingsRepository {
       }
       return BookingDetail.fromJson(apiResp.data!);
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'POST',
         endpoint: Endpoints.bookings,
         body: data.toJson(),
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -192,12 +191,11 @@ class BookingsRepository {
       }
       return BookingDetail.fromJson(apiResp.data!);
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'PATCH',
         endpoint: Endpoints.booking(id),
         body: updates,
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -213,8 +211,10 @@ class BookingsRepository {
         throw Exception(apiResp.error ?? 'Error al eliminar reserva');
       }
     } on NetworkException {
-      await _outbox.enqueue(method: 'DELETE', endpoint: Endpoints.booking(id));
-      throw const OfflineMutationException();
+      await _outbox.enqueueOrThrow(
+        method: 'DELETE',
+        endpoint: Endpoints.booking(id),
+      );
     }
   }
 }

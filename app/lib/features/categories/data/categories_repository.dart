@@ -155,12 +155,11 @@ class CategoriesRepository {
       }
       return apiResponse.data!;
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'POST',
         endpoint: Endpoints.categories,
         body: data.toJson(),
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -184,12 +183,11 @@ class CategoriesRepository {
       }
       return apiResponse.data!;
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'PATCH',
         endpoint: Endpoints.category(id),
         body: data,
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -205,8 +203,10 @@ class CategoriesRepository {
         throw Exception(apiResponse.error ?? 'Error al eliminar categoría');
       }
     } on NetworkException {
-      await _outbox.enqueue(method: 'DELETE', endpoint: Endpoints.category(id));
-      throw const OfflineMutationException();
+      await _outbox.enqueueOrThrow(
+        method: 'DELETE',
+        endpoint: Endpoints.category(id),
+      );
     }
   }
 

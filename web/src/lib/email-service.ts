@@ -10,7 +10,8 @@ import {
 } from './email-templates'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getSiteSettings } from '@/actions/settings/site'
-import { getEmailSettings } from '@/actions/settings/email'
+import { prisma } from '@/lib/db'
+import { findSingleton } from '@/lib/settings-service'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -110,7 +111,7 @@ export const emailService = {
     const [adminEmail, branding, emailSettings] = await Promise.all([
       getAdminEmail(),
       getSenderBranding(),
-      getEmailSettings(),
+      findSingleton(prisma.emailSettings),
     ])
 
     if (emailSettings && !emailSettings.sendContactNotifications) {
@@ -170,7 +171,7 @@ export const emailService = {
     const [adminEmail, branding, emailSettings] = await Promise.all([
       getAdminEmail(),
       getSenderBranding(),
-      getEmailSettings(),
+      findSingleton(prisma.emailSettings),
     ])
 
     if (emailSettings && !emailSettings.sendTestimonialNotifications) {
@@ -199,7 +200,7 @@ export const emailService = {
     const [adminEmail, branding, emailSettings] = await Promise.all([
       getAdminEmail(),
       getSenderBranding(),
-      getEmailSettings(),
+      findSingleton(prisma.emailSettings),
     ])
 
     if (emailSettings && !emailSettings.sendBookingNotifications) {
@@ -219,7 +220,10 @@ export const emailService = {
    * Notify Client that booking is received (Pending)
    */
   async notifyClientBookingReceived(data: { clientEmail: string; clientName: string; date: Date }) {
-    const [branding, emailSettings] = await Promise.all([getSenderBranding(), getEmailSettings()])
+    const [branding, emailSettings] = await Promise.all([
+      getSenderBranding(),
+      findSingleton(prisma.emailSettings),
+    ])
 
     if (emailSettings && !emailSettings.sendBookingNotifications) {
       logger.info('Booking notifications disabled — skipping client email.')

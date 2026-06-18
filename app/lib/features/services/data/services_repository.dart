@@ -153,12 +153,11 @@ class ServicesRepository {
       }
       return apiResponse.data!;
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'POST',
         endpoint: Endpoints.services,
         body: data.toJson(),
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -182,12 +181,11 @@ class ServicesRepository {
       }
       return apiResponse.data!;
     } on NetworkException {
-      await _outbox.enqueue(
+      await _outbox.enqueueOrThrow(
         method: 'PATCH',
         endpoint: Endpoints.service(id),
         body: data,
       );
-      throw const OfflineMutationException();
     }
   }
 
@@ -203,8 +201,10 @@ class ServicesRepository {
         throw Exception(apiResponse.error ?? 'Error al eliminar servicio');
       }
     } on NetworkException {
-      await _outbox.enqueue(method: 'DELETE', endpoint: Endpoints.service(id));
-      throw const OfflineMutationException();
+      await _outbox.enqueueOrThrow(
+        method: 'DELETE',
+        endpoint: Endpoints.service(id),
+      );
     }
   }
 }
