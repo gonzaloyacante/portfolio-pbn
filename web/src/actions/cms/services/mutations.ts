@@ -86,8 +86,8 @@ export async function reorderServices(orderedIds: string[]) {
   try {
     await prisma.$transaction(
       orderedIds.map((id, index) =>
-        prisma.service.update({
-          where: { id },
+        prisma.service.updateMany({
+          where: { id, deletedAt: null },
           data: { sortOrder: index },
         })
       )

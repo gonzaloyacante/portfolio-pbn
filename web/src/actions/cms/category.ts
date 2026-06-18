@@ -34,8 +34,8 @@ export async function reorderCategories(categoryIds: string[]): Promise<void> {
 
   await prisma.$transaction(
     parsed.data.map((id, index) =>
-      prisma.category.update({
-        where: { id },
+      prisma.category.updateMany({
+        where: { id, deletedAt: null },
         data: { sortOrder: index },
       })
     )
