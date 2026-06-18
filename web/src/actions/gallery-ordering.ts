@@ -43,8 +43,8 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
 
     await prisma.$transaction(
       imageOrders.map(({ imageId, order }) =>
-        prisma.categoryImage.update({
-          where: { id: imageId },
+        prisma.categoryImage.updateMany({
+          where: { id: imageId, categoryId },
           data: { order },
         })
       )
