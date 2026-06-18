@@ -73,21 +73,34 @@ class BookingsRepository {
       unawaited(_populateCache(result.data));
       return result;
     } on NetworkException {
-      return _fromCache(status: status);
+      return _fromCache(
+        status: status,
+        serviceId: serviceId,
+        dateFrom: dateFrom,
+        dateTo: dateTo,
+      );
     }
   }
 
-  Future<PaginatedResponse<BookingItem>> _fromCache({String? status}) async {
+  Future<PaginatedResponse<BookingItem>> _fromCache({
+    String? status,
+    String? serviceId,
+    DateTime? dateFrom,
+    DateTime? dateTo,
+  }) async {
     final rows = await _db.bookingsDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
 
     final items = rows
         .where((r) => status == null || r.status == status)
+        .where((r) => dateFrom == null || !r.date.isBefore(dateFrom))
+        .where((r) => dateTo == null || !r.date.isAfter(dateTo))
         .map(
           (r) => BookingItem.fromJson(
             jsonDecode(r.dataJson) as Map<String, dynamic>,
           ),
         )
+        .where((item) => serviceId == null || item.serviceId == serviceId)
         .toList();
 
     AppLogger.info('[Bookings] serving ${items.length} items from cache');
