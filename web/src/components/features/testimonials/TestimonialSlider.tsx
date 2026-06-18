@@ -114,12 +114,16 @@ export default function TestimonialSlider({ testimonials, autoAdvanceMs }: Testi
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Ir al grupo ${i + 1}`}
-                className={`h-2 rounded-full transition-all ${
-                  i === start
-                    ? 'public-testimonial-dot-active w-6'
-                    : 'public-testimonial-dot-inactive w-2'
-                }`}
-              />
+                className="flex items-center justify-center p-3"
+              >
+                <span
+                  className={`pointer-events-none block h-2 rounded-full transition-all ${
+                    i === start
+                      ? 'public-testimonial-dot-active w-6'
+                      : 'public-testimonial-dot-inactive w-2'
+                  }`}
+                />
+              </button>
             ))}
           </div>
 

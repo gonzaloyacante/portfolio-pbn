@@ -116,7 +116,8 @@ export default async function ServicesPage() {
                     <Link
                       href={ROUTES.public.serviceDetail(service.slug)}
                       className="relative block"
-                      aria-label={`Ver servicio: ${service.name}`}
+                      tabIndex={-1}
+                      aria-hidden="true"
                     >
                       {/* Image or Icon Header */}
                       <div className="public-services-surface relative flex h-48 items-center justify-center overflow-hidden">

@@ -17,6 +17,20 @@ export default function InstagramEmbed({ postUrl }: InstagramEmbedProps) {
     }
   }, [postUrl])
 
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node instanceof HTMLIFrameElement && !node.title) {
+            node.title = 'Publicación de Instagram'
+          }
+        }
+      }
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <div className="w-full max-w-sm">
       <blockquote

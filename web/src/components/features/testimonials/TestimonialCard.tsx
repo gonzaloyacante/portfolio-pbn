@@ -63,6 +63,7 @@ export function TestimonialCard({
                   className="public-testimonial-verified"
                   title="Cliente verificado"
                   aria-label="Cliente verificado"
+                  role="img"
                 >
                   <svg className="h-4 w-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
