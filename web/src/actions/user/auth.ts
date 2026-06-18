@@ -60,7 +60,9 @@ export async function requestPasswordReset(email: string, recaptchaToken: string
   void passwordResetLimiter.record(email)
 
   try {
-    const user = await prisma.user.findUnique({ where: { email } })
+    const user = await prisma.user.findFirst({
+      where: { email, isActive: true, deletedAt: null },
+    })
     if (!user) {
       return {
         success: true,
