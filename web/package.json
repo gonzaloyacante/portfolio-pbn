@@ -19,6 +19,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "openapi:generate": "tsx scripts/generate-openapi.ts",
+    "openapi:generate:dart": "openapi-generator-cli generate -i scripts/openapi.json -g dart-dio -o ../packages/portfolio_pbn_api --additional-properties=pubName=portfolio_pbn_api,nullSafe=true,serializationLibrary=json_serializable,disallowAdditionalPropertiesIfNotPresent=false",
+    "openapi:all": "pnpm openapi:generate && pnpm openapi:generate:dart",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
@@ -100,6 +102,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.1.6",
+    "@openapitools/openapi-generator-cli": "^2.38.0",
     "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",

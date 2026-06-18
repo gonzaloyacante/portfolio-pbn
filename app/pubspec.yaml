@@ -21,6 +21,10 @@ dependencies:
   # ── HTTP & API ────────────────────────────────────────────────────────────
   dio: ^5.8.0+1
 
+  # ── API Contract (generado desde OpenAPI spec — fuente única de verdad) ───
+  portfolio_pbn_api:
+    path: ../packages/portfolio_pbn_api
+
   # ── Navigation ────────────────────────────────────────────────────────────
   go_router: ^17.1.0
 

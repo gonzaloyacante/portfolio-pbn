@@ -118,7 +118,14 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 ### ARQ1. ⭐ Contrato web↔app duplicado a mano = causa raíz de C2/C3 ✅
 - Tipos definidos DOS veces sin fuente única: Zod (web/src/lib/validations.ts) y freezed (app/lib/.../*_model.dart), sincronizados a mano. Cualquier desfase (price String vs number) compila en ambos lados y rompe en runtime.
 - Fix de fondo: generar OpenAPI desde Zod (`zod-to-openapi`) → generar cliente Dart (`swagger_dart_code_generator`/openapi-generator). Una sola fuente de verdad elimina toda esta clase de bugs. Alternativa mínima: un `packages/contracts` con JSON Schema compartido.
-- **Hecho 2026-06-18**: `@asteasolutions/zod-to-openapi@8.5.0` instalado. `web/src/lib/openapi/registry.ts` (OpenAPI 3.1.0) cubre los 26 paths / 70 schemas de toda la API admin: Auth, Bookings, Services, Categories + Gallery, Contacts, Testimonials, Settings (8 tipos), Social Links, Upload/Sign, Analytics Overview, Trash, AppRelease. `web/scripts/generate-openapi.ts` produce `web/scripts/openapi.json`. Script `pnpm openapi:generate` en package.json. typecheck limpio. El `openapi.json` es la fuente única de verdad para generar el cliente Dart con openapi-generator (pendiente como tarea separada una vez validado el spec).
+- **Hecho 2026-06-18**: Pipeline completo extremo-a-extremo.
+  - `@asteasolutions/zod-to-openapi@8.5.0` + `@openapitools/openapi-generator-cli` instalados.
+  - `web/src/lib/openapi/registry.ts` (OpenAPI 3.1.0): 26 paths / 70 schemas — toda la API admin: Auth, Bookings, Services, Categories + Gallery, Contacts, Testimonials, Settings (8 tipos), Social Links, Upload/Sign, Analytics Overview, Trash, AppRelease.
+  - `pnpm openapi:generate` → `scripts/openapi.json` (spec).
+  - `pnpm openapi:generate:dart` → `packages/portfolio_pbn_api/` (cliente Dart, generador `dart-dio`, 69 modelos + 12 clases API).
+  - `pnpm openapi:all` encadena ambos pasos.
+  - `packages/portfolio_pbn_api` añadido como path dep en `app/pubspec.yaml`. `flutter pub get` y `dart analyze` limpios.
+  - Pendiente: correr `dart run build_runner build` en `packages/portfolio_pbn_api/` para generar los `.g.dart`; luego migrar progresivamente los modelos freezed manuales → clases generadas feature por feature.
 
 ### ARQ2. Doble pipeline de auth divergente ✅
 - NextAuth (web) + JWT custom (app) = dos login handlers, dos rate-limiters, dos lógicas de lockout que YA divergen (A7: web no bloquea cuenta, app sí). Unificar el núcleo en `verifyCredentials()` compartido; cada capa solo emite su token.
