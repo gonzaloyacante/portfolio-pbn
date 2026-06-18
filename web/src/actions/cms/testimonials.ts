@@ -113,6 +113,10 @@ export async function submitPublicTestimonial(formData: FormData) {
     }
   }
 
+  // Record before persisting to prevent TOCTOU: concurrent requests with the
+  // same IP would all pass check() if we record only after creation.
+  await publicTestimonialLimiter.record(ip)
+
   try {
     await prisma.testimonial.create({
       data: {
@@ -125,8 +129,6 @@ export async function submitPublicTestimonial(formData: FormData) {
         isActive: false,
       },
     })
-
-    await publicTestimonialLimiter.record(ip)
 
     // 📧 NOTIFICAR AL ADMIN
     try {
