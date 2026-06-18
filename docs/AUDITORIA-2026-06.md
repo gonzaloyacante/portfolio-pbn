@@ -269,7 +269,7 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 - Todas vía path DEV de Prisma (`@prisma/client>prisma>@prisma/dev>@hono/node-server>hono`), NO en runtime de producción → riesgo real bajo. Pero `pnpm audit` ya no está limpio (consecuencia de quitar el bloque `overrides`). Re-pinnear hono>=4.12.21 en pnpm-workspace overrides o actualizar Prisma cuando traiga hono parcheado. (GHSA-f577-qrjj-4474, GHSA-2gcr-mfcq-wcc3)
 - **Hecho**: `pnpm.overrides` en web/package.json — `"hono@*": "4.12.25"` y `"@hono/node-server@*": "1.19.13"`. `pnpm audit` limpio para estos CVEs.
 
-### DEP2. Flutter deps atrasadas — minors ✅ / majors ⬜
+### DEP2. Flutter deps atrasadas — minors ✅ / majors ✅
 - **Minors resueltos** (verificado en pubspec.lock 2026-06-18): firebase_messaging 16.3.0, sentry/sentry_flutter 9.22.0, dio 5.9.2, go_router 17.3.0, connectivity_plus 7.1.1, flutter_secure_storage 10.3.1. Las constraints `^` en pubspec.yaml ya cubrían estas versiones; pub.lock las resolvió al día.
 - **Majors resueltos 2026-06-18**: image_cropper ^11→^12 (resuelto 12.2.1) y permission_handler ^11→^12 (resuelto 12.0.3). Uso limitado — `Permission.requestInstallPackages` y `ImageCropper().cropImage()` + `CropAspectRatioPreset.original` — ninguna API rota. `dart analyze` limpio.
 - **flutter_local_notifications resuelto 2026-06-18**: ^20→^22 (resuelto 22.0.1). Uso: `FlutterLocalNotificationsPlugin`, `AndroidInitializationSettings`, `DarwinInitializationSettings`, `AndroidNotificationChannel`, `AndroidNotificationDetails`, `DarwinNotificationDetails`. Ninguna API rota. `dart analyze` limpio.
