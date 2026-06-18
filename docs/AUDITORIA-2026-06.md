@@ -262,7 +262,8 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 ### DEP2. Flutter deps atrasadas — minors ✅ / majors ⬜
 - **Minors resueltos** (verificado en pubspec.lock 2026-06-18): firebase_messaging 16.3.0, sentry/sentry_flutter 9.22.0, dio 5.9.2, go_router 17.3.0, connectivity_plus 7.1.1, flutter_secure_storage 10.3.1. Las constraints `^` en pubspec.yaml ya cubrían estas versiones; pub.lock las resolvió al día.
 - **Majors resueltos 2026-06-18**: image_cropper ^11→^12 (resuelto 12.2.1) y permission_handler ^11→^12 (resuelto 12.0.3). Uso limitado — `Permission.requestInstallPackages` y `ImageCropper().cropImage()` + `CropAspectRatioPreset.original` — ninguna API rota. `dart analyze` limpio.
-- **Majors pendientes** (salto multi-versión, riesgo mayor): device_info_plus ^10 (→13), flutter_local_notifications ^20 (→22). Sin CVE; deuda de mantenimiento. Bump escalonado con changelog review. Dejar para sesión dedicada.
+- **flutter_local_notifications resuelto 2026-06-18**: ^20→^22 (resuelto 22.0.1). Uso: `FlutterLocalNotificationsPlugin`, `AndroidInitializationSettings`, `DarwinInitializationSettings`, `AndroidNotificationChannel`, `AndroidNotificationDetails`, `DarwinNotificationDetails`. Ninguna API rota. `dart analyze` limpio.
+- **device_info_plus pendiente**: ^10→^13 bloqueado — `device_info_plus >=13` requiere `win32 ^6`, pero `package_info_plus ^9` fija `win32 ^5`. Necesita bump coordinado `package_info_plus ^9→^10` primero. Solo se usa `iosInfo.isPhysicalDevice` (API estable). Dejar para sesión dedicada.
 
 ### A11Y1. a11y solo verificable parcialmente en estático ⬜
 - Estático OK: 0 `<img>` sin alt, 110 `aria-*`, 15 `role=`, 11 archivos UI con `aria-label`. Pero correctitud real (lectores de pantalla, foco, contraste sobre el theme del CMS, orden de tabulación) NO se certifica leyendo código → requiere auditoría con screen-reader + Lighthouse/axe.
