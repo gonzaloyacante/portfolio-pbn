@@ -134,8 +134,11 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const previousService = await prisma.service.findUnique({
       where: { id },
-      select: { imageUrl: true, slug: true },
+      select: { imageUrl: true, slug: true, deletedAt: true },
     })
+    if (!previousService || previousService.deletedAt !== null) {
+      return NextResponse.json({ success: false, error: 'Servicio no encontrado' }, { status: 404 })
+    }
 
     const updatedService = await prisma.$transaction(async (tx) => {
       await tx.service.update({
