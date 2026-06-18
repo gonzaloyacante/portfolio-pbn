@@ -92,8 +92,14 @@ export async function PATCH(req: Request, { params }: Params) {
 
     const previousCategory = await prisma.category.findUnique({
       where: { id },
-      select: { coverImageUrl: true, slug: true },
+      select: { coverImageUrl: true, slug: true, deletedAt: true },
     })
+    if (!previousCategory || previousCategory.deletedAt !== null) {
+      return NextResponse.json(
+        { success: false, error: 'Categoría no encontrada' },
+        { status: 404 }
+      )
+    }
 
     // Neon HTTP adapter no soporta transacciones implícitas al usar _count en mutations.
     // Actualizamos sin _count y luego consultamos el count por separado.
