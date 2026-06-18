@@ -104,8 +104,9 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 - `bookings_status_deletedat_idx` Y `bookings_status_deletedAt_idx` coexisten (difieren solo en mayúscula). Uno es peso muerto puro. Vino de drift entre migraciones. Borrar uno.
 - **Hecho 2026-06-17**: `DROP INDEX IF EXISTS bookings_status_deletedAt_idx` ejecutado en prod vía Neon MCP (el con mayúscula, creado por drift; se conserva el original lowercase que ya existía).
 
-### D-DB3. Dead tuples altos en singletons ⬜
+### D-DB3. Dead tuples altos en singletons ✅
 - theme_settings 1 viva/29 muertas, users 1/20, categories 3/17. El patrón update-singleton genera churn. No crítico a esta escala (autovacuum). Vigilar si crece; opcional fillfactor.
+- **Hecho 2026-06-18**: `VACUUM ANALYZE` en todas las tablas afectadas → 0 dead tuples en prod. `fillfactor=50` en 9 singletons (home/about/contact/site/testimonial/category/services_page_settings + theme_settings + users); `fillfactor=70` en tablas pequeñas de rotación (push_tokens, refresh_tokens, social_links, categories). `VACUUM FULL ANALYZE` en singletons para reescribir páginas con el nuevo fillfactor (HOT updates activos desde ya — próximas ediciones no acumulan dead tuples).
 
 ### D-DB4. AnalyticLog crecimiento no acotado ✅ (diferido por DEAD2)
 - Existe migración TTL (analytic_logs_cleanup_and_ttl) pero NO se ve cron que la ejecute. Verificar que el job corre; si analytics escala → partición por mes.
