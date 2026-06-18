@@ -140,8 +140,9 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 - web/src/actions/cms/services.ts 540 — separar create/update/query/mapping. **Hecho 2026-06-15** (commit 58ec8e6c): dividido en `src/actions/cms/services/{schema,form-helpers,queries,create,update,mutations}.ts` + barrel `index.ts`, manteniendo `@/actions/cms/services` como import único. De paso se eliminó la duplicación byte-a-byte del parseo de FormData entre `createService`/`updateService`, ahora compartida en `form-helpers.ts`. Suite/tsc/eslint limpios, build de producción ok.
 - app/lib/core/debug/debug_panel_cards.dart 632, app_theme.dart 558 — partir. **Hecho 2026-06-16** (commit 6eac358a): `debug_panel_cards.dart` (ya era `part of 'debug_panel.dart'`) dividido en 4 partes — `debug_panel_widgets.dart` (DebugCard/InfoRow/ActionButton/EnvBadge), `debug_panel_server_card.dart`, `debug_panel_info_cards.dart`, `debug_panel_action_cards.dart`. `app_theme.dart` dividido en `app_theme_helpers.dart` (helpers de color/fuente + `_Radii`) y `app_theme_builder.dart` (`_buildFromParts` como función privada de nivel superior). API pública de `AppTheme` sin cambios. dart analyze limpio.
 
-### ARQ5. Monorepo informal ⬜
+### ARQ5. Monorepo informal ✅
 - pnpm-workspace.yaml vive DENTRO de web/, no en raíz. web/ y app/ son carpetas hermanas sin workspace real. OK a esta escala; si se añade `packages/contracts` (ARQ1) conviene workspace en raíz.
+- **Hecho 2026-06-18** (commit `b113330b`): `pnpm-workspace.yaml` + root `package.json` en raíz. `pnpm.overrides`/`onlyBuiltDependencies` migrados de `web/` a root (pnpm ignora esos campos en workspace members). `web/pnpm-lock.yaml` eliminado; root `pnpm-lock.yaml` es la fuente única. CI `cache-dependency-path` actualizado. De paso: 3 CVEs pre-existentes parchados vía overrides (dompurify 3.4.0→3.4.11, vite 7.3.2→7.3.5, esbuild →0.25.5). `pnpm audit`: 0 vulnerabilidades.
 
 ---
 
