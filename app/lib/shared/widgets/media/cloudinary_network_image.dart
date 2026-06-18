@@ -39,6 +39,7 @@ class CloudinaryNetworkImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
+          memCacheWidth: physicalWidth,
           placeholder: placeholder,
           errorWidget: errorWidget,
         );

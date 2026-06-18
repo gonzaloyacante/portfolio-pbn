@@ -11,6 +11,7 @@ class AppNetworkImage extends StatelessWidget {
     this.fit = BoxFit.cover,
     this.width,
     this.height,
+    this.memCacheWidth,
     this.placeholder,
     this.errorWidget,
   });
@@ -19,6 +20,10 @@ class AppNetworkImage extends StatelessWidget {
   final BoxFit fit;
   final double? width;
   final double? height;
+
+  /// Physical pixels cap for in-memory decode. Pass the rendered physical
+  /// width (logical × DPR) to avoid holding full-res bitmaps for thumbnails.
+  final int? memCacheWidth;
   final Widget? placeholder;
   final Widget? errorWidget;
 
@@ -29,6 +34,7 @@ class AppNetworkImage extends StatelessWidget {
       fit: fit,
       width: width,
       height: height,
+      memCacheWidth: memCacheWidth,
       placeholder: (context, url) =>
           placeholder ??
           const ShimmerLoader(child: ColoredBox(color: AppColors.lightBorder)),
