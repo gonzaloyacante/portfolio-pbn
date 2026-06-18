@@ -71,12 +71,18 @@ class TestimonialsRepository {
       unawaited(_populateCache(result.data));
       return result;
     } on NetworkException {
-      return _fromCache(isActive: isActive);
+      return _fromCache(
+        isActive: isActive,
+        status: status,
+        isFeatured: isFeatured,
+      );
     }
   }
 
   Future<PaginatedResponse<TestimonialItem>> _fromCache({
     bool? isActive,
+    String? status,
+    bool? isFeatured,
   }) async {
     final rows = await _db.testimonialsDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
@@ -88,6 +94,8 @@ class TestimonialsRepository {
             jsonDecode(r.dataJson) as Map<String, dynamic>,
           ),
         )
+        .where((item) => status == null || item.status == status)
+        .where((item) => isFeatured == null || item.featured == isFeatured)
         .toList();
 
     AppLogger.info('[Testimonials] serving ${items.length} items from cache');

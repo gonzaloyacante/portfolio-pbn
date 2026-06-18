@@ -71,13 +71,18 @@ class ContactsRepository {
       unawaited(_populateCache(result.data));
       return result;
     } on NetworkException {
-      return _fromCache(status: status, priority: priority);
+      return _fromCache(
+        status: status,
+        priority: priority,
+        unreadOnly: unreadOnly,
+      );
     }
   }
 
   Future<PaginatedResponse<ContactItem>> _fromCache({
     String? status,
     String? priority,
+    bool? unreadOnly,
   }) async {
     final rows = await _db.contactsDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
@@ -85,6 +90,7 @@ class ContactsRepository {
     final items = rows
         .where((r) => status == null || r.status == status)
         .where((r) => priority == null || r.priority == priority)
+        .where((r) => unreadOnly != true || r.isRead == false)
         .map(
           (r) => ContactItem.fromJson(
             jsonDecode(r.dataJson) as Map<String, dynamic>,

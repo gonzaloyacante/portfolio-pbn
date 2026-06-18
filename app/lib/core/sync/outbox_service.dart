@@ -57,8 +57,24 @@ class OutboxService {
 
   // ── Flush ─────────────────────────────────────────────────────────────────
 
+  bool _isFlushing = false;
+
   /// Replays all pending outbox entries in order. Skips permanently failed rows.
+  /// Guard prevents concurrent flushes (e.g. rapid offline→online→offline→online).
   Future<void> flush() async {
+    if (_isFlushing) {
+      AppLogger.info('[Outbox] flush already in progress, skipping');
+      return;
+    }
+    _isFlushing = true;
+    try {
+      await _flush();
+    } finally {
+      _isFlushing = false;
+    }
+  }
+
+  Future<void> _flush() async {
     final pending = await _db.outboxDao.getPending();
     if (pending.isEmpty) return;
 

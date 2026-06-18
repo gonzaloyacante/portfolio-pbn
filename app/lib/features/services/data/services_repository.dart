@@ -67,11 +67,14 @@ class ServicesRepository {
       unawaited(_populateCache(apiResponse.data!.data));
       return apiResponse.data!;
     } on NetworkException {
-      return _fromCache(isActive: isActive);
+      return _fromCache(isActive: isActive, isFeatured: isFeatured);
     }
   }
 
-  Future<PaginatedResponse<ServiceItem>> _fromCache({bool? isActive}) async {
+  Future<PaginatedResponse<ServiceItem>> _fromCache({
+    bool? isActive,
+    bool? isFeatured,
+  }) async {
     final rows = await _db.servicesDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
 
@@ -82,6 +85,7 @@ class ServicesRepository {
             jsonDecode(r.dataJson) as Map<String, dynamic>,
           ),
         )
+        .where((item) => isFeatured == null || item.isFeatured == isFeatured)
         .toList();
 
     AppLogger.info('[Services] serving ${items.length} items from cache');
