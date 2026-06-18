@@ -1,9 +1,19 @@
+import { redirect } from 'next/navigation'
+
+import { auth } from '@/lib/auth'
+import { ROUTES } from '@/config/routes'
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminMobileHeader from '@/components/layout/AdminMobileHeader'
 import PageTransition from '@/components/layout/PageTransition'
 import AdminProviders from '@/components/providers/AdminProviders'
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth()
+
+  if (!session?.user || session.user.role !== 'ADMIN') {
+    redirect(ROUTES.auth.login)
+  }
+
   return (
     <AdminProviders>
       <div className="bg-background flex min-h-dvh flex-col transition-colors duration-300 lg:flex-row">
