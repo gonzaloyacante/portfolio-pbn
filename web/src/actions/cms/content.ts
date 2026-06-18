@@ -165,8 +165,14 @@ export async function deleteCategory(id: string) {
   if (rl) return { success: false, error: rl.error }
 
   try {
-    const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
-    const mangledSlug = cat ? `${cat.slug}_deleted_${Date.now()}` : undefined
+    const cat = await prisma.category.findUnique({
+      where: { id },
+      select: { slug: true, deletedAt: true },
+    })
+    if (!cat || cat.deletedAt !== null) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
+    const mangledSlug = `${cat.slug}_deleted_${Date.now()}`
     await prisma.category.update({
       where: { id },
       data: { deletedAt: new Date(), ...(mangledSlug && { slug: mangledSlug }) },
