@@ -203,6 +203,12 @@ export async function markContactAsRead(id: string) {
   const rl = await checkApiRateLimit()
   if (rl) throw new Error(rl.error)
 
+  const existing = await prisma.contact.findUnique({
+    where: { id },
+    select: { deletedAt: true },
+  })
+  if (!existing || existing.deletedAt !== null) throw new Error('Contacto no encontrado')
+
   await prisma.contact.update({
     where: { id },
     data: { isRead: true, readAt: new Date() },
@@ -216,10 +222,11 @@ export async function deleteContact(id: string) {
   const rl = await checkApiRateLimit()
   if (rl) throw new Error(rl.error)
 
-  await prisma.contact.update({
-    where: { id },
+  const result = await prisma.contact.updateMany({
+    where: { id, deletedAt: null },
     data: { deletedAt: new Date() },
   })
+  if (result.count === 0) throw new Error('Contacto no encontrado')
   revalidatePath(ROUTES.admin.contacts)
   revalidateTag(CACHE_TAGS.contacts, 'max')
 }
