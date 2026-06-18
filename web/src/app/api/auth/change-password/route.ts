@@ -41,6 +41,15 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      return NextResponse.json(
+        {
+          error: 'La contraseña debe contener al menos una mayúscula, una minúscula y un número',
+        },
+        { status: 400 }
+      )
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: userEmail },
       select: { id: true, password: true, isActive: true, deletedAt: true },
@@ -57,7 +66,10 @@ export async function POST(req: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 12)
-    await prisma.user.update({ where: { id: user.id }, data: { password: hashedPassword } })
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword, failedLoginCount: 0, lockedUntil: null },
+    })
 
     // Cambiar la contraseña invalida todas las sesiones existentes (A15)
     await prisma.refreshToken.updateMany({

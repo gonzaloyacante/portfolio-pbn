@@ -39,6 +39,13 @@ export default function MiCuentaPage() {
       return
     }
 
+    if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      showToast.error(
+        'La contraseña debe contener al menos una mayúscula, una minúscula y un número'
+      )
+      return
+    }
+
     setIsLoading(true)
 
     try {
