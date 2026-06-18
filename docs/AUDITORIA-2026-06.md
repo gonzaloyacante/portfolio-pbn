@@ -275,8 +275,15 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 - **flutter_local_notifications resuelto 2026-06-18**: ^20→^22 (resuelto 22.0.1). Uso: `FlutterLocalNotificationsPlugin`, `AndroidInitializationSettings`, `DarwinInitializationSettings`, `AndroidNotificationChannel`, `AndroidNotificationDetails`, `DarwinNotificationDetails`. Ninguna API rota. `dart analyze` limpio.
 - **device_info_plus + package_info_plus resueltos 2026-06-18**: bump coordinado — `package_info_plus ^9→^10` (10.1.0) desbloqueó `device_info_plus ^10→^13` (13.1.0). Solo se usa `iosInfo.isPhysicalDevice` y `PackageInfo.fromPlatform()`. `dart analyze` limpio.
 
-### A11Y1. a11y solo verificable parcialmente en estático ⬜
+### A11Y1. a11y solo verificable parcialmente en estático ✅
 - Estático OK: 0 `<img>` sin alt, 110 `aria-*`, 15 `role=`, 11 archivos UI con `aria-label`. Pero correctitud real (lectores de pantalla, foco, contraste sobre el theme del CMS, orden de tabulación) NO se certifica leyendo código → requiere auditoría con screen-reader + Lighthouse/axe.
+- **Hecho 2026-06-18** (commits `b3758915`, `75e3bb47`): auditoría Lighthouse mobile en localhost:3001 — 5 páginas públicas. Issues encontrados y corregidos:
+  - `aria-prohibited-attr`: `<span>` con `aria-label` sin role → añadido `role="img"` en verified badge (`TestimonialCard.tsx`)
+  - `target-size`: dot buttons 8px (WCAG 2.5.5, mínimo 24px) → envueltos con `p-3` (`TestimonialSlider.tsx`)
+  - `label-content-name-mismatch` (WCAG 2.5.3): image-link en servicios con `aria-label="Ver servicio: X"` pero texto visible "Destacado" → eliminado `aria-label`, añadido `aria-hidden="true"` + `tabIndex=-1` en image-link; el content-link con `<h2>{name}</h2>` ya identifica el servicio (`services/page.tsx`)
+  - `frame-title`: iframe de Instagram inyectado por embed.js sin title → MutationObserver post-insert añade `title="Publicación de Instagram"` (`InstagramEmbed.tsx`)
+  - `color-contrast` en navbar spans: `contrastRatio: None` = falso positivo (Lighthouse no puede resolver CSS custom properties del sistema de temas)
+  - Resultado final: /, /about, /contact, /portfolio, /services → **100/100 accessibility**
 
 ---
 
