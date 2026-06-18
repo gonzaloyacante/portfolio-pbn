@@ -182,6 +182,14 @@ export async function updateTestimonial(id: string, formData: FormData) {
   const data = validation.data
 
   try {
+    const existing = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
+      return { success: false, error: 'Testimonio no encontrado' }
+    }
+
     await prisma.testimonial.update({
       where: { id },
       data: {
@@ -221,6 +229,14 @@ export async function deleteTestimonial(id: string) {
   if (rl) return { success: false, error: rl.error }
 
   try {
+    const existing = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
+      return { success: false, error: 'Testimonio no encontrado' }
+    }
+
     await prisma.testimonial.update({
       where: { id },
       data: { deletedAt: new Date() },
@@ -244,8 +260,11 @@ export async function toggleTestimonial(id: string) {
   if (rl) return { success: false, error: rl.error }
 
   try {
-    const testimonial = await prisma.testimonial.findUnique({ where: { id } })
-    if (!testimonial) {
+    const testimonial = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { isActive: true, deletedAt: true },
+    })
+    if (!testimonial || testimonial.deletedAt !== null) {
       return { success: false, error: 'Testimonio no encontrado' }
     }
 
@@ -272,6 +291,14 @@ export async function approveTestimonial(id: string) {
   if (rl) return { success: false, error: rl.error }
 
   try {
+    const existing = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
+      return { success: false, error: 'Testimonio no encontrado' }
+    }
+
     await prisma.testimonial.update({
       where: { id },
       data: { status: 'APPROVED', isActive: true, moderatedAt: new Date() },
@@ -295,6 +322,14 @@ export async function rejectTestimonial(id: string) {
   if (rl) return { success: false, error: rl.error }
 
   try {
+    const existing = await prisma.testimonial.findUnique({
+      where: { id },
+      select: { deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
+      return { success: false, error: 'Testimonio no encontrado' }
+    }
+
     await prisma.testimonial.update({
       where: { id },
       data: { status: 'REJECTED', isActive: false, moderatedAt: new Date() },

@@ -34,9 +34,10 @@ export async function updateCategoryGalleryOrder(input: z.infer<typeof updateGal
 
     const category = await prisma.category.findUnique({
       where: { id: categoryId },
+      select: { slug: true, deletedAt: true },
     })
 
-    if (!category) {
+    if (!category || category.deletedAt !== null) {
       return { success: false, error: 'Categoría no encontrada' }
     }
 
@@ -76,6 +77,14 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
     const rl2 = await checkApiRateLimit()
     if (rl2) return { success: false, error: rl2.error }
 
+    const category = await prisma.category.findUnique({
+      where: { id: categoryId },
+      select: { slug: true, deletedAt: true },
+    })
+    if (!category || category.deletedAt !== null) {
+      return { success: false, error: 'Categoría no encontrada' }
+    }
+
     const images = await prisma.categoryImage.findMany({
       where: { categoryId },
       orderBy: { order: 'asc' },
@@ -95,15 +104,8 @@ export async function resetCategoryGalleryOrder(categoryId: string) {
       )
     )
 
-    const category = await prisma.category.findUnique({
-      where: { id: categoryId },
-      select: { slug: true },
-    })
-
-    if (category) {
-      revalidatePath(ROUTES.public.portfolio)
-      revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
-    }
+    revalidatePath(ROUTES.public.portfolio)
+    revalidatePath(`${ROUTES.public.portfolio}/${category.slug}`)
     revalidatePath(ROUTES.admin.categories)
     revalidatePath(ROUTES.admin.categoryGallery(categoryId))
     revalidateTag(CACHE_TAGS.categoryImages, 'max')
