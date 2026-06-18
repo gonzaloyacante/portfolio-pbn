@@ -2,7 +2,6 @@
 
 import { auth } from '@/lib/auth'
 import { logger } from '@/lib/logger'
-import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
 
 /**
  * Secure Action Wrapper: Require Admin Authentication
@@ -19,17 +18,4 @@ export async function requireAdmin() {
   }
 
   return session.user
-}
-
-/**
- * Combined Security Guard for Settings Actions
- * 1. Admin Auth
- * 2. Rate Limiting based on User ID
- */
-export async function guardSettingsAction() {
-  const user = await requireAdmin()
-  if (user.id) {
-    await checkSettingsRateLimit(user.id)
-  }
-  return user
 }
