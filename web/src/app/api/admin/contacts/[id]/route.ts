@@ -63,15 +63,20 @@ export async function GET(req: Request, { params }: Params) {
 
     // Auto mark as read on first view
     if (!contactData.isRead) {
+      const now = new Date()
       await prisma.contact.update({
         where: { id },
-        data: { isRead: true, readAt: new Date() },
+        data: { isRead: true, readAt: now },
       })
       revalidatePath(ROUTES.admin.contacts)
       revalidateTag(CACHE_TAGS.contacts, 'max')
+      return NextResponse.json({
+        success: true,
+        data: { ...contactData, isRead: true, readAt: now },
+      })
     }
 
-    return NextResponse.json({ success: true, data: { ...contactData, isRead: true } })
+    return NextResponse.json({ success: true, data: contactData })
   } catch (err) {
     logger.error('[admin-contact-get] Error', {
       id,
