@@ -54,7 +54,11 @@ class ApiClient {
         sendTimeout: AppConstants.connectTimeout,
         contentType: 'application/json',
         responseType: ResponseType.json,
-        validateStatus: (status) => status != null && status < 500,
+        // 429 is excluded so DioException fires and RetryInterceptor can apply
+        // Retry-After backoff. All other 4xx pass through so AuthInterceptor
+        // can intercept 401s in onResponse (avoids infinite-loop via onError).
+        validateStatus: (status) =>
+            status != null && status < 500 && status != 429,
       ),
     );
 

@@ -145,9 +145,23 @@ export async function updateBookingStatus(
   if (rl) return { success: false, error: rl.error }
 
   try {
+    const existing = await prisma.booking.findUnique({
+      where: { id },
+      select: { status: true, deletedAt: true },
+    })
+    if (!existing || existing.deletedAt !== null) {
+      return { success: false, error: 'Reserva no encontrada' }
+    }
+
+    const statusData: Record<string, unknown> = {}
+    if (status !== existing.status) {
+      if (status === 'CONFIRMED') statusData.confirmedAt = new Date()
+      else if (status === 'CANCELLED') statusData.cancelledAt = new Date()
+    }
+
     await prisma.booking.update({
       where: { id },
-      data: { status },
+      data: { status, ...statusData },
     })
     revalidatePath(ROUTES.admin.calendar)
     revalidateTag(CACHE_TAGS.bookings, 'max')
