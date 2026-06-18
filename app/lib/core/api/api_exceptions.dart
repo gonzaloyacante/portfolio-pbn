@@ -9,7 +9,7 @@ sealed class AppException implements Exception {
   final String message;
 
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => message;
 }
 
 // ── Red ───────────────────────────────────────────────────────────────────────
