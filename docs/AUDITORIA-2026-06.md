@@ -279,8 +279,9 @@ Estado: 1 user, 3 categories, 34 images, 0 services/bookings/contacts/testimonia
 ### SHARE2. ❌ RETRACTADO (falso positivo, verificado)
 - Afirmé que `portfolio/[slug]` no tenía generateMetadata. ERROR: la ruta real es `portfolio/[category]/page.tsx` y SÍ tiene `generateMetadata` (línea 50) vía `buildSeoMetadata`, con OG image = `coverImageUrl || images[0].url || defaultOgImage` (línea 72). Las galerías SÍ comparten con su foto de portada. Sin hallazgo. (Lección: grepié una ruta inexistente; verificar el árbol antes de afirmar.)
 
-### SHARE3. OG genérico solo-texto en home/raíz (no en galerías) ⬜
-- opengraph-image.tsx (card raíz) pinta nombre+tagline+especialidad sobre fondo plano, sin foto ni logo. Las galerías ya usan su cover (SHARE2 ok), pero compartir la HOME muestra el card de texto. Para una maquilladora, la home compartida debería mostrar trabajo real. Fix opcional: componer el card raíz con una foto hero de fondo.
+### SHARE3. OG genérico solo-texto en home/raíz (no en galerías) ✅
+- opengraph-image.tsx (card raíz) pinta nombre+tagline+especialidad sobre fondo plano, sin foto ni logo. Las galerías ya usan su cover (SHARE2 ok), pero compartir la HOME muestra el card de texto. Para una maquilladora, la home compartida debería mostrar trabajo real.
+- **Hecho 2026-06-18**: `opengraph-image.tsx` añade `getHomeSettings()` al `Promise.all`. Si el CMS tiene `heroMainImageUrl`: Cloudinary URL transformada a `c_fill,w_1200,h_630,q_auto,f_jpg` → usada como fondo `<img>` + scrim `linear-gradient(rgba(0,0,0,0.72)→0.45)` + texto en blanco/alta opacidad. Sin foto en CMS: fallback al card de texto original con `OG_BACKGROUND`. Sin asset hardcodeado — toma la foto real del CMS automáticamente.
 
 ### SHARE4. ⭐ Fuente de marca del navbar ROTA (comilla mal cerrada) ✅
 - (public)/layout.tsx:153 `font-family:'${navbarBrandFont}...,sans-serif !important;` — la comilla abre antes del nombre y NO cierra antes de la coma → genera `font-family:'Great Vibes,sans-serif` (comilla sin cerrar) = CSS inválido → el nombre de marca NO usa la fuente custom configurada en el CMS. Fix: `font-family:'${font}',sans-serif`.
