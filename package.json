@@ -1,0 +1,38 @@
+{
+  "name": "portfolio-pbn-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "pnpm": {
+    "overrides": {
+      "d3-color": "^3.1.0",
+      "hono@*": "4.12.25",
+      "@hono/node-server@*": "1.19.13",
+      "minimatch@*": "10.2.3",
+      "rollup@*": "4.59.0",
+      "serialize-javascript@*": "7.0.5",
+      "flatted@*": "3.4.2",
+      "effect@*": "3.20.0",
+      "nodemailer@*": "8.0.5",
+      "brace-expansion@*": "5.0.6",
+      "picomatch@*": "4.0.4",
+      "yaml@*": "2.8.3",
+      "lodash@*": "4.18.1",
+      "lodash-es@*": "4.18.1",
+      "defu@*": "6.1.5",
+      "vite@*": "7.3.5",
+      "dompurify@*": "3.4.11",
+      "esbuild@*": "0.25.5",
+      "postcss@*": "8.5.10",
+      "uuid@*": "14.0.0"
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@sentry/cli",
+      "esbuild",
+      "prisma",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}
