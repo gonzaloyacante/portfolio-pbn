@@ -110,7 +110,8 @@ export async function updateBookingAdmin(
   formData: FormData
 ): Promise<{ success: boolean; error?: string; fieldErrors?: Record<string, string[]> }> {
   await requireAdmin()
-  await checkApiRateLimit('update-booking')
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const raw = {
     date: formData.get('date'),

@@ -36,7 +36,8 @@ function _revalidatePublicContent(categorySlugs: Array<string | null | undefined
 
 export async function createCategory(formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const _toStringOrNull = (v: FormDataEntryValue | null): string | null =>
     typeof v === 'string' && v !== '' ? v : null
@@ -90,7 +91,8 @@ export async function createCategory(formData: FormData) {
 
 export async function updateCategory(id: string, formData: FormData) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   const _toStringOrNull = (v: FormDataEntryValue | null): string | null =>
     typeof v === 'string' && v !== '' ? v : null
@@ -156,7 +158,8 @@ export async function updateCategory(id: string, formData: FormData) {
 
 export async function deleteCategory(id: string) {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const cat = await prisma.category.findUnique({ where: { id }, select: { slug: true } })
@@ -186,7 +189,8 @@ export async function addCategoryImages(
   files: File[]
 ): Promise<{ success: boolean; error?: string }> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const category = await prisma.category.findFirst({
@@ -232,7 +236,8 @@ export async function saveGalleryImages(
   images: { url: string; publicId: string; width?: number; height?: number }[]
 ): Promise<{ success: boolean; error?: string }> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     if (!categoryId || images.length === 0) {
@@ -279,7 +284,8 @@ export async function deleteCategoryImage(
   imageId: string
 ): Promise<{ success: boolean; error?: string }> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const image = await prisma.categoryImage.findUnique({
@@ -316,7 +322,8 @@ export async function reorderCategoryImages(
   items: { id: string; order: number }[]
 ): Promise<{ success: boolean; error?: string }> {
   await requireAdmin()
-  await checkApiRateLimit()
+  const rl = await checkApiRateLimit()
+  if (rl) return { success: false, error: rl.error }
 
   try {
     const category = await prisma.category.findFirst({
