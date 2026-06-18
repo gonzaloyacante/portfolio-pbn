@@ -705,10 +705,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,user);
 
-@override
-String toString() {
-  return 'AuthLoginResponse(accessToken: [redacted], refreshToken: [redacted], user: $user)';
-}
 
 
 }
@@ -889,8 +885,8 @@ return $default(_that.accessToken,_that.refreshToken,_that.user);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _AuthLoginResponse implements AuthLoginResponse {
-  const _AuthLoginResponse({required this.accessToken, required this.refreshToken, required this.user});
+class _AuthLoginResponse extends AuthLoginResponse {
+  const _AuthLoginResponse({required this.accessToken, required this.refreshToken, required this.user}): super._();
   factory _AuthLoginResponse.fromJson(Map<String, dynamic> json) => _$AuthLoginResponseFromJson(json);
 
 @override final  String accessToken;
@@ -917,10 +913,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,accessToken,refreshToken,user);
 
-@override
-String toString() {
-  return 'AuthLoginResponse(accessToken: [redacted], refreshToken: [redacted], user: $user)';
-}
 
 
 }
@@ -992,10 +984,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,accessToken,refreshToken);
 
-@override
-String toString() {
-  return 'AuthRefreshResponse(accessToken: [redacted], refreshToken: [redacted])';
-}
 
 
 }
@@ -1166,8 +1154,8 @@ return $default(_that.accessToken,_that.refreshToken);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _AuthRefreshResponse implements AuthRefreshResponse {
-  const _AuthRefreshResponse({required this.accessToken, required this.refreshToken});
+class _AuthRefreshResponse extends AuthRefreshResponse {
+  const _AuthRefreshResponse({required this.accessToken, required this.refreshToken}): super._();
   factory _AuthRefreshResponse.fromJson(Map<String, dynamic> json) => _$AuthRefreshResponseFromJson(json);
 
 @override final  String accessToken;
@@ -1193,10 +1181,6 @@ bool operator ==(Object other) {
 @override
 int get hashCode => Object.hash(runtimeType,accessToken,refreshToken);
 
-@override
-String toString() {
-  return 'AuthRefreshResponse(accessToken: [redacted], refreshToken: [redacted])';
-}
 
 
 }

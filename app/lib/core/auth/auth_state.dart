@@ -57,6 +57,9 @@ sealed class AuthState with _$AuthState {
 /// Backend devuelve: { success, data: { accessToken, refreshToken, user } }
 @freezed
 abstract class AuthLoginResponse with _$AuthLoginResponse {
+  // Private constructor required to define instance methods in freezed classes.
+  const AuthLoginResponse._();
+
   const factory AuthLoginResponse({
     required String accessToken,
     required String refreshToken,
@@ -65,6 +68,11 @@ abstract class AuthLoginResponse with _$AuthLoginResponse {
 
   factory AuthLoginResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthLoginResponseFromJson(json);
+
+  // Tokens are never printed — prevents accidental exposure in logs/Sentry.
+  @override
+  String toString() =>
+      'AuthLoginResponse(accessToken: [redacted], refreshToken: [redacted], user: $user)';
 }
 
 // ── AuthRefreshResponse ───────────────────────────────────────────────────────
@@ -73,6 +81,9 @@ abstract class AuthLoginResponse with _$AuthLoginResponse {
 /// Backend devuelve: { success, data: { accessToken, refreshToken } }
 @freezed
 abstract class AuthRefreshResponse with _$AuthRefreshResponse {
+  // Private constructor required to define instance methods in freezed classes.
+  const AuthRefreshResponse._();
+
   const factory AuthRefreshResponse({
     required String accessToken,
     required String refreshToken,
@@ -80,4 +91,9 @@ abstract class AuthRefreshResponse with _$AuthRefreshResponse {
 
   factory AuthRefreshResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthRefreshResponseFromJson(json);
+
+  // Tokens are never printed — prevents accidental exposure in logs/Sentry.
+  @override
+  String toString() =>
+      'AuthRefreshResponse(accessToken: [redacted], refreshToken: [redacted])';
 }
