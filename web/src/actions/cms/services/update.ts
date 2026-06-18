@@ -37,8 +37,11 @@ export async function updateService(id: string, formData: FormData) {
 
     const previousService = await prisma.service.findUnique({
       where: { id },
-      select: { imageUrl: true, galleryUrls: true, slug: true },
+      select: { imageUrl: true, galleryUrls: true, slug: true, deletedAt: true },
     })
+    if (!previousService || previousService.deletedAt !== null) {
+      return { success: false, error: 'Servicio no encontrado' }
+    }
 
     await prisma.$transaction(async (tx) => {
       await tx.service.update({
