@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 
 import 'package:portfolio_pbn_api/src/model/delete_upload_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_upload_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/upload_sign_request.dart';
 import 'package:portfolio_pbn_api/src/model/upload_sign_response.dart';
 

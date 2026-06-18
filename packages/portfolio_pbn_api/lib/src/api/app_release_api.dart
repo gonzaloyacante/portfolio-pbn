@@ -12,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:portfolio_pbn_api/src/model/app_release.dart';
 import 'package:portfolio_pbn_api/src/model/create_release_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_release_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 
 class AppReleaseApi {
 

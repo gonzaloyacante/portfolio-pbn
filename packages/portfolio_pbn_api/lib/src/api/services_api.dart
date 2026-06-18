@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 
 import 'package:portfolio_pbn_api/src/model/create_service_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_service_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/service_detail.dart';
 import 'package:portfolio_pbn_api/src/model/service_list.dart';
 import 'package:portfolio_pbn_api/src/model/update_service_request.dart';

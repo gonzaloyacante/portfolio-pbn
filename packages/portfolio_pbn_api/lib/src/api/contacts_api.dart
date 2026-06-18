@@ -12,7 +12,6 @@ import 'package:dio/dio.dart';
 import 'package:portfolio_pbn_api/src/model/contact_detail.dart';
 import 'package:portfolio_pbn_api/src/model/contact_list.dart';
 import 'package:portfolio_pbn_api/src/model/delete_contact_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/update_contact_request.dart';
 
 class ContactsApi {

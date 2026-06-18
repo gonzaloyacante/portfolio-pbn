@@ -10,7 +10,6 @@ import 'package:portfolio_pbn_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
 import 'package:portfolio_pbn_api/src/model/analytics_overview.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 
 class AnalyticsApi {
 

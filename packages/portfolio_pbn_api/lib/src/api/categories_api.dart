@@ -18,7 +18,6 @@ import 'package:portfolio_pbn_api/src/model/create_category_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_category_response.dart';
 import 'package:portfolio_pbn_api/src/model/delete_gallery_image_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_gallery_image_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/gallery_image.dart';
 import 'package:portfolio_pbn_api/src/model/reorder_gallery_request.dart';
 import 'package:portfolio_pbn_api/src/model/reorder_gallery_response.dart';

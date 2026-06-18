@@ -13,7 +13,6 @@ import 'package:portfolio_pbn_api/src/model/booking.dart';
 import 'package:portfolio_pbn_api/src/model/booking_list.dart';
 import 'package:portfolio_pbn_api/src/model/create_booking_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/update_booking_request.dart';
 
 class BookingsApi {

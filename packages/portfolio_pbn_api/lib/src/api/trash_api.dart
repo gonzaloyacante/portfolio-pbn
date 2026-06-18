@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:portfolio_pbn_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/permanent_delete_trash_response.dart';
 import 'package:portfolio_pbn_api/src/model/restore_trash_response.dart';
 import 'package:portfolio_pbn_api/src/model/trash_list.dart';

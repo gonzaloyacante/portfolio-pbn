@@ -10,7 +10,6 @@ import 'package:portfolio_pbn_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
 import 'package:portfolio_pbn_api/src/model/admin_profile.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/login_request.dart';
 import 'package:portfolio_pbn_api/src/model/login_response.dart';
 import 'package:portfolio_pbn_api/src/model/logout_response.dart';

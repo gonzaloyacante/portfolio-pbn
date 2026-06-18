@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 
 import 'package:portfolio_pbn_api/src/model/delete_social_link_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_social_link_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/social_link.dart';
 import 'package:portfolio_pbn_api/src/model/upsert_social_link_request.dart';
 

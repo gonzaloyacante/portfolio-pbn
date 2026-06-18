@@ -11,7 +11,6 @@ import 'package:dio/dio.dart';
 
 import 'package:portfolio_pbn_api/src/model/create_testimonial_request.dart';
 import 'package:portfolio_pbn_api/src/model/delete_testimonial_response.dart';
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/testimonial_detail.dart';
 import 'package:portfolio_pbn_api/src/model/testimonial_list.dart';
 import 'package:portfolio_pbn_api/src/model/update_testimonial_request.dart';

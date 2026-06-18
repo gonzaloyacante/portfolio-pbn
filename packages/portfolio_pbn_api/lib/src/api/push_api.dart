@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:portfolio_pbn_api/src/deserialize.dart';
 import 'package:dio/dio.dart';
 
-import 'package:portfolio_pbn_api/src/model/error.dart';
 import 'package:portfolio_pbn_api/src/model/push_register_request.dart';
 import 'package:portfolio_pbn_api/src/model/push_register_response.dart';
 import 'package:portfolio_pbn_api/src/model/push_unregister_request.dart';
