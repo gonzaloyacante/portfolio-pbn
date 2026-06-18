@@ -52,7 +52,10 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
     revalidateTag(CACHE_TAGS.categorySettings, 'max')
     return { success: true }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating category settings:', { error })

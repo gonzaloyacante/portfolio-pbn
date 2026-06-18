@@ -222,7 +222,10 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
       message: 'Tema actualizado correctamente',
     }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating theme settings:', { error })

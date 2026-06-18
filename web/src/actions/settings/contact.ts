@@ -89,7 +89,10 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
       message: 'Configuración de contacto actualizada',
     }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating contact settings:', { error })

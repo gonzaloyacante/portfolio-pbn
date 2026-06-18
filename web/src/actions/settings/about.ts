@@ -122,7 +122,10 @@ export async function updateAboutSettings(data: Partial<Omit<AboutSettingsData, 
       message: 'Configuración de "Sobre Mí" actualizada',
     }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating about settings:', { error })

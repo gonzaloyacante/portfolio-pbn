@@ -200,7 +200,10 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
 
     return { success: true, settings, message: 'Configuración del sitio actualizada' }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating site settings:', { error })

@@ -228,7 +228,10 @@ export async function updateHomeSettings(data: Partial<Omit<HomeSettingsData, 'i
       message: 'Configuración actualizada correctamente',
     }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating home settings:', { error })

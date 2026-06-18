@@ -118,7 +118,10 @@ export async function upsertSocialLink(data: Omit<SocialLinkData, 'id'> & { id?:
       message: 'Enlace social actualizado',
     }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error upserting social link:', { error })
@@ -149,7 +152,10 @@ export async function deleteSocialLink(id: string) {
     revalidateTag(CACHE_TAGS.socialLinks, 'max')
     return { success: true, message: 'Enlace social eliminado' }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error deleting social link:', { error })

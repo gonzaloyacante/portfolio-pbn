@@ -59,6 +59,12 @@ export async function upsertPublicColorOverrides(
 
     return { success: true }
   } catch (error) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
+      return { success: false, error: error.message }
+    }
     logger.error('Error upserting public color overrides', { error })
     return { success: false, error: 'Error al guardar los colores' }
   }
@@ -78,6 +84,12 @@ export async function deletePublicColorOverride(
 
     return { success: true }
   } catch (error) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
+      return { success: false, error: error.message }
+    }
     logger.error('Error deleting public color override', { error })
     return { success: false, error: 'Error al eliminar el color' }
   }

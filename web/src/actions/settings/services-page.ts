@@ -68,7 +68,10 @@ export async function updateServicesPageSettings(
 
     return { success: true, settings, message: 'Cabecera de servicios actualizada' }
   } catch (error) {
-    if (error instanceof Error && error.message.includes('Acceso denegado')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+    ) {
       return { success: false, error: error.message }
     }
     logger.error('Error updating services page settings:', { error })
