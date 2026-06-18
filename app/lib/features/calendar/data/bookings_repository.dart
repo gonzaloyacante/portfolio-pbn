@@ -74,6 +74,7 @@ class BookingsRepository {
       return result;
     } on NetworkException {
       return _fromCache(
+        search: search,
         status: status,
         serviceId: serviceId,
         dateFrom: dateFrom,
@@ -83,6 +84,7 @@ class BookingsRepository {
   }
 
   Future<PaginatedResponse<BookingItem>> _fromCache({
+    String? search,
     String? status,
     String? serviceId,
     DateTime? dateFrom,
@@ -91,6 +93,7 @@ class BookingsRepository {
     final rows = await _db.bookingsDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
 
+    final q = search?.toLowerCase();
     final items = rows
         .where((r) => status == null || r.status == status)
         .where((r) => dateFrom == null || !r.date.isBefore(dateFrom))
@@ -101,6 +104,12 @@ class BookingsRepository {
           ),
         )
         .where((item) => serviceId == null || item.serviceId == serviceId)
+        .where(
+          (item) =>
+              q == null ||
+              item.clientName.toLowerCase().contains(q) ||
+              item.clientEmail.toLowerCase().contains(q),
+        )
         .toList();
 
     AppLogger.info('[Bookings] serving ${items.length} items from cache');

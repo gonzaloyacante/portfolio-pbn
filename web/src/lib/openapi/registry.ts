@@ -49,12 +49,15 @@ const BookingSchema = registry.register(
       guestCount: z.number().nullable(),
       serviceId: z.string(),
       adminNotes: z.string().nullable(),
-      totalAmount: z.number().nullable(),
+      totalAmount: z
+        .string()
+        .nullable()
+        .openapi({ description: 'Decimal serializado como string' }),
       paymentStatus: z.string().nullable(),
       paymentMethod: z.string().nullable(),
       status: BookingStatusSchema,
       cancellationReason: z.string().nullable(),
-      paidAmount: z.number().nullable(),
+      paidAmount: z.string().nullable().openapi({ description: 'Decimal serializado como string' }),
       paymentRef: z.string().nullable(),
       createdAt: z.string(),
       updatedAt: z.string(),

@@ -72,6 +72,7 @@ class ContactsRepository {
       return result;
     } on NetworkException {
       return _fromCache(
+        search: search,
         status: status,
         priority: priority,
         unreadOnly: unreadOnly,
@@ -80,6 +81,7 @@ class ContactsRepository {
   }
 
   Future<PaginatedResponse<ContactItem>> _fromCache({
+    String? search,
     String? status,
     String? priority,
     bool? unreadOnly,
@@ -87,6 +89,7 @@ class ContactsRepository {
     final rows = await _db.contactsDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
 
+    final q = search?.toLowerCase();
     final items = rows
         .where((r) => status == null || r.status == status)
         .where((r) => priority == null || r.priority == priority)
@@ -95,6 +98,12 @@ class ContactsRepository {
           (r) => ContactItem.fromJson(
             jsonDecode(r.dataJson) as Map<String, dynamic>,
           ),
+        )
+        .where(
+          (item) =>
+              q == null ||
+              item.name.toLowerCase().contains(q) ||
+              item.email.toLowerCase().contains(q),
         )
         .toList();
 
