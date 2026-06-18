@@ -67,20 +67,30 @@ class CategoriesRepository {
       unawaited(_populateCache(apiResponse.data!.data));
       return apiResponse.data!;
     } on NetworkException {
-      return _fromCache(isActive: isActive);
+      return _fromCache(search: search, isActive: isActive);
     }
   }
 
-  Future<PaginatedResponse<CategoryItem>> _fromCache({bool? isActive}) async {
+  Future<PaginatedResponse<CategoryItem>> _fromCache({
+    String? search,
+    bool? isActive,
+  }) async {
     final rows = await _db.categoriesDao.getAll();
     if (rows.isEmpty) throw const NetworkException();
 
+    final q = search?.toLowerCase();
     final items = rows
         .where((r) => isActive == null || r.isActive == isActive)
         .map(
           (r) => CategoryItem.fromJson(
             jsonDecode(r.dataJson) as Map<String, dynamic>,
           ),
+        )
+        .where(
+          (item) =>
+              q == null ||
+              item.name.toLowerCase().contains(q) ||
+              (item.description?.toLowerCase().contains(q) ?? false),
         )
         .toList();
 
