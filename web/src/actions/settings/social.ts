@@ -27,6 +27,7 @@ export interface SocialLinkData {
  * La web pública usa {@link getSocialLinks} (solo `isActive`).
  */
 export async function getSocialLinksForAdmin(): Promise<SocialLinkData[]> {
+  await requireAdmin()
   try {
     const links = await prisma.socialLink.findMany({
       orderBy: { sortOrder: 'asc' },
