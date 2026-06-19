@@ -130,7 +130,7 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
           aria-hidden
           className="pointer-events-none fixed inset-x-0 top-0 z-40 h-[45vh]"
           style={{
-            background: `linear-gradient(180deg, color-mix(in srgb, var(--foreground) 80%, transparent) 0%, color-mix(in srgb, var(--foreground) 30%, transparent) 41.67%, transparent 100%)`,
+            background: `linear-gradient(180deg, color-mix(in srgb, var(--foreground) 85%, transparent) 0%, color-mix(in srgb, var(--foreground) 35%, transparent) 41.67%, transparent 100%)`,
             opacity: scrimOpacity,
           }}
         />
