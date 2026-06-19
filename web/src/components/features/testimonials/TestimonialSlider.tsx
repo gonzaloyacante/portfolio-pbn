@@ -102,19 +102,19 @@ export default function TestimonialSlider({ testimonials, autoAdvanceMs }: Testi
             onClick={prev}
             disabled={start === 0}
             aria-label="Anterior"
-            className="public-testimonial-nav-button flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="public-testimonial-nav-button flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronLeft size={18} />
           </button>
 
           {/* Dots */}
-          <div className="flex gap-2">
+          <div className="flex items-center gap-1">
             {Array.from({ length: maxStart + 1 }).map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Ir al grupo ${i + 1}`}
-                className="flex items-center justify-center p-3"
+                className="flex items-center justify-center p-1.5"
               >
                 <span
                   className={`pointer-events-none block h-2 rounded-full transition-all ${
@@ -131,7 +131,7 @@ export default function TestimonialSlider({ testimonials, autoAdvanceMs }: Testi
             onClick={next}
             disabled={start >= maxStart}
             aria-label="Siguiente"
-            className="public-testimonial-nav-button flex h-9 w-9 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+            className="public-testimonial-nav-button flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-40"
           >
             <ChevronRight size={18} />
           </button>
