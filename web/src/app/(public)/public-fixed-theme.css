@@ -333,6 +333,7 @@
   color: var(--foreground);
   position: relative;
   z-index: 10;
+  height: 9rem;
 }
 
 .public-footer-muted {
@@ -566,6 +567,10 @@
 .public-testimonial-section {
   background-color: var(--public-testimonial-section-bg);
   border-color: var(--public-testimonial-card-border);
+  min-height: calc(100dvh - 9rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .public-testimonial-title {
