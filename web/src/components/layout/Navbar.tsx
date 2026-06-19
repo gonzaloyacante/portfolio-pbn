@@ -152,7 +152,7 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'public-navbar-link font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-4 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none lg:px-8 lg:py-3 lg:text-base',
+                      'public-navbar-link font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-2 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none sm:px-4 lg:px-8 lg:py-3 lg:text-base',
                       !active && 'hover:opacity-80'
                     )}
                   >
