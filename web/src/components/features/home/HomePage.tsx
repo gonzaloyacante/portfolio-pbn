@@ -49,7 +49,10 @@ export default async function HomePage() {
       )}
       style={homeBackgroundStyle}
     >
-      <div aria-hidden className="public-home-page-background pointer-events-none fixed inset-0" />
+      <div
+        aria-hidden
+        className="public-home-page-background pointer-events-none absolute inset-x-0 top-0 h-[100svh]"
+      />
 
       <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-between">
         <HeroSection settings={homeSettings} />
