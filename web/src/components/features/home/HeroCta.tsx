@@ -20,7 +20,7 @@ export function HeroCta({
   const eff = resolveEffectiveValues(s, isMobile)
 
   return (
-    <div className="order-3 mt-6 lg:order-0 lg:mt-8">
+    <div className="order-2 col-span-1 mt-0 flex items-center justify-end lg:order-0 lg:mt-8 lg:justify-start">
       <HeroWrapper
         id="ctaButton"
         isEditor={isEditor}

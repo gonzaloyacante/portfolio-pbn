@@ -28,7 +28,7 @@ export function HeroTitles({
   const show2 = (isEditor || (s.showHeroTitle2 ?? true)) && !shouldSuppressDefaultTitle2
 
   return (
-    <div className="order-1 flex w-full flex-col items-center text-center lg:order-0 lg:items-start lg:text-left">
+    <div className="order-1 col-span-1 flex w-full flex-col items-start text-left lg:order-0">
       {show1 && (
         <FadeIn delay={0.2} className="relative z-20" disabled={isEditor}>
           <HeroWrapper

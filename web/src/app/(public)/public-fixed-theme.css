@@ -331,6 +331,8 @@
   background-color: var(--background);
   border-color: var(--border);
   color: var(--foreground);
+  position: relative;
+  z-index: 10;
 }
 
 .public-footer-muted {

@@ -182,7 +182,7 @@ export default async function PublicLayout({ children }: { children: React.React
           <PageTransitionWrapper>{children}</PageTransitionWrapper>
         </main>
         {testimonialSettings?.showOnAll && testimonials.length > 0 && (
-          <div className="public-testimonial-section border-t py-12 transition-colors duration-500 lg:py-14">
+          <div className="public-testimonial-section relative z-10 border-t py-12 transition-colors duration-500 lg:py-14">
             <div className="mx-auto max-w-7xl px-6 md:px-12 lg:px-16">
               <h2 className="public-testimonial-title font-heading mb-12 text-center text-3xl font-bold">
                 {testimonialSettings?.title || 'Lo que dicen mis clientes'}

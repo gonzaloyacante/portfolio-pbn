@@ -54,16 +54,12 @@ export function HeroContent({
 
   const scrims = isMobile
     ? ([
-        (s.heroScrimMobileShowTop ?? true) &&
-          buildHeroScrimBackground({ ...mobileParams, edge: 'top' }),
         (s.heroScrimMobileShowLeft ?? false) &&
           buildHeroScrimBackground({ ...mobileParams, edge: 'left' }),
         (s.heroScrimMobileShowRight ?? false) &&
           buildHeroScrimBackground({ ...mobileParams, edge: 'right' }),
       ].filter(Boolean) as string[])
     : ([
-        (s.heroScrimShowTop ?? true) &&
-          buildHeroScrimBackground({ ...baseScrimParams, edge: 'top' }),
         (s.heroScrimShowLeft ?? true) &&
           buildHeroScrimBackground({ ...baseScrimParams, edge: 'left' }),
         (s.heroScrimShowRight ?? false) &&
@@ -95,7 +91,7 @@ export function HeroContent({
           />
         ))}
         <FontLoader fonts={fontsToLoad} />
-        <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-8 lg:grid lg:min-h-[80dvh] lg:grid-cols-12 lg:gap-12 lg:py-0">
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-2 items-center gap-x-4 gap-y-2 lg:min-h-[80dvh] lg:grid-cols-12 lg:items-stretch lg:gap-12 lg:py-0">
           <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
             <HeroTitles {...sectionProps} />
             <HeroSignature {...sectionProps} />
