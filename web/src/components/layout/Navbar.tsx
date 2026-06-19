@@ -127,7 +127,7 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
       <div className={cn('transition-all duration-300', navSurfaceClass)}>
         <div
           className={cn(
-            'mx-auto max-w-7xl px-4 py-0 md:px-8 lg:px-16',
+            'mx-auto max-w-7xl px-4 pt-3 pb-0 md:px-8 lg:px-16',
             isHome ? 'flex flex-col items-center' : 'flex items-center justify-between'
           )}
         >
@@ -143,8 +143,10 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
             ) : null}
           </div>
 
-          <div className={cn('items-center justify-center', isHome ? 'flex' : 'hidden md:flex')}>
-            <div className="relative flex flex-row flex-wrap items-center justify-center">
+          <div
+            className={cn('w-full items-center justify-center', isHome ? 'flex' : 'hidden md:flex')}
+          >
+            <div className="relative flex w-full flex-row items-center justify-between">
               {navItems.map((item) => {
                 const active = isActive(item.href)
                 return (
@@ -152,7 +154,7 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'public-navbar-link font-heading relative inline-flex min-h-11 min-w-[44px] items-center justify-center px-2 py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none sm:px-4 lg:px-8 lg:py-3 lg:text-base',
+                      'public-navbar-link font-heading relative inline-flex min-h-11 flex-1 items-center justify-center py-2.5 text-sm font-semibold tracking-wide uppercase transition-colors duration-300 focus-visible:outline-none lg:py-3 lg:text-base',
                       !active && 'hover:opacity-80'
                     )}
                   >
