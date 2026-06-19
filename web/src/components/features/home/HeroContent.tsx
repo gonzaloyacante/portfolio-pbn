@@ -76,7 +76,7 @@ export function HeroContent({
     <div className="relative isolate w-full overflow-x-clip">
       <section
         className={cn(
-          'public-home-hero relative z-10 flex min-h-[100svh] w-full flex-col justify-center overflow-x-hidden px-4 transition-colors duration-500 sm:px-8 md:min-h-[100dvh] lg:px-16'
+          'public-home-hero relative z-10 flex min-h-[100svh] w-full flex-col justify-end overflow-x-hidden px-4 pb-16 transition-colors duration-500 sm:px-8 md:min-h-[100dvh] lg:justify-center lg:px-16 lg:pb-0'
         )}
       >
         {tint && (
