@@ -1304,7 +1304,7 @@ packages:
   portfolio_pbn_api:
     dependency: "direct main"
     description:
-      path: "../packages/portfolio_pbn_api"
+      path: "packages/portfolio_pbn_api"
       relative: true
     source: path
     version: "1.0.0"
