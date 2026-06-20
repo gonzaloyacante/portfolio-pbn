@@ -36,6 +36,7 @@ type OptimizedImageShared = {
   placeholder?: 'blur' | 'empty'
   blurDataURL?: string
   lazy?: boolean
+  instantReveal?: boolean
   onLoad?: () => void
   onError?: () => void
   /** Applied to the inner `<Image>` elements (main + blur placeholder). Default `cover`. */
@@ -77,6 +78,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
     placeholder = 'blur',
     blurDataURL,
     lazy = true,
+    instantReveal = false,
     onLoad,
     onError,
     objectFit = 'cover',
@@ -90,7 +92,7 @@ export function OptimizedImage(props: OptimizedImageProps) {
   const sizes = fill ? props.sizes : (props.sizes ?? IMAGE_SIZES.common)
 
   const [imageError, setImageError] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(instantReveal)
   const imgRef = useRef<HTMLDivElement>(null)
   const [isInView, setIsInView] = useState(!lazy || priority)
 

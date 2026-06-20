@@ -7,6 +7,7 @@ import { useScroll, useMotionValueEvent, useTransform } from 'framer-motion'
 import { motion, AnimatePresence, OptimizedImage } from '@/components/ui'
 import { Menu, X } from 'lucide-react'
 import { ROUTES } from '@/config/routes'
+import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import type { PageVisibility } from '@/actions/settings/site'
 
@@ -53,10 +54,11 @@ function NavbarBrand({
             src={brandLogoUrl}
             alt={brandLogoAlt || displayBrand}
             fill
-            sizes="72px"
+            sizes={IMAGE_SIZES.heroIllustration}
             objectFit="contain"
             placeholder="empty"
             priority
+            instantReveal
           />
         </motion.div>
       ) : (
@@ -139,9 +141,7 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
         aria-label="Navegación principal"
         className={cn('z-50 w-full', navPositionClass)}
         style={isHome ? { clipPath: scrollClipPath } : undefined}
-        animate={
-          !isHome ? { clipPath: visible ? 'inset(0 0 0% 0)' : 'inset(0 0 100% 0)' } : undefined
-        }
+        animate={!isHome ? { y: visible ? 0 : '-100%' } : undefined}
         transition={!isHome ? { duration: 0.3, ease: 'easeInOut' } : undefined}
       >
         <div className={cn('transition-all duration-300', navSurfaceClass)}>
