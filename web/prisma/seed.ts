@@ -19,7 +19,6 @@ import { contacts } from './seeds/contacts'
 import { bookings } from './seeds/bookings'
 import { pricingTiers } from './seeds/pricing-tiers'
 import { appReleases } from './seeds/app-release'
-import { analyticsLogs } from './seeds/analytics'
 
 const _adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter: _adapter })
@@ -216,19 +215,11 @@ async function main() {
   }
   console.log(`   ✅ ${bookingCount} bookings`)
 
-  // 9. App Release + Analytics
-  console.log('\n📱 Seeding App Release & Analytics...')
+  // 9. App Release
+  console.log('\n📱 Seeding App Release...')
   await prisma.appRelease.deleteMany({ where: { version: appReleases[0].version } })
   await prisma.appRelease.create({ data: appReleases[0] })
   console.log(`   ✅ v${appReleases[0].version}`)
-
-  await prisma.analyticLog.deleteMany({ where: { sessionId: { startsWith: 'seed-session-' } } })
-  let analyticsCount = 0
-  for (const log of analyticsLogs) {
-    await prisma.analyticLog.create({ data: log })
-    analyticsCount++
-  }
-  console.log(`   ✅ ${analyticsCount} sample events`)
 
   console.log('\n🎉 Seeding Completed Successfully!')
   console.log(
@@ -241,7 +232,6 @@ async function main() {
   console.log(`   💰 Pricing tiers: ${tierCount}`)
   console.log(`   📋 Contacts: ${contactCount}`)
   console.log(`   📅 Bookings: ${bookingCount}`)
-  console.log(`   📊 Analytics: ${analyticsCount}`)
 }
 
 main()
