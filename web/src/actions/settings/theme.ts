@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 import { findSingleton, upsertSingleton } from '@/lib/settings-service'
@@ -213,7 +213,6 @@ export async function updateThemeSettings(data: Partial<Omit<ThemeSettingsData, 
 
     const settings = await upsertSingleton(prisma.themeSettings, {}, cleanData)
 
-    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.themeSettings, 'max')
 
     return {
@@ -247,7 +246,6 @@ export async function resetThemeToDefaults() {
     // Sobrescribe todos los campos con RESET_THEME_DEFAULTS (fuente única de verdad)
     await upsertSingleton(prisma.themeSettings, RESET_THEME_DEFAULTS, RESET_THEME_DEFAULTS)
 
-    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.themeSettings, 'max')
 
     return { success: true, message: 'Tema reseteado a valores por defecto' }

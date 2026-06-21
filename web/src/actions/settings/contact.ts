@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { Prisma } from '@/generated/prisma/client'
 import { findSingleton, upsertSingleton, CONTACT_SETTINGS_DEFAULTS } from '@/lib/settings-service'
@@ -79,8 +79,6 @@ export async function updateContactSettings(data: Partial<Omit<ContactSettingsDa
       cleanData
     )
 
-    // contact settings affect Navbar (ownerName) on ALL public pages via (public)/layout.tsx
-    revalidatePath('/', 'layout')
     revalidateTag(CACHE_TAGS.contactSettings, 'max')
 
     return {

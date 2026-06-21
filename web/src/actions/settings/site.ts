@@ -192,8 +192,6 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
 
     const settings = await upsertSingleton(prisma.siteSettings, {}, cleanData)
 
-    // site settings (page visibility) affect Navbar on ALL public pages via (public)/layout.tsx
-    revalidatePath('/', 'layout')
     revalidatePath(ROUTES.public.sitemap)
     revalidatePath(ROUTES.public.robots)
     revalidateTag(CACHE_TAGS.siteSettings, 'max')

@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { z } from 'zod'
-import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { revalidateTag, unstable_cache } from 'next/cache'
 import { CACHE_TAGS, CACHE_DURATIONS } from '@/lib/cache-tags'
 import { requireAdmin } from '@/lib/security-server'
 import { checkSettingsRateLimit } from '@/lib/rate-limit-guards'
@@ -55,7 +55,6 @@ export async function upsertPublicColorOverrides(
     )
 
     revalidateTag(CACHE_TAGS.publicColorOverrides, 'max')
-    revalidatePath('/', 'layout')
 
     return { success: true }
   } catch (error) {
@@ -80,7 +79,6 @@ export async function deletePublicColorOverride(
     await prisma.themeColorOverride.deleteMany({ where: { key } })
 
     revalidateTag(CACHE_TAGS.publicColorOverrides, 'max')
-    revalidatePath('/', 'layout')
 
     return { success: true }
   } catch (error) {
