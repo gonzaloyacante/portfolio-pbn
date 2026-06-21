@@ -79,16 +79,6 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
           <p className="text-muted-foreground text-sm">
             Haz clic en cualquier elemento para editarlo
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedElement('heroBackdrop')}
-            >
-              Fondo inmersivo
-            </Button>
-          </div>
         </div>
         <Button onClick={handleSave} disabled={isSaving} size="lg">
           <Save className="mr-2 h-4 w-4" />
@@ -103,6 +93,16 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
         orientation={orientation}
         onOrientationChange={setOrientation}
         onPreviewBackgroundClick={() => setSelectedElement(null)}
+        headerAction={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setSelectedElement('heroBackdrop')}
+          >
+            Editar fondo y sombras
+          </Button>
+        }
         preview={
           <HeroPreview
             settings={settings}

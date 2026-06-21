@@ -20,7 +20,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <AdminProviders>
-      <div className="bg-background flex min-h-dvh flex-col transition-colors duration-300 lg:flex-row">
+      {/* `public-fixed-theme` define las CSS vars (--primary, --background,
+          --foreground, --border, etc.) que usan las clases del Button y otros
+          componentes. Sin este wrapper, las vars quedan huérfanas en admin y
+          los botones aparecen sin fondo ni color. El admin hereda el theme
+          público (fondo rosado). Si querés un theme admin separado, hay que
+          mover las vars a un bloque `:root` o un wrapper admin-específico. */}
+      <div className="public-fixed-theme bg-background flex min-h-dvh flex-col transition-colors duration-300 lg:flex-row">
         {/* Sidebar desktop (hidden en mobile, visible en lg+) */}
         <AdminSidebar />
         {/* Header mobile con hamburger (visible solo en mobile) */}

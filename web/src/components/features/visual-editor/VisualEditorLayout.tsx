@@ -38,6 +38,8 @@ interface VisualEditorLayoutProps {
   orientation: Orientation
   onOrientationChange: (orientation: Orientation) => void
   onPreviewBackgroundClick?: () => void
+  /** Botón opcional que se renderiza a la derecha del título "Vista Previa". */
+  headerAction?: ReactNode
 }
 
 /**
@@ -51,6 +53,7 @@ export function VisualEditorLayout({
   orientation,
   onOrientationChange,
   onPreviewBackgroundClick,
+  headerAction,
 }: VisualEditorLayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(640)
@@ -70,7 +73,7 @@ export function VisualEditorLayout({
   const vp = { ...VIEWPORT_CONFIGS[viewportMode], ...dimensions }
   // Alto fijo compartido a las 3 vistas. El container del preview siempre mide
   // lo mismo, y el contenido (escalado) llena lo más posible sin salirse.
-  const PREVIEW_HEIGHT = 800
+  const PREVIEW_HEIGHT = 600
   // Escalar para que el contenido quepa en el container (ancho Y alto).
   const scaleToFit = Math.min(containerWidth / vp.width, PREVIEW_HEIGHT / vp.height)
   const effectiveScale = Math.min(scaleToFit, 1.0)
@@ -86,7 +89,10 @@ export function VisualEditorLayout({
       {/* Vista Previa */}
       <div className="bg-card rounded-lg border p-4">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-muted-foreground text-sm font-semibold">Vista Previa</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-muted-foreground text-sm font-semibold">Vista Previa</h2>
+            {headerAction}
+          </div>
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Viewport Toggle */}
