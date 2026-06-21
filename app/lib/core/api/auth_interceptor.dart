@@ -72,8 +72,11 @@ class AuthInterceptor extends Interceptor {
     final status = response.statusCode;
     final path = response.requestOptions.path;
 
-    // Solo interceptamos 401 en rutas que no sean la de refresh.
-    if (status != 401 || _isRefreshEndpoint(path)) {
+    // Solo interceptamos 401 en rutas protegidas (ni refresh ni login público).
+    // Si excluimos solo refresh pero no login, un 401 de credenciales inválidas
+    // dispara el flujo de refresh → falla → muestra "Sesión expirada" en vez
+    // del error real del servidor.
+    if (status != 401 || _isRefreshEndpoint(path) || _isPublicEndpoint(path)) {
       return handler.next(response);
     }
 
