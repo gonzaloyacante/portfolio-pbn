@@ -6,6 +6,10 @@ import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminMobileHeader from '@/components/layout/AdminMobileHeader'
 import PageTransition from '@/components/layout/PageTransition'
 import AdminProviders from '@/components/providers/AdminProviders'
+// Importado para que las clases .public-home-page y .public-home-page-background
+// (donde se aplica el background-image del Hero) funcionen también dentro del
+// editor /admin/inicio. Es la misma hoja que usa la home pública.
+import '@/app/(public)/public-fixed-theme.css'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()

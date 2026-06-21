@@ -66,11 +66,11 @@ export function HeroMainImage({
               )}
             </div>
           </div>
-        ) : (
+        ) : isEditor ? (
           <div className="bg-primary/5 border-primary/20 flex h-64 w-full items-center justify-center border-2 border-dashed lg:h-96">
             <span className="text-primary/40">Sin Imagen Destacada</span>
           </div>
-        )}
+        ) : null}
       </HeroWrapper>
     </div>
   )

@@ -156,7 +156,8 @@ export default async function PublicLayout({ children }: { children: React.React
                 addressCountry: 'ES',
               }
             : {},
-          image: pickSocialImage(homeSettings?.heroBackdropUrl || homeSettings?.heroMainImageUrl),
+          // OG image: SOLO backdrop. La imagen destacada es OTRA cosa, no se mezcla acá.
+          image: pickSocialImage(homeSettings?.heroBackdropUrl),
           url: getPublicSiteUrl(),
           sameAs: socialLinks.map((link) => link.url),
           serviceType: activeServices.length

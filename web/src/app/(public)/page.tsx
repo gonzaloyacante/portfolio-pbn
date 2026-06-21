@@ -30,7 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
     path: ROUTES.home,
     site,
     ownerName,
-    image: home?.heroBackdropUrl || home?.heroMainImageUrl || site?.defaultOgImage,
+    // OG image: SOLO backdrop. La imagen destacada es OTRA cosa.
+    image: home?.heroBackdropUrl || site?.defaultOgImage,
     imageAlt: `${ownerName} - maquillaje profesional${locationSuffix}`,
     keywords: [
       `maquilladora profesional${locationSuffix}`,

@@ -11,6 +11,8 @@ export type EditableElement =
 
 export type ViewportMode = 'desktop' | 'tablet' | 'mobile'
 
+export type Orientation = 'landscape' | 'portrait'
+
 export interface VisualEditorProps {
   selectedElement: EditableElement
   onSelectElement: (element: EditableElement) => void

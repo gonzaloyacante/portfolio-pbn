@@ -63,8 +63,6 @@ export const homeSettingsSchema = z.object({
   heroBackdropPlaysInline: z.boolean().optional(),
   heroBackdropObjectFit: z.enum(['cover', 'contain']).optional(),
   heroBackdropObjectPosition: z.string().max(80).optional().nullable(),
-  heroBackdropMobileUrl: z.string().optional().nullable(),
-  heroBackdropMobileObjectPosition: z.string().max(80).optional().nullable(),
   heroForegroundPortraitShow: z.boolean().optional(),
   heroScrimEdge: z.enum(['left', 'right', 'top', 'both', 'none']).optional(),
   heroScrimShowLeft: z.boolean().optional(),

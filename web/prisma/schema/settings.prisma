@@ -65,8 +65,6 @@ model HomeSettings {
   /// cover | contain
   heroBackdropObjectFit       String @default("cover")
   heroBackdropObjectPosition    String @default("center")
-  heroBackdropMobileUrl         String?
-  heroBackdropMobileObjectPosition String?
   /// Retrato inline en columna derecha cuando hay fondo inmersivo
   heroForegroundPortraitShow Boolean @default(true)
 

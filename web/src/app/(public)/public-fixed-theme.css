@@ -392,19 +392,6 @@
   background-size: cover;
 }
 
-@media (max-width: 767px) {
-  .public-home-page-background {
-    background-image: var(
-      --public-home-mobile-background-image,
-      var(--public-home-background-image, none)
-    );
-    background-position: var(
-      --public-home-mobile-background-position,
-      var(--public-home-background-position, center)
-    );
-  }
-}
-
 .public-home-hero {
   background-color: transparent;
   background-image: none;

@@ -27,19 +27,12 @@ export default async function HomePage() {
   const testimonialsInLayout = testimonialSettings?.showOnAll === true
   const testimonials = testimonialsInLayout ? [] : await getActiveTestimonials(9)
   const showFeatured = homeSettings?.showFeaturedImages === true
+  // Backdrop: SOLO campos del backdrop. La imagen destacada es OTRA cosa.
   const desktopBackgroundUrl =
-    homeSettings?.heroBackdropUrl ||
-    homeSettings?.heroBackdropPosterUrl ||
-    homeSettings?.heroMainImageUrl
-  const mobileBackgroundUrl = homeSettings?.heroBackdropMobileUrl || desktopBackgroundUrl
+    homeSettings?.heroBackdropUrl || homeSettings?.heroBackdropPosterUrl || undefined
   const homeBackgroundStyle = {
     '--public-home-background-image': toBackgroundUrl(desktopBackgroundUrl),
-    '--public-home-mobile-background-image': toBackgroundUrl(mobileBackgroundUrl),
     '--public-home-background-position': homeSettings?.heroBackdropObjectPosition || 'center',
-    '--public-home-mobile-background-position':
-      homeSettings?.heroBackdropMobileObjectPosition ||
-      homeSettings?.heroBackdropObjectPosition ||
-      'center',
   } as CSSProperties
 
   return (

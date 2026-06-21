@@ -58,8 +58,6 @@ export const homeSettings = {
   heroBackdropPlaysInline: true,
   heroBackdropObjectFit: 'cover',
   heroBackdropObjectPosition: 'center',
-  heroBackdropMobileUrl: null,
-  heroBackdropMobileObjectPosition: null,
   heroForegroundPortraitShow: false,
   heroScrimEdge: 'left',
   heroScrimShowLeft: true,

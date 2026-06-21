@@ -73,8 +73,6 @@ export interface HomeSettingsData {
   heroBackdropPlaysInline: boolean
   heroBackdropObjectFit: string | null
   heroBackdropObjectPosition: string | null
-  heroBackdropMobileUrl: string | null
-  heroBackdropMobileObjectPosition: string | null
   heroForegroundPortraitShow: boolean
   heroScrimEdge: string | null
   heroScrimShowLeft: boolean

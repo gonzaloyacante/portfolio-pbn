@@ -9,7 +9,7 @@ import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { VisualEditorLayout } from '../visual-editor/VisualEditorLayout'
 import { HeroPreview } from './HeroPreview'
 import { PropertyPanel } from '../visual-editor/PropertyPanel'
-import type { EditableElement, ViewportMode } from '../visual-editor/types'
+import type { EditableElement, ViewportMode, Orientation } from '../visual-editor/types'
 import { Save } from 'lucide-react'
 
 interface HomeEditorProps {
@@ -23,6 +23,7 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
   const [isSaving, setIsSaving] = useState(false)
   const [isDirty, setIsDirty] = useState(false)
   const [viewportMode, setViewportMode] = useState<ViewportMode>('desktop')
+  const [orientation, setOrientation] = useState<Orientation>('landscape')
   const savedBaselineRef = useRef<HomeSettingsData | null>(initialSettings)
 
   useUnsavedChanges(isDirty)
@@ -99,6 +100,9 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
       <VisualEditorLayout
         viewportMode={viewportMode}
         onViewportChange={setViewportMode}
+        orientation={orientation}
+        onOrientationChange={setOrientation}
+        onPreviewBackgroundClick={() => setSelectedElement(null)}
         preview={
           <HeroPreview
             settings={settings}

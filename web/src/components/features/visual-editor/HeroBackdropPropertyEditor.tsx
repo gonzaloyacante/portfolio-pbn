@@ -158,24 +158,6 @@ export function HeroBackdropPropertyEditor({
       />
 
       <div className="space-y-4 border-t border-(--border) pt-4">
-        <h4 className="text-sm font-semibold">Configuración para móvil</h4>
-        <EditorImageUpload
-          label="Usar otro fondo en móvil"
-          value={(settings.heroBackdropMobileUrl as string) ?? null}
-          onChange={(val: string | null) => onUpdate('heroBackdropMobileUrl', val)}
-        />
-        <Input
-          label="Ubicación del fondo en móvil"
-          value={(settings.heroBackdropMobileObjectPosition as string) ?? ''}
-          onChange={(e) => {
-            const t = e.target.value.trim()
-            onUpdate('heroBackdropMobileObjectPosition', t === '' ? null : t)
-          }}
-          placeholder="Si lo dejas vacío, usa la misma ubicación que en ordenador"
-        />
-      </div>
-
-      <div className="space-y-4 border-t border-(--border) pt-4">
         <h4 className="text-sm font-semibold">Sombra para mejorar la lectura</h4>
 
         <div className="space-y-3">
