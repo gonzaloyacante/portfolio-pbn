@@ -21,8 +21,18 @@ export function ContactCard({
   formatDate,
 }: ContactCardProps) {
   return (
-    <button
+    // role="button" + tabIndex en lugar de <button> para evitar nesting
+    // inválido (HTML no permite <button> dentro de <button>).
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect()
+        }
+      }}
       className={`w-full rounded-2xl border p-4 text-left transition-all ${
         isSelected
           ? 'border-primary bg-primary/10 shadow-md'
@@ -75,6 +85,6 @@ export function ContactCard({
       </div>
       <p className="text-muted-foreground line-clamp-2 text-sm">{contact.message}</p>
       <p className="text-muted-foreground mt-2 text-xs">{formatDate(contact.createdAt)}</p>
-    </button>
+    </div>
   )
 }

@@ -242,9 +242,11 @@ function NavPill({
 function TokenSwatches({ mode }: { mode: PreviewMode }) {
   return (
     <div className="flex gap-1" aria-label={`Muestras ${mode.label}`}>
-      {[mode.background, mode.card, mode.secondary, mode.accent, mode.primary].map((color) => (
+      {[mode.background, mode.card, mode.secondary, mode.accent, mode.primary].map((color, idx) => (
         <span
-          key={`${mode.label}-${color}`}
+          // idx en la key porque varios swatches pueden compartir el mismo
+          // color (background, card y secondary son #fff1f9 en light).
+          key={`${mode.label}-${color}-${idx}`}
           className="h-4 w-4 rounded-full border"
           style={{
             backgroundColor: color,
