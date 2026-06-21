@@ -41,7 +41,7 @@ export default function PublicContactPage({
         }}
       />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-0 px-4 py-6 sm:px-6 md:grid-cols-2 lg:gap-16 lg:px-16 lg:py-20">
         <div className="flex flex-col items-start">
           <FadeIn className="mb-8 hidden lg:block">
             {contactSettings?.illustrationUrl ? (
