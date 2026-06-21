@@ -63,7 +63,7 @@ export const TabsTrigger = React.forwardRef<
     <button
       ref={ref}
       type="button"
-      className={`inline-flex items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 ${
+      className={`inline-flex cursor-pointer items-center justify-center rounded-sm px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none active:scale-95 disabled:pointer-events-none disabled:opacity-50 ${
         isActive
           ? 'bg-primary text-primary-foreground shadow-sm'
           : 'hover:bg-background/50 hover:text-foreground'

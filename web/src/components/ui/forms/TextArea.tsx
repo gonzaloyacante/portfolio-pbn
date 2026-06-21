@@ -28,6 +28,7 @@ const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             'w-full rounded-lg border px-3 py-2 text-sm transition-colors',
             'focus:ring-2 focus:outline-none',
             'min-h-[100px] resize-y',
+            'hover:border-foreground/40',
             error
               ? 'border-destructive focus:border-destructive focus:ring-destructive/20'
               : 'border-input bg-background text-foreground focus:border-ring focus:ring-ring/20',

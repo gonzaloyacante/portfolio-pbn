@@ -80,7 +80,9 @@ export const Select = ({
           'flex h-10 w-full items-center justify-between px-3 py-2 text-left text-sm transition-all duration-200',
           'bg-background rounded-lg border',
           'border-input',
+          'hover:border-foreground/40',
           'focus:ring-ring/20 focus:border-ring focus:ring-2 focus:outline-none',
+          !disabled && 'cursor-pointer',
           disabled && 'cursor-not-allowed opacity-60',
           error && 'border-destructive focus:border-destructive focus:ring-destructive/20'
         )}

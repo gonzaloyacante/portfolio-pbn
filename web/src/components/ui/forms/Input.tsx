@@ -37,9 +37,11 @@ const sizeClasses = {
 
 const variantClasses = {
   default:
-    'border border-input bg-background text-foreground focus:border-ring focus:ring-2 focus:ring-ring/20',
-  filled: 'border-0 bg-muted focus:bg-background focus:ring-2 focus:ring-ring/20',
-  ghost: 'border-0 bg-transparent hover:bg-muted focus:bg-muted focus:ring-2 focus:ring-ring/20',
+    'border border-input bg-background text-foreground hover:border-foreground/40 focus:border-ring focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50',
+  filled:
+    'border-0 bg-muted hover:bg-muted/80 focus:bg-background focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50',
+  ghost:
+    'border-0 bg-transparent hover:bg-muted focus:bg-muted focus:ring-2 focus:ring-ring/20 disabled:cursor-not-allowed disabled:opacity-50',
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
