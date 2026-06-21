@@ -18,6 +18,7 @@ model HomeSettings {
   heroTitle1OffsetX   Int?    @default(0) // Ajuste horizontal (px)
   heroTitle1OffsetY   Int?    @default(0) // Ajuste vertical (px)
   showHeroTitle1      Boolean @default(true)
+  showHeroMainImage   Boolean @default(true)
 
   // ===== TÍTULO 2 ("Portfolio") =====
   heroTitle2Text      String? @default("Portfolio")
@@ -92,6 +93,7 @@ model HomeSettings {
 
   // ===== ILUSTRACIÓN =====
   illustrationUrl      String?
+  showIllustration     Boolean @default(true)
   illustrationAlt      String? @default("Ilustración maquilladora")
   illustrationZIndex   Int?    @default(10)
   illustrationOpacity  Int?    @default(100)
@@ -102,6 +104,7 @@ model HomeSettings {
 
   // ===== BOTÓN CTA =====
   ctaText     String? @default("Ver Portfolio")
+  showCtaButton        Boolean @default(true)
   ctaLink     String? @default("/portfolio")
   ctaFont     String? // null = hereda font del theme
   ctaFontUrl  String?

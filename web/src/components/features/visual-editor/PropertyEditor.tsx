@@ -18,6 +18,7 @@ import { EditorVariantControl } from './components/EditorVariantControl'
 import { EditorSelectControl } from './components/EditorSelectControl'
 import { ViewportPositionControl } from './components/ViewportPositionControl'
 import { ViewportSlider } from './components/ViewportSlider'
+import { ViewportSelectControl } from './components/ViewportSelectControl'
 import { ELEMENT_CONFIG } from './propertyEditorConfig'
 import type { EditableElement, ViewportMode } from './types'
 import { HeroBackdropPropertyEditor } from './HeroBackdropPropertyEditor'
@@ -126,15 +127,20 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
       )}
 
       {fields.buttonSize && (
-        <EditorSelectControl
+        <ViewportSelectControl
           label="Tamaño del botón"
-          value={(settings[fields.buttonSize] as string) ?? 'default'}
+          desktopKey={fields.buttonSize}
+          mobileKey={mobileFields?.size}
+          tabletKey={tabletFields?.size}
+          settings={settings}
+          onUpdate={onUpdate}
+          defaultValue="default"
+          viewportMode={viewportMode}
           options={[
             { value: 'sm', label: 'Pequeño' },
             { value: 'default', label: 'Normal' },
             { value: 'lg', label: 'Grande' },
           ]}
-          onChange={(val: string) => onUpdate(fields.buttonSize as keyof HomeSettingsData, val)}
         />
       )}
 
@@ -149,11 +155,16 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
       )}
 
       {fields.imageStyle && (
-        <EditorSelectControl
-          label="Estilo de Imagen"
-          value={(settings[fields.imageStyle] as string) ?? 'original'}
+        <ViewportSelectControl
+          label="Estilo de imagen"
+          desktopKey={fields.imageStyle}
+          mobileKey={mobileFields?.imageStyle}
+          tabletKey={tabletFields?.imageStyle}
+          settings={settings}
+          onUpdate={onUpdate}
+          defaultValue="original"
+          viewportMode={viewportMode}
           options={IMAGE_STYLES}
-          onChange={(val: string) => onUpdate(fields.imageStyle as keyof HomeSettingsData, val)}
         />
       )}
 

@@ -4,6 +4,12 @@ import type { HomeSettingsData } from '@/actions/settings/home'
 import { EditorPositionControl } from './EditorPositionControl'
 import type { ViewportMode } from '../types'
 
+const VIEWPORT_LABELS: Record<ViewportMode, string> = {
+  desktop: 'escritorio',
+  tablet: 'tablet',
+  mobile: 'móvil',
+}
+
 interface ViewportPositionProps {
   fields: {
     offsetX?: keyof HomeSettingsData
@@ -65,11 +71,7 @@ export function ViewportPositionControl({
   return (
     <div>
       <EditorPositionControl
-        label={
-          activeFields
-            ? `Posición (${viewportMode === 'mobile' ? 'móvil' : 'tablet'})`
-            : 'Posición (Ajuste Fino)'
-        }
+        label={`Posición (${VIEWPORT_LABELS[viewportMode]})`}
         offsetX={currentX as number}
         offsetY={currentY as number}
         onChangeX={(val: number) =>
@@ -86,20 +88,6 @@ export function ViewportPositionControl({
             : undefined
         }
       />
-      {viewportMode === 'mobile' && mobileXKey && (
-        <div className="mt-1 space-y-0.5">
-          <p className="text-muted-foreground text-xs italic">
-            Heredado de escritorio: X:{desktopX}, Y:{desktopY}
-          </p>
-        </div>
-      )}
-      {viewportMode === 'tablet' && tabletXKey && (
-        <div className="mt-1 space-y-0.5">
-          <p className="text-muted-foreground text-xs italic">
-            Heredado de escritorio: X:{desktopX}, Y:{desktopY}
-          </p>
-        </div>
-      )}
     </div>
   )
 }

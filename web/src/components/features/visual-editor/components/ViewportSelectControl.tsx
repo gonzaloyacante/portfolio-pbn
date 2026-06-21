@@ -1,21 +1,24 @@
 'use client'
 
 import type { HomeSettingsData } from '@/actions/settings/home'
-import { EditorSliderControl } from './EditorSliderControl'
+import { EditorSelectControl } from './EditorSelectControl'
 import type { ViewportMode } from '../types'
 
-interface ViewportSliderProps {
+interface ViewportSelectOption {
+  value: string
+  label: string
+}
+
+interface ViewportSelectControlProps {
   label: string
   desktopKey: keyof HomeSettingsData
   mobileKey?: keyof HomeSettingsData
   tabletKey?: keyof HomeSettingsData
   settings: HomeSettingsData
   onUpdate: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
-  defaultValue: number
-  min: number
-  max: number
+  options: ViewportSelectOption[]
+  defaultValue?: string
   viewportMode: ViewportMode
-  unit?: string
 }
 
 const VIEWPORT_LABELS: Record<ViewportMode, string> = {
@@ -25,22 +28,20 @@ const VIEWPORT_LABELS: Record<ViewportMode, string> = {
 }
 
 /**
- * Slider que edita el valor del viewport activo (escritorio / tablet / móvil).
- * El label SIEMPRE incluye el viewport activo: "Tamaño (escritorio)".
+ * Select que edita el valor del viewport activo (escritorio / tablet / móvil).
+ * El label SIEMPRE incluye el viewport activo: "Tamaño del botón (escritorio)".
  */
-export function ViewportSlider({
+export function ViewportSelectControl({
   label,
   desktopKey,
   mobileKey,
   tabletKey,
   settings,
   onUpdate,
+  options,
   defaultValue,
-  min,
-  max,
   viewportMode,
-  unit = 'px',
-}: ViewportSliderProps) {
+}: ViewportSelectControlProps) {
   const activeKey =
     viewportMode === 'mobile'
       ? (mobileKey ?? desktopKey)
@@ -48,18 +49,16 @@ export function ViewportSlider({
         ? (tabletKey ?? desktopKey)
         : desktopKey
 
-  const desktopVal = (settings[desktopKey] as number) ?? defaultValue
-  const activeVal = (settings[activeKey] as number | null) ?? desktopVal
+  const desktopVal = (settings[desktopKey] as string | null) ?? defaultValue ?? ''
+  const activeVal = (settings[activeKey] as string | null) ?? desktopVal
 
   return (
     <div>
-      <EditorSliderControl
+      <EditorSelectControl
         label={`${label} (${VIEWPORT_LABELS[viewportMode]})`}
         value={activeVal}
-        onChange={(val: number) => onUpdate(activeKey, val as HomeSettingsData[typeof activeKey])}
-        min={min}
-        max={max}
-        suffix={unit}
+        options={options}
+        onChange={(val: string) => onUpdate(activeKey, val as HomeSettingsData[typeof activeKey])}
       />
     </div>
   )

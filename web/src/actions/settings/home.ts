@@ -18,6 +18,9 @@ export interface HomeSettingsData {
   showHeroTitle1: boolean
   showHeroTitle2: boolean
   showOwnerName: boolean
+  showHeroMainImage: boolean
+  showIllustration: boolean
+  showCtaButton: boolean
   // Título 1
   heroTitle1Text: string | null
   heroTitle1Font: string | null

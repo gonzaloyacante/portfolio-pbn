@@ -167,6 +167,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   illustration: {
     fields: {
+      visible: 'showIllustration',
       imageUrl: 'illustrationUrl',
       size: 'illustrationSize',
       opacity: 'illustrationOpacity',
@@ -194,6 +195,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   ctaButton: {
     fields: {
+      visible: 'showCtaButton',
       text: 'ctaText',
       link: 'ctaLink',
       variant: 'ctaVariant',
@@ -225,6 +227,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
   },
   heroMainImage: {
     fields: {
+      visible: 'showHeroMainImage',
       imageUrl: 'heroMainImageUrl',
       imageStyle: 'heroImageStyle',
       alt: 'heroMainImageAlt',
