@@ -65,7 +65,7 @@ export default function PublicContactPage({
           </div>
 
           {contactSettings?.showInstagramEmbed && contactSettings?.instagramPostUrl && (
-            <div className="public-contact-instagram mb-6 w-full max-w-sm overflow-hidden">
+            <div className="public-contact-instagram mb-6 w-full max-w-sm self-center overflow-hidden md:self-start">
               <InstagramEmbed postUrl={contactSettings.instagramPostUrl} />
             </div>
           )}
