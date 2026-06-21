@@ -70,6 +70,35 @@ export default async function ServicesPage() {
       )
     : null
 
+  const siteUrl = getPublicSiteUrl()
+
+  const faqItems = [
+    {
+      question: `¿Qué servicios de maquillaje ofrece ${ownerName}?`,
+      answer:
+        services.length > 0
+          ? `${ownerName} ofrece los siguientes servicios de maquillaje profesional${locationSuffix}: ${services.map((s) => s.name).join(', ')}.`
+          : `${ownerName} ofrece servicios de maquillaje profesional para bodas, eventos, editoriales, caracterización artística, efectos especiales (FX) y teatro${locationSuffix}.`,
+    },
+    {
+      question: `¿Dónde trabaja ${ownerName} como maquilladora?`,
+      answer: location
+        ? `${ownerName} trabaja principalmente en ${location} y sus alrededores, aunque también se desplaza para proyectos en otras ciudades de España.`
+        : `${ownerName} es maquilladora profesional disponible para trabajar en toda España.`,
+    },
+    {
+      question: `¿Cómo puedo reservar un servicio de maquillaje con ${ownerName}?`,
+      answer: `Puedes contactar con ${ownerName} a través del formulario de contacto en ${siteUrl}${ROUTES.public.contact}${contactSettings?.whatsapp ? ' o por WhatsApp' : ''}. Se recomienda reservar con antelación especialmente para bodas y eventos.`,
+    },
+    ...services
+      .filter((s) => s.price)
+      .slice(0, 3)
+      .map((s) => ({
+        question: `¿Cuánto cuesta el servicio de ${s.name}?`,
+        answer: `El servicio de ${s.name}${s.priceLabel === 'desde' ? ' tiene un precio desde' : ' tiene un precio de'} ${Number(s.price).toFixed(0)}€${s.duration ? `, con una duración aproximada de ${s.duration}` : ''}. Para más información consulta la página del servicio o contacta directamente.`,
+      })),
+  ]
+
   return (
     <main className="public-services-page py-8 transition-colors duration-500 md:py-12">
       <JsonLd
@@ -77,7 +106,7 @@ export default async function ServicesPage() {
         data={{
           name: `${ownerName} - Servicios de Maquillaje`,
           description: `Servicios profesionales de maquillaje${locationSuffix}: bodas, editoriales, caracterización artística y eventos.`,
-          url: `${getPublicSiteUrl()}${ROUTES.public.services}`,
+          url: `${siteUrl}${ROUTES.public.services}`,
           address: {
             addressLocality: location,
             addressCountry: 'ES',
@@ -89,14 +118,15 @@ export default async function ServicesPage() {
         data={{
           name: 'Servicios de maquillaje',
           description: `Servicios profesionales de maquillaje${locationSuffix}.`,
-          url: `${getPublicSiteUrl()}${ROUTES.public.services}`,
+          url: `${siteUrl}${ROUTES.public.services}`,
           mainEntity: services.map((service) => ({
             name: service.name,
-            url: `${getPublicSiteUrl()}${ROUTES.public.serviceDetail(service.slug)}`,
+            url: `${siteUrl}${ROUTES.public.serviceDetail(service.slug)}`,
             image: service.imageUrl || '',
           })),
         }}
       />
+      <JsonLd type="FAQPage" data={{ faq: faqItems }} />
       <div className="container mx-auto max-w-6xl px-4">
         <ServicesPublicHero settings={servicesPageSettings} />
 

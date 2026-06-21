@@ -10,6 +10,8 @@ interface JsonLdProps {
     | 'Service'
     | 'ImageGallery'
     | 'BreadcrumbList'
+    | 'FAQPage'
+    | 'WebPage'
   data?: {
     name?: string
     url?: string
@@ -42,6 +44,11 @@ interface JsonLdProps {
       name: string
       url: string
     }[]
+    faq?: {
+      question: string
+      answer: string
+    }[]
+    speakableCssSelectors?: string[]
   }
 }
 
@@ -246,6 +253,36 @@ export default function JsonLd({ type, data }: JsonLdProps) {
             name: item.name,
             item: item.url,
           })),
+        }
+
+      case 'FAQPage':
+        if (!data?.faq?.length) return null
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: data.faq.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }
+
+      case 'WebPage':
+        return {
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: mergedData.name,
+          description: mergedData.description,
+          url: mergedData.url,
+          ...(data?.speakableCssSelectors?.length && {
+            speakable: {
+              '@type': 'SpeakableSpecification',
+              cssSelector: data.speakableCssSelectors,
+            },
+          }),
         }
 
       default:
