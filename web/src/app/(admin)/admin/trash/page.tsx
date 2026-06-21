@@ -23,6 +23,14 @@ export default async function PapeleraPage() {
     }),
   ])
 
+  // Prisma devuelve Decimal/Date que Next.js 16 no puede serializar al
+  // cruzar el Server/Client Component boundary. JSON roundtrip los aplana
+  // a strings/numbers planos. Aplicar a todo lo que se pasa como prop a
+  // Client Components (service.price es Decimal).
+  const safeCategories = JSON.parse(JSON.stringify(deletedCategories))
+  const safeServices = JSON.parse(JSON.stringify(deletedServices))
+  const safeTestimonials = JSON.parse(JSON.stringify(deletedTestimonials))
+
   return (
     <div className="space-y-8">
       <PageHeader
@@ -41,9 +49,9 @@ export default async function PapeleraPage() {
       </div>
 
       <TrashTabs
-        categories={deletedCategories}
-        services={deletedServices}
-        testimonials={deletedTestimonials}
+        categories={safeCategories}
+        services={safeServices}
+        testimonials={safeTestimonials}
       />
     </div>
   )

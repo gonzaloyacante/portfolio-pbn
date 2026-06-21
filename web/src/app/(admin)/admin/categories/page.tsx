@@ -21,6 +21,9 @@ export default async function CategoriesPage() {
     getCategorySettings(),
   ])
 
+  // Serializar para cruzar Server/Client boundary.
+  const safeCategories = JSON.parse(JSON.stringify(categories))
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -41,7 +44,7 @@ export default async function CategoriesPage() {
       <CategorySettingsCard settings={categorySettings} />
 
       {/* Client Component with the list */}
-      <CategoriesContent categories={categories} />
+      <CategoriesContent categories={safeCategories} />
     </div>
   )
 }

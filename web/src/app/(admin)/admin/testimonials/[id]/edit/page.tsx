@@ -20,10 +20,13 @@ export default async function EditTestimonialPage({ params }: EditTestimonialPag
     notFound()
   }
 
+  // Serializar para cruzar Server/Client boundary (testimonial tiene Date).
+  const safeTestimonial = JSON.parse(JSON.stringify(testimonial))
+
   return (
     <div className="mx-auto max-w-4xl">
       <Section title={`Editar Testimonio: ${testimonial.name}`}>
-        <TestimonialEditForm testimonial={testimonial} />
+        <TestimonialEditForm testimonial={safeTestimonial} />
       </Section>
     </div>
   )
