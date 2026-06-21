@@ -31,6 +31,8 @@ interface JsonLdProps {
     priceRange?: string
     telephone?: string
     email?: string
+    serviceType?: string[]
+    aggregateRating?: { ratingValue: number; reviewCount: number; bestRating?: number }
     mainEntity?: {
       name: string
       url: string
@@ -87,35 +89,57 @@ export default function JsonLd({ type, data }: JsonLdProps) {
           },
         }
 
-      case 'ProfessionalService':
+      case 'ProfessionalService': {
+        const addr = {
+          '@type': 'PostalAddress',
+          ...mergedData.address,
+        }
+        // Drop empty-string fields — they mislead crawlers
+        if (!addr.addressRegion) delete (addr as Record<string, unknown>).addressRegion
+        if (!addr.streetAddress) delete (addr as Record<string, unknown>).streetAddress
+        if (!addr.postalCode) delete (addr as Record<string, unknown>).postalCode
+
+        const serviceTypes = data?.serviceType ?? [
+          'Maquillaje de novias',
+          'Maquillaje para eventos',
+          'Maquillaje artístico',
+          'Sesiones fotográficas',
+          'Maquillaje editorial',
+          'Caracterización artística',
+          'Efectos especiales (FX)',
+          'Posticería profesional',
+          'Maquillaje para teatro',
+        ]
+
         return {
           '@context': 'https://schema.org',
           '@type': 'ProfessionalService',
           '@id': `${mergedData.url}#professional-service`,
           name: mergedData.name,
           url: mergedData.url,
-          image: mergedData.image,
+          image: mergedData.image || undefined,
           description: mergedData.description,
           priceRange: mergedData.priceRange,
-          address: {
-            '@type': 'PostalAddress',
-            ...mergedData.address,
-          },
-          telephone: mergedData.telephone,
-          email: mergedData.email,
-          sameAs: mergedData.sameAs,
+          address: addr,
+          telephone: mergedData.telephone || undefined,
+          email: mergedData.email || undefined,
+          sameAs: mergedData.sameAs?.length ? mergedData.sameAs : undefined,
           areaServed: {
             '@type': 'City',
             name: mergedData.address?.addressLocality || 'España',
           },
-          serviceType: [
-            'Maquillaje de novias',
-            'Maquillaje para eventos',
-            'Maquillaje artístico',
-            'Sesiones fotográficas',
-            'Maquillaje editorial',
-          ],
+          serviceType: serviceTypes,
+          ...(data?.aggregateRating && {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: data.aggregateRating.ratingValue,
+              reviewCount: data.aggregateRating.reviewCount,
+              bestRating: data.aggregateRating.bestRating ?? 5,
+              worstRating: 1,
+            },
+          }),
         }
+      }
 
       case 'LocalBusiness':
         return {

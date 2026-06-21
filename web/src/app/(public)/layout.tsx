@@ -9,6 +9,7 @@ import JsonLd from '@/components/seo/JsonLd'
 import CookieConsent from '@/components/legal/CookieConsent'
 import { Heart } from 'lucide-react'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
+import { getActiveServices } from '@/actions/cms/services'
 import { getContactSettings } from '@/actions/settings/contact'
 import { getHomeSettings } from '@/actions/settings/home'
 import { getSocialLinks } from '@/actions/settings/social'
@@ -109,15 +110,24 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [contactSettings, visibility, testimonialSettings, homeSettings, socialLinks] =
-    await Promise.all([
-      getContactSettings(),
-      getPageVisibility(),
-      getTestimonialSettings(),
-      getHomeSettings(),
-      getSocialLinks(),
-    ])
-  const testimonials = testimonialSettings?.showOnAll ? await getActiveTestimonials(9) : []
+  const [
+    contactSettings,
+    visibility,
+    testimonialSettings,
+    homeSettings,
+    socialLinks,
+    activeServices,
+    allTestimonials,
+  ] = await Promise.all([
+    getContactSettings(),
+    getPageVisibility(),
+    getTestimonialSettings(),
+    getHomeSettings(),
+    getSocialLinks(),
+    getActiveServices(),
+    getActiveTestimonials(200),
+  ])
+  const testimonials = testimonialSettings?.showOnAll ? allTestimonials.slice(0, 9) : []
 
   // ── Maintenance mode: show a styled, responsive maintenance card
   if (visibility.maintenanceMode) {
@@ -133,12 +143,31 @@ export default async function PublicLayout({ children }: { children: React.React
         type="ProfessionalService"
         data={{
           name: contactSettings?.ownerName || 'Paola Bolívar Nievas',
-          email: contactSettings?.email || 'contacto@paolamakeup.com',
-          telephone: contactSettings?.phone || undefined,
-          address: contactSettings?.location ? { addressLocality: contactSettings.location } : {},
+          email: contactSettings?.email || undefined,
+          // Omit phone if it's a placeholder (admin hasn't set a real number yet)
+          telephone:
+            contactSettings?.phone && !/xxx/i.test(contactSettings.phone)
+              ? contactSettings.phone
+              : undefined,
+          address: contactSettings?.location
+            ? {
+                addressLocality: contactSettings.location.split(',')[0].trim(),
+                addressRegion: 'Andalucía',
+                addressCountry: 'ES',
+              }
+            : {},
           image: pickSocialImage(homeSettings?.heroBackdropUrl || homeSettings?.heroMainImageUrl),
           url: getPublicSiteUrl(),
           sameAs: socialLinks.map((link) => link.url),
+          serviceType: activeServices.length
+            ? activeServices.map((s: { name: string }) => s.name)
+            : undefined,
+          aggregateRating: allTestimonials.length
+            ? {
+                ratingValue: 5,
+                reviewCount: allTestimonials.length,
+              }
+            : undefined,
         }}
       />
       {/* Navbar brand: custom font stays; CMS colors stay disabled for public web. */}
