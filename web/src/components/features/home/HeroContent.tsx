@@ -136,7 +136,7 @@ export function HeroContent({
   const tint = buildHeroBackdropTint(s.heroBackdropTintOpacity ?? 0)
 
   return (
-    <div className="relative isolate w-full overflow-x-clip">
+    <div className={cn('relative isolate w-full overflow-x-clip', isEditor && 'h-full')}>
       <section
         className={cn(
           'public-home-hero relative z-10 w-full overflow-x-hidden transition-colors duration-500',
