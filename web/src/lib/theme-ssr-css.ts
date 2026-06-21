@@ -16,7 +16,7 @@ function escapeCssCustomPropertyValue(value: string): string {
 }
 
 function declBlock(entries: ReadonlyArray<readonly [string, string]>): string {
-  return entries.map(([k, v]) => `${k}:${escapeCssCustomPropertyValue(v)}`).join('')
+  return entries.map(([k, v]) => `${k}:${escapeCssCustomPropertyValue(v)};`).join('')
 }
 
 /**
