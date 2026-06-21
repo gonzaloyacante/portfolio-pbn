@@ -139,7 +139,10 @@ export function HeroContent({
     <div className="relative isolate w-full overflow-x-clip">
       <section
         className={cn(
-          'public-home-hero relative z-10 min-h-[100svh] w-full overflow-x-hidden px-4 pb-16 transition-colors duration-500 sm:px-8 md:min-h-[100dvh] lg:px-16 lg:pb-0'
+          'public-home-hero relative z-10 w-full overflow-x-hidden transition-colors duration-500',
+          isEditor
+            ? 'h-full min-h-0'
+            : 'min-h-[100svh] px-4 pb-16 sm:px-8 md:min-h-[100dvh] lg:px-16 lg:pb-0'
         )}
       >
         {tint && (
@@ -161,7 +164,12 @@ export function HeroContent({
 
         {/* Hero stage: contenedor relativo con altura mínima. Cada hijo es absolute
             con posición base responsive + transform: translate(offsetX, offsetY) desde BD. */}
-        <div className="relative mx-auto h-[100svh] w-full max-w-7xl md:h-[100dvh]">
+        <div
+          className={cn(
+            'relative mx-auto w-full max-w-7xl',
+            isEditor ? 'h-full' : 'h-[100svh] md:h-[100dvh]'
+          )}
+        >
           {/* Title 1: arriba a la izquierda */}
           <div className="absolute top-[18%] left-4 z-20 max-w-[60%] sm:left-8 md:left-12 lg:top-[20%] lg:left-16">
             <HeroTitles {...sectionProps} {...makeDragProps('heroTitle1')} elementId="heroTitle1" />
