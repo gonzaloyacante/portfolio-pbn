@@ -112,6 +112,34 @@ model HomeSettings {
   ctaOffsetX  Int?    @default(0)
   ctaOffsetY  Int?    @default(0)
 
+  // ===== TABLET OVERRIDES (responsive) =====
+  // Título 1 tablet
+  heroTitle1TabletOffsetX    Int? @default(0)
+  heroTitle1TabletOffsetY    Int? @default(0)
+  heroTitle1TabletFontSize   Int? @default(80)
+  // Título 2 tablet
+  heroTitle2TabletOffsetX    Int? @default(0)
+  heroTitle2TabletOffsetY    Int? @default(0)
+  heroTitle2TabletFontSize   Int? @default(84)
+  // Owner name tablet
+  ownerNameTabletOffsetX     Int? @default(0)
+  ownerNameTabletOffsetY     Int? @default(0)
+  ownerNameTabletFontSize    Int? @default(36)
+  // Hero main image tablet
+  heroMainImageTabletOffsetX  Int? @default(0)
+  heroMainImageTabletOffsetY  Int? @default(0)
+  heroMainImageTabletImageStyle String? @default("original") // original, square, circle, landscape, portrait, star
+  // Illustration tablet
+  illustrationTabletOffsetX  Int? @default(0)
+  illustrationTabletOffsetY  Int? @default(0)
+  illustrationTabletSize     Int? @default(80)
+  illustrationTabletRotation Int? @default(0)
+  // CTA tablet
+  ctaTabletOffsetX           Int? @default(0)
+  ctaTabletOffsetY           Int? @default(0)
+  ctaTabletFontSize          Int? @default(18)
+  ctaTabletSize              String? @default("default") // sm, default, lg (padding/height)
+
   // ===== MOBILE OVERRIDES (responsive) =====
   // Título 1 mobile
   heroTitle1MobileOffsetX    Int? @default(0)
@@ -126,8 +154,9 @@ model HomeSettings {
   ownerNameMobileOffsetY     Int? @default(0)
   ownerNameMobileFontSize    Int? @default(28)
   // Hero main image mobile
-  heroMainImageMobileOffsetX Int? @default(0)
-  heroMainImageMobileOffsetY Int? @default(0)
+  heroMainImageMobileOffsetX  Int? @default(0)
+  heroMainImageMobileOffsetY  Int? @default(0)
+  heroMainImageMobileImageStyle String? @default("original") // original, square, circle, landscape, portrait, star
   // Illustration mobile
   illustrationMobileOffsetX  Int? @default(0)
   illustrationMobileOffsetY  Int? @default(0)
@@ -137,6 +166,7 @@ model HomeSettings {
   ctaMobileOffsetX           Int? @default(0)
   ctaMobileOffsetY           Int? @default(0)
   ctaMobileFontSize          Int? @default(16)
+  ctaMobileSize              String? @default("default") // sm, default, lg (padding/height)
 
   // ===== SECCIÓN IMÁGENES DESTACADAS =====
   showFeaturedImages     Boolean @default(true)

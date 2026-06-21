@@ -1,12 +1,14 @@
 import { HomeSettingsData } from '@/actions/settings/home'
-import { EditableElement } from '../visual-editor/types'
+import type { EditableElement, ViewportMode } from '../visual-editor/types'
 
 export interface HeroContentProps {
   settings: HomeSettingsData | null
   isEditor?: boolean
   selectedElement?: EditableElement
   onSelectElement?: (element: EditableElement) => void
-  forceIsMobile?: boolean
+  forceViewportMode?: ViewportMode
+  onUpdate?: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
+  viewportMode?: ViewportMode
 }
 
 export interface WrapperProps {
@@ -17,6 +19,9 @@ export interface WrapperProps {
   onSelectElement?: (id: EditableElement) => void
   className?: string
   style?: React.CSSProperties
+  enableDrag?: boolean
+  onElementDrag?: (deltaX: number, deltaY: number) => void
+  onDragEnd?: (deltaX: number, deltaY: number) => void
 }
 
 export interface HeroSectionProps {
@@ -24,5 +29,14 @@ export interface HeroSectionProps {
   isEditor: boolean
   selectedElement?: EditableElement
   onSelectElement?: (id: EditableElement) => void
-  isMobile: boolean
+  viewportMode: ViewportMode
+  enableDrag?: boolean
+  onDragEnd?: (deltaX: number, deltaY: number) => void
+  elementId?:
+    | 'heroTitle1'
+    | 'heroTitle2'
+    | 'ownerName'
+    | 'heroMainImage'
+    | 'illustration'
+    | 'ctaButton'
 }

@@ -6,7 +6,7 @@ import { EditorColorControl } from './components/EditorColorControl'
 import { EditorImageUpload } from './components/EditorImageUpload'
 import { EditorSelectControl } from './components/EditorSelectControl'
 import { EditorSliderControl } from './components/EditorSliderControl'
-import { MobileOverridableSlider } from './components/MobileOverridableSlider'
+import { ViewportSlider } from './components/ViewportSlider'
 import type { ViewportMode } from './types'
 
 const MEDIA_KIND = [
@@ -222,26 +222,28 @@ export function HeroBackdropPropertyEditor({
           />
         </div>
 
-        <MobileOverridableSlider
+        <ViewportSlider
           label="Cuánto espacio ocupa"
           desktopKey="heroScrimExtentPercent"
-          mobileKey={mobileActive ? 'heroScrimMobileExtentPercent' : undefined}
+          mobileKey="heroScrimMobileExtentPercent"
           settings={settings}
           onUpdate={onUpdate}
           defaultValue={45}
           min={5}
           max={100}
+          viewportMode={viewportMode}
         />
 
-        <MobileOverridableSlider
+        <ViewportSlider
           label="Qué tan fuerte se ve"
           desktopKey="heroScrimOpacity"
-          mobileKey={mobileActive ? 'heroScrimMobileOpacity' : undefined}
+          mobileKey="heroScrimMobileOpacity"
           settings={settings}
           onUpdate={onUpdate}
           defaultValue={80}
           min={0}
           max={100}
+          viewportMode={viewportMode}
         />
 
         <EditorSliderControl

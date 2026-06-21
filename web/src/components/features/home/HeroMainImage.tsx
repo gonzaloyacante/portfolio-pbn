@@ -12,14 +12,14 @@ export function HeroMainImage({
   isEditor,
   selectedElement,
   onSelectElement,
-  isMobile,
+  viewportMode,
 }: HeroSectionProps) {
   const mainImage = s.heroMainImageUrl
   const mainImageAlt = s.heroMainImageAlt || 'Hero Image'
   const caption = s.heroMainImageCaption
-  const eff = resolveEffectiveValues(s, isMobile)
-  const isCircle = s.heroImageStyle === 'circle'
-  const isPortrait = s.heroImageStyle === 'portrait'
+  const eff = resolveEffectiveValues(s, viewportMode)
+  const isCircle = (eff.imgImageStyle ?? s.heroImageStyle) === 'circle'
+  const isPortrait = (eff.imgImageStyle ?? s.heroImageStyle) === 'portrait'
   const imageObjectFit = isCircle || isPortrait ? 'cover' : 'contain'
 
   return (
@@ -40,9 +40,9 @@ export function HeroMainImage({
             <div
               className={cn(
                 'relative overflow-hidden transition-all duration-500',
-                s.heroImageStyle === 'rounded' && 'rounded-3xl',
-                s.heroImageStyle === 'circle' && 'rounded-full',
-                s.heroImageStyle === 'portrait' && 'aspect-3/4'
+                (eff.imgImageStyle ?? s.heroImageStyle) === 'rounded' && 'rounded-3xl',
+                (eff.imgImageStyle ?? s.heroImageStyle) === 'circle' && 'rounded-full',
+                (eff.imgImageStyle ?? s.heroImageStyle) === 'portrait' && 'aspect-3/4'
               )}
             >
               <OptimizedImage

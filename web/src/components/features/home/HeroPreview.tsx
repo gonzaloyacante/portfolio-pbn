@@ -8,7 +8,9 @@ interface HeroPreviewProps {
   settings: HomeSettingsData | null
   selectedElement: EditableElement
   onSelectElement: (element: EditableElement) => void
-  forceIsMobile?: boolean
+  forceViewportMode?: 'desktop' | 'tablet' | 'mobile'
+  onUpdate?: <K extends keyof HomeSettingsData>(field: K, value: HomeSettingsData[K]) => void
+  viewportMode?: 'desktop' | 'tablet' | 'mobile'
 }
 
 /**
@@ -19,7 +21,9 @@ export function HeroPreview({
   settings,
   selectedElement,
   onSelectElement,
-  forceIsMobile,
+  forceViewportMode,
+  onUpdate,
+  viewportMode,
 }: HeroPreviewProps) {
   return (
     <HeroContent
@@ -27,7 +31,9 @@ export function HeroPreview({
       isEditor={true}
       selectedElement={selectedElement}
       onSelectElement={onSelectElement}
-      forceIsMobile={forceIsMobile}
+      forceViewportMode={forceViewportMode}
+      onUpdate={onUpdate}
+      viewportMode={viewportMode}
     />
   )
 }

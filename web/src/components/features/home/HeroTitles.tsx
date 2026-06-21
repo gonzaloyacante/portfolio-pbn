@@ -11,7 +11,7 @@ export function HeroTitles({
   isEditor,
   selectedElement,
   onSelectElement,
-  isMobile,
+  viewportMode,
 }: HeroSectionProps) {
   // Public web colors are fixed; CMS color overrides stay disabled here for now.
   void s.heroTitle1Color
@@ -22,7 +22,7 @@ export function HeroTitles({
   const title1 = s.heroTitle1Text || 'Make-up'
   const title2 = s.heroTitle2Text || 'Portfolio'
   const normalizedTitle2 = title2.trim().toLowerCase()
-  const eff = resolveEffectiveValues(s, isMobile)
+  const eff = resolveEffectiveValues(s, viewportMode)
   const show1 = isEditor || (s.showHeroTitle1 ?? true)
   const shouldSuppressDefaultTitle2 = !isEditor && normalizedTitle2 === 'portfolio'
   const show2 = (isEditor || (s.showHeroTitle2 ?? true)) && !shouldSuppressDefaultTitle2

@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import { Input, Switch } from '@/components/ui'
 import type { HomeSettingsData } from '@/actions/settings/home'
-import { Smartphone } from 'lucide-react'
+import { Monitor, Tablet, Smartphone } from 'lucide-react'
 
 const GoogleFontPicker = dynamic(
   () =>
@@ -16,8 +16,8 @@ import { EditorZIndexControl } from './components/EditorZIndexControl'
 import { EditorImageUpload } from './components/EditorImageUpload'
 import { EditorVariantControl } from './components/EditorVariantControl'
 import { EditorSelectControl } from './components/EditorSelectControl'
-import { MobileOverridableSlider } from './components/MobileOverridableSlider'
-import { MobileOverridablePosition } from './components/MobileOverridablePosition'
+import { ViewportPositionControl } from './components/ViewportPositionControl'
+import { ViewportSlider } from './components/ViewportSlider'
 import { ELEMENT_CONFIG } from './propertyEditorConfig'
 import type { EditableElement, ViewportMode } from './types'
 import { HeroBackdropPropertyEditor } from './HeroBackdropPropertyEditor'
@@ -32,6 +32,12 @@ const IMAGE_STYLES = [
   { value: 'star', label: 'Estrella' },
 ]
 
+const VIEWPORT_META: Record<ViewportMode, { icon: typeof Monitor; label: string }> = {
+  desktop: { icon: Monitor, label: 'escritorio' },
+  tablet: { icon: Tablet, label: 'tablet' },
+  mobile: { icon: Smartphone, label: 'móvil' },
+}
+
 interface PropertyEditorProps {
   element: Exclude<EditableElement, null>
   settings: HomeSettingsData
@@ -40,10 +46,13 @@ interface PropertyEditorProps {
 }
 
 /**
- * Generic Property Editor
- * Renders controls based on element configuration.
- * When viewportMode is 'mobile', overridable fields (position, fontSize, size, rotation)
- * edit mobile-specific DB fields. Non-overridable properties are shared across viewports.
+ * Property Editor — soporta 3 viewports.
+ *
+ * Comportamiento:
+ * - Campos compartidos (text, color, font, etc.) → se editan UNA vez, en cualquier viewport.
+ * - Campos de tamaño/posición (fontSize, size, offsetX/Y, rotation, imageStyle) → se editan
+ *   en el viewport activo (desktop, tablet o mobile). El form muestra el valor del viewport
+ *   activo, no del escritorio.
  */
 export function PropertyEditor({ element, settings, onUpdate, viewportMode }: PropertyEditorProps) {
   if (element === 'heroBackdrop') {
@@ -62,18 +71,17 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
     return <p className="text-muted-foreground text-sm">Propiedades para {element} en desarrollo</p>
   }
 
-  const { fields, mobileFields, defaults } = config
-  const isMobileEditing = viewportMode === 'mobile' && !!mobileFields
+  const { fields, mobileFields, tabletFields, defaults } = config
+  const meta = VIEWPORT_META[viewportMode]
+  const Icon = meta.icon
 
   return (
     <div className="space-y-6">
-      {isMobileEditing && (
-        <div className="bg-primary/10 text-primary border-primary/20 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium">
-          <Smartphone className="h-3.5 w-3.5 shrink-0" />
-          Editando valores para <strong>móvil</strong>. Los campos vacíos heredan el valor de
-          escritorio.
-        </div>
-      )}
+      <div className="bg-primary/10 text-primary border-primary/20 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium">
+        <Icon className="h-3.5 w-3.5 shrink-0" />
+        Editando valores para <strong>{meta.label}</strong>. Los campos vacíos heredan el valor de
+        escritorio.
+      </div>
 
       {fields.visible && (
         <div className="flex items-center justify-between rounded-lg border border-(--border) p-3">
@@ -163,28 +171,32 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
       )}
 
       {fields.fontSize && (
-        <MobileOverridableSlider
+        <ViewportSlider
           label={element === 'ctaButton' ? 'Tamaño de Texto' : 'Tamaño'}
           desktopKey={fields.fontSize}
-          mobileKey={isMobileEditing ? mobileFields?.fontSize : undefined}
+          mobileKey={mobileFields?.fontSize}
+          tabletKey={tabletFields?.fontSize}
           settings={settings}
           onUpdate={onUpdate}
           defaultValue={defaults.fontSize ?? 16}
           min={defaults.fontSizeMin || 10}
           max={defaults.fontSizeMax || 100}
+          viewportMode={viewportMode}
         />
       )}
 
       {fields.size && (
-        <MobileOverridableSlider
+        <ViewportSlider
           label="Tamaño"
           desktopKey={fields.size}
-          mobileKey={isMobileEditing ? mobileFields?.size : undefined}
+          mobileKey={mobileFields?.size}
+          tabletKey={tabletFields?.size}
           settings={settings}
           onUpdate={onUpdate}
           defaultValue={100}
           min={10}
           max={500}
+          viewportMode={viewportMode}
         />
       )}
 
@@ -217,11 +229,13 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
       )}
 
       {fields.offsetX && fields.offsetY && (
-        <MobileOverridablePosition
+        <ViewportPositionControl
           fields={fields}
-          mobileFields={isMobileEditing ? mobileFields : undefined}
+          mobileFields={mobileFields}
+          tabletFields={tabletFields}
           settings={settings}
           onUpdate={onUpdate}
+          viewportMode={viewportMode}
         />
       )}
 

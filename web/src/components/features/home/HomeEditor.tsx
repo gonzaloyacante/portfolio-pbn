@@ -104,7 +104,9 @@ export function HomeEditor({ settings: initialSettings }: HomeEditorProps) {
             settings={settings}
             selectedElement={selectedElement}
             onSelectElement={setSelectedElement}
-            forceIsMobile={viewportMode === 'mobile'}
+            forceViewportMode={viewportMode}
+            onUpdate={handleUpdate}
+            viewportMode={viewportMode}
           />
         }
         propertyPanel={

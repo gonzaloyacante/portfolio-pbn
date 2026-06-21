@@ -11,6 +11,9 @@ export function HeroWrapper({
   onSelectElement,
   className,
   style,
+  enableDrag,
+  onElementDrag,
+  onDragEnd,
 }: WrapperProps) {
   if (isEditor && id) {
     return (
@@ -18,6 +21,9 @@ export function HeroWrapper({
         id={id}
         isSelected={selectedElement === id}
         onClick={() => onSelectElement?.(id)}
+        enableDrag={enableDrag}
+        onElementDrag={onElementDrag}
+        onDragEnd={onDragEnd}
         className={className}
         style={style}
       >

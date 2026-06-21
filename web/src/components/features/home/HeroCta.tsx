@@ -11,13 +11,13 @@ export function HeroCta({
   isEditor,
   selectedElement,
   onSelectElement,
-  isMobile,
+  viewportMode,
 }: HeroSectionProps) {
   const rawCtaText = s.ctaText || 'Ver Portfolio'
   const ctaText =
     !isEditor && rawCtaText.trim().toLowerCase() === 'ver portfolio' ? 'Portfolio' : rawCtaText
   const ctaLink = s.ctaLink || '/portfolio'
-  const eff = resolveEffectiveValues(s, isMobile)
+  const eff = resolveEffectiveValues(s, viewportMode)
 
   return (
     <div className="order-2 col-span-1 mt-0 flex items-center justify-end lg:order-0 lg:mt-8 lg:justify-start">

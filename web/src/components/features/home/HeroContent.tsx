@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/lib/utils'
 import { buildHeroScrimBackground, buildHeroBackdropTint } from '@/lib/hero-backdrop-styles'
@@ -9,18 +9,33 @@ import { HeroContentProps } from './heroTypes'
 import { HeroTitles } from './HeroTitles'
 import { HeroSignature } from './HeroSignature'
 import { HeroCta } from './HeroCta'
+import { HeroMainImage } from './HeroMainImage'
 import { HomeSettingsData } from '@/actions/settings/home'
+import { useViewportMode } from '@/hooks/useViewportMode'
+import { offsetXKey, offsetYKey, resolveEffectiveValues } from './heroUtils'
+
+type DraggableElement =
+  | 'heroTitle1'
+  | 'heroTitle2'
+  | 'ownerName'
+  | 'heroMainImage'
+  | 'illustration'
+  | 'ctaButton'
 
 export function HeroContent({
   settings,
   isEditor = false,
   selectedElement = null,
   onSelectElement,
-  forceIsMobile,
+  forceViewportMode,
+  onUpdate,
+  viewportMode: viewportModeProp,
 }: HeroContentProps) {
   const s = settings || ({} as Partial<HomeSettingsData>)
-  const actualIsMobile = useIsMobile()
-  const isMobile = forceIsMobile ?? actualIsMobile
+  const detectedIsMobile = useIsMobile()
+  const detectedViewport = useViewportMode()
+  const isMobile = forceViewportMode ? forceViewportMode === 'mobile' : detectedIsMobile
+  const viewportMode = forceViewportMode ?? viewportModeProp ?? detectedViewport
 
   const fontsHash = [
     s.heroTitle1Font,
@@ -34,7 +49,59 @@ export function HeroContent({
 
   const fontsToLoad = useMemo(() => fontsHash.split('|'), [fontsHash])
 
-  const sectionProps = { s, isEditor, selectedElement, onSelectElement, isMobile }
+  // Drag: mantener un mapa en memoria con los offsets temporales durante el drag.
+  // Al terminar (onDragEnd), aplicamos el delta sobre el offset actual y llamamos onUpdate.
+  const liveOffsetRef = useRef<Partial<Record<DraggableElement, { x: number; y: number }>>>({})
+
+  const handleDragEnd = (elementId: DraggableElement, deltaX: number, deltaY: number) => {
+    if (!onUpdate) return
+    const currentXKey = offsetXKey(elementId, viewportMode)
+    const currentYKey = offsetYKey(elementId, viewportMode)
+    const eff = resolveEffectiveValues(s, viewportMode)
+    const currentX =
+      elementId === 'heroTitle1'
+        ? eff.title1OffsetX
+        : elementId === 'heroTitle2'
+          ? eff.title2OffsetX
+          : elementId === 'ownerName'
+            ? eff.ownerOffsetX
+            : elementId === 'heroMainImage'
+              ? eff.imgOffsetX
+              : elementId === 'illustration'
+                ? eff.illOffsetX
+                : eff.ctaOffsetX
+    const currentY =
+      elementId === 'heroTitle1'
+        ? eff.title1OffsetY
+        : elementId === 'heroTitle2'
+          ? eff.title2OffsetY
+          : elementId === 'ownerName'
+            ? eff.ownerOffsetY
+            : elementId === 'heroMainImage'
+              ? eff.imgOffsetY
+              : elementId === 'illustration'
+                ? eff.illOffsetY
+                : eff.ctaOffsetY
+    const newX = Math.round(currentX + deltaX)
+    const newY = Math.round(currentY + deltaY)
+    onUpdate(currentXKey, newX as HomeSettingsData[typeof currentXKey])
+    onUpdate(currentYKey, newY as HomeSettingsData[typeof currentYKey])
+  }
+
+  const dragEnabled = isEditor && !!onUpdate
+  const makeDragProps = (elementId: DraggableElement) => ({
+    enableDrag: dragEnabled,
+    onDragEnd: (deltaX: number, deltaY: number) => handleDragEnd(elementId, deltaX, deltaY),
+  })
+
+  const sectionProps = {
+    s,
+    isEditor,
+    selectedElement,
+    onSelectElement,
+    viewportMode,
+    ...makeDragProps('heroTitle1'),
+  }
 
   const baseScrimParams = {
     extentPercent: s.heroScrimExtentPercent ?? 45,
@@ -72,7 +139,7 @@ export function HeroContent({
     <div className="relative isolate w-full overflow-x-clip">
       <section
         className={cn(
-          'public-home-hero relative z-10 flex min-h-[100svh] w-full flex-col justify-end overflow-x-hidden px-4 pb-16 transition-colors duration-500 sm:px-8 md:min-h-[100dvh] lg:justify-center lg:px-16 lg:pb-0'
+          'public-home-hero relative z-10 min-h-[100svh] w-full overflow-x-hidden px-4 pb-16 transition-colors duration-500 sm:px-8 md:min-h-[100dvh] lg:px-16 lg:pb-0'
         )}
       >
         {tint && (
@@ -91,15 +158,34 @@ export function HeroContent({
           />
         ))}
         <FontLoader fonts={fontsToLoad} />
-        <div className="mx-auto grid w-full max-w-7xl grid-cols-2 items-center gap-x-4 gap-y-2 lg:min-h-[80dvh] lg:grid-cols-12 lg:items-stretch lg:gap-12 lg:py-0">
-          <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:justify-between lg:py-16">
-            <HeroTitles {...sectionProps} />
-            <HeroSignature {...sectionProps} />
+
+        {/* Hero stage: contenedor relativo con altura mínima. Cada hijo es absolute
+            con posición base responsive + transform: translate(offsetX, offsetY) desde BD. */}
+        <div className="relative mx-auto h-[100svh] w-full max-w-7xl md:h-[100dvh]">
+          {/* Title 1: arriba a la izquierda */}
+          <div className="absolute top-[18%] left-4 z-20 max-w-[60%] sm:left-8 md:left-12 lg:top-[20%] lg:left-16">
+            <HeroTitles {...sectionProps} {...makeDragProps('heroTitle1')} elementId="heroTitle1" />
           </div>
 
-          <div className="contents lg:col-span-7 lg:flex lg:flex-col lg:items-center lg:justify-center">
-            {/* Imagen destacada del hero desactivada temporalmente en pública y preview admin. */}
-            <HeroCta {...sectionProps} />
+          {/* HeroMainImage: centro-derecha, debajo del scrim */}
+          {s.heroMainImageUrl && (
+            <div className="absolute top-[35%] right-4 z-10 hidden w-[45%] max-w-md sm:right-8 md:right-12 lg:top-[30%] lg:right-16 lg:block">
+              <HeroMainImage
+                {...sectionProps}
+                {...makeDragProps('heroMainImage')}
+                elementId="heroMainImage"
+              />
+            </div>
+          )}
+
+          {/* HeroCta: medio-derecha, debajo de la imagen */}
+          <div className="absolute top-[60%] right-4 z-30 sm:right-8 md:right-12 lg:top-[55%] lg:right-16">
+            <HeroCta {...sectionProps} {...makeDragProps('ctaButton')} elementId="ctaButton" />
+          </div>
+
+          {/* HeroSignature (illustration + ownerName): abajo a la izquierda */}
+          <div className="absolute bottom-[8%] left-4 z-10 sm:left-8 md:left-12 lg:bottom-[10%] lg:left-16">
+            <HeroSignature {...sectionProps} elementId="ownerName" />
           </div>
         </div>
       </section>

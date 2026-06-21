@@ -39,11 +39,22 @@ type MobileFieldConfig = {
   fontSize?: keyof HomeSettingsData
   size?: keyof HomeSettingsData
   rotation?: keyof HomeSettingsData
+  imageStyle?: keyof HomeSettingsData
+}
+
+type TabletFieldConfig = {
+  offsetX?: keyof HomeSettingsData
+  offsetY?: keyof HomeSettingsData
+  fontSize?: keyof HomeSettingsData
+  size?: keyof HomeSettingsData
+  rotation?: keyof HomeSettingsData
+  imageStyle?: keyof HomeSettingsData
 }
 
 type ControlConfig = {
   fields: FieldConfig
   mobileFields?: MobileFieldConfig
+  tabletFields?: TabletFieldConfig
   defaults: {
     fontSize?: number
     fontSizeMin?: number
@@ -53,7 +64,7 @@ type ControlConfig = {
   label?: string
 }
 
-export type { FieldConfig, MobileFieldConfig, ControlConfig }
+export type { FieldConfig, MobileFieldConfig, TabletFieldConfig, ControlConfig }
 
 export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfig> = {
   heroBackdrop: {
@@ -78,6 +89,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetX: 'heroTitle1MobileOffsetX',
       offsetY: 'heroTitle1MobileOffsetY',
       fontSize: 'heroTitle1MobileFontSize',
+    },
+    tabletFields: {
+      offsetX: 'heroTitle1TabletOffsetX',
+      offsetY: 'heroTitle1TabletOffsetY',
+      fontSize: 'heroTitle1TabletFontSize',
     },
     defaults: {
       fontSize: 112,
@@ -105,6 +121,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetY: 'heroTitle2MobileOffsetY',
       fontSize: 'heroTitle2MobileFontSize',
     },
+    tabletFields: {
+      offsetX: 'heroTitle2TabletOffsetX',
+      offsetY: 'heroTitle2TabletOffsetY',
+      fontSize: 'heroTitle2TabletFontSize',
+    },
     defaults: {
       fontSize: 96,
       fontSizeMin: 20,
@@ -131,6 +152,11 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetY: 'ownerNameMobileOffsetY',
       fontSize: 'ownerNameMobileFontSize',
     },
+    tabletFields: {
+      offsetX: 'ownerNameTabletOffsetX',
+      offsetY: 'ownerNameTabletOffsetY',
+      fontSize: 'ownerNameTabletFontSize',
+    },
     defaults: {
       fontSize: 36,
       fontSizeMin: 12,
@@ -155,6 +181,12 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       size: 'illustrationMobileSize',
       rotation: 'illustrationMobileRotation',
     },
+    tabletFields: {
+      offsetX: 'illustrationTabletOffsetX',
+      offsetY: 'illustrationTabletOffsetY',
+      size: 'illustrationTabletSize',
+      rotation: 'illustrationTabletRotation',
+    },
     defaults: {
       zIndex: 10,
     },
@@ -176,6 +208,13 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       offsetX: 'ctaMobileOffsetX',
       offsetY: 'ctaMobileOffsetY',
       fontSize: 'ctaMobileFontSize',
+      size: 'ctaMobileSize',
+    },
+    tabletFields: {
+      offsetX: 'ctaTabletOffsetX',
+      offsetY: 'ctaTabletOffsetY',
+      fontSize: 'ctaTabletFontSize',
+      size: 'ctaTabletSize',
     },
     defaults: {
       fontSize: 16,
@@ -196,6 +235,12 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
     mobileFields: {
       offsetX: 'heroMainImageMobileOffsetX',
       offsetY: 'heroMainImageMobileOffsetY',
+      imageStyle: 'heroMainImageMobileImageStyle',
+    },
+    tabletFields: {
+      offsetX: 'heroMainImageTabletOffsetX',
+      offsetY: 'heroMainImageTabletOffsetY',
+      imageStyle: 'heroMainImageTabletImageStyle',
     },
     defaults: {
       zIndex: 5,

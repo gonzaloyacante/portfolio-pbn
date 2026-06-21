@@ -12,7 +12,7 @@ export function HeroSignature({
   isEditor,
   selectedElement,
   onSelectElement,
-  isMobile,
+  viewportMode,
 }: HeroSectionProps) {
   // Public web colors are fixed; CMS color overrides stay disabled here for now.
   void s.ownerNameColor
@@ -21,7 +21,7 @@ export function HeroSignature({
   const ownerName = s.ownerNameText || 'Paola Bolívar Nievas'
   const illustration = s.illustrationUrl
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
-  const eff = resolveEffectiveValues(s, isMobile)
+  const eff = resolveEffectiveValues(s, viewportMode)
   const showOwner = isEditor || (s.showOwnerName ?? true)
 
   return (
