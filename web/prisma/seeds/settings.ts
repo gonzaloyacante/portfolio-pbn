@@ -14,8 +14,8 @@ export const homeSettings = {
   heroTitle1Color: '#6c0a0a',
   heroTitle1ColorDark: '#000000',
   heroTitle1ZIndex: 20,
-  heroTitle1OffsetX: 33,
-  heroTitle1OffsetY: 40,
+  heroTitle1OffsetX: -30,
+  heroTitle1OffsetY: -20,
 
   // Hero Title 2 ("portfolio")
   heroTitle2Text: 'portfolio',
@@ -97,11 +97,11 @@ export const homeSettings = {
   ctaVariant: 'primary',
   ctaSize: 'default',
   ctaOffsetX: 0,
-  ctaOffsetY: -55,
+  ctaOffsetY: 40,
 
   // Mobile overrides (responsive positioning)
-  heroTitle1MobileOffsetX: 0,
-  heroTitle1MobileOffsetY: 0,
+  heroTitle1MobileOffsetX: -10,
+  heroTitle1MobileOffsetY: -10,
   heroTitle1MobileFontSize: 56,
   heroTitle2MobileOffsetX: 0,
   heroTitle2MobileOffsetY: 0,
@@ -116,7 +116,7 @@ export const homeSettings = {
   illustrationMobileSize: 60,
   illustrationMobileRotation: 0,
   ctaMobileOffsetX: 0,
-  ctaMobileOffsetY: 0,
+  ctaMobileOffsetY: 30,
   ctaMobileFontSize: 18,
 
   // Featured Images Section
