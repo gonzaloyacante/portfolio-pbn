@@ -17,6 +17,11 @@ export default async function ServicesPage() {
     prisma.servicesPageSettings.findFirst({ where: { isActive: true } }),
   ])
 
+  // Prisma devuelve Decimal/Date que Next.js 16 no puede serializar al
+  // cruzar el Server/Client Component boundary. JSON roundtrip los aplana
+  // a strings/numbers planos que sí cruzan.
+  const initialServices = JSON.parse(JSON.stringify(services)) as typeof services
+
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <PageHeader
@@ -24,7 +29,7 @@ export default async function ServicesPage() {
         description="Cabecera de la página pública /servicios y listado de servicios."
       />
       <ServicesPageHeroEditor settings={servicesHero} />
-      <ServiceManager initialServices={services} />
+      <ServiceManager initialServices={initialServices} />
     </div>
   )
 }
