@@ -123,7 +123,7 @@ export default function Navbar({ brandName, visibility, brandLogoUrl, brandLogoA
   const showBrandInBar = showBrand && !isHome
   const showCollapsedMobileNav = !isHome
   const navSurfaceClass = isHome ? 'public-navbar-home-surface' : 'public-navbar-surface'
-  const navPositionClass = isHome ? 'fixed inset-x-0 top-0' : 'sticky top-0'
+  const navPositionClass = isHome ? 'fixed inset-x-0 top-4' : 'sticky top-0'
 
   return (
     <>
