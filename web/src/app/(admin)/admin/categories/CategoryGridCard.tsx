@@ -57,7 +57,7 @@ export function CategoryGridCard({ category, isDragging, onDelete }: CategoryGri
           <span>🖼️ {category._count.images} imágenes</span>
         </div>
 
-        <div className="border-border mt-auto flex gap-2 border-t pt-4">
+        <div className="border-border mt-auto flex flex-wrap gap-2 border-t pt-4">
           <Button asChild variant="outline" size="sm" className="flex-1 gap-2">
             <Link
               href={`${ROUTES.public.portfolio}/${category.slug}`}
