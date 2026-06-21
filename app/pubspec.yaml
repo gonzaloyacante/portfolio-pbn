@@ -15,8 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # ── State Management ──────────────────────────────────────────────────────
-  flutter_riverpod: ^3.2.1
-  riverpod_annotation: ^4.0.2
+  flutter_riverpod: ^3.3.2
+  riverpod_annotation: ^4.0.3
 
   # ── HTTP & API ────────────────────────────────────────────────────────────
   dio: ^5.8.0+1
@@ -33,9 +33,9 @@ dependencies:
   shared_preferences: ^2.5.3
 
   # ── Local Database ────────────────────────────────────────────────────────
-  drift: ^2.22.1
-  drift_flutter: ^0.2.4
-  sqlite3_flutter_libs: ^0.5.4
+  drift: ^2.34.0
+  drift_flutter: ^0.3.0
+  sqlite3_flutter_libs: ^0.6.0
   path_provider: ^2.1.5
   path: ^1.9.1
 
@@ -71,7 +71,7 @@ dependencies:
 
   # ── Serialization ─────────────────────────────────────────────────────────
   freezed_annotation: ^3.1.0
-  json_annotation: ^4.11.0
+  json_annotation: ^4.12.0
 
   # ── Error Tracking ────────────────────────────────────────────────────────
   sentry: ^9.14.0
@@ -83,7 +83,7 @@ dependencies:
   # ── In-App Updates ────────────────────────────────────────────────────────
   # Abre/instala archivos nativos desde la app (APK install en Android).
   # Gestiona automáticamente FileProvider para Android 7+.
-  open_file: ^3.5.10
+  open_file: ^4.0.0
   # Runtime permissions (e.g. REQUEST_INSTALL_PACKAGES before APK install).
   permission_handler: ^12.0.0
   # SHA-256 para verificar integridad del APK descargado (ya transitiva vía firebase)
@@ -106,10 +106,10 @@ dev_dependencies:
 
   # ── Code Generation ───────────────────────────────────────────────────────
   build_runner: ^2.11.1
-  drift_dev: ^2.22.1
+  drift_dev: ^2.34.0
   freezed: ^3.2.5
-  json_serializable: ^6.13.0
-  riverpod_generator: ^4.0.3
+  json_serializable: ^6.14.0
+  riverpod_generator: ^4.0.4
   # envied_generator replaced by flutter_dotenv (no code-gen needed)
 
   # ── Testing ───────────────────────────────────────────────────────────────

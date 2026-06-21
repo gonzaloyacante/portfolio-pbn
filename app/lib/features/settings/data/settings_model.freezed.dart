@@ -679,12 +679,7 @@ as bool,
 /// @nodoc
 mixin _$ThemeSettings {
 
- String? get id;// Light mode — matches AppColors & design-tokens.ts BRAND values
- String get primaryColor; String get secondaryColor; String get accentColor; String get backgroundColor; String get textColor; String get cardBgColor;// Dark mode — matches AppColors darkXxx values
- String get darkPrimaryColor; String get darkSecondaryColor; String get darkAccentColor; String get darkBackgroundColor; String get darkTextColor; String get darkCardBgColor;// Typography — Base
- String get headingFont; String? get headingFontUrl; int get headingFontSize; String get bodyFont; String? get bodyFontUrl; int get bodyFontSize; String get scriptFont; String? get scriptFontUrl; int get scriptFontSize;// Typography — Brand
- String? get brandFont; String? get brandFontUrl; int? get brandFontSize; String? get portfolioFont; String? get portfolioFontUrl; int? get portfolioFontSize; String? get signatureFont; String? get signatureFontUrl; int? get signatureFontSize;// Layout
- int get borderRadius; bool get isActive;
+ String? get id; String get primaryColor; String get secondaryColor; String get accentColor; String get backgroundColor; String get textColor; String get cardBgColor; String get darkPrimaryColor; String get darkSecondaryColor; String get darkAccentColor; String get darkBackgroundColor; String get darkTextColor; String get darkCardBgColor; String get headingFont; String? get headingFontUrl; int get headingFontSize; String get bodyFont; String? get bodyFontUrl; int get bodyFontSize; String get scriptFont; String? get scriptFontUrl; int get scriptFontSize; String? get brandFont; String? get brandFontUrl; int? get brandFontSize; String? get portfolioFont; String? get portfolioFontUrl; int? get portfolioFontSize; String? get signatureFont; String? get signatureFontUrl; int? get signatureFontSize; int get borderRadius; bool get isActive;
 /// Create a copy of ThemeSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -914,21 +909,18 @@ class _ThemeSettings implements ThemeSettings {
   factory _ThemeSettings.fromJson(Map<String, dynamic> json) => _$ThemeSettingsFromJson(json);
 
 @override final  String? id;
-// Light mode — matches AppColors & design-tokens.ts BRAND values
 @override@JsonKey() final  String primaryColor;
 @override@JsonKey() final  String secondaryColor;
 @override@JsonKey() final  String accentColor;
 @override@JsonKey() final  String backgroundColor;
 @override@JsonKey() final  String textColor;
 @override@JsonKey() final  String cardBgColor;
-// Dark mode — matches AppColors darkXxx values
 @override@JsonKey() final  String darkPrimaryColor;
 @override@JsonKey() final  String darkSecondaryColor;
 @override@JsonKey() final  String darkAccentColor;
 @override@JsonKey() final  String darkBackgroundColor;
 @override@JsonKey() final  String darkTextColor;
 @override@JsonKey() final  String darkCardBgColor;
-// Typography — Base
 @override@JsonKey() final  String headingFont;
 @override final  String? headingFontUrl;
 @override@JsonKey() final  int headingFontSize;
@@ -938,7 +930,6 @@ class _ThemeSettings implements ThemeSettings {
 @override@JsonKey() final  String scriptFont;
 @override final  String? scriptFontUrl;
 @override@JsonKey() final  int scriptFontSize;
-// Typography — Brand
 @override final  String? brandFont;
 @override final  String? brandFontUrl;
 @override final  int? brandFontSize;
@@ -948,7 +939,6 @@ class _ThemeSettings implements ThemeSettings {
 @override final  String? signatureFont;
 @override final  String? signatureFontUrl;
 @override final  int? signatureFontSize;
-// Layout
 @override@JsonKey() final  int borderRadius;
 @override@JsonKey() final  bool isActive;
 
@@ -1048,8 +1038,7 @@ as bool,
 /// @nodoc
 mixin _$SiteSettings {
 
- String? get id; String get siteName; String? get siteTagline; String? get logoUrl; String? get defaultMetaTitle; String? get defaultMetaDescription; String? get defaultEmail; String? get defaultPhone; String? get defaultWhatsapp; String? get googleAnalyticsId; bool get maintenanceMode; String? get maintenanceMessage; bool get showAboutPage; bool get showGalleryPage; bool get showServicesPage; bool get showContactPage; bool get allowIndexing; bool get isActive;// ── Encabezado / Navbar brand ──
- String? get navbarBrandText; String? get navbarBrandFont; String? get navbarBrandFontUrl; int? get navbarBrandFontSize; String? get navbarBrandColor; String? get navbarBrandColorDark; bool get navbarShowBrand;
+ String? get id; String get siteName; String? get siteTagline; String? get logoUrl; String? get defaultMetaTitle; String? get defaultMetaDescription; String? get defaultEmail; String? get defaultPhone; String? get defaultWhatsapp; String? get googleAnalyticsId; bool get maintenanceMode; String? get maintenanceMessage; bool get showAboutPage; bool get showGalleryPage; bool get showServicesPage; bool get showContactPage; bool get allowIndexing; bool get isActive; String? get navbarBrandText; String? get navbarBrandFont; String? get navbarBrandFontUrl; int? get navbarBrandFontSize; String? get navbarBrandColor; String? get navbarBrandColorDark; bool get navbarShowBrand;
 /// Create a copy of SiteSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1288,7 +1277,6 @@ class _SiteSettings implements SiteSettings {
 @override@JsonKey() final  bool showContactPage;
 @override@JsonKey() final  bool allowIndexing;
 @override@JsonKey() final  bool isActive;
-// ── Encabezado / Navbar brand ──
 @override final  String? navbarBrandText;
 @override final  String? navbarBrandFont;
 @override final  String? navbarBrandFontUrl;
@@ -1385,16 +1373,7 @@ as bool,
 /// @nodoc
 mixin _$HomeSettings {
 
- String? get id; bool get showHeroTitle1; bool get showHeroTitle2; bool get showOwnerName;// ── Título 1 ──
- String? get heroTitle1Text; String? get heroTitle1Font; String? get heroTitle1FontUrl; int? get heroTitle1FontSize; String? get heroTitle1Color; String? get heroTitle1ColorDark; int? get heroTitle1ZIndex; int? get heroTitle1OffsetX; int? get heroTitle1OffsetY;// ── Título 2 ──
- String? get heroTitle2Text; String? get heroTitle2Font; String? get heroTitle2FontUrl; int? get heroTitle2FontSize; String? get heroTitle2Color; String? get heroTitle2ColorDark; int? get heroTitle2ZIndex; int? get heroTitle2OffsetX; int? get heroTitle2OffsetY;// ── Nombre propietario ──
- String? get ownerNameText; String? get ownerNameFont; String? get ownerNameFontUrl; int? get ownerNameFontSize; String? get ownerNameColor; String? get ownerNameColorDark; int? get ownerNameZIndex; int? get ownerNameOffsetX; int? get ownerNameOffsetY;// ── Imagen principal ──
- String? get heroMainImageUrl; String? get heroMainImageAlt; String? get heroMainImageCaption; String? get heroImageStyle; int? get heroMainImageZIndex; int? get heroMainImageOffsetX; int? get heroMainImageOffsetY; bool get heroImmersiveEnabled; String get heroBackdropMediaKind; String? get heroBackdropUrl; String? get heroBackdropPosterUrl; bool get heroBackdropLoop; bool get heroBackdropMuted; bool get heroBackdropPlaysInline; String get heroBackdropObjectFit; String get heroBackdropObjectPosition; String? get heroBackdropMobileUrl; String? get heroBackdropMobileObjectPosition; bool get heroForegroundPortraitShow; String get heroScrimEdge; int get heroScrimExtentPercent; int get heroScrimOpacity; String? get heroScrimColor; String? get heroScrimColorDark; int get heroScrimFeatherPercent; int get heroBackdropTintOpacity; int? get heroScrimMobileExtentPercent; int? get heroScrimMobileOpacity;// ── Ilustración ──
- String? get illustrationUrl; String? get illustrationAlt; int? get illustrationZIndex; int? get illustrationOpacity; int? get illustrationSize; int? get illustrationOffsetX; int? get illustrationOffsetY; int? get illustrationRotation;// ── Botón CTA ──
- String? get ctaText; String? get ctaLink; String? get ctaFont; String? get ctaFontUrl; int? get ctaFontSize; String? get ctaVariant; String? get ctaSize; int? get ctaOffsetX; int? get ctaOffsetY;// ── Mobile Overrides ──
- int? get heroTitle1MobileOffsetX; int? get heroTitle1MobileOffsetY; int? get heroTitle1MobileFontSize; int? get heroTitle2MobileOffsetX; int? get heroTitle2MobileOffsetY; int? get heroTitle2MobileFontSize; int? get ownerNameMobileOffsetX; int? get ownerNameMobileOffsetY; int? get ownerNameMobileFontSize; int? get heroMainImageMobileOffsetX; int? get heroMainImageMobileOffsetY; int? get illustrationMobileOffsetX; int? get illustrationMobileOffsetY; int? get illustrationMobileSize; int? get illustrationMobileRotation; int? get ctaMobileOffsetX; int? get ctaMobileOffsetY; int? get ctaMobileFontSize;// ── Imágenes destacadas ──
- bool get showFeaturedImages; String? get featuredTitle; String? get featuredTitleFont; String? get featuredTitleFontUrl; int? get featuredTitleFontSize; String? get featuredTitleColor; String? get featuredTitleColorDark; int get featuredCount;// ── Meta ──
- bool get isActive;
+ String? get id; bool get showHeroTitle1; bool get showHeroTitle2; bool get showOwnerName; String? get heroTitle1Text; String? get heroTitle1Font; String? get heroTitle1FontUrl; int? get heroTitle1FontSize; String? get heroTitle1Color; String? get heroTitle1ColorDark; int? get heroTitle1ZIndex; int? get heroTitle1OffsetX; int? get heroTitle1OffsetY; String? get heroTitle2Text; String? get heroTitle2Font; String? get heroTitle2FontUrl; int? get heroTitle2FontSize; String? get heroTitle2Color; String? get heroTitle2ColorDark; int? get heroTitle2ZIndex; int? get heroTitle2OffsetX; int? get heroTitle2OffsetY; String? get ownerNameText; String? get ownerNameFont; String? get ownerNameFontUrl; int? get ownerNameFontSize; String? get ownerNameColor; String? get ownerNameColorDark; int? get ownerNameZIndex; int? get ownerNameOffsetX; int? get ownerNameOffsetY; String? get heroMainImageUrl; String? get heroMainImageAlt; String? get heroMainImageCaption; String? get heroImageStyle; int? get heroMainImageZIndex; int? get heroMainImageOffsetX; int? get heroMainImageOffsetY; bool get heroImmersiveEnabled; String get heroBackdropMediaKind; String? get heroBackdropUrl; String? get heroBackdropPosterUrl; bool get heroBackdropLoop; bool get heroBackdropMuted; bool get heroBackdropPlaysInline; String get heroBackdropObjectFit; String get heroBackdropObjectPosition; String? get heroBackdropMobileUrl; String? get heroBackdropMobileObjectPosition; bool get heroForegroundPortraitShow; String get heroScrimEdge; int get heroScrimExtentPercent; int get heroScrimOpacity; String? get heroScrimColor; String? get heroScrimColorDark; int get heroScrimFeatherPercent; int get heroBackdropTintOpacity; int? get heroScrimMobileExtentPercent; int? get heroScrimMobileOpacity; String? get illustrationUrl; String? get illustrationAlt; int? get illustrationZIndex; int? get illustrationOpacity; int? get illustrationSize; int? get illustrationOffsetX; int? get illustrationOffsetY; int? get illustrationRotation; String? get ctaText; String? get ctaLink; String? get ctaFont; String? get ctaFontUrl; int? get ctaFontSize; String? get ctaVariant; String? get ctaSize; int? get ctaOffsetX; int? get ctaOffsetY; int? get heroTitle1MobileOffsetX; int? get heroTitle1MobileOffsetY; int? get heroTitle1MobileFontSize; int? get heroTitle2MobileOffsetX; int? get heroTitle2MobileOffsetY; int? get heroTitle2MobileFontSize; int? get ownerNameMobileOffsetX; int? get ownerNameMobileOffsetY; int? get ownerNameMobileFontSize; int? get heroMainImageMobileOffsetX; int? get heroMainImageMobileOffsetY; int? get illustrationMobileOffsetX; int? get illustrationMobileOffsetY; int? get illustrationMobileSize; int? get illustrationMobileRotation; int? get ctaMobileOffsetX; int? get ctaMobileOffsetY; int? get ctaMobileFontSize; bool get showFeaturedImages; String? get featuredTitle; String? get featuredTitleFont; String? get featuredTitleFontUrl; int? get featuredTitleFontSize; String? get featuredTitleColor; String? get featuredTitleColorDark; int get featuredCount; bool get isActive;
 /// Create a copy of HomeSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1697,7 +1676,6 @@ class _HomeSettings implements HomeSettings {
 @override@JsonKey() final  bool showHeroTitle1;
 @override@JsonKey() final  bool showHeroTitle2;
 @override@JsonKey() final  bool showOwnerName;
-// ── Título 1 ──
 @override final  String? heroTitle1Text;
 @override final  String? heroTitle1Font;
 @override final  String? heroTitle1FontUrl;
@@ -1707,7 +1685,6 @@ class _HomeSettings implements HomeSettings {
 @override final  int? heroTitle1ZIndex;
 @override final  int? heroTitle1OffsetX;
 @override final  int? heroTitle1OffsetY;
-// ── Título 2 ──
 @override final  String? heroTitle2Text;
 @override final  String? heroTitle2Font;
 @override final  String? heroTitle2FontUrl;
@@ -1717,7 +1694,6 @@ class _HomeSettings implements HomeSettings {
 @override final  int? heroTitle2ZIndex;
 @override final  int? heroTitle2OffsetX;
 @override final  int? heroTitle2OffsetY;
-// ── Nombre propietario ──
 @override final  String? ownerNameText;
 @override final  String? ownerNameFont;
 @override final  String? ownerNameFontUrl;
@@ -1727,7 +1703,6 @@ class _HomeSettings implements HomeSettings {
 @override final  int? ownerNameZIndex;
 @override final  int? ownerNameOffsetX;
 @override final  int? ownerNameOffsetY;
-// ── Imagen principal ──
 @override final  String? heroMainImageUrl;
 @override final  String? heroMainImageAlt;
 @override final  String? heroMainImageCaption;
@@ -1756,7 +1731,6 @@ class _HomeSettings implements HomeSettings {
 @override@JsonKey() final  int heroBackdropTintOpacity;
 @override final  int? heroScrimMobileExtentPercent;
 @override final  int? heroScrimMobileOpacity;
-// ── Ilustración ──
 @override final  String? illustrationUrl;
 @override final  String? illustrationAlt;
 @override final  int? illustrationZIndex;
@@ -1765,7 +1739,6 @@ class _HomeSettings implements HomeSettings {
 @override final  int? illustrationOffsetX;
 @override final  int? illustrationOffsetY;
 @override final  int? illustrationRotation;
-// ── Botón CTA ──
 @override final  String? ctaText;
 @override final  String? ctaLink;
 @override final  String? ctaFont;
@@ -1775,7 +1748,6 @@ class _HomeSettings implements HomeSettings {
 @override final  String? ctaSize;
 @override final  int? ctaOffsetX;
 @override final  int? ctaOffsetY;
-// ── Mobile Overrides ──
 @override final  int? heroTitle1MobileOffsetX;
 @override final  int? heroTitle1MobileOffsetY;
 @override final  int? heroTitle1MobileFontSize;
@@ -1794,7 +1766,6 @@ class _HomeSettings implements HomeSettings {
 @override final  int? ctaMobileOffsetX;
 @override final  int? ctaMobileOffsetY;
 @override final  int? ctaMobileFontSize;
-// ── Imágenes destacadas ──
 @override@JsonKey() final  bool showFeaturedImages;
 @override final  String? featuredTitle;
 @override final  String? featuredTitleFont;
@@ -1803,7 +1774,6 @@ class _HomeSettings implements HomeSettings {
 @override final  String? featuredTitleColor;
 @override final  String? featuredTitleColorDark;
 @override@JsonKey() final  int featuredCount;
-// ── Meta ──
 @override@JsonKey() final  bool isActive;
 
 /// Create a copy of HomeSettings

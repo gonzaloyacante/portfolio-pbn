@@ -47,7 +47,7 @@ abstract class _$ServicesViewMode extends $Notifier<ViewMode> {
   ViewMode build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ViewMode, ViewMode>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$ServicesViewMode extends $Notifier<ViewMode> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -100,7 +100,7 @@ abstract class _$CategoriesViewMode extends $Notifier<ViewMode> {
   ViewMode build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ViewMode, ViewMode>;
     final element =
         ref.element
@@ -110,7 +110,7 @@ abstract class _$CategoriesViewMode extends $Notifier<ViewMode> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -153,7 +153,7 @@ abstract class _$CategoryGalleryViewMode extends $Notifier<ViewMode> {
   ViewMode build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ViewMode, ViewMode>;
     final element =
         ref.element
@@ -163,7 +163,7 @@ abstract class _$CategoryGalleryViewMode extends $Notifier<ViewMode> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -206,7 +206,7 @@ abstract class _$TestimonialsViewMode extends $Notifier<ViewMode> {
   ViewMode build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<ViewMode, ViewMode>;
     final element =
         ref.element
@@ -216,6 +216,6 @@ abstract class _$TestimonialsViewMode extends $Notifier<ViewMode> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

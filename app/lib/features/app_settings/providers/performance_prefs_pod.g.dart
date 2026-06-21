@@ -47,7 +47,7 @@ abstract class _$AnimationsEnabled extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -57,7 +57,7 @@ abstract class _$AnimationsEnabled extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -100,7 +100,7 @@ abstract class _$AnimationSpeedPref extends $Notifier<AnimationSpeed> {
   AnimationSpeed build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AnimationSpeed, AnimationSpeed>;
     final element =
         ref.element
@@ -110,7 +110,7 @@ abstract class _$AnimationSpeedPref extends $Notifier<AnimationSpeed> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -151,7 +151,7 @@ abstract class _$CompactMode extends $Notifier<bool> {
   bool build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -161,6 +161,6 @@ abstract class _$CompactMode extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

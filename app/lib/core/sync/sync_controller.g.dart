@@ -48,4 +48,4 @@ final class SyncControllerProvider
   }
 }
 
-String _$syncControllerHash() => r'ed182dbb0f47981ebcf2a64dc8f71c6ccd645793';
+String _$syncControllerHash() => r'3465d1a8a2f7fef3b96298303708fe21ba5abdec';
