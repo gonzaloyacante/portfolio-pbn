@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:portfolio_pbn/shared/widgets/widgets.dart';
 
 import '../../../../core/router/route_names.dart';
+import '../../../../core/theme/app_breakpoints.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/dashboard_repository.dart';
 
@@ -14,11 +15,17 @@ class DashboardStatsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final aspectRatio = AppBreakpoints.value(
+      context,
+      compact: 2.2,
+      medium: 2.5,
+      expanded: 2.8,
+    );
     return SliverAdaptiveGrid(
       compactCols: 2,
       mediumCols: 2,
       expandedCols: 4,
-      childAspectRatio: 2.6,
+      childAspectRatio: aspectRatio,
       children: [
         StatCard(
           icon: Icons.photo_library_outlined,

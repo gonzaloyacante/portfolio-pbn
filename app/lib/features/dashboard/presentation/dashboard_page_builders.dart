@@ -54,6 +54,12 @@ extension _DashboardPageBuilders on DashboardPage {
     );
     final gutter = AppBreakpoints.gutter(context);
 
+    final aspectRatio = AppBreakpoints.value(
+      context,
+      compact: 2.2,
+      medium: 2.5,
+      expanded: 2.8,
+    );
     return SliverPadding(
       padding: padding.copyWith(top: 0, bottom: 0),
       sliver: SliverToBoxAdapter(
@@ -65,7 +71,7 @@ extension _DashboardPageBuilders on DashboardPage {
               crossAxisCount: cols,
               mainAxisSpacing: gutter,
               crossAxisSpacing: gutter,
-              childAspectRatio: 2.6,
+              childAspectRatio: aspectRatio,
             ),
             itemCount: 4,
             itemBuilder: (BuildContext _, int _) => const SkeletonStatCard(),

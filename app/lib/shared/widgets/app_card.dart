@@ -52,10 +52,14 @@ class AppCard extends StatelessWidget {
     final bg = color ?? theme.cardColor;
     final br = borderRadius ?? BorderRadius.circular(AppRadius.card);
     final pad = padding ?? const EdgeInsets.all(AppSpacing.cardPadding);
+    final borderColor = theme.colorScheme.outline.withValues(alpha: 0.18);
 
     return Material(
       color: bg,
-      shape: RoundedRectangleBorder(borderRadius: br),
+      shape: RoundedRectangleBorder(
+        borderRadius: br,
+        side: BorderSide(color: borderColor, width: 1),
+      ),
       elevation: elevation ?? 0,
       clipBehavior: Clip.antiAlias,
       child: InkWell(

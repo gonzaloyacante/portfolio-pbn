@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/auth/auth_provider.dart';
 import '../../../../core/auth/auth_state.dart';
+import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 /// Banner de bienvenida con saludo horario y fecha actual en español.
 ///
@@ -59,45 +61,75 @@ class DashboardGreeting extends ConsumerWidget {
       _ => '',
     };
 
-    return Padding(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppSpacing.base),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.base,
         vertical: AppSpacing.md,
       ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            primary.withValues(alpha: (isDark ? 28 : 14) / 255),
+            colorScheme.surface,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.card),
+        border: Border.all(
+          color: primary.withValues(alpha: (isDark ? 50 : 22) / 255),
+        ),
+      ),
       child: Row(
         children: [
+          // Monograma decorativo
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [primary, primary.withValues(alpha: 0.75)],
+              ),
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                  color: primary.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              'P',
+              style: AppTypography.decorativeTitle(Colors.white, fontSize: 26),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${_greeting()}${userName.isNotEmpty ? ', $userName' : ''} 👋',
-                  style: textTheme.titleLarge?.copyWith(
+                  '${_greeting()}${userName.isNotEmpty ? ', $userName' : ''}',
+                  style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: colorScheme.onSurface,
                     height: 1.2,
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 3),
                 Text(
                   _formattedDate(),
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withValues(alpha: 160 / 255),
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurface.withValues(alpha: 150 / 255),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(width: AppSpacing.md),
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: primary.withValues(alpha: (isDark ? 70 : 40) / 255),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            alignment: Alignment.center,
-            child: Icon(Icons.spa_outlined, color: primary, size: 28),
           ),
         ],
       ),

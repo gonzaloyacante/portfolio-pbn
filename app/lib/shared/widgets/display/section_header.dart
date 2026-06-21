@@ -45,6 +45,16 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Acento vertical izquierdo
+          Container(
+            width: 3,
+            height: subtitle != null ? 32 : 18,
+            decoration: BoxDecoration(
+              color: colorScheme.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,7 +63,7 @@ class SectionHeader extends StatelessWidget {
                   title,
                   style:
                       titleStyle ??
-                      textTheme.titleMedium?.copyWith(
+                      textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                 ),
