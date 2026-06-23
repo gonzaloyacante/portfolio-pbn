@@ -317,10 +317,12 @@ export function PublicColorOverridesSection({ initialOverrides }: Props) {
             ))}
             {group.advanced && group.advanced.length > 0 && (
               <>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => toggleAdvanced(group.id)}
-                  className="text-muted-foreground flex w-full items-center gap-1 pt-3 text-xs hover:underline"
+                  className="text-muted-foreground w-full justify-start pt-3 hover:underline"
                 >
                   {expandedAdvanced.has(group.id) ? (
                     <ChevronUp size={12} />
@@ -328,7 +330,7 @@ export function PublicColorOverridesSection({ initialOverrides }: Props) {
                     <ChevronDown size={12} />
                   )}
                   {expandedAdvanced.has(group.id) ? 'Ocultar' : 'Mostrar'} controles avanzados
-                </button>
+                </Button>
                 {expandedAdvanced.has(group.id) &&
                   group.advanced.map((item) => (
                     <ColorRow
@@ -384,13 +386,15 @@ function ColorRow({
           <span className="text-muted-foreground bg-muted rounded px-2 py-0.5 text-xs">
             Hereda del tema
           </span>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onAdd}
-            className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs"
+            className="text-muted-foreground hover:text-foreground gap-1"
           >
             <Plus size={12} /> Personalizar
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -400,14 +404,16 @@ function ColorRow({
     <div className={cn('py-3', isDeleting && 'pointer-events-none opacity-50')}>
       <div className="mb-2 flex items-center justify-between">
         <span className="text-sm font-medium">{item.label}</span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onRemove}
-          className="text-muted-foreground hover:text-destructive"
+          className="text-muted-foreground hover:text-destructive h-8 w-8 p-0"
           title="Quitar override"
         >
           <X size={14} />
-        </button>
+        </Button>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>

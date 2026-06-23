@@ -1,6 +1,7 @@
 'use client'
 
 import { Contact, ContactFilter, ITEMS_PER_PAGE } from './contactListTypes'
+import { Button } from '@/components/ui'
 import { ContactCard } from './ContactCard'
 
 interface ContactListPanelProps {
@@ -79,23 +80,29 @@ export function ContactListPanel({
             {filteredContacts.length}
           </p>
           <div className="flex gap-2">
-            <button
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
               onClick={() => onPageChange(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-bold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg"
             >
               Anterior
-            </button>
+            </Button>
             <span className="text-muted-foreground flex items-center px-3 text-sm font-medium">
               {currentPage} / {totalPages}
             </span>
-            <button
+            <Button
+              type="button"
+              variant="primary"
+              size="sm"
               onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
-              className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-sm font-bold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg"
             >
               Siguiente
-            </button>
+            </Button>
           </div>
         </div>
       )}

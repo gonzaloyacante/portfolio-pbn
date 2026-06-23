@@ -1,6 +1,7 @@
 'use client'
 
 import { Copy, Check, Star, Instagram, Mail } from 'lucide-react'
+import { Button } from '@/components/ui'
 import { Contact } from './contactListTypes'
 
 interface ContactDetailProps {
@@ -111,21 +112,27 @@ export function ContactDetail({
             <Star className={`h-4 w-4 ${isImportant ? 'fill-warning' : ''}`} />
           </button>
           {!contact.isRead && (
-            <button
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => onMarkAsRead(contact.id)}
               disabled={isLoading}
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-xl px-4 py-2 text-sm font-bold disabled:opacity-50"
+              className="rounded-xl"
             >
               Marcar leído
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
             onClick={() => onDelete(contact.id)}
             disabled={isLoading}
-            className="border-destructive bg-destructive/10 text-destructive hover:bg-destructive/20 rounded-xl border px-4 py-2 text-sm font-bold disabled:opacity-50"
+            className="rounded-xl"
           >
             Eliminar
-          </button>
+          </Button>
         </div>
       </div>
 
