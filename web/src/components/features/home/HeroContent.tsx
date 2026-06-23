@@ -103,6 +103,11 @@ export function HeroContent({
     ...makeDragProps('heroTitle1'),
   }
 
+  // NOTA: `prefersDark: false` es intencional — la web pública se sirve en modo
+  // claro fijo (los colores de la UI cliente vienen del CSS theme global + overrides
+  // de ThemeColorOverride, no del dark mode del sistema). Los campos
+  // `heroScrimColorDark` están en schema/DB por simetría con `heroScrimColor`
+  // pero el render público no los consume.
   const baseScrimParams = {
     extentPercent: s.heroScrimExtentPercent ?? 45,
     opacityPercent: s.heroScrimOpacity ?? 80,

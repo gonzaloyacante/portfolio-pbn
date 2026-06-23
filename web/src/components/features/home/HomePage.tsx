@@ -45,8 +45,8 @@ export default async function HomePage() {
             titleFont={homeSettings.featuredTitleFont}
             titleFontUrl={homeSettings.featuredTitleFontUrl}
             titleFontSize={homeSettings.featuredTitleFontSize}
-            // titleColor={homeSettings.featuredTitleColor}
-            // titleColorDark={homeSettings.featuredTitleColorDark}
+            titleColor={homeSettings.featuredTitleColor}
+            titleColorDark={homeSettings.featuredTitleColorDark}
             ambientUnderlay
           />
         )}

@@ -1,6 +1,7 @@
 'use client'
 
 import { FadeIn, OptimizedImage, motion } from '@/components/ui'
+import { CMS_HERO_COLORS_ENABLED } from '@/config/feature-flags'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
@@ -14,10 +15,6 @@ export function HeroSignature({
   onSelectElement,
   viewportMode,
 }: HeroSectionProps) {
-  // Public web colors are fixed; CMS color overrides stay disabled here for now.
-  void s.ownerNameColor
-  void s.ownerNameColorDark
-
   const ownerName = s.ownerNameText || 'Paola Bolívar Nievas'
   const illustration = s.illustrationUrl
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
@@ -90,6 +87,12 @@ export function HeroSignature({
                       ? s.ownerNameFont!
                       : 'var(--font-signature, var(--font-heading))',
                     fontSize: eff.ownerFontSize ? `${eff.ownerFontSize}px` : undefined,
+                    ...(CMS_HERO_COLORS_ENABLED
+                      ? ({
+                          '--cms-color': s.ownerNameColor ?? undefined,
+                          '--cms-color-dark': s.ownerNameColorDark ?? undefined,
+                        } as React.CSSProperties)
+                      : {}),
                   }}
                 >
                   {ownerName}

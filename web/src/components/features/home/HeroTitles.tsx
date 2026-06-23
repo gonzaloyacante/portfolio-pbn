@@ -1,10 +1,33 @@
 'use client'
 
 import { FadeIn, SlideIn } from '@/components/ui'
+import { CMS_HERO_COLORS_ENABLED } from '@/config/feature-flags'
 import { cn } from '@/lib/utils'
 import { HeroSectionProps } from './heroTypes'
 import { HeroWrapper } from './HeroWrapper'
 import { resolveEffectiveValues } from './heroUtils'
+
+/**
+ * Aplica el color per-elemento del CMS al style inline.
+ *
+ * - Si el flag está apagado: no aplica nada → CSS theme gana.
+ * - Si el flag está prendido y hay color: aplica como CSS var. Si está vacío,
+ *   `var(--cms-color)` queda `undefined` → el CSS theme hace fallback al default.
+ *
+ * Cuando se active el flag, descomentar también las props titleColor en
+ * `app/(public)/page.tsx` para que `FeaturedCategories` reciba los colores.
+ */
+function cmsColorStyle(
+  color: string | null | undefined,
+  dark: string | null | undefined
+): React.CSSProperties {
+  if (!CMS_HERO_COLORS_ENABLED) return {}
+  const style: Record<string, string | undefined> = {
+    '--cms-color': color ?? undefined,
+    '--cms-color-dark': dark ?? undefined,
+  }
+  return style as React.CSSProperties
+}
 
 export function HeroTitles({
   s,
@@ -13,12 +36,6 @@ export function HeroTitles({
   onSelectElement,
   viewportMode,
 }: HeroSectionProps) {
-  // Public web colors are fixed; CMS color overrides stay disabled here for now.
-  void s.heroTitle1Color
-  void s.heroTitle1ColorDark
-  void s.heroTitle2Color
-  void s.heroTitle2ColorDark
-
   const title1 = s.heroTitle1Text || 'Make-up'
   const title2 = s.heroTitle2Text || 'Portfolio'
   const normalizedTitle2 = title2.trim().toLowerCase()
@@ -51,6 +68,7 @@ export function HeroTitles({
                   ? s.heroTitle1Font!
                   : 'var(--font-brand, var(--font-script))',
                 fontSize: eff.title1FontSize ? `${eff.title1FontSize}px` : undefined,
+                ...cmsColorStyle(s.heroTitle1Color, s.heroTitle1ColorDark),
               }}
             >
               {title1}
@@ -81,6 +99,7 @@ export function HeroTitles({
                   ? s.heroTitle2Font!
                   : 'var(--font-portfolio, var(--font-heading))',
                 fontSize: eff.title2FontSize ? `${eff.title2FontSize}px` : undefined,
+                ...cmsColorStyle(s.heroTitle2Color, s.heroTitle2ColorDark),
               }}
             >
               {title2}
