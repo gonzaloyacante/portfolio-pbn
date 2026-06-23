@@ -26,13 +26,23 @@ export default function Modal({
   const overlayRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
 
-  // Close on Escape key + focus trap
+  // Guardar onClose en un ref para que el useEffect de focus/Escape NO se
+  // re-ejecute cada vez que el padre re-renderiza con una arrow function
+  // nueva. Sin esto, el primer focusable (ej. el input de búsqueda del
+  // font picker) roba el foco en cada keystroke y el teclado móvil se
+  // cierra en cada tecla.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
+  // Solo re-ejecutar al abrir/cerrar, NO en cada render del padre
   useEffect(() => {
     if (!isOpen) return
 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
         return
       }
 
@@ -63,15 +73,19 @@ export default function Modal({
     document.addEventListener('keydown', handleKeyDown)
     document.body.style.overflow = 'hidden'
 
-    // Move focus inside modal on open
-    const firstFocusable = dialogRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTORS)
-    firstFocusable?.focus()
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
+
+  // Mover foco al primer focusable SOLO cuando se abre el modal, no en
+  // cada render del padre
+  useEffect(() => {
+    if (!isOpen) return
+    const firstFocusable = dialogRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTORS)
+    firstFocusable?.focus()
+  }, [isOpen])
 
   // Handle click on overlay
   const handleOverlayClick = (e: React.MouseEvent) => {
