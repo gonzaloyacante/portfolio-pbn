@@ -63,7 +63,7 @@ export const menuItems: SidebarItem[] = [
   },
   {
     href: ROUTES.admin.siteSettings,
-    label: 'Configuración del Sitio',
+    label: 'Sitio publico',
     icon: Globe,
   },
   {

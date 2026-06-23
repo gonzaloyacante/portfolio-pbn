@@ -214,7 +214,7 @@ const nextConfig: NextConfig = {
 
       // Configuración General (Settings)
       { source: '/admin/configuracion', destination: '/admin/settings' },
-      { source: '/admin/configuracion/sitio', destination: '/admin/settings/site' },
+      { source: '/admin/sitio', destination: '/admin/site' },
 
       // Tema
       { source: '/admin/tema', destination: '/admin/theme' },
