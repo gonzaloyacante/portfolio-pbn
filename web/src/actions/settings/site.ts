@@ -200,7 +200,9 @@ export async function updateSiteSettings(data: Partial<Omit<SiteSettingsData, 'i
   } catch (error) {
     if (
       error instanceof Error &&
-      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+      (error.message.includes('Unauthorized') ||
+        error.message.includes('Demasiadas') ||
+        error.message.includes('Acceso denegado'))
     ) {
       return { success: false, error: error.message }
     }

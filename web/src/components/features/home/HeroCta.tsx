@@ -7,15 +7,6 @@ import { HeroSectionProps } from './heroTypes'
 import { HeroWrapper } from './HeroWrapper'
 import { mapButtonSize, mapCtaVariant, resolveEffectiveValues } from './heroUtils'
 
-const VARIANT_CLASSES = {
-  primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-secondary',
-  outline:
-    'bg-background border border-input hover:bg-accent hover:text-accent-foreground text-foreground',
-  ghost: 'bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground',
-  destructive: 'bg-transparent border border-destructive text-destructive hover:bg-destructive/10',
-} as const
-
 const SIZE_CLASSES = {
   sm: 'px-3 py-1.5 text-xs',
   md: 'px-5 py-2 text-sm',
@@ -42,12 +33,12 @@ export function HeroCta({
 
   const variant = mapCtaVariant(s.ctaVariant)
   const size = mapButtonSize(eff.ctaSize ?? s.ctaSize)
-  const variantClasses = VARIANT_CLASSES[variant]
   const sizeClasses = SIZE_CLASSES[size]
 
+  // El variant se aplica vía `data-variant` y se resuelve en `public-fixed-theme.css`
+  // para que el CSS theme siga siendo la única fuente de colores del CTA.
   const ctaClassName = cn(
     'public-hero-cta-button inline-flex items-center justify-center rounded-xl font-semibold transition-opacity hover:opacity-90',
-    variantClasses,
     sizeClasses
   )
 
@@ -68,6 +59,7 @@ export function HeroCta({
               <a
                 href="#"
                 onClick={(e) => e.preventDefault()}
+                data-variant={variant}
                 className={ctaClassName}
                 style={{
                   fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',
@@ -82,6 +74,7 @@ export function HeroCta({
           <MagneticButton>
             <Link
               href={ctaLink}
+              data-variant={variant}
               className={ctaClassName}
               style={{
                 fontFamily: s.ctaFontUrl ? s.ctaFont! : 'inherit',

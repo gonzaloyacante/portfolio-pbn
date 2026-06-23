@@ -424,6 +424,24 @@
   border: 1px solid var(--public-hero-cta-border);
 }
 
+/* CTA variants — colors siempre desde --public-hero-cta-* (CSS theme + ThemeColorOverride).
+   El componente HeroCta aplica `data-variant` según `ctaVariant` desde el CMS. */
+.public-hero-cta-button[data-variant='secondary'] {
+  background-color: var(--public-hero-cta-text);
+  color: var(--public-hero-cta-bg);
+}
+
+.public-hero-cta-button[data-variant='outline'] {
+  background-color: transparent;
+  color: var(--public-hero-cta-bg);
+}
+
+.public-hero-cta-button[data-variant='ghost'] {
+  background-color: transparent;
+  color: var(--public-hero-cta-bg);
+  border-color: transparent;
+}
+
 .public-home-featured-card {
   background-color: var(--card);
 }
