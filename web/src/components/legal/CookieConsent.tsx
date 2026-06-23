@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from '@/components/ui'
+import { motion, AnimatePresence, Button } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 
 interface CookieConsentProps {
@@ -185,12 +185,15 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
                         </div>
 
                         {/* Guardar configuración personalizada */}
-                        <button
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
                           onClick={handleSaveCustom}
-                          className="public-cookie-secondary-btn w-full rounded-xl border px-4 py-2 text-xs font-semibold transition-colors"
+                          className="public-cookie-secondary-btn w-full"
                         >
                           Guardar esta configuración
-                        </button>
+                        </Button>
 
                         <p className="public-cookie-muted border-t pt-3 text-xs">
                           Para más información, consulta nuestra{' '}
@@ -210,19 +213,23 @@ export default function CookieConsent({ onAcceptAll, onAcceptNecessary }: Cookie
 
               {/* Botones */}
               <div className="flex flex-col gap-3 sm:flex-row md:min-w-75 md:flex-col lg:flex-row">
-                <button
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={handleAcceptNecessary}
-                  className="public-cookie-secondary-btn group relative overflow-hidden rounded-xl px-6 py-3 text-sm font-bold transition-all"
+                  className="public-cookie-secondary-btn rounded-xl"
                 >
-                  <span className="relative z-10">Solo necesarias</span>
-                </button>
+                  Solo necesarias
+                </Button>
 
-                <button
+                <Button
+                  type="button"
+                  variant="primary"
                   onClick={handleAcceptAll}
-                  className="public-cookie-primary-btn group relative overflow-hidden rounded-xl px-6 py-3 text-sm font-bold shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="public-cookie-primary-btn rounded-xl shadow-lg"
                 >
-                  <span className="relative z-10">Aceptar todas</span>
-                </button>
+                  Aceptar todas
+                </Button>
               </div>
             </div>
           </div>

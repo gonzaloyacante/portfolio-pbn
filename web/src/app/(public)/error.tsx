@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import * as Sentry from '@sentry/nextjs'
 import { ROUTES } from '@/config/routes'
+import { Button } from '@/components/ui'
 
 export default function PublicError({
   error,
@@ -24,12 +25,9 @@ export default function PublicError({
           Ha ocurrido un error inesperado. Por favor, inténtalo de nuevo.
         </p>
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <button
-            onClick={reset}
-            className="public-error-primary-button rounded-full px-6 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
-          >
+          <Button onClick={reset} className="public-error-primary-button rounded-full">
             Intentar de nuevo
-          </button>
+          </Button>
           <Link
             href={ROUTES.home}
             className="public-error-link text-sm underline transition-opacity hover:opacity-100"

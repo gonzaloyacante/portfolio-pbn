@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui'
 
 export default function AdminError({
   error,
@@ -25,12 +26,7 @@ export default function AdminError({
           {error.message || 'Ocurrió un error inesperado. Por favor intentá de nuevo.'}
         </p>
       </div>
-      <button
-        onClick={reset}
-        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl px-6 py-2.5 text-sm font-medium transition-colors"
-      >
-        Reintentar
-      </button>
+      <Button onClick={reset}>Reintentar</Button>
     </div>
   )
 }
