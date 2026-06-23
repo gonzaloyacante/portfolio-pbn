@@ -1,18 +1,14 @@
 import Link from 'next/link'
-import type { CSSProperties } from 'react'
 import { Heart } from 'lucide-react'
 import { getActiveTestimonials } from '@/actions/cms/testimonials'
 import { getHomeSettings } from '@/actions/settings/home'
 import { getTestimonialSettings } from '@/actions/settings/testimonials'
 import { cn } from '@/lib/utils'
+import BackdropMedia from '@/components/features/home/BackdropMedia'
 import HeroSection from '@/components/features/home/HeroSection'
 import FeaturedCategories from '@/components/features/home/FeaturedCategories'
 import TestimonialSlider from '@/components/features/testimonials/TestimonialSlider'
 import { ROUTES } from '@/config/routes'
-
-function toBackgroundUrl(url?: string | null) {
-  return url ? `url("${url.replace(/"/g, '\\"')}")` : undefined
-}
 
 /**
  * Homepage container.
@@ -27,23 +23,15 @@ export default async function HomePage() {
   const testimonialsInLayout = testimonialSettings?.showOnAll === true
   const testimonials = testimonialsInLayout ? [] : await getActiveTestimonials(9)
   const showFeatured = homeSettings?.showFeaturedImages === true
-  // Backdrop: SOLO campos del backdrop. La imagen destacada es OTRA cosa.
-  const desktopBackgroundUrl =
-    homeSettings?.heroBackdropUrl || homeSettings?.heroBackdropPosterUrl || undefined
-  const homeBackgroundStyle = {
-    '--public-home-background-image': toBackgroundUrl(desktopBackgroundUrl),
-    '--public-home-background-position': homeSettings?.heroBackdropObjectPosition || 'center',
-  } as CSSProperties
 
   return (
     <div
       className={cn(
         'public-home-page relative isolate w-full flex-1 transition-colors duration-500'
       )}
-      style={homeBackgroundStyle}
     >
-      <div
-        aria-hidden
+      <BackdropMedia
+        settings={homeSettings}
         className="public-home-page-background pointer-events-none absolute inset-x-0 top-0 h-[100svh]"
       />
 
