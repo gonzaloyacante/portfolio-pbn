@@ -14,6 +14,10 @@ export function HeroMainImage({
   onSelectElement,
   viewportMode,
 }: HeroSectionProps) {
+  // Toggle "Visible en la web pública": oculto en público si está apagado,
+  // pero siempre visible en el editor para poder editarlo.
+  if (!isEditor && s.showHeroMainImage === false) return null
+
   const mainImage = s.heroMainImageUrl
   const mainImageAlt = s.heroMainImageAlt || 'Hero Image'
   const caption = s.heroMainImageCaption

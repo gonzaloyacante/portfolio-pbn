@@ -23,12 +23,13 @@ export function HeroSignature({
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const eff = resolveEffectiveValues(s, viewportMode)
   const showOwner = isEditor || (s.showOwnerName ?? true)
+  const showIllustration = isEditor || (s.showIllustration ?? true)
 
   return (
     <div className="order-3 col-span-2 mt-1 flex w-full items-center justify-start gap-4 lg:relative lg:order-0 lg:mt-2 lg:justify-start lg:gap-0">
       <div className="flex flex-row items-center justify-center lg:flex-col lg:items-start lg:justify-start">
         {/* Illustration */}
-        {(illustration || isEditor) && (
+        {showIllustration && (
           <div className="relative z-0 lg:mb-0">
             <HeroWrapper
               id="illustration"

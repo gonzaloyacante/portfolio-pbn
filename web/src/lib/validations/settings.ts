@@ -11,6 +11,9 @@ export const homeSettingsSchema = z.object({
   showHeroTitle1: z.boolean().optional(),
   showHeroTitle2: z.boolean().optional(),
   showOwnerName: z.boolean().optional(),
+  showHeroMainImage: z.boolean().optional(),
+  showIllustration: z.boolean().optional(),
+  showCtaButton: z.boolean().optional(),
 
   // Título 1
   heroTitle1Text: z.string().optional(),
@@ -112,6 +115,7 @@ export const homeSettingsSchema = z.object({
   ownerNameMobileFontSize: z.number().min(10).max(100).optional().nullable(),
   heroMainImageMobileOffsetX: z.number().optional().nullable(),
   heroMainImageMobileOffsetY: z.number().optional().nullable(),
+  heroMainImageMobileImageStyle: z.string().optional().nullable(),
   illustrationMobileOffsetX: z.number().optional().nullable(),
   illustrationMobileOffsetY: z.number().optional().nullable(),
   illustrationMobileSize: z.number().min(10).max(200).optional().nullable(),
@@ -119,6 +123,28 @@ export const homeSettingsSchema = z.object({
   ctaMobileOffsetX: z.number().optional().nullable(),
   ctaMobileOffsetY: z.number().optional().nullable(),
   ctaMobileFontSize: z.number().min(10).max(32).optional().nullable(),
+
+  // ─── Tablet Overrides (responsive) ────────────────────────────────────────
+  heroTitle1TabletOffsetX: z.number().optional().nullable(),
+  heroTitle1TabletOffsetY: z.number().optional().nullable(),
+  heroTitle1TabletFontSize: z.number().min(10).max(300).optional().nullable(),
+  heroTitle2TabletOffsetX: z.number().optional().nullable(),
+  heroTitle2TabletOffsetY: z.number().optional().nullable(),
+  heroTitle2TabletFontSize: z.number().min(10).max(300).optional().nullable(),
+  ownerNameTabletOffsetX: z.number().optional().nullable(),
+  ownerNameTabletOffsetY: z.number().optional().nullable(),
+  ownerNameTabletFontSize: z.number().min(10).max(100).optional().nullable(),
+  heroMainImageTabletOffsetX: z.number().optional().nullable(),
+  heroMainImageTabletOffsetY: z.number().optional().nullable(),
+  heroMainImageTabletImageStyle: z.string().optional().nullable(),
+  illustrationTabletOffsetX: z.number().optional().nullable(),
+  illustrationTabletOffsetY: z.number().optional().nullable(),
+  illustrationTabletSize: z.number().min(10).max(200).optional().nullable(),
+  illustrationTabletRotation: z.number().optional().nullable(),
+  ctaTabletOffsetX: z.number().optional().nullable(),
+  ctaTabletOffsetY: z.number().optional().nullable(),
+  ctaTabletFontSize: z.number().min(10).max(32).optional().nullable(),
+  ctaTabletSize: z.string().optional().nullable(),
 
   // Sección destacados
   showFeaturedImages: z.boolean(),

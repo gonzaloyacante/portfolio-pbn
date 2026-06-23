@@ -54,7 +54,9 @@ export async function updateCategorySettings(data: CategorySettingsFormData) {
   } catch (error) {
     if (
       error instanceof Error &&
-      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+      (error.message.includes('Unauthorized') ||
+        error.message.includes('Demasiadas') ||
+        error.message.includes('Acceso denegado'))
     ) {
       return { success: false, error: error.message }
     }

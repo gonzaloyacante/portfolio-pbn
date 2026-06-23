@@ -60,7 +60,9 @@ export async function upsertPublicColorOverrides(
   } catch (error) {
     if (
       error instanceof Error &&
-      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+      (error.message.includes('Unauthorized') ||
+        error.message.includes('Demasiadas') ||
+        error.message.includes('Acceso denegado'))
     ) {
       return { success: false, error: error.message }
     }
@@ -84,7 +86,9 @@ export async function deletePublicColorOverride(
   } catch (error) {
     if (
       error instanceof Error &&
-      (error.message.includes('Unauthorized') || error.message.includes('Demasiadas'))
+      (error.message.includes('Unauthorized') ||
+        error.message.includes('Demasiadas') ||
+        error.message.includes('Acceso denegado'))
     ) {
       return { success: false, error: error.message }
     }
