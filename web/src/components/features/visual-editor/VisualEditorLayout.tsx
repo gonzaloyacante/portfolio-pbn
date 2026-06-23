@@ -17,6 +17,15 @@ const VIEWPORT_ICONS = {
   mobile: Smartphone,
 } as const
 
+// Orientaciones válidas por viewport. El switch debe deshabilitar SOLO la opción
+// no permitida (no ambas), y al cambiar de viewport se fuerza la única válida si
+// la actual no aplica. Módulo-level para identidad estable.
+const ALLOWED_ORIENTATIONS: Record<ViewportMode, Orientation[]> = {
+  desktop: ['landscape'],
+  tablet: ['landscape', 'portrait'],
+  mobile: ['portrait'],
+}
+
 // Todas las dimensiones usan 1920x1080 como base. El toggle de orientación
 // intercambia ancho/alto para tablet y móvil (horizontal/vertical). El escritorio
 // siempre permanece en horizontal 1920x1080 y el toggle se muestra deshabilitado.
@@ -72,14 +81,8 @@ export function VisualEditorLayout({
   const dimensions = getViewportDimensions(viewportMode, orientation)
   const vp = { ...VIEWPORT_CONFIGS[viewportMode], ...dimensions }
 
-  // Orientaciones permitidas por viewport. Solo desktop=horizontal, tablet=ambas,
-  // móvil=vertical. El switch debe deshabilitar SOLO la opción no permitida en el
-  // viewport activo, no ambas.
-  const ALLOWED_ORIENTATIONS: Record<ViewportMode, Orientation[]> = {
-    desktop: ['landscape'],
-    tablet: ['landscape', 'portrait'],
-    mobile: ['portrait'],
-  }
+  // Per-button disabled: solo deshabilita la opción no permitida en el viewport
+  // activo (no ambas). Ver constante `ALLOWED_ORIENTATIONS` arriba.
   const isLandscapeDisabled = !ALLOWED_ORIENTATIONS[viewportMode].includes('landscape')
   const isPortraitDisabled = !ALLOWED_ORIENTATIONS[viewportMode].includes('portrait')
 
