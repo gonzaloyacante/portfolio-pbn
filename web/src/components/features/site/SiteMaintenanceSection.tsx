@@ -1,5 +1,5 @@
 import { AlertTriangle } from 'lucide-react'
-import { Switch } from '@/components/ui'
+import { Switch, TextArea } from '@/components/ui'
 
 interface SiteMaintenanceSectionProps {
   maintenanceMode: boolean
@@ -40,12 +40,11 @@ export function SiteMaintenanceSection({
         />
       </div>
       {maintenanceMode && (
-        <textarea
+        <TextArea
           value={maintenanceMessage}
           onChange={(e) => onMaintenanceMessageChange(e.target.value)}
           placeholder="Estamos realizando mejoras. Volvemos pronto."
           rows={2}
-          className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary/50 w-full resize-none rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
         />
       )}
       {maintenanceMode && (

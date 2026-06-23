@@ -11,7 +11,7 @@ import {
 } from '@/lib/services-page-settings'
 import { EditorSliderControl } from '@/components/features/visual-editor/components/EditorSliderControl'
 import { BRAND } from '@/lib/design-tokens'
-import { Button, ColorPicker, Input } from '@/components/ui'
+import { Button, ColorPicker, Input, TextArea } from '@/components/ui'
 import { servicesPageSettingsSchema, type ServicesPageSettingsFormData } from '@/lib/validations'
 import { showToast } from '@/lib/toast'
 import { ServicesListTitlePreview } from './ServicesListTitlePreview'
@@ -99,15 +99,12 @@ export function ServicesPageHeroEditor({ settings }: ServicesPageHeroEditorProps
 
         <Input label="Título" {...register('listTitle')} error={errors.listTitle?.message} />
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Texto introductorio</label>
-          <textarea
-            {...register('listIntro')}
-            rows={3}
-            className="dark:bg-muted w-full rounded border p-2 text-sm"
-            placeholder={DEFAULT_SERVICES_PAGE_LIST_INTRO}
-          />
-        </div>
+        <TextArea
+          label="Texto introductorio"
+          {...register('listIntro')}
+          rows={3}
+          placeholder={DEFAULT_SERVICES_PAGE_LIST_INTRO}
+        />
 
         <GoogleFontPicker
           value={listTitleFontWatch || ''}

@@ -7,7 +7,7 @@ import { sendContactEmail } from '@/actions/user/contact'
 import { showToast } from '@/lib/toast'
 import { Mail, Phone, MessageCircle, Send, CheckCircle2, Instagram } from 'lucide-react'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence, Button } from '@/components/ui'
+import { motion, AnimatePresence, Button, TextArea } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -256,19 +256,14 @@ export default function ContactForm() {
 
         {/* Message */}
         <div>
-          <label
-            htmlFor="message"
-            className="public-contact-form-label mb-2 block text-sm font-semibold"
-          >
-            Mensaje *
-          </label>
-          <textarea
-            {...register('message')}
+          <TextArea
+            label="Mensaje *"
             id="message"
             rows={5}
-            className="public-contact-field w-full resize-none rounded-xl px-3 py-3 transition-all sm:px-4"
+            className="public-contact-field resize-none rounded-xl"
             placeholder="Escribe tu mensaje aquí..."
             autoComplete="off"
+            {...register('message')}
           />
           {errors.message && (
             <p className="public-contact-error mt-1 text-sm">{errors.message.message}</p>
