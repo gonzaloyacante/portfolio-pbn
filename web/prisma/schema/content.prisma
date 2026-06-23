@@ -77,6 +77,7 @@ model Service {
   cancellationPolicy String?   @db.Text
   // Relations
   bookings           Booking[]
+  contactInquiries   Contact[] @relation("ContactServiceInquiry")
   // Audit
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
@@ -115,6 +116,14 @@ model Contact {
   subject            String? // Optional subject line
   responsePreference String    @default("EMAIL") // EMAIL, PHONE, WHATSAPP, INSTAGRAM
   instagramUser      String? // @usuario de Instagram (cuando responsePreference == INSTAGRAM)
+  // Tipo de mensaje (público): comentario general vs solicitud de servicio
+  // La web pública no maneja pagos ni calendario — el cliente contacta por
+  // canal y la administradora cierra todo por privado. Si es solicitud
+  // de servicio, el cliente puede elegir uno existente o describir uno custom.
+  messageType        String    @default("GENERAL") // GENERAL, SERVICE_INQUIRY
+  serviceId          String? // Si messageType == SERVICE_INQUIRY y eligió uno existente
+  service            Service? @relation("ContactServiceInquiry", fields: [serviceId], references: [id], onDelete: SetNull)
+  customService      String? // Si eligió 'Otro' servicio no listado
   // CRM Workflow
   status             String    @default("NEW") // NEW, IN_PROGRESS, REPLIED, CLOSED, SPAM
   priority           String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
