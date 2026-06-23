@@ -250,11 +250,12 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
         {/* Sidebar */}
         <div className="space-y-6">
           <div className="public-services-card sticky top-28 rounded-2xl border p-6 shadow-sm lg:top-32">
-            <h3 className="public-services-title mb-4 text-xl font-bold">Reserva tu Cita</h3>
+            <h3 className="public-services-title mb-4 text-xl font-bold">
+              ¿Te interesa este servicio?
+            </h3>
             <p className="public-services-muted mb-6 text-sm">
-              Para asegurar tu fecha, contáctame con anticipación.
-              {service.advanceNoticeDays &&
-                ` Se recomienda reservar al menos ${service.advanceNoticeDays} días antes.`}
+              Escríbeme por el canal que prefieras y te respondo personalmente para coordinar fecha,
+              precio y todos los detalles.
             </p>
 
             <div className="flex flex-col gap-3">
@@ -262,13 +263,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
                 href={`${ROUTES.public.contact}?service=${encodeURIComponent(service.slug)}&serviceName=${encodeURIComponent(service.name)}`}
                 className="public-services-primary-button inline-flex w-full items-center justify-center rounded-xl px-5 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
               >
-                Agendar cita
+                Contactar
               </Link>
-            </div>
-
-            <div className="public-services-muted public-services-surface-border mt-6 border-t pt-6 text-xs">
-              <p>• Pago seguro</p>
-              <p className="mt-1">• Confirmación inmediata</p>
             </div>
           </div>
         </div>
