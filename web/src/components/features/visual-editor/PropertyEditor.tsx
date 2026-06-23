@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { Input, Switch } from '@/components/ui'
+import { Input, Switch, TextArea } from '@/components/ui'
 import type { HomeSettingsData } from '@/actions/settings/home'
 import { Monitor, Tablet, Smartphone } from 'lucide-react'
 
@@ -256,6 +256,18 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
           value={(settings[fields.alt] as string) ?? ''}
           onChange={(e) => onUpdate(fields.alt as keyof HomeSettingsData, e.target.value)}
           placeholder="Describe la imagen para accesibilidad"
+        />
+      )}
+
+      {fields.caption && (
+        <TextArea
+          label="Caption (texto sobre la imagen)"
+          value={(settings[fields.caption] as string | null) ?? ''}
+          onChange={(e) =>
+            onUpdate(fields.caption as keyof HomeSettingsData, e.target.value || null)
+          }
+          placeholder="Texto que aparece como overlay sobre la imagen"
+          rows={3}
         />
       )}
 
