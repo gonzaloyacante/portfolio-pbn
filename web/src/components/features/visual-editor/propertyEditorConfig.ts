@@ -10,6 +10,7 @@ type FieldConfig = {
   /** Tamaño del botón CTA (sm | default | lg), sin confundir con `size` del retrato */
   buttonSize?: keyof HomeSettingsData
   text?: keyof HomeSettingsData
+  caption?: keyof HomeSettingsData
   font?: keyof HomeSettingsData
   fontUrl?: keyof HomeSettingsData
   fontSize?: keyof HomeSettingsData
@@ -231,6 +232,7 @@ export const ELEMENT_CONFIG: Record<Exclude<EditableElement, null>, ControlConfi
       imageUrl: 'heroMainImageUrl',
       imageStyle: 'heroImageStyle',
       alt: 'heroMainImageAlt',
+      caption: 'heroMainImageCaption',
       zIndex: 'heroMainImageZIndex',
       offsetX: 'heroMainImageOffsetX',
       offsetY: 'heroMainImageOffsetY',

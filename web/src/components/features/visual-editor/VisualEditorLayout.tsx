@@ -71,6 +71,27 @@ export function VisualEditorLayout({
 
   const dimensions = getViewportDimensions(viewportMode, orientation)
   const vp = { ...VIEWPORT_CONFIGS[viewportMode], ...dimensions }
+
+  // Orientaciones permitidas por viewport. Solo desktop=horizontal, tablet=ambas,
+  // móvil=vertical. El switch debe deshabilitar SOLO la opción no permitida en el
+  // viewport activo, no ambas.
+  const ALLOWED_ORIENTATIONS: Record<ViewportMode, Orientation[]> = {
+    desktop: ['landscape'],
+    tablet: ['landscape', 'portrait'],
+    mobile: ['portrait'],
+  }
+  const isLandscapeDisabled = !ALLOWED_ORIENTATIONS[viewportMode].includes('landscape')
+  const isPortraitDisabled = !ALLOWED_ORIENTATIONS[viewportMode].includes('portrait')
+
+  // Si el viewport activo no permite la orientación actual (ej. quedaste en
+  // tablet=horizontal y pasás a móvil), forzá a la única válida. Evita que el
+  // switch quede visualmente en una opción que no se puede ni tocar.
+  useEffect(() => {
+    const allowed = ALLOWED_ORIENTATIONS[viewportMode]
+    if (!allowed.includes(orientation)) {
+      onOrientationChange(allowed[0])
+    }
+  }, [viewportMode, orientation, onOrientationChange])
   // Alto fijo compartido a las 3 vistas. El container del preview siempre mide
   // lo mismo, y el contenido (escalado) llena lo más posible sin salirse.
   const PREVIEW_HEIGHT = 600
@@ -82,7 +103,6 @@ export function VisualEditorLayout({
   const displayHeight = PREVIEW_HEIGHT
   const leftOffset = (containerWidth - scaledWidth) / 2
   const topOffset = (displayHeight - scaledHeight) / 2
-  const isOrientationDisabled = viewportMode !== 'tablet'
 
   return (
     <div className="flex flex-col gap-6">
@@ -123,14 +143,14 @@ export function VisualEditorLayout({
             <div className="flex items-center gap-1 rounded-lg border p-1">
               <button
                 type="button"
-                disabled={isOrientationDisabled}
+                disabled={isLandscapeDisabled}
                 onClick={() => onOrientationChange('landscape')}
                 className={cn(
                   'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all',
                   orientation === 'landscape'
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  isOrientationDisabled &&
+                  isLandscapeDisabled &&
                     'hover:text-muted-foreground cursor-not-allowed opacity-50 hover:bg-transparent'
                 )}
                 title="Horizontal"
@@ -140,14 +160,14 @@ export function VisualEditorLayout({
               </button>
               <button
                 type="button"
-                disabled={isOrientationDisabled}
+                disabled={isPortraitDisabled}
                 onClick={() => onOrientationChange('portrait')}
                 className={cn(
                   'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-all',
                   orientation === 'portrait'
                     ? 'bg-primary text-primary-foreground shadow-sm'
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  isOrientationDisabled &&
+                  isPortraitDisabled &&
                     'hover:text-muted-foreground cursor-not-allowed opacity-50 hover:bg-transparent'
                 )}
                 title="Vertical"
