@@ -23,45 +23,48 @@ export function HeroSignature({
   const illustrationAlt = s.illustrationAlt || 'Ilustración'
   const eff = resolveEffectiveValues(s, viewportMode)
   const showOwner = isEditor || (s.showOwnerName ?? true)
+  const showIllustration = isEditor || (s.showIllustration ?? true)
 
   return (
     <div className="order-3 col-span-2 mt-1 flex w-full items-center justify-start gap-4 lg:relative lg:order-0 lg:mt-2 lg:justify-start lg:gap-0">
       <div className="flex flex-row items-center justify-center lg:flex-col lg:items-start lg:justify-start">
         {/* Illustration */}
-        <div className="relative z-0 lg:mb-0">
-          <HeroWrapper
-            id="illustration"
-            isEditor={isEditor}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            className={cn('relative h-28 w-28 lg:h-72 lg:w-72', !isEditor && 'opacity-90')}
-            style={{
-              zIndex: s.illustrationZIndex ?? 0,
-              opacity: (s.illustrationOpacity ?? 80) / 100,
-              transform: `translate(${eff.illOffsetX}px, ${eff.illOffsetY}px) rotate(${eff.illRotation}deg) scale(${eff.illSize / 100})`,
-            }}
-          >
-            <motion.div
-              layoutId={!isEditor && illustration ? 'public-brand-mark' : undefined}
-              className="relative h-full w-full"
+        {showIllustration && (
+          <div className="relative z-0 lg:mb-0">
+            <HeroWrapper
+              id="illustration"
+              isEditor={isEditor}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              className={cn('relative h-28 w-28 lg:h-72 lg:w-72', !isEditor && 'opacity-90')}
+              style={{
+                zIndex: s.illustrationZIndex ?? 0,
+                opacity: (s.illustrationOpacity ?? 80) / 100,
+                transform: `translate(${eff.illOffsetX}px, ${eff.illOffsetY}px) rotate(${eff.illRotation}deg) scale(${eff.illSize / 100})`,
+              }}
             >
-              {illustration ? (
-                <OptimizedImage
-                  src={illustration}
-                  alt={illustrationAlt}
-                  fill
-                  objectFit="contain"
-                  sizes={IMAGE_SIZES.heroIllustration}
-                  priority={!isEditor}
-                />
-              ) : (
-                <div className="public-hero-placeholder flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">
-                  <span className="text-xs">Sin Ilustración</span>
-                </div>
-              )}
-            </motion.div>
-          </HeroWrapper>
-        </div>
+              <motion.div
+                layoutId={!isEditor && illustration ? 'public-brand-mark' : undefined}
+                className="relative h-full w-full"
+              >
+                {illustration ? (
+                  <OptimizedImage
+                    src={illustration}
+                    alt={illustrationAlt}
+                    fill
+                    objectFit="contain"
+                    sizes={IMAGE_SIZES.heroIllustration}
+                    priority={!isEditor}
+                  />
+                ) : (
+                  <div className="public-hero-placeholder flex h-full w-full items-center justify-center rounded-full border-2 border-dashed">
+                    <span className="text-xs">Sin Ilustración</span>
+                  </div>
+                )}
+              </motion.div>
+            </HeroWrapper>
+          </div>
+        )}
 
         {/* Owner name / signature */}
         {showOwner && (

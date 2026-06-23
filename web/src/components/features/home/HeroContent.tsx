@@ -176,7 +176,7 @@ export function HeroContent({
           </div>
 
           {/* HeroMainImage: centro-derecha, debajo del scrim */}
-          {(s.heroMainImageUrl || isEditor) && (
+          {(isEditor || ((s.showHeroMainImage ?? true) && s.heroMainImageUrl)) && (
             <div className="absolute top-[35%] right-4 z-10 hidden w-[45%] max-w-md sm:right-8 md:right-12 lg:top-[30%] lg:right-16 lg:block">
               <HeroMainImage
                 {...sectionProps}
