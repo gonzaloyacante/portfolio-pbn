@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ROUTES } from '@/config/routes'
 import { createService, updateService } from '@/actions/cms/services'
-import { Button, ImageUpload, DurationField } from '@/components/ui'
+import { Button, ImageUpload, DurationField, Switch } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { Service, ServicePricingTier } from '@/generated/prisma/client'
@@ -132,23 +132,11 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
         </div>
         <div className="bg-muted/20 flex items-center gap-6 rounded-lg p-4">
           <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              name="isActive"
-              value="true"
-              defaultChecked={service ? service.isActive : true}
-              className="h-5 w-5"
-            />
+            <Switch name="isActive" defaultChecked={service ? service.isActive : true} />
             <span className="font-medium">Activo</span>
           </label>
           <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              name="isFeatured"
-              value="true"
-              defaultChecked={service ? service.isFeatured : false}
-              className="h-5 w-5"
-            />
+            <Switch name="isFeatured" defaultChecked={service ? service.isFeatured : false} />
             <span className="font-medium">Destacado</span>
           </label>
         </div>
@@ -209,13 +197,7 @@ export default function ServiceForm({ service, onSuccess, onCancel }: ServiceFor
         </div>
         <div className="bg-muted/20 rounded-lg p-4">
           <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              name="isAvailable"
-              value="true"
-              defaultChecked={service ? service.isAvailable : true}
-              className="h-5 w-5"
-            />
+            <Switch name="isAvailable" defaultChecked={service ? service.isAvailable : true} />
             <span className="font-medium">Disponible para reservas</span>
           </label>
         </div>

@@ -40,7 +40,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
       instagram: settings?.instagram || '',
       instagramUsername: settings?.instagramUsername || '',
       location: settings?.location || '',
-      showSocialLinks: true,
+      showSocialLinks: settings?.showSocialLinks ?? true,
       showPhone: settings?.showPhone ?? true,
       showWhatsapp: settings?.showWhatsapp ?? true,
       showEmail: settings?.showEmail ?? true,
@@ -77,7 +77,7 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
     if (Object.keys(diff).length === 0) return
 
     try {
-      const result = await updateContactSettings({ ...diff, showSocialLinks: true })
+      const result = await updateContactSettings(diff)
       if (result.success) {
         reset(data)
         showToast.success('Configuración guardada')

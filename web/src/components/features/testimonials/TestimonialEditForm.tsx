@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Testimonial } from '@/generated/prisma/client'
 import { updateTestimonial } from '@/actions/cms/testimonials'
-import { Button, Input, TextArea } from '@/components/ui'
+import { Button, Input, TextArea, Switch } from '@/components/ui'
 import { SmartField as FormField } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { ROUTES } from '@/config/routes'
@@ -161,33 +161,15 @@ export default function TestimonialEditForm({ testimonial }: TestimonialEditForm
 
         <div className="bg-muted/20 space-y-3 rounded-xl p-4">
           <label className="flex cursor-pointer items-center gap-3">
-            <input
-              type="checkbox"
-              name="isActive"
-              value="true"
-              defaultChecked={testimonial.isActive}
-              className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-            />
+            <Switch name="isActive" defaultChecked={testimonial.isActive} />
             <span className="font-medium">Visible (Activo)</span>
           </label>
           <label className="flex cursor-pointer items-center gap-3">
-            <input
-              type="checkbox"
-              name="isVerified"
-              value="true"
-              defaultChecked={testimonial.verified}
-              className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-            />
+            <Switch name="isVerified" defaultChecked={testimonial.verified} />
             <span className="font-medium">Verificado (Badge Azul)</span>
           </label>
           <label className="flex cursor-pointer items-center gap-3">
-            <input
-              type="checkbox"
-              name="isFeatured"
-              value="true"
-              defaultChecked={testimonial.featured}
-              className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-            />
+            <Switch name="isFeatured" defaultChecked={testimonial.featured} />
             <span className="font-medium">Destacado (Home Page)</span>
           </label>
         </div>
