@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { buildHeroScrimBackground, buildHeroBackdropTint } from '@/lib/hero-backdrop-styles'
 import { FontLoader } from './FontLoader'
 import { HeroContentProps } from './heroTypes'
-import { HeroTitles } from './HeroTitles'
+import { HeroTitle1, HeroTitle2 } from './HeroTitles'
 import { HeroSignature } from './HeroSignature'
 import { HeroCta } from './HeroCta'
 import { HeroMainImage } from './HeroMainImage'
@@ -175,14 +175,24 @@ export function HeroContent({
             isEditor ? 'h-full' : 'h-[100svh] md:h-[100dvh]'
           )}
         >
-          {/* Title 1: arriba a la izquierda */}
+          {/* Title 1: arriba a la izquierda — wrapper independiente */}
           <div
             className={cn(
               'absolute top-[18%] left-4 z-20 max-w-[60%] sm:left-8 md:left-12 lg:top-[20%] lg:left-16',
               isEditor && s.showHeroTitle1 === false && 'opacity-40'
             )}
           >
-            <HeroTitles {...sectionProps} {...makeDragProps('heroTitle1')} elementId="heroTitle1" />
+            <HeroTitle1 {...sectionProps} {...makeDragProps('heroTitle1')} elementId="heroTitle1" />
+          </div>
+
+          {/* Title 2: debajo del título 1 — wrapper independiente con su propio opacity */}
+          <div
+            className={cn(
+              'absolute top-[32%] left-4 z-10 max-w-[60%] sm:left-8 md:left-12 lg:top-[35%] lg:left-16',
+              isEditor && s.showHeroTitle2 === false && 'opacity-40'
+            )}
+          >
+            <HeroTitle2 {...sectionProps} {...makeDragProps('heroTitle2')} elementId="heroTitle2" />
           </div>
 
           {/* HeroMainImage: centro-derecha, debajo del scrim */}
