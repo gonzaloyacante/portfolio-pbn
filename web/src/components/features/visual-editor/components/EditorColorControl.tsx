@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@/components/ui'
+import { Input, Button } from '@/components/ui'
 
 interface EditorColorControlProps {
   label: string
@@ -46,14 +46,16 @@ export function EditorColorControl({ label, value, onChange }: EditorColorContro
           className="flex-1"
         />
         {hasValue && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onChange('')}
-            className="text-muted-foreground hover:text-foreground shrink-0 px-1 text-xs"
+            className="text-muted-foreground hover:text-foreground shrink-0 px-2"
             title="Limpiar color"
           >
             ✕
-          </button>
+          </Button>
         )}
       </div>
     </div>
