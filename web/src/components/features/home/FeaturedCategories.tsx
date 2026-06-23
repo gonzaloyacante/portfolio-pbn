@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import { CMS_HERO_COLORS_ENABLED } from '@/config/feature-flags'
 import { cn } from '@/lib/utils'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
@@ -46,9 +47,10 @@ export default async function FeaturedCategories({
   titleColorDark,
   ambientUnderlay = false,
 }: FeaturedCategoriesProps) {
-  // Public web colors are fixed; CMS title colors stay disabled here for now.
-  void titleColor
-  void titleColorDark
+  // Los colores per-elemento del CMS se aplican vía CSS vars (`--cms-color`,
+  // `--cms-color-dark`) en el <h2>. Solo se setean cuando el flag
+  // `CMS_HERO_COLORS_ENABLED` está prendido — ver `config/feature-flags.ts`.
+  // Mientras esté apagado, el CSS theme sigue siendo la única fuente de color.
 
   const featuredImages = await getFeaturedCategoryImages(count)
 
@@ -81,6 +83,12 @@ export default async function FeaturedCategories({
               style={{
                 fontFamily: titleFontUrl ? titleFont! : undefined,
                 fontSize: titleFontSize ? `${titleFontSize}px` : undefined,
+                ...(CMS_HERO_COLORS_ENABLED
+                  ? ({
+                      '--cms-color': titleColor ?? undefined,
+                      '--cms-color-dark': titleColorDark ?? undefined,
+                    } as React.CSSProperties)
+                  : {}),
               }}
             >
               <WordReveal text={title || 'Imágenes Destacadas'} as="span" />

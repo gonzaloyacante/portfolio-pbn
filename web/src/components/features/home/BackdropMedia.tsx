@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { HomeSettingsData } from '@/actions/settings/home'
+import { isHeroBackdropVideoUrl } from '@/lib/hero-backdrop-styles'
 import { cn } from '@/lib/utils'
 
 interface BackdropMediaProps {
@@ -8,22 +9,13 @@ interface BackdropMediaProps {
 }
 
 /**
- * Detecta si una URL apunta a un vídeo basándose en la extensión del archivo o
- * el path de Cloudinary (`/video/upload/`).
- */
-function isLikelyVideoUrl(url: string): boolean {
-  return /\.(mp4|webm|mov)(\?|$)/i.test(url) || /\/video\/upload\//.test(url)
-}
-
-/**
  * Renderiza el fondo del hero:
  * - Si `heroImmersiveEnabled === false` → no renderiza nada
  * - Si la URL es un vídeo (según `heroBackdropMediaKind` o auto-detección) → `<video>`
  * - Si es imagen / GIF → `<div>` con `background-image`
  *
- * Antes los atributos de video (`loop`, `muted`, `playsInline`, `heroBackdropObjectFit`,
- * `heroBackdropMediaKind`) estaban en form/schema/DB pero ningún render los consumía.
- * Ahora todos son funcionales.
+ * El `key={url}` fuerza remount cuando cambia la URL — sin esto el browser
+ * puede quedarse con el video anterior en cache y no reproducir el nuevo.
  */
 function BackdropMedia({ settings, className }: BackdropMediaProps) {
   const immersive = settings?.heroImmersiveEnabled ?? true
@@ -40,11 +32,12 @@ function BackdropMedia({ settings, className }: BackdropMediaProps) {
   const inline = settings?.heroBackdropPlaysInline ?? true
   const poster = settings?.heroBackdropPosterUrl ?? null
 
-  const isVideo = kind === 'video' || (kind === 'auto' && isLikelyVideoUrl(url))
+  const isVideo = isHeroBackdropVideoUrl(url, kind)
 
   if (isVideo) {
     return (
       <video
+        key={url}
         className={className}
         style={
           {
@@ -63,7 +56,6 @@ function BackdropMedia({ settings, className }: BackdropMediaProps) {
     )
   }
 
-  // Imagen o GIF → background-image
   return (
     <div
       aria-hidden
