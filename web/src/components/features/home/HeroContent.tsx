@@ -176,13 +176,23 @@ export function HeroContent({
           )}
         >
           {/* Title 1: arriba a la izquierda */}
-          <div className="absolute top-[18%] left-4 z-20 max-w-[60%] sm:left-8 md:left-12 lg:top-[20%] lg:left-16">
+          <div
+            className={cn(
+              'absolute top-[18%] left-4 z-20 max-w-[60%] sm:left-8 md:left-12 lg:top-[20%] lg:left-16',
+              isEditor && s.showHeroTitle1 === false && 'opacity-40'
+            )}
+          >
             <HeroTitles {...sectionProps} {...makeDragProps('heroTitle1')} elementId="heroTitle1" />
           </div>
 
           {/* HeroMainImage: centro-derecha, debajo del scrim */}
           {(isEditor || ((s.showHeroMainImage ?? true) && s.heroMainImageUrl)) && (
-            <div className="absolute top-[35%] right-4 z-10 hidden w-[45%] max-w-md sm:right-8 md:right-12 lg:top-[30%] lg:right-16 lg:block">
+            <div
+              className={cn(
+                'absolute top-[35%] right-4 z-10 hidden w-[45%] max-w-md sm:right-8 md:right-12 lg:top-[30%] lg:right-16 lg:block',
+                isEditor && s.showHeroMainImage === false && 'opacity-40'
+              )}
+            >
               <HeroMainImage
                 {...sectionProps}
                 {...makeDragProps('heroMainImage')}
@@ -193,13 +203,25 @@ export function HeroContent({
 
           {/* HeroCta: medio-derecha, debajo de la imagen */}
           {(isEditor || (s.showCtaButton ?? true)) && (
-            <div className="absolute top-[60%] right-4 z-30 sm:right-8 md:right-12 lg:top-[55%] lg:right-16">
+            <div
+              className={cn(
+                'absolute top-[60%] right-4 z-30 sm:right-8 md:right-12 lg:top-[55%] lg:right-16',
+                isEditor && s.showCtaButton === false && 'opacity-40'
+              )}
+            >
               <HeroCta {...sectionProps} {...makeDragProps('ctaButton')} elementId="ctaButton" />
             </div>
           )}
 
           {/* HeroSignature (illustration + ownerName): abajo a la izquierda */}
-          <div className="absolute bottom-[8%] left-4 z-10 sm:left-8 md:left-12 lg:bottom-[10%] lg:left-16">
+          <div
+            className={cn(
+              'absolute bottom-[8%] left-4 z-10 sm:left-8 md:left-12 lg:bottom-[10%] lg:left-16',
+              isEditor &&
+                (s.showOwnerName === false || s.showIllustration === false) &&
+                'opacity-40'
+            )}
+          >
             <HeroSignature {...sectionProps} elementId="ownerName" />
           </div>
         </div>

@@ -1,6 +1,5 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import { ROUTES } from '@/config/routes'
 import type { HomeSettingsData } from '@/actions/settings/home'
 

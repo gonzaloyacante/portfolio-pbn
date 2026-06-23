@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { Input, Switch, TextArea } from '@/components/ui'
 import type { HomeSettingsData } from '@/actions/settings/home'
 import { Monitor, Tablet, Smartphone } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 const GoogleFontPicker = dynamic(
   () =>
@@ -76,12 +77,17 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
   const meta = VIEWPORT_META[viewportMode]
   const Icon = meta.icon
 
+  // Si el toggle "visible" existe y está apagado, marcamos los campos relacionados
+  // como visualmente deshabilitados (opacos + tachados) para que el admin vea que
+  // ese elemento NO se muestra en la web pública, pero pueda seguir editándolo
+  // o volver a activarlo.
+  const isHidden = !!fields.visible && ((settings[fields.visible] as boolean) ?? true) === false
+
   return (
     <div className="space-y-6">
       <div className="bg-primary/10 text-primary border-primary/20 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium">
         <Icon className="h-3.5 w-3.5 shrink-0" />
-        Editando valores para <strong>{meta.label}</strong>. Los campos vacíos heredan el valor de
-        escritorio.
+        Editando valores para <strong>{meta.label}</strong>.
       </div>
 
       {fields.visible && (
@@ -93,7 +99,7 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
             </p>
           </div>
           <Switch
-            checked={(settings[fields.visible] as boolean) ?? true}
+            checked={!isHidden}
             onCheckedChange={(val: boolean) =>
               onUpdate(fields.visible as keyof HomeSettingsData, val)
             }
@@ -101,202 +107,218 @@ export function PropertyEditor({ element, settings, onUpdate, viewportMode }: Pr
         </div>
       )}
 
-      {fields.text && (
-        <Input
-          label="Texto"
-          value={(settings[fields.text] as string) ?? ''}
-          onChange={(e) => onUpdate(fields.text as keyof HomeSettingsData, e.target.value)}
-        />
-      )}
-
-      {fields.link && (
-        <Input
-          label="URL Destino"
-          value={(settings[fields.link] as string) ?? ''}
-          onChange={(e) => onUpdate(fields.link as keyof HomeSettingsData, e.target.value)}
-        />
-      )}
-
-      {fields.variant && (
-        <div className="my-4 border-t pt-4">
-          <EditorVariantControl
-            value={(settings[fields.variant] as string) ?? 'primary'}
-            onChange={(val: string) => onUpdate(fields.variant as keyof HomeSettingsData, val)}
-          />
+      {isHidden && (
+        <div className="text-muted-foreground border-muted-foreground/30 rounded-lg border border-dashed bg-(--muted)/40 px-3 py-2 text-xs italic">
+          Este elemento está oculto en la web pública. Los controles siguen activos para que puedas
+          editarlo o volver a mostrarlo cuando quieras.
         </div>
       )}
 
-      {fields.buttonSize && (
-        <ViewportSelectControl
-          label="Tamaño del botón"
-          desktopKey={fields.buttonSize}
-          mobileKey={mobileFields?.size}
-          tabletKey={tabletFields?.size}
-          settings={settings}
-          onUpdate={onUpdate}
-          defaultValue="default"
-          viewportMode={viewportMode}
-          options={[
-            { value: 'sm', label: 'Pequeño' },
-            { value: 'default', label: 'Normal' },
-            { value: 'lg', label: 'Grande' },
-          ]}
-        />
-      )}
-
-      {fields.imageUrl && (
-        <EditorImageUpload
-          label={element === 'illustration' ? 'Subir Ilustración' : 'Imagen Principal'}
-          value={(settings[fields.imageUrl] as string) ?? null}
-          onChange={(val: string | null) =>
-            onUpdate(fields.imageUrl as keyof HomeSettingsData, val)
-          }
-        />
-      )}
-
-      {fields.imageStyle && (
-        <ViewportSelectControl
-          label="Estilo de imagen"
-          desktopKey={fields.imageStyle}
-          mobileKey={mobileFields?.imageStyle}
-          tabletKey={tabletFields?.imageStyle}
-          settings={settings}
-          onUpdate={onUpdate}
-          defaultValue="original"
-          viewportMode={viewportMode}
-          options={IMAGE_STYLES}
-        />
-      )}
-
-      {fields.font && fields.fontUrl && (
-        <div className={fields.variant ? 'my-4 border-t pt-4' : ''}>
-          <GoogleFontPicker
-            value={(settings[fields.font] as string) ?? ''}
-            onValueChange={(font, url) => {
-              onUpdate(fields.font as keyof HomeSettingsData, font)
-              onUpdate(fields.fontUrl as keyof HomeSettingsData, url)
-            }}
-            label="Tipografía"
+      <div
+        className={cn('space-y-6', isHidden && 'opacity-40 [&_input]:line-through')}
+        aria-disabled={isHidden}
+      >
+        {fields.text && (
+          <Input
+            label="Texto"
+            value={(settings[fields.text] as string) ?? ''}
+            onChange={(e) => onUpdate(fields.text as keyof HomeSettingsData, e.target.value)}
           />
-        </div>
-      )}
+        )}
 
-      {fields.fontSize && (
-        <ViewportSlider
-          label={element === 'ctaButton' ? 'Tamaño de Texto' : 'Tamaño'}
-          desktopKey={fields.fontSize}
-          mobileKey={mobileFields?.fontSize}
-          tabletKey={tabletFields?.fontSize}
-          settings={settings}
-          onUpdate={onUpdate}
-          defaultValue={defaults.fontSize ?? 16}
-          min={defaults.fontSizeMin || 10}
-          max={defaults.fontSizeMax || 100}
-          viewportMode={viewportMode}
-        />
-      )}
+        {fields.link && (
+          <Input
+            label="URL Destino"
+            value={(settings[fields.link] as string) ?? ''}
+            onChange={(e) => onUpdate(fields.link as keyof HomeSettingsData, e.target.value)}
+          />
+        )}
 
-      {fields.size && (
-        <ViewportSlider
-          label="Tamaño"
-          desktopKey={fields.size}
-          mobileKey={mobileFields?.size}
-          tabletKey={tabletFields?.size}
-          settings={settings}
-          onUpdate={onUpdate}
-          defaultValue={100}
-          min={10}
-          max={500}
-          viewportMode={viewportMode}
-        />
-      )}
-
-      {fields.opacity && (
-        <EditorSliderControl
-          label="Opacidad (%)"
-          value={(settings[fields.opacity] as number) ?? 100}
-          onChange={(val: number) => onUpdate(fields.opacity as keyof HomeSettingsData, val)}
-          min={0}
-          max={100}
-          suffix="%"
-        />
-      )}
-
-      {fields.color && fields.colorDark && (
-        <EditorDualColorControl
-          label="Color"
-          lightColor={(settings[fields.color] as string) ?? ''}
-          darkColor={(settings[fields.colorDark] as string) ?? ''}
-          onChangeLight={(val: string) => onUpdate(fields.color as keyof HomeSettingsData, val)}
-          onChangeDark={(val: string) => onUpdate(fields.colorDark as keyof HomeSettingsData, val)}
-        />
-      )}
-
-      {fields.zIndex && (
-        <EditorZIndexControl
-          value={(settings[fields.zIndex] as number) ?? defaults.zIndex ?? 10}
-          onChange={(val: number) => onUpdate(fields.zIndex as keyof HomeSettingsData, val)}
-        />
-      )}
-
-      {fields.offsetX && fields.offsetY && (
-        <ViewportPositionControl
-          fields={fields}
-          mobileFields={mobileFields}
-          tabletFields={tabletFields}
-          settings={settings}
-          onUpdate={onUpdate}
-          viewportMode={viewportMode}
-        />
-      )}
-
-      {fields.alt && (
-        <Input
-          label="Texto alternativo (alt)"
-          value={(settings[fields.alt] as string) ?? ''}
-          onChange={(e) => onUpdate(fields.alt as keyof HomeSettingsData, e.target.value)}
-          placeholder="Describe la imagen para accesibilidad"
-        />
-      )}
-
-      {fields.caption && (
-        <TextArea
-          label="Caption (texto sobre la imagen)"
-          value={(settings[fields.caption] as string | null) ?? ''}
-          onChange={(e) =>
-            onUpdate(fields.caption as keyof HomeSettingsData, e.target.value || null)
-          }
-          placeholder="Texto que aparece como overlay sobre la imagen"
-          rows={3}
-        />
-      )}
-
-      {fields.showFeatured && (
-        <div className="flex items-center justify-between rounded-lg border p-3">
-          <div>
-            <p className="text-sm font-medium">Mostrar imágenes destacadas</p>
-            <p className="text-muted-foreground text-xs">
-              Muestra la sección de imágenes destacadas bajo el hero
-            </p>
+        {fields.variant && (
+          <div className="my-4 border-t pt-4">
+            <EditorVariantControl
+              value={(settings[fields.variant] as string) ?? 'primary'}
+              onChange={(val: string) => onUpdate(fields.variant as keyof HomeSettingsData, val)}
+            />
           </div>
-          <Switch
-            checked={(settings[fields.showFeatured] as boolean) ?? true}
-            onCheckedChange={(val: boolean) =>
-              onUpdate(fields.showFeatured as keyof HomeSettingsData, val)
+        )}
+
+        {fields.buttonSize && (
+          <ViewportSelectControl
+            label="Tamaño del botón"
+            desktopKey={fields.buttonSize}
+            mobileKey={mobileFields?.size}
+            tabletKey={tabletFields?.size}
+            settings={settings}
+            onUpdate={onUpdate}
+            defaultValue="default"
+            viewportMode={viewportMode}
+            options={[
+              { value: 'sm', label: 'Pequeño' },
+              { value: 'default', label: 'Normal' },
+              { value: 'lg', label: 'Grande' },
+            ]}
+          />
+        )}
+
+        {fields.imageUrl && (
+          <EditorImageUpload
+            label={element === 'illustration' ? 'Subir Ilustración' : 'Imagen Principal'}
+            value={(settings[fields.imageUrl] as string) ?? null}
+            onChange={(val: string | null) =>
+              onUpdate(fields.imageUrl as keyof HomeSettingsData, val)
             }
           />
-        </div>
-      )}
+        )}
 
-      {fields.featuredCount && (
-        <EditorSliderControl
-          label="Número de imágenes destacadas"
-          value={(settings[fields.featuredCount] as number) ?? 6}
-          onChange={(val: number) => onUpdate(fields.featuredCount as keyof HomeSettingsData, val)}
-          min={1}
-          max={20}
-        />
-      )}
+        {fields.imageStyle && (
+          <ViewportSelectControl
+            label="Estilo de imagen"
+            desktopKey={fields.imageStyle}
+            mobileKey={mobileFields?.imageStyle}
+            tabletKey={tabletFields?.imageStyle}
+            settings={settings}
+            onUpdate={onUpdate}
+            defaultValue="original"
+            viewportMode={viewportMode}
+            options={IMAGE_STYLES}
+          />
+        )}
+
+        {fields.font && fields.fontUrl && (
+          <div className={fields.variant ? 'my-4 border-t pt-4' : ''}>
+            <GoogleFontPicker
+              value={(settings[fields.font] as string) ?? ''}
+              onValueChange={(font, url) => {
+                onUpdate(fields.font as keyof HomeSettingsData, font)
+                onUpdate(fields.fontUrl as keyof HomeSettingsData, url)
+              }}
+              label="Tipografía"
+            />
+          </div>
+        )}
+
+        {fields.fontSize && (
+          <ViewportSlider
+            label={element === 'ctaButton' ? 'Tamaño de Texto' : 'Tamaño'}
+            desktopKey={fields.fontSize}
+            mobileKey={mobileFields?.fontSize}
+            tabletKey={tabletFields?.fontSize}
+            settings={settings}
+            onUpdate={onUpdate}
+            defaultValue={defaults.fontSize ?? 16}
+            min={defaults.fontSizeMin || 10}
+            max={defaults.fontSizeMax || 100}
+            viewportMode={viewportMode}
+          />
+        )}
+
+        {fields.size && (
+          <ViewportSlider
+            label="Tamaño"
+            desktopKey={fields.size}
+            mobileKey={mobileFields?.size}
+            tabletKey={tabletFields?.size}
+            settings={settings}
+            onUpdate={onUpdate}
+            defaultValue={100}
+            min={10}
+            max={500}
+            viewportMode={viewportMode}
+          />
+        )}
+
+        {fields.opacity && (
+          <EditorSliderControl
+            label="Opacidad (%)"
+            value={(settings[fields.opacity] as number) ?? 100}
+            onChange={(val: number) => onUpdate(fields.opacity as keyof HomeSettingsData, val)}
+            min={0}
+            max={100}
+            suffix="%"
+          />
+        )}
+
+        {fields.color && fields.colorDark && (
+          <EditorDualColorControl
+            label="Color"
+            lightColor={(settings[fields.color] as string) ?? ''}
+            darkColor={(settings[fields.colorDark] as string) ?? ''}
+            onChangeLight={(val: string) => onUpdate(fields.color as keyof HomeSettingsData, val)}
+            onChangeDark={(val: string) =>
+              onUpdate(fields.colorDark as keyof HomeSettingsData, val)
+            }
+          />
+        )}
+
+        {fields.zIndex && (
+          <EditorZIndexControl
+            value={(settings[fields.zIndex] as number) ?? defaults.zIndex ?? 10}
+            onChange={(val: number) => onUpdate(fields.zIndex as keyof HomeSettingsData, val)}
+          />
+        )}
+
+        {fields.offsetX && fields.offsetY && (
+          <ViewportPositionControl
+            fields={fields}
+            mobileFields={mobileFields}
+            tabletFields={tabletFields}
+            settings={settings}
+            onUpdate={onUpdate}
+            viewportMode={viewportMode}
+          />
+        )}
+
+        {fields.alt && (
+          <Input
+            label="Texto alternativo (alt)"
+            value={(settings[fields.alt] as string) ?? ''}
+            onChange={(e) => onUpdate(fields.alt as keyof HomeSettingsData, e.target.value)}
+            placeholder="Describe la imagen para accesibilidad"
+          />
+        )}
+
+        {fields.caption && (
+          <TextArea
+            label="Caption (texto sobre la imagen)"
+            value={(settings[fields.caption] as string | null) ?? ''}
+            onChange={(e) =>
+              onUpdate(fields.caption as keyof HomeSettingsData, e.target.value || null)
+            }
+            placeholder="Texto que aparece como overlay sobre la imagen"
+            rows={3}
+          />
+        )}
+
+        {fields.showFeatured && (
+          <div className="flex items-center justify-between rounded-lg border p-3">
+            <div>
+              <p className="text-sm font-medium">Mostrar imágenes destacadas</p>
+              <p className="text-muted-foreground text-xs">
+                Muestra la sección de imágenes destacadas bajo el hero
+              </p>
+            </div>
+            <Switch
+              checked={(settings[fields.showFeatured] as boolean) ?? true}
+              onCheckedChange={(val: boolean) =>
+                onUpdate(fields.showFeatured as keyof HomeSettingsData, val)
+              }
+            />
+          </div>
+        )}
+
+        {fields.featuredCount && (
+          <EditorSliderControl
+            label="Número de imágenes destacadas"
+            value={(settings[fields.featuredCount] as number) ?? 6}
+            onChange={(val: number) =>
+              onUpdate(fields.featuredCount as keyof HomeSettingsData, val)
+            }
+            min={1}
+            max={20}
+          />
+        )}
+      </div>
     </div>
   )
 }
