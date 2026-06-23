@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Save } from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Button, ImageUpload, Input } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import type { SiteSettingsData } from '@/actions/settings/site'
 import { updateSiteSettings } from '@/actions/settings/site'
@@ -24,11 +24,17 @@ export function SiteEditor({ settings }: SiteEditorProps) {
     settings?.siteName ?? 'Paola Bolívar Nievas - Make-up Artist'
   )
   const [siteTagline, setSiteTagline] = useState(settings?.siteTagline ?? '')
+  const [logoUrl, setLogoUrl] = useState(settings?.logoUrl ?? '')
+  const [faviconUrl, setFaviconUrl] = useState(settings?.faviconUrl ?? '')
   const [defaultMetaTitle, setDefaultMetaTitle] = useState(settings?.defaultMetaTitle ?? '')
   const [defaultMetaDescription, setDefaultMetaDescription] = useState(
     settings?.defaultMetaDescription ?? ''
   )
   const [defaultOgImage, setDefaultOgImage] = useState(settings?.defaultOgImage ?? '')
+  const [defaultEmail, setDefaultEmail] = useState(settings?.defaultEmail ?? '')
+  const [defaultPhone, setDefaultPhone] = useState(settings?.defaultPhone ?? '')
+  const [defaultWhatsapp, setDefaultWhatsapp] = useState(settings?.defaultWhatsapp ?? '')
+  const [defaultAddress, setDefaultAddress] = useState(settings?.defaultAddress ?? '')
   const [maintenanceMode, setMaintenanceMode] = useState(settings?.maintenanceMode ?? false)
   const [maintenanceMessage, setMaintenanceMessage] = useState(settings?.maintenanceMessage ?? '')
   const [navbarShowBrand, setNavbarShowBrand] = useState(settings?.navbarShowBrand ?? true)
@@ -61,9 +67,15 @@ export function SiteEditor({ settings }: SiteEditorProps) {
       const result = await updateSiteSettings({
         siteName: siteName.trim() || undefined,
         siteTagline: siteTagline.trim() || null,
+        logoUrl: logoUrl.trim() || null,
+        faviconUrl: faviconUrl.trim() || null,
         defaultMetaTitle: defaultMetaTitle.trim() || null,
         defaultMetaDescription: defaultMetaDescription.trim() || null,
         defaultOgImage: defaultOgImage.trim() || null,
+        defaultEmail: defaultEmail.trim() || null,
+        defaultPhone: defaultPhone.trim() || null,
+        defaultWhatsapp: defaultWhatsapp.trim() || null,
+        defaultAddress: defaultAddress.trim() || null,
         maintenanceMode,
         maintenanceMessage: maintenanceMessage.trim() || null,
         navbarShowBrand,
@@ -107,6 +119,63 @@ export function SiteEditor({ settings }: SiteEditorProps) {
         siteTagline={siteTagline}
         onSiteTaglineChange={setSiteTagline}
       />
+
+      <section className="border-border bg-card space-y-6 rounded-2xl border p-6 shadow-sm">
+        <div>
+          <h2 className="font-heading text-lg font-semibold">
+            Branding y datos de contacto por defecto
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Logo, favicon y los datos que se usan como valores predeterminados cuando las páginas no
+            los definen explícitamente.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Logo</p>
+            <ImageUpload
+              name="site-logoUrl"
+              value={logoUrl ? [logoUrl] : []}
+              onChange={(urls: string[]) => setLogoUrl(urls[0] ?? '')}
+            />
+          </div>
+          <Input
+            label="Favicon (URL)"
+            value={faviconUrl}
+            onChange={(e) => setFaviconUrl(e.target.value)}
+            placeholder="https://res.cloudinary.com/…/favicon.ico"
+          />
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          <Input
+            label="Email por defecto"
+            type="email"
+            value={defaultEmail}
+            onChange={(e) => setDefaultEmail(e.target.value)}
+            placeholder="contacto@ejemplo.com"
+          />
+          <Input
+            label="Teléfono por defecto"
+            value={defaultPhone}
+            onChange={(e) => setDefaultPhone(e.target.value)}
+            placeholder="+34 600 000 000"
+          />
+          <Input
+            label="WhatsApp por defecto (link)"
+            value={defaultWhatsapp}
+            onChange={(e) => setDefaultWhatsapp(e.target.value)}
+            placeholder="https://wa.me/34600000000"
+          />
+          <Input
+            label="Dirección por defecto"
+            value={defaultAddress}
+            onChange={(e) => setDefaultAddress(e.target.value)}
+            placeholder="Granada, España"
+          />
+        </div>
+      </section>
 
       <SiteSeoSection
         defaultMetaTitle={defaultMetaTitle}
