@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input } from '@/components/ui'
+import { Button, Input, TextArea } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { ROUTES } from '@/config/routes'
 import { updateBookingAdmin, type BookingForEdit } from '@/actions/cms/bookings'
@@ -172,15 +172,12 @@ export default function BookingEditForm({ booking, services }: Props) {
             />
           </div>
           <div className="space-y-1.5 sm:col-span-2">
-            <label htmlFor="clientNotes" className="text-foreground text-sm font-medium">
-              Notas del cliente
-            </label>
-            <textarea
+            <TextArea
+              label="Notas del cliente"
               id="clientNotes"
               name="clientNotes"
               rows={2}
               defaultValue={booking.clientNotes ?? ''}
-              className="border-border bg-background text-foreground focus:ring-primary w-full resize-none rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
             />
           </div>
         </div>
@@ -188,15 +185,12 @@ export default function BookingEditForm({ booking, services }: Props) {
 
       {/* Admin Notes */}
       <div className="space-y-1.5">
-        <label htmlFor="adminNotes" className="text-foreground text-sm font-medium">
-          🔒 Notas internas (admin)
-        </label>
-        <textarea
+        <TextArea
+          label="🔒 Notas internas (admin)"
           id="adminNotes"
           name="adminNotes"
           rows={2}
           defaultValue={booking.adminNotes ?? ''}
-          className="border-border bg-background text-foreground focus:ring-primary w-full resize-none rounded-lg border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
         />
       </div>
 
