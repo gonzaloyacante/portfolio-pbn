@@ -63,9 +63,17 @@ function maskObject(
   const out: Record<string, unknown> = {}
   for (const [k, v] of Object.entries(obj)) {
     if (
-      ['email', 'customerEmail', 'phone', 'customerPhone', 'password', 'token', 'secret'].includes(
-        k
-      )
+      [
+        'email',
+        'customerEmail',
+        'phone',
+        'customerPhone',
+        'password',
+        'token',
+        'secret',
+        'ip',
+        'ipAddress',
+      ].includes(k)
     ) {
       out[k] = typeof v === 'string' ? '***redacted***' : null
     } else {

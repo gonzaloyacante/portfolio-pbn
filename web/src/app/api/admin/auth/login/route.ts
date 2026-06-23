@@ -48,7 +48,7 @@ export async function POST(req: Request) {
 
     if (!result.ok) {
       if (result.reason === 'rate_limited') {
-        logger.warn(`[admin-login] Rate limit exceeded for ${email} from ${ipAddress}`)
+        logger.warn('[admin-login] Rate limit exceeded', { email, ipAddress })
         return NextResponse.json(
           {
             success: false,
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
       })
     })
 
-    logger.info(`[admin-login] Usuario ${user.email} autenticado desde ${ipAddress}`)
+    logger.info('[admin-login] Usuario autenticado', { userId: user.id, ipAddress })
 
     // Limpieza perezosa de refresh tokens viejos del usuario (M20)
     await pruneRefreshTokens(user.id)
