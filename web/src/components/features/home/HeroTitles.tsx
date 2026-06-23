@@ -91,10 +91,8 @@ export function HeroTitle2({
   viewportMode,
 }: HeroSectionProps) {
   const title2 = s.heroTitle2Text || 'Portfolio'
-  const normalizedTitle2 = title2.trim().toLowerCase()
   const eff = resolveEffectiveValues(s, viewportMode)
-  const show2 =
-    (isEditor || (s.showHeroTitle2 ?? true)) && !(!isEditor && normalizedTitle2 === 'portfolio')
+  const show2 = isEditor || (s.showHeroTitle2 ?? true)
 
   if (!show2) return null
 
