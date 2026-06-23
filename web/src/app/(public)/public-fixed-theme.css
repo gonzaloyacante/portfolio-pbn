@@ -385,11 +385,11 @@
   background-color: var(--background);
 }
 
+/* El backdrop lo pinta <BackdropMedia> (componente) usando inline styles según
+   heroBackdropMediaKind + URL. Esta clase solo actúa como marker para tests/CSS hooks. */
 .public-home-page-background {
-  background-image: var(--public-home-background-image, none);
-  background-position: var(--public-home-background-position, center);
-  background-repeat: no-repeat;
-  background-size: cover;
+  /* Estilos los aplica el componente (object-fit para video, background-image/size
+     para imagen). No hay reglas aquí para no duplicar ni entrar en conflicto. */
 }
 
 .public-home-hero {

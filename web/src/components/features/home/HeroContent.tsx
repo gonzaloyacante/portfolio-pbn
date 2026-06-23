@@ -187,9 +187,11 @@ export function HeroContent({
           )}
 
           {/* HeroCta: medio-derecha, debajo de la imagen */}
-          <div className="absolute top-[60%] right-4 z-30 sm:right-8 md:right-12 lg:top-[55%] lg:right-16">
-            <HeroCta {...sectionProps} {...makeDragProps('ctaButton')} elementId="ctaButton" />
-          </div>
+          {(isEditor || (s.showCtaButton ?? true)) && (
+            <div className="absolute top-[60%] right-4 z-30 sm:right-8 md:right-12 lg:top-[55%] lg:right-16">
+              <HeroCta {...sectionProps} {...makeDragProps('ctaButton')} elementId="ctaButton" />
+            </div>
+          )}
 
           {/* HeroSignature (illustration + ownerName): abajo a la izquierda */}
           <div className="absolute bottom-[8%] left-4 z-10 sm:left-8 md:left-12 lg:bottom-[10%] lg:left-16">
