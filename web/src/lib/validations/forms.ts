@@ -21,6 +21,15 @@ export const contactFormSchema = z
       .max(2000, 'El mensaje es demasiado largo'),
     responsePreference: z.enum(['EMAIL', 'PHONE', 'WHATSAPP', 'INSTAGRAM']),
     instagramUser: z.string().trim().max(50).optional(),
+    // Tipo de mensaje: comentario general vs solicitud de servicio.
+    // La web pública no maneja pagos ni calendario — la admin cierra todo
+    // por privado con cada clienta después del primer contacto.
+    messageType: z.enum(['GENERAL', 'SERVICE_INQUIRY']),
+    // Cuando messageType == SERVICE_INQUIRY: id del servicio elegido
+    // (o el sentinel 'other' para servicio custom).
+    serviceId: z.string().trim().max(100).optional(),
+    // Cuando serviceId == 'other': descripción libre del servicio.
+    customService: z.string().trim().max(200).optional(),
     privacy: z.boolean().refine((val) => val === true, {
       message: 'Debes aceptar la política de privacidad',
     }),
@@ -51,6 +60,25 @@ export const contactFormSchema = z
         path: ['instagramUser'],
         message: 'El usuario de Instagram es obligatorio',
       })
+    }
+    // Si es solicitud de servicio: exigir serviceId válido O customService
+    if (data.messageType === 'SERVICE_INQUIRY') {
+      const hasService = !!data.serviceId && data.serviceId !== 'other'
+      const hasCustom = !!data.customService?.trim()
+      if (!hasService && !hasCustom) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['serviceId'],
+          message: 'Elige un servicio o describe el que necesitas',
+        })
+      }
+      if (data.serviceId === 'other' && !data.customService?.trim()) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['customService'],
+          message: 'Describe qué servicio necesitas',
+        })
+      }
     }
   })
 

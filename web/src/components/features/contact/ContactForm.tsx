@@ -5,14 +5,24 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { contactFormSchema, type ContactFormData } from '@/lib/validations'
 import { sendContactEmail } from '@/actions/user/contact'
 import { showToast } from '@/lib/toast'
-import { Mail, Phone, MessageCircle, Send, CheckCircle2, Instagram } from 'lucide-react'
+import {
+  Mail,
+  Phone,
+  MessageCircle,
+  Send,
+  CheckCircle2,
+  Instagram,
+  MessageSquare,
+  Sparkles,
+} from 'lucide-react'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence, Button, TextArea } from '@/components/ui'
+import { motion, AnimatePresence, Button, TextArea, Select, Input } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import { ContactField } from './ContactField'
+import type { PublicContactServiceOption } from './public/contactPageData'
 
 type ResponsePreference = 'EMAIL' | 'PHONE' | 'WHATSAPP' | 'INSTAGRAM'
 
@@ -23,7 +33,13 @@ const PREFERENCES: { id: ResponsePreference; icon: React.ReactNode; label: strin
   { id: 'EMAIL', icon: <Mail className="h-5 w-5" />, label: 'Email' },
 ]
 
-export default function ContactForm() {
+interface ContactFormProps {
+  serviceOptions: PublicContactServiceOption[]
+}
+
+const OTHER_SERVICE_VALUE = 'other'
+
+export default function ContactForm({ serviceOptions }: ContactFormProps) {
   const [submitted, setSubmitted] = useState(false)
   const [activeBounds, setActiveBounds] = useState<{
     x: number
@@ -33,6 +49,7 @@ export default function ContactForm() {
   } | null>(null)
   const searchParams = useSearchParams()
   const serviceDisplayName = searchParams.get('serviceName')
+  const serviceSlug = searchParams.get('service')
   const { executeRecaptcha } = useGoogleReCaptcha()
   const selectorRef = useRef<HTMLDivElement | null>(null)
   const buttonRefs = useRef<Record<ResponsePreference, HTMLButtonElement | null>>({
@@ -58,6 +75,9 @@ export default function ContactForm() {
       message: '',
       responsePreference: 'INSTAGRAM',
       instagramUser: '',
+      messageType: 'GENERAL',
+      serviceId: '',
+      customService: '',
       privacy: false,
     },
   })
@@ -68,10 +88,27 @@ export default function ContactForm() {
         'message',
         `Hola, estoy interesado/a en recibir más información sobre el servicio de "${serviceDisplayName}".`
       )
+      // Si el usuario llega desde la página de detalle de un servicio
+      // (?service=slug&serviceName=Name), preseleccionar el tipo de
+      // mensaje como solicitud de servicio y elegir el servicio en el
+      // selector (o fallback a 'other' si el slug no está en la lista).
+      if (serviceSlug && serviceOptions.length > 0) {
+        const match = serviceOptions.find((s) => s.id === serviceSlug)
+        if (match) {
+          setValue('messageType', 'SERVICE_INQUIRY', { shouldDirty: true })
+          setValue('serviceId', match.id, { shouldDirty: true })
+        } else {
+          setValue('messageType', 'SERVICE_INQUIRY', { shouldDirty: true })
+          setValue('serviceId', OTHER_SERVICE_VALUE, { shouldDirty: true })
+          setValue('customService', serviceDisplayName, { shouldDirty: true })
+        }
+      }
     }
-  }, [serviceDisplayName, setValue])
+  }, [serviceDisplayName, serviceSlug, serviceOptions, setValue])
 
   const responsePreference = useWatch({ control, name: 'responsePreference' })
+  const messageType = useWatch({ control, name: 'messageType' })
+  const selectedServiceId = useWatch({ control, name: 'serviceId' })
 
   const updateActiveBounds = useCallback(() => {
     const container = selectorRef.current
@@ -194,6 +231,94 @@ export default function ContactForm() {
             <p className="public-contact-error mt-1 text-sm">{errors.name.message}</p>
           )}
         </div>
+
+        {/* Tipo de mensaje: comentario general vs solicitud de servicio */}
+        <fieldset>
+          <legend className="public-contact-form-label mb-3 block text-sm font-semibold">
+            ¿Qué tipo de mensaje quieres enviar? *
+          </legend>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                setValue('messageType', 'GENERAL', { shouldDirty: true })
+                setValue('serviceId', '', { shouldDirty: true })
+                setValue('customService', '', { shouldDirty: true })
+              }}
+              className={`public-contact-option flex min-h-20 cursor-pointer items-center gap-3 rounded-xl p-3 text-left transition-all duration-200 sm:p-4 ${
+                messageType !== 'SERVICE_INQUIRY'
+                  ? 'public-contact-option-active public-contact-option-active-text'
+                  : ''
+              }`}
+            >
+              <MessageSquare className="h-5 w-5 shrink-0" aria-hidden />
+              <div>
+                <p className="font-medium">Comentario o consulta</p>
+                <p className="text-muted-foreground text-xs">
+                  Pregunta general, prensa, colaboración…
+                </p>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue('messageType', 'SERVICE_INQUIRY', { shouldDirty: true })}
+              className={`public-contact-option flex min-h-20 cursor-pointer items-center gap-3 rounded-xl p-3 text-left transition-all duration-200 sm:p-4 ${
+                messageType === 'SERVICE_INQUIRY'
+                  ? 'public-contact-option-active public-contact-option-active-text'
+                  : ''
+              }`}
+            >
+              <Sparkles className="h-5 w-5 shrink-0" aria-hidden />
+              <div>
+                <p className="font-medium">Solicitar un servicio</p>
+                <p className="text-muted-foreground text-xs">
+                  Te interesa alguno de los que ofrezco
+                </p>
+              </div>
+            </button>
+          </div>
+          {errors.messageType && (
+            <p className="public-contact-error mt-1 text-sm">{errors.messageType.message}</p>
+          )}
+        </fieldset>
+
+        {/* Cuando es solicitud de servicio: selector de servicio + custom */}
+        <AnimatePresence>
+          {messageType === 'SERVICE_INQUIRY' && (
+            <motion.div
+              key="service-fields"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-3 overflow-hidden"
+            >
+              <Select
+                label="¿Qué servicio te interesa?"
+                value={selectedServiceId ?? ''}
+                onChange={(v) => setValue('serviceId', v, { shouldValidate: true })}
+                options={[
+                  ...serviceOptions.map((s) => ({ value: s.id, label: s.name })),
+                  { value: OTHER_SERVICE_VALUE, label: 'Otro (no está en la lista)' },
+                ]}
+                error={errors.serviceId?.message}
+                placeholder="Elegí un servicio"
+              />
+              {selectedServiceId === OTHER_SERVICE_VALUE && (
+                <Input
+                  label="¿Qué servicio necesitás?"
+                  value=""
+                  onChange={(e) =>
+                    setValue('customService', e.target.value, { shouldValidate: true })
+                  }
+                  placeholder="Ej: Maquillaje para carnaval"
+                  error={errors.customService?.message}
+                  maxLength={200}
+                />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Response Preference Selector */}
         <fieldset>

@@ -17,6 +17,7 @@ export default function PublicContactPage({
   contactMethods,
   ownerName,
   locationSuffix,
+  serviceOptions,
 }: PublicContactPageData) {
   const primaryContactMethods = contactMethods.filter((method) => method.id !== 'instagram')
 
@@ -77,7 +78,7 @@ export default function PublicContactPage({
               <div className="public-contact-form-panel rounded-card h-96 w-full animate-pulse" />
             }
           >
-            <ContactForm />
+            <ContactForm serviceOptions={serviceOptions} />
           </Suspense>
         </div>
       </div>

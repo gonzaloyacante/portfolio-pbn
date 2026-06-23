@@ -10,6 +10,13 @@ export interface Contact {
   isRead: boolean
   isImportant: boolean
   adminNote: string | null
+  // Tipo de mensaje y datos de solicitud de servicio (público). Prisma
+  // devuelve strings crudos (default 'GENERAL' / 'SERVICE_INQUIRY'); la
+  // UI trata el valor como unión al renderizar.
+  messageType: string
+  customService: string | null
+  // Servicio elegido cuando messageType = 'SERVICE_INQUIRY' (FK Prisma)
+  service: { name: string; slug: string } | null
   createdAt: Date
   updatedAt: Date
 }

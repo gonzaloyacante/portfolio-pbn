@@ -75,6 +75,9 @@ export async function sendContactEmail(formData: FormData) {
       | 'WHATSAPP'
       | 'INSTAGRAM',
     instagramUser: (formData.get('instagramUser') as string | undefined) || undefined,
+    messageType: (formData.get('messageType') as 'GENERAL' | 'SERVICE_INQUIRY' | null) || 'GENERAL',
+    serviceId: (formData.get('serviceId') as string | null) || undefined,
+    customService: (formData.get('customService') as string | null) || undefined,
     privacy: formData.get('privacy') === 'on',
   }
 
@@ -107,6 +110,10 @@ export async function sendContactEmail(formData: FormData) {
 type ValidatedContactData = z.infer<typeof contactFormSchema>
 
 function buildSanitizedData(data: ValidatedContactData) {
+  // serviceId === 'other' es sentinel del cliente para "servicio custom" —
+  // no es un id válido en la DB, así que se mapea a null antes de guardar.
+  // El texto libre vive en customService.
+  const isCustomService = data.serviceId === 'other'
   return {
     name: sanitizeText(data.name),
     email: data.email ? data.email.toLowerCase().trim() : '',
@@ -114,6 +121,9 @@ function buildSanitizedData(data: ValidatedContactData) {
     message: sanitizeText(data.message),
     responsePreference: data.responsePreference,
     instagramUser: data.instagramUser ? sanitizeText(data.instagramUser) : undefined,
+    messageType: data.messageType,
+    serviceId: isCustomService || !data.serviceId ? null : data.serviceId,
+    customService: data.customService ? sanitizeText(data.customService) : null,
   }
 }
 
@@ -151,11 +161,22 @@ async function persistContact(
 
 async function notifyAdminOfContact(sanitized: SanitizedData) {
   try {
+    // Si es solicitud de servicio, enriquecemos el mensaje con el nombre
+    // del servicio para que la administradora lo vea de un vistazo en el
+    // email (no tiene que entrar al admin para saber qué pidió).
+    let enrichedMessage = sanitized.message
+    if (sanitized.messageType === 'SERVICE_INQUIRY') {
+      const serviceLabel = sanitized.customService
+        ? `Servicio solicitado (personalizado): "${sanitized.customService}"`
+        : `Servicio solicitado: (ver ID ${sanitized.serviceId ?? '—'})`
+      enrichedMessage = `${serviceLabel}\n\n—\n\n${sanitized.message}`
+    }
+
     await emailService.notifyNewContact({
       name: sanitized.name,
       email: sanitized.email ?? '',
       phone: sanitized.phone,
-      message: sanitized.message,
+      message: enrichedMessage,
       preference: sanitized.responsePreference,
     })
   } catch (emailError) {
@@ -184,6 +205,9 @@ export async function getContacts() {
   return await prisma.contact.findMany({
     where: { deletedAt: null },
     orderBy: { createdAt: 'desc' },
+    include: {
+      service: { select: { name: true, slug: true } },
+    },
     take: 500,
   })
 }

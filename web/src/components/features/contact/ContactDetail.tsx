@@ -136,6 +136,27 @@ export function ContactDetail({
         </div>
       </div>
 
+      {/* Tipo de mensaje: comentario general vs solicitud de servicio */}
+      {contact.messageType === 'SERVICE_INQUIRY' && (
+        <div className="bg-primary/10 border-primary/30 mb-6 rounded-2xl border p-6">
+          <h3 className="text-foreground mb-3 flex items-center gap-2 font-bold">
+            Solicitud de servicio
+          </h3>
+          {contact.customService ? (
+            <p className="text-foreground text-sm">
+              <span className="text-muted-foreground">Servicio (personalizado): </span>
+              <span className="font-semibold">{contact.customService}</span>
+            </p>
+          ) : contact.service ? (
+            <p className="text-foreground text-sm">
+              <span className="text-muted-foreground">Servicio: </span>
+              <span className="font-semibold">{contact.service.name}</span>
+              <span className="text-muted-foreground ml-2 text-xs">({contact.service.slug})</span>
+            </p>
+          ) : null}
+        </div>
+      )}
+
       <div className="mb-6">
         <h3 className="text-foreground mb-3 font-bold">Mensaje:</h3>
         <div className="bg-secondary rounded-2xl p-6">
