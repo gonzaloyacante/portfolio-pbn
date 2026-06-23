@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui'
+
 interface ErrorStateProps {
   title?: string
   message?: string
@@ -18,12 +20,9 @@ export default function ErrorState({
       <h3 className="text-destructive mb-2 text-xl font-semibold">{title}</h3>
       <p className="text-muted-foreground mb-6 max-w-sm">{message}</p>
       {onRetry && (
-        <button
-          onClick={onRetry}
-          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-lg px-6 py-2 font-semibold transition-colors"
-        >
+        <Button variant="destructive" onClick={onRetry}>
           Reintentar
-        </button>
+        </Button>
       )}
     </div>
   )

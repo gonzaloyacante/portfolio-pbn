@@ -7,7 +7,7 @@ import { sendContactEmail } from '@/actions/user/contact'
 import { showToast } from '@/lib/toast'
 import { Mail, Phone, MessageCircle, Send, CheckCircle2, Instagram } from 'lucide-react'
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from '@/components/ui'
+import { motion, AnimatePresence, Button } from '@/components/ui'
 import { ROUTES } from '@/config/routes'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -302,14 +302,17 @@ export default function ContactForm() {
         </label>
         {errors.privacy && <p className="public-contact-error text-sm">{errors.privacy.message}</p>}
 
-        <button
+        <Button
           type="submit"
           disabled={isSubmitting}
-          className="public-contact-submit inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-4 font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          loading={isSubmitting}
+          fullWidth
+          size="lg"
+          className="public-contact-submit rounded-xl"
+          leftIcon={<Send size={20} />}
         >
-          <Send size={20} />
-          {isSubmitting ? 'Enviando...' : 'Enviar mensaje'}
-        </button>
+          Enviar mensaje
+        </Button>
 
         <p className="public-contact-form-muted text-center text-xs">* Campos obligatorios</p>
       </form>

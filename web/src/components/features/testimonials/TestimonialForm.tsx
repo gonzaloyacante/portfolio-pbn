@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useReducedMotion } from 'framer-motion'
 import { motion } from '@/components/ui'
 import { submitPublicTestimonial } from '@/actions/cms/testimonials'
-import { Input, TextArea } from '@/components/ui'
+import { Input, TextArea, Button } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { Heart, Home, Sparkles, Star } from 'lucide-react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
@@ -204,13 +204,16 @@ export default function TestimonialForm() {
         />
       </div>
 
-      <button
+      <Button
         type="submit"
         disabled={isSubmitting}
-        className="public-testimonial-submit inline-flex w-full items-center justify-center rounded-xl px-5 py-4 font-semibold transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+        loading={isSubmitting}
+        fullWidth
+        size="lg"
+        className="public-testimonial-submit rounded-xl"
       >
-        {isSubmitting ? 'Enviando...' : 'Enviar testimonio'}
-      </button>
+        Enviar testimonio
+      </Button>
     </form>
   )
 }
