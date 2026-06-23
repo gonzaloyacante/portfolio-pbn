@@ -136,9 +136,8 @@ export default async function ServiceDetailPage({ params }: ServicePageProps) {
             transparentBackground={false}
           />
         ) : (
-          <div className="public-services-detail-hero-fallback h-full w-full" />
+          <div className="public-services-detail-hero-overlay absolute inset-0" />
         )}
-        <div className="public-services-detail-hero-overlay absolute inset-0" />
         <div className="relative z-10 container mx-auto flex h-full flex-col justify-end px-6 pb-20">
           <h1 className="public-services-detail-hero-title mb-4 max-w-full text-4xl leading-tight font-bold break-words sm:text-5xl md:text-6xl lg:text-7xl">
             {service.name}
