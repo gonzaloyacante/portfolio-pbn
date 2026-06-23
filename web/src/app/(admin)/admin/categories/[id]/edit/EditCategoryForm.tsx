@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Input, Card } from '@/components/ui'
+import { Button, Input, Card, TextArea } from '@/components/ui'
 import CategoryCoverSelector from '@/components/features/categories/CategoryCoverSelector'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
@@ -74,39 +74,28 @@ export default function EditCategoryForm({ category, updateAction }: EditCategor
           )}
 
           {/* Name */}
-          <div className="space-y-2">
-            <label htmlFor="name" className="text-foreground text-sm font-medium">
-              Nombre *
-            </label>
-            <Input
-              id="name"
-              name="name"
-              defaultValue={category.name}
-              placeholder="Ej: FX, Maquillaje social..."
-              required
-              maxLength={100}
-              className="w-full"
-            />
-          </div>
+          <Input
+            label="Nombre *"
+            name="name"
+            defaultValue={category.name}
+            placeholder="Ej: FX, Maquillaje social..."
+            required
+            maxLength={100}
+            className="w-full"
+          />
 
           {/* Slug: hidden from UI to avoid accidental edits. Preserved in form data. */}
           <input type="hidden" name="slug" defaultValue={category.slug} maxLength={120} />
 
           {/* Description */}
-          <div className="space-y-2">
-            <label htmlFor="description" className="text-foreground text-sm font-medium">
-              Descripción (opcional)
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              defaultValue={category.description || ''}
-              placeholder="Describe esta categoría..."
-              rows={4}
-              maxLength={500}
-              className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-            />
-          </div>
+          <TextArea
+            label="Descripción (opcional)"
+            name="description"
+            defaultValue={category.description || ''}
+            placeholder="Describe esta categoría..."
+            rows={4}
+            maxLength={500}
+          />
 
           {/* Cover Image Selector */}
           <div className="space-y-2">

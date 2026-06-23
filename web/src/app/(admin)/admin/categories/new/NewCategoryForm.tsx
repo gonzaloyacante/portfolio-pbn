@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createCategory } from '@/actions/cms/content'
-import { Button, Input, Card, ImageUpload } from '@/components/ui'
+import { Button, Input, Card, ImageUpload, TextArea } from '@/components/ui'
 import Link from 'next/link'
 import { ROUTES } from '@/config/routes'
 
@@ -45,37 +45,26 @@ export function NewCategoryForm() {
         )}
 
         {/* Name */}
-        <div className="space-y-2">
-          <label htmlFor="name" className="text-foreground text-sm font-medium">
-            Nombre *
-          </label>
-          <Input
-            id="name"
-            name="name"
-            placeholder="Ej: FX, Maquillaje social..."
-            required
-            maxLength={100}
-            className="w-full"
-          />
-        </div>
+        <Input
+          label="Nombre *"
+          name="name"
+          placeholder="Ej: FX, Maquillaje social..."
+          required
+          maxLength={100}
+          className="w-full"
+        />
 
         {/* Slug is auto-generated from Name (hidden from the form) */}
         <input type="hidden" name="slug" maxLength={120} />
 
         {/* Description */}
-        <div className="space-y-2">
-          <label htmlFor="description" className="text-foreground text-sm font-medium">
-            Descripción (opcional)
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Describe esta categoría..."
-            rows={4}
-            maxLength={500}
-            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:ring-primary w-full rounded-md border px-3 py-2 text-sm focus:ring-2 focus:outline-none"
-          />
-        </div>
+        <TextArea
+          label="Descripción (opcional)"
+          name="description"
+          placeholder="Describe esta categoría..."
+          rows={4}
+          maxLength={500}
+        />
 
         {/* Cover Image */}
         <div className="space-y-2">
