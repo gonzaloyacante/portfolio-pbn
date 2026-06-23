@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { EditorSliderControl } from '@/components/features/visual-editor/components/EditorSliderControl'
 import { BRAND } from '@/lib/design-tokens'
-import { Button, ColorPicker, Input, TextArea, ImageUpload, Switch } from '@/components/ui'
+import { Button, ColorPicker, Input, TextArea, ImageUpload, Switch, Select } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -258,15 +258,22 @@ export function AboutEditor({ settings }: AboutEditorProps) {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Forma de la Foto</label>
-              <select
-                {...register('profileImageShape')}
-                className="dark:bg-muted w-full rounded border p-2 text-sm"
-              >
-                <option value="ellipse">Óvalo (Elipse)</option>
-                <option value="circle">Círculo</option>
-                <option value="rounded">Esquinas Redondeadas</option>
-                <option value="none">Rectangular (Sin recorte)</option>
-              </select>
+              <Controller
+                name="profileImageShape"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    value={field.value ?? 'ellipse'}
+                    onChange={(v) => field.onChange(v)}
+                    options={[
+                      { value: 'ellipse', label: 'Óvalo (Elipse)' },
+                      { value: 'circle', label: 'Círculo' },
+                      { value: 'rounded', label: 'Esquinas Redondeadas' },
+                      { value: 'none', label: 'Rectangular (Sin recorte)' },
+                    ]}
+                  />
+                )}
+              />
             </div>
 
             <div className="border-border space-y-4 rounded-lg border p-4">

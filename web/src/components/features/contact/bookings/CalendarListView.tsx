@@ -3,7 +3,7 @@
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { CheckSquare, Square } from 'lucide-react'
-import { Button } from '@/components/ui'
+import { Button, Select } from '@/components/ui'
 import { getStatusColor, getStatusLabel } from './calendarUtils'
 import type { Booking, BookingStatus } from './calendarTypes'
 
@@ -41,16 +41,17 @@ export function CalendarListView({
           <span className="text-primary text-sm font-medium">
             {selectedIds.size} seleccionada{selectedIds.size !== 1 ? 's' : ''}
           </span>
-          <select
+          <Select
             value={bulkStatus}
-            onChange={(e) => onBulkStatusChange(e.target.value as BookingStatus)}
-            className="border-border bg-background text-foreground rounded border px-2 py-1 text-sm"
-          >
-            <option value="CONFIRMED">Confirmar</option>
-            <option value="COMPLETED">Completar</option>
-            <option value="CANCELLED">Cancelar</option>
-            <option value="PENDING">Pendiente</option>
-          </select>
+            onChange={(v) => onBulkStatusChange(v as BookingStatus)}
+            className="min-w-37.5"
+            options={[
+              { value: 'CONFIRMED', label: 'Confirmar' },
+              { value: 'COMPLETED', label: 'Completar' },
+              { value: 'CANCELLED', label: 'Cancelar' },
+              { value: 'PENDING', label: 'Pendiente' },
+            ]}
+          />
           <Button size="sm" onClick={onBulkUpdate} disabled={isBulkLoading}>
             {isBulkLoading ? 'Actualizando...' : 'Aplicar'}
           </Button>

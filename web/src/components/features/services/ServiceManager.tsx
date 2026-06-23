@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Service, ServicePricingTier } from '@/generated/prisma/client'
-import { Button, Card, Badge, Modal, useConfirmDialog } from '@/components/ui'
+import { Button, Card, Badge, Modal, useConfirmDialog, Input } from '@/components/ui'
 import { toggleService, deleteService } from '@/actions/cms/services'
 import ServiceForm from './ServiceForm'
 import { Edit, Trash2, Plus, Search } from 'lucide-react'
@@ -69,12 +69,13 @@ export default function ServiceManager({ initialServices }: ServiceManagerProps)
             size={16}
             className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
           />
-          <input
+          <Input
             type="search"
             placeholder="Buscar servicios..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-xl border py-2 pr-4 pl-9 text-sm focus:outline-none"
+            className="rounded-xl pl-9"
+            leftIcon={<Search size={16} className="text-muted-foreground" />}
           />
         </div>
         <Button onClick={handleCreate} className="gap-2">
