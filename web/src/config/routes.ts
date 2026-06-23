@@ -9,8 +9,8 @@ export const ROUTES = {
   admin: {
     dashboard: '/admin/panel',
     home: '/admin/inicio',
+    messages: '/admin/mensajes',
     contacts: '/admin/contactos',
-    contactSettings: '/admin/contactos/configuracion',
     categories: '/admin/categorias',
     newCategory: '/admin/categorias/nueva',
     editCategory: (id: string) => `/admin/categorias/${id}/editar` as const,

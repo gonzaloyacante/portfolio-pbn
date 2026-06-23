@@ -1,9 +1,9 @@
-import { SkeletonContactsPage } from '@/components/ui'
+import { SkeletonSettingsPage } from '@/components/ui'
 
-export default function ContactsLoading() {
+export default function SettingsLoading() {
   return (
     <div className="page-transition">
-      <SkeletonContactsPage />
+      <SkeletonSettingsPage />
     </div>
   )
 }

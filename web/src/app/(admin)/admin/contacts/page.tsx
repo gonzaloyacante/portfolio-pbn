@@ -1,36 +1,27 @@
-import { getContacts } from '@/actions/user/contact'
-import ContactList from '@/components/features/contact/ContactList'
-import ExportContactsButton from '@/components/features/contact/ExportContactsButton'
-import { Button } from '@/components/ui'
-import Link from 'next/link'
-import { ROUTES } from '@/config/routes'
+import { getContactSettings } from '@/actions/settings/contact'
+import { getSocialLinksForAdmin } from '@/actions/settings/social'
+import { ContactEditor } from '@/components/features/contact/ContactEditor'
+import { PageHeader } from '@/components/layout'
 
-export default async function AdminContactsPage() {
-  const contacts = await getContacts()
+export const metadata = {
+  title: 'Contacto y Redes | Admin',
+  description: 'Gestiona la información de contacto y enlaces a redes sociales',
+}
+
+export default async function ContactSettingsPage() {
+  const [settings, socialLinks] = await Promise.all([
+    getContactSettings(),
+    getSocialLinksForAdmin(),
+  ])
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h1 className="font-script text-primary text-4xl">📧 Mensajes de Contacto</h1>
-          <p className="text-muted-foreground mt-1">
-            Gestiona los mensajes recibidos de los visitantes
-          </p>
-        </div>
+    <div className="mx-auto max-w-4xl space-y-8">
+      <PageHeader
+        title="📞 Contacto y Redes Sociales"
+        description="Configura la información visible en la página de contacto y footer, además de tus redes sociales."
+      />
 
-        <div className="flex items-center gap-4">
-          <ExportContactsButton />
-          <Button asChild variant="outline" size="sm">
-            <Link href={ROUTES.admin.contactSettings}>Configurar</Link>
-          </Button>
-          <div className="bg-primary text-primary-foreground rounded-2xl px-6 py-4 shadow-lg">
-            <p className="text-xs font-bold tracking-wider uppercase opacity-80">Total</p>
-            <p className="text-3xl leading-none font-bold">{contacts.length}</p>
-          </div>
-        </div>
-      </div>
-
-      <ContactList contacts={contacts} />
+      <ContactEditor settings={settings} socialLinks={socialLinks} />
     </div>
   )
 }

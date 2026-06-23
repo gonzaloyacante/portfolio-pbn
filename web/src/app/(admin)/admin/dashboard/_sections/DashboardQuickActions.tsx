@@ -24,7 +24,7 @@ const ACTIONS = [
   {
     label: 'Datos de contacto',
     detail: 'Email, redes y formulario',
-    href: ROUTES.admin.contactSettings,
+    href: ROUTES.admin.contacts,
     icon: '📱',
   },
 ] as const

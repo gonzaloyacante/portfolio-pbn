@@ -237,7 +237,7 @@ export async function markContactAsRead(id: string) {
     where: { id },
     data: { isRead: true, readAt: new Date() },
   })
-  revalidatePath(ROUTES.admin.contacts)
+  revalidatePath(ROUTES.admin.messages)
   revalidateTag(CACHE_TAGS.contacts, 'max')
 }
 
@@ -251,7 +251,7 @@ export async function deleteContact(id: string) {
     data: { deletedAt: new Date() },
   })
   if (result.count === 0) throw new Error('Contacto no encontrado')
-  revalidatePath(ROUTES.admin.contacts)
+  revalidatePath(ROUTES.admin.messages)
   revalidateTag(CACHE_TAGS.contacts, 'max')
 }
 
@@ -271,7 +271,7 @@ export async function toggleContactImportant(id: string) {
     data: { isImportant: !contact.isImportant },
     select: { id: true, isImportant: true },
   })
-  revalidatePath(ROUTES.admin.contacts)
+  revalidatePath(ROUTES.admin.messages)
   revalidateTag(CACHE_TAGS.contacts, 'max')
   return updated
 }

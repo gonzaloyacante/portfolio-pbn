@@ -163,7 +163,7 @@ function revalidateForType(type: TrashType) {
       revalidateTag(CACHE_TAGS.testimonials, 'max')
       break
     case 'contact':
-      revalidatePath(ROUTES.admin.contacts)
+      revalidatePath(ROUTES.admin.messages)
       revalidateTag(CACHE_TAGS.contacts, 'max')
       break
     case 'booking':

@@ -30,7 +30,7 @@ export default function DashboardPrioritySection({
       detail: 'Responder cuanto antes',
       value: contactsCount,
       icon: '📬',
-      href: ROUTES.admin.contacts,
+      href: ROUTES.admin.messages,
       tone: 'border-warning/40 bg-warning/10',
     },
     {
