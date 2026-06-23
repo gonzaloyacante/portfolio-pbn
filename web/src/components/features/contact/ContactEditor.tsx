@@ -53,25 +53,20 @@ export function ContactEditor({ settings, socialLinks }: ContactEditorProps) {
 
   useUnsavedChanges(isDirty)
 
-  const toggleFieldValues = useWatch({
-    control,
-    name: [
-      'showEmail',
-      'showPhone',
-      'showWhatsapp',
-      'showLocation',
-      'showInstagram',
-      'showInstagramEmbed',
-    ],
-  })
+  const showEmail = useWatch({ control, name: 'showEmail' }) ?? true
+  const showPhone = useWatch({ control, name: 'showPhone' }) ?? true
+  const showWhatsapp = useWatch({ control, name: 'showWhatsapp' }) ?? true
+  const showLocation = useWatch({ control, name: 'showLocation' }) ?? true
+  const showInstagram = useWatch({ control, name: 'showInstagram' }) ?? true
+  const showInstagramEmbed = useWatch({ control, name: 'showInstagramEmbed' }) ?? false
 
   const toggleValueMap: Record<string, boolean> = {
-    showEmail: toggleFieldValues[0] ?? true,
-    showPhone: toggleFieldValues[1] ?? true,
-    showWhatsapp: toggleFieldValues[2] ?? true,
-    showLocation: toggleFieldValues[3] ?? true,
-    showInstagram: toggleFieldValues[4] ?? true,
-    showInstagramEmbed: toggleFieldValues[5] ?? false,
+    showEmail,
+    showPhone,
+    showWhatsapp,
+    showLocation,
+    showInstagram,
+    showInstagramEmbed,
   }
 
   const onSettingsSubmit = async (data: ContactSettingsFormData) => {

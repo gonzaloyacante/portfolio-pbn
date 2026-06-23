@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { useUnsavedChanges } from '@/hooks/useUnsavedChanges'
 import { EditorSliderControl } from '@/components/features/visual-editor/components/EditorSliderControl'
 import { BRAND } from '@/lib/design-tokens'
-import { Button, ColorPicker, Input, ImageUpload, Switch } from '@/components/ui'
+import { Button, ColorPicker, Input, TextArea, ImageUpload, Switch } from '@/components/ui'
 import { showToast } from '@/lib/toast'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -62,7 +62,6 @@ export function AboutEditor({ settings }: AboutEditorProps) {
       illustrationUrl: settings?.illustrationUrl || undefined,
       illustrationAlt: settings?.illustrationAlt || 'Ilustración sobre mí',
       skills: settings?.skills || [],
-      yearsExperience: settings?.yearsExperience || 0,
       certifications: settings?.certifications || [],
       profileImageShadowEnabled: settings?.profileImageShadowEnabled ?? true,
       profileImageShadowBlur: settings?.profileImageShadowBlur ?? 24,
@@ -79,8 +78,6 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   // Watch image fields for real-time updates and persistence
   const profileImageUrl = useWatch({ control, name: 'profileImageUrl' })
   const illustrationUrl = useWatch({ control, name: 'illustrationUrl' })
-  const skillsRaw = useWatch({ control, name: 'skills' })
-  const certificationsRaw = useWatch({ control, name: 'certifications' })
   const profileImageShadowEnabled = useWatch({ control, name: 'profileImageShadowEnabled' })
   const profileImageShadowOpacity = useWatch({ control, name: 'profileImageShadowOpacity' })
   const profileImageShadowBlur = useWatch({ control, name: 'profileImageShadowBlur' })
@@ -98,10 +95,6 @@ export function AboutEditor({ settings }: AboutEditorProps) {
   const bioTitleFontUrlWatch = useWatch({ control, name: 'bioTitleFontUrl' })
   const profileImageShapeWatch = useWatch({ control, name: 'profileImageShape' })
   const profileImageShadowColorWatch = useWatch({ control, name: 'profileImageShadowColor' })
-
-  // Helper for array fields (one per line)
-  const skillsString = skillsRaw?.join('\n') || ''
-  const certificationsString = certificationsRaw?.join('\n') || ''
 
   const onSubmit = async (data: AboutSettingsFormData) => {
     const trimmedColor = data.profileImageShadowColor?.trim()
@@ -231,22 +224,22 @@ export function AboutEditor({ settings }: AboutEditorProps) {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Intro (Primer párrafo)</label>
-              <textarea
+              <TextArea
+                label="Intro (Primer párrafo)"
                 {...register('bioIntro')}
-                rows={3}
-                className="dark:bg-muted w-full rounded border p-2 text-sm"
+                error={errors.bioIntro?.message}
                 placeholder="Breve introducción..."
+                rows={3}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Biografía Completa</label>
-              <textarea
+              <TextArea
+                label="Biografía Completa"
                 {...register('bioDescription')}
-                rows={8}
-                className="dark:bg-muted w-full rounded border p-2 text-sm"
+                error={errors.bioDescription?.message}
                 placeholder="Historia completa..."
+                rows={8}
               />
             </div>
           </div>
@@ -400,59 +393,50 @@ export function AboutEditor({ settings }: AboutEditorProps) {
         <div className="border-t pt-6">
           <h2 className="mb-4 text-lg font-semibold">Habilidades y Formación</h2>
           <div className="grid gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Habilidades (una por línea)</label>
-              <textarea
-                defaultValue={skillsString}
-                onChange={(e) =>
-                  setValue(
-                    'skills',
-                    e.target.value
-                      .split(/\r?\n/) // one skill per line
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                  )
-                }
-                className="dark:bg-muted w-full rounded border p-2 text-sm"
-                rows={4}
-              />
-              <p className="text-muted-foreground text-xs">
-                Ej:
-                <br />
-                Maquillaje social
-                <br />
-                FX
-                <br />
-                Caracterización
-              </p>
-            </div>
+            <Controller
+              name="skills"
+              control={control}
+              render={({ field }) => (
+                <TextArea
+                  label="Habilidades (una por línea)"
+                  value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value
+                        .split(/\r?\n/)
+                        .map((s) => s.trim())
+                        .filter(Boolean)
+                    )
+                  }
+                  onBlur={field.onBlur}
+                  rows={4}
+                  helperText="Ej: Maquillaje social, FX, Caracterización"
+                />
+              )}
+            />
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Certificaciones (una por línea)</label>
-              <textarea
-                defaultValue={certificationsString}
-                onChange={(e) =>
-                  setValue(
-                    'certifications',
-                    e.target.value
-                      .split(/\r?\n/) // one certification per line
-                      .map((s) => s.trim())
-                      .filter(Boolean)
-                  )
-                }
-                className="dark:bg-muted w-full rounded border p-2 text-sm"
-                rows={4}
-              />
-              <p className="text-muted-foreground text-xs">
-                Ej:
-                <br />
-                Master en Maquillaje 2023
-                <br />
-                Curso FX Avanzado
-              </p>
-            </div>
+            <Controller
+              name="certifications"
+              control={control}
+              render={({ field }) => (
+                <TextArea
+                  label="Certificaciones (una por línea)"
+                  value={Array.isArray(field.value) ? field.value.join('\n') : ''}
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value
+                        .split(/\r?\n/)
+                        .map((s) => s.trim())
+                        .filter(Boolean)
+                    )
+                  }
+                  onBlur={field.onBlur}
+                  rows={4}
+                  helperText="Ej: Master en Maquillaje 2023, Curso FX Avanzado"
+                />
+              )}
+            />
           </div>
-          {/* yearsExperience removed from admin editor (not shown publicly) */}
         </div>
 
         <div className="flex justify-end border-t pt-6">
