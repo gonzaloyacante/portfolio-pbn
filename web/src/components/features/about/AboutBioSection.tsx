@@ -3,7 +3,6 @@
 import { FadeIn, OptimizedImage, SlideIn } from '@/components/ui'
 import { IMAGE_SIZES } from '@/config/image-sizes'
 import { useIsMobile } from '@/hooks/useIsMobile'
-import { Palette } from 'lucide-react'
 
 interface AboutBioColumnProps {
   bioTitle: string
@@ -183,6 +182,9 @@ export function AboutProfileImage({
   shadowColor,
   shadowOpacity,
 }: AboutProfileImageProps) {
+  // Public-only component — no image means render nothing (editor uses AboutBioPreview).
+  if (!profileImageUrl) return null
+
   // Public web colors are fixed; CMS shadow color stays disabled here for now.
   void shadowColor
 
@@ -210,25 +212,14 @@ export function AboutProfileImage({
           className="relative aspect-3/4 w-full max-w-full overflow-hidden lg:max-w-xl"
           style={{ clipPath, borderRadius, boxShadow }}
         >
-          {profileImageUrl ? (
-            <OptimizedImage
-              src={profileImageUrl}
-              alt={profileImageAlt}
-              fill
-              sizes={IMAGE_SIZES.aboutProfile}
-              priority
-              variant="card"
-            />
-          ) : (
-            <div className="public-about-portrait-fallback flex h-full items-center justify-center">
-              <Palette
-                className="public-about-portrait-fallback-icon size-[28%] min-w-[4rem]"
-                aria-hidden
-                strokeWidth={1.25}
-              />
-              <span className="sr-only">{profileImageAlt}</span>
-            </div>
-          )}
+          <OptimizedImage
+            src={profileImageUrl}
+            alt={profileImageAlt}
+            fill
+            sizes={IMAGE_SIZES.aboutProfile}
+            priority
+            variant="card"
+          />
         </div>
       </SlideIn>
     </div>
