@@ -1,7 +1,9 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { Clock } from 'lucide-react'
 import SmartField from './SmartField'
+import { Input } from './Input'
 import { Service } from '@/generated/prisma/client'
 
 interface DurationFieldProps {
@@ -45,9 +47,6 @@ export default function DurationField({ service }: DurationFieldProps) {
 
   const currentMinutes = useMemo(() => parseMinutes(text) ?? null, [text])
 
-  const baseInputClasses =
-    'mt-1 block w-full rounded-md border border-input p-2 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-background text-foreground'
-
   return (
     <div>
       <label className="block text-sm font-medium text-(--foreground) opacity-90">Duración</label>
@@ -70,29 +69,13 @@ export default function DurationField({ service }: DurationFieldProps) {
         </div>
 
         <div className="relative mt-3">
-          <span className="absolute top-1/2 left-3 -translate-y-1/2 text-(--muted-foreground)">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M12 7V12L15 14"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
-          <input
+          <Input
             name="duration"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="1h 30min"
-            className={`${baseInputClasses} pr-24 pl-10`}
+            className="pr-24 pl-10"
+            leftIcon={<Clock size={16} className="text-muted-foreground" />}
           />
 
           {currentMinutes !== null && (

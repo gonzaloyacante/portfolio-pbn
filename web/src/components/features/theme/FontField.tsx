@@ -4,6 +4,7 @@ import React from 'react'
 import dynamic from 'next/dynamic'
 import { UseFormRegister, UseFormSetValue, UseFormWatch, FieldErrors } from 'react-hook-form'
 import { ThemeEditorData } from '@/lib/validations'
+import { Input } from '@/components/ui'
 
 const GoogleFontPicker = dynamic(
   () =>
@@ -66,11 +67,11 @@ export const FontField: React.FC<FontFieldProps> = ({
               onChange={(e) => setValue(sizeKey, Number(e.target.value), { shouldDirty: true })}
             />
             <div className="relative">
-              <input
+              <Input
                 type="number"
                 min="10"
                 max={sizeKey.includes('brand') || sizeKey.includes('portfolio') ? '300' : '200'}
-                className="bg-background border-input focus:border-primary focus:ring-primary w-20 rounded-md border px-3 py-1 text-right text-sm focus:ring-1 focus:outline-none"
+                className="w-20 pr-7 text-right"
                 value={(watch(sizeKey) as number) || 16}
                 onChange={(e) => setValue(sizeKey, Number(e.target.value), { shouldDirty: true })}
               />
