@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteCategoryAction, reorderCategories } from '@/actions/cms/category'
-import { Button, Card, useConfirmDialog } from '@/components/ui'
+import { Button, Card, useConfirmDialog, Input } from '@/components/ui'
 import ViewToggle, { type ViewMode } from '@/components/layout/ViewToggle'
 import SortableGrid from '@/components/layout/SortableGrid'
 import Link from 'next/link'
@@ -82,12 +82,13 @@ export default function CategoriesContent({
             size={16}
             className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
           />
-          <input
+          <Input
             type="search"
             placeholder="Buscar categorías..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border-input bg-background text-foreground placeholder:text-muted-foreground focus:border-ring w-full rounded-xl border py-2 pr-4 pl-9 text-sm focus:outline-none"
+            className="rounded-xl pl-9"
+            leftIcon={<Search size={16} className="text-muted-foreground" />}
           />
         </div>
         <ViewToggle defaultView="grid" onViewChange={setView} storageKey="admin-categories-view" />

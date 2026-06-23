@@ -1,7 +1,7 @@
 'use client'
 
 import { Contact, ContactFilter, ITEMS_PER_PAGE } from './contactListTypes'
-import { Button } from '@/components/ui'
+import { Button, Select } from '@/components/ui'
 import { ContactCard } from './ContactCard'
 
 interface ContactListPanelProps {
@@ -37,15 +37,16 @@ export function ContactListPanel({
     <div className="space-y-4 lg:col-span-1">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-foreground text-lg font-bold">Mensajes ({filteredContacts.length})</h2>
-        <select
+        <Select
           value={filter}
-          onChange={(e) => onFilterChange(e.target.value as ContactFilter)}
-          className="border-input bg-background text-foreground focus:border-ring rounded-xl border px-3 py-1.5 text-sm focus:outline-none"
-        >
-          <option value="all">Todos</option>
-          <option value="unread">No leídos</option>
-          <option value="important">⭐ Importantes</option>
-        </select>
+          onChange={(v) => onFilterChange(v as ContactFilter)}
+          className="min-w-35"
+          options={[
+            { value: 'all', label: 'Todos' },
+            { value: 'unread', label: 'No leídos' },
+            { value: 'important', label: '⭐ Importantes' },
+          ]}
+        />
       </div>
 
       <div className="space-y-2">
