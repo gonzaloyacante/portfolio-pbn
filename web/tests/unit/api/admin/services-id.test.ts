@@ -314,6 +314,12 @@ describe('PATCH /api/admin/services/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.clearAllMocks()
+    vi.mocked(prisma.service.findUnique).mockResolvedValue({
+      imageUrl: null,
+      slug: 'test',
+      deletedAt: null,
+    } as any)
     vi.mocked(prisma.service.update).mockRejectedValueOnce(new Error('DB crash'))
 
     const { PATCH } = await import('@/app/api/admin/services/[id]/route')
@@ -389,6 +395,7 @@ describe('DELETE /api/admin/services/[id]', () => {
 
   it('returns 500 on DB error', async () => {
     const { prisma } = await import('@/lib/db')
+    vi.clearAllMocks()
     vi.mocked(prisma.service.findUnique).mockResolvedValueOnce({
       slug: 'sesion-retrato',
       deletedAt: null,
