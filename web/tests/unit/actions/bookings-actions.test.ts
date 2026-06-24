@@ -65,6 +65,16 @@ describe('Bookings Actions', () => {
     vi.clearAllMocks()
     const { prisma } = await import('@/lib/db')
     vi.mocked(prisma.service.findFirst).mockResolvedValue({ id: 'svc-1' } as never)
+    vi.mocked(prisma.booking.findUnique).mockResolvedValue({
+      id: 'bk-1',
+      status: 'PENDING',
+      deletedAt: null,
+    } as never)
+    vi.mocked(prisma.booking.findFirst).mockResolvedValue({
+      id: 'bk-1',
+      status: 'PENDING',
+      deletedAt: null,
+    } as never)
   })
 
   // ─── createBooking ────────────────────────────────
@@ -234,6 +244,11 @@ describe('Bookings Actions', () => {
   describe('updateBookingStatus', () => {
     it('updates status successfully', async () => {
       const { prisma } = await import('@/lib/db')
+      vi.mocked(prisma.booking.findUnique).mockResolvedValue({
+        id: 'bk-1',
+        status: 'PENDING',
+        deletedAt: null,
+      } as never)
       vi.mocked(prisma.booking.update).mockResolvedValue({
         id: 'bk-1',
         status: 'CONFIRMED',
